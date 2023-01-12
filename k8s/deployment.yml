@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: confluent-gateway
+  namespace: selfservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: confluent-gateway
+  template:
+    metadata:
+      labels:
+        app: confluent-gateway
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccount: kafka-janitor
+      initContainers:
+        - name: dbmigration
+          image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway/dbmigrations:{{BUILD_NUMBER}}
+          envFrom:
+            - secretRef:
+                name: confluent-gateway-postgres
+      containers:
+        - name: app
+          image: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway:{{BUILD_NUMBER}}
+          ports:
+            - name: web
+              containerPort: 8080
+          resources:
+            requests:
+              memory: "20Mi"
+              cpu: "50m"
+            limits:
+              memory: "100Mi"
+              cpu: "100m"
+          env:
+            - name: CG_DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: confluent-gateway-postgres
+                  key: PGCONNSTRING
+            - name: CG_APPLICATION_NAME
+              value: Confluent Gateway
+            - name: CG_ENVIRONMENT
+              value: Production
+            - name: CG_CONFLUENT_CLOUD_API_URL
+              value: https://api.confluent.cloud
+            - name: CG_KAFKA_GROUP_ID
+              value: build.selfservice.confluentgateway
+            - name: CG_TOPIC_NAME_SELF_SERVICE
+              value: cloudengineering.selfservice.kafkatopic
+            - name: CG_TOPIC_NAME_PROVISIONING
+              value: cloudengineering.confluentgateway.provisioning
+          envFrom:
+            - secretRef:
+                name: kafka-credentials
+            - secretRef:
+                name: confluent-gateway-cloud-credentials
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: confluent-gateway-gendis
+  namespace: selfservice
+  labels:
+    project: selfservice
+    department: devex
+    app: confluent-gateway-gendis
+    component: capability-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: confluent-gateway-gendis
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5225"
+      labels:
+        app: confluent-gateway-gendis
+        project: selfservice
+        department: devex
+    spec:
+      containers:
+        - name: app
+          image: public.ecr.aws/d8r0z9h2/dafda-gendis:0.9.1
+          ports:
+            - name: metrics
+              containerPort: 5225
+          env:
+            - name: DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: confluent-gateway-postgres
+                  key: GENDIS_CONNECTION_STRING
+          envFrom:
+            - secretRef:
+                name: kafka-credentials
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
