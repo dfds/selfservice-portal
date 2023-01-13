@@ -2,17 +2,21 @@ import { Hero } from '@dfds-ui/react-components';
 import { Container, Column, Card, CardTitle, CardContent, LinkButton  } from '@dfds-ui/react-components';
 import { Link } from "react-router-dom";
 
+import styles from "./frontpage.module.css";
+
 export default function FrontPage() {
     return <>
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
 
-                <Hero 
-                    title="Welcome to the cloud"
-                    headline="Self Service Portal"
-                    //   imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                    imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg"
-                />
+                <div className={styles.herowrapper}>
+                    <Hero 
+                        title="Welcome to the cloud"
+                        headline="Self Service Portal"
+                        //   imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg"
+                    />
+                </div>
 
                 <br />
 
