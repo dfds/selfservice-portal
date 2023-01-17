@@ -18,6 +18,7 @@ import {
 } from "@dfds-ui/react-components";
 
 import ProfilePicture from "./ProfilePicture";
+import ProfileName from "./ProfileName";
 
 export default function GlobalMenu({}) {
   const navLinks = [
@@ -59,7 +60,8 @@ export default function GlobalMenu({}) {
         }
         actions={
           <>
-            <AppBarIconButton icon={Search} ariaLabel="Search" />
+            {/* <AppBarIconButton icon={Search} ariaLabel="Search" /> */}
+            <AppBarItem  title="Name" id="profile-name" as={ProfileName} />
             <AppBarItem  title="Profile" id="profile" as={ProfilePicture} />
           </>
         }>

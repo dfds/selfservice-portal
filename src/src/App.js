@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { SiteLayout } from '@dfds-ui/react-components';
 
@@ -7,18 +8,31 @@ import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
 import CapabilityDetailsPage from "./pages/capabilities/details";
 
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
+import { InteractionType } from '@azure/msal-browser';
+import { loginRequest } from "./authConfig";
+
 function Layout({ }) {
-  return <SiteLayout.Grid>
-    <SiteLayout.Header>
-      <GlobalMenu />
-    </SiteLayout.Header>
-    <SiteLayout.Main>
-      <Outlet />
-    </SiteLayout.Main>
-  </SiteLayout.Grid>
+  return <>
+    <AuthenticatedTemplate>
+      <SiteLayout.Grid>
+        <SiteLayout.Header>
+          <GlobalMenu />
+        </SiteLayout.Header>
+        <SiteLayout.Main>
+          <Outlet />
+        </SiteLayout.Main>
+      </SiteLayout.Grid>
+    </AuthenticatedTemplate>
+
+    {/* <UnauthenticatedTemplate>
+      nooooooo
+    </UnauthenticatedTemplate> */}
+  </>
 }
 
 export default function App() {
+
   return (
     <>
       <Routes>

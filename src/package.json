@@ -38,5 +38,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@azure/msal-browser": "^2.32.2",
+    "@azure/msal-react": "^1.5.2"
   }
 }
