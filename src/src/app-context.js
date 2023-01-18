@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "./authConfig";
-import { callMsGraph, callMsGraph2 } from "./graph";
+import { callMsGraph2 } from "./graph";
 
 import { useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
 import { InteractionType } from '@azure/msal-browser';
@@ -12,53 +12,52 @@ function AppProvider({ children }) {
 
   const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
   const { instance, accounts } = useMsal();
-  const [ graphData, setGraphData ] = useState(null);
+  const isAuthenticated = useIsAuthenticated();
 
   const [user, setUser] = useState({
     name: "John Doe",
     email: "john@jdog.com",
+    title: "duno",
     profilePictureUrl: "https://placeimg.com/640/480/people"
   });
 
-  const isAuthenticated = useIsAuthenticated();
-
   useEffect(() => {
-    const name = accounts[0] && accounts[0].name;
-    if (name) {
-      setUser(prev => {
-        const copy = {...prev};
-        return {...copy, ...{
-          name: name
-        }};
-      });
+    const currentAccount = accounts[0];
+
+    if (isAuthenticated && currentAccount) {
+
+      async function getUserInfo() {
+        const { accessToken } = await instance.acquireTokenSilent({ ...loginRequest, account: currentAccount });
+        const response1 = await callMsGraph2("https://graph.microsoft.com/v1.0/me", accessToken);
+        const profile = await response1.json();
+
+        setUser(prev => {
+          const copy = {...prev};
+          copy.name = profile.displayName;
+          copy.email = profile.mail;
+          copy.upn = profile.userPrincipalName;
+          copy.title = profile.jobTitle;
+
+          return copy;
+        });
+
+        const response2 = await callMsGraph2("https://graph.microsoft.com/v1.0/me/photos/48x48/$value", accessToken);
+        const blob = await response2.blob()
+
+        const url = window.URL || window.webkitURL;
+        const blobUrl = url.createObjectURL(blob);
+        
+        setUser(prev => {
+          const copy = {...prev};
+          copy.profilePictureUrl = blobUrl;
+
+          return copy;
+        });
+      }
+
+      getUserInfo();
     }
-  }, [accounts]);
-
-
-  useEffect(() => {
-    const request = {
-      ...loginRequest,
-      account: accounts[0]
-    };
-
-    if (!isAuthenticated) {
-      return;
-    }
-
-    instance
-      .acquireTokenSilent(request)
-      .then((response) => {
-        console.log("access token: ", response.accessToken);
-        callMsGraph(response.accessToken)
-          .then(response => {
-            setGraphData(response);
-            console.log("graph data: ", response);
-            console.log("accounts: ", accounts);
-          });
-      });
-  }, [isAuthenticated]);
-
-
+  }, [isAuthenticated, accounts]);
 
   const [capabilities, setCapabilities] = useState([
     { id: "1", capabilityRootId: "this-is-a-capability", name: "this is a capability", description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf"},
