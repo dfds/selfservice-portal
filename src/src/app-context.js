@@ -10,7 +10,7 @@ const appContext = React.createContext(null);
 
 function AppProvider({ children }) {
 
-  const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+  useMsalAuthentication(InteractionType.Redirect, loginRequest);
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
 
@@ -57,7 +57,7 @@ function AppProvider({ children }) {
 
       getUserInfo();
     }
-  }, [isAuthenticated, accounts]);
+  }, [isAuthenticated, instance, accounts]);
 
   const [capabilities, setCapabilities] = useState([
     { id: "1", capabilityRootId: "this-is-a-capability", name: "this is a capability", description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf"},
