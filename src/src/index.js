@@ -12,6 +12,8 @@ import { msalConfig } from "./authConfig";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
+console.log("redirect url: ", process.env.REACT_APP_AUTH_REDIRECT_URL);
+
 render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "./authConfig";
+import { callMsGraph, callMsGraph2 } from "./graph";
 
 import { useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
 import { InteractionType } from '@azure/msal-browser';
@@ -19,7 +20,7 @@ function AppProvider({ children }) {
     profilePictureUrl: "https://placeimg.com/640/480/people"
   });
 
-  // const isAuthenticated = useIsAuthenticated();
+  const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
     const name = accounts[0] && accounts[0].name;
@@ -31,8 +32,33 @@ function AppProvider({ children }) {
         }};
       });
     }
-
   }, [accounts]);
+
+
+  useEffect(() => {
+    const request = {
+      ...loginRequest,
+      account: accounts[0]
+    };
+
+    if (!isAuthenticated) {
+      return;
+    }
+
+    instance
+      .acquireTokenSilent(request)
+      .then((response) => {
+        console.log("access token: ", response.accessToken);
+        callMsGraph(response.accessToken)
+          .then(response => {
+            setGraphData(response);
+            console.log("graph data: ", response);
+            console.log("accounts: ", accounts);
+          });
+      });
+  }, [isAuthenticated]);
+
+
 
   const [capabilities, setCapabilities] = useState([
     { id: "1", capabilityRootId: "this-is-a-capability", name: "this is a capability", description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf"},
@@ -40,27 +66,6 @@ function AppProvider({ children }) {
   ]);
 
   const [topics, setTopics] = useState([]);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const response = await fetch("http://localhost:8080/capabilities", {
-  //       mode: 'no-cors'
-  //     });
-  //     const { items } = await   response.json();
-  //     const newCapabilities = (items || []).map(x => {
-  //       return {
-  //         id: x.id,
-  //         capabilityRootId: x.rootId,
-  //         name: x.name,
-  //         description: x.description
-  //       };
-  //     });
-  
-  //     setCapabilities(newCapabilities);
-  //   }
-
-  //   fetchData();
-  // }, []);
 
   const state = {
     user,
