@@ -64,8 +64,7 @@ function AppProvider({ children }) {
   const [capabilities, setCapabilities] = useState([]);
   const reloadCapabilities = async () => {
     const newCapabilities = await getCapabilities();
-    console.log("new capabilities: ", newCapabilities);
-    setCapabilities(newCapabilities);
+    setCapabilities(newCapabilities); 
   };
 
   const [topics, setTopics] = useState([]);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { SiteLayout } from '@dfds-ui/react-components';
 
@@ -8,11 +8,9 @@ import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
 import CapabilityDetailsPage from "./pages/capabilities/details";
 
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
-import { InteractionType } from '@azure/msal-browser';
-import { loginRequest } from "./authConfig";
+import { AuthenticatedTemplate } from "@azure/msal-react";
 
-function Layout({ }) {
+function Layout() {
   return <>
     <AuthenticatedTemplate>
       <SiteLayout.Grid>
@@ -40,7 +38,7 @@ export default function App() {
           <Route index element={<FrontPage />} />
           <Route path="topics" element={<TopicsPage />} />
           <Route path="capabilities" element={<CapabilitiesPage />} />
-          <Route path="capabilities/:capabilityRootId" element={<CapabilityDetailsPage />} />
+          <Route path="capabilities/:rootId" element={<CapabilityDetailsPage />} />
         </Route>
       </Routes>
     </>

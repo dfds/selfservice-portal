@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useCallback } from "react";
-import { Button, ButtonStack, H1, Hero } from '@dfds-ui/react-components';
+import React, { useContext, useEffect } from "react";
+import { Button, H1 } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
-import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions, LinkButton, IconButton  } from '@dfds-ui/react-components';
-import { Link, useNavigate } from "react-router-dom";
+import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
+import { useNavigate } from "react-router-dom";
 import { ChevronRight } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
@@ -28,7 +28,7 @@ function MyCapabilities({capabilities}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.capabilityRootId)}>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.rootId)}>
                                 <TableDataCell>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>
@@ -41,7 +41,7 @@ function MyCapabilities({capabilities}) {
                         </TableBody>
                     </Table>
                 }                
-                {items.length == 0 && 
+                {items.length === 0 && 
                     <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
                 }
             </CardContent>
@@ -68,7 +68,7 @@ function OtherCapabilities({capabilities}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.capabilityRootId)}>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.rootId)}>
                                 <TableDataCell>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>
@@ -81,7 +81,7 @@ function OtherCapabilities({capabilities}) {
                         </TableBody>
                     </Table>
                 }                
-                {items.length == 0 && 
+                {items.length === 0 && 
                     <Spinner />
                 }                
             </CardContent>
@@ -94,10 +94,10 @@ export default function CapabilitiesPage() {
 
     useEffect(() => {
         reloadCapabilities();
-    }, []);
+    }, [reloadCapabilities]);
 
     const splash = <CardMedia aspectRatio='3:2' media={
-        <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' />
+        <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
     } />
 
     return <>

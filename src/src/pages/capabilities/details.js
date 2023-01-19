@@ -1,17 +1,9 @@
-import { Button, ButtonStack, H1, Hero } from '@dfds-ui/react-components';
-import { Text } from '@dfds-ui/typography';
-import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions, LinkButton  } from '@dfds-ui/react-components';
-import { Link } from "react-router-dom";
-import { useParams } from 'react-router-dom';
-
-import { ChevronRight } from '@dfds-ui/icons/system';
-
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
-
 import React, { useContext } from "react"
+import { H1 } from '@dfds-ui/react-components';
+import { Text } from '@dfds-ui/typography';
+import { Container, Column} from '@dfds-ui/react-components';
+import { useParams } from 'react-router-dom';
 import AppContext from "./../../app-context";
-
-import styles from "./details.module.css";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';
@@ -20,10 +12,10 @@ import CommunicationChannels from './communicationchannels';
 import Topics from './topics';
 
 export default function CapabilityDetailsPage() {
-    const { capabilityRootId } = useParams();
+    const { rootId } = useParams();
     const { capabilities } = useContext(AppContext);
 
-    const foundCapability = (capabilities || []).find(x => x.capabilityRootId == capabilityRootId);
+    const foundCapability = (capabilities || []).find(x => x.rootId === rootId);
 
     const members = [];
 
@@ -35,7 +27,6 @@ export default function CapabilityDetailsPage() {
                 pictureUrl: `https://placeimg.com/640/480/people?time=${id}`
             }            
         );
-        
     }
 
     return <>
@@ -47,10 +38,7 @@ export default function CapabilityDetailsPage() {
                 <Text as={H1} styledAs='heroHeadline'>{foundCapability.name}</Text>
 
                 <Members members={members} />
-
-                {/* <hr className={styles.divider} /> */}
-
-                <Summary name={foundCapability.name} rootId={foundCapability.capabilityRootId} description={foundCapability.description} />
+                <Summary name={foundCapability.name} rootId={foundCapability.rootId} description={foundCapability.description} />
                 <Resources />
                 <Logs />
                 <CommunicationChannels />
