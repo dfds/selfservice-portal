@@ -6,6 +6,8 @@ import { callMsGraph2 } from "./graph";
 import { useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
 import { InteractionType } from '@azure/msal-browser';
 
+import { getCapabilities } from "./SelfServiceApiClient";
+
 const appContext = React.createContext(null);
 
 function AppProvider({ children }) {
@@ -59,10 +61,12 @@ function AppProvider({ children }) {
     }
   }, [isAuthenticated, instance, accounts]);
 
-  const [capabilities, setCapabilities] = useState([
-    { id: "1", capabilityRootId: "this-is-a-capability", name: "this is a capability", description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf"},
-    { id: "2", capabilityRootId: "another-awssome-capability", name: "another awssome capability", description: "lknm lk23lnk nl kl23lk lk"},
-  ]);
+  const [capabilities, setCapabilities] = useState([]);
+  const reloadCapabilities = async () => {
+    const newCapabilities = await getCapabilities();
+    console.log("new capabilities: ", newCapabilities);
+    setCapabilities(newCapabilities);
+  };
 
   const [topics, setTopics] = useState([]);
 
@@ -70,7 +74,7 @@ function AppProvider({ children }) {
     user,
     setUser,
     capabilities,
-    setCapabilities,
+    reloadCapabilities,
     topics,
     setTopics,
   };

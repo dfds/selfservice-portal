@@ -12,6 +12,8 @@ import { msalConfig } from "./authConfig";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
+window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
 render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>

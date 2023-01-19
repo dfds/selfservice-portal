@@ -1,14 +1,100 @@
+import React, { useContext, useEffect, useCallback } from "react";
 import { Button, ButtonStack, H1, Hero } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
-import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions, LinkButton  } from '@dfds-ui/react-components';
-import { Link } from "react-router-dom";
+import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions, LinkButton, IconButton  } from '@dfds-ui/react-components';
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
-import React, { useContext } from "react"
+import { Spinner } from '@dfds-ui/react-components';
+
 import AppContext from "./../../app-context";
 
+function MyCapabilities({capabilities}) {
+    const items = capabilities || [];
+
+    const navigate = useNavigate();
+    const clickHandler = (rootId) => navigate(`/capabilities/${rootId}`);
+
+    return <>
+        <Text styledAs='sectionHeadline'>My Capabilities</Text>
+        <Card variant="fill"  surface="main">
+            <CardContent>
+                {items.length > 0 && 
+                    <Table isHeaderSticky isInteractive width={"100%"}>
+                        <TableHead>
+                            <TableRow>
+                                <TableHeaderCell>Name</TableHeaderCell>
+                                <TableHeaderCell align="right"></TableHeaderCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.capabilityRootId)}>
+                                <TableDataCell>
+                                    <Text styledAs="action" as={"div"}>{x.name}</Text>
+                                    <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                                </TableDataCell>
+                                <TableDataCell align="right">
+                                    <ChevronRight />
+                                </TableDataCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                }                
+                {items.length == 0 && 
+                    <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
+                }
+            </CardContent>
+        </Card>    
+    </>
+}
+
+function OtherCapabilities({capabilities}) {
+    const items = capabilities || [];
+
+    const navigate = useNavigate();
+    const clickHandler = (rootId) => navigate(`/capabilities/${rootId}`);
+
+    return <>
+        <Text styledAs='sectionHeadline'>Other Capabilities</Text>
+        <Card variant="fill"  surface="main">
+            <CardContent>
+                {items.length > 0 && 
+                    <Table isHeaderSticky isInteractive width={"100%"}>
+                        <TableHead>
+                            <TableRow>
+                                <TableHeaderCell>Name</TableHeaderCell>
+                                <TableHeaderCell align="right"></TableHeaderCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.capabilityRootId)}>
+                                <TableDataCell>
+                                    <Text styledAs="action" as={"div"}>{x.name}</Text>
+                                    <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                                </TableDataCell>
+                                <TableDataCell align="right">
+                                    <ChevronRight />
+                                </TableDataCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                }                
+                {items.length == 0 && 
+                    <Spinner />
+                }                
+            </CardContent>
+        </Card>    
+    </>
+}
+
 export default function CapabilitiesPage() {
-    const { capabilities } = useContext(AppContext);
+    const { capabilities, reloadCapabilities } = useContext(AppContext);
+
+    useEffect(() => {
+        reloadCapabilities();
+    }, []);
 
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' />
@@ -40,58 +126,14 @@ export default function CapabilitiesPage() {
                         <Button size='small'>Add</Button>
                     </CardActions>
                 </Card>
-                        
-                <br/>
-
-                <Text styledAs='sectionHeadline'>My Capabilities</Text>
-                <Card variant="fill"  surface="main">
-                    <CardContent>
-                        <Table isHeaderSticky isInteractive width={"100%"}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeaderCell>Name</TableHeaderCell>
-                                    <TableHeaderCell align="right"></TableHeaderCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {capabilities.map(x => <TableRow key={x.id}>
-                                    <TableDataCell>{x.name}</TableDataCell>
-                                    <TableDataCell align="right">
-                                        <Link to={`/capabilities/${x.capabilityRootId}`} style={{textDecoration: "none"}}>
-                                            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">Details</LinkButton>
-                                        </Link>
-                                    </TableDataCell>
-                                </TableRow>)}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
 
                 <br/>
 
-                <Text styledAs='sectionHeadline'>Other Capabilities</Text>
-                <Card variant="fill"  surface="main">
-                    <CardContent>
-                        <Table isHeaderSticky isInteractive width={"100%"}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeaderCell>Name</TableHeaderCell>
-                                    <TableHeaderCell align="right"></TableHeaderCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {capabilities.map(x => <TableRow key={x.id}>
-                                    <TableDataCell>{x.name}</TableDataCell>
-                                    <TableDataCell align="right">
-                                        <Link to={`/capabilities/${x.capabilityRootId}`} style={{textDecoration: "none"}}>
-                                            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">Details</LinkButton>
-                                        </Link>
-                                    </TableDataCell>
-                                </TableRow>)}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                <MyCapabilities capabilities={capabilities} />
+
+                <br/>
+
+                <OtherCapabilities capabilities={capabilities} />
 
             </Column>
         </Container>
