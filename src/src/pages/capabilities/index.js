@@ -94,8 +94,10 @@ export default function CapabilitiesPage() {
 
     useEffect(() => {
         reloadCapabilities();
-    }, [reloadCapabilities]);
+    }, []);
 
+
+    
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
     } />
