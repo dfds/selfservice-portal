@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 import { Text } from '@dfds-ui/typography';
 import { Card, CardContent  } from '@dfds-ui/react-components';
 import { Accordion, AccordionSmall } from '@dfds-ui/react-components'
-import SwaggerParser from "@apidevtools/swagger-parser";
 
 
 export default function Spec({id, service, isSelected, onHeaderClicked}) {
