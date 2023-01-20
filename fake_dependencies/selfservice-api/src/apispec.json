@@ -1,0 +1,196 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "SelfService API",
+        "description": "SelfService API",
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "/v2/api"
+        }
+    ],
+    "paths": {
+        "/capabilities": {
+            "get": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}": {
+            "get": {
+                "tags": [
+                    "Capability"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}/members": {
+            "post": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}/members/{memberEmail}": {
+            "delete": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}/contexts": {
+            "post": {
+                "tags": [
+                    "Capability"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/kafka/cluster": {
+            "get": {
+                "tags": [
+                    "Cluster"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}/topics": {
+            "get": {
+                "tags": [
+                    "KafkaTopics"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "KafkaTopics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/capabilities/{id}/request-credential-generation": {
+            "get": {
+                "tags": [
+                    "KafkaTopics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/topics": {
+            "get": {
+                "tags": [
+                    "KafkaTopics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/topics/{name}": {
+            "delete": {
+                "tags": [
+                    "KafkaTopics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        }
+    },
+    "components": {}
+}

@@ -31,6 +31,10 @@ export default function GlobalMenu({}) {
       url: "/topics"
     },
     {
+      title: "API Explorer",
+      url: "/apiexplorer"
+    },
+    {
       title: "Playbooks",
       url: "https://wiki.dfds.cloud/playbooks"
     },

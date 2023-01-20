@@ -7,6 +7,7 @@ import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
 import CapabilityDetailsPage from "./pages/capabilities/details";
+import ApiExplorerPage from "./pages/apiexplorer";
 
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="topics" element={<TopicsPage />} />
           <Route path="capabilities" element={<CapabilitiesPage />} />
           <Route path="capabilities/:rootId" element={<CapabilityDetailsPage />} />
+          <Route path="apiexplorer" element={<ApiExplorerPage />} />
         </Route>
       </Routes>
     </>

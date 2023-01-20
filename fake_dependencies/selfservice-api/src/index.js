@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,21 @@ app.get("/ping", (req, res) => {
 
 app.get("/api/capabilities", (req, res) => {
     res.send({ items: capabilities });
+});
+
+app.get("/api/apispecs", (req, res) => {
+    res.send({ 
+      items: [
+        {
+          id: 1,
+          service: "Self Service Api v2"
+        }
+      ]
+    });
+});
+
+app.get("/api/apispecs/:id", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "apispec.json"));
 });
 
 app.listen(port, () => {
