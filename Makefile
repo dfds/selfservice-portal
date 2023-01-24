@@ -11,6 +11,7 @@ clean:
 	@mkdir $(OUTPUT_DIR)
 	@mkdir $(OUTPUT_DIR_APP)
 	@mkdir $(OUTPUT_DIR_MANIFESTS)
+	@rm -Rf src/node_modules
 
 restore:
 	@cd src && npm install
