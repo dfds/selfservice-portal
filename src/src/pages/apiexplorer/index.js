@@ -21,10 +21,10 @@ export default function ApiExplorerPage() {
             }
         });
 
-        fetchData();
-
         return newState;
     });
+
+    fetchData();
 
     async function fetchData(searchfunc) {
         // const url = window.apiBaseUrl + "/apispecs";
