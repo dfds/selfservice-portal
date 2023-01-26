@@ -68,21 +68,6 @@ export default function ApiExplorerPage() {
 
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-                <Text as={H1} styledAs='heroHeadline'>API Explorer</Text>
-
-                <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
-                    <CardTitle largeTitle>Information</CardTitle>
-                    <CardContent>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                            et dolore magna aliqua. Ut eu sem integer vitae justo eget.
-                        </p>
-                    </CardContent>
-                    <CardActions>
-                        <Button size='small'>Add</Button>
-                    </CardActions>
-                </Card>
-
                 <Section title={"APIs"}>
                     {specs.map(x => <Spec key={x.id} spec={x.spec} {...x} onHeaderClicked={id => selectSpec(id)} />)}
                 </Section>
