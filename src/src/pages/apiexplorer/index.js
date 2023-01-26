@@ -26,13 +26,32 @@ export default function ApiExplorerPage() {
 
     useEffect(() => {
         async function fetchData() {
-            const url = window.apiBaseUrl + "/apispecs";
-            const response = await fetch(url, { mode: "cors" });
-            const { items } = await response.json();
+            // const url = window.apiBaseUrl + "/apispecs";
+            // const response = await fetch(url, { mode: "cors" });
+            // const { items } = await response.json();
 
-            console.log("items: ", items);
+            // console.log("items: ", items);
 
-            setSpecs(items);
+            let newUrl = "https://api.hellman.oxygen.dfds.cloud/ce/ascraper/specs"
+            const response = await fetch(newUrl, { mode: "cors" });
+            let items = await response.json();
+
+            console.log(items);
+
+            let entities = [];
+
+            for (const item in items) {
+
+              var newObj = {
+                id: item,
+                spec: atob(items[item])
+              };
+
+              entities.push(newObj)
+            }
+
+
+            setSpecs(entities);
         }
 
         fetchData();
@@ -55,7 +74,7 @@ export default function ApiExplorerPage() {
                     <CardTitle largeTitle>Information</CardTitle>
                     <CardContent>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore 
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
                             et dolore magna aliqua. Ut eu sem integer vitae justo eget.
                         </p>
                     </CardContent>
@@ -65,7 +84,7 @@ export default function ApiExplorerPage() {
                 </Card>
 
                 <Section title={"APIs"}>
-                    {specs.map(x => <Spec key={x.id} {...x} onHeaderClicked={id => selectSpec(id)} />)}
+                    {specs.map(x => <Spec key={x.id} spec={x.spec} {...x} onHeaderClicked={id => selectSpec(id)} />)}
                 </Section>
 
             </Column>
