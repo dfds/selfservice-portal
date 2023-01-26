@@ -3,6 +3,8 @@ import { Text } from '@dfds-ui/typography';
 import { Card, CardContent  } from '@dfds-ui/react-components';
 import { Accordion, AccordionSmall } from '@dfds-ui/react-components'
 
+import SwaggerUI from "swagger-ui-react";
+import "swagger-ui-react/swagger-ui.css";
 
 export default function Spec({id, service, isSelected, onHeaderClicked}) {
     const [state, setState] = useState(null);
@@ -16,7 +18,7 @@ export default function Spec({id, service, isSelected, onHeaderClicked}) {
         async function fetchData() {
             const url = window.apiBaseUrl + `/apispecs/${id}`;
             const response = await fetch(url, {mode: "cors"});
-            const content = await response.text();
+            const content = await response.json();
 
             setState(content);
         }
@@ -24,14 +26,22 @@ export default function Spec({id, service, isSelected, onHeaderClicked}) {
         fetchData();
     }, [isSelected]);
 
+
     const clickHandler = () => {
         if (onHeaderClicked) {
              onHeaderClicked(id);
         }
     };
 
+    const content = isSelected && state
+        ? <SwaggerUI
+            spec={state}
+            supportedSubmitMethods={[]}            
+            tryItOutEnabled={false}
+        />
+        : "";
+
     return <Accordion heading={service} isOpen={isSelected} onToggle={clickHandler}>
-        <div>spec content</div>
-        <div>state: {state}</div>
+        <div> {content} </div>
     </Accordion>
 }

@@ -14,7 +14,8 @@
     "react-router-dom": "^6.5.0",
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
-    "serve": "^14.1.2"
+    "serve": "^14.1.2",
+    "swagger-ui-react": "^4.15.5"
   },
   "scripts": {
     "start": "react-scripts start",
