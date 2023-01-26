@@ -78,7 +78,7 @@ export default function ApiExplorerPage() {
 
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-                <input id="search" placeholder="Search" onChange="fetchData(this.text)"></input>
+                <input id="search" placeholder="Search" onChange={e => fetchData(e.target.value)}></input>
             </Column>
             <Column m={12} l={12} xl={12} xxl={12}>
                 <Section title={"APIs"}>
