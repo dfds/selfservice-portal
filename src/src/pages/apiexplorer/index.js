@@ -24,8 +24,6 @@ export default function ApiExplorerPage() {
         return newState;
     });
 
-    fetchData();
-
     async function fetchData(searchfunc) {
         // const url = window.apiBaseUrl + "/apispecs";
         // const response = await fetch(url, { mode: "cors" });
