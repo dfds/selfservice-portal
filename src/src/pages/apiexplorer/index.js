@@ -25,7 +25,7 @@ export default function ApiExplorerPage() {
     });
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchData(searchfunc) {
             // const url = window.apiBaseUrl + "/apispecs";
             // const response = await fetch(url, { mode: "cors" });
             // const { items } = await response.json();
@@ -39,6 +39,7 @@ export default function ApiExplorerPage() {
             console.log(items);
 
             let entities = [];
+            let filteredEntities = [];
 
             for (const item in items) {
               var splits = item.split('|');
@@ -48,10 +49,19 @@ export default function ApiExplorerPage() {
               };
 
               entities.push(newObj)
+              if (searchfunc !== "") {
+                if (item.startsWith(searchfunc)) {
+                    filteredEntities.push(newObj)
+                }
+              }
+              else {
+                filteredEntities = entities;
+              }
+             
             }
 
 
-            setSpecs(entities);
+            setSpecs(filteredEntities);
         }
 
         fetchData();
@@ -67,6 +77,9 @@ export default function ApiExplorerPage() {
         <br/>
 
         <Container>
+            <Column m={12} l={12} xl={12} xxl={12}>
+                <input id="search" placeholder="Search" onChange="fetchData(this.text)"></input>
+            </Column>
             <Column m={12} l={12} xl={12} xxl={12}>
                 <Section title={"APIs"}>
                     {specs.map(x => <Spec key={x.id} spec={x.spec} {...x} onHeaderClicked={id => selectSpec(id)} />)}
