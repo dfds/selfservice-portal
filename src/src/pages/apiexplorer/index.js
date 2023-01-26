@@ -24,45 +24,47 @@ export default function ApiExplorerPage() {
         return newState;
     });
 
-    useEffect(() => {
-        async function fetchData(searchfunc) {
-            // const url = window.apiBaseUrl + "/apispecs";
-            // const response = await fetch(url, { mode: "cors" });
-            // const { items } = await response.json();
+    async function fetchData(searchfunc) {
+        // const url = window.apiBaseUrl + "/apispecs";
+        // const response = await fetch(url, { mode: "cors" });
+        // const { items } = await response.json();
 
-            // console.log("items: ", items);
+        // console.log("items: ", items);
 
-            let newUrl = "https://api.hellman.oxygen.dfds.cloud/ce/ascraper/specs"
-            const response = await fetch(newUrl, { mode: "cors" });
-            let items = await response.json();
+        let newUrl = "https://api.hellman.oxygen.dfds.cloud/ce/ascraper/specs"
+        const response = await fetch(newUrl, { mode: "cors" });
+        let items = await response.json();
 
-            console.log(items);
+        console.log(items);
 
-            let entities = [];
-            let filteredEntities = [];
+        let entities = [];
+        let filteredEntities = [];
 
-            for (const item in items) {
-              var splits = item.split('|');
-              var newObj = {
-                id: splits[1],
-                spec: atob(items[item])
-              };
+        for (const item in items) {
+          var splits = item.split('|');
+          var newObj = {
+            id: splits[1],
+            spec: atob(items[item])
+          };
 
-              entities.push(newObj)
-              if (searchfunc !== "") {
-                if (item.startsWith(searchfunc)) {
-                    filteredEntities.push(newObj)
-                }
-              }
-              else {
-                filteredEntities = entities;
-              }
-             
+          entities.push(newObj)
+          if (searchfunc !== "") {
+            if (item.startsWith(searchfunc)) {
+                filteredEntities.push(newObj)
             }
-
-
-            setSpecs(filteredEntities);
+          }
+          else {
+            filteredEntities = entities;
+          }
+         
         }
+
+
+        setSpecs(filteredEntities);
+    }
+
+    useEffect(() => {
+        
 
         fetchData();
     }, []);
