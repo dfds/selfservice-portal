@@ -41,9 +41,9 @@ export default function ApiExplorerPage() {
             let entities = [];
 
             for (const item in items) {
-
+              var splits = item.split('|');
               var newObj = {
-                id: item,
+                id: splits[1],
                 spec: atob(items[item])
               };
 
