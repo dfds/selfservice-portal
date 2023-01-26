@@ -32,6 +32,10 @@ app.get("/api/apispecs", (req, res) => {
         {
           id: 1,
           service: "Self Service Api v2"
+        },
+        {
+          id: 2,
+          service: "Backstage API"
         }
       ]
     });
