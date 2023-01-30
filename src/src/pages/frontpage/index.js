@@ -4,11 +4,19 @@ import { Link } from "react-router-dom";
 
 import styles from "./frontpage.module.css";
 
+import AppContext from "./../../app-context";
+import { useContext } from 'react';
+
 export default function FrontPage() {
+    const { user, myCapabilities } = useContext(AppContext);
+    
+    const name = user 
+        ? user.name
+        : "there"
+
     return <>
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-
                 <div className={styles.herowrapper}>
                     <Hero 
                         title="Welcome to the cloud"
@@ -21,26 +29,36 @@ export default function FrontPage() {
                 <br />
 
                 <Card variant="fill" surface="main">
-                    <CardTitle>Welcome</CardTitle>
-                    <CardContent>
-                        Hello John Doe, and welcome to the Cloud Self Service portal.
-                    </CardContent>
+                    <Container>
+                        <Column>
+                            <CardTitle>Welcome</CardTitle>
+                            <CardContent>
+                                Hello {name}, and welcome to the Cloud Self Service portal.
+                            </CardContent>
 
-                    <CardTitle>Capabilities</CardTitle>
-                    <CardContent>
-                        To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
-                    </CardContent>
+                            <CardTitle>Capabilities</CardTitle>
+                            <CardContent>
+                                To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
+                            </CardContent>
 
-                    <CardTitle>Kubernetes</CardTitle>
-                    <CardContent>
-                        <p>Below is a collection of resources for getting started on the Kubernetes platform.</p>
-                        <p>If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started.</p>
-                        <p>Then grab the default Kubernetes config file (information about location, etc., is also available in the link above):</p>
-                        <LinkButton size='small' href="lala" variation="outlined">Get Kubernetes config</LinkButton >
-                    </CardContent>
+                            <CardTitle>Kubernetes</CardTitle>
+                            <CardContent>
+                                Below is a collection of resources for getting started on the Kubernetes platform. <br />
+                                If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
+                                Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
+                                <LinkButton size='small' href="lala" variation="outlined">Get Kubernetes config</LinkButton >
+                            </CardContent>
+                        </Column>
+                        {/* <Column m={3} l={3} xl={3} xxl={3}>
+                            <CardTitle>Quick Access</CardTitle>
+                            <CardContent>
+                                {(myCapabilities || []).map(x => <div>{x.name}</div>)}
+                            </CardContent>
+                        </Column> */}
+                    </Container>
                 </Card>
-
             </Column>
+
         </Container>
     </>
 }

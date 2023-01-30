@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, H1 } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
 import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
@@ -90,13 +90,13 @@ function OtherCapabilities({capabilities}) {
 }
 
 export default function CapabilitiesPage() {
-    const { capabilities, reloadCapabilities } = useContext(AppContext);
+    const { user, myCapabilities, otherCapabilities, reloadOtherCapabilities } = useContext(AppContext);
 
     useEffect(() => {
-        reloadCapabilities();
+        if (user && user.isAuthenticated) {
+            reloadOtherCapabilities();
+        }
     }, []);
-
-
     
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
@@ -131,11 +131,11 @@ export default function CapabilitiesPage() {
 
                 <br/>
 
-                <MyCapabilities capabilities={capabilities} />
+                <MyCapabilities capabilities={myCapabilities} />
 
                 <br/>
 
-                <OtherCapabilities capabilities={capabilities} />
+                <OtherCapabilities capabilities={otherCapabilities} />
 
             </Column>
         </Container>

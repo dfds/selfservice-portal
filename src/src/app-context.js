@@ -1,79 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "./authConfig";
-import { callMsGraph2 } from "./graph";
-
-import { useIsAuthenticated, useMsalAuthentication } from "@azure/msal-react";
-import { InteractionType } from '@azure/msal-browser';
-
-import { getCapabilities } from "./SelfServiceApiClient";
+import { useCurrentUser } from "./AuthService";
+import { getMyPortalProfile, getCapabilities } from "./SelfServiceApiClient";
 
 const appContext = React.createContext(null);
 
 function AppProvider({ children }) {
+  const user = useCurrentUser();
+  
+  const [topics, setTopics] = useState([]);
+  const [myCapabilities, setMyCapabilities] = useState([]);
+  const [otherCapabilities, setOtherCapabilities] = useState([]);
 
-  useMsalAuthentication(InteractionType.Redirect, loginRequest);
-  const { instance, accounts } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
+  async function loadMyCapabilities() {
+    const { myCapabilities } = await getMyPortalProfile();
+    setMyCapabilities(myCapabilities);
+  }
 
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john@jdog.com",
-    title: "duno",
-    profilePictureUrl: "https://placeimg.com/640/480/people"
-  });
+  async function loadOtherCapabilities() {
+    const allCapabilities = await getCapabilities();
+    const filteredList = (allCapabilities || []).filter(x => {
+        const myCap = (myCapabilities || []).find(y => y.id === x.id);
+        if (myCap) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+
+    setOtherCapabilities(filteredList);
+  }
 
   useEffect(() => {
-    const currentAccount = accounts[0];
-
-    if (isAuthenticated && currentAccount) {
-
-      async function getUserInfo() {
-        const { accessToken } = await instance.acquireTokenSilent({ ...loginRequest, account: currentAccount });
-        const response1 = await callMsGraph2("https://graph.microsoft.com/v1.0/me", accessToken);
-        const profile = await response1.json();
-
-        setUser(prev => {
-          const copy = {...prev};
-          copy.name = profile.displayName;
-          copy.email = profile.mail;
-          copy.upn = profile.userPrincipalName;
-          copy.title = profile.jobTitle;
-
-          return copy;
-        });
-
-        const response2 = await callMsGraph2("https://graph.microsoft.com/v1.0/me/photos/48x48/$value", accessToken);
-        const blob = await response2.blob()
-
-        const url = window.URL || window.webkitURL;
-        const blobUrl = url.createObjectURL(blob);
-        
-        setUser(prev => {
-          const copy = {...prev};
-          copy.profilePictureUrl = blobUrl;
-
-          return copy;
-        });
+    if (user && user.isAuthenticated) {
+        loadMyCapabilities();
       }
+  }, [user]);
 
-      getUserInfo();
-    }
-  }, [isAuthenticated, instance, accounts]);
-
-  const [capabilities, setCapabilities] = useState([]);
-  const reloadCapabilities = async () => {
-    const newCapabilities = await getCapabilities();
-    setCapabilities(newCapabilities); 
-  };
-
-  const [topics, setTopics] = useState([]);
+  useEffect(() => {
+    if (user && user.isAuthenticated) {
+        loadOtherCapabilities();
+      }
+  }, [myCapabilities]);
 
   const state = {
     user,
-    setUser,
-    capabilities,
-    reloadCapabilities,
+    myCapabilities,
+    otherCapabilities,
+    reloadOtherCapabilities: loadOtherCapabilities,
     topics,
     setTopics,
   };

@@ -13,9 +13,12 @@ import Topics from './topics';
 
 export default function CapabilityDetailsPage() {
     const { rootId } = useParams();
-    const { capabilities } = useContext(AppContext);
+    const { myCapabilities, otherCapabilities } = useContext(AppContext);
 
-    const foundCapability = (capabilities || []).find(x => x.rootId === rootId);
+    let foundCapability = (myCapabilities || []).find(x => x.rootId === rootId);
+    if (!foundCapability) {
+        foundCapability = (otherCapabilities || []).find(x => x.rootId === rootId);        
+    }
 
     const members = [];
 

@@ -5,8 +5,11 @@ import { Text } from "@dfds-ui/typography";
 
 export default function ProfileName() {
     const { user } = useContext(AppContext);
+    const name = user ? user.name : "";
+    const title = user ? user.title : "";
+
     return <div className={styles.container}>
-        <Text styledAs="bodyInterfaceBold" as="div">{user.name}</Text>
-        <Text styledAs="bodyInterface"  as="div">{user.title}</Text>
+        <Text styledAs="bodyInterfaceBold" as="div">{name}</Text>
+        <Text styledAs="bodyInterface"  as="div">{title}</Text>
     </div>
 }

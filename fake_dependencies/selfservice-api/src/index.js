@@ -22,7 +22,15 @@ app.get("/ping", (req, res) => {
 });
 
 app.get("/api/capabilities", (req, res) => {
+  setTimeout(() => {
     res.send({ items: capabilities });
+  }, 2000);
+});
+
+app.get("/api/me", (req, res) => {
+    res.send({ 
+      myCapabilities: capabilities.filter(x => x.id === "1")
+    });
 });
 
 app.listen(port, () => {

@@ -1,11 +1,4 @@
-import React, { useState } from "react";
-import { Route, Switch } from "react-router-dom";
-import { SiteLayout, NavBar, NavBarItem, Menu, NavBarIcon, H1 } from '@dfds-ui/react-components';
-import { Account as AccountIcon, Menu as BurgerMenu, Search } from '@dfds-ui/icons/system';
-
-import { Hero, AppBarIconButton, AppBarListItem, ListText } from '@dfds-ui/react-components';
-import { Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@dfds-ui/react-components';
-
+import React from "react";
 import { Link } from "react-router-dom";
 
 import {
@@ -13,8 +6,8 @@ import {
   AppBarProvider,
   AppBarDrawer,
   AppBarItem,
-  MenuPopOverContext,
-  ListIcon,
+  AppBarListItem, 
+  ListText
 } from "@dfds-ui/react-components";
 
 import ProfilePicture from "./ProfilePicture";
@@ -47,12 +40,12 @@ export default function GlobalMenu({}) {
       url: "https://dfdsit.statuspage.io/"
     },
   ];
-
+  
   return <>
     <AppBarProvider>
       <DFDSAppBar 
         logoProps={{
-          logoContainerProps: { as: 'a', href: '/' },
+          logoContainerProps: { as: 'a', href: process.env.PUBLIC_URL },
         }}
         leftActions={
           <>
