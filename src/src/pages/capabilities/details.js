@@ -1,7 +1,7 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { H1 } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
-import { Container, Column} from '@dfds-ui/react-components';
+import { Container, Column, DfdsLoader, Card } from '@dfds-ui/react-components';
 import { useParams } from 'react-router-dom';
 import AppContext from "./../../app-context";
 import Members from './members';
@@ -10,18 +10,9 @@ import Resources from './resources';
 import Logs from './logs';
 import CommunicationChannels from './communicationchannels';
 import Topics from './topics';
+import styles  from "./details.module.css";
 
-export default function CapabilityDetailsPage() {
-    const { rootId } = useParams();
-    const { myCapabilities, otherCapabilities } = useContext(AppContext);
-
-    let foundCapability = (myCapabilities || []).find(x => x.rootId === rootId);
-    if (!foundCapability) {
-        foundCapability = (otherCapabilities || []).find(x => x.rootId === rootId);        
-    }
-
-    const members = [];
-
+function fillWithFakeMembers(members) {
     for (let i = 0; i < 4; i++) {
         const id = Math.random()*1000;
         members.push(
@@ -31,24 +22,76 @@ export default function CapabilityDetailsPage() {
             }            
         );
     }
+}
+
+export default function CapabilityDetailsPage() {
+    const { rootId } = useParams();
+    const { myCapabilities, otherCapabilities, isCapabilitiesInitialized } = useContext(AppContext);
+    const [capabilityDetails, setCapabilityDetails] = useState(null);
+
+    const members = [];
+    fillWithFakeMembers(members);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
+        if (!isCapabilitiesInitialized) {
+            return;
+        }
+
+        let foundCapability = (myCapabilities || []).find(x => x.rootId === rootId);
+        if (!foundCapability) {
+            foundCapability = (otherCapabilities || []).find(x => x.rootId === rootId);        
+        }
+
+        setCapabilityDetails(foundCapability);
+    }, [myCapabilities, otherCapabilities, isCapabilitiesInitialized]);
 
     return <>
         <br/>
         <br/>
 
-        <Container>
-            <Column m={12} l={12} xl={12} xxl={12}>
-                <Text as={H1} styledAs='heroHeadline'>{foundCapability.name}</Text>
+        {!isCapabilitiesInitialized && 
+            <DfdsLoader showMenu={true} label="Loading capability..." />
+        }
 
-                <Members members={members} />
-                <Summary name={foundCapability.name} rootId={foundCapability.rootId} description={foundCapability.description} />
-                <Resources />
-                <Logs />
-                <CommunicationChannels />
-                <Topics />
+        {isCapabilitiesInitialized && !capabilityDetails &&
+            <Container>
+                <Column m={12} l={12} xl={12} xxl={12}>
+                    <Card variant="fill" surface="main">
+                        <div className={styles.notfound}>
+                        <br />
 
-            </Column>
-        </Container>
+                        <img src="https://media3.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif" />
+                        {/* <img src="https://i.imgflip.com/79b2aa.jpg" /> */}
+
+                        <br />
+                        <br />
+                        <Text as={"div"} styledAs='heroHeadline'>404 - Capability not found!</Text>
+                        </div>
+                    </Card>
+                </Column>
+            </Container>
+        }
+
+        {isCapabilitiesInitialized && capabilityDetails &&
+            <Container>
+                <Column m={12} l={12} xl={12} xxl={12}>
+                    <Text as={H1} styledAs='heroHeadline'>{capabilityDetails.name}</Text>
+
+                    <Members members={members} />
+                    <Summary name={capabilityDetails.name} rootId={capabilityDetails.rootId} description={capabilityDetails.description} />
+                    <Resources />
+                    <Logs />
+                    <CommunicationChannels />
+                    <Topics />
+
+                </Column>
+            </Container>
+        }
+
 
         <br/>
     </>

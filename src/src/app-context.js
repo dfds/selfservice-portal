@@ -7,6 +7,11 @@ const appContext = React.createContext(null);
 function AppProvider({ children }) {
   const user = useCurrentUser();
   
+  const [appStatus, setAppStatus] = useState({
+    hasLoadedMyCapabilities: false,
+    hasLoadedOtherCapabilities: false,
+  });
+
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [otherCapabilities, setOtherCapabilities] = useState([]);
@@ -14,6 +19,7 @@ function AppProvider({ children }) {
   async function loadMyCapabilities() {
     const { myCapabilities } = await getMyPortalProfile();
     setMyCapabilities(myCapabilities);
+    setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
   }
 
   async function loadOtherCapabilities() {
@@ -28,6 +34,7 @@ function AppProvider({ children }) {
     });
 
     setOtherCapabilities(filteredList);
+    setAppStatus(prev => ({...prev, ...{hasLoadedOtherCapabilities: true}}));
   }
 
   useEffect(() => {
@@ -47,6 +54,7 @@ function AppProvider({ children }) {
     myCapabilities,
     otherCapabilities,
     reloadOtherCapabilities: loadOtherCapabilities,
+    isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
     topics,
     setTopics,
   };

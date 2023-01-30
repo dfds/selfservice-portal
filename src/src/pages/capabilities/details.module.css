@@ -4,3 +4,12 @@
     border: 0;
     border-bottom: 1px solid #4d4e4c29;    
 }
+
+.notfound {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+}
