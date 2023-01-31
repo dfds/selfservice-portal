@@ -7,8 +7,31 @@ app.use(cors());
 const port = process.env.PORT || 3001;
 
 const capabilities = [
-    { id: "1", rootId: "this-is-a-capability", name: "this is a capability", description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf"},
-    { id: "2", rootId: "another-awssome-capability", name: "another awssome capability", description: "lknm lk23lnk nl kl23lk lk"},
+    { 
+      id: "1", 
+      rootId: "this-is-a-capability", 
+      name: "this is a capability", 
+      description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
+      members: [
+        { 
+          email: "jandr@dfds.com"
+        },
+        { 
+          email: "thfis@dfds.com"
+        },
+      ]
+    },
+    { 
+      id: "2", 
+      rootId: "another-awssome-capability", 
+      name: "another awssome capability", 
+      description: "lknm lk23lnk nl kl23lk lk",
+      members: [
+        { 
+          email: "thfis@dfds.com" 
+        },
+      ]
+    },
 ];
 
 app.use((req, res, next) => {
@@ -27,9 +50,21 @@ app.get("/api/capabilities", (req, res) => {
   }, 2000);
 });
 
+app.get("/api/capabilities/:id", (req, res) => {
+  const found = capabilities.find(x => x.id == req.params.id);
+
+  setTimeout(() => {
+    if (found) {
+      res.send(found);
+    } else {
+      res.sendStatus(404);
+    }
+  }, 1000);
+});
+
 app.get("/api/me", (req, res) => {
     res.send({ 
-      myCapabilities: capabilities.filter(x => x.id === "1")
+      capabilities: capabilities.filter(x => x.id === "1")
     });
 });
 

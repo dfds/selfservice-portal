@@ -11,6 +11,15 @@ export async function getCapabilities() {
     return items || [];
 }
 
+export async function getCapabilityById(id) {
+    const accessToken = await getSelfServiceAccessToken();
+ 
+    const url = window.apiBaseUrl + "/capabilities/" + id;
+    const response = await callApi(url, accessToken);
+ 
+    return await response.json();
+}
+
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
  
@@ -30,7 +39,7 @@ export async function getMyPortalProfile() {
     const myProfile = await response.json();
 
     const defaultValues = {
-        myCapabilities: []
+        capabilities: []
     };
 
     return {...defaultValues, ...myProfile};

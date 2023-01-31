@@ -21,3 +21,12 @@ export async function getUserProfilePictureUrl() {
 
     return url.createObjectURL(blob);
 }
+
+export async function getAnotherUserProfilePictureUrl(upn) {
+    const accessToken = await getGraphAccessToken();
+    const pictureResponse = await callApi(`https://graph.microsoft.com/v1.0/users/${upn}/photos/96x96/$value`, accessToken);
+    const blob = await pictureResponse.blob()
+    const url = window.URL || window.webkitURL;
+
+    return url.createObjectURL(blob);
+}

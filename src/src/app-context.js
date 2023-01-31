@@ -17,8 +17,8 @@ function AppProvider({ children }) {
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
   async function loadMyCapabilities() {
-    const { myCapabilities } = await getMyPortalProfile();
-    setMyCapabilities(myCapabilities);
+    const { capabilities } = await getMyPortalProfile();
+    setMyCapabilities(capabilities);
     setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
   }
 
