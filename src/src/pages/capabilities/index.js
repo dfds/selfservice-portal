@@ -13,7 +13,7 @@ function MyCapabilities({capabilities}) {
     const items = capabilities || [];
 
     const navigate = useNavigate();
-    const clickHandler = (rootId) => navigate(`/capabilities/${rootId}`);
+    const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
         <Text styledAs='sectionHeadline'>My Capabilities</Text>
@@ -28,7 +28,7 @@ function MyCapabilities({capabilities}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.rootId)}>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                                 <TableDataCell>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>
@@ -53,7 +53,7 @@ function OtherCapabilities({capabilities}) {
     const items = capabilities || [];
 
     const navigate = useNavigate();
-    const clickHandler = (rootId) => navigate(`/capabilities/${rootId}`);
+    const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
         <Text styledAs='sectionHeadline'>Other Capabilities</Text>
@@ -68,7 +68,7 @@ function OtherCapabilities({capabilities}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.rootId)}>
+                            {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                                 <TableDataCell>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>

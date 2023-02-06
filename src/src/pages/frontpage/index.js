@@ -8,7 +8,7 @@ import AppContext from "./../../app-context";
 import { useContext } from 'react';
 
 export default function FrontPage() {
-    const { user, myCapabilities } = useContext(AppContext);
+    const { user } = useContext(AppContext);
     
     const name = user 
         ? user.name
@@ -49,12 +49,6 @@ export default function FrontPage() {
                                 <LinkButton size='small' href="lala" variation="outlined">Get Kubernetes config</LinkButton >
                             </CardContent>
                         </Column>
-                        {/* <Column m={3} l={3} xl={3} xxl={3}>
-                            <CardTitle>Quick Access</CardTitle>
-                            <CardContent>
-                                {(myCapabilities || []).map(x => <div>{x.name}</div>)}
-                            </CardContent>
-                        </Column> */}
                     </Container>
                 </Card>
             </Column>

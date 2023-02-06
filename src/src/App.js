@@ -38,7 +38,7 @@ export default function App() {
           <Route index element={<FrontPage />} />
           <Route path="topics" element={<TopicsPage />} />
           <Route path="capabilities" element={<CapabilitiesPage />} />
-          <Route path="capabilities/:rootId" element={<CapabilityDetailsPage />} />
+          <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
         </Route>
       </Routes>
     </>

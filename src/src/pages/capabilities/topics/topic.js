@@ -6,7 +6,7 @@ import { TextField as TextareaField } from '@dfds-ui/react-components/forms';
 
 import Message from "./message";
 
-export default function Topic({id, name, partitions, retention, isSelected, messages, onHeaderClicked}) {
+export default function Topic({id, name, partitions, retention, status, isSelected, messages, onHeaderClicked}) {
     const clickHandler = () => {
         if (onHeaderClicked) {
              onHeaderClicked(id);

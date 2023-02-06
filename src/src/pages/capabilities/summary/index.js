@@ -3,7 +3,7 @@ import styles from "./summary.module.css";
 import { Text } from '@dfds-ui/typography';
 import { Card, CardContent  } from '@dfds-ui/react-components';
 
-export default function Summary({name, rootId, description}) {
+export default function Summary({name, id, description}) {
     return <>
         <Text styledAs='sectionHeadline'>Summary</Text>
         <Card variant="fill" surface="main">
@@ -13,7 +13,7 @@ export default function Summary({name, rootId, description}) {
                         <Text styledAs={'smallHeadline'}>Name:</Text> {name}
                     </div>
                     <div className={styles.column}>
-                        <Text styledAs={'smallHeadline'}>Root Id:</Text> {rootId}
+                        <Text styledAs={'smallHeadline'}>Root Id:</Text> {id}
                     </div>
                     <div className={styles.column}>
                         <Text styledAs={'smallHeadline'}>Description:</Text> {description}

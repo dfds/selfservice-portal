@@ -1,101 +1,52 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Text } from '@dfds-ui/typography';
 import { Card, CardContent  } from '@dfds-ui/react-components';
 import Topic from "./topic";
+import styles from "./topics.module.css";
 
-const clusters = [
-    {
-        id: 1,
-        name: "Production",
-        topics: []
-    },
-    {
-        id: 2,
-        name: "Development",
-        topics: []
-    },
-];
+import { Banner, BannerHeadline } from '@dfds-ui/react-components'
 
-for (let i = 0; i < 10; i++) {
-    clusters[0].topics.push({
-        id: i,
-        name: "pub.foo.bar.baz.qux-" + i,
-        description: "n/a",
-        partitions: 3,
-        retention: 1000,
-        isSelected: false,
-    });
+function Cluster({id, name, topics, onTopicClicked}) {
+
+    const provisioned = topics.filter(topic => topic.status.toUpperCase() === "Provisioned".toUpperCase());
+    const notProvisioned = topics.filter(topic => topic.status.toUpperCase() != "Provisioned".toUpperCase());
+
+    return <div>
+        <Text styledAs='subHeadline'>{name}</Text>
+
+        {notProvisioned.length > 0 && 
+            <Banner variant="mediumEmphasis">
+                <BannerHeadline>Topics currently being provisioned:</BannerHeadline>
+                <ul className={styles.notprovisioned}>
+                    {notProvisioned.map(topic => <li key={topic.id}>
+                        <Text styledAs="body">{topic.name}</Text>
+                    </li>)}
+                </ul>
+
+            </Banner>
+        }
+
+        {provisioned.length == 0 && <div>No topics...yet!</div>}
+        {provisioned.map(topic => <Topic 
+            key={`${id}-${topic.id}`} 
+            {...topic} 
+            onHeaderClicked={topicId => onTopicClicked(id, topicId)}
+        />)}
+    </div>    
 }
 
-for (let i = 0; i < 5; i++) {
-    clusters[1].topics.push({
-        id: i,
-        name: "foo.bar.baz.qux-" + i,
-        description: "n/a",
-        partitions: 3,
-        retention: 1000,
-        isSelected: false,
-    });
-}
+export default function Topics({clusters}) {
+    const [state, setState] = useState([]);
 
-clusters[0].topics[0].messages = [
-    {
-        id: 1,
-        messageType: "new-booking-request-has-been-recieved",
-        messageContract: `
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-              "messageId": {
-                "type": "string"
-              },
-              "type": {
-                "type": "string"
-              },
-              "data": {
-                "type": "object",
-                "properties": {
-                  "bookingId": {
-                    "type": "string"
-                  },
-                  "customerNumber": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "bookingId",
-                  "customerNumber"
-                ]
-              }
-            },
-            "required": [
-              "messageId",
-              "type",
-              "data"
-            ]
-          }        
-        `,
-        description: "n/a",
-        isSelected: true,
-    },
-    {
-        id: 2,
-        messageType: "booking-request-has-been-cancelled",
-        messageContract: "",
-        description: "n/a",
-        isSelected: false,
-    }
-];
+    useEffect(() => {
+        setState(clusters || []);
+    }, [clusters]);
 
-export default function Topics({}) {
-    const [state, setState] = useState(clusters);
     const selectTopic = (cid, tid) => setState(prev => {
         const newState = [...prev];
         const cluster = newState.find(x => x.id == cid);
 
         if (cluster) {
-
             cluster.topics.forEach(topic => {
                 if (topic.id == tid) {
                     topic.isSelected = !topic.isSelected;
@@ -112,15 +63,11 @@ export default function Topics({}) {
         <Text styledAs='sectionHeadline'>Topics</Text>
         <Card variant="fill" surface="main">
             <CardContent>
-                {state.map(cluster => <div key={cluster.id}>
-                    <Text styledAs='subHeadline'>{cluster.name}</Text>
-                    {(cluster.topics || []).length == 0 && <div>No topics...yet!</div>}
-                    {(cluster.topics || []).map(topic => <Topic 
-                        key={`${cluster.id}-${topic.id}`} 
-                        {...topic} 
-                        onHeaderClicked={topicId => selectTopic(cluster.id, topicId)}
-                    />)}
-                </div>)}
+                {state.map(cluster => <Cluster 
+                    key={cluster.id} 
+                    {...cluster} 
+                    onTopicClicked={selectTopic} 
+                />)}
             </CardContent>
         </Card>
     </>
