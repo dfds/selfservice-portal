@@ -4,7 +4,7 @@ OUTPUT_DIR=${PWD}/.output
 OUTPUT_DIR_APP=${OUTPUT_DIR}/app
 OUTPUT_DIR_MANIFESTS=${OUTPUT_DIR}/manifests
 
-init: restore build
+init: clean restore build
 
 clean:
 	@rm -Rf $(OUTPUT_DIR)
