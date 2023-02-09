@@ -109,10 +109,10 @@ export default function CapabilityDetailsPage() {
 
         fetchClustersAndTopics(capabilityDetails);
 
-        const cancellation = setInterval(() => {
-            fetchClustersAndTopics(capabilityDetails);
-        }, 5*1000);
-        return () => clearInterval(cancellation);
+        // const cancellation = setInterval(() => {
+        //     fetchClustersAndTopics(capabilityDetails);
+        // }, 5*1000);
+        // return () => clearInterval(cancellation);
     }, [capabilityDetails]);
 
     return <>
@@ -136,9 +136,9 @@ export default function CapabilityDetailsPage() {
                     <Members members={members} />
                     <Summary id={capabilityDetails.id} name={capabilityDetails.name} description={capabilityDetails.description} />
                     <Resources />
-                    <Logs />
-                    <CommunicationChannels />
-                    <Topics clusters={kafkaClusters} />
+                    {/* <Logs /> */}
+                    {/* <CommunicationChannels /> */}
+                    <Topics clusters={kafkaClusters} capability={capabilityDetails} capabilityId={capabilityDetails.id} />
 
                 </Column>
             </Container>

@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 const app = express();
+
+app.use(bodyParser.json());
 app.use(cors());
 
 const port = process.env.PORT || 3001;
@@ -92,6 +95,8 @@ const capabilities = [
     },
 ];
 
+// ----------------------------------------------------------------------------------------------------
+
 function simplifyCapability(capability) {
   return {
     id: capability.id,
@@ -117,7 +122,13 @@ function simplifyCapability(capability) {
   };
 }
 
-app.use((req, res, next) => {
+function log(message) {
+  const timestamp = new Date();
+  const time = timestamp.toLocaleTimeString();
+  console.log(`${time}> ${message}`);
+}
+
+function fakeDelay() {
   let fakeDelay = Math.random() * 1000;
   if (fakeDelay < 200) {
     fakeDelay = 200;
@@ -125,14 +136,20 @@ app.use((req, res, next) => {
     fakeDelay = fakeDelay;
   }
 
-  console.log(`${req.method} ${req.originalUrl}`);
+  return fakeDelay;
+}
 
+// ----------------------------------------------------------------------------------------------------
+
+app.use((req, res, next) => {
   setTimeout(() => {
     next();
-  }, fakeDelay);
+    log(`${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`);
+  }, fakeDelay());
   
-  console.log(`  --> response status: ${res.statusCode}`);
 });
+
+// ----------------------------------------------------------------------------------------------------
 
 app.get("/ping", (req, res) => {
   res.send("pong!");
@@ -181,6 +198,36 @@ app.get("/api/capabilities/:id/topics", (req, res) => {
         }
       }
     });
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+app.post("/api/capabilities/:id/topics", (req, res) => {
+  let found = capabilities.find(x => x.id == req.params.id);
+  if (found) {
+    const topics = found.topics || [];
+
+    const newTopic = {...req.body, ...{
+      id: "" + new Date().getTime(),
+      status: "In Progress",
+    }};
+
+    topics.push(newTopic);
+    found.topics = topics;
+
+    log("Added new topic: " + JSON.stringify(newTopic, null, 2));
+
+    res
+      .set("Location", `${req.path}/${newTopic.id}`)
+      .status(201)
+      .send(newTopic);
+
+    setTimeout(() => {
+      newTopic.status = "Provisioned";
+      log(`Changed status on topic ${newTopic.id} to ${newTopic.status}`);
+    }, (Math.random() * 2000)+2000);
+
   } else {
     res.sendStatus(404);
   }

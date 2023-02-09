@@ -20,7 +20,7 @@ const msalInstance = new PublicClientApplication({
 
 export  { msalInstance as MsalInstance };
 
-export function callApi(url, accessToken, method = "GET") {
+export function callApi(url, accessToken, method = "GET", payload = null) {
     const headers = new Headers();
 
     const bearer = `Bearer ${accessToken}`;
@@ -31,6 +31,11 @@ export function callApi(url, accessToken, method = "GET") {
         headers: headers,
         mode: "cors"
     };
+
+    if (method.toUpperCase() === "POST" && payload) {
+        options.body = JSON.stringify(payload);
+        options.headers.append("Content-Type", "application/json");
+    }
 
     return fetch(url, options);
 }

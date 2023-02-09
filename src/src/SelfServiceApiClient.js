@@ -1,5 +1,17 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
+function composeUrl(...args) {
+    let url = window.apiBaseUrl;
+    (args || []).forEach(x => {
+        if (x[0] == '/') {
+            url += x;
+        } else {
+            url += '/' + x;
+        }
+    });
+    return url;
+}
+
 export async function getCapabilities() {
     const accessToken = await getSelfServiceAccessToken();
  
@@ -86,17 +98,41 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
     return clusters;
 }
 
+export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
+    console.group("addTopicToCapability");
 
-function composeUrl(...args) {
-    let url = window.apiBaseUrl;
-    (args || []).forEach(x => {
-        if (x[0] == '/') {
-            url += x;
-        } else {
-            url += '/' + x;
-        }
-    });
-    return url;
+    const topicsLink = capabilityDefinition?._links?.topics;
+    if (!topicsLink) {
+        console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
+        return [];
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+ 
+    const url = composeUrl(topicsLink.href);
+    const payload = {
+        name: topicDefinition.name,
+        description: topicDefinition.description,
+        partitions: topicDefinition.partitions,
+        retention: topicDefinition.retention,
+        kafkaClusterId: clusterId,
+    };
+
+    console.log("sending payload: ", payload);
+    const response = await callApi(url, accessToken, "POST", payload);
+
+    if (!response.ok) {
+        console.log(`Warning: failed adding topic to capability using url ${url} - response was ${response.status} ${response.statusText}`);
+        return;
+    }
+
+    const newTopic = await response.json();
+    console.log("recieved new topic: ", newTopic);
+
+
+    console.groupEnd();
+
+    return newTopic;
 }
 
 export async function getCapabilityMembers(capabilityDefinition) {

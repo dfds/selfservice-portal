@@ -2,3 +2,27 @@
     list-style-type: square;
     padding-left: 1rem;
 }
+
+.clusterheader {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.capabilityid {
+    font-family: monospace;
+    color: #ED8800;
+}
+
+.tooltipsection {
+    clear: both;
+}
+
+.tooltip {
+    display: inline-block;
+    position: relative;
+    float: right;
+}
