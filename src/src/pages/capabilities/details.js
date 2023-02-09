@@ -10,10 +10,12 @@ import Resources from './resources';
 import Logs from './logs';
 import CommunicationChannels from './communicationchannels';
 import Topics from './topics';
+import NewTopicDialog from './topics/NewTopicDialog';
 import styles  from "./details.module.css";
 
 import { getAnotherUserProfilePictureUrl } from "./../../GraphApiClient";
-import { getCapabilityById, getCapabilityMembers, getCapabilityTopicsGroupedByCluster } from "./../../SelfServiceApiClient";
+import { getCapabilityById, getCapabilityMembers, getCapabilityTopicsGroupedByCluster, addTopicToCapability } from "./../../SelfServiceApiClient";
+
 
 function NotFound() {
     return <>
@@ -41,8 +43,10 @@ export default function CapabilityDetailsPage() {
     const [loading, setLoading] = useState(true);
 
     const [capabilityDetails, setCapabilityDetails] = useState(null);
+    const [selectedCluster, setSelectedCluster] = useState(null);
     const [members, setMembers] = useState([]);
     const [kafkaClusters, setKafkaClusters] = useState([]);
+    const [isAddingATopic, setIsAddingATopic] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -108,12 +112,66 @@ export default function CapabilityDetailsPage() {
         };
 
         fetchClustersAndTopics(capabilityDetails);
+        setSelectedCluster(null);
+        setIsAddingATopic(false);
 
         // const cancellation = setInterval(() => {
         //     fetchClustersAndTopics(capabilityDetails);
         // }, 5*1000);
         // return () => clearInterval(cancellation);
     }, [capabilityDetails]);
+
+    const handleAddTopicToClusterClicked = (clusterId) => {
+        const found = kafkaClusters.find(cluster => cluster.id == clusterId);
+        if (found) {
+            setSelectedCluster(found);
+        }
+    };
+
+    const handleCloseTopicFormClicked = () => {
+        setSelectedCluster(null);
+        setIsAddingATopic(false);
+    };
+
+    const handleAddTopic = async (topic) => {
+        setIsAddingATopic(true);
+
+        const newTopic = await addTopicToCapability(capabilityDetails, selectedCluster.id, topic);
+
+        setKafkaClusters(prev => {
+            const clusters = [...prev];
+            const cluster = clusters.find(x => x.id === selectedCluster.id);
+    
+            if (cluster) {
+                if (!cluster.topics) {
+                    cluster.topics = [];
+                }
+
+                cluster.topics.push(newTopic);
+            }
+    
+            return clusters;
+        });
+
+        setSelectedCluster(null);
+        setIsAddingATopic(false);
+    };
+
+    const handleTopicClicked = (cid, tid) => setKafkaClusters(prev => {
+        const newState = [...prev];
+
+        newState.forEach(cluster => {
+            (cluster.topics || []).forEach(topic => {
+                if (cluster.id === cid && topic.id === tid) {
+                    topic.isSelected = !topic.isSelected;
+                } else {
+                    topic.isSelected = false;
+                }
+            });
+        });
+
+        return newState;
+    });
 
     return <>
         <br/>
@@ -131,6 +189,17 @@ export default function CapabilityDetailsPage() {
             <Container>
                 <Column m={12} l={12} xl={12} xxl={12}>
 
+                {selectedCluster && 
+                    <NewTopicDialog 
+                        capabilityId={capabilityDetails.id} 
+                        clusterName={selectedCluster.name} 
+                        inProgress={isAddingATopic}
+                        onAddClicked={handleAddTopic}
+                        onCloseClicked={handleCloseTopicFormClicked} 
+                    />
+                }
+
+
                     <Text as={H1} styledAs='heroHeadline'>{capabilityDetails.name}</Text>
 
                     <Members members={members} />
@@ -138,7 +207,11 @@ export default function CapabilityDetailsPage() {
                     <Resources />
                     {/* <Logs /> */}
                     {/* <CommunicationChannels /> */}
-                    <Topics clusters={kafkaClusters} capability={capabilityDetails} capabilityId={capabilityDetails.id} />
+                    <Topics 
+                        clusters={kafkaClusters} 
+                        onAddTopicToClusterClicked={handleAddTopicToClusterClicked}
+                        onTopicClicked={handleTopicClicked}
+                    />
 
                 </Column>
             </Container>

@@ -1,48 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { Text } from '@dfds-ui/typography';
-import Topic from "./topic";
 import styles from "./topics.module.css";
-import { Button, ButtonStack, Card, CardContent, Banner, BannerHeadline, SideSheet, SideSheetContent, SideSheetFooter, TextField, SelectField, Tooltip, BannerParagraph } from '@dfds-ui/react-components';
+import { Button, Banner, BannerHeadline, SideSheet, SideSheetContent, TextField, SelectField, Tooltip, BannerParagraph } from '@dfds-ui/react-components';
 import { Information } from '@dfds-ui/icons/system';
 
-function Cluster({id, name, topics, onTopicClicked, onAddClicked}) {
-    const provisioned = topics.filter(topic => topic.status.toUpperCase() === "Provisioned".toUpperCase());
-    const notProvisioned = topics.filter(topic => topic.status.toUpperCase() != "Provisioned".toUpperCase());
-
-    const handleAddClicked = () => {
-        if (onAddClicked) {
-            onAddClicked(id)
-        }
-    }
-
-    return <div>
-        <div className={styles.clusterheader}>
-            <Text styledAs='subHeadline'>{name}</Text>
-            <Button size="small" onClick={handleAddClicked}>Add</Button>
-        </div>
-
-        {notProvisioned.length > 0 && 
-            <Banner variant="mediumEmphasis">
-                <BannerHeadline>Topics currently being provisioned:</BannerHeadline>
-                <ul className={styles.notprovisioned}>
-                    {notProvisioned.map(topic => <li key={topic.id}>
-                        <Text styledAs="body">{topic.name}</Text>
-                    </li>)}
-                </ul>
-
-            </Banner>
-        }
-
-        {provisioned.length == 0 && <div>No topics...yet!</div>}
-        {provisioned.map(topic => <Topic 
-            key={`${id}-${topic.id}`} 
-            {...topic} 
-            onHeaderClicked={topicId => onTopicClicked(id, topicId)}
-        />)}
-    </div>    
-}
-
-export function NewTopicForm({capabilityId, clusterId, clusterName, onAddClicked, onCloseClicked}) {
+export default function NewTopicDialog({capabilityId, clusterName, inProgress, onAddClicked, onCloseClicked}) {
     const emptyValues = {
         name: "",
         description: "",
@@ -55,7 +17,7 @@ export function NewTopicForm({capabilityId, clusterId, clusterName, onAddClicked
 
     useEffect(() => {
         setFormData(emptyValues);
-    }, [capabilityId, clusterId, clusterName]);
+    }, [capabilityId, clusterName]);
 
     const changeName = (e) => {
         e.preventDefault();
@@ -109,7 +71,7 @@ export function NewTopicForm({capabilityId, clusterId, clusterName, onAddClicked
         nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", "_" and it must not end with "-" or "_".';
     }
 
-    const canAdd = formData.name != "" && formData.description != "";
+    const canAdd = formData.name != "" && formData.description != "" && !inProgress;
 
     const handleAddClicked = () => {
         if (onAddClicked) {
@@ -227,36 +189,8 @@ export function NewTopicForm({capabilityId, clusterId, clusterName, onAddClicked
             </div>
 
             <br />
-            <Button size="small" type="button" disabled={!canAdd} onClick={handleAddClicked}>Add</Button>
+            <Button size="small" type="button" disabled={!canAdd} submitting={inProgress} onClick={handleAddClicked}>Add</Button>
 
         </SideSheetContent>
     </SideSheet>
-}
-
-export default function Topics({clusters, onAddTopicToClusterClicked, onTopicClicked}) {
-    const handleAddTopicToClusterClicked = (clusterId) => {
-        if (onAddTopicToClusterClicked) {
-            onAddTopicToClusterClicked(clusterId);
-        }
-    };
-
-    const handleTopicClicked = (clusterId, topicId) => {
-        if (onTopicClicked) {
-            onTopicClicked(clusterId, topicId);
-        }
-    };
-
-    return <>
-        <Text styledAs='sectionHeadline'>Topics</Text>
-        <Card variant="fill" surface="main">
-            <CardContent>
-                {clusters.map(cluster => <Cluster
-                    key={cluster.id}
-                    {...cluster}
-                    onTopicClicked={handleTopicClicked}
-                    onAddClicked={handleAddTopicToClusterClicked}
-                />)}
-            </CardContent>
-        </Card>
-    </>
 }

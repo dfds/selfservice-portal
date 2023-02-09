@@ -207,7 +207,6 @@ app.post("/api/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     const topics = found.topics || [];
-
     const newTopic = {...req.body, ...{
       id: "" + new Date().getTime(),
       status: "In Progress",
