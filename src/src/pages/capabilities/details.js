@@ -43,10 +43,15 @@ export default function CapabilityDetailsPage() {
     const [loading, setLoading] = useState(true);
 
     const [capabilityDetails, setCapabilityDetails] = useState(null);
-    const [selectedCluster, setSelectedCluster] = useState(null);
     const [members, setMembers] = useState([]);
-    const [kafkaClusters, setKafkaClusters] = useState([]);
-    const [isAddingATopic, setIsAddingATopic] = useState(false);
+
+    const [topicsState, setTopicsState] = useState({
+        clusters: [],
+        selectedCluster: null,
+        selectedTopic: null,
+        showTopicDialog: false,
+        inProgress: false,
+    });
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -108,40 +113,84 @@ export default function CapabilityDetailsPage() {
 
         async function fetchClustersAndTopics(capability) {
             const topicsGroupedByCluster = await getCapabilityTopicsGroupedByCluster(capability);
-            setKafkaClusters(topicsGroupedByCluster);
+            setTopicsState(prev => {
+                const copy = {...prev};
+                copy.clusters = topicsGroupedByCluster;
+
+                const selectedTopic = copy.selectedTopic;
+                copy.selectedTopic = null;
+
+                if (selectedTopic) {
+                    const foundCluster = topicsGroupedByCluster.find(cluster => cluster.id === selectedTopic.kafkaTopicId);
+                    if (foundCluster) {
+                        const foundTopic = (foundCluster.topics || []).find(topic => topic.id === selectedTopic.id);
+                        if (foundTopic) {
+                            copy.selectedTopic = {...foundTopic, ...{messages: selectedTopic.messages}};
+                        }
+                    }
+                }
+
+                const selectedCluster = copy.selectedCluster;
+                copy.selectedCluster = null;
+
+                if (selectedCluster) {
+                    const foundCluster = topicsGroupedByCluster.find(cluster => cluster.id === selectedCluster.id);
+                    if (foundCluster) {
+                        copy.selectedCluster = foundCluster;
+                    }
+                }
+
+                return copy;
+            });
         };
 
         fetchClustersAndTopics(capabilityDetails);
-        setSelectedCluster(null);
-        setIsAddingATopic(false);
+        
+        setTopicsState({
+            clusters: [],
+            // selectedCluster: null,
+            // selectedTopic: null,
+            showTopicDialog: false,
+            inProgress: false,
+        });
 
-        // const cancellation = setInterval(() => {
-        //     fetchClustersAndTopics(capabilityDetails);
-        // }, 5*1000);
-        // return () => clearInterval(cancellation);
+        const cancellation = setInterval(() => {
+            fetchClustersAndTopics(capabilityDetails);
+        }, 5*1000);
+        return () => clearInterval(cancellation);
     }, [capabilityDetails]);
 
+    useEffect(() => {
+        console.log("topic state changed to: ", topicsState);
+    }, [topicsState]);
+
     const handleAddTopicToClusterClicked = (clusterId) => {
-        const found = kafkaClusters.find(cluster => cluster.id == clusterId);
+        const found = (topicsState.clusters || []).find(cluster => cluster.id == clusterId);
         if (found) {
-            setSelectedCluster(found);
+            setTopicsState(prev => ({...prev, ...{
+                selectedCluster: found,
+                showTopicDialog: true,
+            }}));
         }
     };
 
-    const handleCloseTopicFormClicked = () => {
-        setSelectedCluster(null);
-        setIsAddingATopic(false);
-    };
+    const handleCloseTopicFormClicked = () => setTopicsState(prev => ({...prev, ...{
+        selectedCluster: null,
+        showTopicDialog: false,
+        inProgress: false,
+    }}));
 
     const handleAddTopic = async (topic) => {
-        setIsAddingATopic(true);
+        setTopicsState(prev => ({...prev, ...{
+            inProgress: true,
+        }}));
 
-        const newTopic = await addTopicToCapability(capabilityDetails, selectedCluster.id, topic);
+        const newTopic = await addTopicToCapability(capabilityDetails, topicsState.selectedCluster.id, topic);
 
-        setKafkaClusters(prev => {
-            const clusters = [...prev];
-            const cluster = clusters.find(x => x.id === selectedCluster.id);
-    
+        setTopicsState(prev => {
+            const copy = {...prev};
+
+            const cluster = (copy.clusters || []).find(cluster => cluster.id === topicsState.selectedCluster.id);
             if (cluster) {
                 if (!cluster.topics) {
                     cluster.topics = [];
@@ -149,29 +198,46 @@ export default function CapabilityDetailsPage() {
 
                 cluster.topics.push(newTopic);
             }
-    
-            return clusters;
-        });
 
-        setSelectedCluster(null);
-        setIsAddingATopic(false);
+            copy.selectedCluster = null;
+            copy.inProgress = false;
+            copy.showTopicDialog = false;
+
+            return copy;
+        });
     };
 
-    const handleTopicClicked = (cid, tid) => setKafkaClusters(prev => {
-        const newState = [...prev];
+    const handleTopicClicked = (cid, tid) => {
+        setTopicsState(prev => {
+            console.group("handleTopicClicked");
 
-        newState.forEach(cluster => {
-            (cluster.topics || []).forEach(topic => {
-                if (cluster.id === cid && topic.id === tid) {
-                    topic.isSelected = !topic.isSelected;
-                } else {
-                    topic.isSelected = false;
+            const copy = {...prev};
+
+            console.log("input: ", { cid, tid });
+            console.log("selected topic: ", copy.selectedTopic);
+
+            // deselect current
+            if (copy.selectedTopic?.kafkaClusterId === cid && copy.selectedTopic?.id === tid) {
+                console.log("deselecting current");
+                copy.selectedTopic = null;
+            } else {
+                // find the topic and assign it to selectedTopic
+                const foundCluster = (copy.clusters || []).find(cluster => cluster.id === cid);
+                console.log("found cluster: ", foundCluster);
+
+                const foundTopic = (foundCluster?.topics || []).find(topic => topic.id === tid);
+                console.log("found topic: ", foundTopic);
+
+                if (foundTopic) {
+                    copy.selectedTopic = foundTopic;
                 }
-            });
-        });
+            }
 
-        return newState;
-    });
+            console.groupEnd();
+
+            return copy;
+        });
+    };
 
     return <>
         <br/>
@@ -189,16 +255,15 @@ export default function CapabilityDetailsPage() {
             <Container>
                 <Column m={12} l={12} xl={12} xxl={12}>
 
-                {selectedCluster && 
-                    <NewTopicDialog 
-                        capabilityId={capabilityDetails.id} 
-                        clusterName={selectedCluster.name} 
-                        inProgress={isAddingATopic}
-                        onAddClicked={handleAddTopic}
-                        onCloseClicked={handleCloseTopicFormClicked} 
-                    />
-                }
-
+                    {topicsState.selectedCluster && 
+                        <NewTopicDialog 
+                            capabilityId={capabilityDetails.id} 
+                            clusterName={topicsState.selectedCluster.name} 
+                            inProgress={topicsState.inProgress}
+                            onAddClicked={handleAddTopic}
+                            onCloseClicked={handleCloseTopicFormClicked} 
+                        />
+                    }
 
                     <Text as={H1} styledAs='heroHeadline'>{capabilityDetails.name}</Text>
 
@@ -208,7 +273,8 @@ export default function CapabilityDetailsPage() {
                     {/* <Logs /> */}
                     {/* <CommunicationChannels /> */}
                     <Topics 
-                        clusters={kafkaClusters} 
+                        clusters={topicsState.clusters}
+                        selectedTopic={topicsState.selectedTopic}
                         onAddTopicToClusterClicked={handleAddTopicToClusterClicked}
                         onTopicClicked={handleTopicClicked}
                     />
