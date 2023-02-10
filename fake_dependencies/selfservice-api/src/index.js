@@ -104,17 +104,17 @@ function simplifyCapability(capability) {
     description: capability.description,
     "_links": {
       self: {
-        href: `/api/capabilities/${capability.id}`,
+        href: `/capabilities/${capability.id}`,
         rel: "self",
         allow: ["GET"]
       },
       members: {
-        href: `/api/capabilities/${capability.id}/members`,
+        href: `/capabilities/${capability.id}/members`,
         rel: "related",
         allow: ["GET"]
       },
       topics: {
-        href: `/api/capabilities/${capability.id}/topics`,
+        href: `/capabilities/${capability.id}/topics`,
         rel: "related",
         allow: ["GET"]
       }
@@ -157,14 +157,14 @@ app.get("/ping", (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------
 
-app.get("/api/capabilities", (req, res) => {
+app.get("/capabilities", (req, res) => {
 
   res.send({ 
     items: capabilities.map(x => simplifyCapability(x))
   });
 });
 
-app.get("/api/capabilities/:id", (req, res) => {
+app.get("/capabilities/:id", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send(simplifyCapability(found));
@@ -173,7 +173,7 @@ app.get("/api/capabilities/:id", (req, res) => {
   }
 });
 
-app.get("/api/capabilities/:id/topics", (req, res) => {
+app.get("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send({ 
@@ -183,7 +183,7 @@ app.get("/api/capabilities/:id/topics", (req, res) => {
           items: (kafkaClusters || []),
           "_links": {
             self: {
-              href: `/api/kafkaclusters`,
+              href: `/kafkaclusters`,
               rel: "related",
               allow: ["GET"]
             }
@@ -203,7 +203,7 @@ app.get("/api/capabilities/:id/topics", (req, res) => {
   }
 });
 
-app.post("/api/capabilities/:id/topics", (req, res) => {
+app.post("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     const topics = found.topics || [];
@@ -232,7 +232,7 @@ app.post("/api/capabilities/:id/topics", (req, res) => {
   }
 });
 
-app.get("/api/capabilities/:id/members", (req, res) => {
+app.get("/capabilities/:id/members", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send({ items: found.members || [] });
@@ -243,7 +243,7 @@ app.get("/api/capabilities/:id/members", (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------
 
-app.get("/api/kafkaclusters", (req, res) => {
+app.get("/kafkaclusters", (req, res) => {
   res.send({ 
     items: kafkaClusters || []
   });
@@ -251,7 +251,7 @@ app.get("/api/kafkaclusters", (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------
 
-app.get("/api/me", (req, res) => {
+app.get("/me", (req, res) => {
   res.send({ 
     capabilities: capabilities
       .slice(0,1)

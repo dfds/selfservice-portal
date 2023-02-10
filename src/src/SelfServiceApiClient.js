@@ -15,7 +15,7 @@ function composeUrl(...args) {
 export async function getCapabilities() {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = window.apiBaseUrl + "/api/capabilities";
+    const url = composeUrl("capabilities");
     const response = await callApi(url, accessToken);
  
     const { items } = await response.json();
@@ -26,7 +26,7 @@ export async function getCapabilities() {
 export async function getCapabilityById(id) {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = window.apiBaseUrl + "/api/capabilities/" + id;
+    const url = composeUrl("capabilities", id);
     const response = await callApi(url, accessToken);
  
     if (response.ok) {
@@ -39,7 +39,7 @@ export async function getCapabilityById(id) {
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = window.apiBaseUrl + "/topics";
+    const url = composeUrl("topics");
     const response = await callApi(url, accessToken);
  
     const { items } = await response.json();
@@ -50,7 +50,7 @@ export async function getAllTopics() {
 export async function getMyPortalProfile() {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = window.apiBaseUrl + "/api/me";
+    const url = composeUrl("me");
     const response = await callApi(url, accessToken);
     const myProfile = await response.json();
 
@@ -160,7 +160,7 @@ export async function getCapabilityMembers(capabilityDefinition) {
 export async function getKafkaClusters() {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = `${window.apiBaseUrl}/api/kafkaclusters`;
+    const url = composeUrl("kafkaclusters");
     const response = await callApi(url, accessToken);
     const { items } = await response.json();
 
