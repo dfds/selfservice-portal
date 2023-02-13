@@ -70,7 +70,7 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = composeUrl(topicsLink.href);
+    const url = topicsLink.href;
     const response = await callApi(url, accessToken);
     const { items, _embedded } = await response.json();
 
@@ -109,7 +109,7 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
 
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = composeUrl(topicsLink.href);
+    const url = topicsLink.href;
     const payload = {
         name: topicDefinition.name,
         description: topicDefinition.description,
@@ -144,7 +144,7 @@ export async function getCapabilityMembers(capabilityDefinition) {
     const accessToken = await getSelfServiceAccessToken();
  
 
-    const url = composeUrl(membersLink.href);
+    const url = membersLink.href;
     const response = await callApi(url, accessToken);
 
     if (!response.ok) {
