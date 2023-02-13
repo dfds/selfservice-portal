@@ -97,6 +97,18 @@ const capabilities = [
 
 // ----------------------------------------------------------------------------------------------------
 
+function composeUrl(...args) {
+  let url = process.env.API_BASE_URL;
+  (args || []).forEach(x => {
+      if (x[0] == '/') {
+          url += x;
+      } else {
+          url += '/' + x;
+      }
+  });
+  return url;
+}
+
 function simplifyCapability(capability) {
   return {
     id: capability.id,
@@ -104,17 +116,17 @@ function simplifyCapability(capability) {
     description: capability.description,
     "_links": {
       self: {
-        href: `/capabilities/${capability.id}`,
+        href: composeUrl(`/capabilities/${capability.id}`),
         rel: "self",
         allow: ["GET"]
       },
       members: {
-        href: `/capabilities/${capability.id}/members`,
+        href: composeUrl(`/capabilities/${capability.id}/members`),
         rel: "related",
         allow: ["GET"]
       },
       topics: {
-        href: `/capabilities/${capability.id}/topics`,
+        href: composeUrl(`/capabilities/${capability.id}/topics`),
         rel: "related",
         allow: ["GET"]
       }
@@ -183,7 +195,7 @@ app.get("/capabilities/:id/topics", (req, res) => {
           items: (kafkaClusters || []),
           "_links": {
             self: {
-              href: `/kafkaclusters`,
+              href: composeUrl(`/kafkaclusters`),
               rel: "related",
               allow: ["GET"]
             }
@@ -192,7 +204,7 @@ app.get("/capabilities/:id/topics", (req, res) => {
       },
       "_links": {
         self: {
-          href: req.path,
+          href: composeUrl(req.path),
           rel: "self",
           allow: ["GET"]
         }
@@ -218,7 +230,7 @@ app.post("/capabilities/:id/topics", (req, res) => {
     log("Added new topic: " + JSON.stringify(newTopic, null, 2));
 
     res
-      .set("Location", `${req.path}/${newTopic.id}`)
+      .set("Location", composeUrl(`${req.path}/${newTopic.id}`))
       .status(201)
       .send(newTopic);
 
