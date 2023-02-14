@@ -67,6 +67,8 @@ function Cluster({clusterId, name, description, topics, selectedTopic, onTopicCl
             onTopicClicked={onTopicClicked} 
         />
 
+        <br />
+
         <TopicSection 
             name="Private" 
             topics={privateTopcis} 
