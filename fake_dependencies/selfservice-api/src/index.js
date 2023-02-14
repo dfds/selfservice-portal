@@ -12,11 +12,13 @@ const port = process.env.PORT || 3001;
 const kafkaClusters = [
   {
     id: "kc-1",
-    name: "Development"
+    name: "Development",
+    description: "This cluster is for non-production workloads and used in various staging environments. Please note, you should not consume messages in this cluster from your production workloads!",
   },
   {
     id: "kc-2",
-    name: "Production"
+    name: "Production",
+    description: "This is the production cluster used for production workloads. This cluster has the highes resource allocations and is used for business critical messages.",
   }
 ];
 
