@@ -38,7 +38,7 @@ const capabilities = [
       topics: [
         {
           id: "1",
-          name: "cloudengineering.selfservice.foo",
+          name: "this-is-a-capability-xyz.foo",
           description: "this is a foo topic for foo stuff",
           kafkaClusterId: "kc-2",
           partitions: 3,
@@ -47,7 +47,7 @@ const capabilities = [
         },
         {
           id: "2",
-          name: "pub.cloudengineering.selfservice.bar",
+          name: "pub.this-is-a-capability-xyz.bar",
           description: "a public topic for bar stuff",
           kafkaClusterId: "kc-2",
           partitions: 3,
@@ -56,7 +56,7 @@ const capabilities = [
         },
         {
           id: "3",
-          name: "cloudengineering.selfservice.a-foo",
+          name: "this-is-a-capability-xyz.a-foo",
           description: "a topic for a-foo stuff",
           kafkaClusterId: "kc-2",
           partitions: 3,
@@ -65,7 +65,7 @@ const capabilities = [
         },
         {
           id: "4",
-          name: "cloudengineering.selfservice.b-foo",
+          name: "this-is-a-capability-xyz.b-foo",
           description: "a topic for b-foo stuff",
           kafkaClusterId: "kc-2",
           partitions: 3,
@@ -86,7 +86,7 @@ const capabilities = [
       topics: [
         {
           id: "3",
-          name: "capability.name-of-topic",
+          name: "another-awssome-capability-abcd.name-of-topic",
           description: "just a dummy topic",
           kafkaClusterId: "kc-2",
           partitions: 3,
