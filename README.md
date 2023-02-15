@@ -1,7 +1,7 @@
 # Self Service Portal
 
 ## Getting started
-When you have a freshly cloned repository, navigate to the root of it in your `bash` terminal and run the following command:
+When you have a freshly cloned repository, navigate to the root of it in your `bash` terminal and run the following command (requires node installed):
 
 ```bash
 make
