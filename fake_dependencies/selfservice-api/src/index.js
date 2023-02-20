@@ -278,3 +278,30 @@ app.get("/me", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 });
+
+// ----------------------------------------------------------------------------------------------------
+
+app.get("/api/topics", (req, res) => {
+  const result = [];
+
+  capabilities.forEach(capability => {
+    const topics = capability.topics || [];
+    topics.forEach(topic => {
+      const item = {
+        capabilityId: capability.id,
+        capabilityName: capability.name,
+        topic: topic
+      }
+      result.push(item);
+    });
+  });
+
+  res.send({ 
+    items: result 
+  });
+});
+
+
+
+
+// ----------------------------------------------------------------------------------------------------
