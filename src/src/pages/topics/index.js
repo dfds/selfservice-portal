@@ -58,7 +58,7 @@ export default function TopicsPage({}) {
         <TableBody>
             {topics.map(x => <TableRow key={x.name + x.id}>
                 <TableDataCell  onClick={() => clickHandler(x.capabilityId)}>{x.capabilityName}</TableDataCell>
-                <TableDataCell>{x.topic.name}</TableDataCell>
+                <TableDataCell>todo</TableDataCell>
                 <TableDataCell>{x.topic.kafkaClusterId}</TableDataCell>
                 <TableDataCell>{x.topic.description}</TableDataCell>
                 </TableRow> 
