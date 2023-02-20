@@ -289,8 +289,12 @@ app.get("/api/topics", (req, res) => {
     topics.forEach(topic => {
       const item = {
         capabilityId: capability.id,
-        capabilityName: capability.name,
-        topic: topic
+        name: topic.name,
+        kafkaClusterId: topic.kafkaClusterId,
+        description: topic.description,
+        partitions: topic.partitions,
+        retention: topic.retention,
+        status: topic.status        
       }
       result.push(item);
     });
