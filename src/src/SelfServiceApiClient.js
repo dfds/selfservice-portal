@@ -39,7 +39,7 @@ export async function getCapabilityById(id) {
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
  
-    const url = composeUrl("api/topics"); //window.apiBaseUrl + "/api/topics";
+    const url = composeUrl("topics"); //window.apiBaseUrl + "/api/topics";
     const response = await callApi(url, accessToken);
  
     const { items } = await response.json();
