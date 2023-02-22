@@ -5,8 +5,10 @@ import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
+import { SideSheet, SideSheetContent } from '@dfds-ui/react-components'
+import { Tooltip, TextField } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
-
+import styles from "./capabilities.module.css";
 import AppContext from "./../../app-context";
 
 function MyCapabilities({capabilities}) {
@@ -19,7 +21,7 @@ function MyCapabilities({capabilities}) {
         <Text styledAs='sectionHeadline'>My Capabilities</Text>
         <Card variant="fill"  surface="main">
             <CardContent>
-                {items.length > 0 && 
+                {items.length > 0 &&
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -40,12 +42,12 @@ function MyCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }                
-                {items.length === 0 && 
+                }
+                {items.length === 0 &&
                     <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
                 }
             </CardContent>
-        </Card>    
+        </Card>
     </>
 }
 
@@ -59,7 +61,7 @@ function OtherCapabilities({capabilities}) {
         <Text styledAs='sectionHeadline'>Other Capabilities</Text>
         <Card variant="fill"  surface="main">
             <CardContent>
-                {items.length > 0 && 
+                {items.length > 0 &&
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -80,24 +82,99 @@ function OtherCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }                
-                {items.length === 0 && 
+                }
+                {items.length === 0 &&
                     <Spinner />
-                }                
+                }
             </CardContent>
-        </Card>    
+        </Card>
+    </>
+}
+
+
+
+function NewCapabilityDialog(props) {
+    var openSetter = props.setter
+    var open = props.open
+
+    const handleClose = () => {
+        openSetter(false);
+    };
+
+    const emptyValues = {
+        name: "",
+        description: "",
+    };
+
+    const [formData, setFormData] = useState(emptyValues);
+
+    const changeName = (e) => {
+        e.preventDefault();
+        let newName = e?.target?.value || "";
+        newName = newName.replace(/\s+/g, "-");
+
+        setFormData(prev => ({...prev, ...{ name: newName.toLowerCase()}}));
+    }
+
+    const changeDescription = e => {
+        e.preventDefault();
+        const newValue = e?.target?.value || emptyValues.description;
+        setFormData(prev => ({...prev, ...{ description: newValue}}));
+    };
+
+    return <>
+        <SideSheet header={`Add new Capability`} onRequestClose={handleClose} isOpen={open} width="30%" alignSideSheet="right" variant="elevated" backdrop>
+        <SideSheetContent>
+        <Text as={"label"} styledAs="labelBold">Full topic name:</Text>
+            {/*<Text as={"div"} styledAs="bodyInterface">{fullTopicName}</Text> */}
+
+            <br />
+            <br />
+
+            <div className={styles.tooltipsection}>
+                <div className={styles.tooltip}>
+                    <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word topic name (e.g. foo-bar instead of foo_bar).'>
+                        {/* <Information /> */}
+                    </Tooltip>
+                </div>
+                <TextField
+                    label="Name"
+                    placeholder="Enter name of capability"
+                    required
+                    value={formData.name}
+                    onChange={changeName}
+                    //errorMessage={nameErrorMessage}
+                />
+            </div>
+
+            <TextField
+                label="Description"
+                placeholder="Enter a description"
+                required value={formData.description}
+                onChange={changeDescription}>
+            </TextField>
+
+        </SideSheetContent>
+        </SideSheet>
     </>
 }
 
 export default function CapabilitiesPage() {
     const { user, myCapabilities, otherCapabilities, reloadOtherCapabilities } = useContext(AppContext);
+    const [sideSheetOpen, setSidesheetOpen] = React.useState(false);
+
+    const handleAddClicked= () => {
+        if (setSidesheetOpen){
+            setSidesheetOpen(true);
+        }
+    };
 
     useEffect(() => {
         if (user && user.isAuthenticated) {
             reloadOtherCapabilities();
         }
     }, []);
-    
+
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
     } />
@@ -105,16 +182,16 @@ export default function CapabilitiesPage() {
     return <>
         <br/>
         <br/>
-
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
+                <NewCapabilityDialog open={sideSheetOpen} setter={setSidesheetOpen}/>
                 <Text as={H1} styledAs='heroHeadline'>Capabilities</Text>
 
                 <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
                     <CardTitle largeTitle>Information</CardTitle>
                     <CardContent>
                         <p>
-                            Capabilities should be named uniquely after their (business) capability. 
+                            Capabilities should be named uniquely after their (business) capability.
                             Avoid using team or project names. For more information <a href='lala'>head on over to the Playbooks.</a>
                         </p>
                         <p>
@@ -125,7 +202,7 @@ export default function CapabilitiesPage() {
                         </p>
                     </CardContent>
                     <CardActions>
-                        <Button size='small'>Add</Button>
+                        <Button size='small' onClick={handleAddClicked}>Add</Button>
                     </CardActions>
                 </Card>
 
