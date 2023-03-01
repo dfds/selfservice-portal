@@ -10,7 +10,7 @@ import { Tooltip, TextField } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
 import AppContext from "./../../app-context";
-
+import { createCapability } from "../../SelfServiceApiClient";
 function MyCapabilities({capabilities}) {
     const items = capabilities || [];
 
@@ -92,8 +92,6 @@ function OtherCapabilities({capabilities}) {
 }
 
 function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
-    const capabilityId = "some-capability-id-xyzabfej";
-
     const handleClose = () => {
         openSetter(false);
     };
@@ -132,7 +130,7 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
 
     const fullCapabilityName = `${publicPrefix}.${capabilityName}`;
 
-    const isNameValid = formData.name != "" &&
+    const isNameValid = formData.name !== "" &&
         !formData.name.match(/^\s*$/g) &&
         !formData.name.match(/(-|_)$/g) &&
         !formData.name.match(/[^a-zA-Z0-9\-_]/g);
@@ -142,15 +140,17 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
         nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", "_" and it must not end with "-" or "_".';
     }
 
-    const canAdd = formData.name != "" && formData.description != "";
+    const canAdd = formData.name !== "" && formData.description !== "";
 
     const handleAddCapabilityClicked = () => {
         console.log("name: %s\nfull name: %s\ndescription: %s", formData.name,  fullCapabilityName, formData.description);
-        if (onAddCapabilityClicked) {
-            onAddCapabilityClicked({
-                name: fullCapabilityName,
-                description: formData.description,
-            });
+        if (canAdd){
+            if (onAddCapabilityClicked) {
+                onAddCapabilityClicked({
+                    name: capabilityName,
+                    description: formData.description,
+                });
+            }
         }
     };
 
@@ -176,7 +176,7 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
                     required
                     value={formData.name}
                     onChange={changeName}
-                    //errorMessage={nameErrorMessage}
+                    errorMessage={nameErrorMessage}
                 />
             </div>
 
@@ -217,7 +217,7 @@ export default function CapabilitiesPage() {
         <br/>
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-                <NewCapabilityDialog openToggle={sideSheetOpen} openSetter={setSidesheetOpen}/>
+                <NewCapabilityDialog openToggle={sideSheetOpen} openSetter={setSidesheetOpen} onAddCapabilityClicked={createCapability}/>
                 <Text as={H1} styledAs='heroHeadline'>Capabilities</Text>
 
                 <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>

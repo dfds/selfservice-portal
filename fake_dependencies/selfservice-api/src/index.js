@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -22,16 +21,17 @@ const kafkaClusters = [
   }
 ];
 
+
 const capabilities = [
-    { 
-      id: "this-is-a-capability-xyz", 
-      name: "this is a capability", 
+    {
+      id: "this-is-a-capability-xyz",
+      name: "this is a capability",
       description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
       members: [
-        { 
+        {
           email: "jandr@dfds.com"
         },
-        { 
+        {
           email: "thfis@dfds.com"
         },
       ],
@@ -74,13 +74,13 @@ const capabilities = [
         }
       ]
     },
-    { 
-      id: "another-awssome-capability-abcd", 
-      name: "another awssome capability", 
+    {
+      id: "another-awssome-capability-abcd",
+      name: "another awssome capability",
       description: "lknm lk23lnk nl kl23lk lk",
       members: [
-        { 
-          email: "thfis@dfds.com" 
+        {
+          email: "thfis@dfds.com"
         },
       ],
       topics: [
@@ -153,6 +153,11 @@ function fakeDelay() {
   return fakeDelay;
 }
 
+function idPostfix(){
+  return Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 7);
+  //TODO: use hashstring just like the real thing (?)
+}
+
 // ----------------------------------------------------------------------------------------------------
 
 app.use((req, res, next) => {
@@ -160,7 +165,7 @@ app.use((req, res, next) => {
     next();
     log(`${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`);
   }, fakeDelay());
-  
+
 });
 
 // ----------------------------------------------------------------------------------------------------
@@ -172,14 +177,13 @@ app.get("/ping", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/capabilities", (req, res) => {
-
-  res.send({ 
+  res.send({
     items: capabilities.map(x => simplifyCapability(x))
   });
 });
 
 app.get("/capabilities/:id", (req, res) => {
-  let found = capabilities.find(x => x.id == req.params.id);
+  let found = capabilities.find(x => x.name == req.params.id);
   if (found) {
     res.send(simplifyCapability(found));
   } else {
@@ -190,7 +194,7 @@ app.get("/capabilities/:id", (req, res) => {
 app.get("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
-    res.send({ 
+    res.send({
       items: (found.topics || []),
       "_embedded": {
         kafkaClusters: {
@@ -216,6 +220,29 @@ app.get("/capabilities/:id/topics", (req, res) => {
     res.sendStatus(404);
   }
 });
+
+// ----------------------------------------------------------------------------------------------------
+
+app.post("/capabilities", (req, res) => {
+  let found = capabilities.find(x => x.name == req.body.name); //TODO: use id
+  if (found){
+    res.status(409).send("capability with that name alerady exists");
+    return;
+  }
+  //TODO: input sanitation
+  const newId = `${req.body.name}-${idPostfix()}`;
+  const newCapability = {
+    id:newId,
+    name: req.body.name,
+    description: req.body.description,
+    members: [], //TODO: get user email
+    topics:  []
+  }
+  capabilities.push(newCapability);
+  //TODO: wrap push in error handling
+  res.status(201).send(`/capabilities/${newId}`); //default should be error
+});
+// ----------------------------------------------------------------------------------------------------
 
 app.post("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
@@ -258,7 +285,7 @@ app.get("/capabilities/:id/members", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/kafkaclusters", (req, res) => {
-  res.send({ 
+  res.send({
     items: kafkaClusters || []
   });
 });
@@ -266,7 +293,7 @@ app.get("/kafkaclusters", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/me", (req, res) => {
-  res.send({ 
+  res.send({
     capabilities: capabilities
       .slice(0,1)
       .map(x => simplifyCapability(x))
@@ -294,14 +321,14 @@ app.get("/topics", (req, res) => {
         description: topic.description,
         partitions: topic.partitions,
         retention: topic.retention,
-        status: topic.status        
+        status: topic.status
       }
       result.push(item);
     });
   });
 
-  res.send({ 
-    items: result 
+  res.send({
+    items: result
   });
 });
 

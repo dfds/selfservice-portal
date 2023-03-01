@@ -3,7 +3,7 @@ import { callApi, getSelfServiceAccessToken } from "./AuthService";
 function composeUrl(...args) {
     let url = window.apiBaseUrl;
     (args || []).forEach(x => {
-        if (x[0] == '/') {
+        if (x[0] === '/') {
             url += x;
         } else {
             url += '/' + x;
@@ -14,10 +14,10 @@ function composeUrl(...args) {
 
 export async function getCapabilities() {
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = composeUrl("capabilities");
     const response = await callApi(url, accessToken);
- 
+
     const { items } = await response.json();
 
     return items || [];
@@ -25,10 +25,10 @@ export async function getCapabilities() {
 
 export async function getCapabilityById(id) {
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = composeUrl("capabilities", id);
     const response = await callApi(url, accessToken);
- 
+
     if (response.ok) {
         return await response.json();
     } else {
@@ -38,10 +38,10 @@ export async function getCapabilityById(id) {
 
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = composeUrl("topics"); //window.apiBaseUrl + "/api/topics";
     const response = await callApi(url, accessToken);
- 
+
     const { items } = await response.json();
 
     return items || [];
@@ -49,7 +49,7 @@ export async function getAllTopics() {
 
 export async function getMyPortalProfile() {
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = composeUrl("me");
     const response = await callApi(url, accessToken);
     const myProfile = await response.json();
@@ -69,7 +69,7 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
     }
 
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = topicsLink.href;
     const response = await callApi(url, accessToken);
     const { items, _embedded } = await response.json();
@@ -81,11 +81,11 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 
     clusters.forEach(cluster => {
         const publicTopics = items
-            .filter(topic => topic.kafkaClusterId == cluster.id)
+            .filter(topic => topic.kafkaClusterId === cluster.id)
             .filter(topic => topic.name.startsWith("pub."));
-            
+
         const privateTopics = items
-            .filter(topic => topic.kafkaClusterId == cluster.id)
+            .filter(topic => topic.kafkaClusterId === cluster.id)
             .filter(topic => !topic.name.startsWith("pub."));
 
 
@@ -98,6 +98,29 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
     return clusters;
 }
 
+export async function createCapability(capabilityDefinition){
+    //console.group("createCapability");
+
+    const url = "http://localhost:3001/capabilities";
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const payload = {
+        name: capabilityDefinition.name,
+        description: capabilityDefinition.description,
+    };
+
+    const response = await callApi(url, accessToken, "POST", payload);
+    if (!response.ok) {
+        console.log(`Warning: failed adding capability using url ${url} - response was ${response.status} ${response.statusText}`);
+        return;
+    }
+
+    const newCapabilityEndpoint = await response.json();
+
+    return newCapabilityEndpoint;
+}
+
 export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
     console.group("addTopicToCapability");
 
@@ -108,7 +131,7 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
     }
 
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = topicsLink.href;
     const payload = {
         name: topicDefinition.name,
@@ -142,7 +165,7 @@ export async function getCapabilityMembers(capabilityDefinition) {
     }
 
     const accessToken = await getSelfServiceAccessToken();
- 
+
 
     const url = membersLink.href;
     const response = await callApi(url, accessToken);
@@ -159,7 +182,7 @@ export async function getCapabilityMembers(capabilityDefinition) {
 
 export async function getKafkaClusters() {
     const accessToken = await getSelfServiceAccessToken();
- 
+
     const url = composeUrl("kafkaclusters");
     const response = await callApi(url, accessToken);
     const { items } = await response.json();
