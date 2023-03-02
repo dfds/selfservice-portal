@@ -281,7 +281,7 @@ app.listen(port, () => {
 
 // ----------------------------------------------------------------------------------------------------
 
-app.get("/api/topics", (req, res) => {
+app.get("/topics", (req, res) => {
   const result = [];
 
   capabilities.forEach(capability => {
