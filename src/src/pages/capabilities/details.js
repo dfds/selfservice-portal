@@ -121,11 +121,11 @@ export default function CapabilityDetailsPage() {
                 copy.selectedTopic = null;
 
                 if (selectedTopic) {
-                    const foundCluster = topicsGroupedByCluster.find(cluster => cluster.id === selectedTopic.kafkaTopicId);
+                    const foundCluster = copy.clusters.find(cluster => cluster.id === selectedTopic.kafkaClusterId);
                     if (foundCluster) {
                         const foundTopic = (foundCluster.topics || []).find(topic => topic.id === selectedTopic.id);
                         if (foundTopic) {
-                            copy.selectedTopic = {...foundTopic, ...{messages: selectedTopic.messages}};
+                            copy.selectedTopic = {...foundTopic, ...{messages: selectedTopic.messages}}; // note: [jandr] check this again! will this not hide any new messages loaded from api?
                         }
                     }
                 }
@@ -134,7 +134,7 @@ export default function CapabilityDetailsPage() {
                 copy.selectedCluster = null;
 
                 if (selectedCluster) {
-                    const foundCluster = topicsGroupedByCluster.find(cluster => cluster.id === selectedCluster.id);
+                    const foundCluster = copy.clusters.find(cluster => cluster.id === selectedCluster.id);
                     if (foundCluster) {
                         copy.selectedCluster = foundCluster;
                     }
@@ -159,10 +159,6 @@ export default function CapabilityDetailsPage() {
         }, 5*1000);
         return () => clearInterval(cancellation);
     }, [capabilityDetails]);
-
-    useEffect(() => {
-        console.log("topic state changed to: ", topicsState);
-    }, [topicsState]);
 
     const handleAddTopicToClusterClicked = (clusterId) => {
         const found = (topicsState.clusters || []).find(cluster => cluster.id == clusterId);
@@ -209,31 +205,20 @@ export default function CapabilityDetailsPage() {
 
     const handleTopicClicked = (cid, tid) => {
         setTopicsState(prev => {
-            console.group("handleTopicClicked");
-
             const copy = {...prev};
-
-            console.log("input: ", { cid, tid });
-            console.log("selected topic: ", copy.selectedTopic);
 
             // deselect current
             if (copy.selectedTopic?.kafkaClusterId === cid && copy.selectedTopic?.id === tid) {
-                console.log("deselecting current");
                 copy.selectedTopic = null;
             } else {
                 // find the topic and assign it to selectedTopic
                 const foundCluster = (copy.clusters || []).find(cluster => cluster.id === cid);
-                console.log("found cluster: ", foundCluster);
-
                 const foundTopic = (foundCluster?.topics || []).find(topic => topic.id === tid);
-                console.log("found topic: ", foundTopic);
 
                 if (foundTopic) {
                     copy.selectedTopic = foundTopic;
                 }
             }
-
-            console.groupEnd();
 
             return copy;
         });
