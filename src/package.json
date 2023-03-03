@@ -11,9 +11,11 @@
     "react": "^16.8.0",
     "react-dates": "^21.8.0",
     "react-dom": "^16.8.0",
+    "react-json-view": "^1.21.3",
     "react-router-dom": "^6.5.0",
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
+    "react-syntax-highlighter": "^15.5.0",
     "serve": "^14.1.2"
   },
   "scripts": {

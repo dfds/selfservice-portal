@@ -16,6 +16,8 @@ import styles  from "./details.module.css";
 import { getAnotherUserProfilePictureUrl } from "./../../GraphApiClient";
 import { getCapabilityById, getCapabilityMembers, getCapabilityTopicsGroupedByCluster, addTopicToCapability } from "./../../SelfServiceApiClient";
 
+import KafkaCluster from "./KafkaCluster";
+
 
 function NotFound() {
     return <>
@@ -113,6 +115,17 @@ export default function CapabilityDetailsPage() {
 
         async function fetchClustersAndTopics(capability) {
             const topicsGroupedByCluster = await getCapabilityTopicsGroupedByCluster(capability);
+            topicsGroupedByCluster.forEach(c => {
+                (c.topics || []).forEach(t => {
+                    if (t.retention != "forever") {
+                        const match = t.retention.match(/^(?<days>\d+)d$/);
+                        if (match) {
+                            const { days } = match.groups;
+                            t.retention = `${days} day${days == "1" ? "" : "s"}`;
+                        }
+                    }
+                });
+            });
             setTopicsState(prev => {
                 const copy = {...prev};
                 copy.clusters = topicsGroupedByCluster;
@@ -125,7 +138,7 @@ export default function CapabilityDetailsPage() {
                     if (foundCluster) {
                         const foundTopic = (foundCluster.topics || []).find(topic => topic.id === selectedTopic.id);
                         if (foundTopic) {
-                            copy.selectedTopic = {...foundTopic, ...{messages: selectedTopic.messages}}; // note: [jandr] check this again! will this not hide any new messages loaded from api?
+                            copy.selectedTopic = {...foundTopic, ...{messageContracts: selectedTopic.messageContracts}}; // note: [jandr] check this again! will this not hide any new messages loaded from api?
                         }
                     }
                 }
@@ -257,12 +270,22 @@ export default function CapabilityDetailsPage() {
                     <Resources />
                     {/* <Logs /> */}
                     {/* <CommunicationChannels /> */}
-                    <Topics 
+
+                    {/* TODO: [jandr] change to a kafka cluster component instead */}
+                    {/* <Topics 
                         clusters={topicsState.clusters}
                         selectedTopic={topicsState.selectedTopic}
                         onAddTopicToClusterClicked={handleAddTopicToClusterClicked}
                         onTopicClicked={handleTopicClicked}
-                    />
+                    /> */}
+
+                    {(topicsState.clusters || []).map(cluster => <KafkaCluster 
+                        key={cluster.id}
+                        cluster={cluster}
+                        selectedTopic={topicsState.selectedTopic}
+                        onAddTopicToClusterClicked={handleAddTopicToClusterClicked}
+                        onTopicClicked={handleTopicClicked}
+                    />)}
 
                 </Column>
             </Container>

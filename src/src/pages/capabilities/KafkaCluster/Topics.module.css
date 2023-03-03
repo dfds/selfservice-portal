@@ -1,8 +1,3 @@
-.notprovisioned {
-    list-style-type: square;
-    padding-left: 1rem;
-}
-
 .clusterheader {
     display: flex;
     flex-direction: row;
@@ -44,17 +39,23 @@
     /* color: #fff */
 }
 
-.topicheaderselected {
-    /* background-color: #002b45;
-    color: #fff */
-    background-color: #bbddf3;
-    /* color: #fff */
-}
-
 .topicheader:hover {
     background-color: #bbddf3;
-    /* background-color: #002b45; */
-    /* color: #fff */
+}
+
+.topicheaderselected {
+    background-color: #002b45;
+    color: #fff
+}
+
+.topicheaderselected:hover {
+    background-color: #002b45 !important;
+    color: #fff
+}
+
+.notprovisioned {
+    color: #002b454d;
+    font-style: italic;
 }
 
 .messagecontractsheader {

@@ -3,10 +3,12 @@ import { Text } from '@dfds-ui/typography';
 import Topic from "./topic";
 import styles from "./topics.module.css";
 import { Button, Card, CardContent, Banner, BannerHeadline, ButtonStack } from '@dfds-ui/react-components';
+import { Divider } from "@dfds-ui/react-components/divider";
 
 function TopicSection({name, topics, clusterId, selectedTopic, onTopicClicked}) {
     return <>
         <Text styledAs='action'>{name}</Text>
+        <Divider />
         {topics.length == 0 &&
             <div style={{ paddingLeft: "1rem", fontStyle: "italic" }}>
                 No {name.toLocaleLowerCase()} topics...yet!
@@ -52,7 +54,7 @@ function Cluster({clusterId, name, description, topics, selectedTopic, onTopicCl
         <Text styledAs="label">Description</Text>
         {(description || "").split("\n").map(x => <Text>{x}</Text>)}
 
-        <ButtonStack align="right">
+        <ButtonStack align="left">
             <Button size="small" onClick={handleAddClicked}>Add topic</Button>
             <Button size="small" variation="outlined" disabled>Get credentials</Button>
         </ButtonStack>

@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { kafkaClusters, capabilities } from "./dummyData";
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
     next();
     log(`${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`);
   }, fakeDelay());
-
+  
 });
 
 // ----------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ app.get("/ping", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/capabilities", (req, res) => {
-  res.send({
+  res.send({ 
     items: capabilities.map(x => simplifyCapability(x))
   });
 });
@@ -106,7 +106,7 @@ app.get("/capabilities/:id", (req, res) => {
 app.get("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
-    res.send({
+    res.send({ 
       items: (found.topics || []),
       "_embedded": {
         kafkaClusters: {
@@ -222,7 +222,7 @@ app.get("/capabilities/:id/members", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/kafkaclusters", (req, res) => {
-  res.send({
+  res.send({ 
     items: kafkaClusters || []
   });
 });
@@ -230,7 +230,7 @@ app.get("/kafkaclusters", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/me", (req, res) => {
-  res.send({
+  res.send({ 
     capabilities: capabilities
       .slice(0,1)
       .map(x => simplifyCapability(x))
@@ -258,14 +258,14 @@ app.get("/kafkatopics", (req, res) => {
         description: topic.description,
         partitions: topic.partitions,
         retention: topic.retention,
-        status: topic.status
+        status: topic.status        
       }
       result.push(item);
     });
   });
 
-  res.send({
-    items: result
+  res.send({ 
+    items: result 
   });
 });
 

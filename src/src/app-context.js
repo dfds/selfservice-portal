@@ -53,6 +53,7 @@ function AppProvider({ children }) {
     user,
     myCapabilities,
     otherCapabilities,
+    selectedCapability: null,
     reloadOtherCapabilities: loadOtherCapabilities,
     isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
     topics,
