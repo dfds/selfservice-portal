@@ -101,7 +101,7 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 export async function createCapability(capabilityDefinition){
     //console.group("createCapability");
 
-    const url = "http://localhost:3001/capabilities";
+    const url = composeUrl("capabilities");
 
     const accessToken = await getSelfServiceAccessToken();
 
