@@ -138,7 +138,7 @@ app.get("/capabilities/:id/topics", (req, res) => {
 app.post("/capabilities", (req, res) => {
   let found = capabilities.find(x => x.name == req.body.name); //TODO: use id
   if (found){
-    res.status(409).send("capability with that name alerady exists");
+    res.status(409).send("capability with that name already exists");
     return;
   }
   //TODO: input sanitation
