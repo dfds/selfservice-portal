@@ -96,6 +96,10 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
         openSetter(false);
     };
 
+    //error banner logic
+    //const displayConflictWarning =
+
+    const [conflictWarning, setConflictWarning] = useState(false);
 
     //form logic
     const emptyValues = {
@@ -135,7 +139,7 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
         !formData.name.match(/(-|_)$/g) &&
         !formData.name.match(/[^a-zA-Z0-9\-_]/g);
 
-    let nameErrorMessage = ""; //TODO: Error handling and input sanitation
+    let nameErrorMessage = "";
     if (formData.name.length > 0 && !isNameValid) {
         nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", "_" and it must not end with "-" or "_".';
     }
@@ -143,13 +147,14 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
     const canAdd = formData.name !== "" && formData.description !== "";
 
     const handleAddCapabilityClicked = () => {
-        console.log("name: %s\nfull name: %s\ndescription: %s", formData.name,  fullCapabilityName, formData.description);
         if (canAdd){
             if (onAddCapabilityClicked) {
                 onAddCapabilityClicked({
                     name: capabilityName,
                     description: formData.description,
-                });
+                })
+                .then((response) => {console.log("res: "+response.status);})
+                .catch((err) => console.log(err)); //TODO: change state of something and paint everything in panic-red
             }
         }
     };

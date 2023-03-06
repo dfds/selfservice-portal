@@ -135,10 +135,36 @@ app.get("/capabilities/:id/topics", (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------
 
+ //TODO: input santitation in backend too
+
+function checkValidInput(input) {
+
+  const isNameValid = input !== "" &&
+  !input.match(/^\s*$/g) &&
+  !input.match(/(-|_)$/g) &&
+  !input.match(/[^a-zA-Z0-9\-_]/g);
+
+  if (input.length > 0){
+    if (!isNameValid) {
+      return [false, 'Invalid name: Allowed characters are a-z, 0-9, "-", "_" and it may not end with "-" or "_".'];
+    }else{
+      return [true, ""];
+    }
+  }
+  return [false, 'Capability name may not be empty'];
+}
+
+// ----------------------------------------------------------------------------------------------------
 app.post("/capabilities", (req, res) => {
-  let found = capabilities.find(x => x.name == req.body.name); //TODO: use id
+  let [isValidInput, errMsg] = checkValidInput(req.body.name);
+  console.log("validinput: ", isValidInput);
+  if (!isValidInput){
+    res.status(400).send({message: errMsg});
+    return;
+  }
+  let found = capabilities.find(x => x.name == req.body.name);
   if (found){
-    res.status(409).send("capability with that name already exists");
+    res.status(409).send({message: 'capability with that name already exists'});
     return;
   }
   //TODO: input sanitation
@@ -151,7 +177,6 @@ app.post("/capabilities", (req, res) => {
     topics:  []
   }
   capabilities.push(newCapability);
-  //TODO: wrap push in error handling
   res.status(201).send(`/capabilities/${newId}`); //default should be error
 });
 // ----------------------------------------------------------------------------------------------------

@@ -99,7 +99,7 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 }
 
 export async function createCapability(capabilityDefinition){
-    //console.group("createCapability");
+    console.group("createCapability");
 
     const url = composeUrl("capabilities");
 
@@ -112,13 +112,19 @@ export async function createCapability(capabilityDefinition){
 
     const response = await callApi(url, accessToken, "POST", payload);
     if (!response.ok) {
-        console.log(`Warning: failed adding capability using url ${url} - response was ${response.status} ${response.statusText}`);
-        return;
+        let exceptionMessage = "";
+        if (response.status === 409){
+            console.log(`Warning: failed adding capability using url ${url} for name ${capabilityDefinition.name} - response was ${response.status} ${response.statusText}`);
+            exceptionMessage = await response.text().then((text) => { return text })
+            throw new Error(`Capability already exists with that name: ${capabilityDefinition.name}`);
+        }
+        if (response.status === 400){
+            throw new Error("Invalid capability name: "+exceptionMessage);
+        }
     }
 
-    const newCapabilityEndpoint = await response.json();
-
-    return newCapabilityEndpoint;
+    const resVal = response;
+    return resVal;
 }
 
 export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
@@ -149,13 +155,13 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
         return;
     }
 
-    const newTopic = await response.json();
-    console.log("recieved new topic: ", newTopic);
+    const resVal = response;
+    console.log("recieved new topic: ", resVal.json());
 
 
     console.groupEnd();
 
-    return newTopic;
+    return resVal;
 }
 
 export async function getCapabilityMembers(capabilityDefinition) {
