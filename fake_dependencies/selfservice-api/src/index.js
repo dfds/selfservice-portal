@@ -245,7 +245,7 @@ app.listen(port, () => {
 
 // ----------------------------------------------------------------------------------------------------
 
-app.get("/topics", (req, res) => {
+app.get("/kafkatopics", (req, res) => {
   const result = [];
 
   capabilities.forEach(capability => {
