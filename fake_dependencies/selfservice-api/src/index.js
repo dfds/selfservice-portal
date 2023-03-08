@@ -95,7 +95,7 @@ app.get("/capabilities", (req, res) => {
 });
 
 app.get("/capabilities/:id", (req, res) => {
-  let found = capabilities.find(x => x.name == req.params.id);
+  let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send(simplifyCapability(found));
   } else {
