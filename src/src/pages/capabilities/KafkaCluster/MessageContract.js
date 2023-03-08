@@ -45,19 +45,27 @@ export default function Message({id, messageType, description, example, schema, 
         <Divider />
     </>;
 
-    const descriptionElement = <Text>{description}</Text>;
+    let descriptionElement = <Text>{description}</Text>;
+    if ((description || "") === "") {
+        descriptionElement = <Text>
+            <i style={{color: "#999"}}>[description is missing] </i>
+        </Text>;
+    }
 
     return <div className={styles.container}>
         <Expandable header={header} isOpen={isSelected} onHeaderClicked={headerClickHandler}>
             <div className={styles.contentcontainer}>
                 <Poles 
-                    leftContent={<Text styledAs="label">Description</Text>}
+                    leftContent={<Text styledAs="label" style={{ marginBottom: "0"}}>Description</Text>}
                     rightContent={<Poles
                         leftContent={<Text styledAs="caption">Show JSON Schema &nbsp;</Text>}
                         rightContent={<Switch size="small" checked={showSchema} onChange={handleToggleSchema} />}
                     />}
                 />
                 {descriptionElement}
+
+                <br />
+                <Text styledAs="label">{showSchema ? "Schema" : "Example"}</Text>
                 <JsonViewer json={showSchema ? schema : example} />
             </div>
         </Expandable>
