@@ -58,7 +58,7 @@ const capabilities = [
                 schema: "<schema>",
                 example: "<example>",
               }
-            ]            
+            ]
           },
           {
             id: "3",
@@ -78,7 +78,8 @@ const capabilities = [
             retention: "1d",
             status: "In Progress"
           }
-        ]
+        ],
+        membershipApplications : []
       },
       {
         id: "another-awssome-capability-abcd",
@@ -98,6 +99,22 @@ const capabilities = [
             partitions: 3,
             retention: "1d",
             status: "Provisioned"
+          }
+        ],
+        membershipApplications: [
+          {
+            applicant: "pausegh@dfds.com",
+            approvals: [],
+            status: "pending",
+            submittedAt: "2023-03-08T12:53:50+01:00",
+            expiresOn: "2023-03-22T12:53:50+01:00"
+          },
+          {
+            applicant: "hritote@dfds.com",
+            approvals: [],
+            status: "pending",
+            submittedAt: "2023-03-08T11:48:50+01:00",
+            expiresOn: "2023-03-22T11:48:50+01:00"
           }
         ]
       },

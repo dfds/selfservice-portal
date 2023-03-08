@@ -43,6 +43,11 @@ function simplifyCapability(capability) {
         href: composeUrl(`/capabilities/${capability.id}/topics`),
         rel: "related",
         allow: ["GET"]
+      },
+      membershipApplications: {
+        href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),
+        rel: "related",
+        allow: ["GET"]
       }
     }
   };
@@ -77,7 +82,7 @@ app.use((req, res, next) => {
     next();
     log(`${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`);
   }, fakeDelay());
-  
+
 });
 
 // ----------------------------------------------------------------------------------------------------
@@ -89,7 +94,7 @@ app.get("/ping", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/capabilities", (req, res) => {
-  res.send({ 
+  res.send({
     items: capabilities.map(x => simplifyCapability(x))
   });
 });
@@ -106,7 +111,7 @@ app.get("/capabilities/:id", (req, res) => {
 app.get("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
-    res.send({ 
+    res.send({
       items: (found.topics || []),
       "_embedded": {
         kafkaClusters: {
@@ -133,9 +138,18 @@ app.get("/capabilities/:id/topics", (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------------------------------------------
+app.get("/capabilities/:id/membershipapplications", (req, res) => {
+  let found = capabilities.find(x => x.id == req.params.id);
+  if (found) {
+    res.send({
+      membershipapplications: (found.membershipApplications || []),
+    });
+  } else {
+    res.sendStatus(404);
+  }
+});
 
- //TODO: input santitation in backend too
+// ----------------------------------------------------------------------------------------------------
 
 function checkValidInput(input) {
 
@@ -174,7 +188,8 @@ app.post("/capabilities", (req, res) => {
     name: req.body.name,
     description: req.body.description,
     members: [], //TODO: get user email
-    topics:  []
+    topics:  [],
+    mambershipApplications: []
   }
   capabilities.push(newCapability);
   res.status(201).send(`/capabilities/${newId}`); //default should be error
@@ -222,7 +237,7 @@ app.get("/capabilities/:id/members", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/kafkaclusters", (req, res) => {
-  res.send({ 
+  res.send({
     items: kafkaClusters || []
   });
 });
@@ -230,7 +245,7 @@ app.get("/kafkaclusters", (req, res) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.get("/me", (req, res) => {
-  res.send({ 
+  res.send({
     capabilities: capabilities
       .slice(0,1)
       .map(x => simplifyCapability(x))
@@ -258,14 +273,14 @@ app.get("/kafkatopics", (req, res) => {
         description: topic.description,
         partitions: topic.partitions,
         retention: topic.retention,
-        status: topic.status        
+        status: topic.status
       }
       result.push(item);
     });
   });
 
-  res.send({ 
-    items: result 
+  res.send({
+    items: result
   });
 });
 
