@@ -142,10 +142,10 @@ app.get("/capabilities/:id/membershipapplications", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send({
-      membershipapplications: (found.membershipApplications || []),
+      membershipApplications: (found.membershipApplications || []),
     });
   } else {
-    res.sendStatus(404);
+    res.status(404).send(`capability not found for id: ${req.params.id}`);
   }
 });
 
@@ -187,13 +187,26 @@ app.post("/capabilities", (req, res) => {
     id:newId,
     name: req.body.name,
     description: req.body.description,
-    members: [], //TODO: get user email
+    members: [], //TODO [pausegh]: get user email
     topics:  [],
-    mambershipApplications: []
+    membershipApplications: []
   }
   capabilities.push(newCapability);
   res.status(201).send(`/capabilities/${newId}`); //default should be error
 });
+
+// ----------------------------------------------------------------------------------------------------
+
+app.post("/capabilities/:id/membershipapplications", (req, res) => {
+  let found = capabilities.find(x => x.id == req.params.id);
+  if (found) {
+    res.status(501).send("not yet implemented");
+    // TODO [pausegh] : implement adding membership application
+  } else {
+    res.status(404).send(`capability not found for id: ${req.params.id}`);
+  }
+});
+
 // ----------------------------------------------------------------------------------------------------
 
 app.post("/capabilities/:id/topics", (req, res) => {
