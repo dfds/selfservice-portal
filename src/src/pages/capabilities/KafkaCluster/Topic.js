@@ -7,6 +7,7 @@ import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
 import Message from "./MessageContract";
 import styles from "./Topics.module.css";
 import { Divider } from "@dfds-ui/react-components/divider";
+import MessageContractDialog from "./MessageContractDialog";
 
 function TopicHeader({name, description, partitions, retention, status, isOpen, onClicked}) {
     const handleClick = () => {
@@ -46,16 +47,22 @@ function TopicHeader({name, description, partitions, retention, status, isOpen, 
 export default function Topic({id, name, description, partitions, retention, status, isSelected, messageContracts, onHeaderClicked}) {
     const [contracts, setContracts] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+    const [showMessageContractDialog, setShowMessageContractDialog] = useState(false);
 
     useEffect(() => {
         setContracts(messageContracts || [])
         setSelectedId(null);
+        setShowMessageContractDialog(false);
     }, [id, isSelected]);
 
     const clickHandler = () => {
         if (onHeaderClicked) {
              onHeaderClicked(id);
         }
+    };
+
+    const handleAddMessageContractClicked = () => {
+        setShowMessageContractDialog(prev => !prev);
     };
 
     const messageHeaderClickHandler = (messageId) => {
@@ -90,8 +97,14 @@ export default function Topic({id, name, description, partitions, retention, sta
                 <br />
 
                 <div className={styles.messagecontractsheader}>
+                    {showMessageContractDialog && 
+                        <MessageContractDialog 
+                            topicName={name} 
+                            onCloseClicked={() => setShowMessageContractDialog(false)}
+                        /> 
+                    }
                     <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
-                    <Button size="small" variation="primary">Add</Button>
+                    <Button size="small" variation="primary" onClick={handleAddMessageContractClicked}>Add</Button>
                 </div>
                 {(contracts || []).length == 0 && 
                     <div>No message contracts defined...yet!</div>

@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "/v2",
   "dependencies": {
+    "@dfds-ui/forms": "^1.1.15",
     "@dfds-ui/react-components": "^1.1.15",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -16,7 +17,8 @@
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
     "react-syntax-highlighter": "^15.5.0",
-    "serve": "^14.1.2"
+    "serve": "^14.1.2",
+    "to-json-schema": "^0.2.5"
   },
   "scripts": {
     "start": "react-scripts start",
