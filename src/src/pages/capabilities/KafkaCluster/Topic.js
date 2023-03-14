@@ -85,6 +85,8 @@ export default function Topic({id, name, description, partitions, retention, sta
         onClicked={clickHandler} 
     />;
 
+    const isPublic = name.startsWith("pub.");
+
     return <Accordion header={header} isOpen={isSelected} onToggle={clickHandler}>
 
         <Divider />
@@ -94,29 +96,38 @@ export default function Topic({id, name, description, partitions, retention, sta
                 <Text styledAs="actionBold">Description</Text>
                 <Text>{description}</Text>
 
-                <br />
 
-                <div className={styles.messagecontractsheader}>
-                    {showMessageContractDialog && 
-                        <MessageContractDialog 
-                            topicName={name} 
-                            onCloseClicked={() => setShowMessageContractDialog(false)}
-                        /> 
-                    }
-                    <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
-                    <Button size="small" variation="primary" onClick={handleAddMessageContractClicked}>Add</Button>
-                </div>
-                {(contracts || []).length == 0 && 
-                    <div>No message contracts defined...yet!</div>
+                {isPublic && 
+                    <>
+                        <br />
+
+                        <div className={styles.messagecontractsheader}>
+                            {showMessageContractDialog && 
+                                <MessageContractDialog 
+                                    topicName={name} 
+                                    onCloseClicked={() => setShowMessageContractDialog(false)}
+                                /> 
+                            }
+                            <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
+                            <Button size="small" variation="primary" onClick={handleAddMessageContractClicked}>Add</Button>
+                        </div>
+
+
+                        {(contracts || []).length == 0 && 
+                            <div>No message contracts defined...yet!</div>
+                        }
+
+                        {(contracts || []).map(x => <Message 
+                            key={x.id} 
+                            {...x} 
+                            isSelected={x.id === selectedId}
+                            onHeaderClicked={id => messageHeaderClickHandler(id)}
+                        />)}
+                        
+                        <br />
+                    </>
                 }
-                {(contracts || []).map(x => <Message 
-                    key={x.id} 
-                    {...x} 
-                    isSelected={x.id === selectedId}
-                    onHeaderClicked={id => messageHeaderClickHandler(id)}
-                />)}
 
-                <br />
             </CardContent>
         </Card>
 
