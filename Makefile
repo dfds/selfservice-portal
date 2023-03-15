@@ -15,8 +15,9 @@ clean:
 restore:
 	@cd src && npm install
 
+build: TIME=$(shell date +"%Y-%m-%d %H:%M")
 build:
-	@cd src && npm run build
+	@cd src && REACT_APP_DATE_OF_RELEASE="$(TIME)" npm run build
 	@cp -r ./src/build/* $(OUTPUT_DIR_APP)
 
 

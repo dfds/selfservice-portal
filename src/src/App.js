@@ -10,6 +10,12 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
+function Footer() {
+  return <div className="globalfooter">
+    By: Cloud Engineering | Released: {process.env.REACT_APP_DATE_OF_RELEASE}
+  </div>
+}
+
 function Layout() {
   return <>
     <AuthenticatedTemplate>
@@ -19,6 +25,7 @@ function Layout() {
         </SiteLayout.Header>
         <SiteLayout.Main>
           <Outlet />
+          <Footer />
         </SiteLayout.Main>
       </SiteLayout.Grid>
     </AuthenticatedTemplate>

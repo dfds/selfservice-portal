@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.globalfooter {
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+
+  text-transform: lowercase;
+  color: #002b454d;
+  font-size: 0.65rem;
+  font-family: monospace;
+}
