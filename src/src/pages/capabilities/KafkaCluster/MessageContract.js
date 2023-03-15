@@ -6,10 +6,26 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import Expandable from "components/Expandable";
 import Poles from "components/Poles";
 import { Divider } from "@dfds-ui/react-components/divider";
+import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
 
-function MessageHeader({messageType, isOpen}) {
+function MessageHeader({messageType, isOpen, status}) {
+    const notProvisioned = "Provisioned".toUpperCase() !== status?.toUpperCase();
+
     return <div className={`${styles.header} ${isOpen ? styles.headerselected : null}`}>
-        <Text styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}>{messageType}</Text>
+        <Text className={notProvisioned ? styles.notprovisioned : null} styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}>
+            {notProvisioned && 
+                <>
+                    <StatusAlert /> 
+                    <span>&nbsp;</span>
+                </>
+            }
+
+            {messageType}
+
+            {notProvisioned &&
+                <span>&nbsp;({status?.toLowerCase()})</span>
+            }            
+        </Text>
     </div>
 }
 
@@ -19,7 +35,7 @@ function JsonViewer({json}) {
     </div>
 }
 
-export default function Message({id, messageType, description, example, schema, isSelected, onHeaderClicked}) {
+export default function Message({id, messageType, description, example, schema, status, isSelected, onHeaderClicked}) {
 
     const [showSchema, setShowSchema] = useState(false);
 
@@ -37,12 +53,15 @@ export default function Message({id, messageType, description, example, schema, 
         }
     };
 
+    const isProvisioned = (status || "").toLowerCase() === "provisioned";
+
     const header = <>
         <MessageHeader
             messageType={messageType}
-            isOpen={isSelected}
+            isOpen={isSelected && isProvisioned}
+            status={status}
         />
-        <Divider />
+        <Divider/>
     </>;
 
     let descriptionElement = <Text>{description}</Text>;
@@ -53,7 +72,7 @@ export default function Message({id, messageType, description, example, schema, 
     }
 
     return <div className={styles.container}>
-        <Expandable header={header} isOpen={isSelected} onHeaderClicked={headerClickHandler}>
+        <Expandable header={header} isOpen={isSelected && isProvisioned} onHeaderClicked={headerClickHandler}>
             <div className={styles.contentcontainer}>
                 <Poles 
                     leftContent={<Text styledAs="label" style={{ marginBottom: "0"}}>Description</Text>}

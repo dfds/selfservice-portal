@@ -108,11 +108,31 @@ app.get("/capabilities/:id", (req, res) => {
   }
 });
 
+function addLinksToTopic(parentCollectionUrl, topic) {
+  return {...topic, ...{
+    "_links": {
+      self: {
+        href: composeUrl(parentCollectionUrl, topic.id),
+        rel: "self",
+        allow: ["GET"]
+      },
+      messageContracts: {
+        href: composeUrl(parentCollectionUrl, topic.id, "messagecontracts"),
+        rel: "related",
+        allow: [
+          "GET", 
+          topic.name.startsWith("pub.") ? "POST" : ""
+        ].filter(x => x != "")
+      }
+    }
+  }};
+}
+
 app.get("/capabilities/:id/topics", (req, res) => {
   let found = capabilities.find(x => x.id == req.params.id);
   if (found) {
     res.send({
-      items: (found.topics || []),
+      items: (found.topics || []).map(topic => addLinksToTopic(req.path, topic)),
       "_embedded": {
         kafkaClusters: {
           items: (kafkaClusters || []),
@@ -129,13 +149,49 @@ app.get("/capabilities/:id/topics", (req, res) => {
         self: {
           href: composeUrl(req.path),
           rel: "self",
-          allow: ["GET"]
+          allow: ["GET", "POST"]
         }
       }
     });
   } else {
     res.sendStatus(404);
   }
+});
+
+app.post("/capabilities/:capabilityId/topics/:topicId/messagecontracts", (req, res) => {
+  let foundCapability = capabilities.find(x => x.id == req.params.capabilityId);
+  if (!foundCapability) {
+    res.sendStatus(404);
+    return;
+  }
+
+  const foundTopic = (foundCapability.topics || []).find(topic => topic.id === req.params.topicId);
+  if (!foundTopic) {
+    res.sendStatus(404);
+    return;
+  }
+
+  const contracts = foundTopic.messageContracts || [];
+  const newContract = {...req.body, ...{
+    id: "" + new Date().getTime(),
+    status: "In Progress",
+  }};
+
+  contracts.push(newContract);
+  foundTopic.messageContracts = contracts;
+
+  log("Added new message contract: " + JSON.stringify(newContract, null, 2));
+
+  res
+    .set("Location", composeUrl(`${req.path}/${newContract.id}`))
+    .status(201)
+    .send(newContract);
+
+  setTimeout(() => {
+      newContract.status = "Provisioned";
+      log(`Changed status on message contract ${newContract.id} to ${newContract.status}`);
+  }, (Math.random() * 2000)+2000);
+
 });
 
 app.get("/capabilities/:id/membershipapplications", (req, res) => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Text } from '@dfds-ui/typography';
-import styles from "./topics.module.css";
+import styles from "./Topics.module.css";
 import { Button, Banner, BannerHeadline, SideSheet, SideSheetContent, TextField, SelectField, Tooltip, BannerParagraph } from '@dfds-ui/react-components';
 import { Information } from '@dfds-ui/icons/system';
 
@@ -166,7 +166,7 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
                 </SelectField>
 
                 {formData.availability === "public" && 
-                    <Banner>
+                    <Banner variant="lowEmphasis">
                         <BannerHeadline>Please note</BannerHeadline>
                         <BannerParagraph>
                             All public topics will be prefixed with <span className={styles.capabilityid}>pub.</span> to 

@@ -128,12 +128,10 @@ export async function createCapability(capabilityDefinition){
 }
 
 export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
-    console.group("addTopicToCapability");
-
     const topicsLink = capabilityDefinition?._links?.topics;
     if (!topicsLink) {
         console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
-        return [];
+        return null;
     }
 
     const accessToken = await getSelfServiceAccessToken();
@@ -143,25 +141,51 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
         name: topicDefinition.name,
         description: topicDefinition.description,
         partitions: topicDefinition.partitions,
-        retention: topicDefinition.retention,
+        retention: topicDefinition.retention + "d",
         kafkaClusterId: clusterId,
     };
 
-    console.log("sending payload: ", payload);
     const response = await callApi(url, accessToken, "POST", payload);
 
     if (!response.ok) {
         console.log(`Warning: failed adding topic to capability using url ${url} - response was ${response.status} ${response.statusText}`);
+        // NOTE: [jandr] handle problem details instead
         return;
     }
 
-    const resVal = response;
-    console.log("recieved new topic: ", resVal.json());
+    return await response.json();
+}
 
+export async function addMessageContractToTopic(topicDefinition, messageContractDescriptor) {
+    const messageContractsLink = topicDefinition?._links?.messageContracts;
+    if (!messageContractsLink) {
+        console.log("Warning! No message contract link found on topic definition:", topicDefinition);
+        return null;
+    }
 
-    console.groupEnd();
+    if (messageContractsLink.allow.indexOf("POST") === -1) {
+        throw Error("Error! You are not allowed to post new message contracts to this topic.");
+    }
 
-    return resVal;
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = messageContractsLink.href;
+    const payload = {
+        messageType: messageContractDescriptor.messageType,
+        description: messageContractDescriptor.description,
+        example: messageContractDescriptor.example,
+        schema: messageContractDescriptor.schema,
+    };
+
+    const response = await callApi(url, accessToken, "POST", payload);
+
+    if (!response.ok) {
+        console.log(`Warning: failed adding message contract to topic on capability using url ${url} - response was ${response.status} ${response.statusText}`);
+        // NOTE: [jandr] handle problem details instead
+        return;
+    }
+
+    return await response.json();
 }
 
 export async function getCapabilityMembers(capabilityDefinition) {

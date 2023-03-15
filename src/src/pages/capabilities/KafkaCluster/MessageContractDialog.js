@@ -101,7 +101,7 @@ function removeEnvelope(message) {
     return newValue;
 }
 
-export default function MessageContractDialog({topicName, onCloseClicked}) {
+export default function MessageContractDialog({topicName, onAddClicked, onCloseClicked}) {
     const [type, setType] = useState("");
     const [typeError, setTypeError] = useState("");
     const [description, setDescription] = useState("");
@@ -116,6 +116,7 @@ export default function MessageContractDialog({topicName, onCloseClicked}) {
     const [previewAsSchema, setPreviewAsSchema] = useState(false);
 
     const [canAdd, setCanAdd] = useState(false);
+    const [isInProgress, setIsInProgress] = useState(false);
 
     useEffect(() => {
         let error = "";
@@ -224,8 +225,19 @@ export default function MessageContractDialog({topicName, onCloseClicked}) {
         }
     };
 
-    const handleAddClicked = () => {
-        
+    const handleAddClicked = async () => {
+        if (onAddClicked) {
+            setIsInProgress(true);
+
+            // NOTE: [jandr] handle errors
+            await onAddClicked({
+                messageType: type,
+                description: description,
+                example: previewMessage,
+                schema: previewSchema,
+            });
+            // setIsInProgress(false);
+        }
     };
 
     return <SideSheet header={`Add message contract...`} onRequestClose={handleCloseClicked} isOpen={true} width="50%" alignSideSheet="right" variant="elevated" backdrop>
@@ -295,7 +307,7 @@ export default function MessageContractDialog({topicName, onCloseClicked}) {
             <br />
 
             <ButtonStack>
-                <Button variation="primary" disabled={!canAdd} onClick={handleAddClicked}>Add</Button>
+                <Button variation="primary" disabled={!canAdd} submitting={isInProgress} onClick={handleAddClicked}>Add</Button>
                 <Button variation="outlined" onClick={handleCloseClicked}>Cancel</Button>
             </ButtonStack>
 

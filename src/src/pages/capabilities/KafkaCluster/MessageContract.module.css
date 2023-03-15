@@ -64,6 +64,11 @@
     /* overflow-y: scroll; */
 }
 
+.notprovisioned {
+    color: #002b454d;
+    font-style: italic;
+}
+
 @keyframes slidein {
     from { height: 0; }
     to { height: 35rem; }

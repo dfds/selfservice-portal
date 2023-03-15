@@ -1,49 +1,52 @@
 import React from "react"
 import { Text } from '@dfds-ui/typography';
-import Topic from "./Topic";
-import { Button, Card, CardContent, ButtonStack } from '@dfds-ui/react-components';
-import { Divider } from "@dfds-ui/react-components/divider";
+import { Button, ButtonStack } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
+import NewTopicDialog from './NewTopicDialog';
+import { useState } from "react";
+import { useContext } from "react";
+import AppContext from "app-context";
+import TopicList from "./TopicList";
 
-function TopicSection({name, topics, clusterId, selectedTopic, onTopicClicked}) {
-    return <>
-        <Text styledAs='action'>{name}</Text>
-        <Divider />
-        {topics.length == 0 &&
-            <div style={{ paddingLeft: "1rem", fontStyle: "italic" }}>
-                No {name.toLocaleLowerCase()} topics...yet!
-            </div>
-        }
-
-        {topics.map(topic => <Topic 
-            key={`${clusterId}-${topic.id}`} 
-            {...topic} 
-            isSelected={clusterId === selectedTopic?.kafkaClusterId && topic.id === selectedTopic?.id}
-            onHeaderClicked={topicId => onTopicClicked(clusterId, topicId)}
-        />)}
-    </>
-}
-
-export default function KafkaCluster({cluster, selectedTopic, onAddTopicToClusterClicked, onTopicClicked}) {
-    const handleTopicClicked = (clusterId, topicId) => {
-        if (onTopicClicked) {
-            onTopicClicked(clusterId, topicId);
-        }
-    };
-
-    const handleAddTopicToClusterClicked = (clusterId) => {
-        if (onAddTopicToClusterClicked) {
-            onAddTopicToClusterClicked(clusterId);
-        }
-    };
+export default function KafkaCluster({cluster}) {
+    const { selectedCapability } = useContext(AppContext);
+    const [showDialog, setShowDialog] = useState(false);
+    const [isInProgress, setIsInProgress] = useState(false);
 
     const topics = cluster.topics || [];
     const publicTopics = topics.filter(x => x.name.startsWith("pub."));
     const privateTopcis = topics.filter(x => !x.name.startsWith("pub."));
+    const clusterDescription = (cluster.description || "")
+        .split("\n")
+        .map((x, i) => <Text key={i}>{x}</Text>);
+
+    const handleAddTopicToClusterClicked = () => setShowDialog(true);
+    const handleCloseTopicFormClicked = () => setShowDialog(false);
+
+    const handleAddTopic = async ({name, description, partitions, retention}) => {
+        setIsInProgress(true);
+        await selectedCapability?.addTopicToCluster(cluster.id, {name, description, partitions, retention});
+        setIsInProgress(false);
+        setShowDialog(false);
+    };
+
+    const handleTopicClicked = (clusterId, topicId) => {
+        selectedCapability?.toggleSelectedKafkaTopic(clusterId, topicId);
+    };
 
     return <PageSection headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}>
         <Text styledAs="label">Description</Text>
-        {(cluster.description || "").split("\n").map((x, i) => <Text key={i}>{x}</Text>)}
+        {clusterDescription}
+
+        {showDialog &&
+            <NewTopicDialog
+                capabilityId={selectedCapability?.details?.id}
+                clusterName={cluster.name.toLocaleLowerCase()}
+                inProgress={isInProgress}
+                onAddClicked={handleAddTopic}
+                onCloseClicked={handleCloseTopicFormClicked}
+            />
+        }
 
         <ButtonStack align="left">
             <Button size="small" onClick={handleAddTopicToClusterClicked}>Add topic</Button>
@@ -52,22 +55,22 @@ export default function KafkaCluster({cluster, selectedTopic, onAddTopicToCluste
         
         <br />
 
-        <TopicSection 
+        <TopicList 
             name="Public" 
             topics={publicTopics} 
             clusterId={cluster.id} 
-            selectedTopic={selectedTopic} 
-            onTopicClicked={onTopicClicked} 
+            selectedTopic={selectedCapability?.selectedKafkaTopic} 
+            onTopicClicked={handleTopicClicked} 
         />
 
         <br />
 
-        <TopicSection 
+        <TopicList 
             name="Private" 
             topics={privateTopcis} 
             clusterId={cluster.id} 
-            selectedTopic={selectedTopic} 
-            onTopicClicked={onTopicClicked} 
+            selectedTopic={selectedCapability?.selectedKafkaTopic} 
+            onTopicClicked={handleTopicClicked} 
         />
     </PageSection>
 }
