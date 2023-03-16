@@ -33,15 +33,52 @@ export default function TopicsPage({}) {
     const [filteredData, setfilteredData] = useState([]);
     const navigate = useNavigate();
     const [inputText, setInputText] = useState(""); 
+    // let inputHandler = (e) => {
+    //     var lowerCase = e.target.value.toLowerCase();
+    //     setInputText(lowerCase);
+    //     let data = topics.filter((el) => {
+    //         return el.name.toLowerCase().includes(lowerCase)
+    //     }
+        
+    //     );
+
+    //     //Highlight matching text
+    //     let highlightData = data.map((el) => {
+    //         let regex = new RegExp(lowerCase, 'gi');
+    //         let name = el.name.replace(regex, (match) => {
+    //             return '<b>' + match + '</b>';
+    //         });
+
+    //         return el.name.toLowerCase()
+    //     }
+
+    //     )
+
+
+    //     setfilteredData(highlightData)
+    //     //console.log(filteredData)
+    // }
+
     let inputHandler = (e) => {
         var lowerCase = e.target.value.toLowerCase();
-        setInputText(lowerCase);
-        let data = topics.filter((el) => {
-            return el.name.toLowerCase().includes(lowerCase)
-        }
+        const highlightedData = topics.map((topic) =>  {
+            const copy = {...topic};
+            const index = copy.name.indexOf(lowerCase);
+            if (index > -1) {
+                copy.highlight = {
+                    start: index,
+                    count: lowerCase.length
+                };
+            }
+
+            return copy
+
+        });
+
+        const finalResult = highlightedData.filter((el) => el.highlight != null );
         
-        )
-        setfilteredData(data)
+
+        setfilteredData(finalResult)
         console.log(filteredData)
     }
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
@@ -60,6 +97,21 @@ export default function TopicsPage({}) {
         fetchTopics();
     }, []);
     
+    const highlightedName = (name, highlight) => {
+        if (!highlight) {
+            return <>{name}</>
+        }
+        const left = name.substring(0, highlight.start);
+        const token = name.substring(highlight.start, highlight.count);
+        const right = name.substring(highlight.start + highlight.count);
+
+        return <>
+            <span>{left}</span>
+            <span style= {{backgroundColor: "yellow"}}>{token}</span>
+            <span>{right}</span>
+        </>
+    };
+
     return <>
         <br/>
         <br/>
@@ -71,9 +123,8 @@ export default function TopicsPage({}) {
                     <TextField
                         name="basic"
                         onChange={inputHandler}
-                        label="Field label"
                         prefix="Test"
-                        placeholder="Hint text"
+                        placeholder="Search"
                         icon={<Search />}
                         help="I need some more help"
                     />
@@ -89,7 +140,7 @@ export default function TopicsPage({}) {
                      <TableBody>
                          {filteredData.map(x => <TableRow key={x.name + x.id}>
                              <TableDataCell  onClick={() => clickHandler(x.capabilityId)}>{x.capabilityId}</TableDataCell>
-                             <TableDataCell>{x.name}</TableDataCell>
+                             <TableDataCell>{highlightedName(x.name, x.highlight)}</TableDataCell>
                              <TableDataCell>{x.kafkaClusterId}</TableDataCell>
                              <TableDataCell>{x.description}</TableDataCell>
                              </TableRow> 
