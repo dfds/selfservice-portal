@@ -61,12 +61,9 @@ export default function TopicsPage({}) {
 
     let inputHandler = (e) => {
         var lowerCase = e.target.value.toLowerCase();
-        console.log(lowerCase)
         const highlightedData = topics.map((topic) =>  {
             const copy = {...topic};
-            console.log(copy.name)
             const index = copy.name.indexOf(lowerCase);
-            console.log(index)
             if (index > -1) {
                 copy.highlight = {
                     start: index,
@@ -82,7 +79,6 @@ export default function TopicsPage({}) {
         
 
         setfilteredData(finalResult)
-        console.log(filteredData)
     }
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
@@ -104,14 +100,9 @@ export default function TopicsPage({}) {
         if (!highlight) {
             return <>{name}</>
         }
-        console.log("start="+ highlight.start + "count="+ highlight.count )
-        console.log("name="+name)
         const left = name.substring(0, highlight.start);
-        console.log("Left="+left)
         const token = name.substring(highlight.start, highlight.start + highlight.count);
-        console.log("Token="+token)
         const right = name.substring(highlight.start + highlight.count);
-        console.log("Right="+right)
 
         return <>
             <span>{left}</span>
