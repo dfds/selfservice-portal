@@ -33,31 +33,6 @@ export default function TopicsPage({}) {
     const [filteredData, setfilteredData] = useState([]);
     const navigate = useNavigate();
     const [inputText, setInputText] = useState(""); 
-    // let inputHandler = (e) => {
-    //     var lowerCase = e.target.value.toLowerCase();
-    //     setInputText(lowerCase);
-    //     let data = topics.filter((el) => {
-    //         return el.name.toLowerCase().includes(lowerCase)
-    //     }
-        
-    //     );
-
-    //     //Highlight matching text
-    //     let highlightData = data.map((el) => {
-    //         let regex = new RegExp(lowerCase, 'gi');
-    //         let name = el.name.replace(regex, (match) => {
-    //             return '<b>' + match + '</b>';
-    //         });
-
-    //         return el.name.toLowerCase()
-    //     }
-
-    //     )
-
-
-    //     setfilteredData(highlightData)
-    //     //console.log(filteredData)
-    // }
 
     let inputHandler = (e) => {
         var lowerCase = e.target.value.toLowerCase();
