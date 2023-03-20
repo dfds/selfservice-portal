@@ -8,7 +8,7 @@ import Summary from './summary';
 import Resources from './resources';
 import Logs from './logs';
 import CommunicationChannels from './communicationchannels';
-
+import { getCapabilityMembershipApplications, getCapabilityById } from "SelfServiceApiClient";
 import KafkaCluster from "./KafkaCluster";
 import PageSection from "components/PageSection";
 import Page from "components/Page";
@@ -17,18 +17,49 @@ export default function CapabilityDetailsPage() {
     const { id } = useParams();
     const { selectedCapability, changeSelectedCapability } = useContext(AppContext);
 
+    const [loading, setLoading] = useState(true);
+
+    const [capabilityDetails, setCapabilityDetails] = useState(null);
+
     const [selectedKafkaClusterId, setSelectedKafkaClusterId] = useState(null);
-
-    //const [membershipApplicationsData, setMembershipApplicationsData] = useState([]);
-
-    const dummyMembershipApplications = []; //TODO: non-hardcoded data
-    // TODO: function to handle GET call on capabilities/:id/membershipApplications in SelfServiceApiClient
-    //setMembershipApplicationsData(dummyMembershipApplications);
 
     useEffect(() => {
         window.scrollTo(0, 0);
         changeSelectedCapability(id);
     }, [id]);
+
+
+    // get capability details
+    useEffect(() => {
+        async function fetchDetails(id) {
+            setLoading(true);
+
+            const details = await getCapabilityById(id);
+            if (details) {
+                setCapabilityDetails(details);
+            }
+
+            setLoading(false);
+        }
+
+        fetchDetails(id);
+    }, [id]);
+
+    //get membership applications
+    const [membershipApplications, setMembershipApplications] = useState([]);
+
+    useEffect(() => {
+        if (!capabilityDetails) {
+            return;
+        }
+        const fetchMemberhipApplications = async (capabilityDetails) => {
+          console.log("passing: ", capabilityDetails);
+          const result = await getCapabilityMembershipApplications(capabilityDetails);
+          setMembershipApplications(result);
+        };
+
+        fetchMemberhipApplications(capabilityDetails);
+    }, [capabilityDetails]);
 
     return <>
             <Page title={selectedCapability?.details?.name} isLoading={selectedCapability?.isLoading} isNotFound={selectedCapability?.details === null}>
@@ -48,7 +79,7 @@ export default function CapabilityDetailsPage() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                            {dummyMembershipApplications.map(x =>
+                            {membershipApplications.map(x =>
                             <TableRow key={x.applicant}>
                                 {/* <TableDataCell  onClick={() => clickHandler(x.capabilityId)}>{x.capabilityId}</TableDataCell> */}
                                 <TableDataCell>{x.applicant}</TableDataCell>
@@ -77,7 +108,7 @@ export default function CapabilityDetailsPage() {
                 />)}
 
             </Page>
- 
+
         <br/>
     </>
 }
