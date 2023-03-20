@@ -67,7 +67,9 @@ export default function TopicsPage({}) {
             if (index > -1) {
                 copy.highlight = {
                     start: index,
-                    count: lowerCase.length
+                    count: lowerCase.length,
+                    shouldBeHighlighted: true,
+                    searchStr: lowerCase
                 };
             }
 
@@ -95,19 +97,18 @@ export default function TopicsPage({}) {
 
         fetchTopics();
     }, []);
+
+     
     
     const highlightedName = (name, highlight) => {
         if (!highlight) {
             return <>{name}</>
         }
-        const left = name.substring(0, highlight.start);
-        const token = name.substring(highlight.start, highlight.start + highlight.count);
-        const right = name.substring(highlight.start + highlight.count);
+
+        const parts = name.split(new RegExp(`(${highlight.searchStr})`, 'gi'));
 
         return <>
-            <span>{left}</span>
-            <span style= {{backgroundColor: "yellow"}}>{token}</span>
-            <span>{right}</span>
+            <span>{parts.map(part => part.toLowerCase() === highlight.searchStr.toLowerCase() ? <span style= {{backgroundColor: "yellow"}}>{part}</span> : part)}</span>
         </>
     };
 
