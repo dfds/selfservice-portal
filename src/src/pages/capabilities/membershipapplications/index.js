@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useContext } from "react";
 import PageSection from "components/PageSection";
 import AppContext from "app-context";
+import { format, intlFormatDistance,} from "date-fns";
 
 export function MembershipApplications(id){
     const { selectedCapability } = useContext(AppContext);
@@ -25,8 +26,8 @@ export function MembershipApplications(id){
             <TableRow key={x.applicant}>
                 {/* <TableDataCell  onClick={() => clickHandler(x.capabilityId)}>{x.capabilityId}</TableDataCell> */}
                 <TableDataCell>{x.applicant}</TableDataCell>
-                <TableDataCell>{x.submittedAt}</TableDataCell> {/*TODO [pausegh]: human-readable datetime format*/}
-                <TableDataCell>{x.expiresOn}</TableDataCell> {/*TODO [pausegh]: human readable time delta*/}
+                <TableDataCell>{format(new Date(x.submittedAt), 'MMMM do yyyy, h:mm:ss')}</TableDataCell> {/*TODO [pausegh]: human-readable datetime format*/}
+                <TableDataCell>{intlFormatDistance(new Date(x.expiresOn), new Date())}</TableDataCell> {/*TODO [pausegh]: human readable time delta*/}
                 <TableDataCell>{x.status}</TableDataCell>
                 </TableRow>
             )}
