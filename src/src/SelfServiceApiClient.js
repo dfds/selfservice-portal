@@ -156,6 +156,22 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
     return await response.json();
 }
 
+export async function getMessageContracts(topicDefinition) {
+    const messageContractsLink = topicDefinition?._links?.messageContracts;
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = messageContractsLink.href;
+    const response = await callApi(url, accessToken);
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json();
+    return data.items;
+}
+
 export async function addMessageContractToTopic(topicDefinition, messageContractDescriptor) {
     const messageContractsLink = topicDefinition?._links?.messageContracts;
     if (!messageContractsLink) {

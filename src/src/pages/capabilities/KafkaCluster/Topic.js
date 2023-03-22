@@ -10,6 +10,8 @@ import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
 import AppContext from "app-context";
 
+import { getMessageContracts } from "SelfServiceApiClient";
+
 function TopicHeader({name, description, partitions, retention, status, isOpen, onClicked}) {
     const handleClick = () => {
         if (onClicked) {
@@ -48,18 +50,29 @@ function TopicHeader({name, description, partitions, retention, status, isOpen, 
 export default function Topic({topic, isSelected, onHeaderClicked}) {
     const { selectedCapability } = useContext(AppContext);
     
-    // const [contracts, setContracts] = useState([]);
+    const [contracts, setContracts] = useState([]);
     const [selectedMessageContractId, setSelectedMessageContractId] = useState(null);
     const [showMessageContractDialog, setShowMessageContractDialog] = useState(false);
 
-    const { id, name, description, partitions, retention, status, messageContracts } = topic;
-    const contracts = messageContracts;
+    const { id, name, description, partitions, retention, status } = topic;
+    const isPublic = name.startsWith("pub.");
 
-    // useEffect(() => {
-    //     setContracts(messageContracts || [])
-    //     setSelectedMessageContractId(null);
-    //     setShowMessageContractDialog(false);
-    // }, [id, isSelected, messageContracts]);
+    useEffect(() => {
+        if (!isSelected) {
+            setContracts([]);
+            return;
+        }
+
+        async function fetchData(topic) {
+            const result = await getMessageContracts(topic);
+            result.sort((a,b) => a.messageType.localeCompare(b.messageType));
+            setContracts(result);
+        }
+
+        if (isPublic) {
+            fetchData(topic);
+        }
+    }, [topic, isSelected]);
 
     const handleHeaderClicked = () => {
         if (onHeaderClicked) {
@@ -96,7 +109,6 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
         onClicked={handleHeaderClicked} 
     />;
 
-    const isPublic = name.startsWith("pub.");
 
     return <Accordion header={header} isOpen={isSelected} onToggle={handleHeaderClicked}>
 
