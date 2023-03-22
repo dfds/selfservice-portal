@@ -1,6 +1,6 @@
 import express from "express";
 import { convertKafkaTopic, convertMessageContract } from "../converters";
-import { state } from "../data";
+import { MessageContract, state } from "../data";
 import { composeUrl, log } from "../helpers";
 
 const router = express.Router();
@@ -53,15 +53,17 @@ router.get("/kafkatopics/:id/messagecontracts", (req, res) => {
 });
 
 router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
-  const foundTopic = state.kafkaTopics.find(x => x.id == req.params.id);
+  const kafkaTopicId : string = req?.params?.id || "";
+  const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
   }
 
-  const newContract = {...req.body, ...{
+  const newContract : MessageContract = {...req.body, ...{
     id: "" + new Date().getTime(),
     status: "In Progress",
+    kafkaTopicId: kafkaTopicId,
   }};
 
   state.messageContracts.push(newContract);
