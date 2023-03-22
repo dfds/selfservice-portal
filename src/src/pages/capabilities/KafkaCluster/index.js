@@ -48,11 +48,15 @@ export default function KafkaCluster({cluster}) {
             />
         }
 
+        {(selectedCapability?.details?._links?.topics?.allow).includes("POST") && 
+
         <ButtonStack align="left">
             <Button size="small" onClick={handleAddTopicToClusterClicked}>Add topic</Button>
             <Button size="small" variation="outlined" disabled>Get credentials</Button>
         </ButtonStack>
         
+        }
+
         <br />
 
         <TopicList 

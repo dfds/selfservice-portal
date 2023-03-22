@@ -20,14 +20,14 @@ export function convertCapability(capability: Capability) : any {
             topics: {
                 href: composeUrl(`/capabilities/${capability.id}/topics`),
                 rel: "related",
-                allow: capability.id === "1" 
+                allow: capability.id === "this-is-a-capability-xyz" 
                     ? ["GET", "POST"]
                     : ["GET"]
             },
             membershipApplications: {
                 href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),
                 rel: "related",
-                allow: capability.id === "1" 
+                allow: capability.id === "this-is-a-capability-xyz" 
                     ? ["GET", "POST"]
                     : ["GET"]
             }
