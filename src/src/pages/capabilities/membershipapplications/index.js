@@ -8,7 +8,6 @@ import { format, intlFormatDistance,} from "date-fns";
 
 export function MembershipApplications(id, userEmail){
     const { selectedCapability } = useContext(AppContext);
-    const [userCanApprove, setUserCanApprove] = useState(false);
    return <>
     <Text styledAs='sectionHeadline'>Membership applications</Text>
     <PageSection>
@@ -28,7 +27,7 @@ export function MembershipApplications(id, userEmail){
                 <TableDataCell>{format(new Date(x.submittedAt), 'MMMM do yyyy, h:mm:ss')}</TableDataCell>
                 <TableDataCell>{intlFormatDistance(new Date(x.expiresOn), new Date())}</TableDataCell>
                 <TableDataCell>{x.status}</TableDataCell>
-                { userCanApprove && <TableDataCell> <Button size='small' >Approve</Button></TableDataCell> }
+                { selectedCapability.userCanApprove && <TableDataCell> <Button size='small' >Approve</Button></TableDataCell> }
                 </TableRow>
             )}
         </TableBody>

@@ -23,7 +23,10 @@ function useCapability() {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
+  const [userCanApprove, setUserCanApprove] = useState(false);
 
+
+// load details
   useEffect(() => {
     setDetails(null);
 
@@ -194,6 +197,18 @@ function useCapability() {
   fetchMemberhipApplications(details);
   }, [details]);
 
+  //check if currently logged-in user can approve membership for this capability
+  useEffect(() => {
+
+    async function fetchUserAllowedActions(details) {
+      if (details._links.membershipApplications.allow.includes("POST")){
+        setUserCanApprove(true);
+      }
+    }
+    if (details) {
+      fetchUserAllowedActions(capabilityId);
+    }
+  }, [details]);
 
   const capability = {
     isLoading,
@@ -202,6 +217,7 @@ function useCapability() {
     kafkaClusters,
     selectedKafkaTopic,
     membershipApplications,
+    userCanApprove,
     toggleSelectedKafkaTopic,
     addTopicToCluster,
     addMessageContractToTopic: addMessageContractToTopicLocal
