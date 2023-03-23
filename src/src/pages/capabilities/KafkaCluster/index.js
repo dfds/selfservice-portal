@@ -34,6 +34,8 @@ export default function KafkaCluster({cluster}) {
         selectedCapability?.toggleSelectedKafkaTopic(clusterId, topicId);
     };
 
+    const hasWriteAccess = (selectedCapability?.details?._links?.topics?.allow || []).includes("POST");
+
     return <PageSection headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}>
         <Text styledAs="label">Description</Text>
         {clusterDescription}
@@ -48,11 +50,13 @@ export default function KafkaCluster({cluster}) {
             />
         }
 
-        <ButtonStack align="left">
-            <Button size="small" onClick={handleAddTopicToClusterClicked}>Add topic</Button>
-            <Button size="small" variation="outlined" disabled>Get credentials</Button>
-        </ButtonStack>
-        
+        {hasWriteAccess && 
+            <ButtonStack align="left">
+                <Button size="small" onClick={handleAddTopicToClusterClicked}>Add topic</Button>
+                <Button size="small" variation="outlined" disabled>Get credentials</Button>
+            </ButtonStack>
+        }
+
         <br />
 
         <TopicList 
@@ -62,15 +66,20 @@ export default function KafkaCluster({cluster}) {
             selectedTopic={selectedCapability?.selectedKafkaTopic} 
             onTopicClicked={handleTopicClicked} 
         />
-
         <br />
 
-        <TopicList 
-            name="Private" 
-            topics={privateTopcis} 
-            clusterId={cluster.id} 
-            selectedTopic={selectedCapability?.selectedKafkaTopic} 
-            onTopicClicked={handleTopicClicked} 
-        />
+        {hasWriteAccess && 
+            <>
+                <TopicList 
+                    name="Private" 
+                    topics={privateTopcis} 
+                    clusterId={cluster.id} 
+                    selectedTopic={selectedCapability?.selectedKafkaTopic} 
+                    onTopicClicked={handleTopicClicked} 
+                />
+                <br />
+            </>
+        }
+
     </PageSection>
 }

@@ -8,6 +8,7 @@
     "@dfds-ui/react-components": "^1.1.15",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "date-fns": "^2.29.3",
     "global": "^4.4.0",
     "react": "^16.8.0",
     "react-dates": "^21.8.0",

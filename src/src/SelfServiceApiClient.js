@@ -39,7 +39,7 @@ export async function getCapabilityById(id) {
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
 
-    const url =  composeUrl("kafkatopics"); //window.apiBaseUrl + "/api/topics"; 
+    const url =  composeUrl("kafkatopics"); //window.apiBaseUrl + "/api/topics";
     const response = await callApi(url, accessToken);
 
     const { items } = await response.json();
@@ -156,6 +156,22 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
     return await response.json();
 }
 
+export async function getMessageContracts(topicDefinition) {
+    const messageContractsLink = topicDefinition?._links?.messageContracts;
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = messageContractsLink.href;
+    const response = await callApi(url, accessToken);
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json();
+    return data.items;
+}
+
 export async function addMessageContractToTopic(topicDefinition, messageContractDescriptor) {
     const messageContractsLink = topicDefinition?._links?.messageContracts;
     if (!messageContractsLink) {
@@ -208,6 +224,22 @@ export async function getCapabilityMembers(capabilityDefinition) {
     const { items } = await response.json();
 
     return items || [];
+}
+
+export async function getCapabilityMembershipApplications(capabilityDefinition){
+    const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;
+    if (!membershipApplicationsLink) {
+        console.log("Warning! No memberships applications link found on capability definition:", capabilityDefinition);
+        return [];
+    }
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = membershipApplicationsLink.href;
+    const response = await callApi(url, accessToken);
+
+    const items  = await response.json();
+    console.log(items);
+    return items.membershipApplications || [];
 }
 
 export async function getKafkaClusters() {

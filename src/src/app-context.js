@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic } from "./SelfServiceApiClient";
+import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic } from "./SelfServiceApiClient";
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
 
 const appContext = React.createContext(null);
@@ -12,7 +12,7 @@ function adjustRetention(kafkaTopic) {
         const { days } = match.groups;
         kafkaTopic.retention = `${days} day${days === "1" ? "" : "s"}`;
     }
-  }  
+  }
 }
 
 function useCapability() {
@@ -22,6 +22,7 @@ function useCapability() {
   const [members, setMembers] = useState([]);
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
+  const [membershipApplications, setMembershipApplications] = useState([]);
 
   useEffect(() => {
     setDetails(null);
@@ -64,7 +65,7 @@ function useCapability() {
           }
 
           return copy;
-        });        
+        });
       });
     }
 
@@ -82,14 +83,14 @@ function useCapability() {
             kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a,b) => a.messageType.localeCompare(b.messageType));
           });
       });
-      
+
       setKafkaClusters(clusters);
     }
 
     if (details) {
       fetchData(details);
     }
-    
+
     const handle = setInterval(() => {
       if (details) {
         fetchData(details);
@@ -178,12 +179,29 @@ function useCapability() {
     });
   };
 
+
+  // load membership applications
+  useEffect(() => {
+  if (!details) {
+      return;
+  }
+  const fetchMemberhipApplications = async (details) => {
+    console.log("passing: ", details);
+    const result = await getCapabilityMembershipApplications(details);
+    setMembershipApplications(result);
+  };
+
+  fetchMemberhipApplications(details);
+  }, [details]);
+
+
   const capability = {
     isLoading,
     details,
     members,
     kafkaClusters,
     selectedKafkaTopic,
+    membershipApplications,
     toggleSelectedKafkaTopic,
     addTopicToCluster,
     addMessageContractToTopic: addMessageContractToTopicLocal
@@ -194,7 +212,7 @@ function useCapability() {
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
-  
+
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
     hasLoadedOtherCapabilities: false,
@@ -236,6 +254,8 @@ function AppProvider({ children }) {
         loadOtherCapabilities();
       }
   }, [myCapabilities, user]);
+
+
 
 // ---------------------------------------------------------
 
