@@ -42,9 +42,14 @@ export async function getAllTopics() {
     const url =  composeUrl("kafkatopics"); //window.apiBaseUrl + "/api/topics";
     const response = await callApi(url, accessToken);
 
-    const { items } = await response.json();
-
-    return items || [];
+    const { items, _embedded } = await response.json();
+    console.log("embedded ", _embedded)
+    return (items || []).map(topic => {
+        const copy = {...topic};
+        const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
+        copy.kafkaClusterName = found?.name || "";
+        return copy;
+    });
 }
 
 export async function getMyPortalProfile() {

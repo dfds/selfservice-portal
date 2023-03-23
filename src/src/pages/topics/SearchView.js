@@ -19,12 +19,12 @@ export function SearchView({data}) {
 
 
     return(
-        <div class={styles.searchcontainer}>
+        <div className={styles.searchcontainer}>
             <h3 style= {{color: "#1874bc", fontSize: "1.3em"}}>{highlightedName(data.name, data.highlight)}</h3>
             <p>{data.description}</p>
             <div >
                 <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
-                <div style= {{color: "#1874bc"}}>{data.kafkaClusterId}</div>
+                <div style= {{color: "#1874bc"}}>{data.kafkaClusterName}</div>
             </div>
 
         </div>

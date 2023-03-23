@@ -111,7 +111,7 @@ export default function TopicsPage({}) {
                      </TableBody>
                     </Table> */}
                     <Text style= {{color: "#4d4e4cb3"}}><i>{filteredData.length} Results</i></Text>
-                    {filteredData.map(x => <div style={{marginBottom: "15px"}}><SearchView data={x}/></div>)}
+                    {filteredData.map(x => <div key= {x.id} style={{marginBottom: "15px"}}><SearchView data={x}/></div>)}
                     
             </CardContent>
         </Card>

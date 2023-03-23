@@ -109,6 +109,16 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+  },
+  {
+    id: "6",
+    capabilityId: "another-awssome-capability-abcd",
+    name: "pub.another-awssome-capability-abcd.hrisy",
+    description: "just a dummy topic",
+    kafkaClusterId: "kc-2",
+    partitions: 3,
+    retention: "1d",
+    status: "Provisioned",
   }
 ];
 

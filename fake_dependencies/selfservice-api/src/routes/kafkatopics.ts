@@ -9,6 +9,18 @@ router.get("/kafkatopics", (req, res) => {
   const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
   res.send({
     items: result.map(x => convertKafkaTopic(x)),
+    "_embedded": {
+      kafkaClusters: {
+          items: (state.kafkaClusters || []),
+          "_links": {
+              self: {
+                  href: composeUrl(`/kafkaclusters`),
+                  rel: "related",
+                  allow: ["GET"]
+              }
+          }
+      }  
+  },
     "_links": {
       self: {
         href: composeUrl("kafkatopics"),
