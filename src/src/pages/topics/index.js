@@ -6,6 +6,7 @@ import { Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } fr
 import { Text } from '@dfds-ui/typography';
 import { Tooltip, TextField } from '@dfds-ui/react-components';
 import { Search } from '@dfds-ui/icons/system';
+import {SearchView} from './SearchView'
 
 // const topics = [
 //     {
@@ -41,8 +42,6 @@ export default function TopicsPage({}) {
             const index = copy.name.indexOf(lowerCase);
             if (index > -1) {
                 copy.highlight = {
-                    start: index,
-                    count: lowerCase.length,
                     shouldBeHighlighted: true,
                     searchStr: lowerCase
                 };
@@ -54,9 +53,9 @@ export default function TopicsPage({}) {
 
         const finalResult = highlightedData.filter((el) => el.highlight != null );
         
-
         setfilteredData(finalResult)
     }
+
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     useEffect(() => {
@@ -64,8 +63,6 @@ export default function TopicsPage({}) {
         const fetchTopics = async () => {
           const result = await getAllTopics();
 
-          console.log(result); 
-          
           setTopics(result)
           setfilteredData(result)
         }
@@ -73,19 +70,9 @@ export default function TopicsPage({}) {
         fetchTopics();
     }, []);
 
-     
+         
     
-    const highlightedName = (name, highlight) => {
-        if (!highlight) {
-            return <>{name}</>
-        }
 
-        const parts = name.split(new RegExp(`(${highlight.searchStr})`, 'gi'));
-
-        return <>
-            <span>{parts.map(part => part.toLowerCase() === highlight.searchStr.toLowerCase() ? <span style= {{backgroundColor: "yellow"}}>{part}</span> : part)}</span>
-        </>
-    };
 
     return <>
         <br/>
@@ -103,7 +90,7 @@ export default function TopicsPage({}) {
                         icon={<Search />}
                         help="I need some more help"
                     />
-                    <Table isHeaderSticky isInteractive width={"100%"}>
+                    {/* <Table isHeaderSticky isInteractive width={"100%"}>
                          <TableHead>
                              <TableRow>
                                  <TableHeaderCell>Capability</TableHeaderCell>
@@ -121,7 +108,9 @@ export default function TopicsPage({}) {
                              </TableRow> 
                          )}             
                      </TableBody>
-                    </Table>
+                    </Table> */}
+                    {filteredData.map(x => <div style={{marginBottom: "15px"}}><SearchView data={x}/></div>)}
+                    
             </CardContent>
         </Card>
     </>
