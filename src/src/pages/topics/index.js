@@ -89,6 +89,7 @@ export default function TopicsPage({}) {
                         placeholder="Search"
                         icon={<Search />}
                         help="I need some more help"
+                        style={{ marginBottom: "-15px" }}
                     />
                     {/* <Table isHeaderSticky isInteractive width={"100%"}>
                          <TableHead>
@@ -109,6 +110,7 @@ export default function TopicsPage({}) {
                          )}             
                      </TableBody>
                     </Table> */}
+                    <Text style= {{color: "#4d4e4cb3"}}><i>{filteredData.length} Results</i></Text>
                     {filteredData.map(x => <div style={{marginBottom: "15px"}}><SearchView data={x}/></div>)}
                     
             </CardContent>
