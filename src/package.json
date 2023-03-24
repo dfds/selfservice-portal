@@ -1,6 +1,9 @@
 {
   "name": "selfservice-portal",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0" 
+  },
   "private": true,
   "homepage": "/v2",
   "dependencies": {
