@@ -2,7 +2,7 @@
   "name": "selfservice-portal",
   "version": "0.1.0",
   "engines": {
-    "node": ">=16.0.0" 
+    "node": ">=16.0.0"
   },
   "private": true,
   "homepage": "/v2",
@@ -20,6 +20,7 @@
     "react-router-dom": "^6.5.0",
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
+    "react-sparklines": "^1.7.0",
     "react-syntax-highlighter": "^15.5.0",
     "serve": "^14.1.2",
     "to-json-schema": "^0.2.5"

@@ -20,7 +20,7 @@ export default function GlobalMenu({}) {
       url: "/capabilities"
     },
     {
-      title: "Topics",
+      title: "Stream Topics",
       url: "/topics"
     },
     {
@@ -28,12 +28,12 @@ export default function GlobalMenu({}) {
       url: "https://wiki.dfds.cloud/playbooks"
     },
     {
-      title: "GitHub (Code examples)",
-      url: "https://github.com/dfds"
+      title: "Products",
+      url: "https://wiki.dfds.cloud/playbooks"
     },
     {
-      title: "UI",
-      url: "/sharedcomponents"
+      title: "GitHub (Code examples)",
+      url: "https://github.com/dfds"
     },
     {
       title: "Status page",
