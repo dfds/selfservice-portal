@@ -11,6 +11,14 @@ router.get("/capabilities", (req, res) => {
     });
 });
 
+router.get("/capabilities/:id/costs", (req, res) => {
+  let sample_costs = [
+    5, 10, 8, 15, 12, 7, 20, 18, 9
+  ]
+  res.send(sample_costs);  
+});
+
+
 router.get("/capabilities/:id", (req, res) => {
     let found = state.capabilities.find(x => x.id == req.params.id);
     if (found) {

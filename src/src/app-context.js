@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic } from "./SelfServiceApiClient";
+import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic, getCapabilityCostGlances } from "./SelfServiceApiClient";
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
 
 const appContext = React.createContext(null);
@@ -20,6 +20,7 @@ function useCapability() {
   const [isLoading, setIsLoading] = useState(false);
   const [details, setDetails] = useState(null);
   const [members, setMembers] = useState([]);
+  const [capabilityCostGlances, setCapabilityCostGlances] = useState([]);
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
@@ -232,11 +233,20 @@ function AppProvider({ children }) {
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
     hasLoadedOtherCapabilities: false,
+    hasLoadedCapabilityCostGlance: false
   });
 
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [otherCapabilities, setOtherCapabilities] = useState([]);
+  const [capabilityCostGlances, setCapabilityCostGlances] = useState([])
+
+  async function loadCapabilityCostGlance() {
+    // TODO jawib [2021-03-23]: this is a temporary solution to get the cost glances for a capability
+    const capabilityCostGlances = await getCapabilityCostGlances([]);
+    setCapabilityCostGlances(capabilityCostGlances);
+    setAppStatus(prev => ({...prev, ...{hasLoadedCapabilityCostGlance: true}}));
+  }
 
   async function loadMyCapabilities() {
     const { capabilities } = await getMyPortalProfile();

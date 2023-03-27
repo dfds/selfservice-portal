@@ -36,6 +36,26 @@ export async function getCapabilityById(id) {
     }
 }
 
+export async function getCapabilityCostGlances(ids) {
+    // TODO: Implement this
+    let glances = {}
+    for (const id of ids) {
+        const glance = [
+            5, 10, 8, 15, 12, 7, 20, 18, 9
+          ]//await getCapabilityCostGlance(id);
+        glances[id] = glance;
+    }
+    return glances;
+    // const accessToken = await getSelfServiceAccessToken();
+
+    // const url = composeUrl("capabilities", "costs");
+    // const response = await callApi(url, accessToken);
+
+    // const { items } = await response.json();
+
+    // return items || [];
+}
+
 export async function getAllTopics() {
     const accessToken = await getSelfServiceAccessToken();
 
@@ -243,7 +263,6 @@ export async function getCapabilityMembershipApplications(capabilityDefinition){
     const response = await callApi(url, accessToken);
 
     const items  = await response.json();
-    console.log(items);
     return items.membershipApplications || [];
 }
 

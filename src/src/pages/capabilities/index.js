@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Sparklines, SparklinesLine, SparklinesReferenceLine, SparklinesSpots, SparklinesBars, SparklinesNormalBand } from 'react-sparklines';
 import { Button, H1 } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
 import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
@@ -11,15 +12,17 @@ import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
 import AppContext from "./../../app-context";
 import { createCapability } from "../../SelfServiceApiClient";
-function MyCapabilities({capabilities}) {
+function MyCapabilities({ capabilities, capabilityCostGlances }) {
     const items = capabilities || [];
+    const costGlances = capabilityCostGlances || [];
+    console.log("MyCapabilities", items, costGlances);
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
         <Text styledAs='sectionHeadline'>My Capabilities</Text>
-        <Card variant="fill"  surface="main">
+        <Card variant="fill" surface="main">
             <CardContent>
                 {items.length > 0 &&
                     <Table isHeaderSticky isInteractive width={"100%"}>
@@ -34,6 +37,16 @@ function MyCapabilities({capabilities}) {
                                 <TableDataCell>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                                </TableDataCell>
+                                <TableDataCell align="right">
+                                </TableDataCell>
+                                <TableDataCell align="right">
+                                    { (
+                                        <Sparklines data={costGlances[x.id]}>
+                                            <SparklinesLine style={{ stroke: "#8ed53f", fillOpacity: ".25", strokeWidth: "1" }}/>
+                                            <SparklinesReferenceLine type="mean" style={{ stroke: 'darkred', strokeOpacity: .55, strokeDasharray: '2, 2' }}/>
+                                        </Sparklines>
+                                    )}
                                 </TableDataCell>
                                 <TableDataCell align="right">
                                     <ChevronRight />
@@ -51,15 +64,16 @@ function MyCapabilities({capabilities}) {
     </>
 }
 
-function OtherCapabilities({capabilities}) {
+function OtherCapabilities({ capabilities, capabilityCostGlances }) {
     const items = capabilities || [];
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+
     return <>
         <Text styledAs='sectionHeadline'>Other Capabilities</Text>
-        <Card variant="fill"  surface="main">
+        <Card variant="fill" surface="main">
             <CardContent>
                 {items.length > 0 &&
                     <Table isHeaderSticky isInteractive width={"100%"}>
@@ -91,7 +105,7 @@ function OtherCapabilities({capabilities}) {
     </>
 }
 
-function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
+function NewCapabilityDialog({ openSetter, openToggle, onAddCapabilityClicked }) {
     const handleClose = () => {
         openSetter(false);
     };
@@ -114,13 +128,13 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
         let newName = e?.target?.value || "";
         newName = newName.replace(/\s+/g, "-");
 
-        setFormData(prev => ({...prev, ...{ name: newName.toLowerCase()}}));
+        setFormData(prev => ({ ...prev, ...{ name: newName.toLowerCase() } }));
     }
 
     const changeDescription = e => {
         e.preventDefault();
         const newValue = e?.target?.value || emptyValues.description;
-        setFormData(prev => ({...prev, ...{ description: newValue}}));
+        setFormData(prev => ({ ...prev, ...{ description: newValue } }));
     };
 
     //input validation and handling logic
@@ -147,14 +161,14 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
     const canAdd = formData.name !== "" && formData.description !== "";
 
     const handleAddCapabilityClicked = () => {
-        if (canAdd){
+        if (canAdd) {
             if (onAddCapabilityClicked) {
                 onAddCapabilityClicked({
                     name: capabilityName,
                     description: formData.description,
                 })
-                .then((response) => {console.log("res: "+response.status);})
-                .catch((err) => console.log(err)); //TODO: change state of something and paint everything in panic-red
+                    .then((response) => { console.log("res: " + response.status); })
+                    .catch((err) => console.log(err)); //TODO: change state of something and paint everything in panic-red
             }
         }
     };
@@ -162,37 +176,37 @@ function NewCapabilityDialog({openSetter, openToggle, onAddCapabilityClicked}) {
     //render part
     return <>
         <SideSheet header={`Add new Capability`} onRequestClose={handleClose} isOpen={openToggle} width="30%" alignSideSheet="right" variant="elevated" backdrop>
-        <SideSheetContent>
-        <Text as={"label"} styledAs="labelBold">Full Capability name:</Text>
-            {/*<Text as={"div"} styledAs="bodyInterface">{fullCapabilityName}</Text> */}
+            <SideSheetContent>
+                <Text as={"label"} styledAs="labelBold">Full Capability name:</Text>
+                {/*<Text as={"div"} styledAs="bodyInterface">{fullCapabilityName}</Text> */}
 
-            <br />
-            <br />
+                <br />
+                <br />
 
-            <div className={styles.tooltipsection}>
-                <div className={styles.tooltip}>
-                    <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'>
-                        {/* <Information /> */}
-                    </Tooltip>
+                <div className={styles.tooltipsection}>
+                    <div className={styles.tooltip}>
+                        <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'>
+                            {/* <Information /> */}
+                        </Tooltip>
+                    </div>
+                    <TextField
+                        label="Name"
+                        placeholder="Enter name of capability"
+                        required
+                        value={formData.name}
+                        onChange={changeName}
+                        errorMessage={nameErrorMessage}
+                    />
                 </div>
-                <TextField
-                    label="Name"
-                    placeholder="Enter name of capability"
-                    required
-                    value={formData.name}
-                    onChange={changeName}
-                    errorMessage={nameErrorMessage}
-                />
-            </div>
 
-            <TextField
-                label="Description"
-                placeholder="Enter a description"
-                required value={formData.description}
-                onChange={changeDescription}>
-            </TextField>
-            <Button size='small' onClick={handleAddCapabilityClicked}>Add</Button>
-        </SideSheetContent>
+                <TextField
+                    label="Description"
+                    placeholder="Enter a description"
+                    required value={formData.description}
+                    onChange={changeDescription}>
+                </TextField>
+                <Button size='small' onClick={handleAddCapabilityClicked}>Add</Button>
+            </SideSheetContent>
         </SideSheet>
     </>
 }
@@ -201,8 +215,16 @@ export default function CapabilitiesPage() {
     const { user, myCapabilities, otherCapabilities, reloadOtherCapabilities } = useContext(AppContext);
     const [sideSheetOpen, setSidesheetOpen] = React.useState(false);
 
-    const handleAddClicked= () => {
-        if (setSidesheetOpen){
+    const capabilityCostGlances = {
+        "this-is-a-capability-xyz": [
+            5, 10, 8, 15, 12, 7, 20, 18, 9, 8, 8, 9, 10, 11, 12, 13, 12, 12, 11, 10, 9, 8, 7, 6, 6, 5, 4, 7, 9, 5
+        ],
+        "another-awssome-capability-abcd": [
+            5, 10, 8, 15, 12, 7, 20, 18, 9, 8, 8, 9, 10, 11, 12, 13, 12, 12, 11, 10, 9, 8, 7, 6, 6, 5, 4, 7, 9, 5
+        ]
+    };
+    const handleAddClicked = () => {
+        if (setSidesheetOpen) {
             setSidesheetOpen(true);
         }
     };
@@ -218,11 +240,11 @@ export default function CapabilitiesPage() {
     } />
 
     return <>
-        <br/>
-        <br/>
+        <br />
+        <br />
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-                <NewCapabilityDialog openToggle={sideSheetOpen} openSetter={setSidesheetOpen} onAddCapabilityClicked={createCapability}/>
+                <NewCapabilityDialog openToggle={sideSheetOpen} openSetter={setSidesheetOpen} onAddCapabilityClicked={createCapability} />
                 <Text as={H1} styledAs='heroHeadline'>Capabilities</Text>
 
                 <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
@@ -244,17 +266,17 @@ export default function CapabilitiesPage() {
                     </CardActions>
                 </Card>
 
-                <br/>
+                <br />
 
-                <MyCapabilities capabilities={myCapabilities} />
+                <MyCapabilities capabilities={myCapabilities} capabilityCostGlances={capabilityCostGlances} />
 
-                <br/>
+                <br />
 
-                <OtherCapabilities capabilities={otherCapabilities} />
+                <OtherCapabilities capabilities={otherCapabilities} capabilityCostGlances={capabilityCostGlances} />
 
             </Column>
         </Container>
 
-        <br/>
+        <br />
     </>
 }
