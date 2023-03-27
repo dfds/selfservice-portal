@@ -1,5 +1,5 @@
-import express from "express";
-import { convertCapability, convertMember, convertKafkaTopic } from "../converters";
+import express, { Request, Response } from "express";
+import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster } from "../converters";
 import { state, Capability, KafkaTopic } from "../data";
 import { composeUrl, log } from "../helpers";
 
@@ -7,7 +7,14 @@ const router = express.Router();
 
 router.get("/capabilities", (req, res) => {
     res.send({
-        items: state.capabilities.map(x => convertCapability(x))
+        items: state.capabilities.map(x => convertCapability(x)),
+        "_links": {
+          self: {
+            href: composeUrl("capabilities"),
+            rel: "self",
+            allow: ["GET"]
+          }
+        }
     });
 });
 
@@ -70,7 +77,14 @@ router.get("/capabilities/:id/members", (req, res) => {
     let found = state.capabilities.find(x => x.id == req.params.id);
     if (found) {
         res.send({
-            items: (found.members || []).map(x => convertMember(x))
+            items: (found.members || []).map(x => convertMember(x)),
+            "_links": {
+              self: {
+                href: composeUrl("capabilities", req.params.id),
+                rel: "self",
+                allow: ["GET"]
+              }
+            }
         });
     } else {
         res.sendStatus(404);
@@ -84,7 +98,7 @@ router.get("/capabilities/:id/topics", (req, res) => {
         items: (foundTopics || []).map(x => convertKafkaTopic(x)),
         "_embedded": {
             kafkaClusters: {
-                items: (state.kafkaClusters || []),
+                items: (state.kafkaClusters || []).map(x => convertKafkaCluster(x)),
                 "_links": {
                     self: {
                         href: composeUrl(`/kafkaclusters`),
