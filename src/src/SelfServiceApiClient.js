@@ -143,11 +143,11 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
 
     const url = topicsLink.href;
     const payload = {
+        kafkaClusterId: clusterId,
         name: topicDefinition.name,
         description: topicDefinition.description,
         partitions: topicDefinition.partitions,
         retention: topicDefinition.retention + "d",
-        kafkaClusterId: clusterId,
     };
 
     const response = await callApi(url, accessToken, "POST", payload);

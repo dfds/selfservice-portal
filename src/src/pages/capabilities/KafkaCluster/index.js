@@ -53,7 +53,7 @@ export default function KafkaCluster({cluster}) {
         {hasWriteAccess && 
             <ButtonStack align="left">
                 <Button size="small" onClick={handleAddTopicToClusterClicked}>Add topic</Button>
-                <Button size="small" variation="outlined" disabled>Get credentials</Button>
+                {/* <Button size="small" variation="outlined" disabled>Get credentials</Button> */}
             </ButtonStack>
         }
 
