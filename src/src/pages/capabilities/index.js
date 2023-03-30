@@ -240,7 +240,7 @@ export default function CapabilitiesPage() {
                         </p>
                     </CardContent>
                     <CardActions>
-                        <Button size='small' onClick={handleAddClicked}>Add</Button>
+                        <Button size='small' onClick={handleAddClicked} disabled title="Comming soon the the v2 experience!">Add</Button>
                     </CardActions>
                 </Card>
 
