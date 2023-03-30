@@ -1,6 +1,11 @@
 import React from "react";
 import styles from "./topics.module.css";
 
+import { Chip, ChipContainer } from '@dfds-ui/react-components'
+
+import { Badge } from '@dfds-ui/react-components';
+import { css } from '@emotion/react';
+
 
 
 export function SearchView({data}) {
@@ -20,7 +25,13 @@ export function SearchView({data}) {
 
     return(
         <div className={styles.searchcontainer}>
-            <h3 style= {{color: "#1874bc", fontSize: "1.3em"}}>{highlightedName(data.name, data.highlight)}</h3>
+            <div className={styles.row}>
+                <h3 style= {{color: "#1874bc", fontSize: "1.3em"}}>{highlightedName(data.name, data.highlight)}</h3>
+                {/* <Chip mdxType="Chip">
+                    {data.kafkaClusterName}
+                </Chip> */}
+                <Badge className={styles.badgecluster}>{data.kafkaClusterName}</Badge>
+            </div>
             <p>{data.description}</p>
             <div >
                 <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>

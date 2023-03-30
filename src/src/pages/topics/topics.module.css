@@ -1,14 +1,35 @@
 .searchcontainer  div{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 .searchcontainer div div + div::before {
-    content: "|";
-    margin: 0 5px;
-  }
+  content: "|";
+  margin: 0 5px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.row h3 {
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+.badgecluster {
+  color: white !important;
+  background-color: saddlebrown !important;
+}
+
 
 .searchcontainer > * {
-    margin: 0 5px 0 0;
+  margin: 0 5px 0 0;
 }
+
