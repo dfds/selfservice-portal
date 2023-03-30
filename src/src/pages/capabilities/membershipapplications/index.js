@@ -1,6 +1,5 @@
 import { Text } from '@dfds-ui/typography';
 import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
-import { useState } from "react";
 import { useContext } from "react";
 import PageSection from "components/PageSection";
 import AppContext from "app-context";
@@ -8,9 +7,14 @@ import { format, intlFormatDistance,} from "date-fns";
 
 export function MembershipApplications(id, userEmail){
     const { selectedCapability } = useContext(AppContext);
+    // only display membership applications banner if there are membership applications
+    let nonEmpty = false;
+    if (selectedCapability.membershipApplications.length > 0){
+        nonEmpty = true;
+    }
    return <>
-    <Text styledAs='sectionHeadline'>Membership applications</Text>
-    <PageSection>
+    {nonEmpty && <Text styledAs='sectionHeadline'>Membership applications</Text>}
+    {nonEmpty && <PageSection>
     <Table isInteractive width={"100%"}>
         <TableHead>
                 <TableRow>
@@ -32,7 +36,7 @@ export function MembershipApplications(id, userEmail){
             )}
         </TableBody>
     </Table>
-</PageSection>
+</PageSection>}
 </>
 }
 

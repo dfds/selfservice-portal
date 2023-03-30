@@ -170,9 +170,9 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
                     const result = type != "object"
                         ? {...schema, ...{ 
                             examples: type === "array" ? value : [value],
-                            required: true
+                            // required: true
                         }}
-                        : defaultFunc(type, schema, value);
+                        : {...defaultFunc(type, schema, value), ...{required: Object.getOwnPropertyNames(value)}};
 
                     return result;
                 }

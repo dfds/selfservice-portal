@@ -6,7 +6,7 @@ import {
   AppBarProvider,
   AppBarDrawer,
   AppBarItem,
-  AppBarListItem, 
+  AppBarListItem,
   ListText
 } from "@dfds-ui/react-components";
 
@@ -32,18 +32,14 @@ export default function GlobalMenu({}) {
       url: "https://github.com/dfds"
     },
     {
-      title: "UI",
-      url: "/sharedcomponents"
-    },
-    {
       title: "Status page",
       url: "https://dfdsit.statuspage.io/"
     },
   ];
-  
+
   return <>
     <AppBarProvider>
-      <DFDSAppBar 
+      <DFDSAppBar
         logoProps={{
           logoContainerProps: { as: 'a', href: process.env.PUBLIC_URL },
         }}
@@ -59,9 +55,20 @@ export default function GlobalMenu({}) {
           </>
         }>
 
-        {navLinks.map(x => <Link to={x.url} style={{ textDecoration: "none" }} key={x.title}>
-          <AppBarItem title={x.title} id={x.title} />  
-        </Link>)}
+    {navLinks.map(x =>
+        /https:?\/\//.test(x.url)
+        ? <a href={x.url} style={{ textDecoration: "none" }} key={x.title}>
+            <AppBarListItem clickable>
+              <ListText>{x.title}</ListText>
+            </AppBarListItem>
+          </a>
+        : <Link to={x.url} style={{ textDecoration: "none" }} key={x.title}>
+          <AppBarListItem clickable>
+            <ListText>{x.title}</ListText>
+          </AppBarListItem>
+        </Link>
+      )
+        }
       </DFDSAppBar>
 
       <AppBarDrawer >

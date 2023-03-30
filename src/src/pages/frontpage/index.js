@@ -9,16 +9,16 @@ import { useContext } from 'react';
 
 export default function FrontPage() {
     const { user } = useContext(AppContext);
-    
-    const name = user 
+
+    const name = user
         ? user.name
         : "there"
-
+    const kubeConfigS3url= "https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config";
     return <>
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
                 <div className={styles.herowrapper}>
-                    <Hero 
+                    <Hero
                         title="Welcome to the cloud"
                         headline="Self Service Portal"
                         //   imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
@@ -46,7 +46,7 @@ export default function FrontPage() {
                                 Below is a collection of resources for getting started on the Kubernetes platform. <br />
                                 If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
                                 Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
-                                <LinkButton size='small' href="lala" variation="outlined">Get Kubernetes config</LinkButton >
+                                <LinkButton size='small' href={kubeConfigS3url} variation="outlined">Get Kubernetes config</LinkButton >
                             </CardContent>
                         </Column>
                     </Container>

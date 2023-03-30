@@ -38,6 +38,7 @@ export function convertCapability(capability: Capability) : any {
 export function convertMember(member: Member) : any {
     return {
         id: member.email,
+        name: member.email,
         email: member.email,
     };
 }
