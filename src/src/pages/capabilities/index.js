@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, H1 } from '@dfds-ui/react-components';
+import { Button, H1, Input } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
 import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
 import { useNavigate } from "react-router-dom";
@@ -11,17 +11,34 @@ import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
 import AppContext from "./../../app-context";
 import { createCapability } from "../../SelfServiceApiClient";
-function MyCapabilities({capabilities}) {
-    const items = capabilities || [];
+import PageSection from "components/PageSection";
+
+
+import { Search } from '@dfds-ui/icons/system';
+import HighlightedText from "components/HighlightedText";
+
+
+function MyCapabilities() {
+    const { myCapabilities, appStatus } = useContext(AppContext);
+
+    const items = myCapabilities || [];
+    const isLoading = !appStatus.hasLoadedMyCapabilities;
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
-        <Text styledAs='sectionHeadline'>My Capabilities</Text>
-        <Card variant="fill"  surface="main">
-            <CardContent>
-                {items.length > 0 &&
+        <PageSection headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}>
+            { isLoading &&
+                <Spinner />
+            }
+
+            { !isLoading && items.length === 0 &&
+                <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
+            }
+
+            { !isLoading && items.length > 0 &&
+                <>
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -42,26 +59,68 @@ function MyCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }
-                {items.length === 0 &&
-                    <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
-                }
-            </CardContent>
-        </Card>
+                </>
+            }
+        </PageSection>
     </>
 }
 
-function OtherCapabilities({capabilities}) {
-    const items = capabilities || [];
+function OtherCapabilities() {
+    const { otherCapabilities, appStatus } = useContext(AppContext);
+
+    const [searchInput, setSearchInput] = useState("");
+    const [searchResult, setSearchResult] = useState([]);
+
+    const hasSearchInput = searchInput.replace(" ", "") !== "";
+
+    useEffect(() => {
+        setSearchResult(otherCapabilities);
+    }, [otherCapabilities]);
+
+    useEffect(() => {
+        let result = otherCapabilities || [];
+
+        if (hasSearchInput) {
+            result = result.filter(x => {
+                const nameAndDescription = `${x.name || ""} ${x.description}`;
+                const isMatch = nameAndDescription
+                    .toLocaleLowerCase()
+                    .indexOf(searchInput.toLocaleLowerCase()) > -1;
+
+                return isMatch;
+            });
+        }
+
+        setSearchResult(result);
+    }, [searchInput, otherCapabilities]);
+
+    const items = searchResult;
+    const isLoading = !appStatus.hasLoadedOtherCapabilities;
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
-        <Text styledAs='sectionHeadline'>Other Capabilities</Text>
-        <Card variant="fill"  surface="main">
-            <CardContent>
-                {items.length > 0 &&
+        <PageSection headline={`Other Capabilities ${isLoading ? "" : `(${items.length})`}`}>
+            {isLoading &&
+                <Spinner />
+            }
+
+            {!isLoading &&
+                <>
+                    <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
+                        <TextField
+                            name="basic"
+                            placeholder="Find a capability..."
+                            icon={<Search />}
+                            help="Find a capability..."
+                            size="small"
+                            value={searchInput}
+                            onChange={e => setSearchInput(e.target.value)}
+                            assistiveText={hasSearchInput ? `Found: ${searchResult.length}` : ""}
+                        />
+                    </div>
+
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -72,8 +131,12 @@ function OtherCapabilities({capabilities}) {
                         <TableBody>
                             {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                                 <TableDataCell>
-                                    <Text styledAs="action" as={"div"}>{x.name}</Text>
-                                    <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                                    <Text styledAs="action" as={"div"}>
+                                        <HighlightedText text={x.name} highlight={searchInput} />
+                                    </Text>
+                                    <Text styledAs="caption" as={"div"}>
+                                        <HighlightedText text={x.description} highlight={searchInput} />
+                                    </Text>
                                 </TableDataCell>
                                 <TableDataCell align="right">
                                     <ChevronRight />
@@ -82,12 +145,9 @@ function OtherCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }
-                {items.length === 0 &&
-                    <Spinner />
-                }
-            </CardContent>
-        </Card>
+                </>
+            }
+        </PageSection>
     </>
 }
 
@@ -230,27 +290,27 @@ export default function CapabilitiesPage() {
                     <CardContent>
                         <p>
                             Capabilities should be named uniquely after their (business) capability.
-                            Avoid using team or project names. For more information <a href='lala'>head on over to the Playbooks.</a>
+                            Avoid using team or project names. For more information <a href='https://wiki.dfds.cloud/playbooks'>head on over to the Playbooks.</a>
                         </p>
                         <p>
-                            <strong>Please note:</strong> Capability security is our collective responsibility. <a href="lala">Please visit our security documentation.</a>
+                            <strong>Please note:</strong> Capability security is our collective responsibility. <a href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents">Please visit our security documentation.</a>
                         </p>
                         <p>
                             You can add a new capability by clicking the button below:
                         </p>
                     </CardContent>
                     <CardActions>
-                        <Button size='small' onClick={handleAddClicked}>Add</Button>
+                        <Button size='small' onClick={handleAddClicked} disabled title="Comming soon the the v2 experience!">Add</Button>
                     </CardActions>
                 </Card>
 
                 <br/>
 
-                <MyCapabilities capabilities={myCapabilities} />
+                <MyCapabilities />
 
                 <br/>
 
-                <OtherCapabilities capabilities={otherCapabilities} />
+                <OtherCapabilities />
 
             </Column>
         </Container>

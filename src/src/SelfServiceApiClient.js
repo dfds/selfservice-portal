@@ -239,11 +239,17 @@ export async function getCapabilityMembershipApplications(capabilityDefinition){
     }
     const accessToken = await getSelfServiceAccessToken();
 
+    // check for allow get access!
+
     const url = membershipApplicationsLink.href;
     const response = await callApi(url, accessToken);
 
+    if (!response.ok) {
+        console.log("response was: ", response.status);
+        return [];
+    }
+
     const items  = await response.json();
-    console.log(items);
     return items.membershipApplications || [];
 }
 

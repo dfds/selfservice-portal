@@ -185,16 +185,15 @@ function useCapability() {
 
   // load membership applications
   useEffect(() => {
-  if (!details) {
+    if (!details) {
       return;
-  }
-  const fetchMemberhipApplications = async (details) => {
-    console.log("passing: ", details);
-    const result = await getCapabilityMembershipApplications(details);
-    setMembershipApplications(result);
-  };
+    }
+    const fetchMemberhipApplications = async (details) => {
+      const result = await getCapabilityMembershipApplications(details);
+      setMembershipApplications(result);
+    };
 
-  fetchMemberhipApplications(details);
+    fetchMemberhipApplications(details);
   }, [details]);
 
   //check if currently logged-in user can approve membership for this capability
@@ -287,6 +286,7 @@ function AppProvider({ children }) {
     changeSelectedCapability: (capabilityId) => loadCapability(capabilityId),
     reloadOtherCapabilities: loadOtherCapabilities,
     isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
+    appStatus,
     topics,
     setTopics,
   };

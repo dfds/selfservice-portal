@@ -28,7 +28,7 @@ export default function CapabilityDetailsPage() {
                 <Summary id={selectedCapability?.details?.id} name={selectedCapability?.details?.name} description={selectedCapability?.details?.description} />
                 <Resources />
                 {/*  membership applications  */}
-                <MembershipApplications/>
+                {/* <MembershipApplications/> */}
                 {/* <Logs /> */}
                 {/* <CommunicationChannels /> */}
 
