@@ -230,10 +230,10 @@ export default function CapabilitiesPage() {
                     <CardContent>
                         <p>
                             Capabilities should be named uniquely after their (business) capability.
-                            Avoid using team or project names. For more information <a href='lala'>head on over to the Playbooks.</a>
+                            Avoid using team or project names. For more information <a href='https://wiki.dfds.cloud/playbooks'>head on over to the Playbooks.</a>
                         </p>
                         <p>
-                            <strong>Please note:</strong> Capability security is our collective responsibility. <a href="lala">Please visit our security documentation.</a>
+                            <strong>Please note:</strong> Capability security is our collective responsibility. <a href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents">Please visit our security documentation.</a>
                         </p>
                         <p>
                             You can add a new capability by clicking the button below:
