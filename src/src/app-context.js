@@ -286,6 +286,7 @@ function AppProvider({ children }) {
     changeSelectedCapability: (capabilityId) => loadCapability(capabilityId),
     reloadOtherCapabilities: loadOtherCapabilities,
     isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
+    appStatus,
     topics,
     setTopics,
   };

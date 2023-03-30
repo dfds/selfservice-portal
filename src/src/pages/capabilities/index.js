@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, H1 } from '@dfds-ui/react-components';
+import { Button, H1, Input } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
 import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
 import { useNavigate } from "react-router-dom";
@@ -11,17 +11,33 @@ import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
 import AppContext from "./../../app-context";
 import { createCapability } from "../../SelfServiceApiClient";
-function MyCapabilities({capabilities}) {
-    const items = capabilities || [];
+import PageSection from "components/PageSection";
+import Page from "components/Page";
+
+import { Search } from '@dfds-ui/icons/system';
+
+
+function MyCapabilities() {
+    const { myCapabilities, appStatus } = useContext(AppContext);
+
+    const items = myCapabilities || [];
+    const isLoading = !appStatus.hasLoadedMyCapabilities;
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
-        <Text styledAs='sectionHeadline'>My Capabilities</Text>
-        <Card variant="fill"  surface="main">
-            <CardContent>
-                {items.length > 0 &&
+        <PageSection headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}>
+            { isLoading &&
+                <Spinner />
+            }
+
+            { !isLoading && items.length === 0 &&
+                <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
+            }
+
+            { !isLoading && items.length > 0 &&
+                <>
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -42,26 +58,87 @@ function MyCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }
-                {items.length === 0 &&
-                    <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
-                }
-            </CardContent>
-        </Card>
+                </>
+            }
+        </PageSection>
     </>
 }
 
-function OtherCapabilities({capabilities}) {
-    const items = capabilities || [];
+function HighlightedText({text, highlight}) {
+    const matches = text.matchAll(highlight);
+
+    if (matches.length === 0) {
+        return <>{text}</>
+    }
+
+    const highlightStyle = { backgroundColor: "yellow" };
+
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return parts.map((x, i) => {
+        if (x.toLocaleLowerCase() === highlight.toLocaleLowerCase()) {
+            return <span key={i} style={highlightStyle}>{x}</span>
+        } else {
+            return <span key={i}>{x}</span>
+        }
+    });
+}
+
+function OtherCapabilities() {
+    const { otherCapabilities, appStatus } = useContext(AppContext);
+
+    const [searchInput, setSearchInput] = useState("");
+    const [searchResult, setSearchResult] = useState([]);
+
+    const hasSearchInput = searchInput.replace(" ", "") !== "";
+
+    useEffect(() => {
+        setSearchResult(otherCapabilities);
+    }, [otherCapabilities]);
+
+    useEffect(() => {
+        let result = otherCapabilities || [];
+
+        if (hasSearchInput) {
+            result = result.filter(x => {
+                const nameAndDescription = `${x.name || ""} ${x.description}`;
+                const isMatch = nameAndDescription
+                    .toLocaleLowerCase()
+                    .indexOf(searchInput.toLocaleLowerCase()) > -1;
+
+                return isMatch;
+            });
+        }
+
+        setSearchResult(result);
+    }, [searchInput, otherCapabilities]);
+
+    const items = searchResult;
+    const isLoading = !appStatus.hasLoadedOtherCapabilities;
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
     return <>
-        <Text styledAs='sectionHeadline'>Other Capabilities</Text>
-        <Card variant="fill"  surface="main">
-            <CardContent>
-                {items.length > 0 &&
+        <PageSection headline={`Other Capabilities ${isLoading ? "" : `(${items.length})`}`}>
+            {isLoading &&
+                <Spinner />
+            }
+
+            {!isLoading &&
+                <>
+                    <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
+                        <TextField
+                            name="basic"
+                            placeholder="Find a capability..."
+                            icon={<Search />}
+                            help="Find a capability..."
+                            size="small"
+                            value={searchInput}
+                            onChange={e => setSearchInput(e.target.value)}
+                            assistiveText={hasSearchInput ? `Found: ${searchResult.length}` : ""}
+                        />
+                    </div>
+
                     <Table isHeaderSticky isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
@@ -72,8 +149,12 @@ function OtherCapabilities({capabilities}) {
                         <TableBody>
                             {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                                 <TableDataCell>
-                                    <Text styledAs="action" as={"div"}>{x.name}</Text>
-                                    <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                                    <Text styledAs="action" as={"div"}>
+                                        <HighlightedText text={x.name} highlight={searchInput} />
+                                    </Text>
+                                    <Text styledAs="caption" as={"div"}>
+                                        <HighlightedText text={x.description} highlight={searchInput} />
+                                    </Text>
                                 </TableDataCell>
                                 <TableDataCell align="right">
                                     <ChevronRight />
@@ -82,12 +163,9 @@ function OtherCapabilities({capabilities}) {
                             )}
                         </TableBody>
                     </Table>
-                }
-                {items.length === 0 &&
-                    <Spinner />
-                }
-            </CardContent>
-        </Card>
+                </>
+            }
+        </PageSection>
     </>
 }
 
@@ -246,11 +324,11 @@ export default function CapabilitiesPage() {
 
                 <br/>
 
-                <MyCapabilities capabilities={myCapabilities} />
+                <MyCapabilities />
 
                 <br/>
 
-                <OtherCapabilities capabilities={otherCapabilities} />
+                <OtherCapabilities />
 
             </Column>
         </Container>
