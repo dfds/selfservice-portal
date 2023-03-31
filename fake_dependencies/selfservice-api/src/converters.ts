@@ -20,14 +20,21 @@ export function convertCapability(capability: Capability) : any {
             topics: {
                 href: composeUrl(`/capabilities/${capability.id}/topics`),
                 rel: "related",
-                allow: capability.id === "this-is-a-capability-xyz" 
+                allow: capability.id === "this-is-a-capability-xyz"
                     ? ["GET", "POST"]
                     : ["GET"]
             },
             membershipApplications: {
                 href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),
                 rel: "related",
-                allow: capability.id === "this-is-a-capability-xyz" 
+                allow: capability.id === "this-is-a-capability-xyz"
+                    ? ["GET", "POST"]
+                    : ["GET"]
+            },
+            awsAccount: {
+                href: composeUrl(`/capabilities/${capability.id}/awsaccount`),
+                rel: "related",
+                allow: capability.id === "this-is-a-capability-xyz"
                     ? ["GET", "POST"]
                     : ["GET"]
             }
@@ -73,7 +80,7 @@ export function convertKafkaCluster(kafkaCluster: KafkaCluster) : any {
                 rel: "self",
                 allow: ["GET"]
             }
-        }        
+        }
     }};
 }
 
@@ -85,6 +92,6 @@ export function convertMessageContract(messageContract: MessageContract) : any {
                 rel: "self",
                 allow: ["GET"]
             }
-        }        
+        }
     }};
 }
