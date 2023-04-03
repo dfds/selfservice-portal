@@ -13,12 +13,19 @@ export default function Page({title, isLoading = false, isNotFound = false, chil
     }
 
     return <>
-        <br/>
-        <br/>
+        {title && 
+            <>
+                <br/>
+                <br/>        
+            </>
+        }
 
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
-                <Text as={H1} styledAs='heroHeadline'>{title}</Text>
+                {title && 
+                    <Text as={H1} styledAs='heroHeadline'>{title}</Text>
+                }
+                
                 {children}
             </Column>
         </Container>

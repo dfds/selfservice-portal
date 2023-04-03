@@ -8,7 +8,8 @@ router.get("/me", (req, res) => {
     res.send({
         capabilities: state.capabilities
             .slice(0, 1)
-            .map(x => convertCapability(x))
+            .map(x => convertCapability(x)),
+        stats: state.stats
     });
 });
 

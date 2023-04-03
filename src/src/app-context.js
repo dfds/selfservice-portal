@@ -236,10 +236,12 @@ function AppProvider({ children }) {
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [otherCapabilities, setOtherCapabilities] = useState([]);
+  const [stats, setStats] = useState([]);
 
-  async function loadMyCapabilities() {
-    const { capabilities } = await getMyPortalProfile();
+  async function loadMyProfile() {
+    const { capabilities, stats } = await getMyPortalProfile();
     setMyCapabilities(capabilities);
+    setStats(stats);
     setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
   }
 
@@ -260,7 +262,7 @@ function AppProvider({ children }) {
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
-        loadMyCapabilities();
+        loadMyProfile();
       }
   }, [user]);
 
@@ -289,6 +291,7 @@ function AppProvider({ children }) {
     appStatus,
     topics,
     setTopics,
+    stats,
   };
 
   return <appContext.Provider value={state}>{children}</appContext.Provider>;

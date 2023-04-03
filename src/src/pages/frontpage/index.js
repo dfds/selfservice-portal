@@ -1,58 +1,88 @@
-import { Hero } from '@dfds-ui/react-components';
-import { Container, Column, Card, CardTitle, CardContent, LinkButton  } from '@dfds-ui/react-components';
-import { Link } from "react-router-dom";
-
-import styles from "./frontpage.module.css";
-
-import AppContext from "./../../app-context";
+import AppContext from 'app-context';
 import { useContext } from 'react';
 
+import { Hero as DfdsHero, LinkButton } from '@dfds-ui/react-components';
+import { Link } from "react-router-dom";
+
+import PageSection, { SectionContent } from 'components/PageSection';
+import Page from 'components/Page';
+import StatsCounter from 'components/StatsCounter';
+import styles from "./frontpage.module.css";
+import HeroImage from "./hero.jpg";
+
+function Section({children}) {
+    return <div className={styles.section}>{children}</div>
+}
+
+function Hero() {
+    return <div className={styles.herowrapper}>
+        <DfdsHero
+            title="Welcome to the cloud"
+            headline="Self Service Portal"
+            imageSrc={HeroImage}
+        />
+    </div>
+}
+
+function FunStats() {
+    const { stats } = useContext(AppContext);
+
+    if (stats.length === 0) {
+        return <></>
+    }
+
+    return <PageSection>
+        <div className={styles.statscontainer}>
+            {stats.map((x,i) => <StatsCounter key={i} count={x.value} title={x.title} />)}
+        </div>
+    </PageSection>
+}
+
 export default function FrontPage() {
-    const { user } = useContext(AppContext);
+    const { user} = useContext(AppContext);
 
     const name = user
         ? user.name
         : "there"
-    const kubeConfigS3url= "https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config";
+
     return <>
-        <Container>
-            <Column m={12} l={12} xl={12} xxl={12}>
-                <div className={styles.herowrapper}>
-                    <Hero
-                        title="Welcome to the cloud"
-                        headline="Self Service Portal"
-                        //   imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        imageSrc="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg"
-                    />
-                </div>
+        <Page>
+            <Section>
+                <Hero />
+            </Section>
 
-                <br />
+            <Section>
+                <FunStats />
+            </Section>
 
-                <Card variant="fill" surface="main">
-                    <Container>
-                        <Column>
-                            <CardTitle>Welcome</CardTitle>
-                            <CardContent>
-                                Hello {name}, and welcome to the Cloud Self Service portal.
-                            </CardContent>
+            <Section>
+                <PageSection>
+                    <SectionContent title="Welcome">
+                        Hello {name}, and welcome to the Cloud Self Service portal.
+                    </SectionContent>
 
-                            <CardTitle>Capabilities</CardTitle>
-                            <CardContent>
-                                To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
-                            </CardContent>
+                    <SectionContent title="Capabilities">
+                        To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
+                    </SectionContent>
 
-                            <CardTitle>Kubernetes</CardTitle>
-                            <CardContent>
-                                Below is a collection of resources for getting started on the Kubernetes platform. <br />
-                                If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
-                                Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
-                                <LinkButton size='small' href={kubeConfigS3url} variation="outlined">Get Kubernetes config</LinkButton >
-                            </CardContent>
-                        </Column>
-                    </Container>
-                </Card>
-            </Column>
+                    <SectionContent title="Kubernetes">
+                        Below is a collection of resources for getting started on the Kubernetes platform. <br />
+                        If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
+                        Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
+                        
+                        <LinkButton 
+                            size='small' 
+                            href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config" 
+                            variation="outlined">
+                                Get Kubernetes config
+                        </LinkButton >
 
-        </Container>
+                        <br />
+                        <br />
+                        
+                    </SectionContent>
+                </PageSection>
+            </Section>
+        </Page>
     </>
 }

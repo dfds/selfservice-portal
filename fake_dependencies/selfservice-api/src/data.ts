@@ -46,6 +46,38 @@ export interface KafkaCluster {
   description: string, 
 }
 
+export interface Stat {
+  title: string,
+  value: number
+}
+
+const stats: Stat[] = [
+  {
+    title: "Capabilities",
+    value: 198
+  },
+  {
+    title: "AWS Accounts",
+    value: 106
+  },
+  {
+    title: "Kubernetes Clusters",
+    value: 1
+  },
+  {
+    title: "Kafka Clusters",
+    value: 2
+  },
+  {
+    title: "Public Topics",
+    value: 325
+  },
+  {
+    title: "Private Topics",
+    value: 518
+  },
+];
+
 const kafkaClusters: KafkaCluster[] = [
     {
       id: "kc-1",
@@ -202,6 +234,7 @@ export interface State {
   kafkaTopics: KafkaTopic[], 
   capabilities: Capability[],
   messageContracts: MessageContract[],
+  stats: Stat[],
 }
 
 export const state : State = {
@@ -209,4 +242,5 @@ export const state : State = {
   kafkaClusters: kafkaClusters,
   kafkaTopics: kafkaTopics,
   messageContracts: messageContracts,
+  stats: stats,
 };

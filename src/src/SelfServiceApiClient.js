@@ -60,7 +60,8 @@ export async function getMyPortalProfile() {
     const myProfile = await response.json();
 
     const defaultValues = {
-        capabilities: []
+        capabilities: [],
+        stats: [],
     };
 
     return {...defaultValues, ...myProfile};
