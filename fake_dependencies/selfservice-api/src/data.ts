@@ -49,12 +49,12 @@ export interface KafkaCluster {
 const kafkaClusters: KafkaCluster[] = [
     {
       id: "kc-1",
-      name: "Development",
+      name: "Dev",
       description: "This cluster is for non-production workloads and used in various staging environments. Please note, you should not consume messages in this cluster from your production workloads!",
     },
     {
       id: "kc-2",
-      name: "Production",
+      name: "Prod",
       description: "This is the production cluster used for production workloads. This cluster has the highes resource allocations and is used for business critical messages.",
     }
   ];
@@ -116,6 +116,26 @@ const kafkaTopics : KafkaTopic[] = [
     name: "pub.another-awssome-capability-abcd.hrisy",
     description: "just a dummy topic",
     kafkaClusterId: "kc-2",
+    partitions: 3,
+    retention: "1d",
+    status: "Provisioned",
+  },
+  {
+    id: "7",
+    capabilityId: "this-is-a-capability-xyz",
+    name: "pub.this-is-a-capability-xyz.foo",
+    description: "just another dummy topic",
+    kafkaClusterId: "kc-1",
+    partitions: 3,
+    retention: "1d",
+    status: "Provisioned",
+  },
+  {
+    id: "8",
+    capabilityId: "another-awssome-capability-abcd",
+    name: "pub.another-awssome-capability-abcd.foo-foo",
+    description: "just another dummy topic",
+    kafkaClusterId: "kc-1",
     partitions: 3,
     retention: "1d",
     status: "Provisioned",

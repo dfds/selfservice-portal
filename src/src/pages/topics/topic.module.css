@@ -1,0 +1,10 @@
+.container_checkboxes {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-end;
+} 
+
+.container_checkboxes > label {
+    margin-right: 19px;
+}
