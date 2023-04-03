@@ -25,9 +25,9 @@ check-node-version:
 	fi
 
 
-build: TIME=$(shell date +"%Y-%m-%d %H:%M")
+build: TIME=$(shell date -u +"%Y-%m-%d %H:%M")
 build: check-node-version
-	@cd src && REACT_APP_DATE_OF_RELEASE="$(TIME)" npm run build
+	@cd src && REACT_APP_DATE_OF_RELEASE="$(TIME) UTC" npm run build
 	@cp -r ./src/build/* "$(OUTPUT_DIR_APP)"
 
 
