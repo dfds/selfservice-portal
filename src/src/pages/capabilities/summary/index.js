@@ -1,26 +1,26 @@
 import React from "react"
-import styles from "./summary.module.css";
 import { Text } from '@dfds-ui/typography';
-import { Card, CardContent  } from '@dfds-ui/react-components';
+import { Button, ButtonStack } from '@dfds-ui/react-components';
+import PageSection from "components/PageSection";
+import styles from "./summary.module.css";
 
 export default function Summary({name, id, description}) {
-    return <>
-        <Text styledAs='sectionHeadline'>Summary</Text>
-        <Card variant="fill" surface="main">
-            <CardContent>
-                <div className={styles.container}>
-                    <div className={styles.column}>
-                        <Text styledAs={'smallHeadline'}>Name:</Text> {name}
-                    </div>
-                    <div className={styles.column}>
-                        <Text styledAs={'smallHeadline'}>Root Id:</Text> {id}
-                    </div>
-                    <div className={styles.column}>
-                        <Text styledAs={'smallHeadline'}>Description:</Text> {description}
-                    </div>
-                </div>
-                <br />
-            </CardContent>
-        </Card>
-    </>
+    return <PageSection headline="Summary">
+        <div className={styles.container}>
+            <div className={styles.column}>
+                <Text styledAs={'smallHeadline'}>Name</Text> {name}
+            </div>
+            <div className={styles.column}>
+                <Text styledAs={'smallHeadline'}>Description</Text> {description}
+            </div>
+            <div className={styles.column}>
+                {/* <Text styledAs={'smallHeadline'}>?</Text> 
+                <ButtonStack align="right">
+                    <Button>Join</Button>
+                    <Button variation="outlined" >Leave</Button>
+                </ButtonStack> */}
+            </div>
+        </div>
+        <br />
+    </PageSection>
 }
