@@ -58,6 +58,7 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
 
     const { id, name, description, partitions, retention, status } = topic;
     const isPublic = name.startsWith("pub.");
+    const canAddMessageContracts = (topic._links?.messageContracts?.allow || []).includes("POST");
 
     useEffect(() => {
         if (!isSelected) {
@@ -137,7 +138,10 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
                                 /> 
                             }
                             <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
-                            <Button size="small" variation="primary" onClick={handleAddMessageContractClicked}>Add</Button>
+
+                            {canAddMessageContracts && 
+                                <Button size="small" variation="primary" onClick={handleAddMessageContractClicked}>Add</Button>
+                            }
                         </div>
 
                         {
