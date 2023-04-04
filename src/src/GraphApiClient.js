@@ -25,6 +25,11 @@ export async function getUserProfilePictureUrl() {
 export async function getAnotherUserProfilePictureUrl(upn) {
     const accessToken = await getGraphAccessToken();
     const pictureResponse = await callApi(`https://graph.microsoft.com/v1.0/users/${upn}/photos/96x96/$value`, accessToken);
+    
+    if (!pictureResponse.ok) {
+        return "";
+    }
+
     const blob = await pictureResponse.blob()
     const url = window.URL || window.webkitURL;
 
