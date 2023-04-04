@@ -23,7 +23,6 @@ function useCapability() {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  const [userCanApprove, setUserCanApprove] = useState(false);
 
 
 // load details
@@ -182,7 +181,6 @@ function useCapability() {
     });
   };
 
-
   // load membership applications
   useEffect(() => {
     if (!details) {
@@ -191,22 +189,27 @@ function useCapability() {
     const fetchMemberhipApplications = async (details) => {
       const result = await getCapabilityMembershipApplications(details);
       setMembershipApplications(result);
+
+      result.forEach(async application => {
+        const profilePictureUrl = await getAnotherUserProfilePictureUrl(application.applicant);
+
+        setMembershipApplications(prev => {
+          const copy = prev
+              ? [...prev]
+              : [];
+
+          const found = copy.find(x => x.id === application.id);
+          if (found) {
+              found.applicantProfilePictureUrl = profilePictureUrl;
+          }
+
+          return copy;
+        });
+      });
+
     };
 
     fetchMemberhipApplications(details);
-  }, [details]);
-
-  //check if currently logged-in user can approve membership for this capability
-  useEffect(() => {
-
-    async function fetchUserAllowedActions(details) {
-      if (details._links.membershipApplications.allow.includes("POST")){
-        setUserCanApprove(true);
-      }
-    }
-    if (details) {
-      fetchUserAllowedActions(capabilityId);
-    }
   }, [details]);
 
   const capability = {
@@ -216,7 +219,6 @@ function useCapability() {
     kafkaClusters,
     selectedKafkaTopic,
     membershipApplications,
-    userCanApprove,
     toggleSelectedKafkaTopic,
     addTopicToCluster,
     addMessageContractToTopic: addMessageContractToTopicLocal

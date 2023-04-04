@@ -250,8 +250,8 @@ export async function getCapabilityMembershipApplications(capabilityDefinition){
         return [];
     }
 
-    const items  = await response.json();
-    return items.membershipApplications || [];
+    const { items }  = await response.json();
+    return items || [];
 }
 
 export async function getKafkaClusters() {
