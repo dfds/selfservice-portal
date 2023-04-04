@@ -1,9 +1,5 @@
 import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication } from "./data";
-import { composeUrl } from "./helpers";
-
-function isMemberOf(capability: Capability) {
-    return capability.__isMember;
-}
+import { composeUrl, isMemberOf } from "./helpers";
 
 export function convertCapability(capability: Capability) : any {
     return {

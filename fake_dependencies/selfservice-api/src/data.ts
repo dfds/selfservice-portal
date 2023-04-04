@@ -219,6 +219,20 @@ const capabilities : Capability[] = [
         ],
         __isMember: false
       },
+      {
+        id: "my-second-capability",
+        name: "My Second Capability",
+        description: "Integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat diam ut",
+        members: [
+          {
+            email: "jandr@dfds.com"
+          },
+          {
+            email: "thfis@dfds.com"
+          },
+        ],
+        __isMember: true
+      },
 ];
 
 const membershipApplications : MembershipApplication[] = [
