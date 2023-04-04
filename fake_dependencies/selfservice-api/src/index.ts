@@ -7,6 +7,7 @@ import capabilityRoutes from "./routes/capabilities";
 import kafkaClusterRoutes from "./routes/kafkaclusters";
 import kafkaTopicRoutes from "./routes/kafkatopics";
 import meRoutes from "./routes/me";
+import membershipApplicationsRoutes from "./routes/membershipapplications";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(capabilityRoutes);
 app.use(kafkaClusterRoutes);
 app.use(kafkaTopicRoutes);
 app.use(meRoutes);
+app.use(membershipApplicationsRoutes);
 
 // ----------------------------------------------------------------------------------------------------
 

@@ -12,10 +12,10 @@ export function composeUrl(...args: string[]) : string {
     return url;
 }
 
-export function log(message: string) : void {
+export function log(message: string, ...args: any[]) : void {
     const timestamp = new Date();
     const time = timestamp.toLocaleTimeString();
-    console.log(`${time}> ${message}`);
+    console.log(`${time}> ${message}`, args);
 }
 
 export function fakeDelay() : number {

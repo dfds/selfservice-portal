@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic } from "./SelfServiceApiClient";
+import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic, submitMembershipApplicationApproval } from "./SelfServiceApiClient";
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
 
 const appContext = React.createContext(null);
@@ -181,36 +181,48 @@ function useCapability() {
     });
   };
 
-  // load membership applications
-  useEffect(() => {
+  const loadMembershipApplications = useCallback(async () => {
     if (!details) {
       return;
     }
-    const fetchMemberhipApplications = async (details) => {
-      const result = await getCapabilityMembershipApplications(details);
-      setMembershipApplications(result);
 
-      result.forEach(async application => {
-        const profilePictureUrl = await getAnotherUserProfilePictureUrl(application.applicant);
+    const result = await getCapabilityMembershipApplications(details);
+    setMembershipApplications(result);
 
-        setMembershipApplications(prev => {
-          const copy = prev
-              ? [...prev]
-              : [];
+    result.forEach(async application => {
+      const profilePictureUrl = await getAnotherUserProfilePictureUrl(application.applicant);
 
-          const found = copy.find(x => x.id === application.id);
-          if (found) {
-              found.applicantProfilePictureUrl = profilePictureUrl;
-          }
+      setMembershipApplications(prev => {
+        const copy = prev
+            ? [...prev]
+            : [];
 
-          return copy;
-        });
+        const found = copy.find(x => x.id === application.id);
+        if (found) {
+            found.applicantProfilePictureUrl = profilePictureUrl;
+        }
+
+        return copy;
       });
-
-    };
-
-    fetchMemberhipApplications(details);
+    });
   }, [details]);
+
+  // load membership applications
+  useEffect(() => {
+    if (details) {
+      loadMembershipApplications();
+    }
+  }, [details]);
+
+  const approveMembershipApplication = async (membershipApplicationId) => {
+    const found = membershipApplications.find(x => x.id === membershipApplicationId);
+    if (!found) {
+      throw Error(`Error! Membership application "${membershipApplicationId}" is unknown!`);
+    }
+
+    await submitMembershipApplicationApproval(found);
+    await loadMembershipApplications();
+  };
 
   const capability = {
     isLoading,
@@ -221,7 +233,8 @@ function useCapability() {
     membershipApplications,
     toggleSelectedKafkaTopic,
     addTopicToCluster,
-    addMessageContractToTopic: addMessageContractToTopicLocal
+    addMessageContractToTopic: addMessageContractToTopicLocal,
+    approveMembershipApplication
   };
 
   return { capability, loadCapability };

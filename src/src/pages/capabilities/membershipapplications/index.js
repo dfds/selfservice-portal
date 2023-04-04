@@ -1,5 +1,5 @@
 import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell, Badge } from '@dfds-ui/react-components'
-import { useContext } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import PageSection from "components/PageSection";
 import AppContext from "app-context";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
@@ -15,27 +15,47 @@ function ExpirationDate({date}) {
 }
 
 export default function MembershipApplications() {
-    const { selectedCapability } = useContext(AppContext);
-    const hasPendingApplications = selectedCapability.membershipApplications.length > 0;
+    const {selectedCapability} = useContext(AppContext);
+    const [applications, setApplications] = useState([]);
 
+    useEffect(() => {
+        const list = (selectedCapability?.membershipApplications || []).map(x => {
+            const copy = {...x};
+    
+            const approvalLink = copy?._links?.approvals;
+            copy.canApprove = false;
+            copy.showApprove = true;
+            copy.isApproving = false;
+    
+            if (approvalLink) {
+                copy.canApprove = (approvalLink.allow || []).includes("POST");
+                copy.showApprove = (approvalLink.allow || []).includes("GET");
+            }
+    
+            return copy;
+        });
+
+        setApplications(list);
+    }, [selectedCapability]);
+
+    const handleApproveClicked = useCallback((membershipApplicationId) => {
+        setApplications(prev => {
+            const copy = [...prev];
+            const found = copy.find(x => x.id === membershipApplicationId);
+            
+            if (found) {
+                found.isApproving = true;
+            }
+
+            return copy;
+        });
+        selectedCapability.approveMembershipApplication(membershipApplicationId);
+    }, [selectedCapability]);
+
+    const hasPendingApplications = applications.length > 0;
     if (!hasPendingApplications) {
         return <></>;
     }
-
-    const applications = selectedCapability.membershipApplications.map(x => {
-        const copy = {...x};
-
-        const approvalLink = copy?._links?.approvals;
-        copy.canApprove = false;
-        copy.showApprove = true;
-
-        if (approvalLink) {
-            copy.canApprove = (approvalLink.allow || []).includes("POST");
-            copy.showApprove = (approvalLink.allow || []).includes("GET");
-        }
-
-        return copy;
-    });
 
     return <>
         <PageSection headline="Membership Applications">
@@ -72,10 +92,12 @@ export default function MembershipApplications() {
                                     <Button 
                                         size='small' 
                                         disabled={!x.canApprove} 
+                                        submitting={x.isApproving}
                                         title={x.canApprove 
                                             ? "Submit your approval of this membership" 
                                             : "You have already submitted your approval for this membership. Waiting for other members to approve."
                                         }
+                                        onClick={() => handleApproveClicked(x.id)}
                                     >Approve</Button>
                                 }
                             </TableDataCell>
