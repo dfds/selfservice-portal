@@ -1,34 +1,18 @@
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
 import { getAllTopics, getKafkaClusters } from "./../../SelfServiceApiClient";
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { Container, Column, Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@dfds-ui/react-components'
 import { Text } from '@dfds-ui/typography';
-import { Tooltip, TextField } from '@dfds-ui/react-components';
+import { TextField } from '@dfds-ui/react-components';
 import { Search } from '@dfds-ui/icons/system';
 import {SearchView} from './SearchView';
-import { CheckboxGroup, Checkbox } from '@dfds-ui/forms/checkbox';
+import { Checkbox } from '@dfds-ui/forms/checkbox';
 import styles from "./topic.module.css";
 import { Spinner } from '@dfds-ui/react-components';
-import { Button, H1, Input } from '@dfds-ui/react-components';
+import { H1 } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
 
-// const topics = [
-//     {
-//         id: 1,
-//         capability: "Alhan",
-//         name: "pub.alhan-meopj.test-kafka",
-//         cluster: "lkc-4npj6",
-//         descriptuion: "dcdsccwwcw"
-//     },
-//     {
-//         id: 2,
-//         capability: "ControlCapacity",
-//         name: "pub.controlcapacity-xgoja.addon-dev",
-//         cluster: "lkc-3wqzw",
-//         descriptuion: "Contains events for Seabook addons"
-//     }
-// ];
+
 
 
 function Topics() {
@@ -37,17 +21,20 @@ function Topics() {
     const [filteredData, setfilteredData] = useState([]);
     const navigate = useNavigate();
     const [inputText, setInputText] = useState(""); 
-    const [inputProd, setinputProd] = useState(false);
-    const [inputDev, setinputDev] = useState(false);
     const [isLoadingTopics, setIsLoadingTopics] = useState(true);
     const [clusters, setClusters] = useState([]);
     const colors = ['#ED8800', '#4caf50', 'blue', 'yellow', 'purple'];
+    const [clustersMap, setClustersMap] = useState(new Map());
+    const updateClustersMap = (k,v) => {
+        setClustersMap(new Map(clustersMap.set(k,v)));
+    }
 
 
     const fetchKafkaclusters = async () => {
         const result = await getKafkaClusters();
         const clustersWithColor = result.map((cluster, index) => {
             const color = colors[index % colors.length];
+            updateClustersMap(cluster.id, false);
             return {...cluster, color};
         })
 
@@ -78,13 +65,12 @@ function Topics() {
 
         let finalResult = highlightedData.filter((el) => el.highlight != null );
 
-        if (inputProd == true) {
-            finalResult = finalResult.filter((el) => el.kafkaClusterId == "kc-2");
-        } 
-
-        if (inputDev == true) {
-            finalResult = finalResult.filter((el) => el.kafkaClusterId == "kc-1");
-        } 
+        [...clustersMap.keys()].forEach(k => {
+            let clusterState = clustersMap.get(k);
+            if (clusterState){
+                finalResult = finalResult.filter((el) => el.kafkaClusterId == k);
+            }
+        })
         
         setfilteredData(finalResult)
     }
@@ -97,32 +83,23 @@ function Topics() {
           const result = await getAllTopics();
 
           result.sort((a, b) => a.name.localeCompare(b.name));
-          const finalTipics = result.map((topic) => {
+          const finalTopics = result.map((topic) => {
             const copy = {...topic}
-            console.log(c);
             const color = c.find(cluster => cluster.id === copy.kafkaClusterId);
             if(color != null) {
                 copy.clusterColor = color.color;
             }
             return copy
 
-
-          })
+          });
           
-
-          setTopics(finalTipics);
-          console.log(finalTipics);
-          setfilteredData(finalTipics);
+          setTopics(finalTopics);
+          setfilteredData(finalTopics);
           setIsLoadingTopics(false);
         }
 
         fetchKafkaclusters().then((c) => fetchTopics(c));
 
-        //console.log(clusters);
-
-        
-
-        //fetchTopics();
     }, []);
 
     useEffect(() => {
@@ -132,7 +109,7 @@ function Topics() {
             }
         });
 
-    }, [inputProd, inputDev, inputText]);
+    }, [clustersMap, inputText]);
 
 
     return <>
@@ -153,24 +130,23 @@ function Topics() {
                 <div className={styles.container_checkboxes} >
                     <Text style= {{color: "#4d4e4cb3"}}><i>{filteredData.length} Results</i></Text>
                     <div className={styles.checkboxes} >
-                        <Checkbox name="checkboxProd" checked={inputProd} onChange={() => {
-                            setinputProd(prevState => !prevState);
-                            inputHandler({
-                                    target: {
-                                    value: inputText
-                                    }
-                                });
-                            }}>
-                            Prod
-                        </Checkbox>
-                        <Checkbox name="checkboxDev" checked={inputDev} onChange={() => setinputDev(prevState =>!prevState)}>
-                            Dev
-                        </Checkbox>
+                        {
+                            clusters.map(cluster => (
+                                <Checkbox key={cluster.id} checked={clustersMap.get(cluster.id)} onChange={() => {
+                                    updateClustersMap(cluster.id, !clustersMap.get(cluster.id))
+                                    inputHandler({
+                                            target: {
+                                            value: inputText
+                                            }
+                                        });
+                                    }}>
+                                        {cluster.name}
+                                </Checkbox>
+                            ))
+                        }
                     </div>
-                </div>
-                    
-                
-    
+                </div>    
+
                 {
                     isLoadingTopics
                     ? <Spinner instant/>
@@ -192,14 +168,10 @@ function Topics() {
 
 export default function TopicsPage({}) {
 
-    
-
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
     } />
   
-
-
     return <>
         <br/>
         <br/>
