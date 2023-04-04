@@ -43,7 +43,7 @@ export function SearchView({data}) {
                 {/* <Chip mdxType="Chip">
                     {data.kafkaClusterName}
                 </Chip> */}
-                <Badge className={styles.badgecluster} style={{ backgroundColor: getBadgecolor(data.kafkaClusterId) }}>{data.kafkaClusterName}</Badge>
+                <Badge className={styles.badgecluster} style={{ backgroundColor: data.clusterColor }}>{data.kafkaClusterName}</Badge>
             </div>
             <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
             <div >

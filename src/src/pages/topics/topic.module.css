@@ -2,9 +2,22 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    justify-content: flex-end;
+    position: relative;
 } 
 
-.container_checkboxes > label {
+.container_checkboxes > Text {
+    flex: 1;
+}
+
+.checkboxes {
+    display: flex;
+    position: absolute;
+    right: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkboxes > label {
     margin-right: 19px;
 }

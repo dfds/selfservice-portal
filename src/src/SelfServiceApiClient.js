@@ -43,7 +43,6 @@ export async function getAllTopics() {
     const response = await callApi(url, accessToken);
 
     const { items, _embedded } = await response.json();
-    console.log("embedded ", _embedded)
     return (items || []).map(topic => {
         const copy = {...topic};
         const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
