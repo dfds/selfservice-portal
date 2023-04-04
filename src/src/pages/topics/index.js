@@ -169,7 +169,7 @@ function Topics() {
 export default function TopicsPage({}) {
 
     const splash = <CardMedia aspectRatio='3:2' media={
-        <img src='https://images.pexels.com/photos/2873277/pexels-photo-2873277.jpeg' alt="" />
+        <img src='https://images.pexels.com/photos/4792285/pexels-photo-4792285.jpeg' alt="" />
     } />
   
     return <>
