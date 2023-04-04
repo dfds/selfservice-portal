@@ -233,6 +233,17 @@ const capabilities : Capability[] = [
         ],
         __isMember: true
       },
+      {
+        id: "my-future-capability",
+        name: "My Future Capability",
+        description: "Vel facilisis volutpat est velit egestas dui id ornare arcu odio ut sem nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est ultricies integer quis auctor elit sed vulputate",
+        members: [
+          {
+            email: "jawib@dfds.com"
+          },
+        ],
+        __isMember: false
+      },
 ];
 
 const membershipApplications : MembershipApplication[] = [
@@ -242,7 +253,7 @@ const membershipApplications : MembershipApplication[] = [
     applicant: "pausegh@dfds.com",
     approvals: [],
     status: "Pending",
-    submittedAt: getDate(-7).toISOString(),
+    submittedAt: getDate(-1).toISOString(),
     expiresOn: getDate(7).toISOString(),
     __canApprove: false,
   },
@@ -252,7 +263,7 @@ const membershipApplications : MembershipApplication[] = [
     applicant: "hritote@dfds.com",
     approvals: [],
     status: "Pending",
-    submittedAt: getDate(-7).toISOString(),
+    submittedAt: getDate(-7).toISOString(), 
     expiresOn: getDate(7).toISOString(),
     __canApprove: false,
   },
@@ -265,7 +276,17 @@ const membershipApplications : MembershipApplication[] = [
     submittedAt: getDate(-12).toISOString(),
     expiresOn: getDate(2).toISOString(),
     __canApprove: true,
-  }
+  },
+  {
+    id: "4",
+    capabilityId: "my-future-capability",
+    applicant: "jandr@dfds.com",
+    approvals: [],
+    status: "Pending",
+    submittedAt: getDate(-12).toISOString(),
+    expiresOn: getDate(2).toISOString(),
+    __canApprove: false,
+  },
 ];
 
 export interface State {
@@ -285,3 +306,16 @@ export const state : State = {
   stats: stats,
   membershipApplications: membershipApplications,
 };
+
+export function isMemberOf(capability: Capability) : boolean {
+  return capability.__isMember;
+}
+
+export function isMemberOfCapability(capabilityId: string) : boolean {
+  const found = state.capabilities.find(x => x.id === capabilityId);
+  if (found) {
+      return found.__isMember;
+  }
+
+  return false;
+}

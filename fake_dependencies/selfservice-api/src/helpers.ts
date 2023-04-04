@@ -1,5 +1,3 @@
-import { Capability } from "./data";
-
 export function composeUrl(...args: string[]) : string {
     let url = process.env.API_BASE_URL ?? "";
 
@@ -36,13 +34,9 @@ export function idPostfix() : string{
     //TODO: use hashstring just like the real thing (?)
 }
 
-export function getDate(offset: number = 0) {
+export function getDate(offset: number = 0) : Date {
     const date = new Date();
     date.setDate(date.getDate() + offset);
 
     return date;
-}
-
-export function isMemberOf(capability: Capability) {
-    return capability.__isMember;
 }

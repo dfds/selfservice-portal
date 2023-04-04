@@ -5,6 +5,15 @@ import AppContext from "app-context";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from './ProfilePicture';
 
+function ExpirationDate({date}) {
+    const daysUntil = differenceInCalendarDays(new Date(date), new Date());
+    const label = intlFormatDistance(new Date(date), new Date());
+
+    return daysUntil < 3
+        ? <Badge intent="critical">{label}</Badge>
+        : <span>{label}</span>
+}
+
 export default function MembershipApplications() {
     const { selectedCapability } = useContext(AppContext);
     const hasPendingApplications = selectedCapability.membershipApplications.length > 0;
@@ -18,12 +27,12 @@ export default function MembershipApplications() {
 
         const approvalLink = copy?._links?.approvals;
         copy.canApprove = false;
+        copy.showApprove = true;
 
         if (approvalLink) {
             copy.canApprove = (approvalLink.allow || []).includes("POST");
+            copy.showApprove = (approvalLink.allow || []).includes("GET");
         }
-
-        copy.expiresInDays = differenceInCalendarDays(new Date(copy.expiresOn), new Date());
 
         return copy;
     });
@@ -53,27 +62,22 @@ export default function MembershipApplications() {
                             <TableDataCell>
                                 {x.applicant}
                             </TableDataCell>
-                            <TableDataCell>{format(new Date(x.submittedAt), 'MMMM do yyyy, h:mm:ss')}</TableDataCell>
+                            <TableDataCell>{format(new Date(x.submittedAt), 'MMMM do yyyy')}</TableDataCell>
                             <TableDataCell>
-                                {x.expiresInDays < 3 
-                                    ? <Badge intent="critical">
-                                        {intlFormatDistance(new Date(x.expiresOn), new Date())}
-                                      </Badge>
-                                    : <span>
-                                        {intlFormatDistance(new Date(x.expiresOn), new Date())}
-                                      </span>
-                                }
+                                <ExpirationDate date={x.expiresOn} />
                             </TableDataCell>
                             <TableDataCell>{x.status}</TableDataCell>
                             <TableDataCell align='right'>
-                                <Button 
-                                    size='small' 
-                                    disabled={!x.canApprove} 
-                                    title={x.canApprove 
-                                        ? "Submit your approval of this membership" 
-                                        : "You have already submitted your approval for this membership. Waiting for other members to approve."
-                                    }
-                                >Approve</Button>
+                                {x.showApprove && 
+                                    <Button 
+                                        size='small' 
+                                        disabled={!x.canApprove} 
+                                        title={x.canApprove 
+                                            ? "Submit your approval of this membership" 
+                                            : "You have already submitted your approval for this membership. Waiting for other members to approve."
+                                        }
+                                    >Approve</Button>
+                                }
                             </TableDataCell>
                         </TableRow>
                     )}

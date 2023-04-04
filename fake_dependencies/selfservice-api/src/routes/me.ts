@@ -1,7 +1,6 @@
 import express from "express";
 import { convertCapability } from "../converters";
-import { state } from "../data";
-import { isMemberOf } from "../helpers";
+import { state, isMemberOf } from "../data";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
-import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication } from "./data";
-import { composeUrl, isMemberOf } from "./helpers";
+import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability } from "./data";
+import { composeUrl } from "./helpers";
 
 export function convertCapability(capability: Capability) : any {
     return {
@@ -97,6 +97,14 @@ export function convertMessageContract(messageContract: MessageContract) : any {
 }
 
 export function convertMembershipApplication(memebrshipApplication: MembershipApplication) : any {
+    const approvalAllow = [];
+    if (isMemberOfCapability(memebrshipApplication.capabilityId)) {
+        approvalAllow.push("GET");
+    }
+    if (memebrshipApplication.__canApprove) {
+        approvalAllow.push("POST");
+    }
+
     return {...memebrshipApplication, ...{
         "_links": {
             self: {
@@ -107,9 +115,7 @@ export function convertMembershipApplication(memebrshipApplication: MembershipAp
             approvals: {
                 href: composeUrl("membershipapplications", memebrshipApplication.id, "approvals"),
                 rel: "related",
-                allow: memebrshipApplication.__canApprove
-                    ? ["POST"]
-                    : []
+                allow: approvalAllow
             }
         }
     }};    

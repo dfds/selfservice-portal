@@ -60,8 +60,8 @@ router.post("/capabilities", (req, res) => {
         .replace(" ", "-"),
       name: capabilityName,
       description: req?.body?.description,
-      members: [], //TODO [pausegh]: get user email
-      membershipApplications: []
+      members: [],
+      __isMember: true
     };
 
     state.capabilities.push(newCapability);
