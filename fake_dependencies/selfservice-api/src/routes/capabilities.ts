@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster } from "../converters";
+import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster, convertMembershipApplication } from "../converters";
 import { state, Capability, KafkaTopic } from "../data";
 import { composeUrl, log } from "../helpers";
 
@@ -148,14 +148,19 @@ router.post("/capabilities/:id/topics", (req, res) => {
 });
 
 router.get("/capabilities/:id/membershipapplications", (req, res) => {
-    let found = state.capabilities.find(x => x.id == req.params.id);
-    if (found) {
-      res.send({
-        membershipApplications: (found.membershipApplications || []),
-      });
-    } else {
-      res.status(404).send(`capability not found for id: ${req.params.id}`);
+  const capabilityId : string = req.params.id;
+
+  const applications = state.membershipApplications.filter(x => x.capabilityId === capabilityId);
+  res.send({
+    items: (applications || []).map(x => convertMembershipApplication(x)),
+    _links: {
+      self: {
+        href: composeUrl(req.path),
+        rel: "self",
+        allow: ["GET"]
+      }
     }
+  });
 });
 
 router.post("/capabilities/:id/membershipapplications", (req, res) => {

@@ -1,9 +1,10 @@
+import { getDate } from "./helpers";
 export interface Capability {
   id: string,
   name: string,
   description: string,
   members: Member[],
-  membershipApplications: MembershipApplication[],
+  __isMember: boolean
 }
 
 export interface Member {
@@ -33,11 +34,19 @@ export interface MessageContract {
 
 export interface MembershipApplication {
   id: string,
+  capabilityId: string,
   applicant: string,
-  approvals: any[],
+  approvals: MembershipApplicationApproval[],
   status: string,
   submittedAt: string,
-  expiresOn: string
+  expiresOn: string,
+  __canApprove: boolean,
+}
+
+export interface MembershipApplicationApproval {
+  id: string,
+  approvedBy: string,
+  approvedAt: string,
 }
 
 export interface KafkaCluster {
@@ -197,7 +206,7 @@ const capabilities : Capability[] = [
             email: "thfis@dfds.com"
           },
         ],
-        membershipApplications : []
+        __isMember: true
       },
       {
         id: "another-awssome-capability-abcd",
@@ -208,25 +217,41 @@ const capabilities : Capability[] = [
             email: "thfis@dfds.com"
           },
         ],
-        membershipApplications: [
-          {
-            id: "1",
-            applicant: "pausegh@dfds.com",
-            approvals: [],
-            status: "pending",
-            submittedAt: "2023-03-08T12:53:50+01:00",
-            expiresOn: "2023-03-22T12:53:50+01:00"
-          },
-          {
-            id: "2",
-            applicant: "hritote@dfds.com",
-            approvals: [],
-            status: "pending",
-            submittedAt: "2023-03-08T11:48:50+01:00",
-            expiresOn: "2023-03-22T11:48:50+01:00"
-          }
-        ]
+        __isMember: false
       },
+];
+
+const membershipApplications : MembershipApplication[] = [
+  {
+    id: "1",
+    capabilityId: "this-is-a-capability-xyz",
+    applicant: "pausegh@dfds.com",
+    approvals: [],
+    status: "Pending",
+    submittedAt: getDate(-7).toISOString(),
+    expiresOn: getDate(7).toISOString(),
+    __canApprove: false,
+  },
+  {
+    id: "2",
+    capabilityId: "this-is-a-capability-xyz",
+    applicant: "hritote@dfds.com",
+    approvals: [],
+    status: "Pending",
+    submittedAt: getDate(-7).toISOString(),
+    expiresOn: getDate(7).toISOString(),
+    __canApprove: false,
+  },
+  {
+    id: "3",
+    capabilityId: "this-is-a-capability-xyz",
+    applicant: "jawib@dfds.com",
+    approvals: [],
+    status: "Pending",
+    submittedAt: getDate(-12).toISOString(),
+    expiresOn: getDate(2).toISOString(),
+    __canApprove: true,
+  }
 ];
 
 export interface State {
@@ -235,6 +260,7 @@ export interface State {
   capabilities: Capability[],
   messageContracts: MessageContract[],
   stats: Stat[],
+  membershipApplications: MembershipApplication[],
 }
 
 export const state : State = {
@@ -243,4 +269,5 @@ export const state : State = {
   kafkaTopics: kafkaTopics,
   messageContracts: messageContracts,
   stats: stats,
+  membershipApplications: membershipApplications,
 };

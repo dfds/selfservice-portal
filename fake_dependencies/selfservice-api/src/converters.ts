@@ -1,5 +1,9 @@
-import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract } from "./data";
+import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication } from "./data";
 import { composeUrl } from "./helpers";
+
+function isMemberOf(capability: Capability) {
+    return capability.__isMember;
+}
 
 export function convertCapability(capability: Capability) : any {
     return {
@@ -20,21 +24,21 @@ export function convertCapability(capability: Capability) : any {
             topics: {
                 href: composeUrl(`/capabilities/${capability.id}/topics`),
                 rel: "related",
-                allow: capability.id === "this-is-a-capability-xyz"
+                allow: isMemberOf(capability)
                     ? ["GET", "POST"]
                     : ["GET"]
             },
             membershipApplications: {
                 href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),
                 rel: "related",
-                allow: capability.id === "this-is-a-capability-xyz"
-                    ? ["GET", "POST"]
-                    : ["GET"]
+                allow: isMemberOf(capability)
+                    ? ["GET"]
+                    : ["GET", "POST"]
             },
             awsAccount: {
                 href: composeUrl(`/capabilities/${capability.id}/awsaccount`),
                 rel: "related",
-                allow: capability.id === "this-is-a-capability-xyz"
+                allow: isMemberOf(capability)
                     ? ["GET", "POST"]
                     : ["GET"]
             }
@@ -94,4 +98,23 @@ export function convertMessageContract(messageContract: MessageContract) : any {
             }
         }
     }};
+}
+
+export function convertMembershipApplication(memebrshipApplication: MembershipApplication) : any {
+    return {...memebrshipApplication, ...{
+        "_links": {
+            self: {
+                href: composeUrl("membershipapplications", memebrshipApplication.id),
+                rel: "self",
+                allow: ["GET"]
+            },
+            approvals: {
+                href: composeUrl("membershipapplications", memebrshipApplication.id, "approvals"),
+                rel: "related",
+                allow: memebrshipApplication.__canApprove
+                    ? ["POST"]
+                    : []
+            }
+        }
+    }};    
 }

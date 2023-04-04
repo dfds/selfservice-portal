@@ -33,4 +33,10 @@ export function idPostfix() : string{
     return Math.random().toString(36).replace(/[0-9]/g, '').substring(2, 7);
     //TODO: use hashstring just like the real thing (?)
 }
-  
+
+export function getDate(offset: number = 0) {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+
+    return date;
+}
