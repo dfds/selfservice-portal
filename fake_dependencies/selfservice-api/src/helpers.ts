@@ -40,3 +40,10 @@ export function getDate(offset: number = 0) : Date {
 
     return date;
 }
+
+let nextIdSeed : number = 0;
+
+export function createId() : string {
+    nextIdSeed = nextIdSeed++;
+    return "" + new Date().getTime() + "-" + nextIdSeed;
+}

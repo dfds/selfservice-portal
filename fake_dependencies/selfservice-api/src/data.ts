@@ -4,7 +4,8 @@ export interface Capability {
   name: string,
   description: string,
   members: Member[],
-  __isMember: boolean
+  __isMember: boolean,
+  __canJoin: boolean
 }
 
 export interface Member {
@@ -226,7 +227,8 @@ const capabilities : Capability[] = [
             email: "thfis@dfds.com"
           },
         ],
-        __isMember: true
+        __isMember: true,
+        __canJoin: false,
       },
       {
         id: "another-awssome-capability-abcd",
@@ -238,6 +240,7 @@ const capabilities : Capability[] = [
           },
         ],
         __isMember: false
+        __canJoin: true,
       },
       {
         id: "my-second-capability",
@@ -251,7 +254,8 @@ const capabilities : Capability[] = [
             email: "thfis@dfds.com"
           },
         ],
-        __isMember: true
+        __isMember: true,
+        __canJoin: false,
       },
       {
         id: "my-future-capability",
@@ -262,7 +266,8 @@ const capabilities : Capability[] = [
             email: "jawib@dfds.com"
           },
         ],
-        __isMember: false
+        __isMember: false,
+        __canJoin: false,
       },
 ];
 
@@ -326,6 +331,10 @@ export const state : State = {
   stats: stats,
   membershipApplications: membershipApplications,
 };
+
+export function canJoin(capability: Capability) : boolean {
+  return capability.__canJoin;
+}
 
 export function isMemberOf(capability: Capability) : boolean {
   return capability.__isMember;

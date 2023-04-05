@@ -1,4 +1,4 @@
-import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability } from "./data";
+import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability, canJoin } from "./data";
 import { composeUrl } from "./helpers";
 
 export function convertCapability(capability: Capability) : any {
@@ -29,7 +29,7 @@ export function convertCapability(capability: Capability) : any {
                 rel: "related",
                 allow: isMemberOf(capability)
                     ? ["GET"]
-                    : ["GET", "POST"]
+                    : canJoin(capability) ? ["GET", "POST"] : ["GET"]
             },
             awsAccount: {
                 href: composeUrl(`/capabilities/${capability.id}/awsaccount`),

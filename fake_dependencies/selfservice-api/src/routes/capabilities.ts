@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster, convertMembershipApplication } from "../converters";
-import { state, Capability, KafkaTopic } from "../data";
-import { composeUrl, log } from "../helpers";
+import { state, Capability, KafkaTopic, MembershipApplication } from "../data";
+import { composeUrl, createId, getDate, log } from "../helpers";
 
 const router = express.Router();
 
@@ -61,7 +61,8 @@ router.post("/capabilities", (req, res) => {
       name: capabilityName,
       description: req?.body?.description,
       members: [],
-      __isMember: true
+      __isMember: true,
+      __canJoin: false
     };
 
     state.capabilities.push(newCapability);
@@ -163,14 +164,30 @@ router.get("/capabilities/:id/membershipapplications", (req, res) => {
   });
 });
 
+
 router.post("/capabilities/:id/membershipapplications", (req, res) => {
     let found : Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
     if (found) {
-      res
-        .status(501)
-        .send("not yet implemented");
 
-      // TODO [pausegh] : implement adding membership application
+      const newApplication : MembershipApplication = {
+        id: createId(),
+        applicant: "me@me.me",
+        approvals: [],
+        capabilityId: found.id,
+        status: "Pending",
+        submittedAt: getDate().toISOString(),
+        expiresOn: getDate(12).toISOString(),
+        __canApprove: false
+      };
+
+      state.membershipApplications.push(newApplication);
+      found.__canJoin = false;
+
+      log("new membership application added: ", newApplication);
+
+      res
+        .status(201)
+        .send(convertMembershipApplication(newApplication));
     } else {
       res
         .status(404)
