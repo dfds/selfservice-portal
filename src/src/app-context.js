@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, getCapabilityById, getCapabilityMembers, getCapabilityMembershipApplications, getCapabilityTopicsGroupedByCluster, addTopicToCapability, addMessageContractToTopic, submitMembershipApplicationApproval } from "./SelfServiceApiClient";
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
+import { 
+  getMyPortalProfile, 
+  getCapabilities, 
+  getCapabilityById, 
+  getCapabilityMembers, 
+  getCapabilityMembershipApplications, 
+  getCapabilityTopicsGroupedByCluster, 
+  addTopicToCapability, 
+  addMessageContractToTopic, 
+  submitMembershipApplicationApproval,
+  submitMembershipApplication
+} from "./SelfServiceApiClient";
 
 const appContext = React.createContext(null);
 
@@ -224,6 +235,14 @@ function useCapability() {
     await loadMembershipApplications();
   };
 
+  const submitMembershipApplicationLocal = useCallback(async () => {
+    await submitMembershipApplication(details);
+
+    console.log("reload membership applications...");
+    await loadMembershipApplications();
+    
+  }, [details]);
+
   const capability = {
     isLoading,
     details,
@@ -234,7 +253,8 @@ function useCapability() {
     toggleSelectedKafkaTopic,
     addTopicToCluster,
     addMessageContractToTopic: addMessageContractToTopicLocal,
-    approveMembershipApplication
+    approveMembershipApplication,
+    submitMembershipApplication: submitMembershipApplicationLocal
   };
 
   return { capability, loadCapability };

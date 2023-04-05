@@ -272,6 +272,29 @@ export async function submitMembershipApplicationApproval(membershipApplicationD
     }
 }
 
+export async function submitMembershipApplication(capabilityDefinition) {
+    const capabilityId = capabilityDefinition?.details?.id;
+
+    const link = capabilityDefinition?._links?.membershipApplications;
+    if (!link) {
+        throw Error("Error! No membership applications link found on capability " + capabilityId);
+    }
+
+    if (!(link.allow || []).includes("POST")) {
+        throw Error("Error! Not authorized to submit membership application for capability " + capabilityId);
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST", {
+        capabilityId: capabilityId
+    });
+
+    if (!response.ok) {
+        console.log("response was: ", await response.text());
+        throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+    }
+}
+
 export async function getKafkaClusters() {
     const accessToken = await getSelfServiceAccessToken();
 

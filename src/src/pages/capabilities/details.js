@@ -22,7 +22,7 @@ export default function CapabilityDetailsPage() {
     return <>
             <Page title={selectedCapability?.details?.name} isLoading={selectedCapability?.isLoading} isNotFound={selectedCapability?.details === null}>
                 <Members members={selectedCapability?.members} />
-                <Summary id={selectedCapability?.details?.id} name={selectedCapability?.details?.name} description={selectedCapability?.details?.description} />
+                <Summary />
                 <Resources />
 
                 <MembershipApplications />
