@@ -23,7 +23,7 @@ function Topics() {
     const [inputText, setInputText] = useState(""); 
     const [isLoadingTopics, setIsLoadingTopics] = useState(true);
     const [clusters, setClusters] = useState([]);
-    const colors = ['#ED8800', '#4caf50', 'blue', 'yellow', 'purple'];
+    const colors = ['#ED8800', '#4caf50', '#49a2df', '#F1A7AE', 'purple'];
     const [clustersMap, setClustersMap] = useState(new Map());
     const updateClustersMap = (k,v) => {
         setClustersMap(new Map(clustersMap.set(k,v)));
@@ -162,8 +162,6 @@ function Topics() {
     </>
 
 }
-
-
 
 
 export default function TopicsPage({}) {
