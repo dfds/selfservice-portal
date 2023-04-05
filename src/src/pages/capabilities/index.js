@@ -9,7 +9,7 @@ import { SideSheet, SideSheetContent } from '@dfds-ui/react-components'
 import { Tooltip, TextField } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
-import AppContext from "./../../app-context";
+import AppContext from "AppContext";
 import { createCapability } from "../../SelfServiceApiClient";
 import PageSection from "components/PageSection";
 

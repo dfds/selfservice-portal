@@ -1,7 +1,7 @@
 import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell, Badge } from '@dfds-ui/react-components'
 import { useState, useContext, useEffect, useCallback } from "react";
 import PageSection from "components/PageSection";
-import AppContext from "app-context";
+import AppContext from "AppContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from './ProfilePicture';
 

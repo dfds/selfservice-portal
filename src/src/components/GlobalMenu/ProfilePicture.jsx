@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import AppContext from "../../app-context";
+import AppContext from "AppContext";
 import styles from "./ProfilePicture.module.css";
 
 export default function ProfilePicture({}) {

@@ -1,4 +1,4 @@
-import AppContext from 'app-context';
+import AppContext from "AppContext";
 import { useContext } from 'react';
 
 import { Hero as DfdsHero, LinkButton } from '@dfds-ui/react-components';

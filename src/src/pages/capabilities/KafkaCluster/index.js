@@ -5,7 +5,7 @@ import PageSection from "components/PageSection";
 import NewTopicDialog from './NewTopicDialog';
 import { useState } from "react";
 import { useContext } from "react";
-import AppContext from "app-context";
+import AppContext from "AppContext";
 import TopicList from "./TopicList";
 
 export default function KafkaCluster({cluster}) {

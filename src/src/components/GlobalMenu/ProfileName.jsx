@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import AppContext from "./../../app-context";
+import AppContext from "AppContext";
 import styles from "./ProfileName.module.css";
 import { Text } from "@dfds-ui/typography";
 

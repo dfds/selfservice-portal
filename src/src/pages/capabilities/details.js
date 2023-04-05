@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { useParams } from 'react-router-dom';
-import AppContext from "app-context";
+import AppContext from "AppContext";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';

@@ -8,7 +8,7 @@ import Message from "./MessageContract";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
-import AppContext from "app-context";
+import AppContext from "AppContext";
 
 import { getMessageContracts } from "SelfServiceApiClient";
 

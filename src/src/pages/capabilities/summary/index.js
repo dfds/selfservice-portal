@@ -3,7 +3,7 @@ import { Text } from '@dfds-ui/typography';
 import { Modal, ModalAction } from '@dfds-ui/modal';
 import { Button, ButtonStack } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
-import AppContext from "app-context";
+import AppContext from "AppContext";
 
 import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";

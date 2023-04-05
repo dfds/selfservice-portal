@@ -14,7 +14,7 @@ import {
   submitMembershipApplication
 } from "./SelfServiceApiClient";
 
-const appContext = React.createContext(null);
+const AppContext = React.createContext(null);
 
 function adjustRetention(kafkaTopic) {
   if (kafkaTopic.retention !== "forever") {
@@ -240,7 +240,7 @@ function useCapability() {
 
     console.log("reload membership applications...");
     await loadMembershipApplications();
-    
+
   }, [details]);
 
   const capability = {
@@ -283,7 +283,7 @@ function AppProvider({ children }) {
   async function loadOtherCapabilities() {
     const allCapabilities = await getCapabilities();
     const filteredList = (allCapabilities || []).filter(x => {
-        const myCap = (myCapabilities || []).find(y => y.id === x.id);
+        const myCap = (myCapabilities || []).find(y => y.id === x.id);  
         if (myCap) {
             return false;
         } else {
@@ -329,7 +329,7 @@ function AppProvider({ children }) {
     stats,
   };
 
-  return <appContext.Provider value={state}>{children}</appContext.Provider>;
+  return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
 }
 
-export { appContext as default, AppProvider }
+export { AppContext as default, AppProvider }

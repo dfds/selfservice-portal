@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import { GlobalStyles } from '@dfds-ui/react-components';
 import { BrowserRouter } from "react-router-dom";
-import { AppProvider } from "./app-context";
+import { AppProvider } from "./AppContext";
 
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
