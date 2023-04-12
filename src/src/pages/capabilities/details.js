@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { useParams } from 'react-router-dom';
-import AppContext from "AppContext";
+import SelectedCapabilityContext from "SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';
@@ -12,16 +12,16 @@ import MembershipApplications from "./membershipapplications";
 
 export default function CapabilityDetailsPage() {
     const { id } = useParams();
-    const { selectedCapability, changeSelectedCapability } = useContext(AppContext);
+    const { isLoading, isFound, name, members, kafkaClusters, loadCapability } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        changeSelectedCapability(id);
+        loadCapability(id);
     }, [id]);
 
     return <>
-            <Page title={selectedCapability?.details?.name} isLoading={selectedCapability?.isLoading} isNotFound={selectedCapability?.details === null}>
-                <Members members={selectedCapability?.members} />
+            <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
+                <Members members={members} />
                 <Summary />
                 <Resources />
 
@@ -30,7 +30,7 @@ export default function CapabilityDetailsPage() {
                 {/* <Logs /> */}
                 {/* <CommunicationChannels /> */}
 
-                {(selectedCapability?.kafkaClusters || []).map(cluster => <KafkaCluster
+                {(kafkaClusters || []).map(cluster => <KafkaCluster
                     key={cluster.id}
                     cluster={cluster}
                 />)}

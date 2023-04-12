@@ -1,7 +1,7 @@
 import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell, Badge } from '@dfds-ui/react-components'
 import { useState, useContext, useEffect, useCallback } from "react";
 import PageSection from "components/PageSection";
-import AppContext from "AppContext";
+import SelectedCapabilityContext from "SelectedCapabilityContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from './ProfilePicture';
 
@@ -15,11 +15,11 @@ function ExpirationDate({date}) {
 }
 
 export default function MembershipApplications() {
-    const {selectedCapability} = useContext(AppContext);
+    const {membershipApplications, approveMembershipApplication} = useContext(SelectedCapabilityContext);
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
-        const list = (selectedCapability?.membershipApplications || []).map(x => {
+        const list = (membershipApplications || []).map(x => {
             const copy = {...x};
     
             const approvalLink = copy?._links?.approvals;
@@ -36,7 +36,7 @@ export default function MembershipApplications() {
         });
 
         setApplications(list);
-    }, [selectedCapability]);
+    }, [membershipApplications]);
 
     const handleApproveClicked = useCallback((membershipApplicationId) => {
         setApplications(prev => {
@@ -49,8 +49,8 @@ export default function MembershipApplications() {
 
             return copy;
         });
-        selectedCapability.approveMembershipApplication(membershipApplicationId);
-    }, [selectedCapability]);
+        approveMembershipApplication(membershipApplicationId);
+    }, [membershipApplications]);
 
     const hasPendingApplications = applications.length > 0;
     if (!hasPendingApplications) {

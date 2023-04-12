@@ -5,11 +5,11 @@ import PageSection from "components/PageSection";
 import NewTopicDialog from './NewTopicDialog';
 import { useState } from "react";
 import { useContext } from "react";
-import AppContext from "AppContext";
+import SelectedCapabilityContext from "SelectedCapabilityContext";
 import TopicList from "./TopicList";
 
 export default function KafkaCluster({cluster}) {
-    const { selectedCapability } = useContext(AppContext);
+    const { id, links, selectedKafkaTopic, addTopicToCluster, toggleSelectedKafkaTopic } = useContext(SelectedCapabilityContext);
     const [showDialog, setShowDialog] = useState(false);
     const [isInProgress, setIsInProgress] = useState(false);
 
@@ -25,16 +25,16 @@ export default function KafkaCluster({cluster}) {
 
     const handleAddTopic = async ({name, description, partitions, retention}) => {
         setIsInProgress(true);
-        await selectedCapability?.addTopicToCluster(cluster.id, {name, description, partitions, retention});
+        await addTopicToCluster(cluster.id, {name, description, partitions, retention});
         setIsInProgress(false);
         setShowDialog(false);
     };
 
     const handleTopicClicked = (clusterId, topicId) => {
-        selectedCapability?.toggleSelectedKafkaTopic(clusterId, topicId);
+        toggleSelectedKafkaTopic(clusterId, topicId);
     };
 
-    const hasWriteAccess = (selectedCapability?.details?._links?.topics?.allow || []).includes("POST");
+    const hasWriteAccess = (links?.topics?.allow || []).includes("POST");
 
     return <PageSection headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}>
         <Text styledAs="label">Description</Text>
@@ -42,7 +42,7 @@ export default function KafkaCluster({cluster}) {
 
         {showDialog &&
             <NewTopicDialog
-                capabilityId={selectedCapability?.details?.id}
+                capabilityId={id}
                 clusterName={cluster.name.toLocaleLowerCase()}
                 inProgress={isInProgress}
                 onAddClicked={handleAddTopic}
@@ -63,7 +63,7 @@ export default function KafkaCluster({cluster}) {
             name="Public" 
             topics={publicTopics} 
             clusterId={cluster.id} 
-            selectedTopic={selectedCapability?.selectedKafkaTopic} 
+            selectedTopic={selectedKafkaTopic} 
             onTopicClicked={handleTopicClicked} 
         />
         <br />
@@ -74,7 +74,7 @@ export default function KafkaCluster({cluster}) {
                     name="Private" 
                     topics={privateTopcis} 
                     clusterId={cluster.id} 
-                    selectedTopic={selectedCapability?.selectedKafkaTopic} 
+                    selectedTopic={selectedKafkaTopic} 
                     onTopicClicked={handleTopicClicked} 
                 />
                 <br />

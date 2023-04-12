@@ -239,7 +239,7 @@ const capabilities : Capability[] = [
             email: "thfis@dfds.com"
           },
         ],
-        __isMember: false
+        __isMember: false,
         __canJoin: true,
       },
       {

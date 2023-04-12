@@ -8,7 +8,7 @@ import Message from "./MessageContract";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
-import AppContext from "AppContext";
+import SelectedCapabilityContext from "SelectedCapabilityContext";
 
 import { getMessageContracts } from "SelfServiceApiClient";
 
@@ -48,7 +48,7 @@ function TopicHeader({name, description, partitions, retention, status, isOpen, 
 }
 
 export default function Topic({topic, isSelected, onHeaderClicked}) {
-    const { selectedCapability } = useContext(AppContext);
+    const { addMessageContractToTopic } = useContext(SelectedCapabilityContext);
     
     const [contracts, setContracts] = useState([]);
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -103,7 +103,7 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
     };
 
     const handleAddMessageContract = async (formValues) => {
-        await selectedCapability?.addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
+        await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
         setShowMessageContractDialog(false);
     };
 

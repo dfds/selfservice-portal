@@ -5,7 +5,7 @@ import App from './App';
 import { GlobalStyles } from '@dfds-ui/react-components';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
-
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 
@@ -17,7 +17,9 @@ render(
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GlobalStyles />
         <AppProvider>
-          <App />
+          <SelectedCapabilityProvider>
+            <App />
+          </SelectedCapabilityProvider>
         </AppProvider>
       </BrowserRouter>
     </MsalProvider>

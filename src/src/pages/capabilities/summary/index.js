@@ -3,24 +3,51 @@ import { Text } from '@dfds-ui/typography';
 import { Modal, ModalAction } from '@dfds-ui/modal';
 import { Button, ButtonStack } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
-import AppContext from "AppContext";
+import SelectedCapabilityContext from "SelectedCapabilityContext";
 
 import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";
 import { useState } from "react";
-import { useEffect } from "react";
+
+function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked}) {
+
+  const actions = <>
+    <ModalAction actionVariation="primary" submitting={isSubmitting} onClick={onSubmitClicked}>
+      Submit
+    </ModalAction>
+    <ModalAction style={{marginRight: "1rem"}} disabled={isSubmitting} actionVariation="secondary" onClick={onCloseRequested}>
+      Cancel
+    </ModalAction>
+  </>
+
+  return <>
+    <Modal heading={`Want to join...?`} isOpen={true} shouldCloseOnOverlayClick={true} shouldCloseOnEsc={true} onRequestClose={onCloseRequested} actions={actions}>
+      <Text>
+        <strong>Hey</strong>, so you wanna join <TextBlock>{name}</TextBlock>...? Awesome! Apply for a membership by submitting 
+        your membership application for approval by existing capability members. When they approve, you become a member.
+      </Text>
+      <Text styledAs="caption">
+        <i>
+            <strong>Please note</strong> <br />
+            Your membership application will expire after two weeks if it hasn't been approved by existing members.
+        </i>
+      </Text>
+    </Modal>  
+  </>
+
+}
 
 export default function Summary() {
-    const { selectedCapability } = useContext(AppContext);
+    const { name, description, links, submitMembershipApplication } = useContext(SelectedCapabilityContext);
     
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const canJoin = (selectedCapability?.details?._links?.membershipApplications?.allow || []).includes("POST");
+    const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
 
     const handleSubmitClicked = async () => {
         setIsSubmitting(true);
-        await selectedCapability.submitMembershipApplication();
+        await submitMembershipApplication();
         setIsSubmitting(false);
         setShowJoinDialog(false);
     };
@@ -32,34 +59,19 @@ export default function Summary() {
     };
 
     return <PageSection headline="Summary">
-
-        <Modal heading={`Want to join...?`} isOpen={showJoinDialog} shouldCloseOnOverlayClick={true} shouldCloseOnEsc={true} onRequestClose={handleCloseRequested} actions={<>
-              <ModalAction actionVariation="primary" submitting={isSubmitting} onClick={handleSubmitClicked}>
-                Submit
-              </ModalAction>
-              <ModalAction style={{marginRight: "1rem"}} disabled={isSubmitting} actionVariation="secondary" onClick={handleCloseRequested}>
-                Cancel
-              </ModalAction>
-            </>}>
-          
-          <Text>
-            <strong>Hey</strong>, so you wanna join <TextBlock>{selectedCapability.details.name}</TextBlock>...? Awesome! Apply for a membership by submitting 
-            your membership application for approval by existing capability members. When they approve, you become a member.
-          </Text>
-          <Text styledAs="caption">
-            <i>
-                <strong>Please note</strong> <br />
-                Your membership application will expire after two weeks if it hasn't been approved by existing members.
-            </i>
-          </Text>
-        </Modal>
+        {showJoinDialog && <JoinDialog 
+          name={name} 
+          isSubmitting={isSubmitting} 
+          onCloseRequested={handleCloseRequested} 
+          onSubmitClicked={handleSubmitClicked} 
+        />}
 
         <div className={styles.container}>
             <div className={styles.column}>
-                <Text styledAs={'smallHeadline'}>Name</Text> {selectedCapability?.details?.name}
+                <Text styledAs={'smallHeadline'}>Name</Text> {name}
             </div>
             <div className={styles.column}>
-                <Text styledAs={'smallHeadline'}>Description</Text> {selectedCapability?.details?.description}
+                <Text styledAs={'smallHeadline'}>Description</Text> {description}
             </div>
             <div className={styles.column} style={{paddingTop: "2rem"}}>
                 <ButtonStack align="right">
