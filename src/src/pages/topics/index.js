@@ -12,9 +12,6 @@ import { Spinner } from '@dfds-ui/react-components';
 import { H1 } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
 
-
-
-
 function Topics() {
 
     const [topics, setTopics] = useState([]);
@@ -117,35 +114,37 @@ function Topics() {
         <br/>
 
         <PageSection headline={`Public Topics`}>
-                
-                <TextField
-                    name="basic"
-                    onChange={inputHandler}
-                    prefix="Test"
-                    placeholder="Search"
-                    icon={<Search />}
-                    help="I need some more help"
-                    style={{ marginBottom: "-15px" }}
-                />
-                <div className={styles.container_checkboxes} >
-                    <Text style= {{color: "#4d4e4cb3"}}><i>{filteredData.length} Results</i></Text>
-                    <div className={styles.checkboxes} >
-                        {
-                            clusters.map(cluster => (
-                                <Checkbox key={cluster.id} checked={clustersMap.get(cluster.id)} onChange={() => {
-                                    updateClustersMap(cluster.id, !clustersMap.get(cluster.id))
-                                    inputHandler({
-                                            target: {
-                                            value: inputText
-                                            }
-                                        });
-                                    }}>
-                                        {cluster.name}
-                                </Checkbox>
-                            ))
-                        }
-                    </div>
-                </div>    
+                <div style={{ marginTop: "1rem", marginBottom: "2rem" }}>
+                    <TextField
+                        name="basic"
+                        onChange={inputHandler}
+                        prefix="Test"
+                        placeholder="Search"
+                        icon={<Search />}
+                        help="I need some more help"
+                        style={{marginBottom: "0"}}
+                    />
+
+                    <div className={styles.container_checkboxes} >
+                        <Text as={"span"} style= {{color: "#4d4e4cb3"}}><i>{filteredData.length} Results</i></Text>
+                        <div className={styles.checkboxes} >
+                            {
+                                clusters.map(cluster => (
+                                    <Checkbox key={cluster.id} checked={clustersMap.get(cluster.id)} onChange={() => {
+                                        updateClustersMap(cluster.id, !clustersMap.get(cluster.id))
+                                        inputHandler({
+                                                target: {
+                                                value: inputText
+                                                }
+                                            });
+                                        }}>
+                                            {cluster.name}
+                                    </Checkbox>
+                                ))
+                            }
+                        </div>
+                    </div>    
+                </div>
 
                 {
                     isLoadingTopics
