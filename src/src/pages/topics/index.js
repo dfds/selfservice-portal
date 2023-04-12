@@ -179,6 +179,19 @@ export default function TopicsPage({}) {
                 <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
                     <CardTitle largeTitle>Information</CardTitle>
                     <CardContent>
+                        <p>
+                            Here, you can find a comprehensive list of Kafka topics that have been made available for 
+                            development teams to discover and utilize in their projects. Every capability has read 
+                            access to all public topics.
+                        </p>
+                        <p>
+                            When producing messages to a public topic, please be aware of sensitive information and treat it 
+                            responsibly - and as a consumer of messages that might contain sensitive information please also 
+                            treat the information responsibly.
+                        </p>
+                        <p>
+                            Browse the list of public Kafka topics and get started on your next project today!
+                        </p>
                     </CardContent>
                 </Card>
                 <Topics />
