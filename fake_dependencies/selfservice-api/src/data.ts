@@ -51,9 +51,9 @@ export interface MembershipApplicationApproval {
 }
 
 export interface KafkaCluster {
-  id: string, 
-  name: string, 
-  description: string, 
+  id: string,
+  name: string,
+  description: string,
 }
 
 export interface Stat {
@@ -288,7 +288,7 @@ const membershipApplications : MembershipApplication[] = [
     applicant: "hritote@dfds.com",
     approvals: [],
     status: "Pending",
-    submittedAt: getDate(-7).toISOString(), 
+    submittedAt: getDate(-7).toISOString(),
     expiresOn: getDate(7).toISOString(),
     __canApprove: false,
   },
@@ -315,8 +315,8 @@ const membershipApplications : MembershipApplication[] = [
 ];
 
 export interface State {
-  kafkaClusters: KafkaCluster[], 
-  kafkaTopics: KafkaTopic[], 
+  kafkaClusters: KafkaCluster[],
+  kafkaTopics: KafkaTopic[],
   capabilities: Capability[],
   messageContracts: MessageContract[],
   stats: Stat[],
