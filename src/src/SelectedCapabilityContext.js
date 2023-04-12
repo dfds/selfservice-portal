@@ -23,6 +23,7 @@ function SelectedCapabilityProvider({ children }) {
     const [kafkaClusters, setKafkaClusters] = useState([]);
     const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
     const [membershipApplications, setMembershipApplications] = useState([]);
+    const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
 
     // load details
     const loadDetails = useCallback(async (isReload = false) => {
@@ -42,19 +43,19 @@ function SelectedCapabilityProvider({ children }) {
     const loadMembers = useCallback(async () => {
         const members = await ApiClient.getCapabilityMembers(details);
         setMembers(members);
-  
+
         members.forEach(async member => {
           const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
           setMembers(prev => {
             const copy = prev
                 ? [...prev]
                 : [];
-  
+
             const found = copy.find(x => x.email === member.email)
             if (found) {
                 found.pictureUrl = profilePictureUrl;
             }
-  
+
             return copy;
           });
         });
@@ -94,6 +95,12 @@ function SelectedCapabilityProvider({ children }) {
                 return copy;
             });
         });
+    }, [details]);
+
+    // load AWS account
+    const loadAwsAccount = useCallback(async () => {
+        const awsAcc = await ApiClient.getCapabilityAwsAccount(details);
+        awsAcc.then(setAwsAccount(awsAcc.json));
     }, [details]);
 
     //--------------------------------------------------------------------
@@ -208,6 +215,7 @@ function SelectedCapabilityProvider({ children }) {
             loadMembers();
             loadMembershipApplications();
             loadKafkaClustersAndTopics();
+            loadAwsAccount();
         } else {
             setMembers([]);
             setMembershipApplications([]);
@@ -222,7 +230,7 @@ function SelectedCapabilityProvider({ children }) {
                 loadKafkaClustersAndTopics();
             }
         }, 5 * 1000);
-        
+
         return () => clearInterval(handle);
     }, [details]);
 
@@ -245,6 +253,7 @@ function SelectedCapabilityProvider({ children }) {
         addMessageContractToTopic,
         approveMembershipApplication,
         submitMembershipApplication,
+        awsAccount,
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;

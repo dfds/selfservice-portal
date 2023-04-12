@@ -27,7 +27,7 @@ function AppProvider({ children }) {
   async function loadOtherCapabilities() {
     const allCapabilities = await getCapabilities();
     const filteredList = (allCapabilities || []).filter(x => {
-        const myCap = (myCapabilities || []).find(y => y.id === x.id);  
+        const myCap = (myCapabilities || []).find(y => y.id === x.id);
         if (myCap) {
             return false;
         } else {

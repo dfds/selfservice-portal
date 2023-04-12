@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster, convertMembershipApplication } from "../converters";
-import { state, Capability, KafkaTopic, MembershipApplication } from "../data";
+import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster, convertMembershipApplication, convertAwsAccount } from "../converters";
+import { state, Capability, KafkaTopic, MembershipApplication, AwsAccount } from "../data";
 import { composeUrl, createId, getDate, log } from "../helpers";
 
 const router = express.Router();
@@ -26,7 +26,7 @@ router.get("/capabilities/:id", (req, res) => {
         res.sendStatus(404);
     }
 });
- 
+
 router.post("/capabilities", (req, res) => {
     const capabilityName : string = req?.body?.name || "";
 
@@ -107,7 +107,7 @@ router.get("/capabilities/:id/topics", (req, res) => {
                         allow: ["GET"]
                     }
                 }
-            }  
+            }
         },
         "_links": {
             self: {
@@ -164,6 +164,20 @@ router.get("/capabilities/:id/membershipapplications", (req, res) => {
   });
 });
 
+router.get("/capabilities/:id/awsaccount", (req, res) => {
+  const capabilityId : string = req.params.id;
+
+  let found : AwsAccount | undefined = state.awsAccounts.find((x : any) => x.capabilityId === capabilityId);
+  if (!found){
+    res.sendStatus(404);
+    return;
+  }
+  if (found){
+    let awsAcc : AwsAccount = found;
+    res.send(convertAwsAccount(awsAcc));
+  }
+
+});
 
 router.post("/capabilities/:id/membershipapplications", (req, res) => {
     let found : Capability | undefined = state.capabilities.find(x => x.id == req.params.id);

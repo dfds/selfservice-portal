@@ -304,3 +304,14 @@ export async function getKafkaClusters() {
 
     return items || [];
 }
+
+export async function getCapabilityAwsAccount(capabilityDefinition) {
+    const awsAccountLink = capabilityDefinition?._links?.awsAccount;
+
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(awsAccountLink.href, accessToken);
+
+    const { awsAccount } = await response.json(); //will later be more than just a string
+    console.log("aws acc in api client: ", awsAccount);
+    return awsAccount || "";
+}

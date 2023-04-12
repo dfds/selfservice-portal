@@ -56,6 +56,18 @@ export interface KafkaCluster {
   description: string,
 }
 
+export interface AwsAccount {
+  id: string,
+  capabilityId: string,
+  accountId: string,
+  roleEmail: string,
+  registeredAt: string,
+  completedAt: string,
+  namespace: string,
+  status: string, //pending, registered, completed, etc
+}
+
+
 export interface Stat {
   title: string,
   value: number
@@ -87,6 +99,39 @@ const stats: Stat[] = [
     value: 518
   },
 ];
+
+const awsAccounts: AwsAccount[] = [
+  {
+    id: "1",
+    capabilityId: "another-awssome-capability",
+    accountId: "real-aws-id",
+    roleEmail: "lala@lulu.com",
+    registeredAt: "timestamp string",
+    completedAt: "other timestamp",
+    namespace: "awssome-capability-namespace-xswtf",
+    status: "pending", //pending, registered, completed, etc
+  },
+  {
+    id: "2",
+    capabilityId: "some-other-capability",
+    accountId: "delicious-aws-id",
+    roleEmail: "lala@lulu.com",
+    registeredAt: "timestamp string",
+    completedAt: "other timestamp",
+    namespace: "awssome-capability-namespace-xswtf",
+    status: "pending",
+  },
+  {
+    id: "3",
+    capabilityId: "this-is-a-capability-xyz",
+    accountId: "hydraulic-pressing-eks-manager",
+    roleEmail: "lala@lulu.com",
+    registeredAt: "timestamp string",
+    completedAt: "other timestamp",
+    namespace: "awssome-capability-namespace-xswtf",
+    status: "pending",
+  }
+]
 
 const kafkaClusters: KafkaCluster[] = [
     {
@@ -321,6 +366,7 @@ export interface State {
   messageContracts: MessageContract[],
   stats: Stat[],
   membershipApplications: MembershipApplication[],
+  awsAccounts: AwsAccount[],
 }
 
 export const state : State = {
@@ -330,6 +376,7 @@ export const state : State = {
   messageContracts: messageContracts,
   stats: stats,
   membershipApplications: membershipApplications,
+  awsAccounts: awsAccounts,
 };
 
 export function canJoin(capability: Capability) : boolean {

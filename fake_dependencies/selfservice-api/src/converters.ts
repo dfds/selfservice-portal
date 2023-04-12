@@ -1,4 +1,4 @@
-import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability, canJoin } from "./data";
+import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability, canJoin, AwsAccount } from "./data";
 import { composeUrl } from "./helpers";
 
 export function convertCapability(capability: Capability) : any {
@@ -118,5 +118,10 @@ export function convertMembershipApplication(memebrshipApplication: MembershipAp
                 allow: approvalAllow
             }
         }
-    }};    
+    }};
+}
+
+export function convertAwsAccount(awsAcc: AwsAccount) : string {
+    // [pausegh] WIP: keeping it minimal for now
+    return awsAcc.accountId;
 }
