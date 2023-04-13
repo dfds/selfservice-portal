@@ -1,7 +1,7 @@
 import AppContext from "AppContext";
 import { useContext } from 'react';
 
-import { Hero as DfdsHero, LinkButton } from '@dfds-ui/react-components';
+import { Column, Container, Hero as DfdsHero, LinkButton } from '@dfds-ui/react-components';
 import { Link } from "react-router-dom";
 
 import PageSection, { SectionContent } from 'components/PageSection';
@@ -9,6 +9,7 @@ import Page from 'components/Page';
 import StatsCounter from 'components/StatsCounter';
 import styles from "./frontpage.module.css";
 import HeroImage from "./hero.jpg";
+import LatestNews from "./LatestNews";
 
 function Section({children}) {
     return <div className={styles.section}>{children}</div>
@@ -56,32 +57,43 @@ export default function FrontPage() {
             </Section>
 
             <Section>
-                <PageSection>
-                    <SectionContent title="Welcome">
-                        Hello {name}, and welcome to the Cloud Self Service portal.
-                    </SectionContent>
+                <Container>
+                    <Column>
+                        <PageSection>
+                            <SectionContent title="Welcome">
+                                Hello {name}, and welcome to the Cloud Self Service portal.
+                            </SectionContent>
 
-                    <SectionContent title="Capabilities">
-                        To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
-                    </SectionContent>
+                            <SectionContent title="Capabilities">
+                                To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
+                            </SectionContent>
 
-                    <SectionContent title="Kubernetes">
-                        Below is a collection of resources for getting started on the Kubernetes platform. <br />
-                        If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
-                        Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
-                        
-                        <LinkButton 
-                            size='small' 
-                            href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config" 
-                            variation="outlined">
-                                Get Kubernetes config
-                        </LinkButton >
+                            <SectionContent title="Kubernetes">
+                                Below is a collection of resources for getting started on the Kubernetes platform. <br />
+                                If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
+                                Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
+                                
+                                <LinkButton 
+                                    size='small' 
+                                    href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config" 
+                                    variation="outlined">
+                                        Get Kubernetes config
+                                </LinkButton >
 
-                        <br />
-                        <br />
-                        
-                    </SectionContent>
-                </PageSection>
+                                <br />
+                                <br />
+                                
+                            </SectionContent>
+                        </PageSection>
+                    </Column>
+                    <Column m={4} l={4} xl={4} xxl={4}>
+                        <PageSection>
+                            <SectionContent title="What's up...?">
+                                <LatestNews />
+                            </SectionContent>
+                        </PageSection>
+                    </Column>
+                </Container>
             </Section>
         </Page>
     </>

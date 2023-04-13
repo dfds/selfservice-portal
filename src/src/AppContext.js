@@ -16,6 +16,7 @@ function AppProvider({ children }) {
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [otherCapabilities, setOtherCapabilities] = useState([]);
   const [stats, setStats] = useState([]);
+  const [news, setNews] = useState([]);
 
   async function loadMyProfile() {
     const { capabilities, stats } = await getMyPortalProfile();
@@ -39,6 +40,32 @@ function AppProvider({ children }) {
     setAppStatus(prev => ({...prev, ...{hasLoadedOtherCapabilities: true}}));
   }
 
+  const loadNews = useCallback(async () => {
+    const response = await fetch("https://dfdsit.statuspage.io/history.rss");
+    const rssContent = await response.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rssContent, 'application/xml');
+    const items = doc.querySelectorAll('item');
+
+    const newsItems = Array.from(items).map(item => {
+        const title = item.querySelector('title').textContent;
+        const link = item.querySelector('link').textContent;
+        const text = item.querySelector('description').textContent;
+        const date = item.querySelector('pubDate').textContent;
+        
+        return {
+            id: `${date}-${title}`,
+            date: Date.parse(date),
+            title: title,
+            text: text,
+            link: link
+        };
+    });
+
+    setNews(newsItems);
+  });
+
   useEffect(() => {
     if (user && user.isAuthenticated) {
         loadMyProfile();
@@ -50,6 +77,15 @@ function AppProvider({ children }) {
         loadOtherCapabilities();
       }
   }, [myCapabilities, user]);
+
+  useEffect(() => {
+    loadNews();
+
+    const handle = setTimeout(loadNews, 1000*60*5);
+    return () => {
+      clearTimeout(handle);
+    }
+  }, []);
 
 // ---------------------------------------------------------
 
@@ -63,6 +99,7 @@ function AppProvider({ children }) {
     topics,
     setTopics,
     stats,
+    news,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
