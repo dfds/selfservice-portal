@@ -18,8 +18,8 @@ function Section({children}) {
 function Hero() {
     return <div className={styles.herowrapper}>
         <DfdsHero
-            title="Welcome to the cloud"
-            headline="Self Service Portal"
+            title="Welcome to the"
+            headline="Developer Portal"
             imageSrc={HeroImage}
         />
     </div>
@@ -61,7 +61,7 @@ export default function FrontPage() {
                     <Column>
                         <PageSection>
                             <SectionContent title="Welcome">
-                                Hello {name}, and welcome to the Cloud Self Service portal.
+                                Hello {name}, and welcome to the Developer Portal.
                             </SectionContent>
 
                             <SectionContent title="Capabilities">
@@ -88,7 +88,7 @@ export default function FrontPage() {
                     </Column>
                     <Column m={4} l={4} xl={4} xxl={4}>
                         <PageSection>
-                            <SectionContent title="What's up...?">
+                            <SectionContent title="Whats happening...?">
                                 <LatestNews />
                             </SectionContent>
                         </PageSection>
