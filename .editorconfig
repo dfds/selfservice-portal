@@ -1,12 +1,15 @@
-[.js]
+root = true
+
+[*.js]
 end_of_line = lf
 indent_size = 2
 indent_style = space
 insert_final_newline = true
 tab_width = 2
 charset = utf-8
+max_line_length = off
 
-[.css]
+[*.css]
 end_of_line = lf
 indent_size = 2
 indent_style = space
