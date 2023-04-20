@@ -66,6 +66,37 @@ export async function getMyPortalProfile() {
     return {...defaultValues, ...myProfile};
 }
 
+export async function updateMyPersonalInfirmation(myProfileDefinition, personalInformationDescriptor) {
+    const link = myProfileDefinition?._links?.personalInformation;
+    if (!link) {
+        throw Error("Error! No personal information link found on my profile definition: " + JSON.stringify(myProfileDefinition, null, 2));
+    }
+
+    if (!(link.allow || []).includes("PUT")) {
+        throw Error("Error! You are not allowed to update your personal information. Options was " + JSON.stringify(link.allow, null, 2));
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = link.href;
+    const payload = {
+        name: personalInformationDescriptor.name,
+        email: personalInformationDescriptor.email,
+    };
+
+    console.log("Updating personal information: ", {
+        descriptor: personalInformationDescriptor,
+        payload: payload,
+        url: url
+    });
+
+    const response = await callApi(url, accessToken, "PUT", payload);
+
+    if (!response.ok) {
+        console.log(`Warning: failed updating personal information using url ${url} - response was ${response.status} ${response.statusText}`);
+    }
+}
+
 export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) {
     const topicsLink = capabilityDefinition?._links?.topics;
     if (!topicsLink) {

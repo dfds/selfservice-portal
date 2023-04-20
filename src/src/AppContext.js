@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities } from "./SelfServiceApiClient";
+import { getMyPortalProfile, getCapabilities, updateMyPersonalInfirmation } from "./SelfServiceApiClient";
 
 const AppContext = React.createContext(null);
 
@@ -18,13 +18,17 @@ function AppProvider({ children }) {
   const [stats, setStats] = useState([]);
   const [news, setNews] = useState([]);
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
+  const [myProfile, setMyProfile] = useState(null);
 
   async function loadMyProfile() {
-    const { capabilities, stats, autoReloadTopics } = await getMyPortalProfile();
+    const profile = await getMyPortalProfile();
+    const { capabilities, stats, autoReloadTopics } = profile;
     setMyCapabilities(capabilities);
     setStats(stats);
     setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
     setShouldAutoReloadTopics(autoReloadTopics);
+
+    setMyProfile(profile);
   }
 
   async function loadOtherCapabilities() {
@@ -76,9 +80,15 @@ function AppProvider({ children }) {
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
-        loadOtherCapabilities();
-      }
+      loadOtherCapabilities();
+    }
   }, [myCapabilities, user]);
+
+  useEffect(() => {
+    if (user && user.isAuthenticated && myProfile) {
+      updateMyPersonalInfirmation(myProfile, user);
+    }
+  }, [myProfile, user]);
 
   useEffect(() => {
     loadNews();

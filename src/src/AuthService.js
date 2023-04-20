@@ -32,7 +32,7 @@ export function callApi(url, accessToken, method = "GET", payload = null) {
         mode: "cors"
     };
 
-    if (method.toUpperCase() === "POST" && payload) {
+    if (["POST", "PUT"].includes(method.toUpperCase()) && payload) {
         options.body = JSON.stringify(payload);
         options.headers.append("Content-Type", "application/json");
     }
@@ -63,7 +63,7 @@ export async function getGraphAccessToken() {
 export function useCurrentUser() {
     useMsalAuthentication(InteractionType.Redirect, { scopes: graphScopes });
     
-    const { instance, accounts } = useMsal();
+    const { accounts } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const [user, setUser] = useState({ isAuthenticated: false });
 
@@ -74,19 +74,19 @@ export function useCurrentUser() {
 
         if (isAuthenticated && currentAccount) {
             msalInstance.setActiveAccount(currentAccount);
-            setUser(prev => ({...prev, ...{isAuthenticated: true}}));
+            // setUser(prev => ({...prev, ...{isAuthenticated: true}}));
 
             async function getUserInfo() {
                 const profile = await getUserProfile();
-                setUser(prev => ({...prev, ...profile}));
+                setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
 
                 const profilePictureUrl = await getUserProfilePictureUrl();
                 setUser(prev => ({...prev, ...{profilePictureUrl: profilePictureUrl}}));
             }
+
             getUserInfo();
         }
-    
-    }, [instance, accounts, isAuthenticated]);
+    }, [accounts, isAuthenticated]);
 
     return user;
 }
