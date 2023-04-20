@@ -39,7 +39,7 @@ function MyCapabilities() {
 
             { !isLoading && items.length > 0 &&
                 <>
-                    <Table isHeaderSticky isInteractive width={"100%"}>
+                    <Table isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
                                 <TableHeaderCell>Name</TableHeaderCell>
@@ -121,7 +121,7 @@ function OtherCapabilities() {
                         />
                     </div>
 
-                    <Table isHeaderSticky isInteractive width={"100%"}>
+                    <Table isInteractive width={"100%"}>
                         <TableHead>
                             <TableRow>
                                 <TableHeaderCell>Name</TableHeaderCell>
