@@ -254,7 +254,7 @@ export async function getCapabilityMembershipApplications(capabilityDefinition){
 }
 
 export async function submitMembershipApplicationApproval(membershipApplicationDefinition) {
-    const approvalsLink = membershipApplicationDefinition?._links?.approvals;
+    const approvalsLink = membershipApplicationDefinition?.approvals?._links?.self;
     if (!approvalsLink) {
         throw Error("Error! No approval link found on memberships application " + membershipApplicationDefinition.id);
     }

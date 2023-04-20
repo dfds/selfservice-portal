@@ -22,11 +22,11 @@ export default function MembershipApplications() {
         const list = (membershipApplications || []).map(x => {
             const copy = {...x};
     
-            const approvalLink = copy?._links?.approvals;
             copy.canApprove = false;
             copy.showApprove = true;
             copy.isApproving = false;
     
+            const approvalLink = copy?.approvals?._links?.self;
             if (approvalLink) {
                 copy.canApprove = (approvalLink.allow || []).includes("POST");
                 copy.showApprove = (approvalLink.allow || []).includes("GET");
