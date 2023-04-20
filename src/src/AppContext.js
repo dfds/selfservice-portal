@@ -17,12 +17,14 @@ function AppProvider({ children }) {
   const [otherCapabilities, setOtherCapabilities] = useState([]);
   const [stats, setStats] = useState([]);
   const [news, setNews] = useState([]);
+  const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
 
   async function loadMyProfile() {
-    const { capabilities, stats } = await getMyPortalProfile();
+    const { capabilities, stats, autoReloadTopics } = await getMyPortalProfile();
     setMyCapabilities(capabilities);
     setStats(stats);
     setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
+    setShouldAutoReloadTopics(autoReloadTopics);
   }
 
   async function loadOtherCapabilities() {
@@ -100,6 +102,7 @@ function AppProvider({ children }) {
     setTopics,
     stats,
     news,
+    shouldAutoReloadTopics,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

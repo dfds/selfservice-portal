@@ -1,3 +1,4 @@
+import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
 
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
@@ -16,6 +17,9 @@ function adjustRetention(kafkaTopic) {
 }
 
 function SelectedCapabilityProvider({ children }) {
+
+    const { shouldAutoReloadTopics } = useContext(AppContext);
+
     const [isLoading, setIsLoading] = useState(false);
     const [capabilityId, setCapabilityId] = useState(null);
     const [details, setDetails] = useState(null);
@@ -226,7 +230,7 @@ function SelectedCapabilityProvider({ children }) {
     // setup reload of kafka clusters and topics
     useEffect(() => {
         const handle = setInterval(() => {
-            if (details) {
+            if (details && shouldAutoReloadTopics) {
                 loadKafkaClustersAndTopics();
             }
         }, 5 * 1000);
