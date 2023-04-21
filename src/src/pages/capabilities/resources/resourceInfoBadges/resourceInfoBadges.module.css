@@ -1,0 +1,36 @@
+.horizontalBox{
+    display: flex;
+    gap: '0.1rem';
+    margin-left: auto;
+}
+
+hr.divider {
+  height: 1px;
+  border-style: none;
+  background-color: #dedede;
+  margin: 10px 0px;
+}
+
+.pending {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.completed {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.completed .items {
+  text-align: center;
+  border-right: 1px solid #dedede
+}
+
+.completed .items:last-child {
+  border-right: 0px none;
+}

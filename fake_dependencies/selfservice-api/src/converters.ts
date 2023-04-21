@@ -1,4 +1,4 @@
-import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability, canJoin, AwsAccount } from "./data";
+import { Capability, Member, KafkaTopic, KafkaCluster, MessageContract, MembershipApplication, isMemberOf, isMemberOfCapability, canJoin, AwsAccount, hasAwsAccount } from "./data";
 import { composeUrl } from "./helpers";
 
 export function convertCapability(capability: Capability) : any {
@@ -35,7 +35,7 @@ export function convertCapability(capability: Capability) : any {
                 href: composeUrl(`/capabilities/${capability.id}/awsaccount`),
                 rel: "related",
                 allow: isMemberOf(capability)
-                    ? ["GET", "POST"]
+                    ? hasAwsAccount(capability) ? ["GET"] : ["GET", "POST"]
                     : ["GET"]
             }
         }
@@ -121,7 +121,22 @@ export function convertMembershipApplication(memebrshipApplication: MembershipAp
     }};
 }
 
-export function convertAwsAccount(awsAcc: AwsAccount) : string {
-    // [pausegh] WIP: keeping it minimal for now
-    return awsAcc.accountId;
+export function convertAwsAccount(account: AwsAccount) : any {
+    console.log(account);
+
+    return {
+        id: account.id,
+        capabilityId: account.capabilityId,
+        accountId: account.accountId,
+        roleEmail: account.roleEmail,
+        namespace: account.namespace,
+        status: account.status,
+        "_links": {
+            self: {
+                href: composeUrl(`/capabilities/${account.capabilityId}/awsaccount`),
+                rel: "self",
+                allow: ["GET"]
+            },
+        }
+    };
 }

@@ -104,7 +104,7 @@ function SelectedCapabilityProvider({ children }) {
     // load AWS account
     const loadAwsAccount = useCallback(async () => {
         const awsAcc = await ApiClient.getCapabilityAwsAccount(details);
-        awsAcc.then(setAwsAccount(awsAcc.json));
+        setAwsAccount(awsAcc);
     }, [details]);
 
     //--------------------------------------------------------------------
@@ -204,6 +204,12 @@ function SelectedCapabilityProvider({ children }) {
         await loadDetails(true);
     }, [details]);
 
+    const requestAwsAccount = useCallback(async () => {
+      await ApiClient.requestAwsAccount(details);
+      // await loadMembershipApplications();
+      await loadDetails(true);
+  }, [details]);
+
     //--------------------------------------------------------------------
 
     useEffect(() => {
@@ -251,13 +257,14 @@ function SelectedCapabilityProvider({ children }) {
         membershipApplications,
         kafkaClusters,
         selectedKafkaTopic,
+        awsAccount,
         loadCapability: (id) => setCapabilityId(id),
         toggleSelectedKafkaTopic,
         addTopicToCluster,
         addMessageContractToTopic,
         approveMembershipApplication,
         submitMembershipApplication,
-        awsAccount,
+        requestAwsAccount
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;

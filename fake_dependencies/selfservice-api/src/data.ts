@@ -5,7 +5,8 @@ export interface Capability {
   description: string,
   members: Member[],
   __isMember: boolean,
-  __canJoin: boolean
+  __canJoin: boolean,
+  __hasAwsAccount: boolean
 }
 
 export interface Member {
@@ -59,14 +60,17 @@ export interface KafkaCluster {
 export interface AwsAccount {
   id: string,
   capabilityId: string,
-  accountId: string,
-  roleEmail: string,
-  registeredAt: string,
-  completedAt: string,
-  namespace: string,
-  status: string, //pending, registered, completed, etc
+  accountId: string | null,
+  roleEmail: string | null,
+  namespace: string | null,
+  status: AwsAccountStatus, // Requested, Pending, Completed
 }
 
+export enum AwsAccountStatus {
+  Requested = "Requested",
+  Pending = "Pending",
+  Completed = "Completed",
+}
 
 export interface Stat {
   title: string,
@@ -103,33 +107,11 @@ const stats: Stat[] = [
 const awsAccounts: AwsAccount[] = [
   {
     id: "1",
-    capabilityId: "another-awssome-capability",
-    accountId: "real-aws-id",
-    roleEmail: "lala@lulu.com",
-    registeredAt: "timestamp string",
-    completedAt: "other timestamp",
-    namespace: "awssome-capability-namespace-xswtf",
-    status: "pending", //pending, registered, completed, etc
-  },
-  {
-    id: "2",
-    capabilityId: "some-other-capability",
-    accountId: "delicious-aws-id",
-    roleEmail: "lala@lulu.com",
-    registeredAt: "timestamp string",
-    completedAt: "other timestamp",
-    namespace: "awssome-capability-namespace-xswtf",
-    status: "pending",
-  },
-  {
-    id: "3",
     capabilityId: "this-is-a-capability-xyz",
-    accountId: "hydraulic-pressing-eks-manager",
-    roleEmail: "lala@lulu.com",
-    registeredAt: "timestamp string",
-    completedAt: "other timestamp",
-    namespace: "awssome-capability-namespace-xswtf",
-    status: "pending",
+    accountId: "123456789012",
+    roleEmail: "role@lemail.com",
+    namespace: "this-is-a-capability-xyz",
+    status: AwsAccountStatus.Completed,
   }
 ]
 
@@ -274,6 +256,7 @@ const capabilities : Capability[] = [
         ],
         __isMember: true,
         __canJoin: false,
+        __hasAwsAccount: true
       },
       {
         id: "another-awssome-capability-abcd",
@@ -286,6 +269,7 @@ const capabilities : Capability[] = [
         ],
         __isMember: false,
         __canJoin: true,
+        __hasAwsAccount: false
       },
       {
         id: "my-second-capability",
@@ -301,6 +285,7 @@ const capabilities : Capability[] = [
         ],
         __isMember: true,
         __canJoin: false,
+        __hasAwsAccount: false
       },
       {
         id: "my-future-capability",
@@ -313,6 +298,7 @@ const capabilities : Capability[] = [
         ],
         __isMember: false,
         __canJoin: false,
+        __hasAwsAccount: false
       },
 ];
 
@@ -385,6 +371,10 @@ export function canJoin(capability: Capability) : boolean {
 
 export function isMemberOf(capability: Capability) : boolean {
   return capability.__isMember;
+}
+
+export function hasAwsAccount(capability: Capability) : boolean {
+  return capability.__hasAwsAccount;
 }
 
 export function isMemberOfCapability(capabilityId: string) : boolean {

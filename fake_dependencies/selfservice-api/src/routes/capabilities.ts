@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { convertCapability, convertMember, convertKafkaTopic, convertKafkaCluster, convertMembershipApplication, convertAwsAccount } from "../converters";
-import { state, Capability, KafkaTopic, MembershipApplication, AwsAccount } from "../data";
+import { state, Capability, KafkaTopic, MembershipApplication, AwsAccount, AwsAccountStatus } from "../data";
 import { composeUrl, createId, getDate, log } from "../helpers";
 
 const router = express.Router();
@@ -62,7 +62,8 @@ router.post("/capabilities", (req, res) => {
       description: req?.body?.description,
       members: [],
       __isMember: true,
-      __canJoin: false
+      __canJoin: false,
+      __hasAwsAccount: false
     };
 
     state.capabilities.push(newCapability);
@@ -168,15 +169,11 @@ router.get("/capabilities/:id/awsaccount", (req, res) => {
   const capabilityId : string = req.params.id;
 
   let found : AwsAccount | undefined = state.awsAccounts.find((x : any) => x.capabilityId === capabilityId);
-  if (!found){
-    res.sendStatus(404);
-    return;
-  }
   if (found){
-    let awsAcc : AwsAccount = found;
-    res.send(convertAwsAccount(awsAcc));
+    res.send(convertAwsAccount(found));
+  } else {
+    res.sendStatus(404);
   }
-
 });
 
 router.post("/capabilities/:id/membershipapplications", (req, res) => {
@@ -207,6 +204,34 @@ router.post("/capabilities/:id/membershipapplications", (req, res) => {
         .status(404)
         .send(`capability not found for id: ${req.params.id}`);
     }
+});
+
+router.post("/capabilities/:id/awsaccount", (req, res) => {
+  let found : Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
+  if (found) {
+
+    const newAwsAccount : AwsAccount = {
+      id: createId(),
+      capabilityId: found.id,
+      accountId: null,
+      roleEmail: null,
+      namespace: null,
+      status: AwsAccountStatus.Requested,
+    };
+
+    state.awsAccounts.push(newAwsAccount);
+    found.__hasAwsAccount = true;
+
+    log("new aws account requested: ", newAwsAccount);
+
+    res
+      .status(201)
+      .send(convertAwsAccount(newAwsAccount));
+  } else {
+    res
+      .status(404)
+      .send(`capability not found for id: ${req.params.id}`);
+  }
 });
 
 export default router;

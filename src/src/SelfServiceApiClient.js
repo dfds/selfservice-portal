@@ -354,12 +354,40 @@ export async function getKafkaClusters() {
 
 export async function getCapabilityAwsAccount(capabilityDefinition) {
     const awsAccountLink = capabilityDefinition?._links?.awsAccount;
+    if (!awsAccountLink) {
+        console.log("Warning! No AWS account link found on capability definition:", capabilityDefinition);
+        return null;
+    }
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(awsAccountLink.href, accessToken);
+    if( !response.ok ) {
+        return null;
+    }
 
-    const { awsAccount } = await response.json(); //will later be more than just a string
-    return awsAccount || "";
+    const awsAccount = await response.json();
+    return awsAccount || null;
+}
+
+export async function requestAwsAccount(capabilityDefinition) {
+    const capabilityId = capabilityDefinition?.details?.id;
+
+    const link = capabilityDefinition?._links?.awsAccount;
+    if (!link) {
+        throw Error("Error! No AWS account link found on capability " + capabilityId);
+    }
+
+    if (!(link.allow || []).includes("POST")) {
+        throw Error("Error! Not authorized to request AWS account for capability " + capabilityId);
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST");
+
+    if (!response.ok) {
+        console.log("response was: ", await response.text());
+        throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+    }
 }
 
 export async function getTopVisitors(myProfileDefinition) {
