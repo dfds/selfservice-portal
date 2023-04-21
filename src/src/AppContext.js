@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, updateMyPersonalInfirmation } from "./SelfServiceApiClient";
+import { getMyPortalProfile, getCapabilities, updateMyPersonalInfirmation, registerMyVisit } from "./SelfServiceApiClient";
 
 const AppContext = React.createContext(null);
 
@@ -87,22 +87,21 @@ function AppProvider({ children }) {
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
       updateMyPersonalInfirmation(myProfile, user);
+      registerMyVisit(myProfile);
     }
   }, [myProfile, user]);
 
   useEffect(() => {
     loadNews();
-
     const handle = setTimeout(loadNews, 1000*60*5);
-    return () => {
-      clearTimeout(handle);
-    }
+    return () => { clearTimeout(handle); }
   }, []);
 
 // ---------------------------------------------------------
 
   const state = {
     user,
+    myProfile,
     myCapabilities,
     otherCapabilities,
     reloadOtherCapabilities: loadOtherCapabilities,

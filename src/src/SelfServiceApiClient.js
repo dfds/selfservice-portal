@@ -97,6 +97,28 @@ export async function updateMyPersonalInfirmation(myProfileDefinition, personalI
     }
 }
 
+export async function registerMyVisit(myProfileDefinition) {
+    const link = myProfileDefinition?._links?.portalVisits;
+    if (!link) {
+        throw Error("Error! No portal visits link found on my profile definition: " + JSON.stringify(myProfileDefinition, null, 2));
+    }
+
+    if (!(link.allow || []).includes("POST")) {
+        throw Error("Error! You are not allowed to register your portal visit. Options was " + JSON.stringify(link.allow, null, 2));
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = link.href;
+    const payload = { };
+
+    const response = await callApi(url, accessToken, "POST", payload);
+
+    if (!response.ok) {
+        console.log(`Warning: failed registering portal visit using url ${url} - response was ${response.status} ${response.statusText}`);
+    }
+}
+
 export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) {
     const topicsLink = capabilityDefinition?._links?.topics;
     if (!topicsLink) {
@@ -343,6 +365,29 @@ export async function getCapabilityAwsAccount(capabilityDefinition) {
     const response = await callApi(awsAccountLink.href, accessToken);
 
     const { awsAccount } = await response.json(); //will later be more than just a string
-    console.log("aws acc in api client: ", awsAccount);
     return awsAccount || "";
+}
+
+export async function getTopVisitors(myProfileDefinition) {
+    const link = myProfileDefinition?._links?.topVisitors;
+    if (!link) {
+        throw Error("Error! No top visitors link found on my profile definition: " + JSON.stringify(myProfileDefinition, null, 2));
+    }
+
+    if (!(link.allow || []).includes("GET")) {
+        throw Error("Error! You are not allowed to get top visitors. Options was " + JSON.stringify(link.allow, null, 2));
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = link.href;
+    const response = await callApi(url, accessToken);
+
+    if (!response.ok) {
+        console.log(`Warning: failed getting top visitors using url ${url} - response was ${response.status} ${response.statusText}`);
+        return [];
+    }
+
+    const { items } = await response.json();
+    return items || [];
 }

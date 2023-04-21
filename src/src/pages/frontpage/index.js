@@ -10,6 +10,8 @@ import StatsCounter from 'components/StatsCounter';
 import styles from "./frontpage.module.css";
 import HeroImage from "./hero.jpg";
 import LatestNews from "./LatestNews";
+import TopVisitors from "./TopVisitors";
+import { TextBlock } from "components/Text"
 
 function Section({children}) {
     return <div className={styles.section}>{children}</div>
@@ -58,6 +60,15 @@ export default function FrontPage() {
 
             <Section>
                 <Container>
+
+                    <Column m={3} l={3} xl={3} xxl={3}>
+                        <PageSection>
+                            <SectionContent title="Whats happening...?">
+                                <LatestNews />
+                            </SectionContent>
+                        </PageSection>
+                    </Column>
+
                     <Column>
                         <PageSection>
                             <SectionContent title="Welcome">
@@ -68,31 +79,52 @@ export default function FrontPage() {
                                 To get started creating a capability, or joining an existing please go to <Link to={"/capabilities"} >Capabilities</Link>.
                             </SectionContent>
 
+                            <SectionContent title="Kafka Topics">
+                                Want to find an awesome Kafka Topic to consume from? Head on over to <Link to={"/topics"}>Topics</Link> and browse amongst all our 
+                                wonderful topics.
+                            </SectionContent>
+
                             <SectionContent title="Kubernetes">
-                                Below is a collection of resources for getting started on the Kubernetes platform. <br />
-                                If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. <br />
-                                Then grab the default Kubernetes config file (information about location, etc., is also available in the link above): <br /><br />
-                                
+                                If this is your first visit, please go to <a href='https://wiki.dfds.cloud/en/playbooks/getting-started/journey'>Kubernetes Getting Started</a>, for information about what to do to get started. 
+                                <br />
+                                <br />
+                                Then grab the default Kubernetes config file from the column on your right.
+                                <br />
+                                <br />
+
+                                <br />
+                                <i>Enjoy!</i>
+                            </SectionContent>
+                        </PageSection>
+                    </Column>
+
+                    <Column m={3} l={3} xl={3} xxl={3}>
+                        <PageSection>
+                            <SectionContent title="KubeConfig..?">
+                                Are you looking for a fresh config for your <TextBlock>KubeCtl</TextBlock> ?
+
+                                <br />
+                                <br />
+
                                 <LinkButton 
                                     size='small' 
                                     href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config" 
                                     variation="outlined">
-                                        Get Kubernetes config
+                                        Download
                                 </LinkButton >
 
-                                <br />
-                                <br />
-                                
                             </SectionContent>
                         </PageSection>
-                    </Column>
-                    <Column m={4} l={4} xl={4} xxl={4}>
+
+                        <br />
+
                         <PageSection>
-                            <SectionContent title="Whats happening...?">
-                                <LatestNews />
+                            <SectionContent title="Top visitors this week">
+                                <TopVisitors />
                             </SectionContent>
                         </PageSection>
                     </Column>
+                    
                 </Container>
             </Section>
         </Page>
