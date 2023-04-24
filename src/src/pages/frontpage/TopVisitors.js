@@ -40,7 +40,7 @@ function useWindowSize() {
 
 function Visitor({rank, name, pictureUrl, onClicked}) {
     const handler = onClicked ?? (() => {});
-    return <div className={`${styles.visitor} ${rank === 1 ? styles.leader : "" }`} onClick={handler}>
+    return <div className={`${styles.visitor} ${rank === 1 ? styles.leader : "" }`} onClick={handler} title={`${rank === 1 ? "Celebrate...?" : "" }`}>
         <div className={styles.profilepicture}>
             <SmallProfilePicture name={name} pictureUrl={pictureUrl} />
         </div>
