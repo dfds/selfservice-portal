@@ -9,7 +9,7 @@ export default function Members({members}) {
         <div className={styles.members}>
             {(members || []).map(member => <ProfilePicture 
                 key={member.email} 
-                name={member.email} 
+                name={member.name ?? member.email} 
                 pictureUrl={member.pictureUrl} 
             />)}
         </div>
