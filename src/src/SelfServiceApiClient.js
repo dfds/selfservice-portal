@@ -84,12 +84,6 @@ export async function updateMyPersonalInfirmation(myProfileDefinition, personalI
         email: personalInformationDescriptor.email,
     };
 
-    console.log("Updating personal information: ", {
-        descriptor: personalInformationDescriptor,
-        payload: payload,
-        url: url
-    });
-
     const response = await callApi(url, accessToken, "PUT", payload);
 
     if (!response.ok) {
