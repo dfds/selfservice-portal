@@ -82,6 +82,11 @@ export default function FrontPage() {
                             <SectionContent title="Kafka Topics">
                                 Want to find an awesome Kafka Topic to consume from? Head on over to <Link to={"/topics"}>Topics</Link> and browse amongst all our 
                                 wonderful topics.
+                                <br />
+                                <br />
+                                <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance and want to play with Kafka? If so, go check out <a href="https://tniconf.dfds.cloud/dafda/">
+                                    <strong>dafda</strong>
+                                </a> ...you're welcome!
                             </SectionContent>
 
                             <SectionContent title="Kubernetes">
