@@ -1,9 +1,33 @@
-import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell, Badge } from '@dfds-ui/react-components'
+import { Button, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell, Badge, Banner, BannerHeadline, BannerParagraph } from '@dfds-ui/react-components'
 import { useState, useContext, useEffect, useCallback } from "react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "SelectedCapabilityContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from './ProfilePicture';
+import AppContext from 'AppContext';
+import { StatusSuccess } from "@dfds-ui/icons/system";
+
+export function MyMembershipApplication() {
+    const { membershipApplications } = useContext(SelectedCapabilityContext);
+    const { myProfile } = useContext(AppContext);
+
+    const application = (membershipApplications || []).find(x => x.applicant === myProfile?.id);
+    if (!application) {
+        return null;
+    }
+
+    return <div>
+        <Banner variant={'lowEmphasis'} icon={StatusSuccess}>
+            <BannerHeadline>Membership Application Received</BannerHeadline>
+            <BannerParagraph>
+                Your request to join this capability has been received and it's waiting approval from existing members.
+                <br />
+                <br />
+                <strong>Please note:</strong> that it expire <ExpirationDate date={application.expiresOn} />!
+            </BannerParagraph>
+        </Banner>
+    </div>
+}
 
 function ExpirationDate({date}) {
     const daysUntil = differenceInCalendarDays(new Date(date), new Date());
@@ -16,10 +40,13 @@ function ExpirationDate({date}) {
 
 export default function MembershipApplications() {
     const {membershipApplications, approveMembershipApplication} = useContext(SelectedCapabilityContext);
+    const { myProfile } = useContext(AppContext);
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
-        const list = (membershipApplications || []).map(x => {
+        const list = (membershipApplications || [])
+        .filter(x => x.applicant != myProfile?.id)
+        .map(x => {
             const copy = {...x};
     
             copy.canApprove = false;
@@ -36,7 +63,7 @@ export default function MembershipApplications() {
         });
 
         setApplications(list);
-    }, [membershipApplications]);
+    }, [membershipApplications, myProfile]);
 
     const handleApproveClicked = useCallback((membershipApplicationId) => {
         setApplications(prev => {
@@ -54,7 +81,7 @@ export default function MembershipApplications() {
 
     const hasPendingApplications = applications.length > 0;
     if (!hasPendingApplications) {
-        return <></>;
+        return null;
     }
 
     return <>

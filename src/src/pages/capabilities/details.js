@@ -21,7 +21,7 @@ export default function CapabilityDetailsPage() {
 
     return <>
             <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
-                <Members members={members} />
+                <Members />
                 <Summary />
                 <Resources />
 

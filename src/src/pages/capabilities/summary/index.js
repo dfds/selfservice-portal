@@ -8,9 +8,9 @@ import SelectedCapabilityContext from "SelectedCapabilityContext";
 import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";
 import { useState } from "react";
+import { MyMembershipApplication } from "../membershipapplications";
 
 function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked}) {
-
   const actions = <>
     <ModalAction actionVariation="primary" submitting={isSubmitting} onClick={onSubmitClicked}>
       Submit
@@ -34,7 +34,6 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked}) {
       </Text>
     </Modal>  
   </>
-
 }
 
 export default function Summary() {
@@ -74,6 +73,7 @@ export default function Summary() {
                 <Text styledAs={'smallHeadline'}>Description</Text> {description}
             </div>
             <div className={styles.column} style={{paddingTop: "2rem"}}>
+                <MyMembershipApplication />
                 <ButtonStack align="right">
                     {canJoin && <Button onClick={() => setShowJoinDialog(true)}>Join</Button>}
                     
