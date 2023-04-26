@@ -5,6 +5,7 @@
     "node": ">=16.0.0"
   },
   "private": true,
+  "homepage": "",
   "dependencies": {
     "@dfds-ui/forms": "^1.1.15",
     "@dfds-ui/modal": "^1.1.15",
