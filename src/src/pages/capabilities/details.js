@@ -12,7 +12,7 @@ import MembershipApplications from "./membershipapplications";
 
 export default function CapabilityDetailsPage() {
     const { id } = useParams();
-    const { isLoading, isFound, name, members, kafkaClusters, loadCapability } = useContext(SelectedCapabilityContext);
+    const { isLoading, isFound, name, members, kafkaClusters, loadCapability, showResources } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -23,7 +23,7 @@ export default function CapabilityDetailsPage() {
             <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
                 <Members />
                 <Summary />
-                <Resources />
+                { showResources && (<Resources />)  }
 
                 <MembershipApplications />
                 

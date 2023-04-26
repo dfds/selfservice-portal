@@ -264,7 +264,8 @@ function SelectedCapabilityProvider({ children }) {
         addMessageContractToTopic,
         approveMembershipApplication,
         submitMembershipApplication,
-        requestAwsAccount
+        requestAwsAccount,
+        showResources: (details?._links?.awsAccount?.allow || []).includes("GET")
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;
