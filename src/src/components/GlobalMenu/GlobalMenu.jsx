@@ -41,7 +41,7 @@ export default function GlobalMenu({}) {
     <AppBarProvider>
       <DFDSAppBar
         logoProps={{
-          logoContainerProps: { as: 'a', href: process.env.PUBLIC_URL },
+          logoContainerProps: { as: 'a', href: "/" },
         }}
         leftActions={
           <>
