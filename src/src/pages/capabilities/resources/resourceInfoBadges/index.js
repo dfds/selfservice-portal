@@ -172,16 +172,16 @@ export function ResourceInfoBadges({}) {
         />
       )}
 
-      <Container fluid>
-        <Column>
-          <div style={{ marginTop: "1.00em" }}>
+      <div className={styles.pending}>
+        <div className={styles.items}>
+          <strong>
             <em style={{ color: theme.colors.text.secondary.primary }}>
               No AWS Account or Kubernetes Namespace linked with this
               Capability.
             </em>
-          </div>
-        </Column>
-        <Column>
+          </strong>
+        </div>
+        <div className={styles.items}>
           <ButtonStack align="right">
             {canRequest && (
               <Button onClick={() => setShowDialog(true)}>
@@ -189,8 +189,8 @@ export function ResourceInfoBadges({}) {
               </Button>
             )}
           </ButtonStack>
-        </Column>
-      </Container>
+        </div>
+      </div>
     </>
   );
 
