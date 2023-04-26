@@ -12,6 +12,7 @@ import HeroImage from "./hero.jpg";
 import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text"
+import QuickLinks from "./QuickLinks";
 
 function Section({children}) {
     return <div className={styles.section}>{children}</div>
@@ -104,6 +105,15 @@ export default function FrontPage() {
                     </Column>
 
                     <Column m={3} l={3} xl={3} xxl={3}>
+
+                        <PageSection>
+                            <SectionContent title="Quick links">
+                                <QuickLinks />
+                            </SectionContent>
+                        </PageSection>
+
+                        <br />
+
                         <PageSection>
                             <SectionContent title="KubeConfig..?">
                                 Are you looking for a fresh config for your <TextBlock>KubeCtl</TextBlock> ?
