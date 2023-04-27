@@ -1,19 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-
-import {
-  AppBar as DFDSAppBar,
-  AppBarProvider,
-  AppBarDrawer,
-  AppBarItem,
-  AppBarListItem,
-  ListText
-} from "@dfds-ui/react-components";
-
-import ProfilePicture from "./ProfilePicture";
+import { AppBar as DFDSAppBar, AppBarProvider, AppBarDrawer, AppBarItem, AppBarListItem, ListText } from "@dfds-ui/react-components";
+import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture"
 import ProfileName from "./ProfileName";
+import AppContext from "AppContext";
 
 export default function GlobalMenu({}) {
+  const { user } = useContext(AppContext);
+
   const navLinks = [
     {
       title: "Capabilities",
@@ -51,7 +45,7 @@ export default function GlobalMenu({}) {
           <>
             {/* <AppBarIconButton icon={Search} ariaLabel="Search" /> */}
             <AppBarItem  title="Name" id="profile-name" as={ProfileName} />
-            <AppBarItem  title="Profile" id="profile" as={ProfilePicture} />
+            <AppBarItem  title="Profile" id="profile" as={ProfilePicture} name={user.name ?? ""} pictureUrl={user.profilePictureUrl ?? ""} />
           </>
         }>
 
