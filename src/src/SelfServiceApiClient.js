@@ -151,10 +151,7 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 }
 
 export async function createCapability(capabilityDefinition){
-    console.group("createCapability");
-
     const url = composeUrl("capabilities");
-
     const accessToken = await getSelfServiceAccessToken();
 
     const payload = {
@@ -162,21 +159,24 @@ export async function createCapability(capabilityDefinition){
         description: capabilityDefinition.description,
     };
 
+    console.log("sending: ", payload);
     const response = await callApi(url, accessToken, "POST", payload);
-    if (!response.ok) {
-        let exceptionMessage = "";
-        if (response.status === 409){
-            console.log(`Warning: failed adding capability using url ${url} for name ${capabilityDefinition.name} - response was ${response.status} ${response.statusText}`);
-            exceptionMessage = await response.text().then((text) => { return text })
-            throw new Error(`Capability already exists with that name: ${capabilityDefinition.name}`);
-        }
-        if (response.status === 400){
-            throw new Error("Invalid capability name: "+exceptionMessage);
-        }
+
+    if (response.ok) {
+      const newCap = await response.json();
+      console.log("new cap: ", newCap);
+      
+      return newCap;
     }
 
-    const resVal = response;
-    return resVal;
+    if (response.status === 409) {
+        console.log(`Warning: failed adding capability using url ${url} for name ${capabilityDefinition.name} - response was ${response.status} ${response.statusText}`);
+        throw new Error(`Capability already exists with that name: ${capabilityDefinition.name}`);
+    }
+
+    if (response.status === 400) {
+        throw new Error("Invalid capability definition: " + JSON.stringify(capabilityDefinition, null, 2));
+    }
 }
 
 export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {

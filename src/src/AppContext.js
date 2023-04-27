@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "./AuthService";
-import { getMyPortalProfile, getCapabilities, updateMyPersonalInfirmation, registerMyVisit } from "./SelfServiceApiClient";
+import * as ApiClient from "./SelfServiceApiClient";
+import { useLatestNews } from "hooks/LatestNews";
 
 const AppContext = React.createContext(null);
+
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), duration);
+  });
+}
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
@@ -16,12 +23,12 @@ function AppProvider({ children }) {
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [otherCapabilities, setOtherCapabilities] = useState([]);
   const [stats, setStats] = useState([]);
-  const [news, setNews] = useState([]);
+  const news = useLatestNews();
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
 
   async function loadMyProfile() {
-    const profile = await getMyPortalProfile();
+    const profile = await ApiClient.getMyPortalProfile();
     const { capabilities, stats, autoReloadTopics } = profile;
     setMyCapabilities(capabilities);
     setStats(stats);
@@ -32,7 +39,7 @@ function AppProvider({ children }) {
   }
 
   async function loadOtherCapabilities() {
-    const allCapabilities = await getCapabilities();
+    const allCapabilities = await ApiClient.getCapabilities();
     const filteredList = (allCapabilities || []).filter(x => {
         const myCap = (myCapabilities || []).find(y => y.id === x.id);
         if (myCap) {
@@ -46,31 +53,11 @@ function AppProvider({ children }) {
     setAppStatus(prev => ({...prev, ...{hasLoadedOtherCapabilities: true}}));
   }
 
-  const loadNews = useCallback(async () => {
-    const response = await fetch("https://dfdsit.statuspage.io/history.rss");
-    const rssContent = await response.text();
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(rssContent, 'application/xml');
-    const items = doc.querySelectorAll('item');
-
-    const newsItems = Array.from(items).map(item => {
-        const title = item.querySelector('title').textContent;
-        const link = item.querySelector('link').textContent;
-        const text = item.querySelector('description').textContent;
-        const date = item.querySelector('pubDate').textContent;
-        
-        return {
-            id: `${date}-${title}`,
-            date: Date.parse(date),
-            title: title,
-            text: text,
-            link: link
-        };
-    });
-
-    setNews(newsItems);
-  });
+  async function addNewCapability(name, description) {
+    await ApiClient.createCapability({name, description});
+    await sleep(3000);
+    await loadMyProfile();
+  }
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
@@ -86,16 +73,10 @@ function AppProvider({ children }) {
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
-      updateMyPersonalInfirmation(myProfile, user);
-      registerMyVisit(myProfile);
+      ApiClient.updateMyPersonalInfirmation(myProfile, user);
+      ApiClient.registerMyVisit(myProfile);
     }
   }, [myProfile, user]);
-
-  useEffect(() => {
-    loadNews();
-    const handle = setTimeout(loadNews, 1000*60*5);
-    return () => { clearTimeout(handle); }
-  }, []);
 
 // ---------------------------------------------------------
 
@@ -105,6 +86,7 @@ function AppProvider({ children }) {
     myCapabilities,
     otherCapabilities,
     reloadOtherCapabilities: loadOtherCapabilities,
+    addNewCapability,
     isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
     appStatus,
     topics,
