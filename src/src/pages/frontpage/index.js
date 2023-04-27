@@ -68,6 +68,23 @@ export default function FrontPage() {
                                 <LatestNews />
                             </SectionContent>
                         </PageSection>
+
+                        <br />
+
+                        <PageSection>
+                            <SectionContent title="Need Help...?">
+                                <i>Did you know</i> that there is a <strong>Slack</strong> channel where you can ask your peers a question and/or answer some of them yourself?
+                                <br />
+                                <br />
+                                <LinkButton 
+                                    title="Click to head on over to Slack..."
+                                    size='small' 
+                                    href="slack://dfds.slack.com/archives/C9948TVRC"
+                                    variation="outlined">
+                                        #dev-peer-support
+                                </LinkButton >
+                            </SectionContent>
+                        </PageSection>
                     </Column>
 
                     <Column>
