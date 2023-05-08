@@ -31,11 +31,13 @@ function Topics() {
         const result = await getKafkaClusters();
         const clustersWithColor = result.map((cluster, index) => {
             const color = colors[index % colors.length];
-            updateClustersMap(cluster.id, false);
+            updateClustersMap(cluster.id, true);
             return {...cluster, color};
         })
 
         setClusters(clustersWithColor);
+
+        console.log(clustersWithColor)
 
         return clustersWithColor;
     }
@@ -62,14 +64,16 @@ function Topics() {
 
         let finalResult = highlightedData.filter((el) => el.highlight != null );
 
+        let filteredResult = [];
+
         [...clustersMap.keys()].forEach(k => {
             let clusterState = clustersMap.get(k);
             if (clusterState){
-                finalResult = finalResult.filter((el) => el.kafkaClusterId == k);
+                filteredResult = filteredResult.concat(finalResult.filter((el) => el.kafkaClusterId == k));
             }
         })
         
-        setfilteredData(finalResult)
+        setfilteredData(filteredResult)
     }
 
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
