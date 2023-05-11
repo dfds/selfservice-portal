@@ -74,11 +74,11 @@ export function SearchView({data, onTopicClicked}) {
     };
 
     useEffect(() => {
-        if (!selectedKafkaTopic == data.id) {
+        if (selectedKafkaTopic !== data.id) {
             setContracts([]);
             return;
         }
-
+        
         async function fetchData(data) {
             setIsLoadingContracts(true);
             const result = await getMessageContracts(data);
