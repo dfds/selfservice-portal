@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import styles from "./searchview.module.css";
 import { Badge } from '@dfds-ui/react-components';
 import HighlightedText from "components/HighlightedText"
@@ -9,6 +9,7 @@ import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
 
 import { getMessageContracts } from "SelfServiceApiClient";
 import Message from "../capabilities/KafkaCluster/MessageContract";
+import TopicsContext from "pages/topics/TopicsContext";
 
 
 
@@ -48,15 +49,18 @@ function TopicInfo({data, isOpen}) {
     </>
 }
 
-export function SearchView({data}) {
+export function SearchView({data, onTopicClicked}) {
 
     const [isSelected, setIsSelected] = useState(false);
     const [contracts, setContracts] = useState([]);
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
     const [selectedMessageContractId, setSelectedMessageContractId] = useState(null);
+    const { selectedKafkaTopic } = useContext(TopicsContext);
 
     const handleHeaderClicked = () => {
-        setIsSelected(!isSelected);
+        if (onTopicClicked) {
+            onTopicClicked(data.id);
+        }
     };
 
     const handleMessageHeaderClicked = (messageId) => {
@@ -70,7 +74,7 @@ export function SearchView({data}) {
     };
 
     useEffect(() => {
-        if (!isSelected) {
+        if (!selectedKafkaTopic == data.id) {
             setContracts([]);
             return;
         }
@@ -78,7 +82,6 @@ export function SearchView({data}) {
         async function fetchData(data) {
             setIsLoadingContracts(true);
             const result = await getMessageContracts(data);
-            console.log(result);
             result.sort((a,b) => a.messageType.localeCompare(b.messageType));
             setContracts(result);
             setIsLoadingContracts(false);
@@ -88,44 +91,23 @@ export function SearchView({data}) {
         
 
        
-    }, [isSelected]);
+    }, [selectedKafkaTopic]);
 
 
     return(
         <>
         <Accordion className={styles.card} header={<TopicHeader 
             data={data} 
-            isOpen={isSelected} 
+            isOpen={selectedKafkaTopic == data.id} 
             onClicked={handleHeaderClicked} 
-        />} isOpen={isSelected} onToggle={handleHeaderClicked}>
+        />} isOpen={selectedKafkaTopic == data.id} onToggle={handleHeaderClicked}>
             <Card className={styles.card} variant="fill" surface="secondary">
                 <CardContent >
                     <Text styledAs="actionBold">Description</Text>
                     <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
-                    {/* <div className={styles.searchcontainer}>
-                        <div className={styles.row}>
-                            <h3 style= {{color: "#1874bc", fontSize: "1.3em", marginRight: "1rem"}}>{<HighlightedText text={data.name} highlight={data.highlight ? data.highlight : ""} />}</h3>
-                            <Badge className={styles.badgecluster} style={{ backgroundColor: data.clusterColor }}>{data.kafkaClusterName}</Badge>
-                        </div>
-                        <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
-                        <div >
-                            <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
-                        </div>
-
-                    </div> */}
                     {
                         <>
                         <br />
-
-                        {/* <div className={styles.messagecontractsheader}>
-                            <MessageContractDialog 
-                                topicName={data.name} 
-                                onCloseClicked={() => setShowMessageContractDialog(false)}
-                                onAddClicked={(formValues) => handleAddMessageContract(formValues)}
-                            /> 
-                            
-                            <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
-                        </div> */}
 
                         {
                             isLoadingContracts
@@ -160,7 +142,7 @@ export function SearchView({data}) {
         </Accordion>
 
         {
-            isSelected
+            selectedKafkaTopic == data.id
             ? null
             :  <div className={styles.infocontainer}>
                     <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>

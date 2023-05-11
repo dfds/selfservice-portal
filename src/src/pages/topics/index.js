@@ -1,5 +1,5 @@
 import { getAllTopics, getKafkaClusters } from "./../../SelfServiceApiClient";
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom";
 import { Container, Column, Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@dfds-ui/react-components'
 import { Text } from '@dfds-ui/typography';
@@ -11,8 +11,11 @@ import styles from "./topic.module.css";
 import { Spinner } from '@dfds-ui/react-components';
 import { H1 } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
+import TopicsContext from "pages/topics/TopicsContext";
 
 function Topics() {
+
+    const { selectedKafkaTopic,toggleSelectedKafkaTopic } = useContext(TopicsContext);
 
     const [topics, setTopics] = useState([]);
     const [filteredData, setfilteredData] = useState([]);
@@ -26,6 +29,10 @@ function Topics() {
         setClustersMap(new Map(clustersMap.set(k,v)));
     }
 
+    const handleTopicClicked = (topicId) => {
+        toggleSelectedKafkaTopic(topicId);
+    };
+
 
     const fetchKafkaclusters = async () => {
         const result = await getKafkaClusters();
@@ -36,9 +43,6 @@ function Topics() {
         })
 
         setClusters(clustersWithColor);
-
-        console.log(clustersWithColor)
-
         return clustersWithColor;
     }
 
@@ -155,7 +159,7 @@ function Topics() {
                     ? <Spinner instant/>
                     :
                         <>
-                            {filteredData.map(x => <div key= {x.id} style={{marginBottom: "15px"}}><SearchView data={x}/></div>)}
+                            {filteredData.map(x => <div key= {x.id} style={{marginBottom: "15px"}}><SearchView data={x} onTopicClicked={handleTopicClicked}/></div>)}
                         </>
                                
                 }
