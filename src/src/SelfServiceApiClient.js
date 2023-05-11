@@ -124,30 +124,9 @@ export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) 
 
     const url = topicsLink.href;
     const response = await callApi(url, accessToken);
-    const { items, _embedded } = await response.json();
+    const { items } = await response.json();
 
-    let clusters = _embedded?.kafkaClusters?.items || [];
-    if (clusters.length === 0) {
-        clusters = await getKafkaClusters();
-    }
-
-    clusters.forEach(cluster => {
-        const publicTopics = items
-            .filter(topic => topic.kafkaClusterId === cluster.id)
-            .filter(topic => topic.name.startsWith("pub."));
-
-        const privateTopics = items
-            .filter(topic => topic.kafkaClusterId === cluster.id)
-            .filter(topic => !topic.name.startsWith("pub."));
-
-
-        publicTopics.sort((a,b) => a.name.localeCompare(b.name));
-        privateTopics.sort((a,b) => a.name.localeCompare(b.name));
-
-        cluster.topics = [...publicTopics, ...privateTopics];
-    });
-
-    return clusters;
+    return items;
 }
 
 export async function createCapability(capabilityDefinition){

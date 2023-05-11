@@ -96,20 +96,17 @@ router.get("/capabilities/:id/members", (req, res) => {
 
 router.get("/capabilities/:id/topics", (req, res) => {
     const foundTopics = state.kafkaTopics.filter(x => x.capabilityId == req.params.id);
+
+    const clusters = (state.kafkaClusters || []).map(x => {
+      const cluster = convertKafkaCluster(x);
+      cluster.topics = foundTopics
+        .filter(topic => topic.kafkaClusterId==x.id)
+        .map(x => convertKafkaTopic(x));
+      return cluster;
+    });
+
     res.send({
-        items: (foundTopics || []).map(x => convertKafkaTopic(x)),
-        "_embedded": {
-            kafkaClusters: {
-                items: (state.kafkaClusters || []).map(x => convertKafkaCluster(x)),
-                "_links": {
-                    self: {
-                        href: composeUrl(`/kafkaclusters`),
-                        rel: "related",
-                        allow: ["GET"]
-                    }
-                }
-            }
-        },
+        items: clusters,
         "_links": {
             self: {
                 href: composeUrl(req.path),
