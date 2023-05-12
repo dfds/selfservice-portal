@@ -75,6 +75,10 @@ function Topics() {
             if (clusterState){
                 filteredResult = filteredResult.concat(finalResult.filter((el) => el.kafkaClusterId == k));
             }
+
+            filteredResult.sort((a, b) => a.name.localeCompare(b.name));
+
+
         })
         
         setfilteredData(filteredResult)
