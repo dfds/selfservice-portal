@@ -22,7 +22,7 @@ function TopicHeader({data, isOpen, onClicked}) {
 
     return  <div className={`${styles.topicheader} ${isOpen ? styles.topicheaderselected : ""}`} onClick={handleClick}>
     <div className={styles.row}>
-        <h3 style= {{ fontSize: "1.3em", marginRight: "1rem"}}>{<HighlightedText text={data.name} highlight={data.highlight ? data.highlight : ""} />}</h3>
+        <h3 style= {{ fontSize: "1.3em", marginRight: "1rem"}}>{<HighlightedText text={data.name} highlight={data.highlight ? data.highlight : ""} selectedKafkaTopic={isOpen} />}</h3>
         <Badge className={styles.badgecluster} style={{ backgroundColor: data.clusterColor }}>{data.kafkaClusterName}</Badge>
     </div>
     {/* <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
@@ -41,7 +41,7 @@ function TopicInfo({data, isOpen}) {
 
     return  <>
         <div>
-            <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
+            <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""}/>}</p>
             <div >
                 <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
             </div>
@@ -78,7 +78,7 @@ export function SearchView({data, onTopicClicked}) {
             setContracts([]);
             return;
         }
-        
+
         async function fetchData(data) {
             setIsLoadingContracts(true);
             const result = await getMessageContracts(data);
