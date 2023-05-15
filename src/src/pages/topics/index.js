@@ -12,6 +12,7 @@ import { Spinner } from '@dfds-ui/react-components';
 import { H1 } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
 import TopicsContext from "pages/topics/TopicsContext";
+import topicImage from "./topicImage.jpeg"
 
 function Topics() {
 
@@ -178,7 +179,7 @@ function Topics() {
 export default function TopicsPage({}) {
 
     const splash = <CardMedia aspectRatio='3:2' media={
-        <img src='https://images.pexels.com/photos/4792285/pexels-photo-4792285.jpeg' alt="" />
+        <img src={topicImage} alt="" />
     } />
   
     return <>
