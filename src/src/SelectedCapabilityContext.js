@@ -27,6 +27,7 @@ function SelectedCapabilityProvider({ children }) {
     const [kafkaClusters, setKafkaClusters] = useState([]);
     const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
     const [membershipApplications, setMembershipApplications] = useState([]);
+    const [leaveCapability, setLeaveCapability] = useState([]);
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
 
     // load details
@@ -204,6 +205,11 @@ function SelectedCapabilityProvider({ children }) {
         await loadDetails(true);
     }, [details]);
 
+    const submitLeaveCapability = useCallback(async () => {
+        await ApiClient.submitLeaveCapability(details);
+        await loadDetails(true);
+    }, [details])
+
     const requestAwsAccount = useCallback(async () => {
       await ApiClient.requestAwsAccount(details);
       // await loadMembershipApplications();
@@ -255,6 +261,7 @@ function SelectedCapabilityProvider({ children }) {
         links: details?._links,
         members,
         membershipApplications,
+        leaveCapability,
         kafkaClusters,
         selectedKafkaTopic,
         awsAccount,
@@ -264,6 +271,7 @@ function SelectedCapabilityProvider({ children }) {
         addMessageContractToTopic,
         approveMembershipApplication,
         submitMembershipApplication,
+        submitLeaveCapability,
         requestAwsAccount,
         showResources: (details?._links?.awsAccount?.allow || []).includes("GET")
     };

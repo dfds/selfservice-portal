@@ -36,19 +36,48 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked}) {
   </>
 }
 
+function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked}) {
+  const actions = <>
+    <ModalAction actionVariation="primary" submitting={isLeaving} onClick={onLeaveClicked}>
+      Leave
+    </ModalAction>
+    <ModalAction style={{marginRight: "1rem"}} disabled={isLeaving} actionVariation="secondary" onClick={onCloseRequested}>
+      Cancel
+    </ModalAction>
+  </>
+
+  return <>
+    <Modal heading={`Are you sure you want to leave ${name}?`} isOpen={true} shouldCloseOnOverlayClick={true} shouldCloseOnEsc={true} onRequestClose={onCloseRequested} actions={actions}>
+      <Text>
+        <strong>Hey</strong>, so you wanna leave <TextBlock>{name}</TextBlock>...? Are you sure? You will have to reapply for membership to regain access.
+      </Text>
+    </Modal>
+  </>
+}
+
 export default function Summary() {
-    const { name, description, links, submitMembershipApplication } = useContext(SelectedCapabilityContext);
+    const { name, description, links, submitMembershipApplication, submitLeaveCapability } = useContext(SelectedCapabilityContext);
     
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
 
     const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
+    const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
 
     const handleSubmitClicked = async () => {
         setIsSubmitting(true);
         await submitMembershipApplication();
         setIsSubmitting(false);
         setShowJoinDialog(false);
+    };
+
+    const handleLeaveClicked = async () => {
+        setIsLeaving(true)
+        await submitLeaveCapability();
+        setIsLeaving(false)
+        setShowLeaveDialog(false);
     };
 
     const handleCloseRequested = () => {
@@ -64,6 +93,16 @@ export default function Summary() {
           onCloseRequested={handleCloseRequested} 
           onSubmitClicked={handleSubmitClicked} 
         />}
+        {showLeaveDialog && <LeaveDialog
+          name={name}
+          isLeaving={isLeaving}
+          onCloseRequested={() => {
+            if (!isLeaving) {
+              setShowLeaveDialog(false);
+            }
+          }}
+          onLeaveClicked={handleLeaveClicked}
+        />}
 
         <div className={styles.container}>
             <div className={styles.column}>
@@ -77,7 +116,7 @@ export default function Summary() {
                 <ButtonStack align="right">
                     {canJoin && <Button onClick={() => setShowJoinDialog(true)}>Join</Button>}
                     
-                    {/* <Button variation="outlined" >Leave</Button> */}
+                    {canLeave && <Button variation="outlined" onClick={() => setShowLeaveDialog(true)}>Leave</Button>}
                 </ButtonStack>
             </div>
         </div>

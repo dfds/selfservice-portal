@@ -342,6 +342,26 @@ export async function submitMembershipApplication(capabilityDefinition) {
     }
 }
 
+export async function submitLeaveCapability(capabilityDefinition) {
+    const capabilityId = capabilityDefinition?.details?.id;
+
+    const link = capabilityDefinition?._links?.leaveCapability;
+    if (!link) {
+        throw Error("Error! No leave capability link found on capability " + capabilityId);
+    }
+    if (!(link.allow || []).includes("POST")) {
+        throw Error("Error! Not possible to leave capability " + capabilityId);
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST", {});
+
+    if (!response.ok) {
+        console.log("response was: ", await response.text());
+        throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+    }
+}
+
 export async function getKafkaClusters() {
     const accessToken = await getSelfServiceAccessToken();
 
