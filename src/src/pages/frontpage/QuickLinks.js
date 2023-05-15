@@ -17,6 +17,7 @@ export default function QuickLinks() {
     <Link title={"AWS Login"} url="https://dfds.awsapps.com/start" />
     <Link title={"Azure DevOps"} url="https://dev.azure.com/dfds" />
     <Link title={"GitHub"} url="https://github.com/dfds" />
+    <Link title={"Snyk"} url="https://app.snyk.io/login/sso" />
     <Link title={"Mural"} url="https://app.mural.co/t/dfds9874/home" />
     <Link title={"React Frontend Components"} url="https://ui-components-three.vercel.app" />
   </div>
