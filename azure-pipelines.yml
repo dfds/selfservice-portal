@@ -35,6 +35,7 @@ stages:
 
   - stage: Deploy
     dependsOn: CD
+    condition: ne(variables['Build.Reason'], 'PullRequest')
     displayName: 'Deployments'
     jobs:
       - job: Production
