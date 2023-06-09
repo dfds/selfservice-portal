@@ -32,7 +32,7 @@ export function callApi(url, accessToken, method = "GET", payload = null) {
         mode: "cors"
     };
 
-    if (["POST", "PUT"].includes(method.toUpperCase()) && payload) {
+    if (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) && payload) {
         options.body = JSON.stringify(payload);
         options.headers.append("Content-Type", "application/json");
     }

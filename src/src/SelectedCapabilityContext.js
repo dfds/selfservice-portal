@@ -1,4 +1,4 @@
-import AppContext from 'AppContext';
+﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
 
 import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
@@ -216,6 +216,68 @@ function SelectedCapabilityProvider({ children }) {
       await loadDetails(true);
   }, [details]);
 
+    const updateKafkaTopic = async (topicId, topicDescriptor) => {
+      let found = null;
+      for (let cluster of kafkaClusters) {
+        found = cluster.topics.find(t => t.id === topicId);
+        if (found) {
+          break;
+        }
+      }
+
+      if (!found) {
+        throw Error(`A kafka topic with id "${topicId}" could not be found.`);
+      }
+
+      await ApiClient.updateTopic(found, topicDescriptor);
+
+      setKafkaClusters(prev => {
+        const copy = [...prev];
+
+        let found = null;
+        for (let cluster of copy) {
+          found = cluster.topics.find(t => t.id === topicId);
+          if (found) {
+            found.description = topicDescriptor.description;
+            break;
+          }
+        }
+        return copy;
+      });
+    };
+
+    const deleteKafkaTopic = async (topicId) => {
+      let found = null;
+      for (let cluster of kafkaClusters) {
+        found = cluster.topics.find(t => t.id === topicId);
+        if (found) {
+          break;
+        }
+      }
+
+      if (!found) {
+        throw Error(`A kafka topic with id "${topicId}" could not be found.`);
+      }
+
+      await ApiClient.deleteTopic(found);
+
+      setKafkaClusters(prev => {
+        const copy = [...prev];
+
+        let found = null;
+        for (let cluster of copy) {
+          found = cluster.topics.find(t => t.id === topicId);
+          if (found) {
+            const before = [...cluster.topics];
+            cluster.topics = cluster.topics.filter(topic => topic.id !== topicId);
+            break;
+          }
+        }
+
+        return copy;
+      });
+    };
+
     //--------------------------------------------------------------------
 
     useEffect(() => {
@@ -273,7 +335,9 @@ function SelectedCapabilityProvider({ children }) {
         submitMembershipApplication,
         submitLeaveCapability,
         requestAwsAccount,
-        showResources: (details?._links?.awsAccount?.allow || []).includes("GET")
+        showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
+        updateKafkaTopic,
+        deleteKafkaTopic,
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;
