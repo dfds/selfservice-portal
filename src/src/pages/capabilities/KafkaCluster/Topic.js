@@ -8,7 +8,7 @@ import Message from "./MessageContract";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
-import SelectedCapabilityContext from "SelectedCapabilityContext";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 import { getMessageContracts } from "SelfServiceApiClient";
 import Poles from "components/Poles";

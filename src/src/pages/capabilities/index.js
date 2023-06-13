@@ -8,7 +8,6 @@ import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SpashImage from "./splash.jpg";
-import { SelectedCapabilityProvider } from "../../SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
     const { user, reloadOtherCapabilities, addNewCapability } = useContext(AppContext);

@@ -2,7 +2,7 @@ import React, { useContext } from "react"
 import styles from "./members.module.css";
 import { Text } from '@dfds-ui/typography';
 import ProfilePicture from './profilepicture';
-import SelectedCapabilityContext from "SelectedCapabilityContext";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 export default function Members() {
     const { members } = useContext(SelectedCapabilityContext);

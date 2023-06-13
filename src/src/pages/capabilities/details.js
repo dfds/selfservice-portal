@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { useParams } from 'react-router-dom';
-import SelectedCapabilityContext from "SelectedCapabilityContext";
+import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';
@@ -9,7 +9,7 @@ import CommunicationChannels from './communicationchannels';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
-import { SelectedCapabilityProvider } from "../../SelectedCapabilityContext";
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilityDetailsPage() {
 

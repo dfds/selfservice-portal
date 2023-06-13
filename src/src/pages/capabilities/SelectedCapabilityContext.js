@@ -1,8 +1,8 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
 
-import { getAnotherUserProfilePictureUrl } from "./GraphApiClient";
-import * as ApiClient from "./SelfServiceApiClient";
+import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
+import * as ApiClient from "../../SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
