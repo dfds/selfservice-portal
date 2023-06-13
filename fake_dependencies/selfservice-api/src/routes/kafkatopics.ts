@@ -95,4 +95,19 @@ router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
 
 });
 
+router.put("/kafkatopics/:id/description", (req, res) => {
+  const kafkaTopicId : string = req?.params?.id || "";
+  const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
+  if (!foundTopic) {
+    res.sendStatus(404);
+    return;
+  }
+
+  foundTopic.description = req.body.description;
+
+  log(`Changed description on topic ${foundTopic.name} to "${foundTopic.description}"`);
+
+  res.sendStatus(204);
+});
+
 export default router;

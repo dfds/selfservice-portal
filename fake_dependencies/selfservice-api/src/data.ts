@@ -21,7 +21,9 @@ export interface KafkaTopic {
   kafkaClusterId: string,
   partitions: number,
   retention: string,
-  status: string
+  status: string,
+  __canUpdate: boolean,
+  __canDelete: boolean,
 }
 
 export interface MessageContract {
@@ -138,6 +140,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: true,
   },
   {
     id: "2",
@@ -148,6 +152,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: false,
   },
   {
     id: "3",
@@ -158,6 +164,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: true,
   },
   {
     id: "4",
@@ -168,6 +176,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "In Progress",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "5",
@@ -178,6 +188,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "6",
@@ -188,6 +200,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "7",
@@ -198,6 +212,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: false,
   },
   {
     id: "8",
@@ -208,6 +224,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   }
 ];
 

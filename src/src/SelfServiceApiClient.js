@@ -235,6 +235,51 @@ export async function addMessageContractToTopic(topicDefinition, messageContract
     return await response.json();
 }
 
+export async function updateTopic(topicDefinition, topicDescriptor) {
+  const link = topicDefinition?._links?.updateDescription;
+  if (!link) {
+      throw Error("Error! No update topic description link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = link.href;
+  const method = link.method;
+  const payload = {
+    ...topicDescriptor
+  };
+
+  const response = await callApi(url, accessToken, method, payload);
+
+  if (!response.ok) {
+      console.log(`Warning: failed updating topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`);
+      throw Error("Faild updating topic!");
+  }
+}
+
+export async function deleteTopic(topicDefinition) {
+  const link = topicDefinition?._links?.self;
+  if (!link) {
+      throw Error("Error! No topic self link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+  }
+
+  if (!(link.allow || []).includes("DELETE")) {
+    throw Error("Error! You are not allowed to delete the topic. Options was " + JSON.stringify(link.allow, null, 2));
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = link.href;
+  const method = "DELETE";
+
+  const response = await callApi(url, accessToken, method);
+
+  if (!response.ok) {
+      console.log(`Warning: failed deleting topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`);
+      throw Error("Faild updating topic!");
+  }
+}
+
 export async function getCapabilityMembers(capabilityDefinition) {
     const membersLink = capabilityDefinition?._links?.members;
     if (!membersLink) {
