@@ -8,6 +8,7 @@ import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SpashImage from "./splash.jpg";
+import { SelectedCapabilityProvider } from "../../SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
     const { user, reloadOtherCapabilities, addNewCapability } = useContext(AppContext);
@@ -31,7 +32,9 @@ export default function CapabilitiesPage() {
         <img src={SpashImage} alt="" />
     } />
 
-    return <Page title={"Capabilities"}>
+    return <>
+    
+    <Page title={"Capabilities"}>
       {showNewCapabilityDialog && 
         <NewCapabilityDialog 
           inProgress={isCreatingNewCapability}
@@ -67,4 +70,6 @@ export default function CapabilitiesPage() {
 
       <OtherCapabilities />
     </Page>
+
+    </> 
 }

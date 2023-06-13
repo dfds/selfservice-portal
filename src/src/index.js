@@ -18,11 +18,11 @@ render(
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GlobalStyles />
         <AppProvider>
-          <SelectedCapabilityProvider>
-            <TopicsProvider>
+          {/* <SelectedCapabilityProvider> */}
+            {/* <TopicsProvider> */}
               <App />
-            </TopicsProvider>
-          </SelectedCapabilityProvider>
+            {/* </TopicsProvider> */}
+          {/* </SelectedCapabilityProvider> */}
         </AppProvider>
       </BrowserRouter>
     </MsalProvider>

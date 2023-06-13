@@ -13,6 +13,7 @@ import { H1 } from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
 import TopicsContext from "pages/topics/TopicsContext";
 import topicImage from "./topicImage.jpeg"
+import {TopicsProvider} from "./TopicsContext";
 
 function Topics() {
 
@@ -186,29 +187,31 @@ export default function TopicsPage({}) {
         <br/>
         <br/>
 
-        <Container>
-            <Column m={12} l={12} xl={12} xxl={12}>
-                <Text as={H1} styledAs='heroHeadline'>Public Topics</Text>
-                <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
-                    <CardTitle largeTitle>Information</CardTitle>
-                    <CardContent>
-                        <p>
-                            Here, you can find a comprehensive list of Kafka topics that have been made available for 
-                            development teams to discover and utilize in their projects. Every capability has read 
-                            access to all public topics.
-                        </p>
-                        <p>
-                            When producing messages to a public topic, please be aware of sensitive information and treat it 
-                            responsibly - and as a consumer of messages that might contain sensitive information please also 
-                            treat the information responsibly.
-                        </p>
-                        <p>
-                            Browse the list of public Kafka topics and get started on your next project today!
-                        </p>
-                    </CardContent>
-                </Card>
-                <Topics />
-            </Column>
-        </Container>
+        <TopicsProvider>
+            <Container>
+                <Column m={12} l={12} xl={12} xxl={12}>
+                    <Text as={H1} styledAs='heroHeadline'>Public Topics</Text>
+                    <Card variant="fill" surface="main" size='xl' reverse={true} media={splash}>
+                        <CardTitle largeTitle>Information</CardTitle>
+                        <CardContent>
+                            <p>
+                                Here, you can find a comprehensive list of Kafka topics that have been made available for 
+                                development teams to discover and utilize in their projects. Every capability has read 
+                                access to all public topics.
+                            </p>
+                            <p>
+                                When producing messages to a public topic, please be aware of sensitive information and treat it 
+                                responsibly - and as a consumer of messages that might contain sensitive information please also 
+                                treat the information responsibly.
+                            </p>
+                            <p>
+                                Browse the list of public Kafka topics and get started on your next project today!
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Topics />
+                </Column>
+            </Container>
+        </TopicsProvider>
     </>
 }

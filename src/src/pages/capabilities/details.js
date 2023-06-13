@@ -9,8 +9,20 @@ import CommunicationChannels from './communicationchannels';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
+import { SelectedCapabilityProvider } from "../../SelectedCapabilityContext";
 
 export default function CapabilityDetailsPage() {
+
+    return <>
+            <SelectedCapabilityProvider>
+                <CapabilityDetailsPageContent/>
+            </SelectedCapabilityProvider>
+    </>
+}
+
+
+
+function CapabilityDetailsPageContent() {
     const { id } = useParams();
     const { isLoading, isFound, name, members, kafkaClusters, loadCapability, showResources } = useContext(SelectedCapabilityContext);
 
