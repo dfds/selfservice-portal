@@ -15,7 +15,7 @@ function composeUrl(...args) {
 export async function getCapabilities() {
     const accessToken = await getSelfServiceAccessToken();
 
-    const url = composeUrl("capabilities");
+    const url = composeUrl("capabilities"); 
     const response = await callApi(url, accessToken);
 
     const { items } = await response.json();

@@ -78,10 +78,10 @@ export function useCurrentUser() {
 
             async function getUserInfo() {
                 const profile = await getUserProfile();
-                setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
+                //setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
 
                 const profilePictureUrl = await getUserProfilePictureUrl();
-                setUser(prev => ({...prev, ...{profilePictureUrl: profilePictureUrl}}));
+                setUser(prev => ({...prev, ...profile, ...{profilePictureUrl: profilePictureUrl, isAuthenticated: true}}));
             }
 
             getUserInfo();
