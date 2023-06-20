@@ -75,6 +75,14 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
 
     const canAdd = formData.name != "" && formData.description != "" && !inProgress && nameErrorMessage == "";
 
+    
+    const nameContainsUnderscores = formData.name.match(/_/g);
+
+    let nameHintMessage = "";
+    if (nameContainsUnderscores) {
+        nameHintMessage = 'It is recommended to use "-" instead of "_" in topic names.';
+    }
+
     const handleAddClicked = () => {
         if (onAddClicked) {
             onAddClicked({
@@ -124,6 +132,7 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
                     value={formData.name} 
                     onChange={changeName} 
                     errorMessage={nameErrorMessage}
+                    assistiveText={nameHintMessage}
                 />
             </div>
 
