@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
+import ErrorContext  from "./ErrorContext";
 
 function composeUrl(...args) {
     let url = window.apiBaseUrl;
@@ -12,11 +14,24 @@ function composeUrl(...args) {
     return url;
 }
 
-export async function getCapabilities() {
+function responseHandler(response, errorHandler, defaultValue ){
+    
+    if (response.stats > 399)
+    {
+        errorHandler(response);
+    }
+
+    return null;
+    
+}
+
+export async function getCapabilities(errorHandler) {
     const accessToken = await getSelfServiceAccessToken();
 
     const url = composeUrl("capabilities"); 
     const response = await callApi(url, accessToken);
+    responseHandler(response, errorHandler);
+    
 
     const { items } = await response.json();
 

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
+import ErrorContext from "./ErrorContext";
 
 const AppContext = React.createContext(null);
 
@@ -26,6 +27,7 @@ function AppProvider({ children }) {
   const news = useLatestNews();
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
+  const [handleError] = useContext(ErrorContext);
 
   async function loadMyProfile() {
     const profile = await ApiClient.getMyPortalProfile();
@@ -39,7 +41,7 @@ function AppProvider({ children }) {
   }
 
   async function loadOtherCapabilities() {
-    const allCapabilities = await ApiClient.getCapabilities();
+    const allCapabilities = await ApiClient.getCapabilities(handleError);
     const filteredList = (allCapabilities || []).filter(x => {
         const myCap = (myCapabilities || []).find(y => y.id === x.id);
         if (myCap) {
