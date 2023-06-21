@@ -24,7 +24,7 @@ export default function MyCapabilities() {
             }
 
             { !isLoading && items.length === 0 &&
-                <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>
+                <Text>FLUTTERSHY</Text>
             }
 
             { !isLoading && items.length > 0 &&
