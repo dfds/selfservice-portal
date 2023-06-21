@@ -35,7 +35,7 @@ stages:
 
   - stage: Deploy
     dependsOn: CD
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     displayName: 'Deployments'
     jobs:
       - job: Production
