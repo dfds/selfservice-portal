@@ -45,6 +45,7 @@ function CapabilityDetailsPageContent() {
                 {(kafkaClusters || []).map(cluster => <KafkaCluster
                     key={cluster.id}
                     cluster={cluster}
+                    capabilityId={id}
                 />)}
 
             </Page>

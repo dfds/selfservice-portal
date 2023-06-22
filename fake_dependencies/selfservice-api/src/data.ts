@@ -59,6 +59,12 @@ export interface KafkaCluster {
   description: string,
 }
 
+export interface KafkaClusterAccess {
+  id: string,
+  capabilityId: string,
+  kafkaClusterId: string,
+}
+
 export interface AwsAccount {
   id: string,
   capabilityId: string,
@@ -129,6 +135,20 @@ const kafkaClusters: KafkaCluster[] = [
       description: "This is the production cluster used for production workloads. This cluster has the highes resource allocations and is used for business critical messages.",
     }
   ];
+
+const kafkaClusterAccess: KafkaClusterAccess[] = [
+  {
+    id: "kca-1",
+    capabilityId: "this-is-a-capability-xyz",
+    kafkaClusterId: "kc-1",
+  },
+  {
+    id: "kca-2",
+    capabilityId: "this-is-a-capability-xyz",
+    kafkaClusterId: "kc-2",
+  }
+];
+
 
 const kafkaTopics : KafkaTopic[] = [
   {
@@ -365,6 +385,7 @@ const membershipApplications : MembershipApplication[] = [
 
 export interface State {
   kafkaClusters: KafkaCluster[],
+  kafkaClustersAccess: KafkaClusterAccess[],
   kafkaTopics: KafkaTopic[],
   capabilities: Capability[],
   messageContracts: MessageContract[],
@@ -381,6 +402,7 @@ export const state : State = {
   stats: stats,
   membershipApplications: membershipApplications,
   awsAccounts: awsAccounts,
+  kafkaClustersAccess: kafkaClusterAccess
 };
 
 export function canJoin(capability: Capability) : boolean {

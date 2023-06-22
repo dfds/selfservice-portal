@@ -113,10 +113,26 @@ export async function registerMyVisit(myProfileDefinition) {
     }
 }
 
-export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) {
-    const topicsLink = capabilityDefinition?._links?.topics;
+export async function getKafkaClusterAccessList(capabilityDefinition) {
+  const clusterAccessLink = capabilityDefinition?._links?.clusters;
+  if (!clusterAccessLink) {
+      console.log("Warning! No kafka cluster access link found on capability definition:", capabilityDefinition);
+      return [];
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = clusterAccessLink.href;
+  const response = await callApi(url, accessToken);
+  const { items } = await response.json();
+
+  return items;
+}
+
+export async function getTopics(clusterAccessDefinition) {
+  const topicsLink = clusterAccessDefinition?._links?.topics;
     if (!topicsLink) {
-        console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
+      console.log("Warning! No topics link found on kafka cluster access definition:", clusterAccessDefinition);
         return [];
     }
 
@@ -432,6 +448,46 @@ export async function requestAwsAccount(capabilityDefinition) {
         console.log("response was: ", await response.text());
         throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
     }
+}
+
+export async function getAccessToCluster(cluster) {
+  const link = cluster._links?.access;
+  if (!link) {
+      throw Error("Error! No request cluster access link found");
+  }
+
+  if( !(link.allow || []).includes('GET') ) {
+    throw Error("Error! Not authorized to get access to cluster " + cluster.id);
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+  const response = await callApi(link.href, accessToken, "GET");
+
+  if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function requestAccessToCluster(cluster) {
+  const link = cluster._links?.requestAccess;
+  if (!link) {
+      throw Error("Error! No request cluster access link found");
+  }
+
+  if( !(link.allow || []).includes('POST') ) {
+    throw Error("Error! Not authorized to request access to cluster " + cluster.id);
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+  const response = await callApi(link.href, accessToken, "POST");
+
+  if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+  }
 }
 
 export async function getTopVisitors(myProfileDefinition) {

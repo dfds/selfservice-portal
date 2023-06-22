@@ -68,13 +68,7 @@ function SelectedCapabilityProvider({ children }) {
 
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
-        const clusters = await ApiClient.getCapabilityTopicsGroupedByCluster(details);
-        clusters.forEach(cluster => {
-            (cluster.topics || []).forEach(kafkaTopic => {
-                adjustRetention(kafkaTopic);
-                kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) => a.messageType.localeCompare(b.messageType));
-            });
-        });
+        const clusters = await ApiClient.getKafkaClusterAccessList(details);
 
         setKafkaClusters(clusters);
     }, [details]);
@@ -216,6 +210,19 @@ function SelectedCapabilityProvider({ children }) {
       await loadDetails(true);
   }, [details]);
 
+    const getAccessToCluster = async (cluster) => {
+      console.log('getting access to cluster', cluster);
+
+      return await ApiClient.getAccessToCluster(cluster);
+    };
+
+    const requestAccessToCluster = async (cluster) => {
+      console.log('requesting access to cluster', cluster);
+
+      await ApiClient.requestAccessToCluster(cluster);
+      await loadDetails(true);
+    };
+
     const updateKafkaTopic = async (topicId, topicDescriptor) => {
       let found = null;
       for (let cluster of kafkaClusters) {
@@ -335,6 +342,8 @@ function SelectedCapabilityProvider({ children }) {
         submitMembershipApplication,
         submitLeaveCapability,
         requestAwsAccount,
+        getAccessToCluster,
+        requestAccessToCluster,
         showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
         updateKafkaTopic,
         deleteKafkaTopic,

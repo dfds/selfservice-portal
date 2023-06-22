@@ -17,12 +17,10 @@ export function convertCapability(capability: Capability) : any {
                 rel: "related",
                 allow: ["GET"]
             },
-            topics: {
-                href: composeUrl(`/capabilities/${capability.id}/topics`),
+            clusters: {
+                href: composeUrl(`/capabilities/${capability.id}/kafkaclusteraccess`),
                 rel: "related",
-                allow: isMemberOf(capability)
-                    ? ["GET", "POST"]
-                    : ["GET"]
+                allow: ["GET"]
             },
             membershipApplications: {
                 href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),

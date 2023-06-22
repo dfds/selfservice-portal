@@ -6,7 +6,19 @@ import { composeUrl, log } from "../helpers";
 const router = express.Router();
 
 router.get("/kafkatopics", (req, res) => {
-  const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
+  const capabilityId: string | undefined = req?.query?.capabilityId?.toString();
+  const clusterId: string | undefined = req?.query?.clusterId?.toString();
+  const includePrivate: boolean =
+    (req?.query?.includePrivate?.toString() || "").toLowerCase() === "true";
+
+  let result = state.kafkaTopics;
+  if (capabilityId !== undefined) {
+    result = result.filter((x) => x.capabilityId === capabilityId);
+  }
+  if (!includePrivate) {
+    result = result.filter((x) => x.name.startsWith("pub."));
+  }
+
   res.send({
     items: result.map(x => convertKafkaTopic(x)),
     "_embedded": {
