@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
 import  ErrorContext from "./ErrorContext";
+import { Toast } from '@dfds-ui/react-components'
 
 const ErrorDisplay = () => {
   const { error } = useContext(ErrorContext);
-
-  if (!error) {
-    return null; 
+  
+  if (error.length === 0 ) {
+    return null;
   }
 
   return (
     <div className="error">
-      <p>Error: {error.message}</p>
+      {(error.map(e => <Toast intent="critical">{e}</Toast>))}       
     </div>
   );
 };

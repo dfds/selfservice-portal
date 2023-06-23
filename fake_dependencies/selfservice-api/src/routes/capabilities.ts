@@ -6,6 +6,14 @@ import { composeUrl, createId, getDate, log } from "../helpers";
 const router = express.Router();
 
 router.get("/capabilities", (req, res) => {
+  // res
+  //   .set("Content-Type", "application/problem+json")
+  //   .status(400)
+  //   .send({
+  //     title: "title of error",
+  //     detail: "this is the detail of the error"
+  //   });
+
     res.send({
         items: state.capabilities.map(x => convertCapability(x)),
         "_links": {

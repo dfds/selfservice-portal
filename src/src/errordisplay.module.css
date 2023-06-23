@@ -1,0 +1,16 @@
+.bottom-right {
+    bottom: 12px;
+    right: 12px;
+    transition: transform .6s ease-in-out;
+    animation: toast-in-right .7s;
+}
+
+.errorthing {
+    position: fixed;
+    bottom: 1rem;
+    z-index: 1000;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: block;
+    width: 100%;
+}

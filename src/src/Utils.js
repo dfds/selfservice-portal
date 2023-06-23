@@ -8,3 +8,15 @@ export function delay(duration) {
     setTimeout(() => resolve(), duration);
   });
 }
+
+export function composeUrl(...args) {
+  let url = window.apiBaseUrl;
+  (args || []).forEach(x => {
+      if (x[0] === '/') {
+          url += x;
+      } else {
+          url += '/' + x;
+      }
+  });
+  return url;
+}

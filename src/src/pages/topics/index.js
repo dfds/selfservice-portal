@@ -1,4 +1,3 @@
-import { getAllTopics, getKafkaClusters } from "./../../SelfServiceApiClient";
 import React, { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom";
 import { Container, Column, Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@dfds-ui/react-components'
@@ -14,10 +13,12 @@ import PageSection from "components/PageSection";
 import TopicsContext from "pages/topics/TopicsContext";
 import topicImage from "./topicImage.jpeg"
 import {TopicsProvider} from "./TopicsContext";
+import AppContext from "../../AppContext"
 
 function Topics() {
 
     const { selectedKafkaTopic,toggleSelectedKafkaTopic } = useContext(TopicsContext);
+    const {selfServiceApiClient} = useContext(AppContext);
 
     const [topics, setTopics] = useState([]);
     const [filteredData, setfilteredData] = useState([]);
@@ -37,7 +38,7 @@ function Topics() {
 
 
     const fetchKafkaclusters = async () => {
-        const result = await getKafkaClusters();
+        const result = await selfServiceApiClient.getKafkaClusters();
         const clustersWithColor = result.map((cluster, index) => {
             const color = colors[index % colors.length];
             updateClustersMap(cluster.id, true);
@@ -91,7 +92,7 @@ function Topics() {
     useEffect(() => {
 
         const fetchTopics = async (c) => {
-          const result = await getAllTopics();
+          const result = await selfServiceApiClient.getAllTopics();
 
           result.sort((a, b) => a.name.localeCompare(b.name));
           const finalTopics = result.map((topic) => {
