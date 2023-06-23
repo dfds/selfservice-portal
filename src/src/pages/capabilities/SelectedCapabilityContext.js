@@ -139,15 +139,15 @@ function SelectedCapabilityProvider({ children }) {
         });
     };
 
-    const addTopicToCluster = async (kafkaClusterId, kafkaTopicDescriptor) => {
-        const newTopic = await ApiClient.addTopicToCapability(details, kafkaClusterId, kafkaTopicDescriptor);
+    const addTopicToCluster = async (kafkaCluster, kafkaTopicDescriptor) => {
+        const newTopic = await ApiClient.addTopicToCapability(kafkaCluster, kafkaTopicDescriptor);
         // NOTE: [jandr] handle errors from call above ^^
 
         adjustRetention(newTopic);
 
         setKafkaClusters(prev => {
             const copy = [...prev];
-            const cluster = copy.find(cluster => cluster.id === kafkaClusterId);
+            const cluster = copy.find(cluster => cluster.id === kafkaCluster.id);
             if (cluster) {
                 if (!cluster.topics) {
                     cluster.topics = [];

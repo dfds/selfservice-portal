@@ -174,10 +174,10 @@ export async function createCapability(capabilityDefinition){
     }
 }
 
-export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
-    const topicsLink = capabilityDefinition?._links?.topics;
+export async function addTopicToCapability(clusterDefinition, topicDefinition) {
+    const topicsLink = clusterDefinition?._links?.createTopic;
     if (!topicsLink) {
-        console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
+        console.log("Warning! No topics link found on cluster definition:", clusterDefinition);
         return null;
     }
 
@@ -185,7 +185,7 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
 
     const url = topicsLink.href;
     const payload = {
-        kafkaClusterId: clusterId,
+        kafkaClusterId: clusterDefinition.id,
         name: topicDefinition.name,
         description: topicDefinition.description,
         partitions: topicDefinition.partitions,

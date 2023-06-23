@@ -40,7 +40,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   const handleAddTopic = async ({ name, description, partitions, retention }) => {
     setIsInProgress(true);
-    await addTopicToCluster(cluster.id, { name, description, partitions, retention });
+    await addTopicToCluster(cluster, { name, description, partitions, retention });
     setIsInProgress(false);
     setShowDialog(false);
   };
