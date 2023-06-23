@@ -63,7 +63,6 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     toggleSelectedKafkaTopic(clusterId, topicId);
   };
 
-  const hasAccess = (cluster._links?.access?.allow || []).includes("GET");
   const canRequestAccess = (cluster._links?.requestAccess?.allow || []).includes("POST");
   const hasWriteAccess = (cluster?._links?.createTopic?.allow || []).includes("POST");
 
@@ -222,52 +221,48 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         </Table>
       </Modal>
 
-      {hasAccess && (
+      {showDialog && (
+        <NewTopicDialog
+          capabilityId={id}
+          clusterName={cluster.name.toLocaleLowerCase()}
+          inProgress={isInProgress}
+          onAddClicked={handleAddTopic}
+          onCloseClicked={handleCloseTopicFormClicked}
+        />
+      )}
+
+      {hasWriteAccess && (
+        <ButtonStack align="left">
+          <Button size="small" onClick={handleAddTopicToClusterClicked}>
+            Add topic
+          </Button>
+          <Button size="small" variation="outlined" submitting={isLoadingCredentials} onClick={handleGetCredentials}>
+            How to connect?
+          </Button>
+        </ButtonStack>
+      )}
+
+      <br />
+
+      <TopicList
+        name="Public"
+        topics={publicTopics}
+        clusterId={cluster.id}
+        selectedTopic={selectedKafkaTopic}
+        onTopicClicked={handleTopicClicked}
+      />
+      <br />
+
+      {hasWriteAccess && (
         <>
-          {showDialog && (
-            <NewTopicDialog
-              capabilityId={id}
-              clusterName={cluster.name.toLocaleLowerCase()}
-              inProgress={isInProgress}
-              onAddClicked={handleAddTopic}
-              onCloseClicked={handleCloseTopicFormClicked}
-            />
-          )}
-
-          <ButtonStack align="left">
-            {hasWriteAccess && (
-              <Button size="small" onClick={handleAddTopicToClusterClicked}>
-                Add topic
-              </Button>
-            )}
-            <Button size="small" variation="outlined" submitting={isLoadingCredentials} onClick={handleGetCredentials}>
-              How to connect?
-            </Button>
-          </ButtonStack>
-
-          <br />
-
           <TopicList
-            name="Public"
-            topics={publicTopics}
+            name="Private"
+            topics={privateTopcis}
             clusterId={cluster.id}
             selectedTopic={selectedKafkaTopic}
             onTopicClicked={handleTopicClicked}
           />
           <br />
-
-          {hasWriteAccess && (
-            <>
-              <TopicList
-                name="Private"
-                topics={privateTopcis}
-                clusterId={cluster.id}
-                selectedTopic={selectedKafkaTopic}
-                onTopicClicked={handleTopicClicked}
-              />
-              <br />
-            </>
-          )}
         </>
       )}
 
