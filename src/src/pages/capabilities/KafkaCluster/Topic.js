@@ -166,9 +166,9 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
                     { allowedToUpdate && 
                         <IconButton title="Edit" icon={EditIcon} onClick={() => setShowEditTopicDialog(true)} />
                     }
-                    {/* { allowedToDelete && 
+                    { allowedToDelete && 
                         <IconButton title="Delete" icon={DeleteIcon} onClick={() => setShowDeleteTopicDialog(true)} />
-                    } */}
+                    }
 
                     {showEditTopicDialog && 
                       <EditTopicDialog 

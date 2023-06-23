@@ -70,6 +70,20 @@ function SelectedCapabilityProvider({ children }) {
     const loadKafkaClustersAndTopics = useCallback(async () => {
         const clusters = await ApiClient.getKafkaClusterAccessList(details);
 
+        for (const cluster of clusters) {
+          
+          const topics = await ApiClient.getTopics(cluster);
+
+          topics.forEach((kafkaTopic) => {
+            adjustRetention(kafkaTopic);
+            kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
+              a.messageType.localeCompare(b.messageType)
+            );
+          });
+
+          cluster.topics = topics;
+        }        
+
         setKafkaClusters(clusters);
     }, [details]);
 

@@ -29,35 +29,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const [isLoadingCredentials, setIsLoadingCredentials] = useState(false);
   const [showAccess, setShowAccess] = useState(false);
   const [access, setAccess] = useState({ server: "", username: "", password: "" });
-  const [topics, setTopics] = useState([]);
 
-  useEffect(() => {
-    function adjustRetention(kafkaTopic) {
-      if (kafkaTopic.retention !== "forever") {
-        const match = kafkaTopic.retention.match(/^(?<days>\d+)d$/);
-        if (match) {
-          const { days } = match.groups;
-          kafkaTopic.retention = `${days} day${days === "1" ? "" : "s"}`;
-        }
-      }
-    }
-
-    async function getTopics() {
-      const topics = await ApiClient.getTopics(cluster);
-
-      topics.forEach((kafkaTopic) => {
-        adjustRetention(kafkaTopic);
-        kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
-          a.messageType.localeCompare(b.messageType)
-        );
-      });
-
-      setTopics(topics);
-    }
-
-    getTopics();
-  }, [cluster]);
-
+  const topics = cluster.topics;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
   const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
   const clusterDescription = (cluster.description || "").split("\n").map((x, i) => <Text key={i}>{x}</Text>);
@@ -268,7 +241,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
               </Button>
             )}
             <Button size="small" variation="outlined" submitting={isLoadingCredentials} onClick={handleGetCredentials}>
-              Get credentials
+              How to connect?
             </Button>
           </ButtonStack>
 
