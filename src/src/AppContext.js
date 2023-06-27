@@ -3,7 +3,6 @@ import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
-import { useCapabilities } from "hooks/Capabilities";
 
 const AppContext = React.createContext(null);
 

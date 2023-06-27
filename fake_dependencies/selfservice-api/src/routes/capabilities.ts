@@ -27,6 +27,14 @@ router.get("/capabilities", (req, res) => {
 });
 
 router.get("/capabilities/:id", (req, res) => {
+
+    // res
+    // .set("Content-Type", "application/problem+json")
+    // .status(400)
+    // .send({
+    //   title: "title of error",
+    //   detail: "this is the detail of the error"
+    // });
     let found = state.capabilities.find(x => x.id == req.params.id);
     if (found) {
         res.send(convertCapability(found));

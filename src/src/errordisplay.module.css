@@ -5,10 +5,10 @@
     animation: toast-in-right .7s;
 }
 
-.errorthing {
+.errortoast {
     position: fixed;
     bottom: 1rem;
-    z-index: 1000;
+    z-index: 10000;
     margin-left: 1rem;
     margin-right: 1rem;
     display: block;

@@ -1,5 +1,6 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
+import { useCapabilityById } from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 
@@ -19,7 +20,7 @@ function SelectedCapabilityProvider({ children }) {
 
     const { shouldAutoReloadTopics, selfServiceApiClient} = useContext(AppContext);
 
-    const [isLoading, setIsLoading] = useState(false);
+    //const [isLoading, setIsLoading] = useState(false);
     const [capabilityId, setCapabilityId] = useState(null);
     const [details, setDetails] = useState(null);
     const [members, setMembers] = useState([]);
@@ -28,19 +29,8 @@ function SelectedCapabilityProvider({ children }) {
     const [membershipApplications, setMembershipApplications] = useState([]);
     const [leaveCapability, setLeaveCapability] = useState([]);
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+    const {capability, isLoaded} = useCapabilityById(capabilityId);
 
-    // load details
-    const loadDetails = useCallback(async (isReload = false) => {
-        if (!isReload) {
-            setIsLoading(true);
-        }
-        const details = await selfServiceApiClient.getCapabilityById(capabilityId);
-        setDetails(details);
-
-        if (!isReload) {
-            setIsLoading(false);
-        }
-    }, [capabilityId]);
 
     // load members
     const loadMembers = useCallback(async () => {
@@ -279,13 +269,12 @@ function SelectedCapabilityProvider({ children }) {
     //--------------------------------------------------------------------
 
     useEffect(() => {
-        if (capabilityId) {
-            loadDetails();
-        } else {
-            setDetails(null);
+        if(isLoaded){
+            setDetails(capability);            
         }
-    }, [capabilityId]);
-
+        
+    }, [isLoaded, capability]);
+    
     useEffect(() => {
         if (details) {
             loadMembers();
@@ -313,7 +302,7 @@ function SelectedCapabilityProvider({ children }) {
     //--------------------------------------------------------------------
 
     const state = {
-        isLoading,
+        isLoading: !isLoaded,
         isFound: details != null,
         id: capabilityId,
         name: details?.name,

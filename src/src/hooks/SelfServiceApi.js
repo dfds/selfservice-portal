@@ -14,12 +14,13 @@ export function useSelfServiceApi() {
 
         const accessToken = await getSelfServiceAccessToken();
         const url = composeUrl(...urlSegments); 
-
         try {
             const response = await callApi(url, accessToken);
+            
 
             if (response.ok) {
                 const newData = await response.json();
+                
                 setData(newData);
             } else {
                 if (response.headers.get("Content-Type") === "application/problem+json") {
@@ -31,13 +32,16 @@ export function useSelfServiceApi() {
             }
         } catch (error) {
             setErrorMessage(error.message);
+            console.log(error.message);
         } finally {
             setInProgress(false);
         }
     };
 
     useEffect(() => {
+    if (errorMessage != "") {
         showError(errorMessage);
+    }        
     }, [errorMessage]);
 
     return {

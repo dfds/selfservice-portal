@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import  ErrorContext from "./ErrorContext";
 import { Toast } from '@dfds-ui/react-components'
+import styles from "./errordisplay.module.css"
 
 const ErrorDisplay = () => {
   const { error } = useContext(ErrorContext);
@@ -10,7 +11,7 @@ const ErrorDisplay = () => {
   }
 
   return (
-    <div className="error">
+    <div className={styles.errortoast}>
       {(error.map(e => <Toast intent="critical">{e}</Toast>))}       
     </div>
   );
