@@ -3,6 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import { composeUrl } from "Utils";
 import ErrorContext from "ErrorContext";
 
+
+
+function isValidURL(urlString) {
+    const urlRegex = /^(?:https?:\/\/)/;
+    return urlRegex.test(urlString);
+  }
+
 export function useSelfServiceApi() {
     const { showError } =  useContext(ErrorContext);
     const [errorMessage, setErrorMessage] = useState("");
@@ -12,8 +19,15 @@ export function useSelfServiceApi() {
     const sendRequest = async (...urlSegments) => {
         setInProgress(true);
 
+        let url = composeUrl(...urlSegments);
+
         const accessToken = await getSelfServiceAccessToken();
-        const url = composeUrl(...urlSegments); 
+
+        if (isValidURL(urlSegments))
+        {
+            url = urlSegments;
+        }
+
         try {
             const response = await callApi(url, accessToken);
             

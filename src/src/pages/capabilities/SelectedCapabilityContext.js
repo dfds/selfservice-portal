@@ -1,6 +1,6 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
-import { useCapabilityById } from 'hooks/Capabilities';
+import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 
@@ -30,28 +30,30 @@ function SelectedCapabilityProvider({ children }) {
     const [leaveCapability, setLeaveCapability] = useState([]);
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
     const {capability, isLoaded} = useCapabilityById(capabilityId);
+    const {membersList, isLoadedMembers} = useCapabilityMembers(details);
 
 
     // load members
     const loadMembers = useCallback(async () => {
-        const members = await selfServiceApiClient.getCapabilityMembers(details);
-        setMembers(members);
+        // if (members){
+        //     members.forEach(async member => {
+        //         const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
+        //         setMembers(prev => {
+        //           const copy = prev
+        //               ? [...prev]
+        //               : [];
+      
+        //           const found = copy.find(x => x.email === member.email)
+        //           if (found) {
+        //               found.pictureUrl = profilePictureUrl;
+        //           }
+      
+        //           return copy;
+        //         });
+        //       });
 
-        members.forEach(async member => {
-          const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
-          setMembers(prev => {
-            const copy = prev
-                ? [...prev]
-                : [];
-
-            const found = copy.find(x => x.email === member.email)
-            if (found) {
-                found.pictureUrl = profilePictureUrl;
-            }
-
-            return copy;
-          });
-        });
+        // }
+        
     }, [details]);
 
     // load kafka clusters and topics
@@ -274,7 +276,14 @@ function SelectedCapabilityProvider({ children }) {
         }
         
     }, [isLoaded, capability]);
-    
+
+    useEffect(() => {
+        if(isLoadedMembers){
+            console.log(membersList);
+            setMembers(membersList);  
+        }        
+    }, [isLoadedMembers, membersList]);
+
     useEffect(() => {
         if (details) {
             loadMembers();
