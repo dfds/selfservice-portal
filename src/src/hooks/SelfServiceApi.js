@@ -1,6 +1,6 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
 import { useContext, useEffect, useState } from "react";
-import { composeUrl } from "Utils";
+import { composeUrl, composeUrl2 } from "Utils";
 import ErrorContext from "ErrorContext";
 
 
@@ -10,35 +10,33 @@ function isValidURL(urlString) {
     return urlRegex.test(urlString);
   }
 
-export function useSelfServiceApi() {
+export function useSelfServiceRequest() {
     const { showError } =  useContext(ErrorContext);
     const [errorMessage, setErrorMessage] = useState("");
-    const [data, setData] = useState(null);
+    const [responseData, setResponseData] = useState(null);
     const [inProgress, setInProgress] = useState(false);
 
-    const sendRequest = async (...urlSegments) => {
+    const sendRequest = async ({ urlSegments, method, payload }) => {
         setInProgress(true);
-
-        let url = composeUrl(...urlSegments);
 
         const accessToken = await getSelfServiceAccessToken();
 
-        if (isValidURL(urlSegments))
+        let url = composeUrl2(urlSegments);
+        console.log("segmets: ", urlSegments);
+        if (isValidURL(urlSegments[0]))
         {
-            url = urlSegments;
+            url = urlSegments[0];
         }
 
         try {
-            const response = await callApi(url, accessToken);
-            
+            const httpResponse = await callApi(url, accessToken, method, payload);
 
-            if (response.ok) {
-                const newData = await response.json();
-                
-                setData(newData);
+            if (httpResponse.ok) {
+                const newData = await httpResponse.json();
+                setResponseData(newData);
             } else {
-                if (response.headers.get("Content-Type") === "application/problem+json") {
-                    const { detail } = await response.json();
+                if (httpResponse.headers.get("Content-Type") === "application/problem+json") {
+                    const { detail } = await httpResponse.json();
                     setErrorMessage(detail);
                 } else {
                     setErrorMessage("Oh no! We had an issue while retrieving capabilities from the api. Please reload the page.");
@@ -60,7 +58,7 @@ export function useSelfServiceApi() {
 
     return {
         inProgress,
-        data,
+        responseData,
         errorMessage,
         sendRequest
     };

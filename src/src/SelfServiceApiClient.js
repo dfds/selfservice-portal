@@ -4,38 +4,39 @@ import { callApi, getSelfServiceAccessToken } from "./AuthService";
 export class SelfServiceApiClient {
     constructor(errorHandler) {
         this.errorHandler = errorHandler;
+        this.responseHandler = () => {};
     }
 
-    async getCapabilities(){
-        const accessToken = await getSelfServiceAccessToken();
+    // async getCapabilities(){
+    //     const accessToken = await getSelfServiceAccessToken();
 
-        const url = composeUrl("capabilities"); 
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
+    //     const url = composeUrl("capabilities"); 
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
         
     
-        const { items } = await response.json();
+    //     const { items } = await response.json();
     
-        return items || [];
-    }
+    //     return items || [];
+    // }
 
-    responseHandler(response, defaultValue){
-        this.errorHandler(response);
-    }
+    // responseHandler(response, defaultValue){
+    //     this.errorHandler(response);
+    // }
 
-    async getCapabilityById(id) {
-        const accessToken = await getSelfServiceAccessToken();
+    // async getCapabilityById(id) {
+    //     const accessToken = await getSelfServiceAccessToken();
     
-        const url = composeUrl("capabilities", id);
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
+    //     const url = composeUrl("capabilities", id);
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
     
-        if (response.ok) {
-            return await response.json();
-        } else {
-            return null;
-        }
-    }
+    //     if (response.ok) {
+    //         return await response.json();
+    //     } else {
+    //         return null;
+    //     }
+    // }
     
     async getAllTopics() {
         const accessToken = await getSelfServiceAccessToken();

@@ -46,10 +46,10 @@ router.get("/capabilities/:id", (req, res) => {
 router.post("/capabilities", (req, res) => {
     const capabilityName : string = req?.body?.name || "";
 
-    const isValidInput = capabilityName.includes("!");
-    console.log("validinput: ", isValidInput);
+    const isInvalidInput = capabilityName.includes("!");
+    console.log("isInvalidInput: ", isInvalidInput);
 
-    if (!isValidInput){
+    if (isInvalidInput){
       res
         .status(400)
         .send({

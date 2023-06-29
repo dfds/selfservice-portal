@@ -1,46 +1,81 @@
 import { useEffect, useState } from "react";
-import { useSelfServiceApi } from "./SelfServiceApi";
+import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
 
 
 export function useCapabilities() {
-    const { inProgress, data, errorMessage, sendRequest } = useSelfServiceApi();
+    const { inProgress, responseData: getAllResponse, errorMessage, sendRequest } = useSelfServiceRequest();
+    const { responseData: addedCapability, sendRequest: addCapability } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ capabilities, setCapabilities] = useState([]);
-    
+
+    const sortByName = (list) => {
+        list.sort((a,b) => a.name.localeCompare(b.name));
+    };
+
+    const createCapability = (name, description) => {
+        addCapability({
+            urlSegments: ["capabilities"],
+            method: "POST",
+            payload: {
+                name: name,
+                description: description,
+            }
+        });
+    };
+
     useEffect(() => {
-        sendRequest("capabilities");
+        if (addedCapability) {
+            setCapabilities(prev => {
+                const list = [...prev, addCapability];
+                sortByName(list);
+                return list;
+            });
+        }
+    }, [addedCapability]);
+
+    useEffect(() => {
+        sendRequest({
+            urlSegments: ["capabilities"],
+            method: "GET",
+            payload: null
+        });
     }, []);
 
     useEffect(() => {
-        setCapabilities(data?.items || []);
+        const list = getAllResponse?.items || [];
+        sortByName(list);
+
+        setCapabilities(list);
         setIsLoaded(true);
-    }, [data]);
+    }, [getAllResponse]);
 
     return {
         isLoaded,
         capabilities,
+        addCapability: createCapability,
     };
 }
 
-
 export function useCapabilityById(id) {
-    const { inProgress, data, errorMessage, sendRequest } = useSelfServiceApi();
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ capability, setCapability] = useState(null);
     
     useEffect(() => {
         if (id != null){
-            sendRequest("capabilities", id);
+            sendRequest({
+                urlSegments: ["capabilities", id]
+            });
         };
     }, [id]);
 
     useEffect(() => {
-        if (data != null){
-            setCapability(data);
+        if (responseData != null){
+            setCapability(responseData);
             setIsLoaded(true);
         }            
-    }, [data]);
+    }, [responseData]);
 
     return {
         isLoaded,
@@ -49,16 +84,17 @@ export function useCapabilityById(id) {
 }
 
 export function useCapabilityMembers(capabilityDefinition) {
-    const { inProgress, data, errorMessage, sendRequest } = useSelfServiceApi();
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
     const [ isLoadedMembers, setIsLoadedMembers ] = useState(false);
     const [ membersList, setMembersList] = useState([]);
-
 
     const membersLink = capabilityDefinition?._links?.members;
 
     useEffect(() => {
         if (membersLink){
-            sendRequest(membersLink.href);
+            sendRequest({
+                urlSegments: [membersLink.href]
+            });
         }
 
     }, [membersLink]);
@@ -78,25 +114,25 @@ export function useCapabilityMembers(capabilityDefinition) {
             }
           };
 
-        if (data?.items.length !== 0) {
+        if (responseData?.items.length !== 0) {
             setMembersList(prev => {
                 if(prev.length === 0){
-                    return data?.items || [];
+                    return responseData?.items || [];
                 }else {
                     return prev;
                 }
             });
 
-            updateMembers(data?.items || []);
+            updateMembers(responseData?.items || []);
         }
         
-    }, [data]);
+    }, [responseData]);
 
     useEffect(() => {
         if(membersList.length !== 0){
             setIsLoadedMembers(true);
         }
-        
+
     }, [membersList]);
     
 

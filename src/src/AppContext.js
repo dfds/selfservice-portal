@@ -3,6 +3,7 @@ import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
+import { useCapabilities } from "hooks/Capabilities";
 
 const AppContext = React.createContext(null);
 
@@ -29,6 +30,8 @@ function AppProvider({ children }) {
   const {handleError} = useContext(ErrorContext);
   const selfServiceApiClient = new ApiClient.SelfServiceApiClient(handleError);
 
+  const { addCapability } = useCapabilities();
+
   async function loadMyProfile() {
     const profile = await selfServiceApiClient.getMyPortalProfile();
     const { capabilities, stats, autoReloadTopics } = profile;
@@ -41,7 +44,8 @@ function AppProvider({ children }) {
   }
 
   async function addNewCapability(name, description) {
-    await selfServiceApiClient.createCapability({name, description});
+    addCapability(name, description);
+    // await selfServiceApiClient.createCapability({name, description});
     await sleep(3000);
     await loadMyProfile();
   }
