@@ -57,7 +57,7 @@ export default function Resources() {
           </Text>
         </Text>
         <Text>
-          1. Sign into the <i>dfds-logs</i> using the <i>CapabilityLog</i> role at <a target="_blank" href="https://dfds.awsapps.com/start/">https://dfds.awsapps.com/start/</a>
+          1. Sign into the <i>dfds-logs</i> account using the <i>CapabilityLog</i> role at <a target="_blank" href="https://dfds.awsapps.com/start/">https://dfds.awsapps.com/start/</a>
           <br />
           2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
           <br />
