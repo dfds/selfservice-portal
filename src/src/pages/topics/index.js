@@ -14,11 +14,13 @@ import TopicsContext from "pages/topics/TopicsContext";
 import topicImage from "./topicImage.jpeg"
 import {TopicsProvider} from "./TopicsContext";
 import AppContext from "../../AppContext"
+import { useTopics } from "hooks/Topics";
 
 function Topics() {
 
     const { selectedKafkaTopic,toggleSelectedKafkaTopic } = useContext(TopicsContext);
     const {selfServiceApiClient} = useContext(AppContext);
+    const {topicsList, isLoaded} = useTopics();
 
     const [topics, setTopics] = useState([]);
     const [filteredData, setfilteredData] = useState([]);
@@ -31,6 +33,7 @@ function Topics() {
     const updateClustersMap = (k,v) => {
         setClustersMap(new Map(clustersMap.set(k,v)));
     }
+
 
     const handleTopicClicked = (topicId) => {
         toggleSelectedKafkaTopic(topicId);
@@ -89,30 +92,59 @@ function Topics() {
 
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+
     useEffect(() => {
-
-        const fetchTopics = async (c) => {
-          const result = await selfServiceApiClient.getAllTopics();
-
-          result.sort((a, b) => a.name.localeCompare(b.name));
-          const finalTopics = result.map((topic) => {
-            const copy = {...topic}
-            const color = c.find(cluster => cluster.id === copy.kafkaClusterId);
-            if(color != null) {
-                copy.clusterColor = color.color;
-            }
-            return copy
-
-          });
-          
-          setTopics(finalTopics);
-          setfilteredData(finalTopics);
-          setIsLoadingTopics(false);
+        if(isLoaded){
+            console.log(topicsList)
         }
 
-        fetchKafkaclusters().then((c) => fetchTopics(c));
+    }, [isLoaded, topicsList])
 
-    }, []);
+    useEffect(() => {
+
+        // const fetchTopics = async (c) => {
+        //   const result = await selfServiceApiClient.getAllTopics();
+
+        //   result.sort((a, b) => a.name.localeCompare(b.name));
+        //   const finalTopics = result.map((topic) => {
+        //     const copy = {...topic}
+        //     const color = c.find(cluster => cluster.id === copy.kafkaClusterId);
+        //     if(color != null) {
+        //         copy.clusterColor = color.color;
+        //     }
+        //     return copy
+
+        //   });
+
+        if(isLoaded){
+
+            fetchKafkaclusters().then((c) => {
+
+                const finalTopics = topicsList.map((topic) => {
+                    const copy = {...topic}
+                    const color = c.find(cluster => cluster.id === copy.kafkaClusterId);
+                    if(color != null) {
+                        copy.clusterColor = color.color;
+                    }
+                    return copy
+        
+                });
+    
+    
+                setTopics(finalTopics);
+            
+                setfilteredData(finalTopics);
+                setIsLoadingTopics(false);
+
+            });
+
+            
+
+        };
+
+        // fetchKafkaclusters().then((c) => fetchTopics(c));
+
+    }, [isLoaded, topicsList]);
 
     useEffect(() => {
         filter({

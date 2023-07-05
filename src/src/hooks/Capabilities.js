@@ -103,16 +103,16 @@ export function useCapabilityMembers(capabilityDefinition) {
 
         const updateMembers = async (members) => {
             if (members.length !== 0) {
-              const updatedList = await Promise.all(
+                const updatedList = await Promise.all(
                 members.map(async (member) => {
-                  const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
-                  const updatedMember = { ...member, pictureUrl: profilePictureUrl };
-                  return updatedMember;
+                    const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
+                    const updatedMember = { ...member, pictureUrl: profilePictureUrl };
+                    return updatedMember;
                 })
-              );
-              setMembersList(updatedList);
+            );
+            setMembersList(updatedList);
             }
-          };
+        };
 
         if (responseData?.items.length !== 0) {
             setMembersList(prev => {

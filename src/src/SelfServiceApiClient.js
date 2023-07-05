@@ -38,21 +38,21 @@ export class SelfServiceApiClient {
     //     }
     // }
     
-    async getAllTopics() {
-        const accessToken = await getSelfServiceAccessToken();
+    // async getAllTopics() {
+    //     const accessToken = await getSelfServiceAccessToken();
     
-        const url =  composeUrl("kafkatopics"); 
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
+    //     const url =  composeUrl("kafkatopics"); 
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
     
-        const { items, _embedded } = await response.json();
-        return (items || []).map(topic => {
-            const copy = {...topic};
-            const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
-            copy.kafkaClusterName = found?.name || "";
-            return copy;
-        });
-    }
+    //     const { items, _embedded } = await response.json();
+    //     return (items || []).map(topic => {
+    //         const copy = {...topic};
+    //         const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
+    //         copy.kafkaClusterName = found?.name || "";
+    //         return copy;
+    //     });
+    // }
     
     async getMyPortalProfile() {
         const accessToken = await getSelfServiceAccessToken();
@@ -135,35 +135,35 @@ export class SelfServiceApiClient {
         return items;
     }
     
-    async createCapability(capabilityDefinition){
-        const url = composeUrl("capabilities");
-        const accessToken = await getSelfServiceAccessToken();
+    // async createCapability(capabilityDefinition){
+    //     const url = composeUrl("capabilities");
+    //     const accessToken = await getSelfServiceAccessToken();
     
-        const payload = {
-            name: capabilityDefinition.name,
-            description: capabilityDefinition.description,
-        };
+    //     const payload = {
+    //         name: capabilityDefinition.name,
+    //         description: capabilityDefinition.description,
+    //     };
     
-        console.log("sending: ", payload);
-        const response = await callApi(url, accessToken, "POST", payload);
-        this.responseHandler(response);
+    //     console.log("sending: ", payload);
+    //     const response = await callApi(url, accessToken, "POST", payload);
+    //     this.responseHandler(response);
     
-        if (response.ok) {
-          const newCap = await response.json();
-          console.log("new cap: ", newCap);
+    //     if (response.ok) {
+    //       const newCap = await response.json();
+    //       console.log("new cap: ", newCap);
           
-          return newCap;
-        }
+    //       return newCap;
+    //     }
     
-        if (response.status === 409) {
-            console.log(`Warning: failed adding capability using url ${url} for name ${capabilityDefinition.name} - response was ${response.status} ${response.statusText}`);
-            throw new Error(`Capability already exists with that name: ${capabilityDefinition.name}`);
-        }
+    //     if (response.status === 409) {
+    //         console.log(`Warning: failed adding capability using url ${url} for name ${capabilityDefinition.name} - response was ${response.status} ${response.statusText}`);
+    //         throw new Error(`Capability already exists with that name: ${capabilityDefinition.name}`);
+    //     }
     
-        if (response.status === 400) {
-            throw new Error("Invalid capability definition: " + JSON.stringify(capabilityDefinition, null, 2));
-        }
-    }
+    //     if (response.status === 400) {
+    //         throw new Error("Invalid capability definition: " + JSON.stringify(capabilityDefinition, null, 2));
+    //     }
+    // }
     
     async addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
         const topicsLink = capabilityDefinition?._links?.topics;
@@ -292,28 +292,28 @@ export class SelfServiceApiClient {
       }
     }
     
-    async getCapabilityMembers(capabilityDefinition) {
-        const membersLink = capabilityDefinition?._links?.members;
-        if (!membersLink) {
-            return [];
-        }
+    // async getCapabilityMembers(capabilityDefinition) {
+    //     const membersLink = capabilityDefinition?._links?.members;
+    //     if (!membersLink) {
+    //         return [];
+    //     }
     
-        const accessToken = await getSelfServiceAccessToken();
+    //     const accessToken = await getSelfServiceAccessToken();
     
     
-        const url = membersLink.href;
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
+    //     const url = membersLink.href;
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
     
-        if (!response.ok) {
-            console.log(`Warning: failed getting all members from ${url} - response was ${response.status} ${response.statusText}`);
-            return [];
-        }
+    //     if (!response.ok) {
+    //         console.log(`Warning: failed getting all members from ${url} - response was ${response.status} ${response.statusText}`);
+    //         return [];
+    //     }
     
-        const { items } = await response.json();
+    //     const { items } = await response.json();
     
-        return items || [];
-    }
+    //     return items || [];
+    // }
     
     async getCapabilityMembershipApplications(capabilityDefinition){
         const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;

@@ -14,6 +14,7 @@ export default function CapabilitiesPage() {
     const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
     const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
+
     const handleAddCapability = async (formData) => {
       setIsCreatingNewCapability(true);
       await addNewCapability(formData.name, formData.description);

@@ -6,6 +6,14 @@ import { composeUrl, log } from "../helpers";
 const router = express.Router();
 
 router.get("/kafkatopics", (req, res) => {
+
+    // res
+    // .set("Content-Type", "application/problem+json")
+    // .status(400)
+    // .send({
+    //   title: "title of error",
+    //   detail: "this is the detail of the error"
+    // });
   const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
   res.send({
     items: result.map(x => convertKafkaTopic(x)),
