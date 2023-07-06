@@ -20,15 +20,15 @@ function ErrorProvider({ children }) {
 
   const showError = errorMessage => setError((prevError) => [...prevError, errorMessage]);
 
-  useEffect(() => {
-    if (error.length > 0) {
-      const timeoutId = setTimeout(() => {
-        setError([]);
-      }, 5000);
+  // useEffect(() => {
+  //   if (error.length > 0) {
+  //     const timeoutId = setTimeout(() => {
+  //       setError([]);
+  //     }, 5000);
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [error]);
+  //     return () => clearTimeout(timeoutId);
+  //   }
+  // }, [error]);
 
   return (
     <ErrorContext.Provider value={{ error, handleError, showError }}>

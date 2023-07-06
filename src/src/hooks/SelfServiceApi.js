@@ -35,12 +35,13 @@ export function useSelfServiceRequest() {
                 const newData = await httpResponse.json();
                 setResponseData(newData);
             } else {
-                if (httpResponse.headers.get("Content-Type") === "application/problem+json") {
-                    const { detail } = await httpResponse.json();
-                    setErrorMessage(detail);
-                } else {
-                    setErrorMessage("Oh no! We had an issue while retrieving capabilities from the api. Please reload the page.");
-                }
+                setErrorMessage("Oh no! We had an issue while retrieving data from the api. Please reload the page.");
+                // if (httpResponse.headers.get("Content-Type") === "application/problem+json") {
+                //     const { detail } = await httpResponse.json();
+                //     setErrorMessage(detail);
+                // } else {
+                //     setErrorMessage("Oh no! We had an issue while retrieving data from the api. Please reload the page.");
+                // }
             }
         } catch (error) {
             setErrorMessage(error.message);

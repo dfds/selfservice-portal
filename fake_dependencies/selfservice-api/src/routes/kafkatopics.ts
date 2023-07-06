@@ -7,36 +7,36 @@ const router = express.Router();
 
 router.get("/kafkatopics", (req, res) => {
 
-    // res
-    // .set("Content-Type", "application/problem+json")
-    // .status(400)
-    // .send({
-    //   title: "title of error",
-    //   detail: "this is the detail of the error"
-    // });
-  const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
-  res.send({
-    items: result.map(x => convertKafkaTopic(x)),
-    "_embedded": {
-      kafkaClusters: {
-          items: (state.kafkaClusters || []),
-          "_links": {
-              self: {
-                  href: composeUrl(`/kafkaclusters`),
-                  rel: "related",
-                  allow: ["GET"]
-              }
-          }
-      }  
-  },
-    "_links": {
-      self: {
-        href: composeUrl("kafkatopics"),
-        rel: "self",
-        allow: ["GET"]
-      }
-    }
-  });
+    res
+    .set("Content-Type", "application/problem+json")
+    .status(400)
+    .send({
+      title: "title of error",
+      detail: "this is the detail of the error"
+    });
+  // const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
+  // res.send({
+  //   items: result.map(x => convertKafkaTopic(x)),
+  //   "_embedded": {
+  //     kafkaClusters: {
+  //         items: (state.kafkaClusters || []),
+  //         "_links": {
+  //             self: {
+  //                 href: composeUrl(`/kafkaclusters`),
+  //                 rel: "related",
+  //                 allow: ["GET"]
+  //             }
+  //         }
+  //     }  
+  // },
+  //   "_links": {
+  //     self: {
+  //       href: composeUrl("kafkatopics"),
+  //       rel: "self",
+  //       allow: ["GET"]
+  //     }
+  //   }
+  // });
 });
 
 router.get("/kafkatopics/:id", (req, res) => {
