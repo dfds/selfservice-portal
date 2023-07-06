@@ -6,37 +6,44 @@ import { composeUrl, log } from "../helpers";
 const router = express.Router();
 
 router.get("/kafkatopics", (req, res) => {
-
+  const testFail = false;
+  if (testFail) {
     res
-    .set("Content-Type", "application/problem+json")
-    .status(400)
-    .send({
-      title: "title of error",
-      detail: "this is the detail of the error"
+      .set("Content-Type", "application/problem+json")
+      .status(400)
+      .send({
+        title: "title of error",
+        detail: "this is the detail of the error"
+      });
+
+  } else {
+    const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
+    res.send({
+      items: result.map(x => convertKafkaTopic(x)),
+      "_embedded": {
+        kafkaClusters: {
+          items: (state.kafkaClusters || []),
+          "_links": {
+            self: {
+              href: composeUrl(`/kafkaclusters`),
+              rel: "related",
+              allow: ["GET"]
+            }
+          }
+        }
+      },
+      "_links": {
+        self: {
+          href: composeUrl("kafkatopics"),
+          rel: "self",
+          allow: ["GET"]
+        }
+      }
     });
-  // const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
-  // res.send({
-  //   items: result.map(x => convertKafkaTopic(x)),
-  //   "_embedded": {
-  //     kafkaClusters: {
-  //         items: (state.kafkaClusters || []),
-  //         "_links": {
-  //             self: {
-  //                 href: composeUrl(`/kafkaclusters`),
-  //                 rel: "related",
-  //                 allow: ["GET"]
-  //             }
-  //         }
-  //     }  
-  // },
-  //   "_links": {
-  //     self: {
-  //       href: composeUrl("kafkatopics"),
-  //       rel: "self",
-  //       allow: ["GET"]
-  //     }
-  //   }
-  // });
+
+  }
+
+
 });
 
 router.get("/kafkatopics/:id", (req, res) => {
@@ -51,7 +58,7 @@ router.get("/kafkatopics/:id", (req, res) => {
 });
 
 router.get("/kafkatopics/:id/messagecontracts", (req, res) => {
-  const topicId : string = req?.params?.id || "";
+  const topicId: string = req?.params?.id || "";
 
   const foundTopic = state.kafkaTopics.find(x => x.id == topicId);
   if (!foundTopic) {
@@ -73,18 +80,20 @@ router.get("/kafkatopics/:id/messagecontracts", (req, res) => {
 });
 
 router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
-  const kafkaTopicId : string = req?.params?.id || "";
+  const kafkaTopicId: string = req?.params?.id || "";
   const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
   }
 
-  const newContract : MessageContract = {...req.body, ...{
-    id: "" + new Date().getTime(),
-    status: "In Progress",
-    kafkaTopicId: kafkaTopicId,
-  }};
+  const newContract: MessageContract = {
+    ...req.body, ...{
+      id: "" + new Date().getTime(),
+      status: "In Progress",
+      kafkaTopicId: kafkaTopicId,
+    }
+  };
 
   state.messageContracts.push(newContract);
   log("Added new message contract: " + JSON.stringify(newContract, null, 2));
@@ -97,14 +106,14 @@ router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
     .send(newContract);
 
   setTimeout(() => {
-      newContract.status = "Provisioned";
-      log(`Changed status on message contract ${newContract.id} to ${newContract.status}`);
-  }, (Math.random() * 2000)+2000);
+    newContract.status = "Provisioned";
+    log(`Changed status on message contract ${newContract.id} to ${newContract.status}`);
+  }, (Math.random() * 2000) + 2000);
 
 });
 
 router.put("/kafkatopics/:id/description", (req, res) => {
-  const kafkaTopicId : string = req?.params?.id || "";
+  const kafkaTopicId: string = req?.params?.id || "";
   const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
   if (!foundTopic) {
     res.sendStatus(404);

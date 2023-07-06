@@ -454,6 +454,7 @@ export class SelfServiceApiClient {
             throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
         }
     }
+
     
     async getTopVisitors(myProfileDefinition) {
         const link = myProfileDefinition?._links?.topVisitors;
@@ -492,6 +493,46 @@ function composeUrl(...args) {
     });
     return url;
 }
+
+export async function getAccessToCluster(cluster) {
+    const link = cluster._links?.access;
+    if (!link) {
+        throw Error("Error! No request cluster access link found");
+    }
+  
+    if( !(link.allow || []).includes('GET') ) {
+      throw Error("Error! Not authorized to get access to cluster " + cluster.id);
+    }
+  
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "GET");
+  
+    if (!response.ok) {
+        console.log("response was: ", await response.text());
+        throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+    }
+  
+    return response.json();
+  }
+  
+  export async function requestAccessToCluster(cluster) {
+    const link = cluster._links?.requestAccess;
+    if (!link) {
+        throw Error("Error! No request cluster access link found");
+    }
+  
+    if( !(link.allow || []).includes('POST') ) {
+      throw Error("Error! Not authorized to request access to cluster " + cluster.id);
+    }
+  
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST");
+  
+    if (!response.ok) {
+        console.log("response was: ", await response.text());
+        throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+    }
+  }
 
 
 

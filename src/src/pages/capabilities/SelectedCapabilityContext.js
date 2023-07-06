@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useCallback, useContext, useState } fr
 import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
+import * as ApiClient from "../../SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -130,7 +131,7 @@ function SelectedCapabilityProvider({ children }) {
 
         setKafkaClusters(prev => {
             const copy = [...prev];
-            const cluster = copy.find(cluster => cluster.id === kafkaCluster.id);
+            const cluster = copy.find(cluster => cluster.id === kafkaClusterId);
             if (cluster) {
                 if (!cluster.topics) {
                     cluster.topics = [];
@@ -193,18 +194,15 @@ function SelectedCapabilityProvider({ children }) {
     const submitMembershipApplication = useCallback(async () => {
         await selfServiceApiClient.submitMembershipApplication(details);
         // await loadMembershipApplications();
-        await loadDetails(true);
     }, [details]);
 
     const submitLeaveCapability = useCallback(async () => {
         await selfServiceApiClient.submitLeaveCapability(details);
-        await loadDetails(true);
     }, [details])
 
     const requestAwsAccount = useCallback(async () => {
       await selfServiceApiClient.requestAwsAccount(details);
       // await loadMembershipApplications();
-      await loadDetails(true);
   }, [details]);
 
     const getAccessToCluster = async (cluster) => {
