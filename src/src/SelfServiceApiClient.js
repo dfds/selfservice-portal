@@ -15,7 +15,7 @@ function composeUrl(...args) {
 export async function getCapabilities() {
     const accessToken = await getSelfServiceAccessToken();
 
-    const url = composeUrl("capabilities");
+    const url = composeUrl("capabilities"); 
     const response = await callApi(url, accessToken);
 
     const { items } = await response.json();
@@ -113,10 +113,26 @@ export async function registerMyVisit(myProfileDefinition) {
     }
 }
 
-export async function getCapabilityTopicsGroupedByCluster(capabilityDefinition) {
-    const topicsLink = capabilityDefinition?._links?.topics;
+export async function getKafkaClusterAccessList(capabilityDefinition) {
+  const clusterAccessLink = capabilityDefinition?._links?.clusters;
+  if (!clusterAccessLink) {
+      console.log("Warning! No kafka cluster access link found on capability definition:", capabilityDefinition);
+      return [];
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = clusterAccessLink.href;
+  const response = await callApi(url, accessToken);
+  const { items } = await response.json();
+
+  return items;
+}
+
+export async function getTopics(clusterAccessDefinition) {
+  const topicsLink = clusterAccessDefinition?._links?.topics;
     if (!topicsLink) {
-        console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
+      console.log("Warning! No topics link found on kafka cluster access definition:", clusterAccessDefinition);
         return [];
     }
 
@@ -160,10 +176,10 @@ export async function createCapability(capabilityDefinition){
     }
 }
 
-export async function addTopicToCapability(capabilityDefinition, clusterId, topicDefinition) {
-    const topicsLink = capabilityDefinition?._links?.topics;
+export async function addTopicToCapability(clusterDefinition, topicDefinition) {
+    const topicsLink = clusterDefinition?._links?.createTopic;
     if (!topicsLink) {
-        console.log("Warning! No topics link found on capability definition:", capabilityDefinition);
+        console.log("Warning! No topics link found on cluster definition:", clusterDefinition);
         return null;
     }
 
@@ -171,7 +187,7 @@ export async function addTopicToCapability(capabilityDefinition, clusterId, topi
 
     const url = topicsLink.href;
     const payload = {
-        kafkaClusterId: clusterId,
+        kafkaClusterId: clusterDefinition.id,
         name: topicDefinition.name,
         description: topicDefinition.description,
         partitions: topicDefinition.partitions,
@@ -235,6 +251,51 @@ export async function addMessageContractToTopic(topicDefinition, messageContract
     }
 
     return await response.json();
+}
+
+export async function updateTopic(topicDefinition, topicDescriptor) {
+  const link = topicDefinition?._links?.updateDescription;
+  if (!link) {
+      throw Error("Error! No update topic description link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = link.href;
+  const method = link.method;
+  const payload = {
+    ...topicDescriptor
+  };
+
+  const response = await callApi(url, accessToken, method, payload);
+
+  if (!response.ok) {
+      console.log(`Warning: failed updating topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`);
+      throw Error("Faild updating topic!");
+  }
+}
+
+export async function deleteTopic(topicDefinition) {
+  const link = topicDefinition?._links?.self;
+  if (!link) {
+      throw Error("Error! No topic self link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+  }
+
+  if (!(link.allow || []).includes("DELETE")) {
+    throw Error("Error! You are not allowed to delete the topic. Options was " + JSON.stringify(link.allow, null, 2));
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+
+  const url = link.href;
+  const method = "DELETE";
+
+  const response = await callApi(url, accessToken, method);
+
+  if (!response.ok) {
+      console.log(`Warning: failed deleting topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`);
+      throw Error("Faild updating topic!");
+  }
 }
 
 export async function getCapabilityMembers(capabilityDefinition) {
@@ -389,6 +450,46 @@ export async function requestAwsAccount(capabilityDefinition) {
         console.log("response was: ", await response.text());
         throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
     }
+}
+
+export async function getAccessToCluster(cluster) {
+  const link = cluster._links?.access;
+  if (!link) {
+      throw Error("Error! No request cluster access link found");
+  }
+
+  if( !(link.allow || []).includes('GET') ) {
+    throw Error("Error! Not authorized to get access to cluster " + cluster.id);
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+  const response = await callApi(link.href, accessToken, "GET");
+
+  if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function requestAccessToCluster(cluster) {
+  const link = cluster._links?.requestAccess;
+  if (!link) {
+      throw Error("Error! No request cluster access link found");
+  }
+
+  if( !(link.allow || []).includes('POST') ) {
+    throw Error("Error! Not authorized to request access to cluster " + cluster.id);
+  }
+
+  const accessToken = await getSelfServiceAccessToken();
+  const response = await callApi(link.href, accessToken, "POST");
+
+  if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+  }
 }
 
 export async function getTopVisitors(myProfileDefinition) {

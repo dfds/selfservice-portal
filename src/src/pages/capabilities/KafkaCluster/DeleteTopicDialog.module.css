@@ -1,0 +1,20 @@
+.confirmdialogbuttonscontainer {
+  display: flex;
+  width: 100%;
+  justify-items: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.confirmdialogbuttonscontainer > * {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.dangerbutton {
+  background-color: #be1e2d !important;
+  color: white !important;
+}

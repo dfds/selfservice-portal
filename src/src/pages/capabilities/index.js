@@ -31,7 +31,9 @@ export default function CapabilitiesPage() {
         <img src={SpashImage} alt="" />
     } />
 
-    return <Page title={"Capabilities"}>
+    return <>
+    
+    <Page title={"Capabilities"}>
       {showNewCapabilityDialog && 
         <NewCapabilityDialog 
           inProgress={isCreatingNewCapability}
@@ -67,4 +69,6 @@ export default function CapabilitiesPage() {
 
       <OtherCapabilities />
     </Page>
+
+    </> 
 }

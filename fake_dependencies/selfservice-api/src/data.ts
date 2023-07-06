@@ -23,7 +23,9 @@ export interface KafkaTopic {
   kafkaClusterId: string,
   partitions: number,
   retention: string,
-  status: string
+  status: string,
+  __canUpdate: boolean,
+  __canDelete: boolean,
 }
 
 export interface MessageContract {
@@ -57,6 +59,12 @@ export interface KafkaCluster {
   id: string,
   name: string,
   description: string,
+}
+
+export interface KafkaClusterAccess {
+  id: string,
+  capabilityId: string,
+  kafkaClusterId: string,
 }
 
 export interface AwsAccount {
@@ -130,6 +138,20 @@ const kafkaClusters: KafkaCluster[] = [
     }
   ];
 
+const kafkaClusterAccess: KafkaClusterAccess[] = [
+  {
+    id: "kca-1",
+    capabilityId: "this-is-a-capability-xyz",
+    kafkaClusterId: "kc-1",
+  },
+  {
+    id: "kca-2",
+    capabilityId: "this-is-a-capability-xyz",
+    kafkaClusterId: "kc-2",
+  }
+];
+
+
 const kafkaTopics : KafkaTopic[] = [
   {
     id: "1",
@@ -140,6 +162,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: true,
   },
   {
     id: "2",
@@ -150,6 +174,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: false,
   },
   {
     id: "3",
@@ -160,6 +186,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: true,
   },
   {
     id: "4",
@@ -170,6 +198,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "In Progress",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "5",
@@ -180,6 +210,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "6",
@@ -190,6 +222,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   },
   {
     id: "7",
@@ -200,6 +234,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: true,
+    __canDelete: false,
   },
   {
     id: "8",
@@ -210,6 +246,8 @@ const kafkaTopics : KafkaTopic[] = [
     partitions: 3,
     retention: "1d",
     status: "Provisioned",
+    __canUpdate: false,
+    __canDelete: false,
   }
 ];
 
@@ -357,6 +395,7 @@ const membershipApplications : MembershipApplication[] = [
 
 export interface State {
   kafkaClusters: KafkaCluster[],
+  kafkaClustersAccess: KafkaClusterAccess[],
   kafkaTopics: KafkaTopic[],
   capabilities: Capability[],
   messageContracts: MessageContract[],
@@ -373,6 +412,7 @@ export const state : State = {
   stats: stats,
   membershipApplications: membershipApplications,
   awsAccounts: awsAccounts,
+  kafkaClustersAccess: kafkaClusterAccess
 };
 
 export function canJoin(capability: Capability) : boolean {

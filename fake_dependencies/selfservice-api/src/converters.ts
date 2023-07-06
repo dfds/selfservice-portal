@@ -19,12 +19,10 @@ export function convertCapability(capability: Capability) : any {
                 rel: "related",
                 allow: ["GET"]
             },
-            topics: {
-                href: composeUrl(`/capabilities/${capability.id}/topics`),
+            clusters: {
+                href: composeUrl(`/capabilities/${capability.id}/kafkaclusteraccess`),
                 rel: "related",
-                allow: isMemberOf(capability)
-                    ? ["GET", "POST"]
-                    : ["GET"]
+                allow: ["GET"]
             },
             membershipApplications: {
                 href: composeUrl(`/capabilities/${capability.id}/membershipapplications`),
@@ -59,7 +57,10 @@ export function convertKafkaTopic(topic: KafkaTopic) : any {
                 self: {
                     href: composeUrl("kafkatopics", topic.id),
                     rel: "self",
-                    allow: ["GET"]
+                    allow: [
+                        "GET",
+                        topic.__canDelete ? "DELETE" : ""
+                    ].filter(x => x != "")
                 },
                 messageContracts: {
                     href: composeUrl("kafkatopics", topic.id, "messagecontracts"),
@@ -68,7 +69,13 @@ export function convertKafkaTopic(topic: KafkaTopic) : any {
                         "GET",
                         topic.name.startsWith("pub.") ? "POST" : ""
                     ].filter(x => x != "")
-                }
+                },
+                updateDescription: topic.__canUpdate 
+                    ? {
+                        href: composeUrl("kafkatopics", topic.id, "description"),
+                        method: "PUT"
+                    }
+                    : null
             }
         }
     };

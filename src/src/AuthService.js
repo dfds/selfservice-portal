@@ -32,7 +32,7 @@ export function callApi(url, accessToken, method = "GET", payload = null) {
         mode: "cors"
     };
 
-    if (["POST", "PUT"].includes(method.toUpperCase()) && payload) {
+    if (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) && payload) {
         options.body = JSON.stringify(payload);
         options.headers.append("Content-Type", "application/json");
     }
@@ -78,10 +78,10 @@ export function useCurrentUser() {
 
             async function getUserInfo() {
                 const profile = await getUserProfile();
-                setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
+                //setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
 
                 const profilePictureUrl = await getUserProfilePictureUrl();
-                setUser(prev => ({...prev, ...{profilePictureUrl: profilePictureUrl}}));
+                setUser(prev => ({...prev, ...profile, ...{profilePictureUrl: profilePictureUrl, isAuthenticated: true}}));
             }
 
             getUserInfo();

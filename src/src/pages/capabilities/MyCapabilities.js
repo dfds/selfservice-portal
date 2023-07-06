@@ -1,20 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, H1, Input } from '@dfds-ui/react-components';
+import React, { useContext } from "react";
 import { Text } from '@dfds-ui/typography';
-import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
-import { SideSheet, SideSheetContent } from '@dfds-ui/react-components'
-import { Tooltip, TextField } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
-import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
-import { createCapability } from "../../SelfServiceApiClient";
 import PageSection from "components/PageSection";
-import { Search } from '@dfds-ui/icons/system';
-import HighlightedText from "components/HighlightedText";
-import NewCapabilityDialog from "./NewCapabilityDialog";
 
 
 export default function MyCapabilities() {

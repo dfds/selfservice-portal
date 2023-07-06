@@ -13,7 +13,7 @@ function sleep(duration) {
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
-
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(user.isAuthenticated);
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
     hasLoadedOtherCapabilities: false,
@@ -60,6 +60,9 @@ function AppProvider({ children }) {
   }
 
   useEffect(() => {
+    if(isAuthenticatedUser !== user.isAuthenticated) {
+      setIsAuthenticatedUser(user.isAuthenticated);
+    }
     if (user && user.isAuthenticated) {
         loadMyProfile();
       }
@@ -69,7 +72,8 @@ function AppProvider({ children }) {
     if (user && user.isAuthenticated) {
       loadOtherCapabilities();
     }
-  }, [myCapabilities, user]);
+  }, [isAuthenticatedUser]);
+  
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {

@@ -6,7 +6,19 @@ import { composeUrl, log } from "../helpers";
 const router = express.Router();
 
 router.get("/kafkatopics", (req, res) => {
-  const result = state.kafkaTopics.filter(x => x.name.startsWith("pub."));
+  const capabilityId: string | undefined = req?.query?.capabilityId?.toString();
+  const clusterId: string | undefined = req?.query?.clusterId?.toString();
+  const includePrivate: boolean =
+    (req?.query?.includePrivate?.toString() || "").toLowerCase() === "true";
+
+  let result = state.kafkaTopics;
+  if (capabilityId !== undefined) {
+    result = result.filter((x) => x.capabilityId === capabilityId);
+  }
+  if (!includePrivate) {
+    result = result.filter((x) => x.name.startsWith("pub."));
+  }
+
   res.send({
     items: result.map(x => convertKafkaTopic(x)),
     "_embedded": {
@@ -93,6 +105,21 @@ router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
       log(`Changed status on message contract ${newContract.id} to ${newContract.status}`);
   }, (Math.random() * 2000)+2000);
 
+});
+
+router.put("/kafkatopics/:id/description", (req, res) => {
+  const kafkaTopicId : string = req?.params?.id || "";
+  const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
+  if (!foundTopic) {
+    res.sendStatus(404);
+    return;
+  }
+
+  foundTopic.description = req.body.description;
+
+  log(`Changed description on topic ${foundTopic.name} to "${foundTopic.description}"`);
+
+  res.sendStatus(204);
 });
 
 export default router;

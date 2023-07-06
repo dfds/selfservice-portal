@@ -11,7 +11,7 @@ import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useContext, useState } from "react";
 import { theme } from "@dfds-ui/theme";
-import SelectedCapabilityContext from "SelectedCapabilityContext";
+import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
 import styles from "./resourceInfoBadges.module.css";

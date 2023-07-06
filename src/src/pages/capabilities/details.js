@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { useParams } from 'react-router-dom';
-import SelectedCapabilityContext from "SelectedCapabilityContext";
+import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
 import Security from './security';
@@ -10,8 +10,20 @@ import CommunicationChannels from './communicationchannels';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilityDetailsPage() {
+
+    return <>
+            <SelectedCapabilityProvider>
+                <CapabilityDetailsPageContent/>
+            </SelectedCapabilityProvider>
+    </>
+}
+
+
+
+function CapabilityDetailsPageContent() {
     const { id } = useParams();
     const { isLoading, isFound, name, members, kafkaClusters, loadCapability, showResources } = useContext(SelectedCapabilityContext);
 
@@ -35,6 +47,7 @@ export default function CapabilityDetailsPage() {
                 {(kafkaClusters || []).map(cluster => <KafkaCluster
                     key={cluster.id}
                     cluster={cluster}
+                    capabilityId={id}
                 />)}
 
             </Page>
