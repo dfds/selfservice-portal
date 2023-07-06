@@ -215,7 +215,6 @@ function SelectedCapabilityProvider({ children }) {
       console.log('requesting access to cluster', cluster);
 
       await ApiClient.requestAccessToCluster(cluster);
-      await loadDetails(true);
     };
 
     const updateKafkaTopic = async (topicId, topicDescriptor) => {
