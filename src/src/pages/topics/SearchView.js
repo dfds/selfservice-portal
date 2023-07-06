@@ -6,6 +6,8 @@ import { Accordion, Spinner } from '@dfds-ui/react-components'
 import { Button, Card, CardContent, IconButton  } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
 import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
+import { Link } from "react-router-dom";
+import { getMessageContracts } from "SelfServiceApiClient";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import TopicsContext from "pages/topics/TopicsContext";
 import AppContext from "../../AppContext"
@@ -73,6 +75,11 @@ export function SearchView({data, onTopicClicked}) {
         });
     };
 
+    const linkStyle = {
+        color: "#1874bc",
+        textDecoration: "none",
+    }
+
     useEffect(() => {
         if (selectedKafkaTopic !== data.id) {
             setContracts([]);
@@ -137,6 +144,10 @@ export function SearchView({data, onTopicClicked}) {
                     </>
 
                     }
+
+                    <div >
+                        <div><Text styledAs="actionBold">Capability </Text><Link style={linkStyle} to={`/capabilities/${data.capabilityId}`}>{data.capabilityId}</Link></div>
+                    </div>
                 </CardContent>
             </Card>
         </Accordion>
@@ -147,7 +158,7 @@ export function SearchView({data, onTopicClicked}) {
             :  <div className={styles.infocontainer}>
                     <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
                     <div >
-                        <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
+                        <div>Capability: <Link style={linkStyle} to={`/capabilities/${data.capabilityId}`}>{data.capabilityId}</Link></div>
                     </div>
                 </div>
         }

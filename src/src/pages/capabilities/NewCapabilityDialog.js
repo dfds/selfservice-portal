@@ -40,12 +40,14 @@ export default function NewCapabilityDialog({inProgress, onAddCapabilityClicked,
 
     const isNameValid = formData.name !== "" &&
         !formData.name.match(/^\s*$/g) &&
-        !formData.name.match(/(-|_)$/g) &&
+        !formData.name.match(/(_|-)$/g) &&
+        !formData.name.match(/^(_|-)/g) &&
+        !formData.name.match(/[-_\.]{2,}/g) &&
         !formData.name.match(/[^a-zA-Z0-9\-_]/g);
 
     let nameErrorMessage = "";
     if (formData.name.length > 0 && !isNameValid) {
-        nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", "_" and it must not end with "-" or "_".';
+        nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", and "_" and it must not start or end with "_" or "-". Do not use more than one of "-" or "_" in a row.';
     }
 
     const canAdd = formData.name !== "" && formData.description !== "" && nameErrorMessage === "";

@@ -65,6 +65,7 @@ function SelectedCapabilityProvider({ children }) {
                 kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) => a.messageType.localeCompare(b.messageType));
             });
         });
+ 
 
         setKafkaClusters(clusters);
     }, [details]);
@@ -129,7 +130,7 @@ function SelectedCapabilityProvider({ children }) {
 
         setKafkaClusters(prev => {
             const copy = [...prev];
-            const cluster = copy.find(cluster => cluster.id === kafkaClusterId);
+            const cluster = copy.find(cluster => cluster.id === kafkaCluster.id);
             if (cluster) {
                 if (!cluster.topics) {
                     cluster.topics = [];
@@ -205,6 +206,19 @@ function SelectedCapabilityProvider({ children }) {
       // await loadMembershipApplications();
       await loadDetails(true);
   }, [details]);
+
+    const getAccessToCluster = async (cluster) => {
+      console.log('getting access to cluster', cluster);
+
+      return await ApiClient.getAccessToCluster(cluster);
+    };
+
+    const requestAccessToCluster = async (cluster) => {
+      console.log('requesting access to cluster', cluster);
+
+      await ApiClient.requestAccessToCluster(cluster);
+      await loadDetails(true);
+    };
 
     const updateKafkaTopic = async (topicId, topicDescriptor) => {
       let found = null;
@@ -331,6 +345,8 @@ function SelectedCapabilityProvider({ children }) {
         submitMembershipApplication,
         submitLeaveCapability,
         requestAwsAccount,
+        getAccessToCluster,
+        requestAccessToCluster,
         showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
         updateKafkaTopic,
         deleteKafkaTopic,

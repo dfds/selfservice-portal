@@ -109,30 +109,6 @@ router.get("/capabilities/:id/members", (req, res) => {
     }
 });
 
-
-router.get("/capabilities/:id/topics", (req, res) => {
-    const foundTopics = state.kafkaTopics.filter(x => x.capabilityId == req.params.id);
-
-    const clusters = (state.kafkaClusters || []).map(x => {
-      const cluster = convertKafkaCluster(x);
-      cluster.topics = foundTopics
-        .filter(topic => topic.kafkaClusterId==x.id)
-        .map(x => convertKafkaTopic(x));
-      return cluster;
-    });
-
-    res.send({
-        items: clusters,
-        "_links": {
-            self: {
-                href: composeUrl(req.path),
-                rel: "self",
-                allow: ["GET", "POST"]
-            }
-        }
-    });
-});
-
 router.post("/capabilities/:id/topics", (req, res) => {
     const capabilityId : string = req?.params?.id || "";
 
@@ -160,6 +136,74 @@ router.post("/capabilities/:id/topics", (req, res) => {
       newTopic.status = "Provisioned";
       log(`Changed status on topic ${newTopic.id} to ${newTopic.status}`);
     }, (Math.random() * 2000)+2000);
+});
+
+router.get("/capabilities/:id/kafkaclusteraccess", (req, res) => {
+  const capabilityId = req.params.id;
+  const foundTopics = state.kafkaTopics.filter(x => x.capabilityId == capabilityId);
+  const foundAccess = state.kafkaClustersAccess.filter(x => x.capabilityId == capabilityId);
+  const capability = state.capabilities.find(x => x.id == capabilityId);
+  const isMember = capability?.__isMember || false;
+
+  const clusters = (state.kafkaClusters || []).map(x => {
+    const cluster = convertKafkaCluster(x);
+    const access = foundAccess.find(cluster => cluster.kafkaClusterId==x.id);
+
+    delete cluster._links.self;
+
+    cluster._links.topics = {
+      href: composeUrl("kafkatopics") + `?capabilityId=${capabilityId}&clusterId=${x.id}&includePrivate=true`,
+      rel: "self",
+      allow: ["GET"]
+    };
+
+    cluster._links.access = {
+      href: composeUrl("capabilities", req.params.id, "kafkaclusteraccess", x.id),
+      rel: "self",
+      allow: isMember && access!==undefined ? ["GET"] : []
+    };
+
+    cluster._links.requestAccess = {
+      href: composeUrl("capabilities", req.params.id, "kafkaclusteraccess", x.id),
+      rel: "self",
+      allow: isMember && access===undefined ? ["POST"] : []
+    };
+
+    cluster._links.createTopic = {
+      href: composeUrl("capabilities", capabilityId, "topics"),
+      rel: "self",
+      allow: isMember && access!==undefined ? ["POST"] : []
+    };
+
+    return cluster;
+  });
+
+  res.send({
+      items: clusters,
+      "_links": {
+          self: {
+              href: composeUrl(req.path),
+              rel: "self",
+              allow: ["GET"]
+          }
+      }
+  });
+});
+
+router.get("/capabilities/:id/kafkaclusteraccess/:clusterid", (req, res) => {
+  res.status(200).send({
+    bootstrapServers: 'kafka:9092',
+    schemaRegistryUrl: 'schema-registry.com',
+  });
+});
+
+router.post("/capabilities/:id/kafkaclusteraccess/:clusterid", (req, res) => {
+  state.kafkaClustersAccess.push({
+    id: "x",
+    capabilityId: req.params.id,
+    kafkaClusterId: req.params.clusterid
+  })
+  res.status(200).send({});
 });
 
 router.get("/capabilities/:id/membershipapplications", (req, res) => {
