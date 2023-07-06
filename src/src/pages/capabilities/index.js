@@ -22,7 +22,7 @@ export default function CapabilitiesPage() {
 
     const handleAddCapability = async (formData) => {
       setIsCreatingNewCapability(true);
-      await addNewCapability(formData.name, formData.description);
+      await addNewCapability(formData.name, formData.description, formData.isCritical, formData.containsPII);
       setShowNewCapabilityDialog(false);
       setIsCreatingNewCapability(false);
     };

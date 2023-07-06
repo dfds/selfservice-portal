@@ -136,6 +136,8 @@ export async function createCapability(capabilityDefinition){
     const payload = {
         name: capabilityDefinition.name,
         description: capabilityDefinition.description,
+        isCritical: capabilityDefinition.isCritical,
+        containsPII: capabilityDefinition.containsPII
     };
 
     console.log("sending: ", payload);

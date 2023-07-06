@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "^2.32.2",
-    "@azure/msal-react": "^1.5.2"
+    "@azure/msal-react": "^1.5.2",
+    "html-webpack-plugin": "^5.5.1"
   }
 }

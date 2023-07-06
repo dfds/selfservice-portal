@@ -60,6 +60,8 @@ router.post("/capabilities", (req, res) => {
         .replace(" ", "-"),
       name: capabilityName,
       description: req?.body?.description,
+      isCritical: req?.body?.isCritical,
+      containsPII: req?.body?.containsPII,
       members: [],
       __isMember: true,
       __canJoin: false,
@@ -67,7 +69,6 @@ router.post("/capabilities", (req, res) => {
     };
 
     state.capabilities.push(newCapability);
-
     const dto = convertCapability(newCapability);
     res
         .set("Location", dto._links.self.href)

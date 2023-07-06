@@ -3,6 +3,8 @@ export interface Capability {
   id: string,
   name: string,
   description: string,
+  isCritical: boolean,
+  containsPII: boolean,
   members: Member[],
   __isMember: boolean,
   __canJoin: boolean,
@@ -246,6 +248,8 @@ const capabilities : Capability[] = [
         id: "this-is-a-capability-xyz",
         name: "this is a capability",
         description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
+        isCritical: true,
+        containsPII: false,
         members: [
           {
             email: "jandr@dfds.com"
@@ -262,6 +266,8 @@ const capabilities : Capability[] = [
         id: "another-awssome-capability-abcd",
         name: "another awssome capability",
         description: "lknm lk23lnk nl kl23lk lk",
+        isCritical: true,
+        containsPII:false,
         members: [
           {
             email: "thfis@dfds.com"
@@ -275,6 +281,8 @@ const capabilities : Capability[] = [
         id: "my-second-capability",
         name: "My Second Capability",
         description: "Integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat diam ut",
+        isCritical: false,
+        containsPII:false,
         members: [
           {
             email: "jandr@dfds.com"
@@ -291,6 +299,8 @@ const capabilities : Capability[] = [
         id: "my-future-capability",
         name: "My Future Capability",
         description: "Vel facilisis volutpat est velit egestas dui id ornare arcu odio ut sem nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est ultricies integer quis auctor elit sed vulputate",
+        isCritical: true,
+        containsPII:true,
         members: [
           {
             email: "jawib@dfds.com"

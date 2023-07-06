@@ -53,8 +53,8 @@ function AppProvider({ children }) {
     setAppStatus(prev => ({...prev, ...{hasLoadedOtherCapabilities: true}}));
   }
 
-  async function addNewCapability(name, description) {
-    await ApiClient.createCapability({name, description});
+  async function addNewCapability(name, description, isCritical, containsPII) {
+    await ApiClient.createCapability({name, description, isCritical, containsPII});
     await sleep(3000);
     await loadMyProfile();
   }

@@ -251,13 +251,15 @@ function SelectedCapabilityProvider({ children }) {
     }, [details]);
 
     //--------------------------------------------------------------------
-
     const state = {
         isLoading,
         isFound: details != null,
         id: capabilityId,
         name: details?.name,
         description: details?.description,
+        isCritical: details?.isCritical,
+        containsPPI: details?.containsPPI,
+        details: details,
         links: details?._links,
         members,
         membershipApplications,

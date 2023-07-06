@@ -6,6 +6,8 @@ export function convertCapability(capability: Capability) : any {
         id: capability.id,
         name: capability.name,
         description: capability.description,
+        isCritical: capability.isCritical,
+        containsPII: capability.containsPII,
         "_links": {
             self: {
                 href: composeUrl(`/capabilities/${capability.id}`),

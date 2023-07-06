@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import SelectedCapabilityContext from "SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
+import Security from './security';
 import Resources from './resources';
 import Logs from './logs';
 import CommunicationChannels from './communicationchannels';
@@ -23,6 +24,7 @@ export default function CapabilityDetailsPage() {
             <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
                 <Members />
                 <Summary />
+                <Security />
                 { showResources && (<Resources />)  }
 
                 <MembershipApplications />
