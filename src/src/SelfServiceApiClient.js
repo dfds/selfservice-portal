@@ -150,7 +150,7 @@ export class SelfServiceApiClient {
         return items;
     }
 
-    async addTopicToCapability(capabilityDefinition, topicDefinition) {
+    async addTopicToCapability(clusterDefinition, topicDefinition) {
         const topicsLink = clusterDefinition?._links?.createTopic;
         if (!topicsLink) {
             console.log("Warning! No topics link found on cluster definition:", clusterDefinition);
