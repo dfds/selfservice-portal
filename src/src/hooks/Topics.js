@@ -35,18 +35,4 @@ export function useTopics() {
         isLoaded,
         topicsList
     }
-
-    
-        // const url =  composeUrl("kafkatopics"); 
-        // const response = await callApi(url, accessToken);
-        // this.responseHandler(response);
-    
-        // const { items, _embedded } = await response.json();
-        // return (items || []).map(topic => {
-        //     const copy = {...topic};
-        //     const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
-        //     copy.kafkaClusterName = found?.name || "";
-        //     return copy;
-        // });
-
 }

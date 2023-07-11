@@ -1,6 +1,6 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
 import { useContext, useEffect, useState } from "react";
-import { composeUrl, composeUrl2 } from "Utils";
+import { composeUrl, composeSegmentsUrl } from "Utils";
 import ErrorContext from "ErrorContext";
 
 
@@ -21,8 +21,7 @@ export function useSelfServiceRequest() {
 
         const accessToken = await getSelfServiceAccessToken();
 
-        let url = composeUrl2(urlSegments);
-        console.log("segmets: ", urlSegments);
+        let url = composeSegmentsUrl(urlSegments);
         if (isValidURL(urlSegments[0]))
         {
             url = urlSegments[0];
@@ -45,7 +44,6 @@ export function useSelfServiceRequest() {
             }
         } catch (error) {
             setErrorMessage(error.message);
-            console.log(error.message);
         } finally {
             setInProgress(false);
         }

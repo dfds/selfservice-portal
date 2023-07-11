@@ -45,7 +45,6 @@ function AppProvider({ children }) {
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
-    // await selfServiceApiClient.createCapability({name, description});
     await sleep(3000);
     await loadMyProfile();
   }

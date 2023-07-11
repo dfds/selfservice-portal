@@ -34,48 +34,13 @@ function SelectedCapabilityProvider({ children }) {
     const {membersList, isLoadedMembers} = useCapabilityMembers(details);
 
 
-    // load members
-    const loadMembers = useCallback(async () => {
-        // if (members){
-        //     members.forEach(async member => {
-        //         const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
-        //         setMembers(prev => {
-        //           const copy = prev
-        //               ? [...prev]
-        //               : [];
-      
-        //           const found = copy.find(x => x.email === member.email)
-        //           if (found) {
-        //               found.pictureUrl = profilePictureUrl;
-        //           }
-      
-        //           return copy;
-        //         });
-        //       });
-
-        // }
-        
-    }, [details]);
-
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
-        // const clusters = await selfServiceApiClient.getCapabilityTopicsGroupedByCluster(details);
-        // clusters.forEach(cluster => {
-        //     (cluster.topics || []).forEach(kafkaTopic => {
-        //         adjustRetention(kafkaTopic);
-        //         kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) => a.messageType.localeCompare(b.messageType));
-        //     });
-        // });
 
         const clusters = await selfServiceApiClient.getKafkaClusterAccessList(details);
-
-        console.log(clusters);
-
         for (const cluster of clusters) {
 
             const topics = await selfServiceApiClient.getTopics(cluster);
-
-            //console.log(topics);
   
             topics.forEach((kafkaTopic) => {
               adjustRetention(kafkaTopic);
@@ -86,10 +51,7 @@ function SelectedCapabilityProvider({ children }) {
   
             cluster.topics = topics;
           }   
-          
-          //console.log(clusters);
  
-
         setKafkaClusters(clusters);
     }, [details]);
 
@@ -215,7 +177,6 @@ function SelectedCapabilityProvider({ children }) {
 
     const submitMembershipApplication = useCallback(async () => {
         await selfServiceApiClient.submitMembershipApplication(details);
-        // await loadMembershipApplications();
     }, [details]);
 
     const submitLeaveCapability = useCallback(async () => {
@@ -224,18 +185,13 @@ function SelectedCapabilityProvider({ children }) {
 
     const requestAwsAccount = useCallback(async () => {
       await selfServiceApiClient.requestAwsAccount(details);
-      // await loadMembershipApplications();
   }, [details]);
 
     const getAccessToCluster = async (cluster) => {
-      console.log('getting access to cluster', cluster);
-
       return await selfServiceApiClient.getAccessToCluster(cluster);
     };
 
     const requestAccessToCluster = async (cluster) => {
-      console.log('requesting access to cluster', cluster);
-
       await selfServiceApiClient.requestAccessToCluster(cluster);
     };
 
@@ -312,14 +268,12 @@ function SelectedCapabilityProvider({ children }) {
 
     useEffect(() => {
         if(isLoadedMembers){
-            console.log(membersList);
             setMembers(membersList);  
         }        
     }, [isLoadedMembers, membersList]);
 
     useEffect(() => {
         if (details) {
-            loadMembers();
             loadMembershipApplications();
             loadKafkaClustersAndTopics();
             loadAwsAccount();

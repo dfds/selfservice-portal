@@ -27,7 +27,7 @@ export function composeUrl(...args) {
  * @param {string[]} segments 
  * @returns 
  */
-export function composeUrl2(segments) {
+export function composeSegmentsUrl(segments) {
   let url = window.apiBaseUrl;
   (segments || []).forEach(x => {
       if (x[0] === '/') {
