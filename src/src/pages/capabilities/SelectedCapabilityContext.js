@@ -59,13 +59,35 @@ function SelectedCapabilityProvider({ children }) {
 
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
-        const clusters = await selfServiceApiClient.getCapabilityTopicsGroupedByCluster(details);
-        clusters.forEach(cluster => {
-            (cluster.topics || []).forEach(kafkaTopic => {
-                adjustRetention(kafkaTopic);
-                kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) => a.messageType.localeCompare(b.messageType));
+        // const clusters = await selfServiceApiClient.getCapabilityTopicsGroupedByCluster(details);
+        // clusters.forEach(cluster => {
+        //     (cluster.topics || []).forEach(kafkaTopic => {
+        //         adjustRetention(kafkaTopic);
+        //         kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) => a.messageType.localeCompare(b.messageType));
+        //     });
+        // });
+
+        const clusters = await selfServiceApiClient.getKafkaClusterAccessList(details);
+
+        console.log(clusters);
+
+        for (const cluster of clusters) {
+
+            const topics = await selfServiceApiClient.getTopics(cluster);
+
+            //console.log(topics);
+  
+            topics.forEach((kafkaTopic) => {
+              adjustRetention(kafkaTopic);
+              kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
+                a.messageType.localeCompare(b.messageType)
+              );
             });
-        });
+  
+            cluster.topics = topics;
+          }   
+          
+          //console.log(clusters);
  
 
         setKafkaClusters(clusters);
@@ -123,15 +145,15 @@ function SelectedCapabilityProvider({ children }) {
         });
     };
 
-    const addTopicToCluster = async (kafkaClusterId, kafkaTopicDescriptor) => {
-        const newTopic = await selfServiceApiClient.addTopicToCapability(details, kafkaClusterId, kafkaTopicDescriptor);
+    const addTopicToCluster = async (kafkaCluster, kafkaTopicDescriptor) => {
+        const newTopic = await selfServiceApiClient.addTopicToCapability(kafkaCluster, kafkaTopicDescriptor);
         // NOTE: [jandr] handle errors from call above ^^
 
         adjustRetention(newTopic);
 
         setKafkaClusters(prev => {
             const copy = [...prev];
-            const cluster = copy.find(cluster => cluster.id === kafkaClusterId);
+            const cluster = copy.find(cluster => cluster.id === kafkaCluster.id);
             if (cluster) {
                 if (!cluster.topics) {
                     cluster.topics = [];
@@ -208,13 +230,13 @@ function SelectedCapabilityProvider({ children }) {
     const getAccessToCluster = async (cluster) => {
       console.log('getting access to cluster', cluster);
 
-      return await ApiClient.getAccessToCluster(cluster);
+      return await selfServiceApiClient.getAccessToCluster(cluster);
     };
 
     const requestAccessToCluster = async (cluster) => {
       console.log('requesting access to cluster', cluster);
 
-      await ApiClient.requestAccessToCluster(cluster);
+      await selfServiceApiClient.requestAccessToCluster(cluster);
     };
 
     const updateKafkaTopic = async (topicId, topicDescriptor) => {

@@ -6,14 +6,6 @@ import { composeUrl, createId, getDate, log } from "../helpers";
 const router = express.Router();
 
 router.get("/capabilities", (req, res) => {
-  // res
-  //   .set("Content-Type", "application/problem+json")
-  //   .status(400)
-  //   .send({
-  //     title: "title of error",
-  //     detail: "this is the detail of the error"
-  //   });
-
     res.send({
         items: state.capabilities.map(x => convertCapability(x)),
         "_links": {
@@ -27,14 +19,6 @@ router.get("/capabilities", (req, res) => {
 });
 
 router.get("/capabilities/:id", (req, res) => {
-
-    // res
-    // .set("Content-Type", "application/problem+json")
-    // .status(400)
-    // .send({
-    //   title: "title of error",
-    //   detail: "this is the detail of the error"
-    // });
     let found = state.capabilities.find(x => x.id == req.params.id);
     if (found) {
         res.send(convertCapability(found));
@@ -46,10 +30,10 @@ router.get("/capabilities/:id", (req, res) => {
 router.post("/capabilities", (req, res) => {
     const capabilityName : string = req?.body?.name || "";
 
-    const isInvalidInput = capabilityName.includes("!");
-    console.log("isInvalidInput: ", isInvalidInput);
+    const isValidInput = capabilityName.includes("!");
+    console.log("validinput: ", isValidInput);
 
-    if (isInvalidInput){
+    if (!isValidInput){
       res
         .status(400)
         .send({
