@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
+import ErrorContext from "./ErrorContext";
+import { useCapabilities } from "hooks/Capabilities";
 
 const AppContext = React.createContext(null);
 
@@ -16,19 +18,22 @@ function AppProvider({ children }) {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(user.isAuthenticated);
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
-    hasLoadedOtherCapabilities: false,
   });
 
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
-  const [otherCapabilities, setOtherCapabilities] = useState([]);
+
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
+  const {handleError} = useContext(ErrorContext);
+  const selfServiceApiClient = new ApiClient.SelfServiceApiClient(handleError);
+
+  const { addCapability } = useCapabilities();
 
   async function loadMyProfile() {
-    const profile = await ApiClient.getMyPortalProfile();
+    const profile = await selfServiceApiClient.getMyPortalProfile();
     const { capabilities, stats, autoReloadTopics } = profile;
     setMyCapabilities(capabilities);
     setStats(stats);
@@ -38,23 +43,8 @@ function AppProvider({ children }) {
     setMyProfile(profile);
   }
 
-  async function loadOtherCapabilities() {
-    const allCapabilities = await ApiClient.getCapabilities();
-    const filteredList = (allCapabilities || []).filter(x => {
-        const myCap = (myCapabilities || []).find(y => y.id === x.id);
-        if (myCap) {
-            return false;
-        } else {
-            return true;
-        }
-    });
-
-    setOtherCapabilities(filteredList);
-    setAppStatus(prev => ({...prev, ...{hasLoadedOtherCapabilities: true}}));
-  }
-
   async function addNewCapability(name, description) {
-    await ApiClient.createCapability({name, description});
+    addCapability(name, description);
     await sleep(3000);
     await loadMyProfile();
   }
@@ -69,16 +59,9 @@ function AppProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
-    if (user && user.isAuthenticated) {
-      loadOtherCapabilities();
-    }
-  }, [isAuthenticatedUser]);
-  
-
-  useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
-      ApiClient.updateMyPersonalInfirmation(myProfile, user);
-      ApiClient.registerMyVisit(myProfile);
+      selfServiceApiClient.updateMyPersonalInfirmation(myProfile, user);
+      selfServiceApiClient.registerMyVisit(myProfile);
     }
   }, [myProfile, user]);
 
@@ -88,16 +71,14 @@ function AppProvider({ children }) {
     user,
     myProfile,
     myCapabilities,
-    otherCapabilities,
-    reloadOtherCapabilities: loadOtherCapabilities,
     addNewCapability,
-    isCapabilitiesInitialized: (appStatus.hasLoadedMyCapabilities && appStatus.hasLoadedOtherCapabilities),
     appStatus,
     topics,
     setTopics,
     stats,
     news,
     shouldAutoReloadTopics,
+    selfServiceApiClient
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

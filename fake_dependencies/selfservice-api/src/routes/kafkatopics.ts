@@ -15,6 +15,9 @@ router.get("/kafkatopics", (req, res) => {
   if (capabilityId !== undefined) {
     result = result.filter((x) => x.capabilityId === capabilityId);
   }
+  if (clusterId !== undefined) {
+    result = result.filter((x) => x.kafkaClusterId === clusterId);
+  }
   if (!includePrivate) {
     result = result.filter((x) => x.name.startsWith("pub."));
   }

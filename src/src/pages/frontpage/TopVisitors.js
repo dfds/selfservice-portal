@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useState } from "react"
 import { getTopVisitors } from "SelfServiceApiClient";
 
+
 import Confetti from 'react-confetti';
 
 import styles from "./TopVisitors.module.css";
@@ -55,6 +56,7 @@ export default function TopVisitors() {
     const [visitors, setVisitors] = useState([]);
     const [showConfetti, setShowConfetti] = useState(false);
     const { width, height } = useWindowSize()
+    const {selfServiceApiClient} = useContext(AppContext)
 
     const handleVisitorClicked = (rank) => {
         if (rank === 1 && !showConfetti) {
@@ -80,7 +82,7 @@ export default function TopVisitors() {
             return;
         }
 
-        const items = await getTopVisitors(myProfile);
+        const items = await selfServiceApiClient.getTopVisitors(myProfile);
         items.sort((a,b) => a.rank - b.rank);
 
         setVisitors(items);

@@ -1,29 +1,41 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, H1, Input } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
-import { Container, Column, Card, CardTitle, CardContent, CardMedia, CardActions } from '@dfds-ui/react-components';
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
-import { SideSheet, SideSheetContent } from '@dfds-ui/react-components'
-import { Tooltip, TextField } from '@dfds-ui/react-components'
+import { TextField } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
-import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
-import { createCapability } from "../../SelfServiceApiClient";
 import PageSection from "components/PageSection";
 import { Search } from '@dfds-ui/icons/system';
 import HighlightedText from "components/HighlightedText";
-import NewCapabilityDialog from "./NewCapabilityDialog";
-import MyCapabilities from "./MyCapabilities";
+import { useCapabilities } from "hooks/Capabilities";
 
 export default function OtherCapabilities() {
-    const { otherCapabilities, appStatus } = useContext(AppContext);
+    const { myCapabilities, appStatus } = useContext(AppContext);
+    const { capabilities, isLoaded} = useCapabilities();
+    const [ otherCapabilities, setOtherCapabilities ] = useState([]);
 
     const [searchInput, setSearchInput] = useState("");
     const [searchResult, setSearchResult] = useState([]);
-
     const hasSearchInput = searchInput.replace(" ", "") !== "";
+
+    useEffect(() => {
+        if (!appStatus.hasLoadedMyCapabilities) {
+            return;
+        }
+
+        const filteredList = capabilities.filter(x => {
+            const myCap = myCapabilities.find(y => y.id === x.id);
+            if (myCap) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        setOtherCapabilities(filteredList);
+    }, [capabilities, myCapabilities, appStatus]);
 
     useEffect(() => {
         setSearchResult(otherCapabilities);
@@ -47,7 +59,7 @@ export default function OtherCapabilities() {
     }, [searchInput, otherCapabilities]);
 
     const items = searchResult;
-    const isLoading = !appStatus.hasLoadedOtherCapabilities;
+    const isLoading = !isLoaded;
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);

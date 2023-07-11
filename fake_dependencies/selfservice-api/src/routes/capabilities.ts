@@ -6,120 +6,146 @@ import { composeUrl, createId, getDate, log } from "../helpers";
 const router = express.Router();
 
 router.get("/capabilities", (req, res) => {
+  const testFail = false;
+
+  if (testFail) {
+    res
+      .set("Content-Type", "application/problem+json")
+      .status(400)
+      .send({
+        title: "title of error",
+        detail: "this is the detail of the error"
+      });
+  } else {
     res.send({
-        items: state.capabilities.map(x => convertCapability(x)),
-        "_links": {
-          self: {
-            href: composeUrl("capabilities"),
-            rel: "self",
-            allow: ["GET"]
-          }
+      items: state.capabilities.map(x => convertCapability(x)),
+      "_links": {
+        self: {
+          href: composeUrl("capabilities"),
+          rel: "self",
+          allow: ["GET"]
         }
+      }
     });
+  }
 });
 
 router.get("/capabilities/:id", (req, res) => {
+  const testFail = false;
+
+  if (testFail) {
+    res
+      .set("Content-Type", "application/problem+json")
+      .status(400)
+      .send({
+        title: "title of error",
+        detail: "this is the detail of the error"
+      });
+  } else {
     let found = state.capabilities.find(x => x.id == req.params.id);
     if (found) {
-        res.send(convertCapability(found));
+      res.send(convertCapability(found));
     } else {
-        res.sendStatus(404);
+      res.sendStatus(404);
     }
+  }
 });
 
 router.post("/capabilities", (req, res) => {
-    const capabilityName : string = req?.body?.name || "";
+  const capabilityName: string = req?.body?.name || "";
 
-    const isValidInput = capabilityName.includes("!");
-    console.log("validinput: ", isValidInput);
+  const isValidInput = capabilityName.includes("!");
+  console.log("validinput: ", isValidInput);
 
-    if (!isValidInput){
-      res
-        .status(400)
-        .send({
-            message: "Placeholder for backend error message!"
-        });
-
-      return;
-    }
-
-    let found : Capability | undefined = state.capabilities.find(x => x.name == capabilityName);
-    if (found){
-      res
-        .status(409)
-        .send({
-            message: 'capability with that name already exists'
-        });
-
-      return;
-    }
-
-    const newCapability : Capability = {
-      id: capabilityName
-        .toLowerCase()
-        .replace(" ", "-"),
-      name: capabilityName,
-      description: req?.body?.description,
-      members: [],
-      __isMember: true,
-      __canJoin: false,
-      __hasAwsAccount: false
-    };
-
-    state.capabilities.push(newCapability);
-
-    const dto = convertCapability(newCapability);
+  if (!isValidInput) {
     res
-        .set("Location", dto._links.self.href)
-        .status(201)
-        .send(dto);
+      .status(400)
+      .send({
+        message: "Placeholder for backend error message!"
+      });
+
+    return;
+  }
+
+  let found: Capability | undefined = state.capabilities.find(x => x.name == capabilityName);
+  if (found) {
+    res
+      .status(409)
+      .send({
+        message: 'capability with that name already exists'
+      });
+
+    return;
+  }
+
+  const newCapability: Capability = {
+    id: capabilityName
+      .toLowerCase()
+      .replace(" ", "-"),
+    name: capabilityName,
+    description: req?.body?.description,
+    members: [],
+    __isMember: true,
+    __canJoin: false,
+    __hasAwsAccount: false
+  };
+
+  state.capabilities.push(newCapability);
+
+  const dto = convertCapability(newCapability);
+  res
+    .set("Location", dto._links.self.href)
+    .status(201)
+    .send(dto);
 });
 
 router.get("/capabilities/:id/members", (req, res) => {
-    let found = state.capabilities.find(x => x.id == req.params.id);
-    if (found) {
-        res.send({
-            items: (found.members || []).map(x => convertMember(x)),
-            "_links": {
-              self: {
-                href: composeUrl("capabilities", req.params.id),
-                rel: "self",
-                allow: ["GET"]
-              }
-            }
-        });
-    } else {
-        res.sendStatus(404);
-    }
+  let found = state.capabilities.find(x => x.id == req.params.id);
+  if (found) {
+    res.send({
+      items: (found.members || []).map(x => convertMember(x)),
+      "_links": {
+        self: {
+          href: composeUrl("capabilities", req.params.id),
+          rel: "self",
+          allow: ["GET"]
+        }
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 router.post("/capabilities/:id/topics", (req, res) => {
-    const capabilityId : string = req?.params?.id || "";
+  const capabilityId: string = req?.params?.id || "";
 
-    const foundCapability  : Capability | undefined = state.capabilities.find(x => x.id == capabilityId);
-    if (!foundCapability) {
-        res.sendStatus(404);
-        return;
-    }
+  const foundCapability: Capability | undefined = state.capabilities.find(x => x.id == capabilityId);
+  if (!foundCapability) {
+    res.sendStatus(404);
+    return;
+  }
 
-    const newTopic : KafkaTopic = {...req.body, ...{
+  const newTopic: KafkaTopic = {
+    ...req.body, ...{
       id: "" + new Date().getTime(),
       status: "In Progress",
-    }};
+    }
+  };
 
-    state.kafkaTopics.push(newTopic);
-    log("Added new topic: " + JSON.stringify(newTopic, null, 2));
+  state.kafkaTopics.push(newTopic);
+  log("Added new topic: " + JSON.stringify(newTopic, null, 2));
 
-    const dto = convertKafkaTopic(newTopic);
-    res
-      .set("Location", dto._links.self.href)
-      .status(201)
-      .send(dto);
+  const dto = convertKafkaTopic(newTopic);
+  res
+    .set("Location", dto._links.self.href)
+    .status(201)
+    .send(dto);
 
-    setTimeout(() => {
-      newTopic.status = "Provisioned";
-      log(`Changed status on topic ${newTopic.id} to ${newTopic.status}`);
-    }, (Math.random() * 2000)+2000);
+  setTimeout(() => {
+    newTopic.status = "Provisioned";
+    log(`Changed status on topic ${newTopic.id} to ${newTopic.status}`);
+  }, (Math.random() * 2000) + 2000);
 });
 
 router.get("/capabilities/:id/kafkaclusteraccess", (req, res) => {
@@ -131,7 +157,7 @@ router.get("/capabilities/:id/kafkaclusteraccess", (req, res) => {
 
   const clusters = (state.kafkaClusters || []).map(x => {
     const cluster = convertKafkaCluster(x);
-    const access = foundAccess.find(cluster => cluster.kafkaClusterId==x.id);
+    const access = foundAccess.find(cluster => cluster.kafkaClusterId == x.id);
 
     delete cluster._links.self;
 
@@ -144,33 +170,33 @@ router.get("/capabilities/:id/kafkaclusteraccess", (req, res) => {
     cluster._links.access = {
       href: composeUrl("capabilities", req.params.id, "kafkaclusteraccess", x.id),
       rel: "self",
-      allow: isMember && access!==undefined ? ["GET"] : []
+      allow: isMember && access !== undefined ? ["GET"] : []
     };
 
     cluster._links.requestAccess = {
       href: composeUrl("capabilities", req.params.id, "kafkaclusteraccess", x.id),
       rel: "self",
-      allow: isMember && access===undefined ? ["POST"] : []
+      allow: isMember && access === undefined ? ["POST"] : []
     };
 
     cluster._links.createTopic = {
       href: composeUrl("capabilities", capabilityId, "topics"),
       rel: "self",
-      allow: isMember && access!==undefined ? ["POST"] : []
+      allow: isMember && access !== undefined ? ["POST"] : []
     };
 
     return cluster;
   });
 
   res.send({
-      items: clusters,
-      "_links": {
-          self: {
-              href: composeUrl(req.path),
-              rel: "self",
-              allow: ["GET"]
-          }
+    items: clusters,
+    "_links": {
+      self: {
+        href: composeUrl(req.path),
+        rel: "self",
+        allow: ["GET"]
       }
+    }
   });
 });
 
@@ -191,7 +217,7 @@ router.post("/capabilities/:id/kafkaclusteraccess/:clusterid", (req, res) => {
 });
 
 router.get("/capabilities/:id/membershipapplications", (req, res) => {
-  const capabilityId : string = req.params.id;
+  const capabilityId: string = req.params.id;
 
   const applications = state.membershipApplications.filter(x => x.capabilityId === capabilityId);
   res.send({
@@ -207,10 +233,10 @@ router.get("/capabilities/:id/membershipapplications", (req, res) => {
 });
 
 router.get("/capabilities/:id/awsaccount", (req, res) => {
-  const capabilityId : string = req.params.id;
+  const capabilityId: string = req.params.id;
 
-  let found : AwsAccount | undefined = state.awsAccounts.find((x : any) => x.capabilityId === capabilityId);
-  if (found){
+  let found: AwsAccount | undefined = state.awsAccounts.find((x: any) => x.capabilityId === capabilityId);
+  if (found) {
     res.send(convertAwsAccount(found));
   } else {
     res.sendStatus(404);
@@ -218,40 +244,40 @@ router.get("/capabilities/:id/awsaccount", (req, res) => {
 });
 
 router.post("/capabilities/:id/membershipapplications", (req, res) => {
-    let found : Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
-    if (found) {
+  let found: Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
+  if (found) {
 
-      const newApplication : MembershipApplication = {
-        id: createId(),
-        applicant: "me@me.me",
-        approvals: [],
-        capabilityId: found.id,
-        status: "Pending",
-        submittedAt: getDate().toISOString(),
-        expiresOn: getDate(12).toISOString(),
-        __canApprove: false
-      };
+    const newApplication: MembershipApplication = {
+      id: createId(),
+      applicant: "me@me.me",
+      approvals: [],
+      capabilityId: found.id,
+      status: "Pending",
+      submittedAt: getDate().toISOString(),
+      expiresOn: getDate(12).toISOString(),
+      __canApprove: false
+    };
 
-      state.membershipApplications.push(newApplication);
-      found.__canJoin = false;
+    state.membershipApplications.push(newApplication);
+    found.__canJoin = false;
 
-      log("new membership application added: ", newApplication);
+    log("new membership application added: ", newApplication);
 
-      res
-        .status(201)
-        .send(convertMembershipApplication(newApplication));
-    } else {
-      res
-        .status(404)
-        .send(`capability not found for id: ${req.params.id}`);
-    }
+    res
+      .status(201)
+      .send(convertMembershipApplication(newApplication));
+  } else {
+    res
+      .status(404)
+      .send(`capability not found for id: ${req.params.id}`);
+  }
 });
 
 router.post("/capabilities/:id/awsaccount", (req, res) => {
-  let found : Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
+  let found: Capability | undefined = state.capabilities.find(x => x.id == req.params.id);
   if (found) {
 
-    const newAwsAccount : AwsAccount = {
+    const newAwsAccount: AwsAccount = {
       id: createId(),
       capabilityId: found.id,
       accountId: null,
