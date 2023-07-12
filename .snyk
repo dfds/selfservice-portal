@@ -5,4 +5,4 @@ patch: {}
 exclude:
   global:
     - fake_dependencies/**
-    - fake_dependencies/selfservice-api/**
+    - fake_dependencies/selfservice-api/package.json
