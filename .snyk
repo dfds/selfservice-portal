@@ -4,4 +4,4 @@ ignore: {}
 patch: {}
 exclude:
   global:
-    - fake_dependencies
+    - fake_dependencies/**
