@@ -343,34 +343,34 @@ export class SelfServiceApiClient {
         }
     }
 
-    async getKafkaClusters() {
-        const accessToken = await getSelfServiceAccessToken();
+    // async getKafkaClusters() {
+    //     const accessToken = await getSelfServiceAccessToken();
 
-        const url = composeUrl("kafkaclusters");
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
-        const { items } = await response.json();
+    //     const url = composeUrl("kafkaclusters");
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
+    //     const { items } = await response.json();
 
-        return items || [];
-    }
+    //     return items || [];
+    // }
 
-    async getCapabilityAwsAccount(capabilityDefinition) {
-        const awsAccountLink = capabilityDefinition?._links?.awsAccount;
-        if (!awsAccountLink) {
-            console.log("Warning! No AWS account link found on capability definition:", capabilityDefinition);
-            return null;
-        }
+    // async getCapabilityAwsAccount(capabilityDefinition) {
+    //     const awsAccountLink = capabilityDefinition?._links?.awsAccount;
+    //     if (!awsAccountLink) {
+    //         console.log("Warning! No AWS account link found on capability definition:", capabilityDefinition);
+    //         return null;
+    //     }
 
-        const accessToken = await getSelfServiceAccessToken();
-        const response = await callApi(awsAccountLink.href, accessToken);
-        this.responseHandler(response);
-        if (!response.ok) {
-            return null;
-        }
+    //     const accessToken = await getSelfServiceAccessToken();
+    //     const response = await callApi(awsAccountLink.href, accessToken);
+    //     this.responseHandler(response);
+    //     if (!response.ok) {
+    //         return null;
+    //     }
 
-        const awsAccount = await response.json();
-        return awsAccount || null;
-    }
+    //     const awsAccount = await response.json();
+    //     return awsAccount || null;
+    // }
 
     async requestAwsAccount(capabilityDefinition) {
         const capabilityId = capabilityDefinition?.details?.id;

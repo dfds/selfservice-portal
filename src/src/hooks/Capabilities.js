@@ -194,6 +194,42 @@ export function useCapabilityMembershipApplications(capabilityDefinition) {
 }
 
 
+export function useCapabilityAwsAccount(capabilityDefinition) {
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const [isLoadedAwsAccount, setIsLoadedAwsAccount] = useState(false);
+    const [awsAccountList, setAwsAccountList] = useState({});
+
+    const awsAccountLink = capabilityDefinition?._links?.awsAccount;
+
+    useEffect(() => {
+        if (awsAccountLink) {
+            sendRequest({
+                urlSegments: [awsAccountLink.href]
+            });
+        }
+    }, [awsAccountLink]);
+
+    useEffect(() => {
+
+        if (responseData) {
+            setAwsAccountList(responseData);
+        }
+    }, [responseData]);
+
+    useEffect(() => {
+        if (awsAccountList.length !== 0) {
+            setIsLoadedAwsAccount(true);
+        }
+    }, [awsAccountList]);
+
+    return {
+        isLoadedAwsAccount,
+        awsAccountList
+    }
+
+}
+
+
 async function updateUserWithProfilePicture(users) {
     if (users.length !== 0) {
         const updatedList = await Promise.all(

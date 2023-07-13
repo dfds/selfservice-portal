@@ -1,6 +1,6 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
-import { useCapabilityById , useCapabilityMembers, useCapabilityMembershipApplications} from 'hooks/Capabilities';
+import { useCapabilityById , useCapabilityMembers, useCapabilityMembershipApplications, useCapabilityAwsAccount} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import * as ApiClient from "../../SelfServiceApiClient";
@@ -33,6 +33,7 @@ function SelectedCapabilityProvider({ children }) {
     const {capability, isLoaded} = useCapabilityById(capabilityId);
     const {membersList, isLoadedMembers} = useCapabilityMembers(details);
     const {isLoadedApplications, applicationList} = useCapabilityMembershipApplications(details);
+    const { isLoadedAwsAccount, awsAccountList } = useCapabilityAwsAccount(details);
 
 
     // load kafka clusters and topics
@@ -81,8 +82,8 @@ function SelectedCapabilityProvider({ children }) {
 
     // load AWS account
     const loadAwsAccount = useCallback(async () => {
-        const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
-        setAwsAccount(awsAcc);
+        // const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
+        // setAwsAccount(awsAcc);
     }, [details]);
 
     //--------------------------------------------------------------------
@@ -278,6 +279,12 @@ function SelectedCapabilityProvider({ children }) {
           setMembershipApplications(applicationList);  
       }        
     }, [isLoadedApplications, applicationList]);
+
+    useEffect(() => {
+      if(isLoadedAwsAccount){
+          setAwsAccount(awsAccountList);  
+      }        
+  }, [isLoadedAwsAccount, awsAccountList]);
 
     useEffect(() => {
         if (details) {
