@@ -206,6 +206,31 @@ export class SelfServiceApiClient {
         return data.items;
     }
 
+    async getConsumers(topicDefinition) {
+        const link = topicDefinition?._links?.consumers;
+    
+        if (!link) {
+            throw Error("Error! No consumers link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+        }
+
+        if (!(link.allow || []).includes("GET")) {
+            throw Error("Error! You are not allowed fetch consumers.");
+        }
+
+        const accessToken = await getSelfServiceAccessToken();
+    
+        const url = link.href;
+        const response = await callApi(url, accessToken);
+        this.responseHandler(response);
+    
+        if (!response.ok) {
+            return [];
+        }
+    
+        const data = await response.json();
+        return data.items;
+    }
+
     async addMessageContractToTopic(topicDefinition, messageContractDescriptor) {
         const messageContractsLink = topicDefinition?._links?.messageContracts;
         if (!messageContractsLink) {
