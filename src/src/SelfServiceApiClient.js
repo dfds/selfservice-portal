@@ -203,6 +203,22 @@ export async function addTopicToCapability(clusterDefinition, topicDefinition) {
     return await response.json();
 }
 
+export async function getConsumers(topicDefinition) {
+    const consumersLink = topicDefinition?._links?.consumers;
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = consumersLink.href;
+    const response = await callApi(url, accessToken);
+
+    if (!response.ok) {
+        return [];
+    }
+
+    const data = await response.json();
+    return data.items;
+}
+
 export async function getMessageContracts(topicDefinition) {
     const messageContractsLink = topicDefinition?._links?.messageContracts;
 
