@@ -1,6 +1,6 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
-import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
+import { useCapabilityById , useCapabilityMembers, useCapabilityMembershipApplications} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import * as ApiClient from "../../SelfServiceApiClient";
@@ -32,6 +32,7 @@ function SelectedCapabilityProvider({ children }) {
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
     const {capability, isLoaded} = useCapabilityById(capabilityId);
     const {membersList, isLoadedMembers} = useCapabilityMembers(details);
+    const {isLoadedApplications, applicationList} = useCapabilityMembershipApplications(details);
 
 
     // load kafka clusters and topics
@@ -57,25 +58,25 @@ function SelectedCapabilityProvider({ children }) {
 
     // load membership applications
     const loadMembershipApplications = useCallback(async () => {
-        const result = await selfServiceApiClient.getCapabilityMembershipApplications(details);
-        setMembershipApplications(result);
+        // const result = await selfServiceApiClient.getCapabilityMembershipApplications(details);
+        // setMembershipApplications(result);
 
-        result.forEach(async application => {
-            const profilePictureUrl = await getAnotherUserProfilePictureUrl(application.applicant);
+        // result.forEach(async application => {
+        //     const profilePictureUrl = await getAnotherUserProfilePictureUrl(application.applicant);
 
-            setMembershipApplications(prev => {
-                const copy = prev
-                    ? [...prev]
-                    : [];
+        //     setMembershipApplications(prev => {
+        //         const copy = prev
+        //             ? [...prev]
+        //             : [];
 
-                const found = copy.find(x => x.id === application.id);
-                if (found) {
-                    found.applicantProfilePictureUrl = profilePictureUrl;
-                }
+        //         const found = copy.find(x => x.id === application.id);
+        //         if (found) {
+        //             found.applicantProfilePictureUrl = profilePictureUrl;
+        //         }
 
-                return copy;
-            });
-        });
+        //         return copy;
+        //     });
+        // });
     }, [details]);
 
     // load AWS account
@@ -273,8 +274,13 @@ function SelectedCapabilityProvider({ children }) {
     }, [isLoadedMembers, membersList]);
 
     useEffect(() => {
+      if(isLoadedApplications){
+          setMembershipApplications(applicationList);  
+      }        
+    }, [isLoadedApplications, applicationList]);
+
+    useEffect(() => {
         if (details) {
-            loadMembershipApplications();
             loadKafkaClustersAndTopics();
             loadAwsAccount();
         } else {

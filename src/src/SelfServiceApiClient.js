@@ -7,52 +7,6 @@ export class SelfServiceApiClient {
         this.responseHandler = () => { };
     }
 
-    // async getCapabilities(){
-    //     const accessToken = await getSelfServiceAccessToken();
-
-    //     const url = composeUrl("capabilities"); 
-    //     const response = await callApi(url, accessToken);
-    //     this.responseHandler(response);
-
-
-    //     const { items } = await response.json();
-
-    //     return items || [];
-    // }
-
-    // responseHandler(response, defaultValue){
-    //     this.errorHandler(response);
-    // }
-
-    // async getCapabilityById(id) {
-    //     const accessToken = await getSelfServiceAccessToken();
-
-    //     const url = composeUrl("capabilities", id);
-    //     const response = await callApi(url, accessToken);
-    //     this.responseHandler(response);
-
-    //     if (response.ok) {
-    //         return await response.json();
-    //     } else {
-    //         return null;
-    //     }
-    // }
-
-    // async getAllTopics() {
-    //     const accessToken = await getSelfServiceAccessToken();
-
-    //     const url =  composeUrl("kafkatopics"); 
-    //     const response = await callApi(url, accessToken);
-    //     this.responseHandler(response);
-
-    //     const { items, _embedded } = await response.json();
-    //     return (items || []).map(topic => {
-    //         const copy = {...topic};
-    //         const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
-    //         copy.kafkaClusterName = found?.name || "";
-    //         return copy;
-    //     });
-    // }
 
     async getMyPortalProfile() {
         const accessToken = await getSelfServiceAccessToken();
@@ -300,28 +254,28 @@ export class SelfServiceApiClient {
     //     return items || [];
     // }
 
-    async getCapabilityMembershipApplications(capabilityDefinition) {
-        const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;
-        if (!membershipApplicationsLink) {
-            console.log("Warning! No memberships applications link found on capability definition:", capabilityDefinition);
-            return [];
-        }
-        const accessToken = await getSelfServiceAccessToken();
+    // async getCapabilityMembershipApplications(capabilityDefinition) {
+    //     const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;
+    //     if (!membershipApplicationsLink) {
+    //         console.log("Warning! No memberships applications link found on capability definition:", capabilityDefinition);
+    //         return [];
+    //     }
+    //     const accessToken = await getSelfServiceAccessToken();
 
-        // check for allow get access!
+    //     // check for allow get access!
 
-        const url = membershipApplicationsLink.href;
-        const response = await callApi(url, accessToken);
-        this.responseHandler(response);
+    //     const url = membershipApplicationsLink.href;
+    //     const response = await callApi(url, accessToken);
+    //     this.responseHandler(response);
 
-        if (!response.ok) {
-            console.log("response was: ", response.status);
-            return [];
-        }
+    //     if (!response.ok) {
+    //         console.log("response was: ", response.status);
+    //         return [];
+    //     }
 
-        const { items } = await response.json();
-        return items || [];
-    }
+    //     const { items } = await response.json();
+    //     return items || [];
+    // }
 
     async submitMembershipApplicationApproval(membershipApplicationDefinition) {
         const approvalsLink = membershipApplicationDefinition?.approvals?._links?.self;

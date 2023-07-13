@@ -6,11 +6,11 @@ import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
 export function useCapabilities() {
     const { inProgress, responseData: getAllResponse, errorMessage, sendRequest } = useSelfServiceRequest();
     const { responseData: addedCapability, sendRequest: addCapability } = useSelfServiceRequest();
-    const [ isLoaded, setIsLoaded ] = useState(false);
-    const [ capabilities, setCapabilities] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [capabilities, setCapabilities] = useState([]);
 
     const sortByName = (list) => {
-        list.sort((a,b) => a.name.localeCompare(b.name));
+        list.sort((a, b) => a.name.localeCompare(b.name));
     };
 
     const createCapability = (name, description) => {
@@ -59,11 +59,11 @@ export function useCapabilities() {
 
 export function useCapabilityById(id) {
     const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
-    const [ isLoaded, setIsLoaded ] = useState(false);
-    const [ capability, setCapability] = useState(null);
-    
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [capability, setCapability] = useState(null);
+
     useEffect(() => {
-        if (id != null){
+        if (id != null) {
             sendRequest({
                 urlSegments: ["capabilities", id]
             });
@@ -71,10 +71,10 @@ export function useCapabilityById(id) {
     }, [id]);
 
     useEffect(() => {
-        if (responseData != null){
+        if (responseData != null) {
             setCapability(responseData);
             setIsLoaded(true);
-        }            
+        }
     }, [responseData]);
 
     return {
@@ -85,13 +85,13 @@ export function useCapabilityById(id) {
 
 export function useCapabilityMembers(capabilityDefinition) {
     const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
-    const [ isLoadedMembers, setIsLoadedMembers ] = useState(false);
-    const [ membersList, setMembersList] = useState([]);
+    const [isLoadedMembers, setIsLoadedMembers] = useState(false);
+    const [membersList, setMembersList] = useState([]);
 
     const membersLink = capabilityDefinition?._links?.members;
 
     useEffect(() => {
-        if (membersLink){
+        if (membersLink) {
             sendRequest({
                 urlSegments: [membersLink.href]
             });
@@ -101,46 +101,149 @@ export function useCapabilityMembers(capabilityDefinition) {
 
     useEffect(() => {
 
-        const updateMembers = async (members) => {
-            if (members.length !== 0) {
-                const updatedList = await Promise.all(
-                members.map(async (member) => {
-                    const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
-                    const updatedMember = { ...member, pictureUrl: profilePictureUrl };
-                    return updatedMember;
-                })
-            );
-            setMembersList(updatedList);
-            }
-        };
+        if (responseData === null) {
+            return
+        }
 
         if (responseData?.items.length !== 0) {
+
             setMembersList(prev => {
-                if(prev.length === 0){
+                if (prev.length === 0) {
                     return responseData?.items || [];
-                }else {
+                } else {
                     return prev;
                 }
             });
 
-            updateMembers(responseData?.items || []);
+            const result = updateUserWithProfilePicture(responseData?.items || []).then(data => {
+                setMembersList(data);
+            });
+
         }
-        
+
     }, [responseData]);
 
     useEffect(() => {
-        if(membersList.length !== 0){
+        if (membersList.length !== 0) {
             setIsLoadedMembers(true);
         }
 
     }, [membersList]);
-    
+
 
     return {
         isLoadedMembers,
         membersList,
     };
 }
+
+
+export function useCapabilityMembershipApplications(capabilityDefinition) {
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const [isLoadedApplications, setIsLoadedApplications] = useState(false);
+    const [applicationList, setApplicationList] = useState([]);
+
+    const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;
+
+
+
+    useEffect(() => {
+        if (membershipApplicationsLink) {
+            sendRequest({
+                urlSegments: [membershipApplicationsLink.href]
+            });
+        }
+
+    }, [membershipApplicationsLink]);
+
+    useEffect(() => {
+
+        if (responseData === null) {
+            return
+        }
+
+
+        if (responseData?.items.length !== 0) {
+            setApplicationList(prev => {
+                if (prev.length === 0) {
+                    return responseData?.items || [];
+                } else {
+                    return prev;
+                }
+            });
+
+            const result = updateUserWithProfilePicture(responseData?.items || []).then(data => {
+                setApplicationList(data);
+            });
+        }
+
+    }, [responseData]);
+
+    useEffect(() => {
+        if (applicationList.length !== 0) {
+            setIsLoadedApplications(true);
+        }
+
+    }, [applicationList]);
+
+
+    return {
+        isLoadedApplications,
+        applicationList,
+    };
+}
+
+
+async function updateUserWithProfilePicture(users) {
+    if (users.length !== 0) {
+        const updatedList = await Promise.all(
+            users.map(async (member) => {
+                let profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
+                let updatedMember = { ...member, pictureUrl: profilePictureUrl };
+
+                if (member.applicant) {
+                    profilePictureUrl = await getAnotherUserProfilePictureUrl(member.applicant);
+                    updatedMember = { ...member, applicantProfilePictureUrl: profilePictureUrl };
+
+                }
+                return updatedMember;
+            })
+        );
+        return updatedList;
+    }
+
+    return [];
+};
+
+export function useKafkaClusters() {
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const [isLoadedClusters, setIsLoadedClusters] = useState(false);
+    const [clusterList, setClusterList] = useState(null);
+
+    useEffect(() => {
+        sendRequest({
+            urlSegments: ["kafkaclusters"],
+            method: "GET",
+            payload: null
+        });
+    }, []);
+
+    useEffect(() => {
+        if (responseData != null) {
+            setClusterList(responseData);
+            isLoadedClusters(true);
+        }
+    }, [responseData]);
+
+    return {
+        isLoadedClusters,
+        clusterList,
+    };
+
+}
+
+
+
 
 
 

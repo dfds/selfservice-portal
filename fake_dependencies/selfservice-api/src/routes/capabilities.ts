@@ -220,6 +220,17 @@ router.get("/capabilities/:id/membershipapplications", (req, res) => {
   const capabilityId: string = req.params.id;
 
   const applications = state.membershipApplications.filter(x => x.capabilityId === capabilityId);
+  const testFail = false;
+
+  if (testFail) {
+    res
+      .set("Content-Type", "application/problem+json")
+      .status(400)
+      .send({
+        title: "title of error",
+        detail: "this is the detail of the error"
+      });
+  } else {
   res.send({
     items: (applications || []).map(x => convertMembershipApplication(x)),
     _links: {
@@ -230,6 +241,7 @@ router.get("/capabilities/:id/membershipapplications", (req, res) => {
       }
     }
   });
+}
 });
 
 router.get("/capabilities/:id/awsaccount", (req, res) => {
