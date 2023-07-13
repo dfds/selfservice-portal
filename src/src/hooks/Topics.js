@@ -36,3 +36,30 @@ export function useTopics() {
         topicsList
     }
 }
+
+export function useKafkaClusters() {
+    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const [isLoadedClusters, setIsLoadedClusters] = useState(false);
+    const [clusterList, setClusterList] = useState(null);
+
+    useEffect(() => {
+        sendRequest({
+            urlSegments: ["kafkaclusters"],
+            method: "GET",
+            payload: null
+        });
+    }, []);
+
+    useEffect(() => {
+        if (responseData != null) {
+            setClusterList(responseData?.items);
+            setIsLoadedClusters(true);
+        }
+    }, [responseData]);
+
+    return {
+        isLoadedClusters,
+        clusterList,
+    };
+
+}

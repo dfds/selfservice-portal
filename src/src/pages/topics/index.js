@@ -15,7 +15,7 @@ import topicImage from "./topicImage.jpeg"
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext"
 import { useTopics } from "hooks/Topics";
-import { useKafkaClusters } from 'hooks/Capabilities';
+import { useKafkaClusters } from 'hooks/Topics';
 
 function Topics() {
 
@@ -53,7 +53,6 @@ function Topics() {
         })
 
         setClusters(clustersWithColor);
-        console.log(clusters);
         return clustersWithColor;
     }
 
