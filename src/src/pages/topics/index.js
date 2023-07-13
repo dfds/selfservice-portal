@@ -15,6 +15,7 @@ import topicImage from "./topicImage.jpeg"
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext"
 import { useTopics } from "hooks/Topics";
+import { useKafkaClusters } from 'hooks/Capabilities';
 
 function Topics() {
 
@@ -33,6 +34,10 @@ function Topics() {
     const updateClustersMap = (k, v) => {
         setClustersMap(new Map(clustersMap.set(k, v)));
     }
+    const {isLoadedClusters, clusterList} = useKafkaClusters([]);
+    const [isLoadingClusters, setIsLoadingClusters] = useState(false);
+
+
 
 
     const handleTopicClicked = (topicId) => {
@@ -41,14 +46,14 @@ function Topics() {
 
 
     const fetchKafkaclusters = async () => {
-        const result = await selfServiceApiClient.getKafkaClusters();
-        const clustersWithColor = result.map((cluster, index) => {
+        const clustersWithColor = clusters.map((cluster, index) => {
             const color = colors[index % colors.length];
             updateClustersMap(cluster.id, true);
             return { ...cluster, color };
         })
 
         setClusters(clustersWithColor);
+        console.log(clusters);
         return clustersWithColor;
     }
 
@@ -94,7 +99,7 @@ function Topics() {
 
     useEffect(() => {
 
-        if (isLoaded) {
+        if (isLoaded && isLoadingClusters) {
 
             fetchKafkaclusters().then((c) => {
 
@@ -114,7 +119,7 @@ function Topics() {
 
         };
 
-    }, [isLoaded, topicsList]);
+    }, [isLoaded, topicsList, isLoadingClusters]);
 
     useEffect(() => {
         filter({
@@ -124,6 +129,16 @@ function Topics() {
         });
 
     }, [clustersMap, inputText]);
+
+    useEffect(() => {
+        if (isLoadedClusters){
+            setClusters(clusterList);
+            setIsLoadingClusters(true);
+        }
+
+    }, [isLoadedClusters, clusterList]);
+
+
 
 
     return <>

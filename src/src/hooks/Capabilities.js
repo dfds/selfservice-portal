@@ -230,8 +230,8 @@ export function useKafkaClusters() {
 
     useEffect(() => {
         if (responseData != null) {
-            setClusterList(responseData);
-            isLoadedClusters(true);
+            setClusterList(responseData?.items);
+            setIsLoadedClusters(true);
         }
     }, [responseData]);
 

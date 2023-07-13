@@ -3,6 +3,7 @@ import { useSelfServiceRequest } from "./SelfServiceApi";
 
 
 
+
 export function useTopics() {
     const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
@@ -24,7 +25,6 @@ export function useTopics() {
                 copy.kafkaClusterName = found?.name || "";
                 return copy;
             })
-            console.log(finalTopics);
             setTopicsList(finalTopics);
             setIsLoaded(true);
         }
