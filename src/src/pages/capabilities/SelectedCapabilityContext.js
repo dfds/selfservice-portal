@@ -1,5 +1,6 @@
 ﻿import AppContext from 'AppContext';
 import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
+import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import * as ApiClient from "../../SelfServiceApiClient";
@@ -18,9 +19,9 @@ function adjustRetention(kafkaTopic) {
 
 function SelectedCapabilityProvider({ children }) {
 
-    const { shouldAutoReloadTopics } = useContext(AppContext);
+    const { shouldAutoReloadTopics, selfServiceApiClient} = useContext(AppContext);
 
-    const [isLoading, setIsLoading] = useState(false);
+    //const [isLoading, setIsLoading] = useState(false);
     const [capabilityId, setCapabilityId] = useState(null);
     const [details, setDetails] = useState(null);
     const [members, setMembers] = useState([]);
@@ -29,67 +30,34 @@ function SelectedCapabilityProvider({ children }) {
     const [membershipApplications, setMembershipApplications] = useState([]);
     const [leaveCapability, setLeaveCapability] = useState([]);
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+    const {capability, isLoaded} = useCapabilityById(capabilityId);
+    const {membersList, isLoadedMembers} = useCapabilityMembers(details);
 
-    // load details
-    const loadDetails = useCallback(async (isReload = false) => {
-        if (!isReload) {
-            setIsLoading(true);
-        }
-
-        const details = await ApiClient.getCapabilityById(capabilityId);
-        setDetails(details);
-
-        if (!isReload) {
-            setIsLoading(false);
-        }
-    }, [capabilityId]);
-
-    // load members
-    const loadMembers = useCallback(async () => {
-        const members = await ApiClient.getCapabilityMembers(details);
-        setMembers(members);
-
-        members.forEach(async member => {
-          const profilePictureUrl = await getAnotherUserProfilePictureUrl(member.email);
-          setMembers(prev => {
-            const copy = prev
-                ? [...prev]
-                : [];
-
-            const found = copy.find(x => x.email === member.email)
-            if (found) {
-                found.pictureUrl = profilePictureUrl;
-            }
-
-            return copy;
-          });
-        });
-    }, [details]);
 
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
-        const clusters = await ApiClient.getKafkaClusterAccessList(details);
 
+        const clusters = await selfServiceApiClient.getKafkaClusterAccessList(details);
         for (const cluster of clusters) {
-          
-          const topics = await ApiClient.getTopics(cluster);
 
-          topics.forEach((kafkaTopic) => {
-            adjustRetention(kafkaTopic);
-            kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
-              a.messageType.localeCompare(b.messageType)
-            );
-          });
-
-          cluster.topics = topics;
-        }        
-
+            const topics = await selfServiceApiClient.getTopics(cluster);
+  
+            topics.forEach((kafkaTopic) => {
+              adjustRetention(kafkaTopic);
+              kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
+                a.messageType.localeCompare(b.messageType)
+              );
+            });
+  
+            cluster.topics = topics;
+          }   
+ 
         setKafkaClusters(clusters);
     }, [details]);
 
     // load membership applications
     const loadMembershipApplications = useCallback(async () => {
-        const result = await ApiClient.getCapabilityMembershipApplications(details);
+        const result = await selfServiceApiClient.getCapabilityMembershipApplications(details);
         setMembershipApplications(result);
 
         result.forEach(async application => {
@@ -112,7 +80,7 @@ function SelectedCapabilityProvider({ children }) {
 
     // load AWS account
     const loadAwsAccount = useCallback(async () => {
-        const awsAcc = await ApiClient.getCapabilityAwsAccount(details);
+        const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
         setAwsAccount(awsAcc);
     }, [details]);
 
@@ -140,7 +108,7 @@ function SelectedCapabilityProvider({ children }) {
     };
 
     const addTopicToCluster = async (kafkaCluster, kafkaTopicDescriptor) => {
-        const newTopic = await ApiClient.addTopicToCapability(kafkaCluster, kafkaTopicDescriptor);
+        const newTopic = await selfServiceApiClient.addTopicToCapability(kafkaCluster, kafkaTopicDescriptor);
         // NOTE: [jandr] handle errors from call above ^^
 
         adjustRetention(newTopic);
@@ -173,7 +141,7 @@ function SelectedCapabilityProvider({ children }) {
             throw Error(`Error! Kafka topic "${kafkaTopicId}" is unknown!`);
         }
 
-        const newMessageContract = await ApiClient.addMessageContractToTopic(foundTopic, messageContractDescriptor);
+        const newMessageContract = await selfServiceApiClient.addMessageContractToTopic(foundTopic, messageContractDescriptor);
 
         setKafkaClusters(prev => {
             const copy = [...prev];
@@ -203,38 +171,28 @@ function SelectedCapabilityProvider({ children }) {
             throw Error(`Error! Membership application "${membershipApplicationId}" is unknown!`);
         }
 
-        await ApiClient.submitMembershipApplicationApproval(found);
+        await selfServiceApiClient.submitMembershipApplicationApproval(found);
         await loadMembershipApplications();
     };
 
     const submitMembershipApplication = useCallback(async () => {
-        await ApiClient.submitMembershipApplication(details);
-        // await loadMembershipApplications();
-        await loadDetails(true);
+        await selfServiceApiClient.submitMembershipApplication(details);
     }, [details]);
 
     const submitLeaveCapability = useCallback(async () => {
-        await ApiClient.submitLeaveCapability(details);
-        await loadDetails(true);
+        await selfServiceApiClient.submitLeaveCapability(details);
     }, [details])
 
     const requestAwsAccount = useCallback(async () => {
-      await ApiClient.requestAwsAccount(details);
-      // await loadMembershipApplications();
-      await loadDetails(true);
+      await selfServiceApiClient.requestAwsAccount(details);
   }, [details]);
 
     const getAccessToCluster = async (cluster) => {
-      console.log('getting access to cluster', cluster);
-
-      return await ApiClient.getAccessToCluster(cluster);
+      return await selfServiceApiClient.getAccessToCluster(cluster);
     };
 
     const requestAccessToCluster = async (cluster) => {
-      console.log('requesting access to cluster', cluster);
-
-      await ApiClient.requestAccessToCluster(cluster);
-      await loadDetails(true);
+      await selfServiceApiClient.requestAccessToCluster(cluster);
     };
 
     const updateKafkaTopic = async (topicId, topicDescriptor) => {
@@ -250,7 +208,7 @@ function SelectedCapabilityProvider({ children }) {
         throw Error(`A kafka topic with id "${topicId}" could not be found.`);
       }
 
-      await ApiClient.updateTopic(found, topicDescriptor);
+      await selfServiceApiClient.updateTopic(found, topicDescriptor);
 
       setKafkaClusters(prev => {
         const copy = [...prev];
@@ -280,7 +238,7 @@ function SelectedCapabilityProvider({ children }) {
         throw Error(`A kafka topic with id "${topicId}" could not be found.`);
       }
 
-      await ApiClient.deleteTopic(found);
+      await selfServiceApiClient.deleteTopic(found);
 
       setKafkaClusters(prev => {
         const copy = [...prev];
@@ -302,16 +260,20 @@ function SelectedCapabilityProvider({ children }) {
     //--------------------------------------------------------------------
 
     useEffect(() => {
-        if (capabilityId) {
-            loadDetails();
-        } else {
-            setDetails(null);
+        if(isLoaded){
+            setDetails(capability);            
         }
-    }, [capabilityId]);
+        
+    }, [isLoaded, capability]);
+
+    useEffect(() => {
+        if(isLoadedMembers){
+            setMembers(membersList);  
+        }        
+    }, [isLoadedMembers, membersList]);
 
     useEffect(() => {
         if (details) {
-            loadMembers();
             loadMembershipApplications();
             loadKafkaClustersAndTopics();
             loadAwsAccount();
@@ -336,7 +298,7 @@ function SelectedCapabilityProvider({ children }) {
     //--------------------------------------------------------------------
 
     const state = {
-        isLoading,
+        isLoading: !isLoaded,
         isFound: details != null,
         id: capabilityId,
         name: details?.name,

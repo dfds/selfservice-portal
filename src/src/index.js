@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
+import { ErrorProvider } from 'ErrorContext';
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -15,13 +16,11 @@ render(
     <MsalProvider instance={MsalInstance}>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GlobalStyles />
-        <AppProvider>
-          {/* <SelectedCapabilityProvider> */}
-            {/* <TopicsProvider> */}
+          <ErrorProvider>
+            <AppProvider>
               <App />
-            {/* </TopicsProvider> */}
-          {/* </SelectedCapabilityProvider> */}
-        </AppProvider>
+            </AppProvider>
+          </ErrorProvider>
       </BrowserRouter>
     </MsalProvider>
    </React.StrictMode>, 

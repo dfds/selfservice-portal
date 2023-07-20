@@ -10,15 +10,10 @@ import Page from "components/Page";
 import SpashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {
-    const { user, reloadOtherCapabilities, addNewCapability } = useContext(AppContext);
+    const { addNewCapability } = useContext(AppContext);
     const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
     const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
-    useEffect(() => {
-        if (user && user.isAuthenticated) {
-            reloadOtherCapabilities();
-        }
-    }, []);
 
     const handleAddCapability = async (formData) => {
       setIsCreatingNewCapability(true);

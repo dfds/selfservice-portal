@@ -9,11 +9,10 @@ import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-
-import { getMessageContracts } from "SelfServiceApiClient";
 import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
+import AppContext from "../../../AppContext"
 
 function TopicHeader({name, description, partitions, retention, status, isOpen, onClicked}) {
     const handleClick = () => {
@@ -58,7 +57,7 @@ function TopicHeader({name, description, partitions, retention, status, isOpen, 
 
 export default function Topic({topic, isSelected, onHeaderClicked}) {
     const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } = useContext(SelectedCapabilityContext);
-    
+    const {selfServiceApiClient} = useContext(AppContext);
     const [contracts, setContracts] = useState([]);
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
 
@@ -85,7 +84,7 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
         }
 
         async function fetchData(topic) {
-            const result = await getMessageContracts(topic);
+            const result = await selfServiceApiClient.getMessageContracts(topic);
             result.sort((a,b) => a.messageType.localeCompare(b.messageType));
 
             if (isMounted) {

@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { getMessageContracts } from "SelfServiceApiClient";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import TopicsContext from "pages/topics/TopicsContext";
+import AppContext from "../../AppContext"
 
 
 
@@ -56,6 +57,7 @@ export function SearchView({data, onTopicClicked}) {
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
     const [selectedMessageContractId, setSelectedMessageContractId] = useState(null);
     const { selectedKafkaTopic } = useContext(TopicsContext);
+    const {selfServiceApiClient} = useContext(AppContext);
 
     const handleHeaderClicked = () => {
         if (onTopicClicked) {
@@ -86,7 +88,7 @@ export function SearchView({data, onTopicClicked}) {
 
         async function fetchData(data) {
             setIsLoadingContracts(true);
-            const result = await getMessageContracts(data);
+            const result = await selfServiceApiClient.getMessageContracts(data);
             result.sort((a,b) => a.messageType.localeCompare(b.messageType));
             setContracts(result);
             setIsLoadingContracts(false);
