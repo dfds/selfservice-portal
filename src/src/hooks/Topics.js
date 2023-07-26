@@ -4,7 +4,7 @@ import { useSelfServiceRequest } from "./SelfServiceApi";
 
 
 export function useTopics() {
-    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const { inProgress, responseData, sendRequest, setErrorOptions } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ topicsList, setTopicsList] = useState([]);
 
