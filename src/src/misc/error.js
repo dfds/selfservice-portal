@@ -3,7 +3,7 @@ export class ErrorOptions {
   handler = (params) => {};
 }
 
-class ErrorTriggerRequest {
+class ErrorContext {
   httpResponse = null;
   error = null;
   msg = null;
@@ -11,8 +11,8 @@ class ErrorTriggerRequest {
   showError = null;
 }
 
-class ErrorTriggerRequestBuilder {
-  val = new ErrorTriggerRequest();
+class ErrorContextBuilder {
+  val = new ErrorContext();
 
   setHttpResponse(input) {
     this.val.httpResponse = input;
@@ -39,6 +39,6 @@ class ErrorTriggerRequestBuilder {
   }
 }
 
-export function NewErrorTriggerRequestBuilder() {
-  return new ErrorTriggerRequestBuilder();
+export function NewErrorContextBuilder() {
+  return new ErrorContextBuilder();
 }

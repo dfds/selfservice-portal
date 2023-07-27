@@ -2,7 +2,7 @@ import { callApi, getSelfServiceAccessToken } from "AuthService";
 import { useContext, useEffect, useState } from "react";
 import { composeUrl, composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
-import { NewErrorTriggerRequestBuilder } from "misc/error";
+import { NewErrorContextBuilder } from "misc/error";
 
 
 
@@ -37,7 +37,7 @@ export function useSelfServiceRequest(errorParams) {
                 const newData = await httpResponse.json();
                 setResponseData(newData);
             } else {
-                triggerError(NewErrorTriggerRequestBuilder()
+                triggerError(NewErrorContextBuilder()
                   .setHttpResponse(httpResponse)
                   // .setHandler((params) => {
                   //   if (params.httpResponse.headers.get("Content-Type") === "application/problem+json") {
@@ -51,7 +51,7 @@ export function useSelfServiceRequest(errorParams) {
 
             }
         } catch (error) {
-            triggerError(NewErrorTriggerRequestBuilder()
+            triggerError(NewErrorContextBuilder()
               .setMsg(error.message)
               .build());
         } finally {
