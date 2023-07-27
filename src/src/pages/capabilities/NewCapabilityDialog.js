@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, ButtonStack } from '@dfds-ui/react-components';
-import { Text } from '@dfds-ui/typography';
 import { SideSheet, SideSheetContent } from '@dfds-ui/react-components'
 import { Tooltip, TextField } from '@dfds-ui/react-components'
-import { Spinner } from '@dfds-ui/react-components';
 import styles from "./capabilities.module.css";
-import AppContext from "AppContext";
 
 export default function NewCapabilityDialog({inProgress, onAddCapabilityClicked, onCloseClicked}) {
     const handleClose = () => {
@@ -80,7 +77,7 @@ export default function NewCapabilityDialog({inProgress, onAddCapabilityClicked,
               <TextField
                   label="Description"
                   placeholder="Enter a description"
-                  required 
+                  required
                   value={formData.description}
                   onChange={changeDescription}>
               </TextField>

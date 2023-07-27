@@ -1,4 +1,4 @@
-import { Container, Column, Card } from '@dfds-ui/react-components';
+import { Container, Column} from '@dfds-ui/react-components';
 import styles  from "./NotFound.module.css";
 import { Text } from '@dfds-ui/typography';
 import image from "./404.gif";
@@ -15,7 +15,7 @@ export default function NotFound() {
                         <Text as={"div"} styledAs='subHeadline'>Page Not Found!</Text>
                     </div>
                     <div className={styles.column}>
-                        <img src={image} />
+                        <img src={image} alt={""} />
                     </div>
                 </div>
             </Column>

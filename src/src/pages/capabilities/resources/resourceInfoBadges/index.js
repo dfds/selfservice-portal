@@ -2,8 +2,6 @@ import {
   Badge,
   ButtonStack,
   Button,
-  Container,
-  Column,
   Spinner,
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
@@ -120,7 +118,7 @@ const Completed = function ({ accountId, namespace }) {
   );
 };
 
-export function ResourceInfoBadges({}) {
+export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const { awsAccount, links, requestAwsAccount } = useContext(
     SelectedCapabilityContext

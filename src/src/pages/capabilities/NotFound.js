@@ -10,7 +10,7 @@ export default function NotFound() {
                     <div className={styles.notfound}>
                     <br />
 
-                    <img src="https://media3.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif" />
+                    <img src="https://media3.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif" alt="angry chicken gif"/>
                     {/* <img src="https://i.imgflip.com/79b2aa.jpg" /> */}
 
                     <br />

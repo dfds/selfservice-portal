@@ -3,11 +3,10 @@ import styles from "./searchview.module.css";
 import { Badge } from '@dfds-ui/react-components';
 import HighlightedText from "components/HighlightedText"
 import { Accordion, Spinner } from '@dfds-ui/react-components'
-import { Button, Card, CardContent, IconButton  } from '@dfds-ui/react-components';
+import { Card, CardContent, IconButton  } from '@dfds-ui/react-components';
 import { Text } from '@dfds-ui/typography';
-import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
+import { ChevronDown, ChevronUp } from '@dfds-ui/icons/system';
 import { Link } from "react-router-dom";
-import { getMessageContracts } from "SelfServiceApiClient";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import TopicsContext from "pages/topics/TopicsContext";
 import AppContext from "../../AppContext"
@@ -38,21 +37,20 @@ function TopicHeader({data, isOpen, onClicked}) {
     </div>
 }
 
-function TopicInfo({data, isOpen}) {
+// function TopicInfo({data, isOpen}) { //function is currently not being used
 
-    return  <>
-        <div>
-            <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""}/>}</p>
-            <div >
-                <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
-            </div>
-        </div>
-    </>
-}
+//     return  <>
+//         <div>
+//             <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""}/>}</p>
+//             <div >
+//                 <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
+//             </div>
+//         </div>
+//     </>
+// }
 
 export function SearchView({data, onTopicClicked}) {
 
-    const [isSelected, setIsSelected] = useState(false);
     const [contracts, setContracts] = useState([]);
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
     const [selectedMessageContractId, setSelectedMessageContractId] = useState(null);
@@ -95,19 +93,19 @@ export function SearchView({data, onTopicClicked}) {
         }
 
         fetchData(data);
-        
 
-       
+
+
     }, [selectedKafkaTopic]);
 
 
     return(
         <>
-        <Accordion className={styles.card} header={<TopicHeader 
-            data={data} 
-            isOpen={selectedKafkaTopic == data.id} 
-            onClicked={handleHeaderClicked} 
-        />} isOpen={selectedKafkaTopic == data.id} onToggle={handleHeaderClicked}>
+        <Accordion className={styles.card} header={<TopicHeader
+            data={data}
+            isOpen={selectedKafkaTopic === data.id}
+            onClicked={handleHeaderClicked}
+        />} isOpen={selectedKafkaTopic === data.id} onToggle={handleHeaderClicked}>
             <Card className={styles.card} variant="fill" surface="secondary">
                 <CardContent >
                     <Text styledAs="actionBold">Description</Text>
@@ -121,25 +119,25 @@ export function SearchView({data, onTopicClicked}) {
                                 ? <Spinner instant />
                                 :
                                     <>
-                                        {(contracts || []).length === 0 && 
+                                        {(contracts || []).length === 0 &&
                                             <div>No message contracts defined...yet!</div>
                                         }
 
-                                        {(contracts || []).length != 0 && 
+                                        {(contracts || []).length !== 0 &&
                                             <Text styledAs="actionBold">Message Contracts ({(contracts || []).length})</Text>
                                         }
 
-                                        
 
-                                        {(contracts || []).map(messageContract => <Message 
-                                            key={messageContract.id} 
-                                            {...messageContract} 
+
+                                        {(contracts || []).map(messageContract => <Message
+                                            key={messageContract.id}
+                                            {...messageContract}
                                             isSelected={messageContract.id === selectedMessageContractId}
                                             onHeaderClicked={id => handleMessageHeaderClicked(id)}
                                         />)}
                                     </>
                         }
-                        
+
                         <br />
                     </>
 
@@ -153,7 +151,7 @@ export function SearchView({data, onTopicClicked}) {
         </Accordion>
 
         {
-            selectedKafkaTopic == data.id
+            selectedKafkaTopic === data.id
             ? null
             :  <div className={styles.infocontainer}>
                     <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""} />}</p>
@@ -163,8 +161,8 @@ export function SearchView({data, onTopicClicked}) {
                 </div>
         }
 
-        
+
         </>
-        
+
     )
 }

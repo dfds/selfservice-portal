@@ -5,13 +5,11 @@ import { useCallback } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react"
-import { getTopVisitors } from "SelfServiceApiClient";
 
 
 import Confetti from 'react-confetti';
 
 import styles from "./TopVisitors.module.css";
-import { Text } from "@dfds-ui/typography";
 
 function useWindowSize() {
     // Initialize state with undefined width/height so server and client renders match
@@ -93,12 +91,12 @@ export default function TopVisitors() {
               const copy = prev
                   ? [...prev]
                   : [];
-  
+
               const found = copy.find(x => x.id === visitor.id)
               if (found) {
                   found.pictureUrl = profilePictureUrl;
               }
-  
+
               return copy;
             });
           });
@@ -110,14 +108,14 @@ export default function TopVisitors() {
 
     return <div>
         {showConfetti && <Confetti width={width} height={height} />}
-        {(visitors || []).map((x, i) => <Visitor 
-            key={i} 
-            {...x} 
+        {(visitors || []).map((x, i) => <Visitor
+            key={i}
+            {...x}
             onClicked={() => handleVisitorClicked(x.rank)}
         />)}
-        
+
         {(visitors || []).length === 0 &&
-            <div className={styles.tooearly}>too early to tell...</div>            
+            <div className={styles.tooearly}>too early to tell...</div>
         }
     </div>
 }

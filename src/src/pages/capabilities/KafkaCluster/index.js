@@ -7,17 +7,13 @@ import { Modal } from "@dfds-ui/modal";
 import PageSection from "components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
-import * as ApiClient from "../../../SelfServiceApiClient";
-import AppContext from "../../../AppContext"
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const {
     id,
-    links,
     selectedKafkaTopic,
     addTopicToCluster,
     toggleSelectedKafkaTopic,
@@ -30,7 +26,6 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const [isLoadingCredentials, setIsLoadingCredentials] = useState(false);
   const [showAccess, setShowAccess] = useState(false);
   const [access, setAccess] = useState({ server: "", username: "", password: "" });
-  const {selfServiceApiClient} = useContext(AppContext);
 
   const topics = cluster.topics;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));

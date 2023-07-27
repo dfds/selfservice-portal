@@ -45,20 +45,20 @@ export default function MembershipApplications() {
 
     useEffect(() => {
         const list = (membershipApplications || [])
-        .filter(x => x.applicant != myProfile?.id)
+        .filter(x => x.applicant !== myProfile?.id)
         .map(x => {
             const copy = {...x};
-    
+
             copy.canApprove = false;
             copy.showApprove = true;
             copy.isApproving = false;
-    
+
             const approvalLink = copy?.approvals?._links?.self;
             if (approvalLink) {
                 copy.canApprove = (approvalLink.allow || []).includes("POST");
                 copy.showApprove = (approvalLink.allow || []).includes("GET");
             }
-    
+
             return copy;
         });
 
@@ -69,7 +69,7 @@ export default function MembershipApplications() {
         setApplications(prev => {
             const copy = [...prev];
             const found = copy.find(x => x.id === membershipApplicationId);
-            
+
             if (found) {
                 found.isApproving = true;
             }
@@ -101,9 +101,9 @@ export default function MembershipApplications() {
                     {applications.map(x =>
                         <TableRow key={x.applicant}>
                             <TableDataCell>
-                                <ProfilePicture 
-                                    name={x.applicant} 
-                                    pictureUrl={x.applicantProfilePictureUrl} 
+                                <ProfilePicture
+                                    name={x.applicant}
+                                    pictureUrl={x.applicantProfilePictureUrl}
                                 />
                             </TableDataCell>
                             <TableDataCell>
@@ -115,13 +115,13 @@ export default function MembershipApplications() {
                             </TableDataCell>
                             <TableDataCell>{x.status}</TableDataCell>
                             <TableDataCell align='right'>
-                                {x.showApprove && 
-                                    <Button 
-                                        size='small' 
-                                        disabled={!x.canApprove} 
+                                {x.showApprove &&
+                                    <Button
+                                        size='small'
+                                        disabled={!x.canApprove}
                                         submitting={x.isApproving}
-                                        title={x.canApprove 
-                                            ? "Submit your approval of this membership" 
+                                        title={x.canApprove
+                                            ? "Submit your approval of this membership"
                                             : "You have already submitted your approval for this membership. Waiting for other members to approve."
                                         }
                                         onClick={() => handleApproveClicked(x.id)}

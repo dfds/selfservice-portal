@@ -1,6 +1,6 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
 import { useContext, useEffect, useState } from "react";
-import { composeUrl, composeSegmentsUrl } from "Utils";
+import { composeSegmentsUrl } from "Utils";
 import ErrorContext from "ErrorContext";
 
 
@@ -50,9 +50,9 @@ export function useSelfServiceRequest() {
     };
 
     useEffect(() => {
-    if (errorMessage != "") {
+    if (errorMessage !== "") {
         showError(errorMessage);
-    }        
+    }
     }, [errorMessage]);
 
     return {

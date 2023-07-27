@@ -35,7 +35,7 @@ export default function EditTopicDialog({ originalTopic, inProgress, allowedToUp
     }
   };
 
-  const canUpdate = newDescription != "" && !inProgress;
+  const canUpdate = newDescription !== "" && !inProgress;
 
   return <SideSheet header={`Edit topic ${topicCopy.name}`} onRequestClose={handleCloseClicked} isOpen={true} width="30%" alignSideSheet="right" variant="elevated" backdrop>
     <SideSheetContent>
@@ -48,11 +48,11 @@ export default function EditTopicDialog({ originalTopic, inProgress, allowedToUp
         onChange={changeDescription}
       />
 
-      <Button 
-        variation="primary" 
-        type="button" 
-        disabled={!allowedToUpdate && !canUpdate} 
-        submitting={inProgress} 
+      <Button
+        variation="primary"
+        type="button"
+        disabled={!allowedToUpdate && !canUpdate}
+        submitting={inProgress}
         onClick={handleUpdateClicked}>Update</Button>
 
     </SideSheetContent>

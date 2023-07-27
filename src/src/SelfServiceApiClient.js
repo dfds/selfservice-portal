@@ -10,7 +10,7 @@ export class SelfServiceApiClient {
     // async getCapabilities(){
     //     const accessToken = await getSelfServiceAccessToken();
 
-    //     const url = composeUrl("capabilities"); 
+    //     const url = composeUrl("capabilities");
     //     const response = await callApi(url, accessToken);
     //     this.responseHandler(response);
 
@@ -41,7 +41,7 @@ export class SelfServiceApiClient {
     // async getAllTopics() {
     //     const accessToken = await getSelfServiceAccessToken();
 
-    //     const url =  composeUrl("kafkatopics"); 
+    //     const url =  composeUrl("kafkatopics");
     //     const response = await callApi(url, accessToken);
     //     this.responseHandler(response);
 
@@ -64,10 +64,20 @@ export class SelfServiceApiClient {
 
         const defaultValues = {
             capabilities: [],
-            stats: [],
         };
 
         return { ...defaultValues, ...myProfile };
+    }
+
+    async getStats() {
+        const accessToken = await getSelfServiceAccessToken();
+
+        const url = composeUrl("stats");
+        const response = await callApi(url, accessToken);
+        this.responseHandler(response);
+        const  stats = await response.json();
+        console.log("stats: ", stats);
+        return stats || [];
     }
 
     async updateMyPersonalInfirmation(myProfileDefinition, personalInformationDescriptor) {
