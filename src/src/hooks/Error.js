@@ -8,6 +8,10 @@ export function useError(opts) {
   const triggerError = (params) => {
       if (options) {
           if (options.handler) {
+              params.showError = showError;
+              if (params.msg === null) {
+                  params.msg = options.msg;
+              }
               options.handler(params);
           } else {
               if (params) {
