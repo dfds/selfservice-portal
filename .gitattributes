@@ -1,3 +1,13 @@
+# Auto-detect text files
+* text=auto eol=lf
+
+# Treat these as text files with linefeed endings
+*.txt text eol=lf
+*.md text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+
 *.sh	    	text eol=lf
-*.sql	    	text eol=lf
 Dockerfile		text eol=lf
