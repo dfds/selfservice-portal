@@ -39,14 +39,6 @@ export function useSelfServiceRequest(errorParams) {
             } else {
                 triggerError(NewErrorContextBuilder()
                   .setHttpResponse(httpResponse)
-                  // .setHandler((params) => {
-                  //   if (params.httpResponse.headers.get("Content-Type") === "application/problem+json") {
-                  //       const { detail } = await httpResponse.json();
-                  //       setErrorMessage(detail);
-                  //   } else {
-                  //       setErrorMessage("Oh no! We had an issue while retrieving data from the api. Please reload the page.");
-                  //   }
-                  // })
                   .build());
 
             }
