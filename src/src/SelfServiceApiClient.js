@@ -76,7 +76,6 @@ export class SelfServiceApiClient {
         const response = await callApi(url, accessToken);
         this.responseHandler(response);
         const  stats = await response.json();
-        console.log("stats: ", stats);
         return stats || [];
     }
 
