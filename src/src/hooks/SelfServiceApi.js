@@ -11,11 +11,12 @@ function isValidURL(urlString) {
     return urlRegex.test(urlString);
   }
 
-export function useSelfServiceRequest() {
+export function useSelfServiceRequest(errorParams) {
     const [responseData, setResponseData] = useState(null);
     const [inProgress, setInProgress] = useState(false);
     const {triggerError, setErrorOptions} = useError({
-      msg: "Oh no! We had an issue while retrieving data from the api. Please reload the page."
+        ...errorParams,
+        msg: "Oh no! We had an issue while retrieving data from the api. Please reload the page."
     });
 
     const sendRequest = async ({ urlSegments, method, payload }) => {
