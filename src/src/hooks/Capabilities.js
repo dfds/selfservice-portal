@@ -4,7 +4,7 @@ import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
 
 
 export function useCapabilities() {
-    const { inProgress, responseData: getAllResponse, errorMessage, sendRequest } = useSelfServiceRequest();
+    const { inProgress, responseData: getAllResponse, sendRequest, setErrorOptions } = useSelfServiceRequest();
     const { responseData: addedCapability, sendRequest: addCapability } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ capabilities, setCapabilities] = useState([]);
@@ -58,10 +58,27 @@ export function useCapabilities() {
 }
 
 export function useCapabilityById(id) {
-    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ capability, setCapability] = useState(null);
-    
+    const { inProgress, responseData, setErrorOptions, sendRequest } = useSelfServiceRequest({handler: (params => {
+        if (params.error) {
+            params.showError(params.error.message);
+            return;
+        }
+
+        if (params.httpResponse) {
+            if (params.httpResponse.status === 404) {
+                params.showError("Capability not found");
+                return;
+            }
+
+            params.showError(params.httpResponse.statusText);
+            return;
+        }
+
+        params.showError(params.msg);
+    })});
+
     useEffect(() => {
         if (id != null){
             sendRequest({
@@ -74,7 +91,7 @@ export function useCapabilityById(id) {
         if (responseData != null){
             setCapability(responseData);
             setIsLoaded(true);
-        }            
+        }
     }, [responseData]);
 
     return {
@@ -84,7 +101,7 @@ export function useCapabilityById(id) {
 }
 
 export function useCapabilityMembers(capabilityDefinition) {
-    const { inProgress, responseData, errorMessage, sendRequest } = useSelfServiceRequest();
+    const { inProgress, responseData, setErrorOptions, sendRequest } = useSelfServiceRequest();
     const [ isLoadedMembers, setIsLoadedMembers ] = useState(false);
     const [ membersList, setMembersList] = useState([]);
 
@@ -125,7 +142,7 @@ export function useCapabilityMembers(capabilityDefinition) {
 
             updateMembers(responseData?.items || []);
         }
-        
+
     }, [responseData]);
 
     useEffect(() => {
@@ -134,7 +151,7 @@ export function useCapabilityMembers(capabilityDefinition) {
         }
 
     }, [membersList]);
-    
+
 
     return {
         isLoadedMembers,
