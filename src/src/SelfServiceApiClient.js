@@ -10,7 +10,7 @@ export class SelfServiceApiClient {
     // async getCapabilities(){
     //     const accessToken = await getSelfServiceAccessToken();
 
-    //     const url = composeUrl("capabilities"); 
+    //     const url = composeUrl("capabilities");
     //     const response = await callApi(url, accessToken);
     //     this.responseHandler(response);
 
@@ -41,7 +41,7 @@ export class SelfServiceApiClient {
     // async getAllTopics() {
     //     const accessToken = await getSelfServiceAccessToken();
 
-    //     const url =  composeUrl("kafkatopics"); 
+    //     const url =  composeUrl("kafkatopics");
     //     const response = await callApi(url, accessToken);
     //     this.responseHandler(response);
 
@@ -64,10 +64,19 @@ export class SelfServiceApiClient {
 
         const defaultValues = {
             capabilities: [],
-            stats: [],
         };
 
         return { ...defaultValues, ...myProfile };
+    }
+
+    async getStats() {
+        const accessToken = await getSelfServiceAccessToken();
+
+        const url = composeUrl("stats");
+        const response = await callApi(url, accessToken);
+        this.responseHandler(response);
+        const  stats = await response.json();
+        return stats || [];
     }
 
     async updateMyPersonalInfirmation(myProfileDefinition, personalInformationDescriptor) {
@@ -193,6 +202,31 @@ export class SelfServiceApiClient {
             return [];
         }
 
+        const data = await response.json();
+        return data.items;
+    }
+
+    async getConsumers(topicDefinition) {
+        const link = topicDefinition?._links?.consumers;
+    
+        if (!link) {
+            throw Error("Error! No consumers link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+        }
+
+        if (!(link.allow || []).includes("GET")) {
+            throw Error("Error! You are not allowed fetch consumers.");
+        }
+
+        const accessToken = await getSelfServiceAccessToken();
+    
+        const url = link.href;
+        const response = await callApi(url, accessToken);
+        this.responseHandler(response);
+    
+        if (!response.ok) {
+            return [];
+        }
+    
         const data = await response.json();
         return data.items;
     }
