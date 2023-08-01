@@ -34,7 +34,10 @@ function AppProvider({ children }) {
 
   async function loadMyProfile() {
     const profile = await selfServiceApiClient.getMyPortalProfile();
-    const { capabilities, stats, autoReloadTopics } = profile;
+    const { capabilities, autoReloadTopics } = profile;
+
+    const stats = await selfServiceApiClient.getStats();
+
     setMyCapabilities(capabilities);
     setStats(stats);
     setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));

@@ -37,18 +37,6 @@ function TopicHeader({data, isOpen, onClicked}) {
     </div>
 }
 
-// function TopicInfo({data, isOpen}) { //function is currently not being used
-
-//     return  <>
-//         <div>
-//             <p>{<HighlightedText text={data.description} highlight={data.highlight ? data.highlight : ""}/>}</p>
-//             <div >
-//                 <div style= {{color: "#1874bc"}}>{data.capabilityId}</div>
-//             </div>
-//         </div>
-//     </>
-// }
-
 export function SearchView({data, onTopicClicked}) {
 
     const [contracts, setContracts] = useState([]);

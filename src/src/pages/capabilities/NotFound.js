@@ -3,6 +3,7 @@ import styles  from "./NotFound.module.css";
 import { Text } from '@dfds-ui/typography';
 
 export default function NotFound() {
+    // currently not being used because of the new error/notFound banner
     return <>
         <Container>
             <Column m={12} l={12} xl={12} xxl={12}>
@@ -11,7 +12,6 @@ export default function NotFound() {
                     <br />
 
                     <img src="https://media3.giphy.com/media/H54feNXf6i4eAQubud/giphy.gif" alt="angry chicken gif"/>
-                    {/* <img src="https://i.imgflip.com/79b2aa.jpg" /> */}
 
                     <br />
                     <br />

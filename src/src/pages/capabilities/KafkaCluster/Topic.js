@@ -5,6 +5,7 @@ import { Accordion, Spinner } from '@dfds-ui/react-components'
 import { ChevronDown, ChevronUp, StatusAlert, Edit as EditIcon, Delete as DeleteIcon } from '@dfds-ui/icons/system';
 
 import Message from "./MessageContract";
+import Consumer from "./Consumer";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
@@ -61,6 +62,9 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
     const [contracts, setContracts] = useState([]);
     const [isLoadingContracts, setIsLoadingContracts] = useState(false);
 
+    const [consumers, setConsumers] = useState([]);
+    const [isLoadingConsumers, setIsLoadingConsumers] = useState(false);
+
     const [selectedMessageContractId, setSelectedMessageContractId] = useState(null);
     const [showMessageContractDialog, setShowMessageContractDialog] = useState(false);
 
@@ -85,11 +89,14 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
 
         async function fetchData(topic) {
             const result = await selfServiceApiClient.getMessageContracts(topic);
+            const consumers = await selfServiceApiClient.getConsumers(topic);
             result.sort((a,b) => a.messageType.localeCompare(b.messageType));
 
             if (isMounted) {
               setContracts(result);
               setIsLoadingContracts(false);
+              setConsumers(consumers);
+              setIsLoadingConsumers(false);
             }
         }
 
@@ -102,6 +109,7 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
 
     useEffect(() => {
         setIsLoadingContracts(isSelected);
+        setIsLoadingConsumers(isSelected);
     }, [isSelected]);
 
     const handleHeaderClicked = () => {
@@ -194,6 +202,26 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
                 />
                 
                 <Text>{description}</Text>
+
+                
+                {
+                    isLoadingConsumers
+                    ? <Spinner instant />
+                    :
+                    <>
+                        <br />
+                        <Text styledAs="actionBold">Consumers</Text>
+                        {(consumers || []).length === 0 && 
+                            <div>No one has consumed this topic recently.</div>
+                        }
+
+                        {(consumers || []).map(consumer => <Consumer 
+                            name={consumer}
+                        />)}
+                    </>
+                }
+                        
+                <br />
 
                 {isPublic && 
                     <>
