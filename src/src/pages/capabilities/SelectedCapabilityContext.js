@@ -3,7 +3,6 @@ import React, { createContext, useEffect, useCallback, useContext, useState } fr
 import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
-import * as ApiClient from "../../SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -41,17 +40,17 @@ function SelectedCapabilityProvider({ children }) {
         for (const cluster of clusters) {
 
             const topics = await selfServiceApiClient.getTopics(cluster);
-  
+
             topics.forEach((kafkaTopic) => {
               adjustRetention(kafkaTopic);
               kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
                 a.messageType.localeCompare(b.messageType)
               );
             });
-  
+
             cluster.topics = topics;
-          }   
- 
+          }
+
         setKafkaClusters(clusters);
     }, [details]);
 
@@ -247,7 +246,6 @@ function SelectedCapabilityProvider({ children }) {
         for (let cluster of copy) {
           found = cluster.topics.find(t => t.id === topicId);
           if (found) {
-            const before = [...cluster.topics];
             cluster.topics = cluster.topics.filter(topic => topic.id !== topicId);
             break;
           }
@@ -261,15 +259,15 @@ function SelectedCapabilityProvider({ children }) {
 
     useEffect(() => {
         if(isLoaded){
-            setDetails(capability);            
+            setDetails(capability);
         }
-        
+
     }, [isLoaded, capability]);
 
     useEffect(() => {
         if(isLoadedMembers){
-            setMembers(membersList);  
-        }        
+            setMembers(membersList);
+        }
     }, [isLoadedMembers, membersList]);
 
     useEffect(() => {

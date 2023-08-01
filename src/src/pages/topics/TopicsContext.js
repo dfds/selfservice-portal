@@ -1,5 +1,5 @@
 
-import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
+import React, { createContext, useEffect, useContext, useState } from 'react';
 import AppContext from "../../AppContext"
 
 const TopicsContext = createContext();
@@ -21,12 +21,12 @@ function TopicsProvider({ children }) {
 
     const toggleSelectedKafkaTopic = (kafkaTopicId) => {
         setSelectedKafkaTopic(prev => {
-            if (prev == kafkaTopicId) {
+            if (prev === kafkaTopicId) {
                 return null;
-            } 
-            
+            }
+
             return kafkaTopicId;
-            
+
 
         });
     };

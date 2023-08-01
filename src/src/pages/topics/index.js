@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom";
-import { Container, Column, Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@dfds-ui/react-components'
+import { Container, Column, Card, CardMedia, CardTitle, CardContent } from '@dfds-ui/react-components'
 import { Text } from '@dfds-ui/typography';
 import { TextField } from '@dfds-ui/react-components';
 import { Search } from '@dfds-ui/icons/system';
@@ -79,7 +79,7 @@ function Topics() {
         [...clustersMap.keys()].forEach(k => {
             let clusterState = clustersMap.get(k);
             if (clusterState) {
-                filteredResult = filteredResult.concat(finalResult.filter((el) => el.kafkaClusterId == k));
+                filteredResult = filteredResult.concat(finalResult.filter((el) => el.kafkaClusterId === k));
             }
 
             filteredResult.sort((a, b) => a.name.localeCompare(b.name));
@@ -180,7 +180,7 @@ function Topics() {
 }
 
 
-export default function TopicsPage({ }) {
+export default function TopicsPage() {
 
     const splash = <CardMedia aspectRatio='3:2' media={
         <img src={topicImage} alt="" />

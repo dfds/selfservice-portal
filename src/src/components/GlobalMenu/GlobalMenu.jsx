@@ -5,7 +5,7 @@ import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture
 import ProfileName from "./ProfileName";
 import AppContext from "AppContext";
 
-export default function GlobalMenu({}) {
+export default function GlobalMenu() {
   const { user } = useContext(AppContext);
 
   const navLinks = [

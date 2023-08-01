@@ -3,7 +3,8 @@ import { ArrowForward } from "@dfds-ui/icons/system";
 
 function Link({title, url}) {
   const Anchor = props => {
-    return <a target="_blank" href={url} {...props} />;
+    // eslint-disable-next-line jsx-a11y/anchor-has-content, react/jsx-no-target-blank
+    return <a target="_blank" href={url} {...props} />; // Looks like a link attribute is being mis-used, needs to be investigated further
   };
 
   return <ListItem condensed divider as={Anchor} clickable>

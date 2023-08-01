@@ -61,7 +61,7 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
 
     const fullTopicName = `${publicPrefix}${capabilityId}.${topicName}`;
 
-    const isNameValid = formData.name != "" &&
+    const isNameValid = formData.name !== "" &&
         !formData.name.match(/^\s*$/g) &&
         !formData.name.match(/(-|_)$/g) &&
         !formData.name.match(/^(-|_)/g) &&
@@ -73,9 +73,9 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
         nameErrorMessage = 'Allowed characters are a-z, 0-9, "-", "_" and it must not start or end with "-" or "_". Do not use more than one of "-" and "_" in a row.';
     }
 
-    const canAdd = formData.name != "" && formData.description != "" && !inProgress && nameErrorMessage == "";
+    const canAdd = formData.name !== "" && formData.description !== "" && !inProgress && nameErrorMessage === "";
 
-    
+
     const nameContainsUnderscores = formData.name.match(/_/g);
 
     let nameHintMessage = "";
@@ -103,14 +103,14 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
     return <SideSheet header={`Add new topic to ${clusterName}...`} onRequestClose={handleCloseClicked} isOpen={true} width="30%" alignSideSheet="right" variant="elevated" backdrop>
         <SideSheetContent>
             <Text>
-                Topics can be used to communicate that something significant has happened within <i>your</i> capability. Thats also one of the 
-                reasons that the id of your capability (e.g. <span className={styles.capabilityid}>{capabilityId}</span> in your case) will be 
+                Topics can be used to communicate that something significant has happened within <i>your</i> capability. Thats also one of the
+                reasons that the id of your capability (e.g. <span className={styles.capabilityid}>{capabilityId}</span> in your case) will be
                 embedded in the topic name.
             </Text>
             <Text>
                 Below is the full name of your new topic and a topic build that you can use to define the attributes of your topic.
             </Text>
-    
+
             <br />
 
             <Text as={"label"} styledAs="labelBold">Full topic name:</Text>
@@ -125,12 +125,12 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
                         <Information />
                     </Tooltip>
                 </div>
-                <TextField 
-                    label="Name" 
-                    placeholder="Enter name of topic" 
-                    required 
-                    value={formData.name} 
-                    onChange={changeName} 
+                <TextField
+                    label="Name"
+                    placeholder="Enter name of topic"
+                    required
+                    value={formData.name}
+                    onChange={changeName}
                     errorMessage={nameErrorMessage}
                     assistiveText={nameHintMessage}
                 />
@@ -176,20 +176,20 @@ export default function NewTopicDialog({capabilityId, clusterName, inProgress, o
                     <option value={"public"}>Public</option>
                 </SelectField>
 
-                {formData.availability === "public" && 
+                {formData.availability === "public" &&
                     <Banner variant="lowEmphasis">
                         <BannerHeadline>Please note</BannerHeadline>
                         <BannerParagraph>
-                            All public topics will be prefixed with <span className={styles.capabilityid}>pub.</span> to 
+                            All public topics will be prefixed with <span className={styles.capabilityid}>pub.</span> to
                             make it explicit. Have a look at the change to the example above.
                             <br />
                             <br />
-                            Public topics comes with a responsibility. All other capabilities has read access to your public topics 
-                            and can potentially depend on you to not introduce breaking changes to your messages. 
+                            Public topics comes with a responsibility. All other capabilities has read access to your public topics
+                            and can potentially depend on you to not introduce breaking changes to your messages.
                             <br />
                             <br />
-                            You also have a 
-                            responsibility to communicate about any new messages that you want to introduce to the topic as it can 
+                            You also have a
+                            responsibility to communicate about any new messages that you want to introduce to the topic as it can
                             potentially have consequences for consumers.
                             <br />
                             <br />

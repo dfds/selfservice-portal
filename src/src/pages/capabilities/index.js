@@ -27,10 +27,10 @@ export default function CapabilitiesPage() {
     } />
 
     return <>
-    
+
     <Page title={"Capabilities"}>
-      {showNewCapabilityDialog && 
-        <NewCapabilityDialog 
+      {showNewCapabilityDialog &&
+        <NewCapabilityDialog
           inProgress={isCreatingNewCapability}
           onAddCapabilityClicked={handleAddCapability}
           onCloseClicked={() => setShowNewCapabilityDialog(false)}
@@ -65,5 +65,5 @@ export default function CapabilitiesPage() {
       <OtherCapabilities />
     </Page>
 
-    </> 
+    </>
 }

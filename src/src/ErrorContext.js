@@ -1,5 +1,5 @@
 import ErrorDisplay from 'ErrorDisplay';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 const ErrorContext = createContext();
 
@@ -10,8 +10,8 @@ function ErrorProvider({ children }) {
 
   return (
     <ErrorContext.Provider value={{ error, showError }}>
-      {<ErrorDisplay/>} 
-      {children}      
+      {<ErrorDisplay/>}
+      {children}
     </ErrorContext.Provider>
   );
 };

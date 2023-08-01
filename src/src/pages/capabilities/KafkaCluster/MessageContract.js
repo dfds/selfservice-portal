@@ -6,16 +6,16 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import Expandable from "components/Expandable";
 import Poles from "components/Poles";
 import { Divider } from "@dfds-ui/react-components/divider";
-import { ChevronDown, ChevronUp, StatusAlert } from '@dfds-ui/icons/system';
+import { StatusAlert } from '@dfds-ui/icons/system';
 
 function MessageHeader({messageType, isOpen, status}) {
     const notProvisioned = "Provisioned".toUpperCase() !== status?.toUpperCase();
 
     return <div className={`${styles.header} ${isOpen ? styles.headerselected : null}`}>
         <Text className={notProvisioned ? styles.notprovisioned : null} styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}>
-            {notProvisioned && 
+            {notProvisioned &&
                 <>
-                    <StatusAlert /> 
+                    <StatusAlert />
                     <span>&nbsp;</span>
                 </>
             }
@@ -24,7 +24,7 @@ function MessageHeader({messageType, isOpen, status}) {
 
             {notProvisioned &&
                 <span>&nbsp;({status?.toLowerCase()})</span>
-            }            
+            }
         </Text>
     </div>
 }
@@ -74,7 +74,7 @@ export default function Message({id, messageType, description, example, schema, 
     return <div className={styles.container}>
         <Expandable header={header} isOpen={isSelected && isProvisioned} onHeaderClicked={headerClickHandler}>
             <div className={styles.contentcontainer}>
-                <Poles 
+                <Poles
                     leftContent={<Text styledAs="label" style={{ marginBottom: "0"}}>Description</Text>}
                     rightContent={<Poles
                         leftContent={<Text styledAs="caption">Show JSON Schema &nbsp;</Text>}

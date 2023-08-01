@@ -2,7 +2,7 @@ import React from "react"
 import { Text } from '@dfds-ui/typography';
 import { Card, CardContent  } from '@dfds-ui/react-components';
 
-export default function Logs({}) {
+export default function Logs() {
     return <>
         <Text styledAs='sectionHeadline'>Logs</Text>
         <Card variant="fill" surface="main">

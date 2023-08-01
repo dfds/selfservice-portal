@@ -4,7 +4,9 @@ import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
 
 
 export function useCapabilities() {
-    const { inProgress, responseData: getAllResponse, sendRequest, setErrorOptions } = useSelfServiceRequest();
+    // const { errorMessage } = useSelfServiceRequest();
+    // ^to remind that useSelfServiceRequest() also returns an errorMessage, we might want to not ignore it someday
+    const {responseData: getAllResponse, sendRequest } = useSelfServiceRequest();
     const { responseData: addedCapability, sendRequest: addCapability } = useSelfServiceRequest();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const [ capabilities, setCapabilities] = useState([]);

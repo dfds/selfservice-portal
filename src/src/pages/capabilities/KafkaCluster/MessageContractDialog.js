@@ -10,23 +10,23 @@ import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/style
 import toJsonSchema from 'to-json-schema';
 
 function getValidationErrorForType(value) {
-    const isValid = value != undefined &&
+    const isValid = value !== undefined &&
         value != null &&
-        value != "" &&
+        value !== "" &&
         value.length > 0;
 
-    return isValid 
+    return isValid
         ? ""
         : "Type is invalid"
 }
 
 function getValidationErrorForDescription(value) {
-    const isValid = value != undefined &&
+    const isValid = value !== undefined &&
         value != null &&
-        value != "" &&
+        value !== "" &&
         value.length > 0;
 
-    return isValid 
+    return isValid
         ? ""
         : "Please write a description to communicate your intent"
 }
@@ -46,7 +46,7 @@ function getValidationErrorForMessage(value) {
 function isAllEmptyValues(data) {
     let result = true;
     data.forEach(x => {
-        if (x != "") {
+        if (x !== "") {
             result = false;
         }
     });
@@ -56,7 +56,7 @@ function isAllEmptyValues(data) {
 function isAllWithValues(data) {
     let result = true;
     data.forEach(x => {
-        if (x == undefined || x == null || x == "") {
+        if (x === undefined || x == null || x === "") {
             result = false;
         }
     });
@@ -82,7 +82,7 @@ function ensureHasEnvelope(message, type) {
         }
 
     } catch {}
-    return newValue;    
+    return newValue;
 }
 
 function removeEnvelope(message) {
@@ -120,7 +120,7 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
 
     useEffect(() => {
         let error = "";
-        if (type != "") {
+        if (type !== "") {
             error = getValidationErrorForType(type);
         }
         setTypeError(error);
@@ -128,7 +128,7 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
 
     useEffect(() => {
         let error = "";
-        if (description != "") {
+        if (description !== "") {
             error = getValidationErrorForDescription(description);
         }
         setDescriptionError(error);
@@ -136,7 +136,7 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
 
     useEffect(() => {
         let error = "";
-        if (message != "") {
+        if (message !== "") {
             error = getValidationErrorForMessage(message);
         }
         setMessageError(error);
@@ -164,11 +164,11 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
         // update schema preview
         try {
             const json = JSON.parse(messageValue);
-            const result = toJsonSchema(json, { 
+            const result = toJsonSchema(json, {
                 required: true,
                 postProcessFnc: (type, schema, value, defaultFunc) => {
-                    const result = type != "object"
-                        ? {...schema, ...{ 
+                    const result = type !== "object"
+                        ? {...schema, ...{
                             examples: type === "array" ? value : [value],
                             // required: true
                         }}
@@ -242,33 +242,33 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
 
     return <SideSheet header={`Add message contract...`} onRequestClose={handleCloseClicked} isOpen={true} width="50%" alignSideSheet="right" variant="elevated" backdrop>
         <SideSheetContent>
-            
+
             <Text>
-                Add a new message contract to your topic <span className={styles.topicname}>{topicName}</span> by filling in your information below. 
-                By default, the message that you define below is wrapped in the DFDS message envelope and it is recommended that you continue 
+                Add a new message contract to your topic <span className={styles.topicname}>{topicName}</span> by filling in your information below.
+                By default, the message that you define below is wrapped in the DFDS message envelope and it is recommended that you continue
                 to use that for your messages - you can see a full preview of you final message payload on the right.
             </Text>
 
             <br />
 
-            <TextField 
-                label="Type" 
-                placeholder="Enter message type (e.g. order-has-been-placed)" 
-                required 
-                value={type} 
+            <TextField
+                label="Type"
+                placeholder="Enter message type (e.g. order-has-been-placed)"
+                required
+                value={type}
                 help="The message type is recommended to be the name of a domain event (e.g. order-has-been-placed) that would signal that a specific event has occured within your domain. On a technical level it will act as a discriminator to identify and distinguish between different types of messages produced to the same topic. It is recommended to use the kebab-case as the naming convention (words in lower case separated by dashes e.g. order-has-been-placed) and domain events would be phrased in past tense. None of these recommendations are technically enforced, but please remember that they WILL become part of your message contract."
-                onChange={changeType} 
+                onChange={changeType}
                 errorMessage={typeError}
             />
 
             <br />
 
-            <TextField 
-                label="Description" 
-                placeholder="Enter a description" 
-                required 
-                value={description} 
-                onChange={changeDescription} 
+            <TextField
+                label="Description"
+                placeholder="Enter a description"
+                required
+                value={description}
+                onChange={changeDescription}
                 errorMessage={descriptionError}
             />
 
@@ -276,13 +276,13 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
 
             <div className={styles.columns}>
                 <div className={styles.column}>
-                    <TextareaField 
-                        label="Message" 
+                    <TextareaField
+                        label="Message"
                         placeholder='Enter a JSON example of your message'
-                        required 
+                        required
                         style={{ height: "30rem" }}
-                        value={message} 
-                        onChange={changeMessage} 
+                        value={message}
+                        onChange={changeMessage}
                         errorMessage={messageError}
                     />
 
@@ -293,10 +293,10 @@ export default function MessageContractDialog({topicName, onAddClicked, onCloseC
                         Preview final <i style={{ fontWeight: "bolder" }}>{previewAsSchema ? "schema" : "message"}</i>
                     </Text>
                     <div style={{ height: "30rem", border: "1px solid #4d4e4cb3", overflowY: "auto", display: "flex", alignItems: "stretch" }}>
-                        <SyntaxHighlighter 
-                            language="json" 
-                            style={syntaxStyle} 
-                            wrapLongLines={false} 
+                        <SyntaxHighlighter
+                            language="json"
+                            style={syntaxStyle}
+                            wrapLongLines={false}
                             customStyle={{ backgroundColor: "#002b45", padding: "0.75rem", margin: "0", width: "100%" }}
                         >{previewAsSchema ? previewSchema : previewMessage}</SyntaxHighlighter>
                     </div>

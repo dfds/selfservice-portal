@@ -20,7 +20,7 @@ export function useTopics() {
         if(responseData != null){
             const finalTopics = (responseData.items || []).map(topic => {
                 const copy = {...topic};
-                const found = (responseData._embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
+                const found = (responseData._embedded?.kafkaClusters?.items || []).find(cluster => cluster.id === topic.kafkaClusterId);
                 copy.kafkaClusterName = found?.name || "";
                 return copy;
             })

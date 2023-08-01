@@ -4,8 +4,6 @@ import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';
-import Logs from './logs';
-import CommunicationChannels from './communicationchannels';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
@@ -24,7 +22,7 @@ export default function CapabilityDetailsPage() {
 
 function CapabilityDetailsPageContent() {
     const { id } = useParams();
-    const { isLoading, isFound, name, members, kafkaClusters, loadCapability, showResources } = useContext(SelectedCapabilityContext);
+    const { isLoading, isFound, name, kafkaClusters, loadCapability, showResources } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -38,7 +36,7 @@ function CapabilityDetailsPageContent() {
                 { showResources && (<Resources />)  }
 
                 <MembershipApplications />
-                
+
                 {/* <Logs /> */}
                 {/* <CommunicationChannels /> */}
 
