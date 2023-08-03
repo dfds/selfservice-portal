@@ -26,3 +26,9 @@
     position: relative;
     float: right;
 }
+
+.warningIcon {
+    color: #be1e2d;
+    margin-left: -20px;
+    float: left;
+}
