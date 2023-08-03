@@ -31,7 +31,7 @@ function SelectedCapabilityProvider({ children }) {
     const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
     const {capability, isLoaded} = useCapabilityById(capabilityId);
     const {membersList, isLoadedMembers} = useCapabilityMembers(details);
-
+    const [isPendingDeletion, setPendingDeletion] = useState(null);
 
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
@@ -255,11 +255,24 @@ function SelectedCapabilityProvider({ children }) {
       });
     };
 
+    const submitDeleteCapability = useCallback(async () => {
+        await selfServiceApiClient.submitDeleteCapability(details);
+    }, [details])
+
+    const submitCancelDeleteCapability = useCallback(async () => {
+        await selfServiceApiClient.submitCancelDeleteCapability(details);
+    }, [details])
+
+    const updateDeletionStatus = (value) => {
+        setPendingDeletion(value)
+    }
+
     //--------------------------------------------------------------------
 
     useEffect(() => {
         if(isLoaded){
             setDetails(capability);
+            setPendingDeletion(capability.status === "Pending Deletion");            
         }
 
     }, [isLoaded, capability]);
@@ -321,6 +334,10 @@ function SelectedCapabilityProvider({ children }) {
         showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
         updateKafkaTopic,
         deleteKafkaTopic,
+        submitDeleteCapability,
+        submitCancelDeleteCapability,
+        isPendingDeletion,
+        updateDeletionStatus,
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;

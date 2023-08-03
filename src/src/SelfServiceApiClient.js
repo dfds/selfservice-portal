@@ -541,6 +541,48 @@ export class SelfServiceApiClient {
         const { items } = await response.json();
         return items || [];
     }
+
+    async submitDeleteCapability(capabilityDefinition) {
+        const capabilityId = capabilityDefinition?.details?.id;
+
+        const link = capabilityDefinition?._links?.requestCapabilityDeletion;
+        if (!link) {
+            throw Error("Error! No delete capability link found on capability " + capabilityId);
+        }
+        if (!(link.allow || []).includes("POST")) {
+            throw Error("Error! Not possible to delete capability " + capabilityId);
+        }
+
+        const accessToken = await getSelfServiceAccessToken();
+        const response = await callApi(link.href, accessToken, "POST", {});
+        this.responseHandler(response);
+
+        if (!response.ok) {
+            console.log("response was: ", await response.text());
+            throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+        }
+    }
+
+    async submitCancelDeleteCapability(capabilityDefinition) {
+        const capabilityId = capabilityDefinition?.details?.id;
+
+        const link = capabilityDefinition?._links?.cancelCapabilityDeletionRequest;
+        if (!link) {
+            throw Error("Error! No cancel delete request for capability link found on capability " + capabilityId);
+        }
+        if (!(link.allow || []).includes("POST")) {
+            throw Error("Error! Not possible to cancel delete request for capability " + capabilityId);
+        }
+
+        const accessToken = await getSelfServiceAccessToken();
+        const response = await callApi(link.href, accessToken, "POST", {});
+        this.responseHandler(response);
+
+        if (!response.ok) {
+            console.log("response was: ", await response.text());
+            throw Error(`Error! Response from server: (${response.status}) ${response.statusText}`);
+        }   
+    }
 }
 
 function composeUrl(...args) {
