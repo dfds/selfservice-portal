@@ -203,21 +203,30 @@ export default function Topic({topic, isSelected, onHeaderClicked}) {
                 
                 <Text>{description}</Text>
 
-                
-                {
-                    isLoadingConsumers
-                    ? <Spinner instant />
-                    :
+                {/* Consumers currently only fetchable for public topics due to constraints on the API */}
+                {isPublic &&
                     <>
                         <br />
                         <Text styledAs="actionBold">Consumers</Text>
-                        {(consumers || []).length === 0 && 
-                            <div>No one has consumed this topic recently.</div>
-                        }
 
-                        {(consumers || []).map(consumer => <Consumer 
-                            name={consumer}
-                        />)}
+                        {isLoadingConsumers
+                        ? <Spinner instant />
+                        :
+                        <>
+                            <br />
+                            {!(topic._links.consumers.allow || []).includes("GET") &&
+                                <div>Only members of capabilities can see public topic consumers.</div>
+                            }
+
+                            {(consumers || []).length === 0 && (topic._links.consumers.allow || []).includes("GET") &&
+                                <div>No one has consumed this topic recently.</div>
+                            }
+
+                            {(consumers || []).map(consumer => <Consumer 
+                                name={consumer}
+                            />)}
+                        </>
+                        }
                     </>
                 }
                         

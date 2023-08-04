@@ -210,11 +210,12 @@ export class SelfServiceApiClient {
         const link = topicDefinition?._links?.consumers;
 
         if (!link) {
-            throw Error("Error! No consumers link found on topic definition: " + JSON.stringify(topicDefinition, null, 2));
+            return [];
         }
 
+        // If we are _not_ allowed to get consumers, simply return nothing
         if (!(link.allow || []).includes("GET")) {
-            throw Error("Error! You are not allowed fetch consumers.");
+            return [];
         }
 
         const accessToken = await getSelfServiceAccessToken();
