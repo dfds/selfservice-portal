@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { Text } from '@dfds-ui/typography';
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from '@dfds-ui/icons/system';
+import { ChevronRight, StatusAlert } from '@dfds-ui/icons/system';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@dfds-ui/react-components'
 import { Spinner } from '@dfds-ui/react-components';
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-
+import styles from "./myCapabilities.css";
 
 export default function MyCapabilities() {
     const { myCapabilities, appStatus } = useContext(AppContext);
@@ -39,6 +39,7 @@ export default function MyCapabilities() {
                         <TableBody>
                             {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                                 <TableDataCell>
+                                    <Text className="warningIcon" hidden={x.status == "Active"}><StatusAlert /></Text>
                                     <Text styledAs="action" as={"div"}>{x.name}</Text>
                                     <Text styledAs="caption" as={"div"}>{x.description}</Text>
                                 </TableDataCell>
