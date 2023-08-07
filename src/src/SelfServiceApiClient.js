@@ -1,10 +1,11 @@
-import { useContext } from "react";
-import { callApi, getSelfServiceAccessToken } from "./AuthService";
+import {useContext} from "react";
+import {callApi, getSelfServiceAccessToken} from "./AuthService";
 
 export class SelfServiceApiClient {
     constructor(errorHandler) {
         this.errorHandler = errorHandler;
-        this.responseHandler = () => { };
+        this.responseHandler = () => {
+        };
     }
 
     // async getCapabilities(){
@@ -66,7 +67,7 @@ export class SelfServiceApiClient {
             capabilities: [],
         };
 
-        return { ...defaultValues, ...myProfile };
+        return {...defaultValues, ...myProfile};
     }
 
     async getStats() {
@@ -75,7 +76,7 @@ export class SelfServiceApiClient {
         const url = composeUrl("stats");
         const response = await callApi(url, accessToken);
         this.responseHandler(response);
-        const  stats = await response.json();
+        const stats = await response.json();
         return stats || [];
     }
 
@@ -138,7 +139,7 @@ export class SelfServiceApiClient {
 
         const url = clusterAccessLink.href;
         const response = await callApi(url, accessToken);
-        const { items } = await response.json();
+        const {items} = await response.json();
 
         return items;
     }
@@ -154,7 +155,7 @@ export class SelfServiceApiClient {
 
         const url = topicsLink.href;
         const response = await callApi(url, accessToken);
-        const { items } = await response.json();
+        const {items} = await response.json();
 
         return items;
     }
@@ -335,6 +336,21 @@ export class SelfServiceApiClient {
     //     return items || [];
     // }
 
+    async getCapabilityCosts(daysWindow) {
+        const accessToken = await getSelfServiceAccessToken();
+        const url = composeUrl("metrics/costs") + "?daysWindow=" + daysWindow;
+        const response = await callApi(url, accessToken);
+        this.responseHandler(response);
+
+        if (!response.ok) {
+            console.log("response was: ", response.status);
+            return [];
+        }
+
+        let obj = await response.json();
+        return obj.costs || [];
+    }
+
     async getCapabilityMembershipApplications(capabilityDefinition) {
         const membershipApplicationsLink = capabilityDefinition?._links?.membershipApplications;
         if (!membershipApplicationsLink) {
@@ -354,7 +370,7 @@ export class SelfServiceApiClient {
             return [];
         }
 
-        const { items } = await response.json();
+        const {items} = await response.json();
         return items || [];
     }
 
@@ -430,7 +446,7 @@ export class SelfServiceApiClient {
         const url = composeUrl("kafkaclusters");
         const response = await callApi(url, accessToken);
         this.responseHandler(response);
-        const { items } = await response.json();
+        const {items} = await response.json();
 
         return items || [];
     }
@@ -516,7 +532,6 @@ export class SelfServiceApiClient {
     }
 
 
-
     async getTopVisitors(myProfileDefinition) {
         const link = myProfileDefinition?._links?.topVisitors;
         if (!link) {
@@ -538,7 +553,7 @@ export class SelfServiceApiClient {
             return [];
         }
 
-        const { items } = await response.json();
+        const {items} = await response.json();
         return items || [];
     }
 

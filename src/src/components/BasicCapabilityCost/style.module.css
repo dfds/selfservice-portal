@@ -1,8 +1,13 @@
-.costData {
-  width: 90%;
+.costDataSummary {
+  width: 80%;
   height: 30px;
   display: inline-block;
-  align-content: center;
+  align-content: flex-start;
+}
+
+.largeCostDataSummary {
+  width: 100%;
+  height: 300px;
 }
 
 .customTooltip {
@@ -18,4 +23,9 @@
 
 .tooltipValue {
   font-size: 1.2em;
+}
+
+.chartContainer {
+  display: flex;
+  align-items: center;
 }

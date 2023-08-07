@@ -1,24 +1,24 @@
 ﻿import AppContext from 'AppContext';
-import React, { createContext, useEffect, useCallback, useContext, useState } from 'react';
-import { useCapabilityById , useCapabilityMembers} from 'hooks/Capabilities';
+import React, {createContext, useEffect, useCallback, useContext, useState} from 'react';
+import {useCapabilityById, useCapabilityMembers} from 'hooks/Capabilities';
 
-import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
+import {getAnotherUserProfilePictureUrl} from "../../GraphApiClient";
 
 const SelectedCapabilityContext = createContext();
 
 function adjustRetention(kafkaTopic) {
     if (kafkaTopic.retention !== "forever") {
-      const match = kafkaTopic.retention.match(/^(?<days>\d+)d$/);
-      if (match) {
-          const { days } = match.groups;
-          kafkaTopic.retention = `${days} day${days === "1" ? "" : "s"}`;
-      }
+        const match = kafkaTopic.retention.match(/^(?<days>\d+)d$/);
+        if (match) {
+            const {days} = match.groups;
+            kafkaTopic.retention = `${days} day${days === "1" ? "" : "s"}`;
+        }
     }
 }
 
-function SelectedCapabilityProvider({ children }) {
+function SelectedCapabilityProvider({children}) {
 
-    const { shouldAutoReloadTopics, selfServiceApiClient} = useContext(AppContext);
+    const {shouldAutoReloadTopics, selfServiceApiClient} = useContext(AppContext);
 
     //const [isLoading, setIsLoading] = useState(false);
     const [capabilityId, setCapabilityId] = useState(null);
@@ -42,14 +42,14 @@ function SelectedCapabilityProvider({ children }) {
             const topics = await selfServiceApiClient.getTopics(cluster);
 
             topics.forEach((kafkaTopic) => {
-              adjustRetention(kafkaTopic);
-              kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
-                a.messageType.localeCompare(b.messageType)
-              );
+                adjustRetention(kafkaTopic);
+                kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort((a, b) =>
+                    a.messageType.localeCompare(b.messageType)
+                );
             });
 
             cluster.topics = topics;
-          }
+        }
 
         setKafkaClusters(clusters);
     }, [details]);
@@ -183,76 +183,76 @@ function SelectedCapabilityProvider({ children }) {
     }, [details])
 
     const requestAwsAccount = useCallback(async () => {
-      await selfServiceApiClient.requestAwsAccount(details);
-  }, [details]);
+        await selfServiceApiClient.requestAwsAccount(details);
+    }, [details]);
 
     const getAccessToCluster = async (cluster) => {
-      return await selfServiceApiClient.getAccessToCluster(cluster);
+        return await selfServiceApiClient.getAccessToCluster(cluster);
     };
 
     const requestAccessToCluster = async (cluster) => {
-      await selfServiceApiClient.requestAccessToCluster(cluster);
+        await selfServiceApiClient.requestAccessToCluster(cluster);
     };
 
     const updateKafkaTopic = async (topicId, topicDescriptor) => {
-      let found = null;
-      for (let cluster of kafkaClusters) {
-        found = cluster.topics.find(t => t.id === topicId);
-        if (found) {
-          break;
-        }
-      }
-
-      if (!found) {
-        throw Error(`A kafka topic with id "${topicId}" could not be found.`);
-      }
-
-      await selfServiceApiClient.updateTopic(found, topicDescriptor);
-
-      setKafkaClusters(prev => {
-        const copy = [...prev];
-
         let found = null;
-        for (let cluster of copy) {
-          found = cluster.topics.find(t => t.id === topicId);
-          if (found) {
-            found.description = topicDescriptor.description;
-            break;
-          }
+        for (let cluster of kafkaClusters) {
+            found = cluster.topics.find(t => t.id === topicId);
+            if (found) {
+                break;
+            }
         }
-        return copy;
-      });
+
+        if (!found) {
+            throw Error(`A kafka topic with id "${topicId}" could not be found.`);
+        }
+
+        await selfServiceApiClient.updateTopic(found, topicDescriptor);
+
+        setKafkaClusters(prev => {
+            const copy = [...prev];
+
+            let found = null;
+            for (let cluster of copy) {
+                found = cluster.topics.find(t => t.id === topicId);
+                if (found) {
+                    found.description = topicDescriptor.description;
+                    break;
+                }
+            }
+            return copy;
+        });
     };
 
     const deleteKafkaTopic = async (topicId) => {
-      let found = null;
-      for (let cluster of kafkaClusters) {
-        found = cluster.topics.find(t => t.id === topicId);
-        if (found) {
-          break;
-        }
-      }
-
-      if (!found) {
-        throw Error(`A kafka topic with id "${topicId}" could not be found.`);
-      }
-
-      await selfServiceApiClient.deleteTopic(found);
-
-      setKafkaClusters(prev => {
-        const copy = [...prev];
-
         let found = null;
-        for (let cluster of copy) {
-          found = cluster.topics.find(t => t.id === topicId);
-          if (found) {
-            cluster.topics = cluster.topics.filter(topic => topic.id !== topicId);
-            break;
-          }
+        for (let cluster of kafkaClusters) {
+            found = cluster.topics.find(t => t.id === topicId);
+            if (found) {
+                break;
+            }
         }
 
-        return copy;
-      });
+        if (!found) {
+            throw Error(`A kafka topic with id "${topicId}" could not be found.`);
+        }
+
+        await selfServiceApiClient.deleteTopic(found);
+
+        setKafkaClusters(prev => {
+            const copy = [...prev];
+
+            let found = null;
+            for (let cluster of copy) {
+                found = cluster.topics.find(t => t.id === topicId);
+                if (found) {
+                    cluster.topics = cluster.topics.filter(topic => topic.id !== topicId);
+                    break;
+                }
+            }
+
+            return copy;
+        });
     };
 
     const submitDeleteCapability = useCallback(async () => {
@@ -270,7 +270,7 @@ function SelectedCapabilityProvider({ children }) {
     //--------------------------------------------------------------------
 
     useEffect(() => {
-        if(isLoaded){
+        if (isLoaded) {
             setDetails(capability);
             setPendingDeletion(capability.status === "Pending Deletion");            
         }
@@ -278,7 +278,7 @@ function SelectedCapabilityProvider({ children }) {
     }, [isLoaded, capability]);
 
     useEffect(() => {
-        if(isLoadedMembers){
+        if (isLoadedMembers) {
             setMembers(membersList);
         }
     }, [isLoadedMembers, membersList]);
@@ -343,4 +343,4 @@ function SelectedCapabilityProvider({ children }) {
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;
 }
 
-export { SelectedCapabilityContext as default, SelectedCapabilityProvider }
+export {SelectedCapabilityContext as default, SelectedCapabilityProvider}

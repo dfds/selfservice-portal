@@ -1,31 +1,36 @@
-import React, { useContext, useEffect } from "react"
-import { useParams } from 'react-router-dom';
+import React, {useContext, useEffect} from "react"
+import {useParams} from 'react-router-dom';
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
+import Costs from './costs';
 import Resources from './resources';
-import Cost from './cost';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
-import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
+import {SelectedCapabilityProvider} from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
 
-
 export default function CapabilityDetailsPage() {
     return <>
-            <SelectedCapabilityProvider>
-                <CapabilityDetailsPageContent/>
-            </SelectedCapabilityProvider>
+        <SelectedCapabilityProvider>
+            <CapabilityDetailsPageContent/>
+        </SelectedCapabilityProvider>
     </>
 }
 
 
-
 function CapabilityDetailsPageContent() {
-    const { id } = useParams();
-    const { isLoading, isFound, name, kafkaClusters, loadCapability, showResources, isPendingDeletion, updateDeletionStatus } = useContext(SelectedCapabilityContext);
+    const {id} = useParams();
+    const {
+        isLoading,
+        isFound,
+        name,
+        kafkaClusters,
+        loadCapability,
+        showResources
+   , isPendingDeletion, updateDeletionStatus } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -33,22 +38,23 @@ function CapabilityDetailsPageContent() {
     }, [id]);
 
     return <>
-            <DeletionWarning deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus} />
-            <Page title={name} isLoading={isLoading} isNotFound={!isFound}>    
-                <Members />
-                <Summary />
-                { showResources && (<Resources />)  }
+        <DeletionWarning deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus} />
+            <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
+            <Members/>
+            <Summary/>
+            <Costs/>
+            {showResources && (<Resources/>)}
 
-                <MembershipApplications />
+            <MembershipApplications/>
 
-                {/* <Logs /> */}
-                {/* <CommunicationChannels /> */}
+            {/* <Logs /> */}
+            {/* <CommunicationChannels /> */}
 
-                {(kafkaClusters || []).map(cluster => <KafkaCluster
-                    key={cluster.id}
-                    cluster={cluster}
-                    capabilityId={id}
-                />)}
+            {(kafkaClusters || []).map(cluster => <KafkaCluster
+                key={cluster.id}
+                cluster={cluster}
+                capabilityId={id}
+            />)}
 
                 <CapabilityManagement deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus} />
 
