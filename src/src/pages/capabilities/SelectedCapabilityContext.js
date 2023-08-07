@@ -18,7 +18,7 @@ function adjustRetention(kafkaTopic) {
 
 function SelectedCapabilityProvider({children}) {
 
-    const {shouldAutoReloadTopics, selfServiceApiClient} = useContext(AppContext);
+    const {shouldAutoReloadTopics, selfServiceApiClient, myCapabilities} = useContext(AppContext);
 
     //const [isLoading, setIsLoading] = useState(false);
     const [capabilityId, setCapabilityId] = useState(null);
@@ -32,6 +32,7 @@ function SelectedCapabilityProvider({children}) {
     const {capability, isLoaded} = useCapabilityById(capabilityId);
     const {membersList, isLoadedMembers} = useCapabilityMembers(details);
     const [isPendingDeletion, setPendingDeletion] = useState(null);
+    const [showCosts, setShowCosts] = useState(false);
 
     // load kafka clusters and topics
     const loadKafkaClustersAndTopics = useCallback(async () => {
@@ -306,6 +307,11 @@ function SelectedCapabilityProvider({children}) {
         return () => clearInterval(handle);
     }, [details]);
 
+    useEffect(() => {
+        let capabilityJoined = myCapabilities.find(x => x.id === capabilityId) !== undefined;
+        setShowCosts(capabilityJoined);
+    },[capability]);
+
     //--------------------------------------------------------------------
 
     const state = {
@@ -338,6 +344,7 @@ function SelectedCapabilityProvider({children}) {
         submitCancelDeleteCapability,
         isPendingDeletion,
         updateDeletionStatus,
+        showCosts,
     };
 
     return <SelectedCapabilityContext.Provider value={state}>{children}</SelectedCapabilityContext.Provider>;

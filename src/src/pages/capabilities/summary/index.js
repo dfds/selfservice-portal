@@ -4,15 +4,11 @@ import {Modal, ModalAction} from '@dfds-ui/modal';
 import {Button, ButtonStack} from '@dfds-ui/react-components';
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import CapabilityCostSummary from 'components/BasicCapabilityCost';
-import {useParams} from 'react-router-dom';
 
 import styles from "./summary.module.css";
 import {TextBlock} from "components/Text";
 import {useState} from "react";
 import {MyMembershipApplication} from "../membershipapplications";
-import {ChevronRight} from '@dfds-ui/icons/system';
-import AppContext from "../../../AppContext";
 
 function JoinDialog({name, isSubmitting, onCloseRequested, onSubmitClicked}) {
     const actions = <>
@@ -143,15 +139,3 @@ export default function Summary() {
         <br/>
     </PageSection>
 }
-
-const CostTooltip = ({active, payload, label}) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className={styles.customTooltip}>
-                <p className="label">{`${payload[0].payload.name} : ${payload[0].value}`}</p>
-            </div>
-        );
-    }
-
-    return null;
-};

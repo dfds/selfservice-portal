@@ -6,7 +6,6 @@ import {Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell} f
 import {Spinner} from '@dfds-ui/react-components';
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import styles from "./myCapabilities.css";
 import CapabilityCostSummary from 'components/BasicCapabilityCost';
 
 export default function MyCapabilities() {
@@ -15,9 +14,17 @@ export default function MyCapabilities() {
     const items = myCapabilities || [];
     const isLoading = !appStatus.hasLoadedMyCapabilities;
     const isLoadingCosts = !appStatus.hasLoadedCosts;
+    const [showCostsSpinner, setShowCostsSpinner] = useState(isLoadingCosts);
 
     const navigate = useNavigate();
     const clickHandler = (id) => navigate(`/capabilities/${id}`);
+
+    useEffect(() => {
+        // Simulate fetching data from an API
+        setTimeout(() => {
+            setShowCostsSpinner(false);
+        }, 3000);
+    }, []);
 
     return <>
         <PageSection headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}>
@@ -43,13 +50,15 @@ export default function MyCapabilities() {
                             </TableDataCell>
                             <TableDataCell align="center" width="100px">
                                 {
-                                    isLoadingCosts ? <Spinner/> :
-                                        <>
-                                            <CapabilityCostSummary
-                                                data={capabilityCosts.getCostsForCapability(x.id, 7)}/>
-                                            <ChevronRight/>
-                                        </>
+                                    showCostsSpinner ? <Spinner/> : isLoadingCosts ? (
+                                        <Text styledAs="caption" as={"div"}>No data available</Text>
+                                    ) : <>
+                                        <CapabilityCostSummary
+                                            data={capabilityCosts.getCostsForCapability(x.id, 7)}/>
+                                        <ChevronRight/>
+                                    </>
                                 }
+
                             </TableDataCell>
                         </TableRow>)}
                     </TableBody>

@@ -29,8 +29,10 @@ function CapabilityDetailsPageContent() {
         name,
         kafkaClusters,
         loadCapability,
-        showResources
-        , isPendingDeletion, updateDeletionStatus
+        showResources,
+        showCosts,
+        isPendingDeletion,
+        updateDeletionStatus
     } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
@@ -56,7 +58,7 @@ function CapabilityDetailsPageContent() {
                 capabilityId={id}
             />)}
 
-            <Costs/>
+            {showCosts && <Costs/>}
             <CapabilityManagement deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus}/>
 
         </Page>
