@@ -1,8 +1,4 @@
 export class CapabilityCostsWrapper {
-    static get DefaultFetchInterval() {
-        return 60 * 60;
-    }
-
     static get MaxDaysWindowSize() {
         return 30;
     }
