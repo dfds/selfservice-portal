@@ -1,0 +1,21 @@
+.costData {
+  width: 90%;
+  height: 30px;
+  display: inline-block;
+  align-content: center;
+}
+
+.customTooltip {
+  background-color: #01314E;
+  color: #ffffff;
+  opacity: 85%;
+}
+
+
+.tooltipName {
+  color: #c9c9c9;
+}
+
+.tooltipValue {
+  font-size: 1.2em;
+}

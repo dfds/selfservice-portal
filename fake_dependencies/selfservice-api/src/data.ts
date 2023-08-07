@@ -281,8 +281,8 @@ const messageContracts : MessageContract[] = [
 
 const capabilities : Capability[] = [
       {
-        id: "this-is-a-capability-xyz",
-        name: "this is a capability",
+        id: "astrid-dev-bvqrz",
+        name: "astrid-dev",
         description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
         members: [
           {
@@ -297,25 +297,12 @@ const capabilities : Capability[] = [
         __hasAwsAccount: true
       },
       {
-        id: "another-awssome-capability-abcd",
-        name: "another awssome capability",
-        description: "lknm lk23lnk nl kl23lk lk",
+        id: "dataplatform-ajamn",
+        name: "dataplatform",
+        description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
         members: [
           {
-            email: "thfis@dfds.com"
-          },
-        ],
-        __isMember: false,
-        __canJoin: true,
-        __hasAwsAccount: false
-      },
-      {
-        id: "my-second-capability",
-        name: "My Second Capability",
-        description: "Integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat diam ut",
-        members: [
-          {
-            email: "jandr@dfds.com"
+            email: "emcla@dfds.com"
           },
           {
             email: "thfis@dfds.com"
@@ -323,20 +310,39 @@ const capabilities : Capability[] = [
         ],
         __isMember: true,
         __canJoin: false,
-        __hasAwsAccount: false
+        __hasAwsAccount: true
       },
       {
-        id: "my-future-capability",
-        name: "My Future Capability",
-        description: "Vel facilisis volutpat est velit egestas dui id ornare arcu odio ut sem nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est ultricies integer quis auctor elit sed vulputate",
+        id: "customs-qjjyq",
+        name: "customs",
+        description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
         members: [
           {
-            email: "jawib@dfds.com"
+            email: "emcla@dfds.com"
+          },
+          {
+            email: "thfis@dfds.com"
           },
         ],
-        __isMember: false,
+        __isMember: true,
         __canJoin: false,
-        __hasAwsAccount: false
+        __hasAwsAccount: true
+      },
+      {
+        id: "sandbox-rifis-plboy",
+        name: "sandbox-rifis",
+        description: "lksd lskd flskdnf lskerntolweirhtn lis dflk slkdmf",
+        members: [
+          {
+            email: "emcla@dfds.com"
+          },
+          {
+            email: "thfis@dfds.com"
+          },
+        ],
+        __isMember: true,
+        __canJoin: false,
+        __hasAwsAccount: true
       },
 ];
 

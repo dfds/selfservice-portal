@@ -4,6 +4,7 @@ import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from './members';
 import Summary from './summary';
 import Resources from './resources';
+import Cost from './cost';
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import MembershipApplications from "./membershipapplications";
