@@ -72,7 +72,10 @@ function AppProvider({children}) {
     }, [myProfile, user]);
 
     useEffect(() => {
-        capabilityCosts.checkForCapabilityCostsUpdate()
+        capabilityCosts.checkForCapabilityCostsUpdate().then(loaded => {
+                setAppStatus(prev => ({...prev, ...{hasLoadedCosts: loaded}}));
+            }
+        )
     }, []);
 
 // ---------------------------------------------------------

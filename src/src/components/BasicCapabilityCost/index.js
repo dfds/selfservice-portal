@@ -1,6 +1,5 @@
 import styles from "./style.module.css";
-import {LineChart, Label, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
-import {Text} from "@dfds-ui/typography";
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
 import React from "react";
 
 export function CapabilityCostSummary({data}) {

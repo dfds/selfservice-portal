@@ -30,7 +30,8 @@ function CapabilityDetailsPageContent() {
         kafkaClusters,
         loadCapability,
         showResources
-   , isPendingDeletion, updateDeletionStatus } = useContext(SelectedCapabilityContext);
+        , isPendingDeletion, updateDeletionStatus
+    } = useContext(SelectedCapabilityContext);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -38,11 +39,10 @@ function CapabilityDetailsPageContent() {
     }, [id]);
 
     return <>
-        <DeletionWarning deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus} />
-            <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
+        <DeletionWarning deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus}/>
+        <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
             <Members/>
             <Summary/>
-            <Costs/>
             {showResources && (<Resources/>)}
 
             <MembershipApplications/>
@@ -56,9 +56,10 @@ function CapabilityDetailsPageContent() {
                 capabilityId={id}
             />)}
 
-                <CapabilityManagement deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus} />
+            <Costs/>
+            <CapabilityManagement deletionState={isPendingDeletion} updateDeletionState={updateDeletionStatus}/>
 
-            </Page>
+        </Page>
 
         <br/>
     </>
