@@ -43,13 +43,8 @@ export class CapabilityCostsWrapper {
         let nextFetch = (this.last_fetch + CapabilityCostsWrapper.DefaultFetchInterval);
         let fetchNewData = now >= nextFetch;
 
-        console.log("now " + now);
-        console.log("last_fetch " + this.last_fetch);
-        console.log("last_fetch+interval " + nextFetch);
-
         if (fetchNewData) {
             this.last_fetch = now;
-            console.log("last_fetch " + this.last_fetch);
             let costs = await this.apiClient.getCapabilityCosts(CapabilityCostsWrapper.MaxDaysWindowSize);
             this.createCapabilityCostsMap(costs);
         }
