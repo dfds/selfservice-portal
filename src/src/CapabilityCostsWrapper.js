@@ -9,14 +9,13 @@ export class CapabilityCostsWrapper {
 
     constructor(apiClient) {
         this.apiClient = apiClient;
-        this.last_fetch = 0;
         this.costsMap = new Map();
         this.has_set_costs = false;
     }
 
 
-    createCapabilityCostsMap(responseCosts) {
-
+    async updateMyCapabilityCosts() {
+        let responseCosts = await this.apiClient.getMyCapabilityCosts(CapabilityCostsWrapper.MaxDaysWindowSize);
         let costsMap = new Map();
         responseCosts.forEach(responseCost => {
             let capabilityId = responseCost.capabilityId;
@@ -34,20 +33,6 @@ export class CapabilityCostsWrapper {
         });
         this.costsMap = costsMap;
         this.has_set_costs = this.costsMap.size !== 0;
-    }
-
-
-    async checkForCapabilityCostsUpdate() {
-
-        let now = new Date().getTime() / 1000;
-        let nextFetch = (this.last_fetch + CapabilityCostsWrapper.DefaultFetchInterval);
-        let fetchNewData = now >= nextFetch;
-
-        if (fetchNewData) {
-            this.last_fetch = now;
-            let costs = await this.apiClient.getCapabilityCosts(CapabilityCostsWrapper.MaxDaysWindowSize);
-            this.createCapabilityCostsMap(costs);
-        }
         return this.has_set_costs;
     }
 

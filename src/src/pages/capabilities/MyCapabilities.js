@@ -46,7 +46,7 @@ export default function MyCapabilities() {
                                     isLoadingCosts ? <Spinner/> :
                                         <>
                                             <CapabilityCostSummary
-                                                data={capabilityCosts.getCostsForCapability("board-customers-meroa", 7)}/>
+                                                data={capabilityCosts.getCostsForCapability(x.id, 7)}/>
                                             <ChevronRight/>
                                         </>
                                 }

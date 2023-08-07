@@ -336,9 +336,9 @@ export class SelfServiceApiClient {
     //     return items || [];
     // }
 
-    async getCapabilityCosts(daysWindow) {
+    async getMyCapabilityCosts(daysWindow) {
         const accessToken = await getSelfServiceAccessToken();
-        const url = composeUrl("metrics/costs") + "?daysWindow=" + daysWindow;
+        const url = composeUrl("metrics/my-capability-costs") + "?daysWindow=" + daysWindow;
         const response = await callApi(url, accessToken);
         this.responseHandler(response);
 
