@@ -22,6 +22,9 @@ export default function Costs() {
         }, 3000);
     }, []);
 
+    useEffect(() => {
+        setShowCostsSpinner(isLoading);
+    }, [isLoading]);
 
     return <PageSection headline="Costs">
         <div className={styles.container}>

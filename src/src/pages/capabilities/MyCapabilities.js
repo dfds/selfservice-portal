@@ -26,6 +26,10 @@ export default function MyCapabilities() {
         }, 3000);
     }, []);
 
+    useEffect(() => {
+        setShowCostsSpinner(isLoadingCosts);
+    }, [isLoadingCosts]);
+
     return <>
         <PageSection headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}>
             {isLoading && <Spinner/>}
