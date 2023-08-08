@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
