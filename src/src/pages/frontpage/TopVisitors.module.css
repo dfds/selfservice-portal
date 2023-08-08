@@ -1,31 +1,31 @@
 .visitor {
-    display: flex;
-    margin-bottom: 0.5rem;
+  display: flex;
+  margin-bottom: 0.5rem;
 }
 
 .profilepicture {
-    margin-right: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .information {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-grow: 1;
-    margin-left: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  margin-left: 0.5rem;
 }
 
 .rank {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .leader {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tooearly {
-    color: #002b454d;
-    font-style: italic;
+  color: #002b454d;
+  font-style: italic;
 }

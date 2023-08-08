@@ -1,23 +1,23 @@
 .newsitemcontainer {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .newsitemlink {
-    text-decoration: none;
-    color: #002b454d;
-    border: 1px solid #002b454d;
-    border-radius: 0.5rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  text-decoration: none;
+  color: #002b454d;
+  border: 1px solid #002b454d;
+  border-radius: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .newsitemlink:visited {
-    text-decoration: none;
-    color: #002b454d;
+  text-decoration: none;
+  color: #002b454d;
 }
 
 .newsitemlink:hover {
-    text-decoration: none;
-    color: #002b45;
-    border: 1px solid #002b45;
+  text-decoration: none;
+  color: #002b45;
+  border: 1px solid #002b45;
 }

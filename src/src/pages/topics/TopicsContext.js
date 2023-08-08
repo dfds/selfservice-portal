@@ -1,43 +1,40 @@
-
-import React, { createContext, useEffect, useContext, useState } from 'react';
-import AppContext from "../../AppContext"
+import React, { createContext, useEffect, useContext, useState } from "react";
+import AppContext from "../../AppContext";
 
 const TopicsContext = createContext();
 
 function TopicsProvider({ children }) {
-    const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
-    const [kafkaClusters, setKafkaClusters] = useState([]);
-    const {selfServiceApiClient} = useContext(AppContext);
+  const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
+  const [kafkaClusters, setKafkaClusters] = useState([]);
+  const { selfServiceApiClient } = useContext(AppContext);
 
-    useEffect(() => {
-        fetchKafkaclusters().then(x => setKafkaClusters(x));
-    }, []);
+  useEffect(() => {
+    fetchKafkaclusters().then((x) => setKafkaClusters(x));
+  }, []);
 
-    const fetchKafkaclusters = async () => {
-        const result = await selfServiceApiClient.getKafkaClusters();
-            return result;
-        }
+  const fetchKafkaclusters = async () => {
+    const result = await selfServiceApiClient.getKafkaClusters();
+    return result;
+  };
 
+  const toggleSelectedKafkaTopic = (kafkaTopicId) => {
+    setSelectedKafkaTopic((prev) => {
+      if (prev === kafkaTopicId) {
+        return null;
+      }
 
-    const toggleSelectedKafkaTopic = (kafkaTopicId) => {
-        setSelectedKafkaTopic(prev => {
-            if (prev === kafkaTopicId) {
-                return null;
-            }
+      return kafkaTopicId;
+    });
+  };
 
-            return kafkaTopicId;
+  const state = {
+    selectedKafkaTopic,
+    toggleSelectedKafkaTopic,
+  };
 
-
-        });
-    };
-
-    const state ={
-        selectedKafkaTopic,
-        toggleSelectedKafkaTopic
-    }
-
-    return <TopicsContext.Provider value={state}>{children}</TopicsContext.Provider>;
+  return (
+    <TopicsContext.Provider value={state}>{children}</TopicsContext.Provider>
+  );
 }
 
-export {TopicsContext as default, TopicsProvider};
-
+export { TopicsContext as default, TopicsProvider };

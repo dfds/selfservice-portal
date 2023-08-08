@@ -1,7 +1,9 @@
-import { Text } from '@dfds-ui/typography';
+import { Text } from "@dfds-ui/typography";
 
-export default function Consumer({name}) {
-    return <div>
-        <Text styledAs="label">{name}</Text>
+export default function Consumer({ name }) {
+  return (
+    <div>
+      <Text styledAs="label">{name}</Text>
     </div>
+  );
 }

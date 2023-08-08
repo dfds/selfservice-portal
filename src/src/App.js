@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
-import { SiteLayout } from '@dfds-ui/react-components';
+import { SiteLayout } from "@dfds-ui/react-components";
 
 import GlobalMenu from "./components/GlobalMenu/GlobalMenu";
 import FrontPage from "./pages/frontpage";
@@ -11,33 +11,36 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
 function Footer() {
-  return <div className="globalfooter">
-    By: Cloud Engineering | Released: {process.env.REACT_APP_DATE_OF_RELEASE}
-  </div>
+  return (
+    <div className="globalfooter">
+      By: Cloud Engineering | Released: {process.env.REACT_APP_DATE_OF_RELEASE}
+    </div>
+  );
 }
 
 function Layout() {
-  return <>
-    <AuthenticatedTemplate>
-      <SiteLayout.Grid>
-        <SiteLayout.Header>
-          <GlobalMenu />
-        </SiteLayout.Header>
-        <SiteLayout.Main>
-          <Outlet />
-          <Footer />
-        </SiteLayout.Main>
-      </SiteLayout.Grid>
-    </AuthenticatedTemplate>
+  return (
+    <>
+      <AuthenticatedTemplate>
+        <SiteLayout.Grid>
+          <SiteLayout.Header>
+            <GlobalMenu />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <Outlet />
+            <Footer />
+          </SiteLayout.Main>
+        </SiteLayout.Grid>
+      </AuthenticatedTemplate>
 
-    {/* <UnauthenticatedTemplate>
+      {/* <UnauthenticatedTemplate>
       nooooooo
     </UnauthenticatedTemplate> */}
-  </>
+    </>
+  );
 }
 
 export default function App() {
-
   return (
     <>
       <Routes>
@@ -49,5 +52,5 @@ export default function App() {
         </Route>
       </Routes>
     </>
-  )
+  );
 }
