@@ -271,9 +271,16 @@ function SelectedCapabilityProvider({children}) {
     //--------------------------------------------------------------------
 
     useEffect(() => {
+        if(myCapabilities){
+            let capabilityJoined = myCapabilities.find(x => x.id === capabilityId) !== undefined;
+            setShowCosts(capabilityJoined);
+        }
+    },[details, myCapabilities]);
+
+    useEffect(() => {
         if (isLoaded) {
             setDetails(capability);
-            setPendingDeletion(capability.status === "Pending Deletion");            
+            setPendingDeletion(capability.status === "Pending Deletion");
         }
 
     }, [isLoaded, capability]);
@@ -306,11 +313,6 @@ function SelectedCapabilityProvider({children}) {
 
         return () => clearInterval(handle);
     }, [details]);
-
-    useEffect(() => {
-        let capabilityJoined = myCapabilities.find(x => x.id === capabilityId) !== undefined;
-        setShowCosts(capabilityJoined);
-    },[capability]);
 
     //--------------------------------------------------------------------
 
