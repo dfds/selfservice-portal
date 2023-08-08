@@ -43,7 +43,7 @@ export function LargeCapabilityCostSummary({ data }) {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis hide />
-          <YAxis type="number" scale="linear" domain={domain} />
+          <YAxis type="number" scale="linear" domain={domain} unit={"$"} />
           <Tooltip content={CostTooltip} />
           <CartesianGrid strokeDasharray="1 1" />
           <Line
