@@ -27,10 +27,18 @@ export default function MyCapabilities() {
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
   useEffect(() => {
-    // Simulate fetching data from an API
-    setTimeout(() => {
-      setShowCostsSpinner(false);
+    let isMounted = true;
+
+    const interval = setInterval(() => {
+      if (isMounted) {
+        setShowCostsSpinner(false);
+      }
     }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
