@@ -1,4 +1,4 @@
-.searchcontainer  div{
+.searchcontainer div {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -24,7 +24,6 @@
   /* background-color: saddlebrown !important; */
 }
 
-
 .searchcontainer > * {
   margin: 0 5px 0 0;
 }
@@ -43,7 +42,7 @@
   justify-content: space-between;
   align-content: center;
   /* background-color: #002b45; */
-  color: "#002b45b3"
+  color: "#002b45b3";
 }
 
 .topicheader:hover {
@@ -58,7 +57,7 @@
 
 .topicheaderselected:hover {
   background-color: #002b45 !important;
-  color: #fff
+  color: #fff;
 }
 
 .messagecontractsheader {
@@ -69,8 +68,7 @@
   align-items: center;
 }
 
-
-.infocontainer p{
+.infocontainer p {
   margin-block-start: 0.1em;
   margin-block-end: 0.1em;
   margin-inline-start: 0.1px;
@@ -87,5 +85,3 @@
   padding-bottom: 0rem;
   padding-left: 0rem;
 }
-
-

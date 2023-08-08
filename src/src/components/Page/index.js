@@ -1,33 +1,42 @@
-import { H1 } from '@dfds-ui/react-components';
-import { Text } from '@dfds-ui/typography';
-import { Container, Column, DfdsLoader } from '@dfds-ui/react-components';
-import NotFound from './NotFound';
+import { H1 } from "@dfds-ui/react-components";
+import { Text } from "@dfds-ui/typography";
+import { Container, Column, DfdsLoader } from "@dfds-ui/react-components";
+import NotFound from "./NotFound";
 
-export default function Page({title, isLoading = false, isNotFound = false, children}) {
-    if (isLoading) {
-        return <DfdsLoader showMenu={true} label="Loading..." />
-    }
+export default function Page({
+  title,
+  isLoading = false,
+  isNotFound = false,
+  children,
+}) {
+  if (isLoading) {
+    return <DfdsLoader showMenu={true} label="Loading..." />;
+  }
 
-    if (isNotFound) {
-        return <NotFound />
-    }
+  if (isNotFound) {
+    return <NotFound />;
+  }
 
-    return <>
-        {title && 
-            <>
-                <br/>
-                <br/>        
-            </>
-        }
+  return (
+    <>
+      {title && (
+        <>
+          <br />
+          <br />
+        </>
+      )}
 
-        <Container>
-            <Column m={12} l={12} xl={12} xxl={12}>
-                {title && 
-                    <Text as={H1} styledAs='heroHeadline'>{title}</Text>
-                }
-                
-                {children}
-            </Column>
-        </Container>
+      <Container>
+        <Column m={12} l={12} xl={12} xxl={12}>
+          {title && (
+            <Text as={H1} styledAs="heroHeadline">
+              {title}
+            </Text>
+          )}
+
+          {children}
+        </Column>
+      </Container>
     </>
+  );
 }

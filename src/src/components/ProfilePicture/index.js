@@ -1,3 +1,3 @@
 import ProfilePicture from "./ProfilePicture";
 
-export { ProfilePicture as SmallProfilePicture }
+export { ProfilePicture as SmallProfilePicture };

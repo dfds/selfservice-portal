@@ -38,36 +38,37 @@ export default function MyCapabilities() {
                 <Text>Oh no! You have not joined a capability...yet! Knock yourself out with the ones below...</Text>}
 
             {!isLoading && items.length > 0 && <>
-                <Table isInteractive width={"100%"}>
-                    <TableHead>
-                        <TableRow>
-                            <TableHeaderCell>Name</TableHeaderCell>
-                            <TableHeaderCell align="center">Costs</TableHeaderCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
-                            <TableDataCell>
-                                <Text className="warningIcon" hidden={x.status == "Active"}><StatusAlert/></Text>
-                                <Text styledAs="action" as={"div"}>{x.name}</Text>
-                                <Text styledAs="caption" as={"div"}>{x.description}</Text>
-                            </TableDataCell>
-                            <TableDataCell align="center" width="100px">
-                                {
-                                    showCostsSpinner ? <Spinner/> : isLoadingCosts ? (
-                                        <Text styledAs="caption" as={"div"}>No data available</Text>
-                                    ) : <>
-                                        <CapabilityCostSummary
-                                            data={capabilityCosts.getCostsForCapability(x.id, 7)}/>
-                                        <ChevronRight/>
-                                    </>
-                                }
+            <Table isInteractive width={"100%"}>
+                <TableHead>
+                    <TableRow>
+                        <TableHeaderCell>Name</TableHeaderCell>
+                        <TableHeaderCell align="center">Costs</TableHeaderCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {items.map(x => <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
+                        <TableDataCell>
+                            <Text className="warningIcon" hidden={x.status == "Active"}><StatusAlert/></Text>
+                            <Text styledAs="action" as={"div"}>{x.name}</Text>
+                            <Text styledAs="caption" as={"div"}>{x.description}</Text>
+                        </TableDataCell>
+                        <TableDataCell align="center" width="100px">
+                            {
+                                showCostsSpinner ? <Spinner/> : isLoadingCosts ? (
+                                    <Text styledAs="caption" as={"div"}>No data available</Text>
+                                ) : <>
+                                    <CapabilityCostSummary
+                                        data={capabilityCosts.getCostsForCapability(x.id, 7)}/>
+                                    <ChevronRight/>
+                                </>
+                            }
 
-                            </TableDataCell>
-                        </TableRow>)}
-                    </TableBody>
-                </Table>
-            </>}
+                        </TableDataCell>
+                    </TableRow>)}
+                </TableRow>)}
+            </TableBody>
+            </Table>
+                </>}
         </PageSection>
     </>
 }
