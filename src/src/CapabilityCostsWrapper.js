@@ -45,7 +45,7 @@ export class CapabilityCostsWrapper {
 
         let costsForWindow = [];
         let now = new Date();
-        let costs = this.costsMap.get(capabilityId);
+        let costs = this.costsMap.get(capabilityId).slice().reverse();
         costs.forEach((cost) => {
             if (costsForWindow.length === daysWindow) {
                 return;
