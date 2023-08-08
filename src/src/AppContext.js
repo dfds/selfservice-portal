@@ -71,12 +71,25 @@ function AppProvider({children}) {
         }
     }, [myProfile, user]);
 
-    useEffect(() => {
-        capabilityCosts.updateMyCapabilityCosts().then(loaded => {
+    function updateCapabilityCosts(){
+        capabilityCosts.tryUpdateMyCapabilityCosts().then(loaded => {
                 setAppStatus(prev => ({...prev, ...{hasLoadedCosts: loaded}}));
             }
         )
+    }
+
+    useEffect(() => {
+        updateCapabilityCosts();
     }, [myCapabilities]);
+
+    useEffect(() => {
+        const interval=setInterval(()=>{
+            updateCapabilityCosts();
+        },1000 * 60)
+        return () => clearInterval(interval)
+    },[])
+
+
 
 // ---------------------------------------------------------
 

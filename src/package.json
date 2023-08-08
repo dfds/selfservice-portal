@@ -24,7 +24,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
     "react-syntax-highlighter": "^15.5.0",
-    "recharts": "^2.6.2",
+    "recharts": "^2.7.2",
     "serve": "^14.1.2",
     "to-json-schema": "^0.2.5"
   },

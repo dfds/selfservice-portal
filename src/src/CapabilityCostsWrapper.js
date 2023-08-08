@@ -1,4 +1,9 @@
 export class CapabilityCostsWrapper {
+
+    static get ForceCheckInterval() {
+        return 60 * 5; // 5 minutes
+    }
+
     static get MaxDaysWindowSize() {
         return 30;
     }
@@ -7,10 +12,16 @@ export class CapabilityCostsWrapper {
         this.apiClient = apiClient;
         this.costsMap = new Map();
         this.has_set_costs = false;
+        this.next_forced_update = new Date();
     }
 
 
-    async updateMyCapabilityCosts() {
+    async tryUpdateMyCapabilityCosts() {
+        let now = new Date().getUTCSeconds();
+        if (this.has_set_costs && this.next_forced_update > now) {
+            return true;
+        }
+
         let responseCosts = await this.apiClient.getMyCapabilityCosts(CapabilityCostsWrapper.MaxDaysWindowSize);
         let costsMap = new Map();
         responseCosts.forEach(responseCost => {
@@ -29,6 +40,7 @@ export class CapabilityCostsWrapper {
         });
         this.costsMap = costsMap;
         this.has_set_costs = this.costsMap.size !== 0;
+        this.next_forced_update = now + CapabilityCostsWrapper.ForceCheckInterval;
         return this.has_set_costs;
     }
 

@@ -21,12 +21,16 @@ export function CapabilityCostSummary({data}) {
 }
 
 export function LargeCapabilityCostSummary({data}) {
+    const d1 = (Math.min(...data.map(x => x.pv)) * 0.95);
+    const d2 = (Math.max(...data.map(x => x.pv)) * 1.05);
+
+    const domain = [d1, d2];
     return (
         <div className={styles.largeCostDataSummary}>
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
                     <XAxis hide/>
-                    <YAxis type="number" domain={[dataMin => (0), dataMax => (dataMax * 1.2)]} />/>
+                    <YAxis type="number" scale='linear' domain={domain} />
                     <Tooltip content={CostTooltip}/>
                     <CartesianGrid strokeDasharray="1 1"/>
                     <Line type="monotone" dataKey="pv" stroke="#055874" strokeWidth={2} dot={false}
