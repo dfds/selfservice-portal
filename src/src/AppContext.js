@@ -15,7 +15,9 @@ function sleep(duration) {
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
-  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(user.isAuthenticated);
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
+    user.isAuthenticated,
+  );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
   });
@@ -27,7 +29,7 @@ function AppProvider({ children }) {
   const news = useLatestNews();
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
-  const {handleError} = useContext(ErrorContext);
+  const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = new ApiClient.SelfServiceApiClient(handleError);
 
   const { addCapability } = useCapabilities();
@@ -40,7 +42,7 @@ function AppProvider({ children }) {
 
     setMyCapabilities(capabilities);
     setStats(stats);
-    setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
+    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
     setShouldAutoReloadTopics(autoReloadTopics);
 
     setMyProfile(profile);
@@ -53,12 +55,12 @@ function AppProvider({ children }) {
   }
 
   useEffect(() => {
-    if(isAuthenticatedUser !== user.isAuthenticated) {
+    if (isAuthenticatedUser !== user.isAuthenticated) {
       setIsAuthenticatedUser(user.isAuthenticated);
     }
     if (user && user.isAuthenticated) {
-        loadMyProfile();
-      }
+      loadMyProfile();
+    }
   }, [user]);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ function AppProvider({ children }) {
     }
   }, [myProfile, user]);
 
-// ---------------------------------------------------------
+  // ---------------------------------------------------------
 
   const state = {
     user,
@@ -81,10 +83,10 @@ function AppProvider({ children }) {
     stats,
     news,
     shouldAutoReloadTopics,
-    selfServiceApiClient
+    selfServiceApiClient,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
 }
 
-export { AppContext as default, AppProvider }
+export { AppContext as default, AppProvider };

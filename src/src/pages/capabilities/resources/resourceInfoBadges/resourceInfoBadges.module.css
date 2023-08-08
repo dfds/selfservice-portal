@@ -1,7 +1,7 @@
-.horizontalBox{
-    display: flex;
-    gap: '0.1rem';
-    margin-left: auto;
+.horizontalBox {
+  display: flex;
+  gap: "0.1rem";
+  margin-left: auto;
 }
 
 hr.divider {
@@ -28,7 +28,7 @@ hr.divider {
 
 .completed .items {
   text-align: center;
-  border-right: 1px solid #dedede
+  border-right: 1px solid #dedede;
 }
 
 .completed .items:last-child {

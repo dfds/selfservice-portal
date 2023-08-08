@@ -1,7 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { Text } from "@dfds-ui/typography";
-import { Card, CardContent, Button, ButtonStack } from "@dfds-ui/react-components";
+import {
+  Card,
+  CardContent,
+  Button,
+  ButtonStack,
+} from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 
@@ -27,8 +32,12 @@ export default function Resources() {
 
           <ResourceInfoBadges />
 
-          <ButtonStack align="left" style={{marginTop: '15px'}}>
-            <Button size="small" variation="outlined" onClick={handleApplicationLogShow}>
+          <ButtonStack align="left" style={{ marginTop: "15px" }}>
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={handleApplicationLogShow}
+            >
               How to see application logs?
             </Button>
           </ButtonStack>
@@ -57,16 +66,34 @@ export default function Resources() {
           </Text>
         </Text>
         <Text>
-          1. Sign into the <i>dfds-logs</i> account using the <i>CapabilityLog</i> role at <a target="_blank" href="https://dfds.awsapps.com/start/">https://dfds.awsapps.com/start/</a>
+          1. Sign into the <i>dfds-logs</i> account using the{" "}
+          <i>CapabilityLog</i> role at{" "}
+          <a target="_blank" href="https://dfds.awsapps.com/start/">
+            https://dfds.awsapps.com/start/
+          </a>
           <br />
           2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
           <br />
-          3. Navigate to the CloudWatch service either using the navigation menu or <a target="_blank" href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:">this link</a>
+          3. Navigate to the CloudWatch service either using the navigation menu
+          or{" "}
+          <a
+            target="_blank"
+            href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
+          >
+            this link
+          </a>
           <br />
-          4. Once there, select "Logs" in the menu on your left, and then "Logs Insights"
+          4. Once there, select "Logs" in the menu on your left, and then "Logs
+          Insights"
           <br />
-          5. From this view, you can query logs in Kubernetes. For example queries, please check our wiki article at <a target="_blank" href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch">https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch</a>
-
+          5. From this view, you can query logs in Kubernetes. For example
+          queries, please check our wiki article at{" "}
+          <a
+            target="_blank"
+            href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
+          >
+            https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
+          </a>
         </Text>
       </Modal>
     </>
