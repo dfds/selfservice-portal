@@ -49,7 +49,7 @@ export default function DeletionWarning() {
               will be removed permanently.
             </p>
             <div style={{ paddingTop: "2rem" }}>
-              <ButtonStack align="right">
+              {canCancelDeleteCapability && <ButtonStack align="right">
                 {
                   <button
                     className="goodButton"
@@ -58,13 +58,12 @@ export default function DeletionWarning() {
                         cursor: pointer;
                       }
                     `}
-                    disabled={!canCancelDeleteCapability}
                     onClick={() => handleCancelDeleteClicked()}
                   >
                     Cancel Deletion
                   </button>
                 }
-              </ButtonStack>
+              </ButtonStack>}
             </div>
           </CardContent>
         </div>
