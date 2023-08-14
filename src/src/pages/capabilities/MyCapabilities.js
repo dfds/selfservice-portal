@@ -29,7 +29,8 @@ export default function MyCapabilities() {
   useEffect(() => {
     let isMounted = true;
 
-    const interval = setInterval(() => {
+    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
+    const timeout = setTimeout(() => {
       if (isMounted) {
         setShowCostsSpinner(false);
       }
@@ -37,7 +38,7 @@ export default function MyCapabilities() {
 
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      clearTimeout(timeout);
     };
   }, []);
 

@@ -57,19 +57,10 @@ export class CapabilityCostsWrapper {
       return [];
     }
 
-    let costsForWindow = [];
-    let now = new Date();
-    let costs = this.costsMap.get(capabilityId).slice().reverse();
-    costs.forEach((cost) => {
-      if (costsForWindow.length === daysWindow) {
-        return;
-      }
-      let costDate = new Date(cost.name);
-      if (costDate <= now) {
-        costsForWindow.push(cost);
-      }
-    });
-
-    return costsForWindow.slice().reverse();
+    let these_costs = this.costsMap.get(capabilityId);
+    if (these_costs.length <= daysWindow) {
+      return these_costs;
+    }
+    return these_costs.slice(-daysWindow);
   }
 }
