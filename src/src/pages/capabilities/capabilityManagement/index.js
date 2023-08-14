@@ -83,7 +83,7 @@ export default function CapabilityManagement() {
 
   return (
     <>
-      <PageSection headline="Capability Management">
+      {canDeleteCapability && <PageSection headline="Capability Management">
         {showDeleteDialog && (
           <DeleteDialog
             onCloseRequested={() => {
@@ -126,7 +126,7 @@ export default function CapabilityManagement() {
             </CardContent>
           )}
         </Card>
-      </PageSection>
+      </PageSection>}
     </>
   );
 }
