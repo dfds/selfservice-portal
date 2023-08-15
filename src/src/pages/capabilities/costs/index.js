@@ -2,11 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../../AppContext";
 import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
-import styles from "../summary/summary.module.css";
 import { Text } from "@dfds-ui/typography";
 import { LargeCapabilityCostSummary } from "../../../components/BasicCapabilityCost";
 import { Spinner } from "@dfds-ui/react-components";
-import costsStyles from "./costs.module.css";
+import styles from "./costs.module.css";
 
 export default function Costs() {
   const { appStatus, capabilityCosts } = useContext(AppContext);
@@ -54,7 +53,7 @@ export default function Costs() {
                         data={dataValue}
                         capabilityId={id}
                       />
-                      <Text className={costsStyles.finout_link} >
+                      <Text className={styles.finout_link} >
                         <ins>Finout link coming soon</ins>
                       </Text>
                     </>
