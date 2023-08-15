@@ -11,12 +11,16 @@ import {
 import React from "react";
 
 export function CapabilityCostSummary({ data }) {
+  const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
+  const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
+
+  const domain = [d1, d2];
   return (
     <div className={styles.costDataSummary}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="timestamp" hide />
-          <YAxis type="number" domain={["dataMin", "dataMax"]} hide></YAxis>
+          <YAxis type="number" domain={[d1,d2]} hide></YAxis>
           <Tooltip content={CostTooltip} />
           <CartesianGrid />
           <Line
