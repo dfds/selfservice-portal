@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
+import { CapabilityCostsWrapper } from "./CapabilityCostsWrapper";
 
 const AppContext = React.createContext(null);
 
@@ -20,6 +21,7 @@ function AppProvider({ children }) {
   );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
+    hasLoadedCosts: false,
   });
 
   const [topics, setTopics] = useState([]);
@@ -30,7 +32,14 @@ function AppProvider({ children }) {
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
-  const selfServiceApiClient = new ApiClient.SelfServiceApiClient(handleError);
+  const selfServiceApiClient = useMemo(
+    () => new ApiClient.SelfServiceApiClient(handleError),
+    [handleError],
+  );
+  const capabilityCosts = useMemo(
+    () => new CapabilityCostsWrapper(selfServiceApiClient),
+    [selfServiceApiClient],
+  );
 
   const { addCapability } = useCapabilities();
 
@@ -70,6 +79,23 @@ function AppProvider({ children }) {
     }
   }, [myProfile, user]);
 
+  function updateCapabilityCosts() {
+    capabilityCosts.tryUpdateMyCapabilityCosts().then((loaded) => {
+      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedCosts: loaded } }));
+    });
+  }
+
+  useEffect(() => {
+    updateCapabilityCosts();
+  }, [myCapabilities]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateCapabilityCosts();
+    }, 1000 * 60);
+    return () => clearInterval(interval);
+  }, []);
+
   // ---------------------------------------------------------
 
   const state = {
@@ -84,6 +110,7 @@ function AppProvider({ children }) {
     news,
     shouldAutoReloadTopics,
     selfServiceApiClient,
+    capabilityCosts,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

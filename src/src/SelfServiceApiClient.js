@@ -383,6 +383,22 @@ export class SelfServiceApiClient {
   //     return items || [];
   // }
 
+  async getMyCapabilityCosts(daysWindow) {
+    const accessToken = await getSelfServiceAccessToken();
+    const url =
+      composeUrl("metrics/my-capability-costs") + "?daysWindow=" + daysWindow;
+    const response = await callApi(url, accessToken);
+    this.responseHandler(response);
+
+    if (!response.ok) {
+      console.log("response was: ", response.status);
+      return [];
+    }
+
+    let obj = await response.json();
+    return obj.costs || [];
+  }
+
   async getCapabilityMembershipApplications(capabilityDefinition) {
     const membershipApplicationsLink =
       capabilityDefinition?._links?.membershipApplications;

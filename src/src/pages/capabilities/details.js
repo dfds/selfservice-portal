@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
 import Summary from "./summary";
+import Costs from "./costs";
 import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
@@ -30,6 +31,7 @@ function CapabilityDetailsPageContent() {
     kafkaClusters,
     loadCapability,
     showResources,
+    showCosts,
     isPendingDeletion,
     updateDeletionStatus,
   } = useContext(SelectedCapabilityContext);
@@ -59,6 +61,7 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
+        {showCosts && <Costs />}
         <CapabilityManagement
           deletionState={isPendingDeletion}
           updateDeletionState={updateDeletionStatus}

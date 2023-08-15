@@ -1,4 +1,4 @@
-﻿import AppContext from "AppContext";
+import AppContext from "AppContext";
 import React, {
   createContext,
   useEffect,
@@ -23,7 +23,7 @@ function adjustRetention(kafkaTopic) {
 }
 
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient } =
+  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
     useContext(AppContext);
 
   //const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +38,7 @@ function SelectedCapabilityProvider({ children }) {
   const { capability, isLoaded } = useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
+  const [showCosts, setShowCosts] = useState(false);
 
   // load kafka clusters and topics
   const loadKafkaClustersAndTopics = useCallback(async () => {
@@ -307,6 +308,14 @@ function SelectedCapabilityProvider({ children }) {
   //--------------------------------------------------------------------
 
   useEffect(() => {
+    if (myCapabilities) {
+      let capabilityJoined =
+        myCapabilities.find((x) => x.id === capabilityId) !== undefined;
+      setShowCosts(capabilityJoined);
+    }
+  }, [details, myCapabilities]);
+
+  useEffect(() => {
     if (isLoaded) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
@@ -374,6 +383,7 @@ function SelectedCapabilityProvider({ children }) {
     submitCancelDeleteCapability,
     isPendingDeletion,
     updateDeletionStatus,
+    showCosts,
   };
 
   return (
