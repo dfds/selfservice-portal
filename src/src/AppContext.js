@@ -74,7 +74,7 @@ function AppProvider({ children }) {
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
-      selfServiceApiClient.updateMyPersonalInfirmation(myProfile, user);
+      selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
       selfServiceApiClient.registerMyVisit(myProfile);
     }
   }, [myProfile, user]);

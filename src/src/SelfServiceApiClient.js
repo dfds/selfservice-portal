@@ -78,7 +78,7 @@ export class SelfServiceApiClient {
     return stats || [];
   }
 
-  async updateMyPersonalInfirmation(
+  async updateMyPersonalInformation(
     myProfileDefinition,
     personalInformationDescriptor,
   ) {
