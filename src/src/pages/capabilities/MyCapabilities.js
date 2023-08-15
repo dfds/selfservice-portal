@@ -14,6 +14,7 @@ import {
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
+import styles from "./myCapabilities.module.css";
 
 export default function MyCapabilities() {
   const { myCapabilities, capabilityCosts, appStatus } = useContext(AppContext);
@@ -74,7 +75,7 @@ export default function MyCapabilities() {
                   <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
                     <TableDataCell>
                       <Text
-                        className="warningIcon"
+                        className={styles.warningIcon}
                         hidden={x.status == "Active"}
                       >
                         <StatusAlert />
