@@ -1,11 +1,4 @@
-import {
-  Badge,
-  ButtonStack,
-  Button,
-  Container,
-  Column,
-  Spinner,
-} from "@dfds-ui/react-components";
+import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
@@ -120,10 +113,10 @@ const Completed = function ({ accountId, namespace }) {
   );
 };
 
-export function ResourceInfoBadges({}) {
+export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const { awsAccount, links, requestAwsAccount } = useContext(
-    SelectedCapabilityContext
+    SelectedCapabilityContext,
   );
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

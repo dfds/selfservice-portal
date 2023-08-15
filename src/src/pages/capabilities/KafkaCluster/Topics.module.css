@@ -1,67 +1,67 @@
 .clusterheader {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .capabilityid {
-    font-family: monospace;
-    color: #ED8800;
+  font-family: monospace;
+  color: #ed8800;
 }
 
 .tooltipsection {
-    clear: both;
+  clear: both;
 }
 
 .tooltip {
-    display: inline-block;
-    position: relative;
-    float: right;
+  display: inline-block;
+  position: relative;
+  float: right;
 }
 
 .topicheader {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    /* border: 1px solid orange; */
-    cursor: pointer;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin: 1rem;
-    margin-bottom: 0;
-    align-items: center;
-    justify-content: space-between;
-    align-content: center;
-    /* background-color: #002b45; */
-    /* color: #fff */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  /* border: 1px solid orange; */
+  cursor: pointer;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin: 1rem;
+  margin-bottom: 0;
+  align-items: center;
+  justify-content: space-between;
+  align-content: center;
+  /* background-color: #002b45; */
+  /* color: #fff */
 }
 
 .topicheader:hover {
-    background-color: #bbddf3;
+  background-color: #bbddf3;
 }
 
 .topicheaderselected {
-    background-color: #002b45;
-    color: #fff
+  background-color: #002b45;
+  color: #fff;
 }
 
 .topicheaderselected:hover {
-    background-color: #002b45 !important;
-    color: #fff
+  background-color: #002b45 !important;
+  color: #fff;
 }
 
 .notprovisioned {
-    color: #002b454d;
-    font-style: italic;
+  color: #002b454d;
+  font-style: italic;
 }
 
 .messagecontractsheader {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
 }

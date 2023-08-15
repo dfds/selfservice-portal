@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
+import { CapabilityCostsWrapper } from "./CapabilityCostsWrapper";
 
 const AppContext = React.createContext(null);
 
@@ -15,9 +16,12 @@ function sleep(duration) {
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
-  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(user.isAuthenticated);
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
+    user.isAuthenticated,
+  );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
+    hasLoadedCosts: false,
   });
 
   const [topics, setTopics] = useState([]);
@@ -27,8 +31,15 @@ function AppProvider({ children }) {
   const news = useLatestNews();
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
-  const {handleError} = useContext(ErrorContext);
-  const selfServiceApiClient = new ApiClient.SelfServiceApiClient(handleError);
+  const { handleError } = useContext(ErrorContext);
+  const selfServiceApiClient = useMemo(
+    () => new ApiClient.SelfServiceApiClient(handleError),
+    [handleError],
+  );
+  const capabilityCosts = useMemo(
+    () => new CapabilityCostsWrapper(selfServiceApiClient),
+    [selfServiceApiClient],
+  );
 
   const { addCapability } = useCapabilities();
 
@@ -40,7 +51,7 @@ function AppProvider({ children }) {
 
     setMyCapabilities(capabilities);
     setStats(stats);
-    setAppStatus(prev => ({...prev, ...{hasLoadedMyCapabilities: true}}));
+    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
     setShouldAutoReloadTopics(autoReloadTopics);
 
     setMyProfile(profile);
@@ -53,22 +64,39 @@ function AppProvider({ children }) {
   }
 
   useEffect(() => {
-    if(isAuthenticatedUser !== user.isAuthenticated) {
+    if (isAuthenticatedUser !== user.isAuthenticated) {
       setIsAuthenticatedUser(user.isAuthenticated);
     }
     if (user && user.isAuthenticated) {
-        loadMyProfile();
-      }
+      loadMyProfile();
+    }
   }, [user]);
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
-      selfServiceApiClient.updateMyPersonalInfirmation(myProfile, user);
+      selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
       selfServiceApiClient.registerMyVisit(myProfile);
     }
   }, [myProfile, user]);
 
-// ---------------------------------------------------------
+  function updateCapabilityCosts() {
+    capabilityCosts.tryUpdateMyCapabilityCosts().then((loaded) => {
+      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedCosts: loaded } }));
+    });
+  }
+
+  useEffect(() => {
+    updateCapabilityCosts();
+  }, [myCapabilities]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateCapabilityCosts();
+    }, 1000 * 60);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ---------------------------------------------------------
 
   const state = {
     user,
@@ -81,10 +109,11 @@ function AppProvider({ children }) {
     stats,
     news,
     shouldAutoReloadTopics,
-    selfServiceApiClient
+    selfServiceApiClient,
+    capabilityCosts,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
 }
 
-export { AppContext as default, AppProvider }
+export { AppContext as default, AppProvider };

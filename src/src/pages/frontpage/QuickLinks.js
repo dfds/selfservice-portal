@@ -1,25 +1,33 @@
 import { ListItem, ListText, ListIcon } from "@dfds-ui/react-components";
 import { ArrowForward } from "@dfds-ui/icons/system";
 
-function Link({title, url}) {
-  const Anchor = props => {
-    return <a target="_blank" href={url} {...props} />;
+function Link({ title, url }) {
+  const Anchor = (props) => {
+    // eslint-disable-next-line jsx-a11y/anchor-has-content, react/jsx-no-target-blank
+    return <a target="_blank" href={url} {...props} />; // Looks like a link attribute is being mis-used, needs to be investigated further
   };
 
-  return <ListItem condensed divider as={Anchor} clickable>
-    <ListText>{title}</ListText>
-    <ListIcon icon={ArrowForward} />
-  </ListItem>
+  return (
+    <ListItem condensed divider as={Anchor} clickable>
+      <ListText>{title}</ListText>
+      <ListIcon icon={ArrowForward} />
+    </ListItem>
+  );
 }
 
 export default function QuickLinks() {
-  return <div>
-    <Link title={"AWS Login"} url="https://dfds.awsapps.com/start" />
-    <Link title={"Azure DevOps"} url="https://dev.azure.com/dfds" />
-    <Link title={"GitHub"} url="https://github.com/dfds" />
-    <Link title={"Snyk"} url="https://app.snyk.io/login/sso" />
-    <Link title={"1Password"} url="https://dfds.1password.com/signin" />
-    <Link title={"Mural"} url="https://app.mural.co/t/dfds9874/home" />
-    <Link title={"React Frontend Components"} url="https://ui-components-three.vercel.app" />
-  </div>
+  return (
+    <div>
+      <Link title={"AWS Login"} url="https://dfds.awsapps.com/start" />
+      <Link title={"Azure DevOps"} url="https://dev.azure.com/dfds" />
+      <Link title={"GitHub"} url="https://github.com/dfds" />
+      <Link title={"Snyk"} url="https://app.snyk.io/login/sso" />
+      <Link title={"1Password"} url="https://dfds.1password.com/signin" />
+      <Link title={"Mural"} url="https://app.mural.co/t/dfds9874/home" />
+      <Link
+        title={"React Frontend Components"}
+        url="https://ui-components-three.vercel.app"
+      />
+    </div>
+  );
 }

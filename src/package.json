@@ -24,6 +24,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^4.0.0",
     "react-syntax-highlighter": "^15.5.0",
+    "recharts": "^2.7.2",
     "serve": "^14.1.2",
     "to-json-schema": "^0.2.5"
   },
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "^2.32.2",
-    "@azure/msal-react": "^1.5.2"
+    "@azure/msal-react": "^1.5.2",
+    "prettier": "3.0.1"
   }
 }

@@ -1,0 +1,54 @@
+.cardLike {
+  padding: 20px;
+  width: 100%;
+}
+
+.spacing {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.warningBorder {
+  border: 2px solid;
+  border-color: #be1e2d;
+}
+
+.alertFill {
+  background-color: #f1a7ae;
+}
+
+.warningHeader {
+  text-align: center;
+  color: #be1e2d;
+}
+
+.warningContent {
+  font-weight: bold;
+}
+
+.goodButton {
+  border: 2px solid;
+  border-color: #be1e2d;
+  background-color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+}
+
+.badButton {
+  background-color: white;
+  font-weight: bold;
+  color: #be1e2d;
+  padding: 10px 20px;
+}
+
+.fade-out-element {
+  opacity: 1;
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
+}
+
+.fade-out-element.fade-out {
+  opacity: 0;
+  transform: translateY(-20px); /* Or any other desired effect */
+}

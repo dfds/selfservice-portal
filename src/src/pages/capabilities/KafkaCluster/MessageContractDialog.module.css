@@ -1,27 +1,27 @@
 .columns {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: flex-start;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .column {
-    width: 50%;
-    margin-right: 1rem;
+  width: 50%;
+  margin-right: 1rem;
 }
 
 .column:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .contentwrapper {
-    display: flex;
-    align-items: stretch;    
+  display: flex;
+  align-items: stretch;
 }
 
 .topicname {
-    font-family: monospace;
-    color: #ED8800;
+  font-family: monospace;
+  color: #ed8800;
 }

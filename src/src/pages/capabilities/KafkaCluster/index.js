@@ -2,22 +2,25 @@ import React from "react";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from "@dfds-ui/react-components";
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeaderCell,
+  TableDataCell,
+} from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
 import PageSection from "components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
-import * as ApiClient from "../../../SelfServiceApiClient";
-import AppContext from "../../../AppContext"
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const {
     id,
-    links,
     selectedKafkaTopic,
     addTopicToCluster,
     toggleSelectedKafkaTopic,
@@ -29,20 +32,35 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const [isRequestingAccess, setIsRequestingAccess] = useState(false);
   const [isLoadingCredentials, setIsLoadingCredentials] = useState(false);
   const [showAccess, setShowAccess] = useState(false);
-  const [access, setAccess] = useState({ server: "", username: "", password: "" });
-  const {selfServiceApiClient} = useContext(AppContext);
+  const [access, setAccess] = useState({
+    server: "",
+    username: "",
+    password: "",
+  });
 
   const topics = cluster.topics;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
   const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
-  const clusterDescription = (cluster.description || "").split("\n").map((x, i) => <Text key={i}>{x}</Text>);
+  const clusterDescription = (cluster.description || "")
+    .split("\n")
+    .map((x, i) => <Text key={i}>{x}</Text>);
 
   const handleAddTopicToClusterClicked = () => setShowDialog(true);
   const handleCloseTopicFormClicked = () => setShowDialog(false);
 
-  const handleAddTopic = async ({ name, description, partitions, retention }) => {
+  const handleAddTopic = async ({
+    name,
+    description,
+    partitions,
+    retention,
+  }) => {
     setIsInProgress(true);
-    await addTopicToCluster(cluster, { name, description, partitions, retention });
+    await addTopicToCluster(cluster, {
+      name,
+      description,
+      partitions,
+      retention,
+    });
     setIsInProgress(false);
     setShowDialog(false);
   };
@@ -65,11 +83,17 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     toggleSelectedKafkaTopic(clusterId, topicId);
   };
 
-  const canRequestAccess = (cluster._links?.requestAccess?.allow || []).includes("POST");
-  const hasWriteAccess = (cluster?._links?.createTopic?.allow || []).includes("POST");
+  const canRequestAccess = (
+    cluster._links?.requestAccess?.allow || []
+  ).includes("POST");
+  const hasWriteAccess = (cluster?._links?.createTopic?.allow || []).includes(
+    "POST",
+  );
 
   return (
-    <PageSection headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}>
+    <PageSection
+      headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}
+    >
       <Text styledAs="label">Description</Text>
       {clusterDescription}
 
@@ -91,7 +115,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       >
         <Text>
           <Text styledAs={"smallHeadline"}>
-            In order to connect to the Kafka cluster <TextBlock>{cluster.name.toLocaleLowerCase()}</TextBlock>, please
+            In order to connect to the Kafka cluster{" "}
+            <TextBlock>{cluster.name.toLocaleLowerCase()}</TextBlock>, please
             use the following configuration:
           </Text>
         </Text>
@@ -162,7 +187,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
                 <code>group.id</code>
               </TableDataCell>
               <TableDataCell>
-                <TextBlock>{capabilityId}.application-name</TextBlock> (<i>example</i>)
+                <TextBlock>{capabilityId}.application-name</TextBlock> (
+                <i>example</i>)
               </TableDataCell>
             </TableRow>
           </TableBody>
@@ -170,13 +196,16 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         <Text>
           <i>
             <strong>Please note</strong> <br />
-            That <TextBlock>group.id</TextBlock> <strong>must</strong> be prefixed with the capability id (
-            <TextBlock>{capabilityId}</TextBlock>) followed by a dot (<TextBlock>.</TextBlock>), before the rest of the
-            consumer group id, like in the example above.
+            That <TextBlock>group.id</TextBlock> <strong>must</strong> be
+            prefixed with the capability id (
+            <TextBlock>{capabilityId}</TextBlock>) followed by a dot (
+            <TextBlock>.</TextBlock>), before the rest of the consumer group id,
+            like in the example above.
           </i>
         </Text>
         <Text styledAs={"smallHeadline"}>
-          In order to connect to the Schema Registry, please use the following configuration:
+          In order to connect to the Schema Registry, please use the following
+          configuration:
         </Text>
 
         <Table>
@@ -238,7 +267,12 @@ export default function KafkaCluster({ cluster, capabilityId }) {
           <Button size="small" onClick={handleAddTopicToClusterClicked}>
             Add topic
           </Button>
-          <Button size="small" variation="outlined" submitting={isLoadingCredentials} onClick={handleGetCredentials}>
+          <Button
+            size="small"
+            variation="outlined"
+            submitting={isLoadingCredentials}
+            onClick={handleGetCredentials}
+          >
             How to connect?
           </Button>
         </ButtonStack>
@@ -270,7 +304,11 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       {canRequestAccess && (
         <ButtonStack align="right">
-          <Button size="small" submitting={isRequestingAccess} onClick={handleRequestAccess}>
+          <Button
+            size="small"
+            submitting={isRequestingAccess}
+            onClick={handleRequestAccess}
+          >
             Request Access
           </Button>
         </ButtonStack>
