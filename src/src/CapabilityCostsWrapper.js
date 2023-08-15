@@ -11,11 +11,11 @@ export class CapabilityCostsWrapper {
     this.apiClient = apiClient;
     this.costsMap = new Map();
     this.has_set_costs = false;
-    this.next_forced_update = new Date();
+    this.next_forced_update = 0;
   }
 
   async tryUpdateMyCapabilityCosts() {
-    let now = new Date().getUTCSeconds();
+    let now = new Date().getTime()
     if (this.has_set_costs && this.next_forced_update > now) {
       return true;
     }
