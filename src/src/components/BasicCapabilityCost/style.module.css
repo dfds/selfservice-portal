@@ -1,12 +1,24 @@
+
+.chartContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+}
+
 .costDataSummary {
-  width: 90%;
-  height: 30px;
-  display: inline-block;
-  align-content: flex-start;
+  width: 200px;
+  padding-right: 2px;
+}
+
+.costDataSummaryCost {
+  height: 100%;
+  font-size: 10px;
+  text-align: right;
 }
 
 .largeCostDataSummary {
-  width: 100%;
   height: 300px;
 }
 
@@ -22,9 +34,4 @@
 
 .tooltipValue {
   font-size: 1.2em;
-}
-
-.chartContainer {
-  display: flex;
-  align-items: center;
 }

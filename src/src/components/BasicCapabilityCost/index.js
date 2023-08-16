@@ -14,9 +14,11 @@ export function CapabilityCostSummary({ data }) {
   const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
   const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
 
+  const lastDay = data[data.length - 1].pv;
   const domain = [d1, d2];
   return (
-    <div className={styles.costDataSummary}>
+    <div className={styles.chartContainer}>
+      <div className={styles.costDataSummary}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="timestamp" hide />
@@ -33,6 +35,9 @@ export function CapabilityCostSummary({ data }) {
           />
         </LineChart>
       </ResponsiveContainer>
+      </div>
+      <div className={styles.costDataSummaryCost}>${lastDay}</div>
+
     </div>
   );
 }
