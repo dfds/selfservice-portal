@@ -92,7 +92,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}
+      headline={` `} headlineChildren={(<div style={{display: 'flex', alignItems: 'center'}}><span style={{}}>Kafka Topics ({cluster.name.toLocaleLowerCase()}  -&nbsp;</span><span style={{fontSize: '0.8em', color: '#c6c7c5', top: '1px', position: 'relative'}}>{cluster.id}</span>)</div>)}
     >
       <Text styledAs="label">Description</Text>
       {clusterDescription}
@@ -116,7 +116,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         <Text>
           <Text styledAs={"smallHeadline"}>
             In order to connect to the Kafka cluster{" "}
-            <TextBlock>{cluster.name.toLocaleLowerCase()}</TextBlock>, please
+            <TextBlock>{cluster.name.toLocaleLowerCase()} ({cluster.id})</TextBlock>, please
             use the following configuration:
           </Text>
         </Text>
