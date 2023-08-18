@@ -1,3 +1,20 @@
+export class CapabilityCosts{
+
+constructor(){
+  this.rechartsCosts = [];
+  this.rawCosts = [];
+  this.average = 0.0;
+  }
+
+  addCost(cost){
+    this.rawCosts.push(cost);
+    this.rechartsCosts.push({name:cost.timestamp, pv:cost.value});
+  }
+   calculateAndSetAverage(){
+
+  }
+}
+
 export class CapabilityCostsWrapper {
   static get ForceCheckInterval() {
     return 60 * 5; // 5 minutes
@@ -33,7 +50,7 @@ export class CapabilityCostsWrapper {
       responseCost.costs.forEach((cost) => {
         let chartStructure = {
           name: cost.timeStamp,
-          pv: cost.value.toFixed(2),
+          pv: Math.floor(cost.value),
         };
         costsMap.get(capabilityId).push(chartStructure);
       });

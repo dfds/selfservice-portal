@@ -14,30 +14,39 @@ export function CapabilityCostSummary({ data }) {
   const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
   const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
 
-  const lastDay = data[data.length - 1].pv;
+
+
+  const averageCost = Math.floor(
+    data.reduce((acc, x) => acc + x.pv, 0) / data.length,
+  );
+
+  let displayedCost = averageCost < 1 ? "<$1/d" : `$${averageCost}/d`;
+
   const domain = [d1, d2];
   return (
     <div className={styles.chartContainer}>
       <div className={styles.costDataSummary}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <XAxis dataKey="timestamp" hide />
-          <YAxis type="number" domain={[d1,d2]} hide></YAxis>
-          <Tooltip content={CostTooltip} />
-          <CartesianGrid />
-          <Line
-            type="monotone"
-            dataKey="pv"
-            stroke="#014874"
-            strokeWidth={2}
-            dot={false}
-            isAnimationActive={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data}>
+            <XAxis dataKey="timestamp" hide />
+            <YAxis type="number" domain={domain} hide></YAxis>
+            <Tooltip content={CostTooltip} />
+            <CartesianGrid />
+            <Line
+              type="monotone"
+              dataKey="pv"
+              stroke="#014874"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
-      <div className={styles.costDataSummaryCost}>${lastDay}</div>
-
+      <div className={styles.costDataSummaryCostContainer}>
+        <div className={styles.costDataSummaryCostAvg}>Average</div>
+        <div className={styles.costDataSummaryCost}>{displayedCost}</div>
+      </div>
     </div>
   );
 }
