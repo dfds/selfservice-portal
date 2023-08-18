@@ -7,14 +7,20 @@
 }
 
 .costDataSummary {
-  max-width: 150px;
+  width: 150px;
   height: 30px;
 }
 
-.costDataSummaryCost {
+.costDataSummaryCostAvg {
   height: 100%;
   font-size: 10px;
-  text-align: right;
+  text-align: center;
+}
+.costDataSummaryCost {
+  height: 100%;
+  width: 100%;
+  font-size: 10px;
+    text-align: right;
 }
 
 .largeCostDataSummary {
