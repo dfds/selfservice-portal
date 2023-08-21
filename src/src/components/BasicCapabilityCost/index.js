@@ -14,7 +14,7 @@ export function CapabilityCostSummary({ data }) {
   const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
   const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
 
-
+  const has_data = data.length > 0;
 
   const averageCost = Math.floor(
     data.reduce((acc, x) => acc + x.pv, 0) / data.length,
@@ -46,7 +46,7 @@ export function CapabilityCostSummary({ data }) {
       </div>
       <div className={styles.costDataSummaryCostContainer}>
         <div className={styles.costDataSummaryCostAvg}>Average</div>
-        <div className={styles.costDataSummaryCost}>{displayedCost}</div>
+        <div className={styles.costDataSummaryCost}>{has_data ? displayedCost:"No data"}</div>
       </div>
     </div>
   );
