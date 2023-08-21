@@ -27,6 +27,9 @@ export function useSelfServiceRequest(errorParams) {
       url = urlSegments[0];
     }
 
+    // eslint-disable-next-line no-undef
+    _paq.push(['trackEvent', 'selfservice', `${method}::${url}`, '1']);
+
     try {
       const httpResponse = await callApi(url, accessToken, method, payload);
 
