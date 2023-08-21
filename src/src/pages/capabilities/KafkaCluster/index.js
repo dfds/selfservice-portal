@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
 import {
   Table,
   TableHead,
@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
+import styles from './index.module.css';
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const {
@@ -92,7 +93,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline={` `} headlineChildren={(<div style={{display: 'flex', alignItems: 'center'}}><span style={{}}>Kafka Topics ({cluster.name.toLocaleLowerCase()}  -&nbsp;</span><span style={{fontSize: '0.8em', color: '#c6c7c5', top: '1px', position: 'relative'}}>{cluster.id}</span>)</div>)}
+      headline={` `} headlineChildren={(<div className={styles.headlineContainer}><span style={{}}>Kafka Topics ({cluster.name.toLocaleLowerCase()})</span> <div className={styles.badges}><Badge className={styles.badge}>ID: <span>{cluster.id}</span></Badge></div></div>)}
     >
       <Text styledAs="label">Description</Text>
       {clusterDescription}
