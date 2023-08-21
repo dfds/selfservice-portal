@@ -22,6 +22,11 @@ export async function getUserProfilePictureUrl() {
     "https://graph.microsoft.com/v1.0/me/photos/48x48/$value",
     accessToken,
   );
+
+  if (!pictureResponse.ok) {
+    return "";
+  }
+
   const blob = await pictureResponse.blob();
   const url = window.URL || window.webkitURL;
 
