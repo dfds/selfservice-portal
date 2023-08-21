@@ -8,7 +8,12 @@
 .headlineContainer .badge {
   background-color: #ED8800;
   color: #ffffff;
-  max-width: calc(100%)
+  max-width: calc(100%);
+  height: 1.45rem;
+}
+
+.headlineContainer .badge p {
+  font-size: 0.5em;
 }
 
 .headlineContainer .badges {
