@@ -3,3 +3,10 @@
   margin: 0px -20px;
   float: left;
 }
+
+.costs{
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
