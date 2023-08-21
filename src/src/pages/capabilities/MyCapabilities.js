@@ -96,6 +96,7 @@ export default function MyCapabilities() {
                         </Text>
                       ) : (
                         <>
+                          <div className={styles.costs}>
                           <CapabilityCostSummary
                             data={capabilityCosts.getCostsForCapability(
                               x.id,
@@ -103,6 +104,7 @@ export default function MyCapabilities() {
                             )}
                           />
                           <ChevronRight />
+                          </div>
                         </>
                       )}
                     </TableDataCell>

@@ -15,7 +15,7 @@ export class CapabilityCostsWrapper {
   }
 
   async tryUpdateMyCapabilityCosts() {
-    let now = new Date().getTime()
+    let now = new Date().getTime();
     if (this.has_set_costs && this.next_forced_update > now) {
       return true;
     }
@@ -33,7 +33,7 @@ export class CapabilityCostsWrapper {
       responseCost.costs.forEach((cost) => {
         let chartStructure = {
           name: cost.timeStamp,
-          pv: cost.value.toFixed(2),
+          pv: Math.floor(cost.value),
         };
         costsMap.get(capabilityId).push(chartStructure);
       });
