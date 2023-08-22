@@ -3,6 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import { composeUrl, composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
 import { NewErrorContextBuilder } from "misc/error";
+import { useTracking } from "./Tracking";
+
 
 function isValidURL(urlString) {
   const urlRegex = /^(?:https?:\/\/)/;
@@ -16,6 +18,7 @@ export function useSelfServiceRequest(errorParams) {
     ...errorParams,
     msg: "Oh no! We had an issue while retrieving data from the api. Please reload the page.",
   });
+  const {track} = useTracking();
 
   const sendRequest = async ({ urlSegments, method, payload }) => {
     setInProgress(true);
@@ -27,8 +30,7 @@ export function useSelfServiceRequest(errorParams) {
       url = urlSegments[0];
     }
 
-    // eslint-disable-next-line no-undef
-    _paq.push(['trackEvent', 'selfservice', `${method}::${url}`, '1']);
+    track('selfservice', `${method}::${url}`, '1')
 
     try {
       const httpResponse = await callApi(url, accessToken, method, payload);
