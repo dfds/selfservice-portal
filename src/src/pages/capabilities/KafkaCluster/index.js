@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
 import {
   Table,
   TableHead,
@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
+import styles from './index.module.css';
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const {
@@ -92,7 +93,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline={`Kafka Topics (${cluster.name.toLocaleLowerCase()})`}
+      headline={` `} headlineChildren={(<div className={styles.headlineContainer}><span style={{}}>Kafka Topics ({cluster.name.toLocaleLowerCase()})</span> <div className={styles.badges}><Badge className={styles.badge}>ID: <span>{cluster.id}</span></Badge></div></div>)}
     >
       <Text styledAs="label">Description</Text>
       {clusterDescription}
@@ -116,7 +117,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         <Text>
           <Text styledAs={"smallHeadline"}>
             In order to connect to the Kafka cluster{" "}
-            <TextBlock>{cluster.name.toLocaleLowerCase()}</TextBlock>, please
+            <TextBlock>{cluster.name.toLocaleLowerCase()} ({cluster.id})</TextBlock>, please
             use the following configuration:
           </Text>
         </Text>

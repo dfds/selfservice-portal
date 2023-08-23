@@ -11,10 +11,10 @@ export function SectionContent({ title, children }) {
   );
 }
 
-export default function PageSection({ headline, children }) {
+export default function PageSection({ headline, headlineChildren, children }) {
   return (
     <div>
-      {headline && <Text styledAs="sectionHeadline">{headline}</Text>}
+      {headline && <Text styledAs="sectionHeadline">{headline} {headlineChildren}</Text>}
 
       <Card variant="fill" surface="main">
         <CardContent>{children}</CardContent>

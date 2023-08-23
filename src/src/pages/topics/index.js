@@ -157,7 +157,7 @@ function Topics() {
                     });
                   }}
                 >
-                  {cluster.name}
+                  {cluster.name} ({cluster.id})
                 </Checkbox>
               ))}
             </div>

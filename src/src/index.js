@@ -8,8 +8,10 @@ import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";
+import { TrackingProvider } from "TrackingContext";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+window.env = process.env.NODE_ENV;
 
 render(
   <React.StrictMode>
@@ -17,9 +19,11 @@ render(
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GlobalStyles />
         <ErrorProvider>
-          <AppProvider>
-            <App />
-          </AppProvider>
+          <TrackingProvider>
+            <AppProvider>
+              <App />
+            </AppProvider>
+          </TrackingProvider>
         </ErrorProvider>
       </BrowserRouter>
     </MsalProvider>
