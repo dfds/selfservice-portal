@@ -383,26 +383,32 @@ export class SelfServiceApiClient {
   //     return items || [];
   // }
 
-  async getMyCapabilitiesCosts() {
+  async fetchWithToken(url) {
     const accessToken = await getSelfServiceAccessToken();
-    const url = composeUrl("metrics/my-capabilities-costs");
     const response = await callApi(url, accessToken);
     this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", response.status);
+      return undefined;
+    }
+    return response
+  }
+
+  async getMyCapabilitiesCosts() {
+    const response = await this.fetchWithToken(composeUrl("metrics/my-capabilities-costs"));
+    if (!response) {
       return [];
     }
-
     let obj = await response.json();
     return obj.costs || [];
   }
 
   async getMyCapabilitiesResourceCounts() {
-    const accessToken = await getSelfServiceAccessToken();
-    const url = composeUrl("metrics/my-capabilities-resources");
-    const response = await callApi(url, accessToken);
-    this.responseHandler(response);
+    const response = await this.fetchWithToken(composeUrl("metrics/my-capabilities-resources"));
+    if (!response) {
+      return [];
+    }
 
     if (!response.ok) {
       console.log("response was: ", response.status);
