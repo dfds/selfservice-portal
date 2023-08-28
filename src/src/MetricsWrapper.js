@@ -40,19 +40,14 @@ export class MetricsWrapper {
     this.metrics.set(MetricsWrapper.ResourceCountsKey, new MetricsData());
   }
 
+  hasLoaded(key) {
+    return this.metrics.get(key).hasData;
+  }
+
   async tryUpdateMetrics() {
     let now = new Date().getTime();
     await this.#tryUpdateMyCapabilityCosts(now);
     await this.#tryUpdateResourceCounts(now);
-
-    console.log(
-      "this.costs: " +
-        JSON.stringify(this.metrics.get(MetricsWrapper.CostsKey)),
-    );
-    console.log(
-      "this.resources: " +
-        JSON.stringify(this.metrics.get(MetricsWrapper.ResourceCountsKey)),
-    );
 
     let has_all_data = true;
     for (let [_, value] of this.metrics) {
@@ -125,11 +120,12 @@ export class MetricsWrapper {
     const metric = this.metrics.get(MetricsWrapper.ResourceCountsKey);
 
     const counts = metric.capabilitiesMap.get(capabilityId);
+    if (counts === undefined) {
+      return 0;
+    }
     let total = 0;
     for (let [_, value] of counts) {
-      for (let [_, count] of value) {
-        total += count;
-      }
+      total += value;
     }
     return total;
   }
@@ -157,11 +153,7 @@ export class MetricsWrapper {
       throw new Error("Days window size is too large");
     }
     const metric = this.metrics.get(MetricsWrapper.CostsKey);
-    console.log(
-      "metric.capabilitiesMap: " + JSON.stringify(metric.capabilitiesMap),
-    );
     if (
-      metric.capabilitiesMap === undefined ||
       !metric.capabilitiesMap.has(capabilityId) ||
       metric.capabilitiesMap.get(capabilityId).length === 0
     ) {

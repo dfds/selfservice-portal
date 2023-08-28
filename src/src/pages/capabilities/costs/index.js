@@ -12,7 +12,7 @@ export default function Costs() {
 
   const { id } = useParams();
   const [showCostsSpinner, setShowCostsSpinner] = useState(true);
-  const isLoading = !appStatus.hasLoadedCosts;
+  const isLoading = !appStatus.hasLoadedMyCapabilitiesCosts;
   const dayWindows = [7, 14, 30];
 
   useEffect(() => {
@@ -35,7 +35,6 @@ export default function Costs() {
           return (
             <div key={index} className={styles.column} align="center">
               <Text styledAs={"smallHeadline"}>{days} Days</Text>
-
               {showCostsSpinner ? (
                 <Spinner instant />
               ) : isLoading ? (
@@ -53,7 +52,7 @@ export default function Costs() {
                         data={dataValue}
                         capabilityId={id}
                       />
-                      <Text className={styles.finout_link} >
+                      <Text className={styles.finout_link}>
                         <ins>Finout link coming soon</ins>
                       </Text>
                     </>

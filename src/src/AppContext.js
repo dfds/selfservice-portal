@@ -21,7 +21,8 @@ function AppProvider({ children }) {
   );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
-    hasLoadedAllMetrics: false,
+    hasLoadedMyCapabilitiesCosts: false,
+    hasLoadedMyCapabilitiesResourcesCounts: false,
   });
 
   const [topics, setTopics] = useState([]);
@@ -80,8 +81,23 @@ function AppProvider({ children }) {
   }, [myProfile, user]);
 
   function updateMetrics() {
-    metricsWrapper.tryUpdateMetrics().then((loaded) => {
-      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedAllMetrics: loaded } }));
+    metricsWrapper.tryUpdateMetrics().then(() => {
+      setAppStatus((prev) => ({
+        ...prev,
+        ...{
+          hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(
+            MetricsWrapper.CostsKey,
+          ),
+        },
+      }));
+      setAppStatus((prev) => ({
+        ...prev,
+        ...{
+          hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(
+            MetricsWrapper.ResourceCountsKey,
+          ),
+        },
+      }));
     });
   }
 
