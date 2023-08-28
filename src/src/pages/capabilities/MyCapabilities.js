@@ -17,7 +17,7 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./myCapabilities.module.css";
 
 export default function MyCapabilities() {
-  const { myCapabilities, capabilityCosts, appStatus } = useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
@@ -98,7 +98,7 @@ export default function MyCapabilities() {
                         <>
                           <div className={styles.costs}>
                           <CapabilityCostSummary
-                            data={capabilityCosts.getCostsForCapability(
+                            data={metricsWrapper.getCostsForCapability(
                               x.id,
                               7,
                             )}

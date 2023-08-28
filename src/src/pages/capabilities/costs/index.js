@@ -8,7 +8,7 @@ import { Spinner } from "@dfds-ui/react-components";
 import styles from "./costs.module.css";
 
 export default function Costs() {
-  const { appStatus, capabilityCosts } = useContext(AppContext);
+  const { appStatus, metricsWrapper } = useContext(AppContext);
 
   const { id } = useParams();
   const [showCostsSpinner, setShowCostsSpinner] = useState(true);
@@ -30,7 +30,7 @@ export default function Costs() {
     <PageSection headline="Costs">
       <div className={styles.container}>
         {dayWindows.map((days, index) => {
-          const dataValue = capabilityCosts.getCostsForCapability(id, days);
+          const dataValue = metricsWrapper.getCostsForCapability(id, days);
 
           return (
             <div key={index} className={styles.column} align="center">
