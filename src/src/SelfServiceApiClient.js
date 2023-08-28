@@ -392,11 +392,13 @@ export class SelfServiceApiClient {
       console.log("response was: ", response.status);
       return undefined;
     }
-    return response
+    return response;
   }
 
   async getMyCapabilitiesCosts() {
-    const response = await this.fetchWithToken(composeUrl("metrics/my-capabilities-costs"));
+    const response = await this.fetchWithToken(
+      composeUrl("metrics/my-capabilities-costs"),
+    );
     if (!response) {
       return [];
     }
@@ -405,20 +407,16 @@ export class SelfServiceApiClient {
   }
 
   async getMyCapabilitiesResourceCounts() {
-    const response = await this.fetchWithToken(composeUrl("metrics/my-capabilities-resources"));
+    const response = await this.fetchWithToken(
+      composeUrl("metrics/my-capabilities-resources"),
+    );
     if (!response) {
-      return [];
-    }
-
-    if (!response.ok) {
-      console.log("response was: ", response.status);
       return [];
     }
 
     let obj = await response.json();
     return obj.capabilityAwsResourceCounts || [];
   }
-
 
   async getCapabilityMembershipApplications(capabilityDefinition) {
     const membershipApplicationsLink =
