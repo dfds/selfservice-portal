@@ -161,3 +161,40 @@ export function useCapabilityMembers(capabilityDefinition) {
     membersList,
   };
 }
+
+
+export function useKafkaClustersAccessList(capabilityDefinition) {
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
+  const [isLoadedClusters, setIsLoadedClusters] = useState(false);
+  const [clustersList, setClustersList] = useState([]);
+
+  const clustersLink = capabilityDefinition?._links?.clusters;
+
+  
+
+  useEffect(() => {
+    if (clustersLink) {
+      sendRequest({
+        urlSegments: [clustersLink.href],
+      });
+    }
+  }, [clustersLink]);
+
+  useEffect(() => {
+    if (responseData?.items.length !== 0) {
+      setClustersList(responseData?.items || []);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (clustersList.length !== 0) {
+      setIsLoadedClusters(true);
+    }
+  }, [clustersList]);
+
+  return {
+    isLoadedClusters,
+    clustersList,
+  };
+}
