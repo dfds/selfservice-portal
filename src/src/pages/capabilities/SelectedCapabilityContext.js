@@ -6,7 +6,7 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { useCapabilityById, useCapabilityMembers, useKafkaClustersAccessList, useCapabilityAwsAccount} from "hooks/Capabilities";
+import { useCapabilityById, useCapabilityMembers, useKafkaClustersAccessList, useCapabilityAwsAccount, useCapabilityMembersApplications} from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 
@@ -41,6 +41,7 @@ function SelectedCapabilityProvider({ children }) {
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+  const { isLoadedMembersApplications, membersApplicationsList, } = useCapabilityMembersApplications(details);
 
 
 
@@ -223,7 +224,7 @@ function SelectedCapabilityProvider({ children }) {
     }
 
     await selfServiceApiClient.submitMembershipApplicationApproval(found);
-    await loadMembershipApplications();
+    // await loadMembershipApplications();
   };
 
   const submitMembershipApplication = useCallback(async () => {
@@ -344,19 +345,25 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [isLoadedMembers, membersList]);
 
-
-
   useEffect(() => {
-    if (details) {
-      loadMembershipApplications();
-      //loadKafkaClustersAndTopics();
-      // loadAwsAccount();
-    } else {
-      setMembers([]);
-      setMembershipApplications([]);
-      setKafkaClusters([]);
+    if (isLoadedMembersApplications) {
+      setMembershipApplications(membersApplicationsList);
     }
-  }, [details]);
+  }, [isLoadedMembersApplications, membersApplicationsList]);
+
+
+
+  // useEffect(() => {
+  //   if (details) {
+  //     //  loadMembershipApplications();
+  //     //loadKafkaClustersAndTopics();
+  //     // loadAwsAccount();
+  //   } else {
+  //     setMembers([]);
+  //     setMembershipApplications([]);
+  //     setKafkaClusters([]);
+  //   }
+  // }, [details]);
 
   // setup reload of kafka clusters and topics
   useEffect(() => {
