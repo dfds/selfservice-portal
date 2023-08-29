@@ -6,7 +6,7 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { useCapabilityById, useCapabilityMembers, useKafkaClustersAccessList } from "hooks/Capabilities";
+import { useCapabilityById, useCapabilityMembers, useKafkaClustersAccessList, useCapabilityAwsAccount} from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 
@@ -40,6 +40,8 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
+  const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+
 
 
   useEffect(() => {
@@ -93,10 +95,17 @@ function SelectedCapabilityProvider({ children }) {
   }, [details]);
 
   // load AWS account
-  const loadAwsAccount = useCallback(async () => {
-    const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
-    setAwsAccount(awsAcc);
-  }, [details]);
+  // const loadAwsAccount = useCallback(async () => {
+  //   const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
+  //   setAwsAccount(awsAcc);
+  // }, [details]);
+
+
+  useEffect(() => {
+    if (isLoadedAccount) {
+      setAwsAccount(awsAccountInfo);
+    }
+  }, [isLoadedAccount, awsAccountInfo]);
 
   //--------------------------------------------------------------------
 
@@ -341,7 +350,7 @@ function SelectedCapabilityProvider({ children }) {
     if (details) {
       loadMembershipApplications();
       //loadKafkaClustersAndTopics();
-      loadAwsAccount();
+      // loadAwsAccount();
     } else {
       setMembers([]);
       setMembershipApplications([]);
