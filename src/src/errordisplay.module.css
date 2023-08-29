@@ -15,13 +15,23 @@
   width: 100%;
 }*/
 
-.errortoast {
+/* .errortoast {
   position: fixed;
   bottom: 1rem;
   z-index: 10000;
   margin-left: 1rem;
   margin-right: 1rem;
   display: flex; /* make the toast use flexbox */
-  justify-content: space-between; /* separate the message and close button */
-  width: 100%;
+  /*justify-content: space-between; /* separate the message and close button */
+  /*width: 100%;
+ /*}*/
+
+.errortoast{
+  position: fixed;
+  bottom: 20px; /* A bit of margin from the bottom; adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  text-align: center; /* Ensures inline children (like the Toasts) are centered */
 }
