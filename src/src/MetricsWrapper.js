@@ -38,6 +38,12 @@ export class MetricsWrapper {
     this.metrics = new Map();
     this.metrics.set(MetricsWrapper.CostsKey, new MetricsData());
     this.metrics.set(MetricsWrapper.ResourceCountsKey, new MetricsData());
+    this.fetchers = new Map();
+    this.fetchers.set(MetricsWrapper.CostsKey, this.#fetchNewCapabilityCosts);
+    this.fetchers.set(
+      MetricsWrapper.ResourceCountsKey,
+      this.#fetchNewResourceCounts,
+    );
   }
 
   hasLoaded(key) {
@@ -46,54 +52,24 @@ export class MetricsWrapper {
 
   async tryUpdateMetrics() {
     let now = new Date().getTime();
-    await this.#tryUpdateMyCapabilityCosts(now);
-    await this.#tryUpdateResourceCounts(now);
-
-    let has_all_data = true;
-    for (let [_, value] of this.metrics) {
-      if (!value.has_data) {
-        has_all_data = false;
-        break;
-      }
-    }
-
-    return has_all_data;
+    await this.#tryUpdate(MetricsWrapper.CostsKey, now);
+    await this.#tryUpdate(MetricsWrapper.ResourceCountsKey, now);
   }
 
-  async #tryUpdateResourceCounts(now) {
-    let metric = this.metrics.get(MetricsWrapper.ResourceCountsKey);
+  async #tryUpdate(metricsKey, now) {
+    let metric = this.metrics.get(metricsKey);
     if (!metric.shouldUpdate(now)) {
       return;
     }
+    const newData = await this.fetchers.get(metricsKey).bind(this)();
 
-    let responseResourceCounts =
-      await this.apiClient.getMyCapabilitiesResourceCounts();
-
-    let resourceCountsMap = new Map();
-    responseResourceCounts.forEach((responseResourceCount) => {
-      let capabilityId = responseResourceCount.capabilityId;
-      if (!resourceCountsMap.has(capabilityId)) {
-        resourceCountsMap.set(capabilityId, new Map());
-      }
-
-      responseResourceCount.awsResourceCounts.forEach((resourceCount) => {
-        resourceCountsMap
-          .get(capabilityId)
-          .set(resourceCount.resourceId, resourceCount.resourceCount);
-      });
-    });
-    if (resourceCountsMap.size > 0) {
-      metric.updateCapabilityMap(now, resourceCountsMap);
-      this.metrics.set(MetricsWrapper.ResourceCountsKey, metric);
+    if (newData.size > 0) {
+      metric.updateCapabilityMap(now, newData);
+      this.metrics.set(metricsKey, metric);
     }
   }
 
-  async #tryUpdateMyCapabilityCosts(now) {
-    let metric = this.metrics.get(MetricsWrapper.CostsKey);
-    if (!metric.shouldUpdate(now)) {
-      return;
-    }
-
+  async #fetchNewCapabilityCosts() {
     let responseCosts = await this.apiClient.getMyCapabilitiesCosts();
     let costsMap = new Map();
     responseCosts.forEach((responseCost) => {
@@ -110,10 +86,27 @@ export class MetricsWrapper {
         costsMap.get(capabilityId).push(chartStructure);
       });
     });
-    if (costsMap.size > 0) {
-      metric.updateCapabilityMap(now, costsMap);
-      this.metrics.set(MetricsWrapper.CostsKey, metric);
-    }
+    return costsMap;
+  }
+
+  async #fetchNewResourceCounts() {
+    let responseResourceCounts =
+      await this.apiClient.getMyCapabilitiesResourceCounts();
+
+    let resourceCountsMap = new Map();
+    responseResourceCounts.forEach((responseResourceCount) => {
+      let capabilityId = responseResourceCount.capabilityId;
+      if (!resourceCountsMap.has(capabilityId)) {
+        resourceCountsMap.set(capabilityId, new Map());
+      }
+
+      responseResourceCount.awsResourceCounts.forEach((resourceCount) => {
+        resourceCountsMap
+          .get(capabilityId)
+          .set(resourceCount.resourceId, resourceCount.resourceCount);
+      });
+    });
+    return resourceCountsMap;
   }
 
   getAwsResourcesTotalCountForCapability(capabilityId) {
