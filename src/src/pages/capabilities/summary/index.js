@@ -103,6 +103,7 @@ function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
 export default function Summary() {
   const {
     name,
+    id,
     description,
     links,
     submitMembershipApplication,
@@ -163,6 +164,9 @@ export default function Summary() {
       <div className={styles.container}>
         <div className={styles.column}>
           <Text styledAs={"smallHeadline"}>Name</Text> {name}
+        </div>
+        <div className={styles.column}>
+          <Text styledAs={"smallHeadline"}>Root Id</Text> {id}
         </div>
         <div className={styles.column}>
           <Text styledAs={"smallHeadline"}>Description</Text> {description}
