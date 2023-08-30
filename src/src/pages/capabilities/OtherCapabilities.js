@@ -52,13 +52,12 @@ export default function OtherCapabilities() {
     let result = otherCapabilities || [];
 
     if (hasSearchInput) {
-      result = result.filter((x) => {
-        const nameAndDescription = `${x.name || ""} ${x.description}`;
+      result = result.filter((c) => {
+        const input = searchInput.toLocaleLowerCase()
         const isMatch =
-          nameAndDescription
-            .toLocaleLowerCase()
-            .indexOf(searchInput.toLocaleLowerCase()) > -1;
-
+          c.id.toLocaleLowerCase().includes(input) ||
+          c.name.toLocaleLowerCase().includes(input) ||
+          c.description.toLocaleLowerCase().includes(input)
         return isMatch;
       });
     }
