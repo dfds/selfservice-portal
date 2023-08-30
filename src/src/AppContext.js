@@ -4,7 +4,7 @@ import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
-import { CapabilityCostsWrapper } from "./CapabilityCostsWrapper";
+import { MetricsWrapper } from "./MetricsWrapper";
 
 const AppContext = React.createContext(null);
 
@@ -21,7 +21,8 @@ function AppProvider({ children }) {
   );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
-    hasLoadedCosts: false,
+    hasLoadedMyCapabilitiesCosts: false,
+    hasLoadedMyCapabilitiesResourcesCounts: false,
   });
 
   const [topics, setTopics] = useState([]);
@@ -36,8 +37,8 @@ function AppProvider({ children }) {
     () => new ApiClient.SelfServiceApiClient(handleError),
     [handleError],
   );
-  const capabilityCosts = useMemo(
-    () => new CapabilityCostsWrapper(selfServiceApiClient),
+  const metricsWrapper = useMemo(
+    () => new MetricsWrapper(selfServiceApiClient),
     [selfServiceApiClient],
   );
 
@@ -79,19 +80,23 @@ function AppProvider({ children }) {
     }
   }, [myProfile, user]);
 
-  function updateCapabilityCosts() {
-    capabilityCosts.tryUpdateMyCapabilityCosts().then((loaded) => {
-      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedCosts: loaded } }));
+  function updateMetrics() {
+    metricsWrapper.tryUpdateMetrics().then(() => {
+      setAppStatus(prev => ({
+        ...prev,
+        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(MetricsWrapper.CostsKey),
+        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(MetricsWrapper.ResourceCountsKey)
+      }));
     });
   }
 
   useEffect(() => {
-    updateCapabilityCosts();
+    updateMetrics();
   }, [myCapabilities]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      updateCapabilityCosts();
+      updateMetrics();
     }, 1000 * 60);
     return () => clearInterval(interval);
   }, []);
@@ -110,7 +115,7 @@ function AppProvider({ children }) {
     news,
     shouldAutoReloadTopics,
     selfServiceApiClient,
-    capabilityCosts,
+    metricsWrapper,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

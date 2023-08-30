@@ -8,11 +8,11 @@ import { Spinner } from "@dfds-ui/react-components";
 import styles from "./costs.module.css";
 
 export default function Costs() {
-  const { appStatus, capabilityCosts } = useContext(AppContext);
+  const { appStatus, metricsWrapper } = useContext(AppContext);
 
   const { id } = useParams();
   const [showCostsSpinner, setShowCostsSpinner] = useState(true);
-  const isLoading = !appStatus.hasLoadedCosts;
+  const isLoading = !appStatus.hasLoadedMyCapabilitiesCosts;
   const dayWindows = [7, 14, 30];
 
   useEffect(() => {
@@ -30,12 +30,11 @@ export default function Costs() {
     <PageSection headline="Costs">
       <div className={styles.container}>
         {dayWindows.map((days, index) => {
-          const dataValue = capabilityCosts.getCostsForCapability(id, days);
+          const dataValue = metricsWrapper.getCostsForCapability(id, days);
 
           return (
             <div key={index} className={styles.column} align="center">
               <Text styledAs={"smallHeadline"}>{days} Days</Text>
-
               {showCostsSpinner ? (
                 <Spinner instant />
               ) : isLoading ? (
@@ -53,7 +52,7 @@ export default function Costs() {
                         data={dataValue}
                         capabilityId={id}
                       />
-                      <Text className={styles.finout_link} >
+                      <Text className={styles.finout_link}>
                         <ins>Finout link coming soon</ins>
                       </Text>
                     </>
