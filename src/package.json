@@ -28,6 +28,26 @@
     "serve": "^14.1.2",
     "to-json-schema": "^0.2.5"
   },
+  "overrides": {
+    "react-dates": {
+      "react": "18.2.0"
+    },
+    "react-json-view": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0"
+    },
+    "@dfds-ui/forms": {
+      "react-select": "5.7.0",
+      "react-dates": "^21.8.0"
+    },
+    "@dfds-ui/react-components": {
+      "react-select": "5.7.0",
+      "react-dates@21.8.0": {
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+      }
+    }
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
