@@ -53,7 +53,7 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showResources && <Resources />}
+        {showResources && <Resources capabilityId={id}/>}
 
         <MembershipApplications />
 

@@ -4,10 +4,11 @@ import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useContext, useState } from "react";
 import { theme } from "@dfds-ui/theme";
-import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
 import styles from "./resourceInfoBadges.module.css";
+import { DetailedAwsCountSummary } from "components/AwsResourceCount";
+import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
@@ -86,7 +87,7 @@ const Pending = function () {
   );
 };
 
-const Completed = function ({ accountId, namespace }) {
+const Completed = function ({ accountId, namespace, id }) {
   return (
     <>
       <div className={styles.completed}>
@@ -98,6 +99,9 @@ const Completed = function ({ accountId, namespace }) {
           <Badge>
             <strong>{accountId} </strong>
           </Badge>
+          <br />
+          <br />
+          <DetailedAwsCountSummary capabilityId={id}></DetailedAwsCountSummary>
         </div>
         <div className={styles.items}>
           <p>
@@ -115,7 +119,7 @@ const Completed = function ({ accountId, namespace }) {
 
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
-  const { awsAccount, links, requestAwsAccount } = useContext(
+  const { id, awsAccount, links, requestAwsAccount } = useContext(
     SelectedCapabilityContext,
   );
   const [showDialog, setShowDialog] = useState(false);
@@ -147,7 +151,7 @@ export function ResourceInfoBadges() {
         return <Pending />;
 
       case "Completed":
-        return <Completed {...awsAccount} />;
+        return <Completed {...{...awsAccount, id}} />;
       default:
         return <div>Unknown error occurred</div>;
     }

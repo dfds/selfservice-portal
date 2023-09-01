@@ -14,7 +14,6 @@ import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SpashImage from "./splash.jpg";
-import CapabilitiesTable from "./CapabilitiesTable";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myCapabilities } = useContext(AppContext);
@@ -78,10 +77,6 @@ export default function CapabilitiesPage() {
             </Button>
           </CardActions>
         </Card>
-
-        <br />
-
-        <CapabilitiesTable capabilities={myCapabilities}/>
 
         <br />
 

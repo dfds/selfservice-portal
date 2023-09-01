@@ -10,7 +10,7 @@ import {
 import { Modal } from "@dfds-ui/modal";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 
-export default function Resources() {
+export default function Resources({capabilityId}) {
   const [showLogModal, setLogModal] = useState(false);
   const handleApplicationLogShow = async () => {
     setLogModal(true);
@@ -30,9 +30,11 @@ export default function Resources() {
             may take a while before your resources are ready.
           </p>
 
-          <ResourceInfoBadges />
+          <ResourceInfoBadges/>
 
-          <ButtonStack align="left" style={{ marginTop: "15px" }}>
+          <br />
+
+          <ButtonStack align="center" style={{ margin: "auto", marginTop: "15px", width: "400px" }}>
             <Button
               size="small"
               variation="outlined"
