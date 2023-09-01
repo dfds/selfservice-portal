@@ -107,7 +107,6 @@ function AppProvider({ children }) {
     user,
     myProfile,
     myCapabilities,
-    addNewCapability,
     appStatus,
     topics,
     setTopics,
