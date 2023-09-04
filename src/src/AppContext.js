@@ -87,30 +87,25 @@ function AppProvider({ children }) {
   }
 
   function updateResourcesCount() {
-    //FLUTTERSHY; see updateCapabilityCosts
     setAppStatus((prev) => ({ ...prev, ...{ hasLoadedResources: true } }));
   }
 
   useEffect(() => {
     updateMetrics();
-  }, [myCapabilities]);
-
-  useEffect(() => {
     updateResourcesCount();
   }, [myCapabilities]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const metricsInterval = setInterval(() => {
       updateMetrics();
     }, 1000 * 60);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
+    const costsInterval = setInterval(() => {
       updateResourcesCount();
     }, 1000 * 60);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(metricsInterval)
+      clearInterval(costsInterval)
+    };
   }, []);
 
   // ---------------------------------------------------------

@@ -140,31 +140,15 @@ export function ResourceInfoBadges() {
     }
   };
 
-  const ShowSimpleAccountStatus = function () {
-    switch (awsAccount.status) {
-      case "Requested":
-        return <Requested />;
-
-      case "Pending":
-        return <Pending />;
-
-      default:
-        return <div>Unknown error occurred</div>;
-    }
-  };
-
   return (
     <>
       <hr className={styles.divider} />
 
       {(awsAccount != null) ? (
         <>
-          {/* Moving this to the switch-statement causes React to re-render it even when not necessary */}
-          {awsAccount.status === "Completed" ? (
-            <Completed accountId={awsAccount.id} namespace={awsAccount.namespace} id={id} />
-          ) : (
-            <ShowSimpleAccountStatus />
-          )}
+          {awsAccount.status === "Completed" && <Completed accountId={awsAccount.id} namespace={awsAccount.namespace} id={id} />}
+          {awsAccount.status === "Requested" && <Requested />}
+          {awsAccount.status === "Pending" && <Pending />}
         </>
       ) : (
       <>
