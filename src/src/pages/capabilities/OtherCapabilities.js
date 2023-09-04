@@ -20,7 +20,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import styles from "./capabilities.module.css"
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
+  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
@@ -111,13 +111,13 @@ export default function OtherCapabilities() {
                     <TableDataCell>
                       <Text styledAs="action" as={"div"}>
                         <HighlightedText
-                          text={x.name}
+                          text={truncateString(x.name)}
                           highlight={searchInput}
                         />
                       </Text>
                       <Text styledAs="caption" as={"div"}>
                         <HighlightedText
-                          text={x.description}
+                          text={truncateString(x.name)}
                           highlight={searchInput}
                         />
                       </Text>

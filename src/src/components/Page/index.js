@@ -2,6 +2,7 @@ import { H1 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { Container, Column, DfdsLoader } from "@dfds-ui/react-components";
 import NotFound from "./NotFound";
+import styles from "./page.module.css";
 
 export default function Page({
   title,
@@ -29,7 +30,7 @@ export default function Page({
       <Container>
         <Column m={12} l={12} xl={12} xxl={12}>
           {title && (
-            <Text as={H1} styledAs="heroHeadline">
+            <Text as={H1} styledAs="heroHeadline" className={styles.pageTitle}>
               {title}
             </Text>
           )}
