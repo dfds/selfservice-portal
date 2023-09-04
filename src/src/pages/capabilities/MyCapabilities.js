@@ -20,7 +20,7 @@ import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus, truncateString } = useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
@@ -109,10 +109,10 @@ export default function MyCapabilities() {
                         <StatusAlert />
                       </Text>
                       <Text styledAs="action" as={"div"}>
-                        {x.name}
+                        {truncateString(x.name)}
                       </Text>
                       <Text styledAs="caption" as={"div"}>
-                        {x.description}
+                        {truncateString(x.description)}
                       </Text>
                     </TableDataCell>
                     <TableDataCell align="center">
