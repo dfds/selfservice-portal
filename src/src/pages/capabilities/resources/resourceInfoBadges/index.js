@@ -146,7 +146,7 @@ export function ResourceInfoBadges() {
 
       {(awsAccount != null) ? (
         <>
-          {awsAccount.status === "Completed" && <Completed accountId={awsAccount.id} namespace={awsAccount.namespace} id={id} />}
+          {awsAccount.status === "Completed" && <Completed accountId={awsAccount.accountId} namespace={awsAccount.namespace} id={id} />}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
         </>
