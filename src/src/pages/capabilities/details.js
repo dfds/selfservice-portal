@@ -53,12 +53,13 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showResources && <Resources />}
+        {showResources && <Resources capabilityId={id}/>}
 
         <MembershipApplications />
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
+
 
         {(kafkaClusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />

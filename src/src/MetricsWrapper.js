@@ -132,6 +132,22 @@ export class MetricsWrapper {
     return counts;
   }
 
+  getAwsResourceCountsForCapabilityAndType(capabilityId, resourceType) {
+    const metric = this.metrics.get(MetricsWrapper.ResourceCountsKey);
+    const counts = metric.capabilitiesMap.get(capabilityId);
+    if (counts === undefined) {
+      return 0;
+    }
+
+    let total = 0;
+    for (let [key, value] of counts) {
+      if (key.includes(resourceType)) {
+        total += value;
+      }
+    }
+    return total;
+  }
+
   getAwsResourceCountForCapability(capabilityId, resourceId) {
     const metric = this.metrics.get(MetricsWrapper.ResourceCountsKey);
     const counts = metric.capabilitiesMap.get(capabilityId);

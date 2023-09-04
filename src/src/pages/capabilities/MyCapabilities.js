@@ -15,6 +15,7 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./myCapabilities.module.css";
+import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
   const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
@@ -88,7 +89,7 @@ export default function MyCapabilities() {
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell align="center">Aws Resources</TableHeaderCell>
+                  <TableHeaderCell align="center">Resources</TableHeaderCell>
                   <TableHeaderCell align="center">Costs</TableHeaderCell>
                 </TableRow>
               </TableHead>
@@ -112,14 +113,10 @@ export default function MyCapabilities() {
                     <TableDataCell align="center">
                       {showAwsResourcesSpinner ? (
                           <Spinner />
-                      ) : isLoadingAwsResourcesCounts ? (
-                          <Text styledAs="caption" as={"div"}>
-                            0
-                          </Text>
                       ) : (
-                          <>
-                          {metricsWrapper.getAwsResourcesTotalCountForCapability(x.id)}
-                          </>
+                          <InlineAwsCountSummary data={
+                            metricsWrapper.getAwsResourcesTotalCountForCapability(x.id)
+                          }/>
                       )}
                     </TableDataCell>
                     <TableDataCell align="center" width="100px">

@@ -30,6 +30,7 @@ function AppProvider({ children }) {
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
+
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
@@ -85,15 +86,26 @@ function AppProvider({ children }) {
     });
   }
 
+  function updateResourcesCount() {
+    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedResources: true } }));
+  }
+
   useEffect(() => {
     updateMetrics();
+    updateResourcesCount();
   }, [myCapabilities]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const metricsInterval = setInterval(() => {
       updateMetrics();
     }, 1000 * 60);
-    return () => clearInterval(interval);
+    const costsInterval = setInterval(() => {
+      updateResourcesCount();
+    }, 1000 * 60);
+    return () => {
+      clearInterval(metricsInterval)
+      clearInterval(costsInterval)
+    };
   }, []);
 
   // ---------------------------------------------------------
