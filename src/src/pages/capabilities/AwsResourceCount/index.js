@@ -29,7 +29,7 @@ export function DetailedAwsCountSummary({ capabilityId }) {
   const [showResourcesWindow, setShowResourcesWindow] = useState(false);
   const count = metricsWrapper.getAwsResourcesTotalCountForCapability(capabilityId);
   
-  const interests = ["rds", "s3", "ssm", "sqs", "ssn", "lambda", "ecs", "ec2"];
+  const interests = ["rds", "s3", "ssm", "sqs", "ssn", "lambda", "ecs", "ec2", "iam"];
   let noteworthyCounts = new Map();
   
   for (let interest of interests) {
