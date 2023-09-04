@@ -52,6 +52,9 @@ export default function NewCapabilityDialog({
     nameErrorMessage =
       'Allowed characters are a-z, 0-9, "-", and "_" and it must not start or end with "_" or "-". Do not use more than one of "-" or "_" in a row.';
   }
+  if (formData.name.length > 150) {
+    nameErrorMessage = "Please consider a shorter name.";
+  }
 
   const canAdd =
     formData.name !== "" &&
@@ -89,6 +92,7 @@ export default function NewCapabilityDialog({
               value={formData.name}
               onChange={changeName}
               errorMessage={nameErrorMessage}
+              maxLength={255}
             />
           </div>
 
