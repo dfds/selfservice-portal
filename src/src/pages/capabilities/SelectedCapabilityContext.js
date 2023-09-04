@@ -38,6 +38,7 @@ function SelectedCapabilityProvider({ children }) {
   const { capability, isLoaded } = useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
+  const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
 
   // load kafka clusters and topics
@@ -319,6 +320,7 @@ function SelectedCapabilityProvider({ children }) {
     if (isLoaded) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
+      setIsDeleted(capability.status === "Deleted");
     }
   }, [isLoaded, capability]);
 
@@ -382,6 +384,7 @@ function SelectedCapabilityProvider({ children }) {
     submitDeleteCapability,
     submitCancelDeleteCapability,
     isPendingDeletion,
+    isDeleted,
     updateDeletionStatus,
     showCosts,
   };
