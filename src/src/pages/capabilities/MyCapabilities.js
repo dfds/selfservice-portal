@@ -14,8 +14,10 @@ import {
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
-import styles from "./myCapabilities.module.css";
+import styles from "./capabilities.module.css"
+import mystyles from "./myCapabilities.module.css";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+
 
 export default function MyCapabilities() {
   const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
@@ -69,6 +71,9 @@ export default function MyCapabilities() {
   useEffect(() => {
     setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
   }, [isLoadingAwsResourcesCounts]);
+
+  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
+
   return (
     <>
       <PageSection
@@ -95,10 +100,10 @@ export default function MyCapabilities() {
               </TableHead>
               <TableBody>
                 {items.map((x) => (
-                  <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
+                  <TableRow key={x.id} onClick={() => clickHandler(x.id)} className={rowClass(x.status)}>
                     <TableDataCell>
                       <Text
-                        className={styles.warningIcon}
+                        className={mystyles.warningIcon}
                         hidden={x.status == "Active"}
                       >
                         <StatusAlert />
@@ -128,7 +133,7 @@ export default function MyCapabilities() {
                         </Text>
                       ) : (
                         <>
-                          <div className={styles.costs}>
+                          <div className={mystyles.costs}>
                             <CapabilityCostSummary
                               data={metricsWrapper.getCostsForCapability(
                                 x.id,
