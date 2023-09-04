@@ -27,7 +27,6 @@ function AppProvider({ children }) {
 
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
-  const [reloadCapabilities, setReloadCapabilities] = useState(false);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -46,6 +45,12 @@ function AppProvider({ children }) {
 
   const { addCapability } = useCapabilities();
 
+  async function addNewCapability(name, description) {
+    addCapability(name, description);
+    await sleep(3000);
+    await loadMyProfile();
+  }
+
   async function loadMyProfile() {
     const profile = await selfServiceApiClient.getMyPortalProfile();
     const { capabilities, autoReloadTopics } = profile;
@@ -53,22 +58,12 @@ function AppProvider({ children }) {
     const stats = await selfServiceApiClient.getStats();
 
     setMyCapabilities(capabilities);
-    setReloadCapabilities(false);
     setStats(stats);
     setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
     setShouldAutoReloadTopics(autoReloadTopics);
 
     setMyProfile(profile);
   }
-
-  useEffect(() => {
-    console.log("FLUTTERSHy");
-    if (reloadCapabilities) {
-      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: false } }));
-      console.log("APPLE JACK");
-      loadMyProfile();
-    }
-  }, [reloadCapabilities]);
 
   useEffect(() => {
     if (isAuthenticatedUser !== user.isAuthenticated) {
@@ -133,7 +128,7 @@ function AppProvider({ children }) {
     selfServiceApiClient,
     metricsWrapper,
     addCapability,
-    setReloadCapabilities,
+    addNewCapability,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
