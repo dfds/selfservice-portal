@@ -4,7 +4,7 @@ import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
-import { CapabilityCostsWrapper } from "./CapabilityCostsWrapper";
+import { MetricsWrapper } from "./MetricsWrapper";
 
 const AppContext = React.createContext(null);
 
@@ -21,7 +21,8 @@ function AppProvider({ children }) {
   );
   const [appStatus, setAppStatus] = useState({
     hasLoadedMyCapabilities: false,
-    hasLoadedCosts: false,
+    hasLoadedMyCapabilitiesCosts: false,
+    hasLoadedMyCapabilitiesResourcesCounts: false,
   });
 
   const [topics, setTopics] = useState([]);
@@ -29,6 +30,7 @@ function AppProvider({ children }) {
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
+
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
@@ -36,8 +38,8 @@ function AppProvider({ children }) {
     () => new ApiClient.SelfServiceApiClient(handleError),
     [handleError],
   );
-  const capabilityCosts = useMemo(
-    () => new CapabilityCostsWrapper(selfServiceApiClient),
+  const metricsWrapper = useMemo(
+    () => new MetricsWrapper(selfServiceApiClient),
     [selfServiceApiClient],
   );
 
@@ -57,11 +59,6 @@ function AppProvider({ children }) {
     setMyProfile(profile);
   }
 
-  async function addNewCapability(name, description) {
-    addCapability(name, description);
-    await sleep(3000);
-    await loadMyProfile();
-  }
 
   useEffect(() => {
     if (isAuthenticatedUser !== user.isAuthenticated) {
@@ -79,21 +76,36 @@ function AppProvider({ children }) {
     }
   }, [myProfile, user]);
 
-  function updateCapabilityCosts() {
-    capabilityCosts.tryUpdateMyCapabilityCosts().then((loaded) => {
-      setAppStatus((prev) => ({ ...prev, ...{ hasLoadedCosts: loaded } }));
+  function updateMetrics() {
+    metricsWrapper.tryUpdateMetrics().then(() => {
+      setAppStatus(prev => ({
+        ...prev,
+        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(MetricsWrapper.CostsKey),
+        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(MetricsWrapper.ResourceCountsKey)
+      }));
     });
   }
 
+  function updateResourcesCount() {
+    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedResources: true } }));
+  }
+
   useEffect(() => {
-    updateCapabilityCosts();
+    updateMetrics();
+    updateResourcesCount();
   }, [myCapabilities]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateCapabilityCosts();
+    const metricsInterval = setInterval(() => {
+      updateMetrics();
     }, 1000 * 60);
-    return () => clearInterval(interval);
+    const costsInterval = setInterval(() => {
+      updateResourcesCount();
+    }, 1000 * 60);
+    return () => {
+      clearInterval(metricsInterval)
+      clearInterval(costsInterval)
+    };
   }, []);
 
   // ---------------------------------------------------------
@@ -102,7 +114,6 @@ function AppProvider({ children }) {
     user,
     myProfile,
     myCapabilities,
-    addNewCapability,
     appStatus,
     topics,
     setTopics,
@@ -110,7 +121,7 @@ function AppProvider({ children }) {
     news,
     shouldAutoReloadTopics,
     selfServiceApiClient,
-    capabilityCosts,
+    metricsWrapper,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

@@ -383,20 +383,39 @@ export class SelfServiceApiClient {
   //     return items || [];
   // }
 
-  async getMyCapabilityCosts(daysWindow) {
+  async fetchWithToken(url) {
     const accessToken = await getSelfServiceAccessToken();
-    const url =
-      composeUrl("metrics/my-capability-costs") + "?daysWindow=" + daysWindow;
     const response = await callApi(url, accessToken);
     this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", response.status);
+      return undefined;
+    }
+    return response;
+  }
+
+  async getMyCapabilitiesCosts() {
+    const response = await this.fetchWithToken(
+      composeUrl("metrics/my-capabilities-costs"),
+    );
+    if (!response) {
+      return [];
+    }
+    let obj = await response.json();
+    return obj.costs || [];
+  }
+
+  async getMyCapabilitiesResourceCounts() {
+    const response = await this.fetchWithToken(
+      composeUrl("metrics/my-capabilities-resources"),
+    );
+    if (!response) {
       return [];
     }
 
     let obj = await response.json();
-    return obj.costs || [];
+    return obj.capabilityAwsResourceCounts || [];
   }
 
   async getCapabilityMembershipApplications(capabilityDefinition) {

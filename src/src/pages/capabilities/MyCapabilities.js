@@ -15,14 +15,17 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./myCapabilities.module.css";
+import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
-  const { myCapabilities, capabilityCosts, appStatus } = useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
-  const isLoadingCosts = !appStatus.hasLoadedCosts;
+  const isLoadingCosts = !appStatus.hasLoadedMyCapabilitiesCosts;
+  const isLoadingAwsResourcesCounts = !appStatus.hasLoadedMyCapabilitiesResourcesCounts;
   const [showCostsSpinner, setShowCostsSpinner] = useState(isLoadingCosts);
+  const [showAwsResourcesSpinner, setShowAwsResourcesSpinner] = useState(isLoadingAwsResourcesCounts);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
@@ -47,6 +50,25 @@ export default function MyCapabilities() {
     setShowCostsSpinner(isLoadingCosts);
   }, [isLoadingCosts]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
+    const timeout = setTimeout(() => {
+      if (isMounted) {
+        setShowAwsResourcesSpinner(false);
+      }
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
+  }, [isLoadingAwsResourcesCounts]);
   return (
     <>
       <PageSection
@@ -67,6 +89,7 @@ export default function MyCapabilities() {
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell align="center">Resources</TableHeaderCell>
                   <TableHeaderCell align="center">Costs</TableHeaderCell>
                 </TableRow>
               </TableHead>
@@ -87,6 +110,15 @@ export default function MyCapabilities() {
                         {x.description}
                       </Text>
                     </TableDataCell>
+                    <TableDataCell align="center">
+                      {showAwsResourcesSpinner ? (
+                          <Spinner />
+                      ) : (
+                          <InlineAwsCountSummary data={
+                            metricsWrapper.getAwsResourcesTotalCountForCapability(x.id)
+                          }/>
+                      )}
+                    </TableDataCell>
                     <TableDataCell align="center" width="100px">
                       {showCostsSpinner ? (
                         <Spinner />
@@ -97,13 +129,13 @@ export default function MyCapabilities() {
                       ) : (
                         <>
                           <div className={styles.costs}>
-                          <CapabilityCostSummary
-                            data={capabilityCosts.getCostsForCapability(
-                              x.id,
-                              7,
-                            )}
-                          />
-                          <ChevronRight />
+                            <CapabilityCostSummary
+                              data={metricsWrapper.getCostsForCapability(
+                                x.id,
+                                7,
+                              )}
+                            />
+                            <ChevronRight />
                           </div>
                         </>
                       )}
