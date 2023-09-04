@@ -14,6 +14,15 @@ function sleep(duration) {
   });
 }
 
+function truncateString(str) {
+  const maxLength = 70;
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength) + "...";
+  } else {
+    return str;
+  }
+}
+
 function AppProvider({ children }) {
   const user = useCurrentUser();
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
@@ -129,6 +138,7 @@ function AppProvider({ children }) {
     metricsWrapper,
     addCapability,
     addNewCapability,
+    truncateString,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

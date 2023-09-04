@@ -163,13 +163,13 @@ export default function Summary() {
 
       <div className={styles.container}>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Name</Text> {name}
+          <Text styledAs={"smallHeadline"}>Name</Text> <span className={styles.breakwords}>{name}</span>
         </div>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Root Id</Text> {id}
+          <Text styledAs={"smallHeadline"}>Root Id</Text> <span className={styles.breakwords}>{id}</span>
         </div>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Description</Text> {description}
+          <Text styledAs={"smallHeadline"}>Description</Text> <span className={styles.breakwords}>{description}</span>
         </div>
         <div className={styles.column} style={{ paddingTop: "2rem" }}>
           <MyMembershipApplication />
