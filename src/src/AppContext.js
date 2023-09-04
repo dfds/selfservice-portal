@@ -58,11 +58,6 @@ function AppProvider({ children }) {
     setMyProfile(profile);
   }
 
-  async function addNewCapability(name, description) {
-    addCapability(name, description);
-    await sleep(3000);
-    await loadMyProfile();
-  }
 
   useEffect(() => {
     if (isAuthenticatedUser !== user.isAuthenticated) {
@@ -107,7 +102,6 @@ function AppProvider({ children }) {
     user,
     myProfile,
     myCapabilities,
-    addNewCapability,
     appStatus,
     topics,
     setTopics,
