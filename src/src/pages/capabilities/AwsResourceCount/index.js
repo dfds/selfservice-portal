@@ -76,6 +76,8 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
   const { metricsWrapper } = useContext(AppContext);
   const counts = metricsWrapper.getAwsResourceCountsForCapability(capabilityId);
 
+  const sorted_counts = new Map([...counts.entries()].sort((a, b) => b[1] - a[1]));
+
   const actions = (
     <>
       <ModalAction
@@ -93,7 +95,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
       <Modal
         heading={`Complete list of resources in AWS`}
         isOpen={true}
-        shouldCloseOnOverlayClick={false}
+        shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
         onRequestClose={onCloseRequested}
         actions={actions}
@@ -113,7 +115,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.from(counts.entries()).map(([resource, count]) => (
+            {Array.from(sorted_counts.entries()).map(([resource, count]) => (
               <TableRow key={resource}>
                 <TableDataCell>
                   {resource}
