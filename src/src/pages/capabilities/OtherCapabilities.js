@@ -17,6 +17,7 @@ import PageSection from "components/PageSection";
 import { Search } from "@dfds-ui/icons/system";
 import HighlightedText from "components/HighlightedText";
 import { useCapabilities } from "hooks/Capabilities";
+import styles from "./capabilities.module.css"
 
 export default function OtherCapabilities() {
   const { myCapabilities, appStatus } = useContext(AppContext);
@@ -71,6 +72,8 @@ export default function OtherCapabilities() {
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
+
   return (
     <>
       <PageSection
@@ -104,7 +107,7 @@ export default function OtherCapabilities() {
               </TableHead>
               <TableBody>
                 {items.map((x) => (
-                  <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
+                  <TableRow key={x.id} onClick={() => clickHandler(x.id)} className={rowClass(x.status)}>
                     <TableDataCell>
                       <Text styledAs="action" as={"div"}>
                         <HighlightedText
