@@ -2,12 +2,12 @@ import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { theme } from "@dfds-ui/theme";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
 import styles from "./resourceInfoBadges.module.css";
-import { DetailedAwsCountSummary } from "components/AwsResourceCount";
+import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
@@ -140,9 +140,7 @@ export function ResourceInfoBadges() {
     }
   };
 
-  const hasAwsAccount = awsAccount != null;
-
-  const ShowAccountStatus = function () {
+  const ShowSimpleAccountStatus = function () {
     switch (awsAccount.status) {
       case "Requested":
         return <Requested />;
@@ -150,52 +148,55 @@ export function ResourceInfoBadges() {
       case "Pending":
         return <Pending />;
 
-      case "Completed":
-        return <Completed {...{...awsAccount, id}} />;
       default:
         return <div>Unknown error occurred</div>;
     }
   };
 
-  const aws = hasAwsAccount ? (
-    <ShowAccountStatus />
-  ) : (
-    <>
-      {showDialog && (
-        <RequestDialog
-          isRequesting={isSubmitting}
-          onClose={closeDialog}
-          onSubmit={handleSubmitClicked}
-        />
-      )}
-
-      <div className={styles.pending}>
-        <div className={styles.items}>
-          <strong>
-            <em style={{ color: theme.colors.text.secondary.primary }}>
-              No AWS Account or Kubernetes Namespace linked with this
-              Capability.
-            </em>
-          </strong>
-        </div>
-        <div className={styles.items}>
-          <ButtonStack align="right">
-            {canRequest && (
-              <Button onClick={() => setShowDialog(true)}>
-                Request AWS Account & Kubernetes Namespace
-              </Button>
-            )}
-          </ButtonStack>
-        </div>
-      </div>
-    </>
-  );
-
   return (
     <>
       <hr className={styles.divider} />
 
-      {aws}
+      {(awsAccount != null) ? (
+        <>
+          {/* Moving this to the switch-statement causes React to re-render it even when not necessary */}
+          {awsAccount.status === "Completed" ? (
+            <Completed accountId={awsAccount.id} namespace={awsAccount.namespace} id={id} />
+          ) : (
+            <ShowSimpleAccountStatus />
+          )}
+        </>
+      ) : (
+      <>
+        {showDialog && (
+          <RequestDialog
+            isRequesting={isSubmitting}
+            onClose={closeDialog}
+            onSubmit={handleSubmitClicked}
+          />
+        )}
+
+        <div className={styles.pending}>
+          <div className={styles.items}>
+            <strong>
+              <em style={{ color: theme.colors.text.secondary.primary }}>
+                No AWS Account or Kubernetes Namespace linked with this
+                Capability.
+              </em>
+            </strong>
+          </div>
+          <div className={styles.items}>
+            <ButtonStack align="right">
+              {canRequest && (
+                <Button onClick={() => setShowDialog(true)}>
+                  Request AWS Account & Kubernetes Namespace
+                </Button>
+              )}
+            </ButtonStack>
+          </div>
+        </div>
+      </>
+      )}
     </>
   );
 }

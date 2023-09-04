@@ -15,7 +15,7 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./myCapabilities.module.css";
-import { InlineAwsCountSummary } from "components/AwsResourceCount";
+import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
   const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);

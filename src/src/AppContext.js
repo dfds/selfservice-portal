@@ -30,6 +30,7 @@ function AppProvider({ children }) {
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
+
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);

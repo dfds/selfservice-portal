@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import awsLogo from "./aws-logo.svg";
 import AppContext from "AppContext";
 import styles from "./AwsCount.module.css";
@@ -25,8 +25,8 @@ export function InlineAwsCountSummary({ data }) {
   }
 
 export function DetailedAwsCountSummary({ capabilityId }) {
-  const [showResourcesWindow, setShowResourcesWindow] = useState(false);
   const { metricsWrapper } = useContext(AppContext);
+  const [showResourcesWindow, setShowResourcesWindow] = useState(false);
   const count = metricsWrapper.getAwsResourcesTotalCountForCapability(capabilityId);
   
   const interests = ["rds", "s3", "ssm", "sqs", "ssn", "lambda", "ecs", "ec2"];
@@ -52,7 +52,7 @@ export function DetailedAwsCountSummary({ capabilityId }) {
     
     <div className={styles.FlexContainer}  onClick={() => setShowResourcesWindow(true)} >
       {noteworthyInterests.map((i) => (
-        <AwsCountCard title={i} count={noteworthyCounts.get(i)}/>
+        <AwsCountCard key={i} title={i} count={noteworthyCounts.get(i)}/>
       ))}
       <AwsCountCard title="Total" count={count}/>
     </div>
@@ -108,18 +108,18 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
         <Table isInteractive width={"100%"}>
           <TableHead>
             <TableRow>
-              <TableHeaderCell align="center">Resource</TableHeaderCell>
+              <TableHeaderCell>Resource</TableHeaderCell>
               <TableHeaderCell align="center">Count</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.from(counts.entries()).map(([key, value]) => (
-              <TableRow key={key}>
+            {Array.from(counts.entries()).map(([resource, count]) => (
+              <TableRow key={resource}>
                 <TableDataCell>
-                  {key}
+                  {resource}
                 </TableDataCell>
                 <TableDataCell align="center">
-                  {value}
+                  {count}
                 </TableDataCell>
               </TableRow>
             ))}

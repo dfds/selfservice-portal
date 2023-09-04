@@ -60,6 +60,7 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
+
         {(kafkaClusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}

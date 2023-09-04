@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Text } from "@dfds-ui/typography";
+import PageSection from "components/PageSection";
 import {
   Card,
   CardContent,
@@ -18,7 +19,7 @@ export default function Resources({capabilityId}) {
 
   return (
     <>
-      <Text styledAs="sectionHeadline">Resources</Text>
+      <PageSection headline="Resources">
       <Card variant="fill" surface="main">
         <CardContent>
           <p>
@@ -45,6 +46,7 @@ export default function Resources({capabilityId}) {
           </ButtonStack>
         </CardContent>
       </Card>
+      </PageSection>
 
       <Modal
         heading={"How do I see my application logs?"}
