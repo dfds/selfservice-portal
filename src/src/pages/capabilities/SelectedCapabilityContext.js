@@ -23,7 +23,7 @@ function adjustRetention(kafkaTopic) {
 }
 
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
+  const { shouldAutoReloadTopics, setShouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
     useContext(AppContext);
 
   //const [isLoading, setIsLoading] = useState(false);
@@ -46,10 +46,14 @@ function SelectedCapabilityProvider({ children }) {
     const clusters = await selfServiceApiClient.getKafkaClusterAccessList(
       details,
     );
+    let allTopicsProvisioned = true;
     for (const cluster of clusters) {
       const topics = await selfServiceApiClient.getTopics(cluster);
 
       topics.forEach((kafkaTopic) => {
+        if (kafkaTopic.status !== "Provisioned") {
+          allTopicsProvisioned = false;
+        }
         adjustRetention(kafkaTopic);
         kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort(
           (a, b) => a.messageType.localeCompare(b.messageType),
@@ -59,6 +63,7 @@ function SelectedCapabilityProvider({ children }) {
       cluster.topics = topics;
     }
 
+    setShouldAutoReloadTopics(!allTopicsProvisioned);
     setKafkaClusters(clusters);
   }, [details]);
 
@@ -351,7 +356,7 @@ function SelectedCapabilityProvider({ children }) {
     }, 5 * 1000);
 
     return () => clearInterval(handle);
-  }, [details]);
+  }, [details, shouldAutoReloadTopics]);
 
   //--------------------------------------------------------------------
 
