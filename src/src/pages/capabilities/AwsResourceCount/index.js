@@ -50,12 +50,13 @@ export function DetailedAwsCountSummary({ capabilityId }) {
         capabilityId={capabilityId}
       />)}
     
-    <div className={styles.FlexContainer}  onClick={() => setShowResourcesWindow(true)} >
-      {noteworthyInterests.map((i) => (
-        <AwsCountCard key={i} title={i} count={noteworthyCounts.get(i)}/>
-      ))}
-      <AwsCountCard title="Total" count={count}/>
-    </div>
+      <p className={styles.resourceHint}>Please note that cards are only shown for resource types in actual use and includes everything for that type according to AWS. Click on any card for the complete list of resources.</p>
+      <div className={styles.FlexContainer}  onClick={() => setShowResourcesWindow(true)} >
+        {noteworthyInterests.map((i) => (
+          <AwsCountCard key={i} title={i} count={noteworthyCounts.get(i)}/>
+        ))}
+        <AwsCountCard title="Total" count={count}/>
+      </div>
     </>
   );
 }
