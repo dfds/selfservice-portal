@@ -1,5 +1,6 @@
 .container_toast {
   display: flex;
+  flex-direction: column;
   background-color: rgba(190, 30, 45, 0.8);
   width: 284px;
   cursor: default;
@@ -9,24 +10,20 @@
   bottom: 1rem;
   z-index: 10000;
   box-sizing: border-box;
-  display: inline-flex;
   align-items: center;
-  padding: 0.5rem;
+  justify-content: center;
   border-radius: 5px;
+}
+
+.container_toast_message{
+  display: flex;
   justify-content: center;
 }
+
 
 /* Toast Close Button */
 .toast_close {
   display: flex;
-  cursor: pointer;
-  color: #fff;
-  justify-content: center;
-  align-items: center;
-  padding: 0 0 0 0;
-  margin: 0 0 0 20px;
-  line-height: 16px;
-  border-radius: 5px;
 }
 
 .toast_close:hover {
@@ -37,19 +34,17 @@
   display: flex;
   color: #ffffff;
   text-align: center;
+  padding: 0.5rem;
 }
 
 .actionbox {
   display: flex;
-  flex: 0;
-  justify-content: "flex-start";
-  align-items: end;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.1rem 0.35rem 0 0.35rem;
+  color: #fff;
 }
 
-.actionbox > div {
-  margin-bottom: 40px;
-  margin-left: 0px;
-}
 
 .actionbox > Button {
   color: white;
