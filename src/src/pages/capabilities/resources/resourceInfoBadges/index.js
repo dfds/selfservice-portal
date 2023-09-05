@@ -100,7 +100,6 @@ const Completed = function ({ accountId, namespace, id }) {
             <strong>{accountId} </strong>
           </Badge>
           <br />
-          <br />
           <DetailedAwsCountSummary capabilityId={id}></DetailedAwsCountSummary>
         </div>
         <div className={styles.items}>

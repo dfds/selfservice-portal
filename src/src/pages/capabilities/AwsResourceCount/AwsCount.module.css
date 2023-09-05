@@ -27,3 +27,10 @@
     font-size: 1.5em;
     color: #000;
 }
+
+.resourceHint {
+    font-size: 0.8em;
+    color: #666;
+    text-align: left;
+    padding: 0 5px;
+}
