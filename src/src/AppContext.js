@@ -40,7 +40,7 @@ function AppProvider({ children }) {
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
 
-  const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(true);
+  const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(false);
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
@@ -134,6 +134,7 @@ function AppProvider({ children }) {
     stats,
     news,
     shouldAutoReloadTopics,
+    setShouldAutoReloadTopics,
     selfServiceApiClient,
     metricsWrapper,
     addCapability,
