@@ -25,6 +25,10 @@ export default function GlobalMenu() {
       url: "/topics",
     },
     {
+      title: "ECR",
+      url: "/ecr",
+    },
+    {
       title: "Playbooks",
       url: "https://wiki.dfds.cloud/playbooks",
     },
