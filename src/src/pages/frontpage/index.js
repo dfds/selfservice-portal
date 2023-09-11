@@ -1,13 +1,15 @@
 import AppContext from "AppContext";
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import {
   Column,
   Container,
   Hero as DfdsHero,
+  IconButton,
   LinkButton,
 } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
+import { TextField } from "@dfds-ui/forms";
 
 import PageSection, { SectionContent } from "components/PageSection";
 import Page from "components/Page";
@@ -18,6 +20,7 @@ import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
+import {ExternalLink } from "@dfds-ui/icons/system";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -55,8 +58,17 @@ function FunStats() {
 
 export default function FrontPage() {
   const { user } = useContext(AppContext);
+  const [chatInput, setChatInput] = useState("");
+  const aiChatUrl = process.env.REACT_APP_AI_CHAT_URL;
 
   const name = user ? user.name : "there";
+
+  const onChatAsked = (e) => {
+    e.preventDefault();
+    window.open(
+      `${aiChatUrl}?question=${chatInput}`,
+    );
+  };
 
   return (
     <>
@@ -134,10 +146,29 @@ export default function FrontPage() {
                   <br />
                   Then grab the default Kubernetes config file from the column
                   on your right.
-                  <br />
-                  <br />
-                  <br />
-                  <i>Enjoy!</i>
+                </SectionContent>
+              </PageSection>
+              <br />
+              <PageSection>
+                <SectionContent title="Get help from our GPT-powered Chat Bot">
+                  <form onSubmit={onChatAsked}>
+                    <div className={styles.aichatcontainer}>
+                      <TextField
+                        name="basic"
+                        placeholder="Ask your question"
+                        size="small"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        className={styles.chatinput}
+                      />
+                      <IconButton
+                        icon={ExternalLink}
+                        disableTooltip
+                        disableOverlay
+                        type={"submit"}
+                       ariaLabel="Submit"/>
+                    </div>
+                  </form>
                 </SectionContent>
               </PageSection>
             </Column>
