@@ -66,7 +66,7 @@ export default function FrontPage() {
   const onChatAsked = (e) => {
     e.preventDefault();
     window.open(
-      `${aiChatUrl}?question=${chatInput}`,
+      `${aiChatUrl}?q=${chatInput}`,
     );
   };
 
