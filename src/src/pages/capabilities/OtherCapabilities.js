@@ -117,7 +117,7 @@ export default function OtherCapabilities() {
                       </Text>
                       <Text styledAs="caption" as={"div"}>
                         <HighlightedText
-                          text={truncateString(x.name)}
+                          text={truncateString(x.description)}
                           highlight={searchInput}
                         />
                       </Text>
