@@ -153,7 +153,7 @@ export default function MyCapabilities() {
 
     setFullTableData(tableData);
 
-  }, [isLoading, appStatus, isLoadingCosts])
+  }, [isLoading, appStatus])
 
 
   return (
