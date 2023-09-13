@@ -74,6 +74,8 @@ export default function MyCapabilities() {
     setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
   }, [isLoadingAwsResourcesCounts]);
 
+  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
+
 
   const columns = useMemo(
     () => [
@@ -93,7 +95,7 @@ export default function MyCapabilities() {
 
       },
       {
-        accessorKey: 'awsResources',
+        accessorKey: 'id',
         header: 'Aws Resources',
         size: 150,
         enableColumnFilterModes: false,
@@ -101,9 +103,17 @@ export default function MyCapabilities() {
           align: 'center'
         },
         muiTableBodyCellProps: {
-          align: 'center'
+          align: 'center',
+        },
+        Cell: ({ cell }) => {
+          return <div style={{
+          }}>
+            <InlineAwsCountSummary data={
+              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue().toLocaleString())
+            } />
+          </div>
         }
-        
+
 
       },
       {
@@ -125,8 +135,18 @@ export default function MyCapabilities() {
                 7,
               )}
             />
-            <ChevronRight />
           </div>
+        }
+      },
+      {
+        id: 'details',
+        size: 1,
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: 'right',
+        },
+        Cell: ({ cell }) => {
+          return <ChevronRight />
         }
       },
     ],
@@ -138,12 +158,6 @@ export default function MyCapabilities() {
     const tableData = items.map((item) => {
 
       const copy = { ...item };
-
-      const awsResources = metricsWrapper.getAwsResourcesTotalCountForCapability(copy.id)
-        ? metricsWrapper.getAwsResourcesTotalCountForCapability(copy.id)
-        : 0;
-
-      copy.awsResources = awsResources;
 
       return copy;
 
@@ -173,12 +187,12 @@ export default function MyCapabilities() {
         {!isLoading && items.length > 0 && (
           <>
             <MaterialReactTable columns={columns} data={fullTableData}
-              muiTableHeadCellProps={{                
+              muiTableHeadCellProps={{
                 sx: {
                   fontWeight: '700',
                   fontSize: '16px',
                   fontFamily: 'DFDS',
-                  color: '#002b45', 
+                  color: '#002b45',
                 },
               }}
               muiTableBodyCellProps={{
@@ -187,11 +201,36 @@ export default function MyCapabilities() {
                   fontSize: '16px',
                   fontFamily: 'DFDS',
                   color: '#4d4e4c',
+                  padding: '5px',
+                  // margin: 0,
+                  // minHeight: 0,
                 },
               }}
+              muiTablePaperProps={{
+                elevation: 0, //change the mui box shadow
+                //customize paper styles
+                sx: {
+                  borderRadius: '0',
+                }
+              }
+              }
               enableTopToolbar={false}
               enableBottomToolbar={false}
               enableColumnActions={false}
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => {
+                  console.log('status', row.original.status);
+                  clickHandler(row.original.id)
+                },
+                sx: {
+                  cursor: 'pointer',
+                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                }
+              })}
+
 
             />
           </>
