@@ -202,8 +202,6 @@ export default function MyCapabilities() {
                   fontFamily: 'DFDS',
                   color: '#4d4e4c',
                   padding: '5px',
-                  // margin: 0,
-                  // minHeight: 0,
                 },
               }}
               muiTablePaperProps={{
