@@ -24,7 +24,7 @@ function Repositories() {
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'repositoryName',
+        accessorKey: 'name',
         header: 'Name',
         size: 250,
         Cell: ({ renderedCellValue }) => {
@@ -46,7 +46,19 @@ function Repositories() {
             </Text>
           )
         }
-      }
+      },
+      {
+        accessorKey: 'repositoryName',
+        header: 'Repository Name',
+        size: 250,
+        Cell: ({ renderedCellValue }) => {
+          return (
+            <Text styledAs="action" as={"div"}>
+                {renderedCellValue}
+            </Text>
+          )
+        }
+      },
     ],
     [],
   )
