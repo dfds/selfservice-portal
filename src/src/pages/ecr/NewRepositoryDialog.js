@@ -2,17 +2,13 @@ import React, { useState, useContext } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
-import ECRContext from "./ECRContext";
+import { useECRRepositories } from "hooks/ECRRepositories";
 
 export default function NewRepositoryDialog({
   onClose
 }) {
-  const {
-    addRepository,
-    setIsCreatingNewRepository,
-    setPollForUpdates,
-    isCreatingNewRepository
-  } = useContext(ECRContext);
+  const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
+  const { createRepository } = useECRRepositories();
 
   const handleClose = () => {
     if (!isCreatingNewRepository) {
@@ -20,22 +16,29 @@ export default function NewRepositoryDialog({
     }
   };
 
-  //error banner logic
-  //const displayConflictWarning =
-
   const emptyValues = {
-    name: "",
+    //name: "",
     description: "",
+    repositoryName: "",
   };
 
   const [formData, setFormData] = useState(emptyValues);
 
+  /*
   const changeName = (e) => {
     e.preventDefault();
-    let newName = e?.target?.value || "";
+    let newName = e?.target?.value || emptyValues.name;
+    
+    setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
+  };
+  */
+
+  const changeRepositoryName = (e) => {
+    e.preventDefault();
+    let newName = e?.target?.value || emptyValues.repositoryName;
     newName = newName.replace(/\s+/g, "/");
 
-    setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
+    setFormData((prev) => ({ ...prev, ...{ repositoryName: newName.toLowerCase() } }));
   };
 
   const changeDescription = (e) => {
@@ -43,7 +46,7 @@ export default function NewRepositoryDialog({
     const newValue = e?.target?.value || emptyValues.description;
     setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
   };
-
+  /*
   const isNameValid =
     formData.name !== "" &&
     !formData.name.match(/^\s*$/g) &&
@@ -52,24 +55,41 @@ export default function NewRepositoryDialog({
     !formData.name.match(/[-_\/\.]{2,}/g) &&
     !formData.name.match(/[^a-zA-Z0-9\/\-_]/g);
 
-  let nameErrorMessage = "";
+    let nameErrorMessage = "";
   if (formData.name.length > 0 && !isNameValid) {
     nameErrorMessage =
-      'Allowed characters are a-z, 0-9, "-", "_", and "/". Names must not start or end with "_", "-", or "/". Do not use more than one of "-", "_", or "/" in a row.';
+      'Allowed characters are a-z, 0-9, "-", "_", and " ". Names must not start or end with "_", "-", or "/". Do not use more than one of "-", "_", or "/" in a row.';
   }
-  if (formData.name.length > 150) {
-    nameErrorMessage = "Please consider a shorter name.";
+
+  */
+  const isRepositoryNameValid =
+    formData.repositoryName !== "" &&
+    !formData.repositoryName.match(/^\s*$/g) &&
+    !formData.repositoryName.match(/(_|-|\/)$/g) &&
+    !formData.repositoryName.match(/^(_|-|\/)/g) &&
+    !formData.repositoryName.match(/[-_\/\.]{2,}/g) &&
+    !formData.repositoryName.match(/[^a-zA-Z0-9\/\-_]/g);
+  
+  let repositoryNameErrorMessage = "";
+  if (formData.repositoryName.length > 0 && !isRepositoryNameValid) {
+    repositoryNameErrorMessage =
+      'Allowed characters are a-z, 0-9, "-", "_", and "/". Repositories must not start or end with "_", "-", or "/". Do not use more than one of "-", "_", or "/" in a row.';
+  }
+  
+  if (formData.repositoryName.length > 150) {
+    repositoryNameErrorMessage = "Please consider a shorter name.";
   }
 
   const canAdd =
-    formData.name !== "" &&
+    //formData.name !== "" &&
     formData.description !== "" &&
-    nameErrorMessage === "";
+    formData.repositoryName !== "" &&
+    //nameErrorMessage === "" &&
+    repositoryNameErrorMessage === "";
 
   const handleAddRepositoryClicked = async () => {
     setIsCreatingNewRepository(true);
-    await addRepository(formData);
-    setPollForUpdates(true);
+    await createRepository(formData);
     setIsCreatingNewRepository(false);
     onClose();
   };
@@ -86,6 +106,7 @@ export default function NewRepositoryDialog({
         backdrop
       >
         <SideSheetContent>
+          {/*
           <div>
             <TextField
               label="Name"
@@ -97,6 +118,15 @@ export default function NewRepositoryDialog({
               maxLength={255}
             />
           </div>
+          */}
+          <TextField
+            label="Repository Name"
+            placeholder="Enter a name for the new repository"
+            required
+            value={formData.repositoryName}
+            onChange={changeRepositoryName}
+            errorMessage={repositoryNameErrorMessage}
+          ></TextField>
 
           <TextField
             label="Description"
