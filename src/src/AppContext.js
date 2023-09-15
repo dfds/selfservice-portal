@@ -138,6 +138,7 @@ function AppProvider({ children }) {
     selfServiceApiClient,
     metricsWrapper,
     addCapability,
+    getCapabilityJsonMetadataSchema: selfServiceApiClient.getCapabilityJsonMetadataSchema,
     addNewCapability,
     truncateString,
   };

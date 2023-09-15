@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
@@ -66,6 +65,17 @@ export class SelfServiceApiClient {
     };
 
     return { ...defaultValues, ...myProfile };
+  }
+
+  async getCapabilityJsonMetadataSchema() {
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = composeUrl("json-schema/capability");
+    const response = await callApi(url, accessToken);
+    this.responseHandler(response);
+    const schema = await response.json();
+    console.log("schema", schema);
+    return schema || {};
   }
 
   async getStats() {

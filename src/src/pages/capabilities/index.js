@@ -16,7 +16,7 @@ import Page from "components/Page";
 import SpashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {
-  const { addNewCapability } = useContext(AppContext);
+  const { addNewCapability, getCapabilityJsonMetadataSchema } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
@@ -37,6 +37,7 @@ export default function CapabilitiesPage() {
         {showNewCapabilityDialog && (
           <NewCapabilityDialog
             inProgress={isCreatingNewCapability}
+            capabilitySchema={getCapabilityJsonMetadataSchema}
             onAddCapabilityClicked={handleAddCapability}
             onCloseClicked={() => setShowNewCapabilityDialog(false)}
           />

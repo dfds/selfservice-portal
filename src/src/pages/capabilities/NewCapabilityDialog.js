@@ -3,9 +3,13 @@ import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
+import { RJSFSchema } from "@rjsf/utils";
+import validator from "@rjsf/validator-ajv8";
+import Form from "@rjsf/core";
 
 export default function NewCapabilityDialog({
   inProgress,
+  capabilitySchema,
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
@@ -21,10 +25,11 @@ export default function NewCapabilityDialog({
   const emptyValues = {
     name: "",
     description: "",
+    metadata: "",
   };
 
   const [formData, setFormData] = useState(emptyValues);
-
+  const schema = capabilitySchema;
   const changeName = (e) => {
     e.preventDefault();
     let newName = e?.target?.value || "";
@@ -67,6 +72,10 @@ export default function NewCapabilityDialog({
     }
   };
 
+  const changeMetadata = (e) => {
+    console.log(e.formData);
+  };
+
   return (
     <>
       <SideSheet
@@ -104,20 +113,27 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          <ButtonStack>
-            <Button
-              size="small"
-              variation="primary"
-              onClick={handleAddCapabilityClicked}
-              disabled={!canAdd}
-              submitting={inProgress}
-            >
-              Add
-            </Button>
-            <Button size="small" variation="outlined" onClick={handleClose}>
-              Cancel
-            </Button>
-          </ButtonStack>
+          <Form
+            schema={schema}
+            onSubmit={handleAddCapabilityClicked}
+            onChange={changeMetadata}
+            validator={validator}
+          >
+            <ButtonStack>
+              <Button
+                size="small"
+                variation="primary"
+                disabled={!canAdd}
+                submitting={inProgress}
+              >
+                Add
+              </Button>
+
+              <Button size="small" variation="outlined" onClick={handleClose}>
+                Cancel
+              </Button>
+            </ButtonStack>
+          </Form>
         </SideSheetContent>
       </SideSheet>
     </>
