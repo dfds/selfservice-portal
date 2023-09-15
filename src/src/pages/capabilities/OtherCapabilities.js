@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "@dfds-ui/icons/system";
@@ -17,7 +17,8 @@ import PageSection from "components/PageSection";
 import { Search } from "@dfds-ui/icons/system";
 import HighlightedText from "components/HighlightedText";
 import { useCapabilities } from "hooks/Capabilities";
-import styles from "./capabilities.module.css"
+import styles from "./capabilities.module.css";
+import { MaterialReactTable } from 'material-react-table';
 
 export default function OtherCapabilities() {
   const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
@@ -74,6 +75,38 @@ export default function OtherCapabilities() {
 
   const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
 
+  const columns = useMemo(
+    () => [
+      {
+        accessorFn: (row) => { return { name: row.name, description: row.description } },
+        header: 'Name',
+        size: 350,
+        enableColumnFilterModes: false,
+        Cell: ({ cell }) => {
+          return <div> <Text styledAs="action" as={"div"}>
+            {cell.getValue().name}
+          </Text>
+            <Text styledAs="caption" as={"div"}>
+              {cell.getValue().description}
+            </Text></div>
+        }
+
+      },
+      {
+        id: 'details',
+        size: 1,
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: 'right',
+        },
+        Cell: ({ cell }) => {
+          return <ChevronRight />
+        }
+      },
+    ],
+    [],
+  )
+
   return (
     <>
       <PageSection
@@ -97,6 +130,71 @@ export default function OtherCapabilities() {
                 }
               />
             </div>
+
+            <MaterialReactTable columns={columns} data={otherCapabilities}
+              muiTableHeadCellProps={{
+                sx: {
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#002b45',
+                },
+              }}
+              muiTableBodyCellProps={{
+                sx: {
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#4d4e4c',
+                  padding: '5px',
+                },
+              }}
+              muiTablePaperProps={{
+                elevation: 0, //change the mui box shadow
+                //customize paper styles
+                sx: {
+                  borderRadius: '0',
+                }
+              }
+              }
+              enableGlobalFilterModes
+              initialState={{
+                showGlobalFilter: true,
+              }}
+              positionGlobalFilter="left"
+              muiSearchTextFieldProps={{
+              placeholder: `Find a capability...`,
+                sx: { 
+                  minWidth: '1120px',
+                  fontWeight: '400',
+                  fontSize: '16px', 
+                },
+                variant: 'outlined',
+              }}
+              enableFilterMatchHighlighting={true}
+              enableFullScreenToggle={false}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={false}
+              enableTopToolbar={true}
+              enableBottomToolbar={false}
+              enableColumnActions={false}
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => {
+                  clickHandler(row.original.id)
+                },
+                sx: {
+                  cursor: 'pointer',
+                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                }
+              })}
+              
+
+
+            />
 
             <Table isInteractive width={"100%"}>
               <TableHead>
