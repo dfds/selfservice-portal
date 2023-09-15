@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
+import {Tooltip} from '@mui/material';
 import {
   Spinner,
   Table,
@@ -95,7 +96,7 @@ export default function MyCapabilities() {
 
       },
       {
-        accessorKey: 'id',
+        accessorFn: (row) => row.id,
         header: 'Aws Resources',
         size: 150,
         enableColumnFilterModes: false,
@@ -117,7 +118,7 @@ export default function MyCapabilities() {
 
       },
       {
-        accessorKey: 'id',
+        accessorFn: (row) => row.id,
         header: 'Costs',
         size: 150,
         enableColumnFilterModes: false,
@@ -139,7 +140,8 @@ export default function MyCapabilities() {
         }
       },
       {
-        id: 'details',
+        accessorFn: (row) => row.id,
+        header: 'dddd',
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
@@ -147,7 +149,8 @@ export default function MyCapabilities() {
         },
         Cell: ({ cell }) => {
           return <ChevronRight />
-        }
+        },
+        Header: <div></div> //enable empty header
       },
     ],
     [],
