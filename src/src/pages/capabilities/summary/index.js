@@ -105,6 +105,7 @@ export default function Summary() {
     name,
     id,
     description,
+    jsonMetadata,
     links,
     submitMembershipApplication,
     submitLeaveCapability,
@@ -171,6 +172,9 @@ export default function Summary() {
         <div className={styles.column}>
           <Text styledAs={"smallHeadline"}>Description</Text> <span className={styles.breakwords}>{description}</span>
         </div>
+          <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>Metadata</Text> <span className={styles.breakwords}>{jsonMetadata}</span>
+          </div>
         <div className={styles.column} style={{ paddingTop: "2rem" }}>
           <MyMembershipApplication />
           <ButtonStack align="right">

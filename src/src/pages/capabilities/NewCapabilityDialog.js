@@ -1,141 +1,158 @@
-import React, { useState } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
+import React, {useEffect, useState} from "react";
+import {Button, ButtonStack} from "@dfds-ui/react-components";
+import {SideSheet, SideSheetContent} from "@dfds-ui/react-components";
+import {Tooltip, TextField} from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
-import { RJSFSchema } from "@rjsf/utils";
+import {RJSFSchema} from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/core";
 
 export default function NewCapabilityDialog({
-  inProgress,
-  capabilitySchema,
-  onAddCapabilityClicked,
-  onCloseClicked,
-}) {
-  const handleClose = () => {
-    if (onCloseClicked && !inProgress) {
-      onCloseClicked();
+                                                inProgress,
+                                                capabilitySchema,
+                                                onAddCapabilityClicked,
+                                                onCloseClicked,
+                                            }) {
+    const handleClose = () => {
+        if (onCloseClicked && !inProgress) {
+            onCloseClicked();
+        }
+    };
+
+    //error banner logic
+    //const displayConflictWarning =
+
+    const emptyValues = {
+        name: "",
+        description: "",
+        jsonMetadata: {},
+        schemaVersion: 0,
+    };
+
+    const prepareJsonSchema = (schema) => {
+        const parsed = JSON.parse(schema);
+        // for some reason the $schema property is not working well in the form
+        delete parsed.$schema;
+        return parsed;
+    };
+
+    const [formData, setFormData] = useState(emptyValues);
+    const schema = prepareJsonSchema(capabilitySchema.schema) ?? {};
+    const schemaVersion = capabilitySchema.schemaVersion ?? 0;
+
+    useEffect(() => {
+        setFormData((prev) => ({...prev, ...{jsonSchemaVersion: schemaVersion+1}}));
+    }, [capabilitySchema]);
+
+    const changeName = (e) => {
+        e.preventDefault();
+        let newName = e?.target?.value || "";
+        newName = newName.replace(/\s+/g, "-");
+
+        setFormData((prev) => ({...prev, ...{name: newName.toLowerCase()}}));
+    };
+
+    const changeDescription = (e) => {
+        e.preventDefault();
+        const newValue = e?.target?.value || emptyValues.description;
+        setFormData((prev) => ({...prev, ...{description: newValue}}));
+    };
+
+    const changeMetadata = (e) => {
+        const newValue = e.formData;
+        setFormData((prev) => ({...prev, ...{jsonMetadata: newValue}}));
+    };
+
+    const isNameValid =
+        formData.name !== "" &&
+        !formData.name.match(/^\s*$/g) &&
+        !formData.name.match(/(_|-)$/g) &&
+        !formData.name.match(/^(_|-)/g) &&
+        !formData.name.match(/[-_\.]{2,}/g) &&
+        !formData.name.match(/[^a-zA-Z0-9\-_]/g);
+
+    let nameErrorMessage = "";
+    if (formData.name.length > 0 && !isNameValid) {
+        nameErrorMessage =
+            'Allowed characters are a-z, 0-9, "-", and "_" and it must not start or end with "_" or "-". Do not use more than one of "-" or "_" in a row.';
     }
-  };
-
-  //error banner logic
-  //const displayConflictWarning =
-
-  const emptyValues = {
-    name: "",
-    description: "",
-    metadata: "",
-  };
-
-  const [formData, setFormData] = useState(emptyValues);
-  const schema = capabilitySchema;
-  const changeName = (e) => {
-    e.preventDefault();
-    let newName = e?.target?.value || "";
-    newName = newName.replace(/\s+/g, "-");
-
-    setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
-  };
-
-  const changeDescription = (e) => {
-    e.preventDefault();
-    const newValue = e?.target?.value || emptyValues.description;
-    setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
-  };
-
-  const isNameValid =
-    formData.name !== "" &&
-    !formData.name.match(/^\s*$/g) &&
-    !formData.name.match(/(_|-)$/g) &&
-    !formData.name.match(/^(_|-)/g) &&
-    !formData.name.match(/[-_\.]{2,}/g) &&
-    !formData.name.match(/[^a-zA-Z0-9\-_]/g);
-
-  let nameErrorMessage = "";
-  if (formData.name.length > 0 && !isNameValid) {
-    nameErrorMessage =
-      'Allowed characters are a-z, 0-9, "-", and "_" and it must not start or end with "_" or "-". Do not use more than one of "-" or "_" in a row.';
-  }
-  if (formData.name.length > 150) {
-    nameErrorMessage = "Please consider a shorter name.";
-  }
-
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    nameErrorMessage === "";
-
-  const handleAddCapabilityClicked = () => {
-    if (onAddCapabilityClicked) {
-      onAddCapabilityClicked(formData);
+    if (formData.name.length > 150) {
+        nameErrorMessage = "Please consider a shorter name.";
     }
-  };
 
-  const changeMetadata = (e) => {
-    console.log(e.formData);
-  };
+    const canAdd =
+        formData.name !== "" &&
+        formData.description !== "" &&
+        nameErrorMessage === "";
 
-  return (
-    <>
-      <SideSheet
-        header={`Add new Capability`}
-        onRequestClose={handleClose}
-        isOpen={true}
-        width="30%"
-        alignSideSheet="right"
-        variant="elevated"
-        backdrop
-      >
-        <SideSheetContent>
-          <div className={styles.tooltipsection}>
-            <div className={styles.tooltip}>
-              <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'>
-                {/* <Information /> */}
-              </Tooltip>
-            </div>
-            <TextField
-              label="Name"
-              placeholder="Enter name of capability"
-              required
-              value={formData.name}
-              onChange={changeName}
-              errorMessage={nameErrorMessage}
-              maxLength={255}
-            />
-          </div>
+    const handleAddCapabilityClicked = () => {
+        if (onAddCapabilityClicked) {
+            onAddCapabilityClicked(formData);
+        }
+    };
 
-          <TextField
-            label="Description"
-            placeholder="Enter a description"
-            required
-            value={formData.description}
-            onChange={changeDescription}
-          ></TextField>
+    return (
+        <>
+            <SideSheet
+                header={`Add new Capability`}
+                onRequestClose={handleClose}
+                isOpen={true}
+                width="30%"
+                alignSideSheet="right"
+                variant="elevated"
+                backdrop
+            >
+                <SideSheetContent>
+                    <div className={styles.tooltipsection}>
+                        <div className={styles.tooltip}>
+                            <Tooltip
+                                content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'>
+                                {/* <Information /> */}
+                            </Tooltip>
+                        </div>
+                        <TextField
+                            label="Name"
+                            placeholder="Enter name of capability"
+                            required
+                            value={formData.name}
+                            onChange={changeName}
+                            errorMessage={nameErrorMessage}
+                            maxLength={255}
+                        />
+                    </div>
 
-          <Form
-            schema={schema}
-            onSubmit={handleAddCapabilityClicked}
-            onChange={changeMetadata}
-            validator={validator}
-          >
-            <ButtonStack>
-              <Button
-                size="small"
-                variation="primary"
-                disabled={!canAdd}
-                submitting={inProgress}
-              >
-                Add
-              </Button>
+                    <TextField
+                        label="Description"
+                        placeholder="Enter a description"
+                        required
+                        value={formData.description}
+                        onChange={changeDescription}
+                    ></TextField>
 
-              <Button size="small" variation="outlined" onClick={handleClose}>
-                Cancel
-              </Button>
-            </ButtonStack>
-          </Form>
-        </SideSheetContent>
-      </SideSheet>
-    </>
-  );
+                    <Form
+                        schema={schema}
+                        onSubmit={handleAddCapabilityClicked}
+                        formData={formData.jsonMetadata}
+                        onChange={changeMetadata}
+                        validator={validator}
+                    >
+                        <ButtonStack>
+                            <Button
+                                size="small"
+                                variation="primary"
+                                disabled={!canAdd}
+                                submitting={inProgress}
+                            >
+                                Add
+                            </Button>
+
+                            <Button size="small" variation="outlined" onClick={handleClose}>
+                                Cancel
+                            </Button>
+                        </ButtonStack>
+                    </Form>
+                </SideSheetContent>
+            </SideSheet>
+        </>
+    );
 }

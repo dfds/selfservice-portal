@@ -54,8 +54,8 @@ function AppProvider({ children }) {
 
   const { addCapability } = useCapabilities();
 
-  async function addNewCapability(name, description) {
-    addCapability(name, description);
+  async function addNewCapability(name, description, jsonMetadata, jsonSchemaVersion) {
+    addCapability(name, description,jsonMetadata,jsonSchemaVersion);
     await sleep(3000);
     await loadMyProfile();
   }

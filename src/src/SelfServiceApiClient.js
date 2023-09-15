@@ -72,10 +72,7 @@ export class SelfServiceApiClient {
 
     const url = composeUrl("json-schema/capability");
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
-    const schema = await response.json();
-    console.log("schema", schema);
-    return schema || {};
+    return await response.json();
   }
 
   async getStats() {

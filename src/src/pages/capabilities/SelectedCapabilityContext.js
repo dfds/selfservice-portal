@@ -324,6 +324,7 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (isLoaded) {
       setDetails(capability);
+      console.log("capability meta data", capability.jsonMetadata);
       setPendingDeletion(capability.status === "Pending Deletion");
       setIsDeleted(capability.status === "Deleted");
     }
@@ -366,6 +367,7 @@ function SelectedCapabilityProvider({ children }) {
     id: capabilityId,
     name: details?.name,
     description: details?.description,
+    jsonMetadata: details?.jsonMetadata,
     links: details?._links,
     members,
     membershipApplications,

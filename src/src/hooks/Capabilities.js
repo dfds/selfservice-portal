@@ -15,13 +15,16 @@ export function useCapabilities() {
     list.sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const createCapability = (name, description) => {
+  const createCapability = (name, description,jsonMetadata,jsonSchemaVersion) => {
+    console.log("jsonMetadata in createCapability", jsonMetadata);
     addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
       payload: {
         name: name,
         description: description,
+        jsonMetadata: JSON.stringify(jsonMetadata),
+        jsonSchemaVersion: jsonSchemaVersion,
       },
     });
   };

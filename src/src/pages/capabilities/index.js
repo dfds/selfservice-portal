@@ -14,15 +14,26 @@ import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SpashImage from "./splash.jpg";
+import {json} from "react-router-dom";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, getCapabilityJsonMetadataSchema } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
+  const [capabilitySchema, setCapabilitySchema] = useState({});
+
+  const loadCapabilitySchema = async () => {
+    const schema = await getCapabilityJsonMetadataSchema();
+    setCapabilitySchema(schema);
+  }
+  useEffect(() => {
+    loadCapabilitySchema();
+  },[]);
+
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
-    await addNewCapability(formData.name, formData.description);
+    await addNewCapability(formData.name, formData.description,formData.jsonMetadata,formData.jsonSchemaVersion);
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
   };
@@ -37,7 +48,7 @@ export default function CapabilitiesPage() {
         {showNewCapabilityDialog && (
           <NewCapabilityDialog
             inProgress={isCreatingNewCapability}
-            capabilitySchema={getCapabilityJsonMetadataSchema}
+            capabilitySchema={capabilitySchema}
             onAddCapabilityClicked={handleAddCapability}
             onCloseClicked={() => setShowNewCapabilityDialog(false)}
           />
