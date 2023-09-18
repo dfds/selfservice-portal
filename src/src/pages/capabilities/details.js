@@ -35,6 +35,7 @@ function CapabilityDetailsPageContent() {
     isPendingDeletion,
     isDeleted,
     updateDeletionStatus,
+    awsAccount,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -65,7 +66,7 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && <Costs />}
+        {showCosts && (awsAccount != undefined) && <Costs />}
         <CapabilityManagement
           deletionState={isPendingDeletion}
           updateDeletionState={updateDeletionStatus}
