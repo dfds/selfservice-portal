@@ -182,7 +182,7 @@ function Topics() {
 
 export default function TopicsPage() {
   const splash = (
-    <CardMedia aspectRatio="3:2" media={<img src={topicImage} alt="" />} />
+    <CardMedia aspectRatio="3:2" media={<img src={topicImage} alt="" className={styles.cardMediaImage} />} className={styles.cardMedia} />
   );
 
   return (

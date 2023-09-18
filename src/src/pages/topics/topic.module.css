@@ -21,3 +21,12 @@
 .checkboxes > label {
   margin-right: 19px;
 }
+
+.cardMediaImage {
+  position: unset!important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset!important;
+}
