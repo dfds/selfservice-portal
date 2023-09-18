@@ -123,9 +123,14 @@ export default function ECRPage() {
             <CardTitle largeTitle>Information</CardTitle>
             <CardContent>
               <p>
-                This is a long text about ECR Repositories. We have no idea what
-                goes here and it is just a placeholder. However, if it is too short
-                then the layout will be all wrong. Long live Lorem Ipsum and all that.
+                  This a comprehensive list of all AWS ECR Repositories that
+                  have been created by DFDS development teams.
+                  All users with access to this portal can request new repositories.
+              </p>
+              <p>
+                  When creating new repositories, please be mindful of the naming conventions.
+                  Normally the repository name should consist of the team name and the application name.
+                  For example: <b>cloudengineering/selfservice-portal</b>.
               </p>
             </CardContent>
             <CardActions>

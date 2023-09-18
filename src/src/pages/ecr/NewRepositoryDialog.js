@@ -99,7 +99,7 @@ export default function NewRepositoryDialog({
 
           <TextField
             label="Repository Name"
-            placeholder="Enter a name for the new repository"
+            placeholder="team-name/repository-name"
             required
             value={formData.repositoryName}
             onChange={changeRepositoryName}
