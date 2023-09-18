@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'chore/dev-env-pipeline'
     paths:
       - '.github/workflows/shared-env-develop.yml'
       - 'src/**'
@@ -53,6 +54,11 @@ jobs:
           role_arn: ${{ secrets.SSU_APPS_GH_IAM_ROLE }}
           aws_region: eu-central-1
           sha_tag_prefix: develop
+          args: |
+            REACT_APP_API_BASE_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/develop/api
+            REACT_APP_AUTH_REDIRECT_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/develop
+            REACT_APP_PUBLIC_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/develop
+            PUBLIC_URL=/ssu/dev-env/develop
       - shell: bash
         name: "Update image tag"
         env:
