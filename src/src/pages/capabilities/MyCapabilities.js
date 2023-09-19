@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
-import {Tooltip} from '@mui/material';
 import {
   Spinner,
   Table,
@@ -141,7 +140,7 @@ export default function MyCapabilities() {
       },
       {
         accessorFn: (row) => row.id,
-        header: 'dddd',
+        header: 'arrow',
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
