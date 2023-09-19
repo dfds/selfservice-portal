@@ -78,22 +78,29 @@ export default function OtherCapabilities() {
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => { return { name: row.name, description: row.description } },
+        accessorFn: (row) =>  row.name ,
         header: 'Name',
         size: 350,
-        enableColumnFilterModes: false,
-        Cell: ({ cell }) => {
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+        
+          
+        Cell: ({ cell, renderedCellValue }) => {
           return <div> <Text styledAs="action" as={"div"}>
-            {cell.getValue().name}
+            {renderedCellValue}
           </Text>
             <Text styledAs="caption" as={"div"}>
-              {cell.getValue().description}
-            </Text></div>
+              {cell.row.original.description}
+            </Text>
+          </div>
         }
 
       },
       {
-        id: 'details',
+        accessorFn: (row) => row.id,
+        header: 'arrow',
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
@@ -101,7 +108,8 @@ export default function OtherCapabilities() {
         },
         Cell: ({ cell }) => {
           return <ChevronRight />
-        }
+        },
+        Header: <div></div> //enable empty header
       },
     ],
     [],
@@ -116,7 +124,7 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
-            <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
+            {/* <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
               <TextField
                 name="basic"
                 placeholder="Find a capability..."
@@ -129,7 +137,7 @@ export default function OtherCapabilities() {
                   hasSearchInput ? `Found: ${searchResult.length}` : ""
                 }
               />
-            </div>
+            </div> */}
 
             <MaterialReactTable columns={columns} data={otherCapabilities}
               muiTableHeadCellProps={{
@@ -138,6 +146,14 @@ export default function OtherCapabilities() {
                   fontSize: '16px',
                   fontFamily: 'DFDS',
                   color: '#002b45',
+                },
+              }}
+              filterFns={{
+                customFilterFn: (row, id, filterValue) => {
+                  console.log(row.getValue(id));
+                  console.log(row);
+                  return true;
+                  
                 },
               }}
               muiTableBodyCellProps={{
@@ -157,7 +173,7 @@ export default function OtherCapabilities() {
                 }
               }
               }
-              enableGlobalFilterModes
+              enableGlobalFilterModes= {true}
               initialState={{
                 showGlobalFilter: true,
               }}
@@ -168,18 +184,22 @@ export default function OtherCapabilities() {
                   minWidth: '1120px',
                   fontWeight: '400',
                   fontSize: '16px', 
+                  padding: '5px',
                 },
+                size: 'small',
                 variant: 'outlined',
               }}
+              globalFilterFn="contains" 
               enableFilterMatchHighlighting={true}
               enableFullScreenToggle={false}
               enableDensityToggle={false}
               enableHiding={false}
-              enableFilters={false}
+              enableFilters={true}
+              enableGlobalFilter= {true}
               enableTopToolbar={true}
               enableBottomToolbar={false}
               enableColumnActions={false}
-              muiTableBodyRowProps={({ row }) => ({
+              muiTableBodyRowProps2={({ row }) => ({
                 onClick: () => {
                   clickHandler(row.original.id)
                 },
@@ -191,42 +211,24 @@ export default function OtherCapabilities() {
                   minHeight: 0,
                 }
               })}
+
+              muiTableBodyRowProps={({ row }) => {
+                
+                return ({
+                  onClick: () => {
+                    clickHandler(row.original.id)
+                  },
+                  sx: {
+                    cursor: 'pointer',
+                    background: row.original.status === 'Deleted' ? '#d88' : '',
+                    padding: 0,
+                    margin: 0,
+                    minHeight: 0,
+                  }
+                })
+              }}
               
-
-
             />
-
-            <Table isInteractive width={"100%"}>
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell align="right"></TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {items.map((x) => (
-                  <TableRow key={x.id} onClick={() => clickHandler(x.id)} className={rowClass(x.status)}>
-                    <TableDataCell>
-                      <Text styledAs="action" as={"div"}>
-                        <HighlightedText
-                          text={truncateString(x.name)}
-                          highlight={searchInput}
-                        />
-                      </Text>
-                      <Text styledAs="caption" as={"div"}>
-                        <HighlightedText
-                          text={truncateString(x.name)}
-                          highlight={searchInput}
-                        />
-                      </Text>
-                    </TableDataCell>
-                    <TableDataCell align="right">
-                      <ChevronRight />
-                    </TableDataCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
           </>
         )}
       </PageSection>
