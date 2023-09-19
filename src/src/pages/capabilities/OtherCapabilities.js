@@ -124,6 +124,7 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
+
             <MaterialReactTable columns={columns} data={otherCapabilities}
               muiTableHeadCellProps={{
                 sx: {
@@ -209,11 +210,15 @@ export default function OtherCapabilities() {
                     padding: 0,
                     margin: 0,
                     minHeight: 0,
+                    '&:hover td': {
+                      backgroundColor: row.original.status === 'Deleted' ? 'rgba(187, 221, 243, 0.1)' : 'rgba(187, 221, 243, 0.4)',
+                    },
                   }
                 })
               }}
-              
+
             />
+
           </>
         )}
       </PageSection>
