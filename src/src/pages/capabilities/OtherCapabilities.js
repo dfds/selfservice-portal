@@ -124,21 +124,6 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
-            {/* <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
-              <TextField
-                name="basic"
-                placeholder="Find a capability..."
-                icon={<Search />}
-                help="Find a capability..."
-                size="small"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                assistiveText={
-                  hasSearchInput ? `Found: ${searchResult.length}` : ""
-                }
-              />
-            </div> */}
-
             <MaterialReactTable columns={columns} data={otherCapabilities}
               muiTableHeadCellProps={{
                 sx: {
