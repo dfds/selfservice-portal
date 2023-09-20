@@ -24,7 +24,7 @@ import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
-import {useGetMessageContracts, useGetConsumers} from "../../../hooks/Topics";
+import AppContext from "../../../AppContext";
 
 function TopicHeader({
   name,
@@ -94,8 +94,7 @@ function TopicHeader({
 export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
     useContext(SelectedCapabilityContext);
-  const {getMessageContracts} = useGetMessageContracts();
-  const {getConsumers} = useGetConsumers();
+  const { selfServiceApiClient } = useContext(AppContext);
   const [contracts, setContracts] = useState([]);
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
 
@@ -129,8 +128,8 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     }
 
     async function fetchData(topic) {
-      const result = await getMessageContracts(topic);
-      const consumers = await getConsumers(topic);
+      const result = await selfServiceApiClient.getMessageContracts(topic);
+      const consumers = await selfServiceApiClient.getConsumers(topic);
       result.sort((a, b) => a.messageType.localeCompare(b.messageType));
 
       if (isMounted) {

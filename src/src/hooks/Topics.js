@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { NewErrorContextBuilder } from "../misc/error";
-import {callApi, getSelfServiceAccessToken} from "../AuthService";
 
 export function useTopics() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -39,7 +38,7 @@ export function useTopics() {
 
 export function useDeleteTopic() {
   const { triggerError, sendRequest } = useSelfServiceRequest();
-  return (topicDefinition) => {
+  const deleteTopic = (topicDefinition) => {
     const link = topicDefinition?._links?.self;
     if (!link) {
       triggerError(
@@ -69,6 +68,9 @@ export function useDeleteTopic() {
       method: "DELETE",
     });
   };
+  return {
+    deleteTopic,
+  };
 }
 
 export function useUpdateTopic() {
@@ -92,60 +94,4 @@ export function useUpdateTopic() {
       },
     });
   };
-}
-
-export function useGetTopics() {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-
-  const getTopics = async (clusterAccessDefinition) => {
-    const topicsLink = clusterAccessDefinition?._links?.topics;
-    if (!topicsLink) {
-      console.log(
-        "Warning! No topics link found on kafka cluster access definition:",
-        clusterAccessDefinition,
-      );
-      return [];
-    }
-    await sendRequest({
-      urlSegments: [topicsLink.href],
-      method: topicsLink.method,
-    });
-    return responseData.data;
-  };
-
-  return {
-    getTopics,
-  };
-}
-
-export function useGetMessageContracts() {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  return async (topicDefinition) => {
-    const messageContractsLink = topicDefinition?._links?.messageContracts;
-    await sendRequest({
-      urlSegments: [messageContractsLink.href],
-      method: messageContractsLink.method,
-    });
-    return responseData.data;
-  };
-}
-
-export function useGetConsumers(){
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  return async (topicDefinition) =>  {
-    const link = topicDefinition?._links?.consumers;
-
-    if (!link) {
-      return [];
-    }
-    // If we are _not_ allowed to get consumers, simply return nothing
-    if (!(link.allow || []).includes("GET")) {
-      return [];
-    }
-    await sendRequest(
-    {
-      urlSegments: [link.href],
-    });
-    return responseData.data.items
-  }
 }
