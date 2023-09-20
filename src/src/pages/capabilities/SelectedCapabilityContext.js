@@ -6,9 +6,10 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { useCapabilityById, useCapabilityMembers } from "hooks/Capabilities";
+import {useCapabilities, useCapabilityById, useCapabilityMembers} from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
+import {useDeleteTopic, useGetTopics, useUpdateTopic} from "../../hooks/Topics";
 
 const SelectedCapabilityContext = createContext();
 
@@ -25,6 +26,9 @@ function adjustRetention(kafkaTopic) {
 function SelectedCapabilityProvider({ children }) {
   const { shouldAutoReloadTopics, setShouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
     useContext(AppContext);
+  const { deleteTopic } = useDeleteTopic();
+  const { updateTopic } = useUpdateTopic();
+  const { getTopics } = useGetTopics();
 
   //const [isLoading, setIsLoading] = useState(false);
   const [capabilityId, setCapabilityId] = useState(null);
@@ -48,7 +52,7 @@ function SelectedCapabilityProvider({ children }) {
     );
     let allTopicsProvisioned = true;
     for (const cluster of clusters) {
-      const topics = await selfServiceApiClient.getTopics(cluster);
+      const topics = getTopics(cluster);
 
       topics.forEach((kafkaTopic) => {
         if (kafkaTopic.status !== "Provisioned") {
@@ -249,7 +253,7 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    await selfServiceApiClient.updateTopic(found, topicDescriptor);
+    updateTopic(found, topicDescriptor);
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -279,7 +283,7 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    await selfServiceApiClient.deleteTopic(found);
+    deleteTopic(found);
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
