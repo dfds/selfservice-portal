@@ -118,6 +118,25 @@ export class SelfServiceApiClient {
     return items;
   }
 
+  async getTopics(clusterAccessDefinition) {
+    const topicsLink = clusterAccessDefinition?._links?.topics;
+    if (!topicsLink) {
+      console.log(
+        "Warning! No topics link found on kafka cluster access definition:",
+        clusterAccessDefinition,
+      );
+      return [];
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = topicsLink.href;
+    const response = await callApi(url, accessToken);
+    const { items } = await response.json();
+
+    return items;
+  }
+
   async addTopicToCapability(clusterDefinition, topicDefinition) {
     const topicsLink = clusterDefinition?._links?.createTopic;
     if (!topicsLink) {
@@ -153,7 +172,22 @@ export class SelfServiceApiClient {
     return await response.json();
   }
 
+  async getMessageContracts(topicDefinition) {
+    const messageContractsLink = topicDefinition?._links?.messageContracts;
 
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = messageContractsLink.href;
+    const response = await callApi(url, accessToken);
+    this.responseHandler(response);
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    return data.items;
+  }
 
   async getConsumers(topicDefinition) {
     const link = topicDefinition?._links?.consumers;

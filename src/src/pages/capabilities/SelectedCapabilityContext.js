@@ -6,10 +6,14 @@ import React, {
   useContext,
   useState,
 } from "react";
-import {useCapabilities, useCapabilityById, useCapabilityMembers} from "hooks/Capabilities";
+import {
+  useCapabilities,
+  useCapabilityById,
+  useCapabilityMembers,
+} from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
-import {useDeleteTopic, useGetTopics, useUpdateTopic} from "../../hooks/Topics";
+import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 
 const SelectedCapabilityContext = createContext();
 
@@ -23,12 +27,16 @@ function adjustRetention(kafkaTopic) {
   }
 }
 
+// TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, setShouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
-    useContext(AppContext);
+  const {
+    shouldAutoReloadTopics,
+    setShouldAutoReloadTopics,
+    selfServiceApiClient,
+    myCapabilities,
+  } = useContext(AppContext);
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
-  const { getTopics } = useGetTopics();
 
   //const [isLoading, setIsLoading] = useState(false);
   const [capabilityId, setCapabilityId] = useState(null);
@@ -52,7 +60,7 @@ function SelectedCapabilityProvider({ children }) {
     );
     let allTopicsProvisioned = true;
     for (const cluster of clusters) {
-      const topics = getTopics(cluster);
+      const topics = selfServiceApiClient.getTopics(cluster);
 
       topics.forEach((kafkaTopic) => {
         if (kafkaTopic.status !== "Provisioned") {
