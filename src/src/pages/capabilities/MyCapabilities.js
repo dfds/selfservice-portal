@@ -95,7 +95,7 @@ export default function MyCapabilities() {
 
       },
       {
-        accessorKey: 'id',
+        accessorFn: (row) => row.id,
         header: 'Aws Resources',
         size: 150,
         enableColumnFilterModes: false,
@@ -117,7 +117,7 @@ export default function MyCapabilities() {
 
       },
       {
-        accessorKey: 'id',
+        accessorFn: (row) => row.id,
         header: 'Costs',
         size: 150,
         enableColumnFilterModes: false,
@@ -139,7 +139,8 @@ export default function MyCapabilities() {
         }
       },
       {
-        id: 'details',
+        accessorFn: (row) => row.id,
+        header: 'arrow',
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
@@ -147,7 +148,8 @@ export default function MyCapabilities() {
         },
         Cell: ({ cell }) => {
           return <ChevronRight />
-        }
+        },
+        Header: <div></div> //enable empty header
       },
     ],
     [],
