@@ -1,67 +1,45 @@
-.container_toast {
-  display: flex;
-  background-color: rgba(190, 30, 45, 0.8);
+.toast_container {
+  background-color: rgba(190, 30, 45);
   width: 284px;
-  cursor: default;
-  position: fixed;
-  left: 50%; /* Position the element at the horizontal center */
-  transform: translateX(-50%);
-  bottom: 1rem;
-  z-index: 10000;
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem;
   border-radius: 5px;
+  margin: 5px;
+  opacity: 0;
+  transition: 300ms all ease;
+  height: 120px;
+}
+.hidden {
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.container_toast_message{
+  display: flex;
   justify-content: center;
 }
 
-/* Toast Close Button */
-.toast_close {
-  display: flex;
-  cursor: pointer;
+.toast_close_bar {
+  width: 100%;
+  text-align: right;
+  padding-right: 0.5rem;
+}
+.toast_close_bar button {
+  width: 20px;
+}
+.close_icon {
+  font-size: 20px;
+  font-weight: bold;
   color: #fff;
-  justify-content: center;
-  align-items: center;
-  padding: 0 0 0 0;
-  margin: 0 0 0 20px;
-  line-height: 16px;
-  border-radius: 5px;
 }
 
-.toast_close:hover {
-  background-color: #920916;
-}
-
-.textbox {
-  display: flex;
+.toast_message {
   color: #ffffff;
   text-align: center;
+  padding: 0.5rem;
 }
 
-.actionbox {
-  display: flex;
-  flex: 0;
-  justify-content: "flex-start";
-  align-items: end;
-}
-
-.actionbox > div {
-  margin-bottom: 40px;
-  margin-left: 0px;
-}
-
-.actionbox > Button {
-  color: white;
-}
-
-.actionbox > Button:hover {
-  color: white;
-  background-color: #920916;
-}
-
-.close_icon {
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1;
+.toast_details_button {
+  position: relative;
+  bottom: 0.5rem;
+  font-size: 0.8rem;
 }

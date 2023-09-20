@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import ErrorContext from "./ErrorContext";
 import Toast from "components/Toast/index.js";
+import styles from "errordisplay.module.css"
 
 const ErrorDisplay = () => {
   const { error } = useContext(ErrorContext);
@@ -10,9 +11,11 @@ const ErrorDisplay = () => {
   }
 
   return (
-    <div>
+    <div className={styles.toasts_container}>
       {error.map((e, index) => (
+        <>
         <Toast key={index} message={e}></Toast>
+        </>
       ))}
     </div>
   );
