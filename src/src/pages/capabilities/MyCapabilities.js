@@ -212,6 +212,7 @@ export default function MyCapabilities() {
                 }
               }
               }
+              enablePagination={false}
               enableTopToolbar={false}
               enableBottomToolbar={false}
               enableColumnActions={false}
