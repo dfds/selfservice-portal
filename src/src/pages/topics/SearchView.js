@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
 import { Link } from "react-router-dom";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import TopicsContext from "pages/topics/TopicsContext";
-import AppContext from "../../AppContext";
+import { useGetMessageContracts } from "../../hooks/Topics";
 
 function TopicHeader({ data, isOpen, onClicked }) {
   const handleClick = () => {
@@ -64,7 +64,7 @@ export function SearchView({ data, onTopicClicked }) {
   const [selectedMessageContractId, setSelectedMessageContractId] =
     useState(null);
   const { selectedKafkaTopic } = useContext(TopicsContext);
-  const { selfServiceApiClient } = useContext(AppContext);
+  const { getMessageContracts } = useGetMessageContracts();
 
   const handleHeaderClicked = () => {
     if (onTopicClicked) {
@@ -95,7 +95,7 @@ export function SearchView({ data, onTopicClicked }) {
 
     async function fetchData(data) {
       setIsLoadingContracts(true);
-      const result = await selfServiceApiClient.getMessageContracts(data);
+      const result = getMessageContracts(data);
       result.sort((a, b) => a.messageType.localeCompare(b.messageType));
       setContracts(result);
       setIsLoadingContracts(false);
