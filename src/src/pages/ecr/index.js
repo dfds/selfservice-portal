@@ -123,7 +123,7 @@ export default function ECRPage() {
             <CardTitle largeTitle>Information</CardTitle>
             <CardContent>
               <p>
-                  This a comprehensive list of all AWS ECR Repositories that
+                  This is a comprehensive list of all AWS ECR Repositories that
                   have been created by DFDS development teams.
                   All users with access to this portal can request new repositories.
               </p>
