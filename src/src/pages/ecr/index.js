@@ -93,6 +93,7 @@ function Repositories() {
               borderRadius: '0',
             }
           }}
+          enablePagination={false}
           enableTopToolbar={true}
           enableBottomToolbar={false}
           enableColumnActions={true}
