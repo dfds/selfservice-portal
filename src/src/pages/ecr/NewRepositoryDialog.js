@@ -90,7 +90,7 @@ export default function NewRepositoryDialog({
         <SideSheetContent>
             <TextField
               label="Name"
-              placeholder="Enter name of capability"
+              placeholder="Enter name of repository"
               required
               value={formData.name}
               onChange={changeName}
