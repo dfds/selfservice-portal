@@ -3,7 +3,6 @@ import { Close } from "@dfds-ui/icons/system";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@dfds-ui/react-components";
 import { Modal, ModalAction } from "@dfds-ui/modal";
-import { set } from "date-fns";
 
 /*
  * This hook is used to get the previous value of a prop or state.

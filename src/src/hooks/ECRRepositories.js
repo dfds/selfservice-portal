@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
-import { set } from "date-fns";
 
 export function useECRRepositories() {
   const { responseData: loadResponse, sendRequest: loadRepositories } = useSelfServiceRequest();
