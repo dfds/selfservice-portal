@@ -5,6 +5,7 @@ export function useECRRepositories() {
   const { responseData: loadResponse, sendRequest: loadRepositories } = useSelfServiceRequest();
   const { responseData: addResponse, sendRequest: addRepository } = useSelfServiceRequest();
   const [ repositories, setRepositories ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   useEffect(() => {
     loadRepositories({
@@ -18,10 +19,12 @@ export function useECRRepositories() {
     if (loadResponse != null) {
       const repositories = loadResponse || [];
       setRepositories(repositories);
+      setIsLoading(false);
     }
   }, [loadResponse]);
 
   const createRepository = async ({name, description, repositoryName}) => {
+    setIsLoading(true);
     await addRepository({
       urlSegments: ["ecr/repositories"],
       method: "POST",
@@ -35,6 +38,7 @@ export function useECRRepositories() {
 
   return {
     createRepository,
+    isLoading,
     repositories,
   };
 }
