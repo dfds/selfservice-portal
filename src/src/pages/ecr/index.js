@@ -15,11 +15,7 @@ import NewRepositoryDialog from "./NewRepositoryDialog";
 import { useECRRepositories } from "hooks/ECRRepositories";
 
 function Repositories() {  
-  const { repositories } = useECRRepositories();
-
-  useEffect(() => {
-    console.log("Repositories updated: ", repositories.length);
-  }, [repositories]);
+  const { repositories, isLoading } = useECRRepositories();
 
   const columns = useMemo(
     () => [
@@ -67,8 +63,8 @@ function Repositories() {
   return (
     <>
       <PageSection headline={`Repositories`}>
-      {((repositories || []).length === 0) && (<Spinner />)}
-      {(repositories.length > 0) && (
+      {isLoading && <Spinner />}
+      {!isLoading && (
         <MaterialReactTable columns={columns} data={repositories}
           muiTableHeadCellProps={{
             sx: {
