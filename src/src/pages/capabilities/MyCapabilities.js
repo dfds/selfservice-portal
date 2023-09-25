@@ -15,7 +15,6 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./capabilities.module.css"
-import mystyles from "./myCapabilities.module.css";
 import { MaterialReactTable } from 'material-react-table';
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
@@ -225,7 +224,7 @@ export default function MyCapabilities() {
                 },
                 sx: {
                   cursor: 'pointer',
-                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  background: row.original.status === 'Deleted' ? styles.deletedRow : '',
                   padding: 0,
                   margin: 0,
                   minHeight: 0,
