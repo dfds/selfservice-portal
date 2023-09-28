@@ -4,17 +4,16 @@ import Toast from "components/Toast/index.js";
 import styles from "errordisplay.module.css"
 
 const ErrorDisplay = () => {
-  const { error } = useContext(ErrorContext);
-
-  if (error.length === 0) {
+  const { errors } = useContext(ErrorContext); //error is multiple errors
+  if (errors.length === 0) {
     return null;
   }
-
   return (
     <div className={styles.toasts_container}>
-      {error.map((e, index) => (
+      {errors.map((e, index) => (
         <>
-        <Toast key={index} message={e}></Toast>
+        {console.log("going to display error: ", e)}
+        <Toast key={index} message={e.msg} details={e.details ? e.details : null}></Toast>
         </>
       ))}
     </div>

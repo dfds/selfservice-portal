@@ -29,12 +29,14 @@ export function useError(opts) {
     // Error handling flow
     if (params?.handler != null) {
       // 1: Handler provided via params
+      console.log("hit prio #1");
       params.handler(params);
       return;
     }
 
     if (options?.handler != null) {
       // 2: Handler provided via options
+      console.log("hit prio #2");
       if (params.msg === null) {
         params.msg = fallbackMsg;
       }
@@ -44,19 +46,21 @@ export function useError(opts) {
 
     if (params) {
       if (params.error) {
+      console.log("hit prio #3");
         // 3: Error provided via params
-        showError(params.error.message);
+        showError(params.error.message, params.details);
         return;
       }
 
       if (params.msg) {
         // 4: Msg provided via params
-        showError(params.msg);
+      console.log("hit prio #4");
+        showError(params.msg, params.details);
         return;
       }
     }
 
-    showError(fallbackMsg); // 5: fallbackMsg
+    showError(fallbackMsg, params.httpResponse); // 5: fallbackMsg
   };
 
   return {
