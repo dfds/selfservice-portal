@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import PageSection from "components/PageSection";
 import {
@@ -10,9 +10,11 @@ import {
 } from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 export default function Resources({capabilityId}) {
   const [showLogModal, setLogModal] = useState(false);
+  const { awsAccount } = useContext(SelectedCapabilityContext);
   const handleApplicationLogShow = async () => {
     setLogModal(true);
   };
@@ -33,17 +35,21 @@ export default function Resources({capabilityId}) {
 
           <ResourceInfoBadges/>
 
-          <br />
+          {(awsAccount && awsAccount.status == "Completed") && (
+            <>
+              <br />
 
-          <ButtonStack align="center" style={{ margin: "auto", marginTop: "15px", width: "400px" }}>
-            <Button
-              size="small"
-              variation="outlined"
-              onClick={handleApplicationLogShow}
-            >
-              How to see application logs?
-            </Button>
-          </ButtonStack>
+              <ButtonStack align="center" style={{ margin: "auto", marginTop: "15px", width: "400px" }}>
+                <Button
+                  size="small"
+                  variation="outlined"
+                  onClick={handleApplicationLogShow}
+                >
+                  How to see application logs?
+                </Button>
+              </ButtonStack>
+            </>
+          )}
         </CardContent>
       </Card>
       </PageSection>
@@ -65,7 +71,7 @@ export default function Resources({capabilityId}) {
         }}
       >
         <Text>
-          <Text styledAs={"smallHeadline"}>
+          <Text as="span" styledAs={"smallHeadline"}>
             For applications running in Kubernetes
           </Text>
         </Text>
