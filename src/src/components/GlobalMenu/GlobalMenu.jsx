@@ -76,7 +76,7 @@ export default function GlobalMenu() {
                           />
                         </AppBarListItem>
                         
-                        <AppBarListItem
+                        {/*<AppBarListItem
                           clickable
                           onClick={() => {
                             handleLogout();
@@ -85,6 +85,7 @@ export default function GlobalMenu() {
                         >
                           <ListText>Logout</ListText>
                         </AppBarListItem>
+                        */}
                       </>
                     )
                   }}
