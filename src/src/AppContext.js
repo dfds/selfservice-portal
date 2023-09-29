@@ -5,6 +5,7 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
+import { useMsal } from "@azure/msal-react";
 
 const AppContext = React.createContext(null);
 
@@ -53,6 +54,17 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
+
+  const { instance } = useMsal();
+  const handleLogout = () => {
+    instance.logoutRedirect()
+      .then(response => {
+        console.log('Logout successful', response);
+      })
+      .catch(error => {
+        console.error('Logout failed', error);
+      });
+  };
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
@@ -140,6 +152,7 @@ function AppProvider({ children }) {
     addCapability,
     addNewCapability,
     truncateString,
+    handleLogout,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

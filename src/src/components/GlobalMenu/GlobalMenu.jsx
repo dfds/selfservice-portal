@@ -16,7 +16,7 @@ import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 
 export default function GlobalMenu() {
-  const { user } = useContext(AppContext);
+  const { user, handleLogout } = useContext(AppContext);
 
   const navLinks = [
     {
@@ -59,8 +59,6 @@ export default function GlobalMenu() {
                 id="profile"
                 Icon={Account}
                 title="Profile"
-                //as={ProfilePicture}
-                //pictureUrl={user.profilePictureUrl ?? ""}
                 placement="bottom-end"
               >
                 <MenuPopOverContext.Consumer>
@@ -69,13 +67,20 @@ export default function GlobalMenu() {
                       <>
                         <AppBarListItem>
                           <ListText><span><b>{user.name ?? "<noname>"}</b><br/>{user.title ?? "<untitled>"}</span></ListText>
+                          <ProfilePicture
+                            clickable
+                            as={AppBarItem}
+                            title="Profile"
+                            pictureUrl={user.profilePictureUrl ?? ""}
+                            placement="bottom-end"
+                          />
                         </AppBarListItem>
                         
                         <AppBarListItem
                           clickable
                           onClick={() => {
-                            alert("Logout not implemented")
-                            context.handlePopoverClose()
+                            handleLogout();
+                            //context.handlePopoverClose();
                           }}
                         >
                           <ListText>Logout</ListText>
