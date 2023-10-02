@@ -41,13 +41,13 @@
 
 .toast_details_button {
   position: relative;
-  bottom: 0.7rem; /* Adjust as needed */
+  bottom: 0.7rem;
   transform: translateX(-50%);
   font-size: 0.8rem;
-  color: #6d6d6d; /* Adjust to match your design */
-  cursor: pointer; /* Indicates an interactive element */
+  color: #6d6d6d;
+  cursor: pointer;
 }
 
 .toast_details_button:hover {
-  color: rgb(255, 255, 255); /* Change the color upon hover */
+  color: rgb(255, 255, 255);
 }
