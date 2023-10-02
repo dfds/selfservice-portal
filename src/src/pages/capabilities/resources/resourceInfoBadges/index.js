@@ -49,7 +49,7 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
           <i>
             <strong>Please note</strong> <br />
             That manual steps are a part of the AWS Account & Kubernetes
-            Namespace creation, so please allow for x hours for the request to
+            Namespace creation, so please allow for some hours for the request to
             be processed. Also remember that requests submitted late in the day,
             or during weekends, will not picked up until the following business
             day.
@@ -118,7 +118,7 @@ const Completed = function ({ accountId, namespace, id }) {
 
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
-  const { id, awsAccount, links, requestAwsAccount } = useContext(
+  const { id, awsAccount, links, requestAwsAccount, setAwsAccountRequested } = useContext(
     SelectedCapabilityContext,
   );
   const [showDialog, setShowDialog] = useState(false);
@@ -130,6 +130,7 @@ export function ResourceInfoBadges() {
     setIsSubmitting(true);
     await requestAwsAccount();
     setIsSubmitting(false);
+    setAwsAccountRequested(true);
     setShowDialog(false);
   };
 

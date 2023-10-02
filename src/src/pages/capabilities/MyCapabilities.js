@@ -15,7 +15,6 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./capabilities.module.css"
-import mystyles from "./myCapabilities.module.css";
 import { MaterialReactTable } from 'material-react-table';
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
@@ -85,14 +84,15 @@ export default function MyCapabilities() {
         size: 350,
         enableColumnFilterModes: false,
         Cell: ({ cell }) => {
-          return <div> <Text styledAs="action" as={"div"}>
-            {cell.getValue().name}
-          </Text>
+          return <div>
+            <Text styledAs="action" as={"div"}>
+              {cell.getValue().name}
+            </Text>
             <Text styledAs="caption" as={"div"}>
               {cell.getValue().description}
-            </Text></div>
+            </Text>
+          </div>
         }
-
       },
       {
         accessorFn: (row) => row.id,
@@ -106,15 +106,12 @@ export default function MyCapabilities() {
           align: 'center',
         },
         Cell: ({ cell }) => {
-          return <div style={{
-          }}>
+          return <div>
             <InlineAwsCountSummary data={
-              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue().toLocaleString())
+              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue().id)
             } />
           </div>
         }
-
-
       },
       {
         accessorFn: (row) => row.id,
@@ -141,12 +138,13 @@ export default function MyCapabilities() {
       {
         accessorFn: (row) => row.id,
         header: 'arrow',
+        id: 'details',
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
           align: 'right',
         },
-        Cell: ({ cell }) => {
+        Cell: () => {
           return <ChevronRight />
         },
         Header: <div></div> //enable empty header
@@ -225,7 +223,7 @@ export default function MyCapabilities() {
                 },
                 sx: {
                   cursor: 'pointer',
-                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  background: row.original.status === 'Deleted' ? styles.deletedRow : '',
                   padding: 0,
                   margin: 0,
                   minHeight: 0,

@@ -13,9 +13,7 @@ const ErrorDisplay = () => {
   return (
     <div className={styles.toasts_container}>
       {error.map((e, index) => (
-        <>
         <Toast key={index} message={e}></Toast>
-        </>
       ))}
     </div>
   );

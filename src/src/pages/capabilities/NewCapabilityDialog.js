@@ -114,7 +114,12 @@ export default function NewCapabilityDialog({
             >
               Add
             </Button>
-            <Button size="small" variation="outlined" onClick={handleClose}>
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={handleClose}
+              disabled={inProgress}
+            >
               Cancel
             </Button>
           </ButtonStack>

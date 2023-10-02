@@ -14,6 +14,7 @@ import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
@@ -33,7 +34,7 @@ export default function CapabilitiesPage() {
 
   return (
     <>
-      <Page title={"Capabilities"}>
+      <Page title="Capabilities">
         {showNewCapabilityDialog && (
           <NewCapabilityDialog
             inProgress={isCreatingNewCapability}

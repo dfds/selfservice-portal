@@ -48,7 +48,6 @@ export default function Costs() {
                   ) : (
                     <>
                       <LargeCapabilityCostSummary
-                        key={index}
                         data={dataValue}
                         capabilityId={id}
                       />
