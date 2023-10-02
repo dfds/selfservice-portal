@@ -16,7 +16,7 @@ import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 
 export default function GlobalMenu() {
-  const { user, handleLogout } = useContext(AppContext);
+  const { user } = useContext(AppContext);
 
   const navLinks = [
     {
@@ -75,17 +75,6 @@ export default function GlobalMenu() {
                             placement="bottom-end"
                           />
                         </AppBarListItem>
-                        
-                        {/*<AppBarListItem
-                          clickable
-                          onClick={() => {
-                            handleLogout();
-                            //context.handlePopoverClose();
-                          }}
-                        >
-                          <ListText>Logout</ListText>
-                        </AppBarListItem>
-                        */}
                       </>
                     )
                   }}
