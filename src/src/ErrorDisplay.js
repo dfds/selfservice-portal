@@ -12,7 +12,6 @@ const ErrorDisplay = () => {
     <div className={styles.toasts_container}>
       {errors.map((e, index) => (
         <>
-        {console.log("going to display error: ", e)}
         <Toast key={index} message={e.msg} details={e.details ? e.details : null}></Toast>
         </>
       ))}

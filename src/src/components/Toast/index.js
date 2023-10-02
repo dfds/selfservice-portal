@@ -69,7 +69,11 @@ export default function Toast({ message, details }) {
         actions={actions}
     >
       {console.log("details in component: ", details)}
-      {details ? <div>{''+details}</div> : "No details available"}
+      {details ? <div>{'Got '+details.status+': "'+details.statusText+'" for '+details.url+'.'
+                      }
+                  </div>
+               : "No details available"
+      }
     </Modal>)}
     {showToast && (
     <div className={`${styles.toast_container} ${hide ? styles.hidden : ''}`} style={{"opacity": opacity}}>

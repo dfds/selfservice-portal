@@ -16,7 +16,7 @@ function ErrorProvider({ children }) {
   const [errors, setErrors] = useState([]);
 
   const showError = (errorMessage, errorDetails=null) => {
-    console.log("adding new error with msg: ", errorMessage);
+    // console.log("adding new error with msg: ", errorMessage); //leaving this here for debugging inb4 comment on PR
     const error = new ErrorContent(errorMessage, errorDetails);
     setErrors((prevError) => [...prevError, error])
   };
