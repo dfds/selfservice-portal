@@ -22,7 +22,7 @@ export default function Toast({ message, details }) {
   const prevOpacity = usePrevious(opacity);
   const [hide, setHide] = useState(false);
   const prevHide = usePrevious(hide);
- 
+
   const actions = (
     <>
       <ModalAction
@@ -68,7 +68,12 @@ export default function Toast({ message, details }) {
         onRequestClose={() => setShowDetails(false)}
         actions={actions}
     >
-      {details ? details : "No details available"}
+      {console.log("details in component: ", details)}
+      {details ? <div>{'Got '+details.status+': "'+details.statusText+'" for '+details.url+'.'
+                      }
+                  </div>
+               : "No details available"
+      }
     </Modal>)}
     {showToast && (
     <div className={`${styles.toast_container} ${hide ? styles.hidden : ''}`} style={{"opacity": opacity}}>
@@ -80,7 +85,6 @@ export default function Toast({ message, details }) {
         <div className={styles.toast_message}>
           {message}
         </div>
-        <br />
         {details && (
         <div>
           <Button size="small" variation="link" fillWidth="true" onClick={() => setShowDetails(true)}>

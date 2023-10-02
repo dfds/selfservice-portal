@@ -1,17 +1,28 @@
 import ErrorDisplay from "ErrorDisplay";
 import React, { createContext, useEffect, useState } from "react";
 
+class ErrorContent {
+    msg = null;
+    details = null;
+    constructor(msg, details) {
+        this.msg = msg;
+        this.details = details;
+    }
+}
+
 const ErrorContext = createContext();
 
 function ErrorProvider({ children }) {
-  const [error, setError] = useState([]);
+  const [errors, setErrors] = useState([]);
 
-  const showError = (errorMessage) => {
-    setError((prevError) => [...prevError, errorMessage])
+  const showError = (errorMessage, errorDetails=null) => {
+    // console.log("adding new error with msg: ", errorMessage); //leaving this here for debugging inb4 comment on PR
+    const error = new ErrorContent(errorMessage, errorDetails);
+    setErrors((prevError) => [...prevError, error])
   };
 
   return (
-    <ErrorContext.Provider value={{ error, showError }}>
+    <ErrorContext.Provider value={{ errors, showError }}>
       {<ErrorDisplay />}
       {children}
     </ErrorContext.Provider>
