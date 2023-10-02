@@ -1,7 +1,7 @@
 
 
 .headlineContainer {
-  display: flex;
+  display: inline-flex;
   align-items: center;
 }
 
@@ -17,11 +17,10 @@
 }
 
 .headlineContainer .badges {
-  display: flex;
   align-items: center;
   margin-left: 10px;
   position: relative;
-  top: 1px;
+  top: -3px;
 }
 
 .headlineContainer .badge span {

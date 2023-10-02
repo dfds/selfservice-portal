@@ -85,8 +85,8 @@ export default function OtherCapabilities() {
         disableFilters: false,
         enableGlobalFilter: true,
         enableFilterMatchHighlighting: true,
-        
-          
+
+
         Cell: ({ cell, renderedCellValue }) => {
           return <div> <Text styledAs="action" as={"div"}>
             {renderedCellValue}
@@ -139,7 +139,7 @@ export default function OtherCapabilities() {
                   console.log(row.getValue(id));
                   console.log(row);
                   return true;
-                  
+
                 },
               }}
               muiTableBodyCellProps={{
@@ -166,16 +166,16 @@ export default function OtherCapabilities() {
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
               placeholder: `Find a capability...`,
-                sx: { 
+                sx: {
                   minWidth: '1120px',
                   fontWeight: '400',
-                  fontSize: '16px', 
+                  fontSize: '16px',
                   padding: '5px',
                 },
                 size: 'small',
                 variant: 'outlined',
               }}
-              globalFilterFn="contains" 
+              globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
               enableFullScreenToggle={false}
               enableDensityToggle={false}
@@ -199,7 +199,7 @@ export default function OtherCapabilities() {
               })}
 
               muiTableBodyRowProps={({ row }) => {
-                
+
                 return ({
                   onClick: () => {
                     clickHandler(row.original.id)

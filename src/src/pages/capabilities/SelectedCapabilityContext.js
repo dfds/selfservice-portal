@@ -35,6 +35,7 @@ function SelectedCapabilityProvider({ children }) {
   const [membershipApplications, setMembershipApplications] = useState([]);
   const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+  const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded } = useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
@@ -358,6 +359,15 @@ function SelectedCapabilityProvider({ children }) {
     return () => clearInterval(handle);
   }, [details, shouldAutoReloadTopics]);
 
+  useEffect(() => {
+    if (awsAccountRequested) {
+      setAwsAccount({
+        ...awsAccount,
+        status: "Requested",
+      });
+    }
+  }, [awsAccountRequested])
+
   //--------------------------------------------------------------------
 
   const state = {
@@ -373,6 +383,7 @@ function SelectedCapabilityProvider({ children }) {
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
+    setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,
     addTopicToCluster,

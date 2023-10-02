@@ -36,3 +36,12 @@
 .deletedRow {
   background-color: #d88;
 }
+
+.cardMediaImage {
+  position: unset!important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset!important;
+}
