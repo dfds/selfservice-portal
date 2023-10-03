@@ -175,6 +175,7 @@ export default function OtherCapabilities() {
                 size: 'small',
                 variant: 'outlined',
               }}
+              enablePagination={false}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
               enableFullScreenToggle={false}
