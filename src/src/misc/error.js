@@ -8,6 +8,7 @@ class ErrorContext {
   error = null;
   msg = null;
   handler = null;
+  details = null;
   showError = null;
 }
 
@@ -31,6 +32,11 @@ class ErrorContextBuilder {
 
   setHandler(input) {
     this.val.handler = input;
+    return this;
+  }
+
+  setDetails(input) {
+    this.val.details = input;
     return this;
   }
 

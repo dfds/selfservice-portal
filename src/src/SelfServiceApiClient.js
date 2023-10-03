@@ -437,7 +437,6 @@ export class SelfServiceApiClient {
     this.responseHandler(response);
 
     if (!response.ok) {
-      console.log("response was: ", response.status);
       return [];
     }
 

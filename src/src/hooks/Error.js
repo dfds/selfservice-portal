@@ -45,18 +45,18 @@ export function useError(opts) {
     if (params) {
       if (params.error) {
         // 3: Error provided via params
-        showError(params.error.message);
+        showError(params.error.message, params.details);
         return;
       }
 
       if (params.msg) {
         // 4: Msg provided via params
-        showError(params.msg);
+        showError(params.msg, params.details);
         return;
       }
     }
 
-    showError(fallbackMsg); // 5: fallbackMsg
+    showError(fallbackMsg, params.httpResponse); // 5: fallbackMsg
   };
 
   return {

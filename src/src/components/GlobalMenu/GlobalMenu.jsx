@@ -5,12 +5,15 @@ import {
   AppBarProvider,
   AppBarDrawer,
   AppBarItem,
+  AppBarIconButton,
   AppBarListItem,
+  MenuPopOverContext,
   ListText,
 } from "@dfds-ui/react-components";
+import { Account } from '@dfds-ui/icons/system'
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
-import ProfileName from "./ProfileName";
 import AppContext from "AppContext";
+import styles from "./GlobalMenu.module.css";
 
 export default function GlobalMenu() {
   const { user } = useContext(AppContext);
@@ -52,27 +55,43 @@ export default function GlobalMenu() {
           leftActions={<></>}
           actions={
             <>
-              {/* <AppBarIconButton icon={Search} ariaLabel="Search" /> */}
-              <AppBarItem title="Name" id="profile-name" as={ProfileName} />
               <AppBarItem
-                title="Profile"
                 id="profile"
-                as={ProfilePicture}
-                name={user.name ?? ""}
-                pictureUrl={user.profilePictureUrl ?? ""}
-              />
+                Icon={Account}
+                title="Profile"
+                placement="bottom-end"
+              >
+                <MenuPopOverContext.Consumer>
+                  {(context) => {
+                    return (
+                      <>
+                        <AppBarListItem>
+                          <ListText><span><b>{user.name ?? "<noname>"}</b><br/>{user.title ?? "<untitled>"}</span></ListText>
+                          <ProfilePicture
+                            clickable
+                            as={AppBarItem}
+                            title="Profile"
+                            pictureUrl={user.profilePictureUrl ?? ""}
+                            placement="bottom-end"
+                          />
+                        </AppBarListItem>
+                      </>
+                    )
+                  }}
+                </MenuPopOverContext.Consumer>
+              </AppBarItem>
             </>
           }
         >
           {navLinks.map((x) =>
             /https:?\/\//.test(x.url) ? (
-              <a href={x.url} style={{ textDecoration: "none" }} key={x.title}>
+              <a href={x.url} style={{ textDecoration: "none" }} key={x.title} className={styles.alignCenter}>
                 <AppBarListItem clickable>
                   <ListText>{x.title}</ListText>
                 </AppBarListItem>
               </a>
             ) : (
-              <Link to={x.url} style={{ textDecoration: "none" }} key={x.title}>
+              <Link to={x.url} style={{ textDecoration: "none" }} key={x.title} className={styles.alignCenter}>
                 <AppBarListItem clickable>
                   <ListText>{x.title}</ListText>
                 </AppBarListItem>

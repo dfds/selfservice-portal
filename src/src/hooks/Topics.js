@@ -25,7 +25,6 @@ export function useTopics() {
         copy.kafkaClusterName = found?.name || "";
         return copy;
       });
-      console.log(finalTopics);
       setTopicsList(finalTopics);
       setIsLoaded(true);
     }
