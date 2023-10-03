@@ -108,7 +108,7 @@ export default function MyCapabilities() {
         Cell: ({ cell }) => {
           return <div>
             <InlineAwsCountSummary data={
-              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue().id)
+              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue())
             } />
           </div>
         }
