@@ -7,52 +7,6 @@ export class SelfServiceApiClient {
     this.responseHandler = () => {};
   }
 
-  // async getCapabilities(){
-  //     const accessToken = await getSelfServiceAccessToken();
-
-  //     const url = composeUrl("capabilities");
-  //     const response = await callApi(url, accessToken);
-  //     this.responseHandler(response);
-
-  //     const { items } = await response.json();
-
-  //     return items || [];
-  // }
-
-  // responseHandler(response, defaultValue){
-  //     this.errorHandler(response);
-  // }
-
-  // async getCapabilityById(id) {
-  //     const accessToken = await getSelfServiceAccessToken();
-
-  //     const url = composeUrl("capabilities", id);
-  //     const response = await callApi(url, accessToken);
-  //     this.responseHandler(response);
-
-  //     if (response.ok) {
-  //         return await response.json();
-  //     } else {
-  //         return null;
-  //     }
-  // }
-
-  // async getAllTopics() {
-  //     const accessToken = await getSelfServiceAccessToken();
-
-  //     const url =  composeUrl("kafkatopics");
-  //     const response = await callApi(url, accessToken);
-  //     this.responseHandler(response);
-
-  //     const { items, _embedded } = await response.json();
-  //     return (items || []).map(topic => {
-  //         const copy = {...topic};
-  //         const found = (_embedded?.kafkaClusters?.items || []).find(cluster => cluster.id == topic.kafkaClusterId);
-  //         copy.kafkaClusterName = found?.name || "";
-  //         return copy;
-  //     });
-  // }
-
   async getMyPortalProfile() {
     const accessToken = await getSelfServiceAccessToken();
 
@@ -299,66 +253,6 @@ export class SelfServiceApiClient {
     }
 
     return await response.json();
-  }
-
-  async updateTopic(topicDefinition, topicDescriptor) {
-    const link = topicDefinition?._links?.updateDescription;
-    if (!link) {
-      throw Error(
-        "Error! No update topic description link found on topic definition: " +
-          JSON.stringify(topicDefinition, null, 2),
-      );
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const method = link.method;
-    const payload = {
-      ...topicDescriptor,
-    };
-
-    const response = await callApi(url, accessToken, method, payload);
-    this.responseHandler(response);
-
-    if (!response.ok) {
-      console.log(
-        `Warning: failed updating topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`,
-      );
-      throw Error("Faild updating topic!");
-    }
-  }
-
-  async deleteTopic(topicDefinition) {
-    const link = topicDefinition?._links?.self;
-    if (!link) {
-      throw Error(
-        "Error! No topic self link found on topic definition: " +
-          JSON.stringify(topicDefinition, null, 2),
-      );
-    }
-
-    if (!(link.allow || []).includes("DELETE")) {
-      throw Error(
-        "Error! You are not allowed to delete the topic. Options was " +
-          JSON.stringify(link.allow, null, 2),
-      );
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const method = "DELETE";
-
-    const response = await callApi(url, accessToken, method);
-    this.responseHandler(response);
-
-    if (!response.ok) {
-      console.log(
-        `Warning: failed deleting topic using request [${method}] ${url} - response was ${response.status} ${response.statusText}`,
-      );
-      throw Error("Faild updating topic!");
-    }
   }
 
   // async getCapabilityMembers(capabilityDefinition) {
