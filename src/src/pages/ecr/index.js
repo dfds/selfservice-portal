@@ -5,6 +5,7 @@ import {
   CardTitle,
   CardContent,
   CardActions,
+  CardMedia,
   Button,
   Text,
   Spinner, 
@@ -13,6 +14,8 @@ import Page from "components/Page";
 import PageSection from "components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";
 import { useECRRepositories } from "hooks/ECRRepositories";
+import SplashImage from "./repository.jpg";
+import styles from "./ecr.module.css";
 
 function Repositories() {  
   const { repositories, isLoading } = useECRRepositories();
@@ -105,6 +108,10 @@ function Repositories() {
 export default function ECRPage() {
   const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(false);
 
+  const splash = (
+    <CardMedia aspectRatio="3:2" media={<img src={SplashImage} className={styles.cardMediaImage} alt=""/>} className={styles.cardMedia} />
+  );
+
   return (
     <>
       <Page title="ECR Repositories">
@@ -116,6 +123,7 @@ export default function ECRPage() {
             surface="main"
             size="xl"
             reverse={true}
+            media={splash}
           >
             <CardTitle largeTitle>Information</CardTitle>
             <CardContent>
