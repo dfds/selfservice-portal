@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import styles from "./searchview.module.css";
 import { Badge } from "@dfds-ui/react-components";
 import HighlightedText from "components/HighlightedText";
@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import TopicsContext from "pages/topics/TopicsContext";
 import AppContext from "../../AppContext";
+import { MaterialReactTable } from 'material-react-table';
 
 function TopicHeader({ data, isOpen, onClicked }) {
   const handleClick = () => {
@@ -17,6 +18,8 @@ function TopicHeader({ data, isOpen, onClicked }) {
       onClicked();
     }
   };
+
+  
 
   return (
     <div
@@ -103,6 +106,100 @@ export function SearchView({ data, onTopicClicked }) {
 
     fetchData(data);
   }, [selectedKafkaTopic]);
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorFn: (row) =>  row.name ,
+        header: 'Name',
+        size: 350,
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+
+
+        Cell: ({ cell, renderedCellValue }) => {
+          return <div> 
+            <Accordion
+        className={styles.card}
+        header={
+          <TopicHeader
+            data={data}
+            isOpen={selectedKafkaTopic === data.id}
+            onClicked={handleHeaderClicked}
+          />
+        }
+        isOpen={selectedKafkaTopic === data.id}
+        onToggle={handleHeaderClicked}
+      >
+        <Card className={styles.card} variant="fill" surface="secondary">
+          <CardContent>
+            <Text styledAs="actionBold">Description</Text>
+            <p>
+              {
+                <HighlightedText
+                  text={data.description}
+                  highlight={data.highlight ? data.highlight : ""}
+                />
+              }
+            </p>
+            {
+              <>
+                <br />
+
+                {isLoadingContracts ? (
+                  <Spinner instant />
+                ) : (
+                  <>
+                    {(contracts || []).length === 0 && (
+                      <div>No message contracts defined...yet!</div>
+                    )}
+
+                    {(contracts || []).length !== 0 && (
+                      <Text styledAs="actionBold">
+                        Message Contracts ({(contracts || []).length})
+                      </Text>
+                    )}
+
+                    {(contracts || []).map((messageContract) => (
+                      <Message
+                        key={messageContract.id}
+                        {...messageContract}
+                        isSelected={
+                          messageContract.id === selectedMessageContractId
+                        }
+                        onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
+                      />
+                    ))}
+                  </>
+                )}
+
+                <br />
+              </>
+            }
+
+            <div>
+              <div>
+                <Text styledAs="actionBold">Capability </Text>
+                <Link
+                  style={linkStyle}
+                  to={`/capabilities/${data.capabilityId}`}
+                >
+                  {data.capabilityId}
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Accordion>
+          </div>
+        }
+
+      }
+    ],
+    [],
+  )
 
   return (
     <>
@@ -199,6 +296,10 @@ export function SearchView({ data, onTopicClicked }) {
           </div>
         </div>
       )}
+
+
+
+      
     </>
   );
 }

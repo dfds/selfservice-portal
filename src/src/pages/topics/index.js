@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -22,6 +22,7 @@ import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { useTopics } from "hooks/Topics";
+import { MaterialReactTable } from 'material-react-table';
 
 function Topics() {
   const { selectedKafkaTopic, toggleSelectedKafkaTopic } =
@@ -122,6 +123,28 @@ function Topics() {
     });
   }, [clustersMap, inputText]);
 
+  const columns = useMemo(
+    () => [
+      {
+        accessorFn: (row) => row.name,
+        header: 'name',
+        size: 350,
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+
+
+        // Cell: ({ cell, renderedCellValue }) => {
+        //   return <div>{id}
+        //   </div>
+        // }
+
+      }
+    ],
+    [],
+  )
+
   return (
     <>
       <br />
@@ -173,6 +196,119 @@ function Topics() {
                 <SearchView data={x} onTopicClicked={handleTopicClicked} />
               </div>
             ))}
+
+            <MaterialReactTable columns={columns} data={filteredData}
+              muiTableHeadCellProps={{
+                sx: {
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#002b45',
+                },
+              }}
+              filterFns={{
+                customFilterFn: (row, id, filterValue) => {
+                  console.log(row.getValue(id));
+                  console.log(row);
+                  return true;
+
+                },
+              }}
+              muiTableBodyCellProps={{
+                sx: {
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#4d4e4c',
+                  padding: '5px',
+                },
+              }}
+              muiTablePaperProps={{
+                elevation: 0, //change the mui box shadow
+                //customize paper styles
+                sx: {
+                  borderRadius: '0',
+                }
+              }
+              }
+              enableGlobalFilterModes={true}
+              initialState={{
+                showGlobalFilter: true,
+              }}
+              positionGlobalFilter="left"
+              muiSearchTextFieldProps={{
+                placeholder: `Find a capability...`,
+                sx: {
+                  minWidth: '1120px',
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  padding: '5px',
+                },
+                size: 'small',
+                variant: 'outlined',
+              }}
+              globalFilterFn="contains"
+              enableFilterMatchHighlighting={true}
+              enableFullScreenToggle={false}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter={true}
+              enableTopToolbar={true}
+              enableBottomToolbar={false}
+              enableColumnActions={false}
+              muiTableBodyRowProps2={({ row }) => ({
+                onClick: () => {
+                  clickHandler(row.original.id)
+                },
+                sx: {
+                  cursor: 'pointer',
+                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                }
+              })}
+
+              renderDetailPanel={({ row }) => (
+                <Card
+                  sx={{
+                    display: 'grid',
+                    margin: 'auto',
+                    gridTemplateColumns: '1fr 1fr',
+                    width: '100%',
+                  }}
+                >
+                  {/* <>
+                    {(contracts || []).length === 0 && (
+                      <div>No message contracts defined...yet!</div>
+                    )}
+
+                    {(contracts || []).length !== 0 && (
+                      <Text styledAs="actionBold">
+                        Message Contracts ({(contracts || []).length})
+                      </Text>
+                    )}
+
+                    {(contracts || []).map((messageContract) => (
+                      <Message
+                        key={messageContract.id}
+                        {...messageContract}
+                        isSelected={
+                          messageContract.id === selectedMessageContractId
+                        }
+                        onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
+                      />
+                    ))}
+                  </> */}
+                </Card>
+              )}
+
+            />
+
+
+
+
           </>
         )}
       </PageSection>
