@@ -207,6 +207,7 @@ export default function MyCapabilities() {
             <MaterialReactTable
               columns={columns}
               data={fullTableData}
+              initialState={{pagination: {pageSize: 25}, showGlobalFilter: true}}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
@@ -236,16 +237,17 @@ export default function MyCapabilities() {
                   background: "none",
                 },
               }}
+              enableFilterMatchHighlighting={true}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter= {true}
+              enableColumnActions={false}
               muiBottomToolbarProps={{
                 sx: {
                   background: "none",
                 },
               }}
-              enableDensityToggle={false}
-              enableHiding={false}
-              enableFilters={true}
-              enableGlobalFilter={true}
-              enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => {
                 return {
                   onClick: () => {

@@ -65,52 +65,53 @@ function Repositories() {
   return (
     <>
       <PageSection headline={`Repositories`}>
-        {isLoading && <Spinner />}
-        {!isLoading && (
-          <MaterialReactTable
-            columns={columns}
-            data={repositories}
-            muiTableHeadCellProps={{
-              sx: {
-                fontWeight: "700",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#002b45",
-              },
+      {isLoading && <Spinner />}
+      {!isLoading && (
+        <MaterialReactTable
+          columns={columns}
+          data={repositories}
+          initialState={{pagination: {pageSize: 50}, showGlobalFilter: true}}
+          muiTableHeadCellProps={{
+            sx: {
+              fontWeight: '700',
+              fontSize: '16px',
+              fontFamily: 'DFDS',
+              color: '#002b45',
+            },
+          }}
+          muiTableBodyCellProps={{
+            sx: {
+              fontWeight: '400',
+              fontSize: '16px',
+              fontFamily: 'DFDS',
+              color: '#4d4e4c',
+              padding: '5px',
+            },
+          }}
+          muiTablePaperProps={{
+            elevation: 0,
+            sx: {
+              borderRadius: '0',
+            }
+          }}
+          muiTopToolbarProps={{
+            sx: {
+              background: 'none',
+            }
             }}
-            muiTableBodyCellProps={{
-              sx: {
-                fontWeight: "400",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#4d4e4c",
-                padding: "5px",
-              },
-            }}
-            muiTablePaperProps={{
-              elevation: 0,
-              sx: {
-                borderRadius: "0",
-              },
-            }}
-            muiTopToolbarProps={{
+          muiBottomToolbarProps={{
               sx: {
                 background: "none",
               },
-            }}
-            muiBottomToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-            enableFilterMatchHighlighting={true}
-            enableDensityToggle={false}
-            enableHiding={false}
-            enableFilters={true}
-            enableGlobalFilter={true}
-            enableColumnActions={false}
-          />
-        )}
+          }}
+          enableFilterMatchHighlighting={true}
+          enableDensityToggle={false}
+          enableHiding={false}
+          enableFilters={true}
+          enableGlobalFilter={true}
+          enableColumnActions={false}
+        />
+      )}
       </PageSection>
     </>
   );
