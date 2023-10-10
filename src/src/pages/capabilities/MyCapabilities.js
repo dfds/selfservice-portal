@@ -210,11 +210,21 @@ export default function MyCapabilities() {
                 sx: {
                   borderRadius: '0',
                 }
-              }
-              }
-              enablePagination={false}
-              enableTopToolbar={false}
-              enableBottomToolbar={false}
+              }}
+              muiTopToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+                }}
+              muiBottomToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+              }}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter= {true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
