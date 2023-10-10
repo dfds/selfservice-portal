@@ -61,7 +61,7 @@ function SelectedCapabilityProvider({ children }) {
     );
     let allTopicsProvisioned = true;
     for (const cluster of clusters) {
-      const topics = selfServiceApiClient.getTopics(cluster);
+      const topics = await selfServiceApiClient.getTopics(cluster);
 
       topics.forEach((kafkaTopic) => {
         if (kafkaTopic.status !== "Provisioned") {
