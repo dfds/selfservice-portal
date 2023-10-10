@@ -92,11 +92,22 @@ function Repositories() {
               borderRadius: '0',
             }
           }}
-          enablePagination={false}
-          enableTopToolbar={true}
-          enableBottomToolbar={false}
-          enableColumnActions={true}
-          enableColumnFilters={true}
+          muiTopToolbarProps={{
+            sx: {
+              background: 'none',
+            }
+            }}
+          muiBottomToolbarProps={{
+            sx: {
+              background: 'none',
+            }
+          }}
+          enableFilterMatchHighlighting={true}
+          enableDensityToggle={false}
+          enableHiding={false}
+          enableFilters={true}
+          enableGlobalFilter= {true}
+          enableColumnActions={false}
        />
       )}
       </PageSection>

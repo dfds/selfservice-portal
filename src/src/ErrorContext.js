@@ -23,8 +23,8 @@ function ErrorProvider({ children }) {
 
   return (
     <ErrorContext.Provider value={{ errors, showError }}>
-      {<ErrorDisplay />}
       {children}
+      {<ErrorDisplay />}
     </ErrorContext.Provider>
   );
 }
