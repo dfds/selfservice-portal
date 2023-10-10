@@ -29,6 +29,8 @@ export default function OtherCapabilities() {
   const [searchResult, setSearchResult] = useState([]);
   const hasSearchInput = searchInput.replace(" ", "") !== "";
 
+
+
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
       return;

@@ -23,6 +23,11 @@ import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { useTopics } from "hooks/Topics";
 import { MaterialReactTable } from 'material-react-table';
+import { Link } from "react-router-dom";
+import Message from "../capabilities/KafkaCluster/MessageContract";
+import { RowDetails } from "./rowDetails";
+import { Badge } from "@dfds-ui/react-components";
+
 
 function Topics() {
   const { selectedKafkaTopic, toggleSelectedKafkaTopic } =
@@ -41,9 +46,28 @@ function Topics() {
   const updateClustersMap = (k, v) => {
     setClustersMap(new Map(clustersMap.set(k, v)));
   };
+  const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+  const [contracts, setContracts] = useState([]);
+  const [selectedMessageContractId, setSelectedMessageContractId] =
+    useState(null);
 
   const handleTopicClicked = (topicId) => {
     toggleSelectedKafkaTopic(topicId);
+  };
+
+  const linkStyle = {
+    color: "#1874bc",
+    textDecoration: "none",
+  };
+
+  const handleMessageHeaderClicked = (messageId) => {
+    setSelectedMessageContractId((prev) => {
+      if (messageId === prev) {
+        return null; // deselect already selected (toggling)
+      }
+
+      return messageId;
+    });
   };
 
   const fetchKafkaclusters = async () => {
@@ -123,11 +147,19 @@ function Topics() {
     });
   }, [clustersMap, inputText]);
 
+  async function fetchData(data) {
+    setIsLoadingContracts(true);
+    const result = await selfServiceApiClient.getMessageContracts(data);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    setContracts(result);
+    setIsLoadingContracts(false);
+  }
+
   const columns = useMemo(
     () => [
       {
         accessorFn: (row) => row.name,
-        header: 'name',
+        header: <div></div>,
         size: 350,
         enableColumnFilterModes: true,
         disableFilters: false,
@@ -135,15 +167,55 @@ function Topics() {
         enableFilterMatchHighlighting: true,
 
 
-        // Cell: ({ cell, renderedCellValue }) => {
-        //   return <div>{id}
-        //   </div>
-        // }
+        Cell: ({ cell, renderedCellValue }) => {
+          return <div>
+            <div className={styles.topicheader} >
+              <div className={styles.row}>
+                <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
+                  {renderedCellValue}
+                </h3>
+                <Badge
+                  className={styles.badgecluster}
+                  style={{ backgroundColor: cell.row.original.clusterColor }}
+                >
+                  {cell.row.original.kafkaClusterName}
+                </Badge>
 
+
+              </div >
+            </div >
+            <div className={styles.infocontainer}>
+              <p>
+                {cell.row.original.description}
+              </p>
+              <div>
+                <div>
+                  Capability:{" "}
+                  <Link style={linkStyle} to={`/capabilities/${cell.row.original.capabilityId}`}>
+                    {cell.row.original.capabilityId}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
       }
-    ],
-    [],
+    ]
   )
+
+  {/* <div> <Text styledAs="action" as={"div"}>
+  {renderedCellValue}
+</Text>
+  <Text styledAs="caption" as={"div"}>
+    {cell.row.original.description}
+  </Text>
+  <div>
+    Capability:{" "}
+    <Link style={linkStyle} to={`/capabilities/${cell.row.original.capabilityId}`}>
+      {cell.row.original.capabilityId}
+    </Link>
+  </div>
+</div> */}
 
   return (
     <>
@@ -270,7 +342,11 @@ function Topics() {
                 }
               })}
 
-              renderDetailPanel={({ row }) => (
+              positionExpandColumn="last"
+
+              renderDetailPanel={({ row }) =>
+              (
+
                 <Card
                   sx={{
                     display: 'grid',
@@ -279,30 +355,10 @@ function Topics() {
                     width: '100%',
                   }}
                 >
-                  {/* <>
-                    {(contracts || []).length === 0 && (
-                      <div>No message contracts defined...yet!</div>
-                    )}
-
-                    {(contracts || []).length !== 0 && (
-                      <Text styledAs="actionBold">
-                        Message Contracts ({(contracts || []).length})
-                      </Text>
-                    )}
-
-                    {(contracts || []).map((messageContract) => (
-                      <Message
-                        key={messageContract.id}
-                        {...messageContract}
-                        isSelected={
-                          messageContract.id === selectedMessageContractId
-                        }
-                        onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
-                      />
-                    ))}
-                  </> */}
+                  <RowDetails data={row.original}></RowDetails>
                 </Card>
               )}
+              
 
             />
 
