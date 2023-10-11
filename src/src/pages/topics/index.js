@@ -160,7 +160,7 @@ function Topics() {
       {
         accessorFn: (row) => row.name,
         header: <div></div>,
-        size: 350,
+        size: 500,
         enableColumnFilterModes: true,
         disableFilters: false,
         enableGlobalFilter: true,
@@ -203,19 +203,6 @@ function Topics() {
     ]
   )
 
-  {/* <div> <Text styledAs="action" as={"div"}>
-  {renderedCellValue}
-</Text>
-  <Text styledAs="caption" as={"div"}>
-    {cell.row.original.description}
-  </Text>
-  <div>
-    Capability:{" "}
-    <Link style={linkStyle} to={`/capabilities/${cell.row.original.capabilityId}`}>
-      {cell.row.original.capabilityId}
-    </Link>
-  </div>
-</div> */}
 
   return (
     <>
@@ -223,67 +210,51 @@ function Topics() {
       <br />
 
       <PageSection headline={`Public Topics`}>
-        <div style={{ marginTop: "1rem", marginBottom: "2rem" }}>
-          <TextField
-            name="basic"
-            onChange={inputHandler}
-            prefix="Test"
-            placeholder="Search"
-            icon={<Search />}
-            help="I need some more help"
-            style={{ marginBottom: "0" }}
-          />
-
-          <div className={styles.container_checkboxes}>
-            <Text as={"span"} style={{ color: "#4d4e4cb3" }}>
-              <i>{filteredData.length} Results</i>
-            </Text>
-            <div className={styles.checkboxes}>
-              {clusters.map((cluster) => (
-                <Checkbox
-                  key={cluster.id}
-                  checked={clustersMap.get(cluster.id)}
-                  onChange={() => {
-                    updateClustersMap(cluster.id, !clustersMap.get(cluster.id));
-                    inputHandler({
-                      target: {
-                        value: inputText,
-                      },
-                    });
-                  }}
-                >
-                  {cluster.name} ({cluster.id})
-                </Checkbox>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {isLoadingTopics ? (
           <Spinner instant />
         ) : (
           <>
-            {filteredData.map((x) => (
-              <div key={x.id} style={{ marginBottom: "15px" }}>
-                <SearchView data={x} onTopicClicked={handleTopicClicked} />
-              </div>
-            ))}
-
             <MaterialReactTable columns={columns} data={filteredData}
+              positionExpandColumn="last"
+              displayColumnDefOptions={{                
+                'mrt-row-expand': {
+                  muiTableHeadCellProps: {
+                    sx: {
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      fontFamily: 'DFDS',
+                      color: '#4d4e4c',
+                      padding: '5px',
+                      width: '1%',
+                      align: 'centre',
+                    },
+                  },
+                  muiTableBodyCellProps: {
+                    sx: {
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      fontFamily: 'DFDS',
+                      color: '#4d4e4c',
+                      padding: '5px',
+                      width: '1%',
+                      align: 'centre',
+                    },
+                  },
+                },
+              }}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: '700',
                   fontSize: '16px',
                   fontFamily: 'DFDS',
                   color: '#002b45',
+                  align: 'centre',
                 },
               }}
               filterFns={{
                 customFilterFn: (row, id, filterValue) => {
-                  console.log(row.getValue(id));
-                  console.log(row);
                   return true;
-
                 },
               }}
               muiTableBodyCellProps={{
@@ -309,7 +280,7 @@ function Topics() {
               }}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
-                placeholder: `Find a capability...`,
+                placeholder: `Search`,
                 sx: {
                   minWidth: '1120px',
                   fontWeight: '400',
@@ -319,6 +290,7 @@ function Topics() {
                 size: 'small',
                 variant: 'outlined',
               }}
+              enableTableHead={false}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
               enableFullScreenToggle={false}
@@ -341,9 +313,7 @@ function Topics() {
                   minHeight: 0,
                 }
               })}
-
-              positionExpandColumn="last"
-
+              enablePagination={false}
               renderDetailPanel={({ row }) =>
               (
 
@@ -358,13 +328,8 @@ function Topics() {
                   <RowDetails data={row.original}></RowDetails>
                 </Card>
               )}
-              
 
             />
-
-
-
-
           </>
         )}
       </PageSection>
