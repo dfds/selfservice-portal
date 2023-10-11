@@ -17,7 +17,6 @@ export function RowDetails(data) {
     }, []);
 
     async function fetchData(topic) {
-        console.log(topic);
         setIsLoadingContracts(true);
         const result = await selfServiceApiClient.getMessageContracts(topic.data);
         result.sort((a, b) => a.messageType.localeCompare(b.messageType));

@@ -94,7 +94,6 @@ export function SearchView({ data, onTopicClicked }) {
     }
 
     async function fetchData(data) {
-      console.log(data);
       setIsLoadingContracts(true);
       const result = await selfServiceApiClient.getMessageContracts(data);
       result.sort((a, b) => a.messageType.localeCompare(b.messageType));
