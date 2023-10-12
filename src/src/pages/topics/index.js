@@ -184,7 +184,8 @@ function Topics() {
 
               </div >
             </div >
-            <div className={styles.infocontainer}>
+            {!cell.row.getIsExpanded() ? (
+              <div className={styles.infocontainer}>
               <p>
                 {cell.row.original.description}
               </p>
@@ -197,6 +198,8 @@ function Topics() {
                 </div>
               </div>
             </div>
+            ) : null}
+            
           </div>
         }
       }
@@ -217,7 +220,7 @@ function Topics() {
           <>
             <MaterialReactTable columns={columns} data={filteredData}
               positionExpandColumn="last"
-              displayColumnDefOptions={{                
+              displayColumnDefOptions={{
                 'mrt-row-expand': {
                   muiTableHeadCellProps: {
                     sx: {
@@ -306,8 +309,6 @@ function Topics() {
                   console.log(row)
                 },
                 sx: {
-                  background: row.getIsExpanded() ? '#002b45' : '',
-                  color: row.getIsExpanded() ? 'red' : '',
                   padding: 0,
                   margin: 0,
                   minHeight: 0,
