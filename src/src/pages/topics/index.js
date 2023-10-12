@@ -306,7 +306,6 @@ function Topics() {
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
-                  console.log(row)
                 },
                 sx: {
                   padding: 0,
