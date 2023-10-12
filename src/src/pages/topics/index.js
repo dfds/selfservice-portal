@@ -302,7 +302,7 @@ function Topics() {
               enableFilters={true}
               enableGlobalFilter={true}
               enableTopToolbar={true}
-              enableBottomToolbar={false}
+              enableBottomToolbar={true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
@@ -314,7 +314,7 @@ function Topics() {
                   minHeight: 0,
                 }
               })}
-              enablePagination={false}
+              enablePagination={true}
               renderDetailPanel={({ row }) =>
               (
 
