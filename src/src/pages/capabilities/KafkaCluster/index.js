@@ -316,21 +316,14 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       )}
 
       {canRequestAccess && (
-          <ButtonStack align="right">
-            <p>
-              Currently not possible to request access to Kafka clusters. Please
-              see more info here:
-              <a href={"https://dfdsit.statuspage.io/incidents/sryjd688nj5b"}>
-                https://dfdsit.statuspage.io/incidents/sryjd688nj5b
-              </a>
-            </p>
-            {/*  <Button
+        <ButtonStack align="right">
+          <Button
             size="small"
             submitting={isRequestingAccess}
             onClick={handleRequestAccess}
           >
             Request Access
-          </Button>*/}
+          </Button>
         </ButtonStack>
       )}
     </PageSection>
