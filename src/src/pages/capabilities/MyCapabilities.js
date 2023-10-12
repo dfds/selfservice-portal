@@ -80,7 +80,7 @@ export default function MyCapabilities() {
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status} },
+        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status } },
         header: 'Name',
         size: 350,
         enableColumnFilterModes: false,
@@ -217,7 +217,7 @@ export default function MyCapabilities() {
                 sx: {
                   background: 'none',
                 }
-                }}
+              }}
               muiBottomToolbarProps={{
                 sx: {
                   background: 'none',
@@ -226,17 +226,17 @@ export default function MyCapabilities() {
               enableDensityToggle={false}
               enableHiding={false}
               enableFilters={true}
-              enableGlobalFilter= {true}
+              enableGlobalFilter={true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => {
 
                 return ({
                   onClick: () => {
                     clickHandler(row.original.id)
-                },
-                sx: {
-                  cursor: 'pointer',
-                  background: row.original.status === 'Deleted' ? '#d88' : '',
+                  },
+                  sx: {
+                    cursor: 'pointer',
+                    background: row.original.status === 'Deleted' ? '#d88' : '',
                     padding: 0,
                     margin: 0,
                     minHeight: 0,
