@@ -301,13 +301,13 @@ function Topics() {
               enableTopToolbar={true}
               enableBottomToolbar={false}
               enableColumnActions={false}
-              muiTableBodyRowProps2={({ row }) => ({
+              muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
-                  clickHandler(row.original.id)
+                  console.log(row)
                 },
                 sx: {
-                  cursor: 'pointer',
-                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  background: row.getIsExpanded() ? '#002b45' : '',
+                  color: row.getIsExpanded() ? 'red' : '',
                   padding: 0,
                   margin: 0,
                   minHeight: 0,
@@ -319,8 +319,8 @@ function Topics() {
 
                 <Card
                   sx={{
-                    display: 'grid',
-                    margin: 'auto',
+                    display: 'flex',
+                    // margin: 'auto',
                     gridTemplateColumns: '1fr 1fr',
                     width: '100%',
                   }}

@@ -218,7 +218,6 @@ export default function MyCapabilities() {
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
-                  console.log('status', row.original.status);
                   clickHandler(row.original.id)
                 },
                 sx: {
