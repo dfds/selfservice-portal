@@ -54,7 +54,6 @@
 
 .badgecluster {
   color: white !important;
-  /* background-color: saddlebrown !important; */
 }
 
 .searchcontainer > * {
@@ -65,7 +64,6 @@
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  /* border: 1px solid orange; */
   cursor: pointer;
   padding-left: 0;
   padding-right: 0;
@@ -74,24 +72,14 @@
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  /* background-color: #002b45; */
   color: "#002b45b3";
 }
-
-/* .topicheader:hover {
-  background-color: #bbddf3;
-  color: #002b45;
-} */
 
 .topicheaderselected {
   background-color: #002b45;
   color: #fff !important;
 }
 
-/* .topicheaderselected:hover {
-  background-color: #002b45 !important;
-  color: #fff;
-} */
 
 .messagecontractsheader {
   display: flex;

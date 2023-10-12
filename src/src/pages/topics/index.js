@@ -27,6 +27,7 @@ import { Link } from "react-router-dom";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
+import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 
 
 function Topics() {
@@ -160,7 +161,7 @@ function Topics() {
       {
         accessorFn: (row) => row.name,
         header: <div></div>,
-        size: 500,
+        size: '200',
         enableColumnFilterModes: true,
         disableFilters: false,
         enableGlobalFilter: true,
@@ -202,7 +203,21 @@ function Topics() {
             
           </div>
         }
-      }
+      },
+      {
+        accessorFn: (row) => row.id,
+        header: 'arrow',
+        id: 'last arrow',
+        size: 1,
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: 'center',
+        },
+        Cell: () => {
+          return <ChevronRight />
+        },
+        Header: <div></div> //enable empty header
+      },
     ]
   )
 
@@ -219,7 +234,7 @@ function Topics() {
         ) : (
           <>
             <MaterialReactTable columns={columns} data={filteredData}
-              positionExpandColumn="last"
+              positionExpandColumn="left"
               displayColumnDefOptions={{
                 'mrt-row-expand': {
                   muiTableHeadCellProps: {
@@ -270,8 +285,7 @@ function Topics() {
                 },
               }}
               muiTablePaperProps={{
-                elevation: 0, //change the mui box shadow
-                //customize paper styles
+                elevation: 0, 
                 sx: {
                   borderRadius: '0',
                 }
@@ -303,9 +317,10 @@ function Topics() {
               enableGlobalFilter={true}
               enableTopToolbar={true}
               enableBottomToolbar={true}
-              enableColumnActions={false}
+              enableColumnActions={false}           
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
+                  row.toggleExpanded()
                 },
                 sx: {
                   padding: 0,
@@ -320,7 +335,6 @@ function Topics() {
                 <Card
                   sx={{
                     display: 'flex',
-                    // margin: 'auto',
                     gridTemplateColumns: '1fr 1fr',
                     width: '100%',
                   }}
