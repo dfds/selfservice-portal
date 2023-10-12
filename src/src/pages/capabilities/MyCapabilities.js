@@ -86,7 +86,9 @@ export default function MyCapabilities() {
         enableColumnFilterModes: false,
         Cell: ({ cell }) => {
           return <div >
-            <Text hidden={cell.getValue().status === "Active"}><StatusAlert className={styles.warningIcon} /></Text>
+            {cell.getValue().status === "Pending Deletion" ? (
+              <Text><StatusAlert className={styles.warningIcon} /></Text>
+            ) : null}            
             <Text styledAs="action" style={{ marginLeft: '20px' }} as={"div"}>
               {cell.getValue().name}
             </Text>
@@ -165,10 +167,7 @@ export default function MyCapabilities() {
 
     });
 
-
-
     setFullTableData(tableData);
-    console.log(fullTableData);
 
   }, [isLoading, appStatus])
 
