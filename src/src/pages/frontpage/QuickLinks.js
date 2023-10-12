@@ -15,6 +15,8 @@ function Link({ title, url }) {
   );
 }
 
+const swaggerUrl = process.env.REACT_APP_API_BASE_URL + "/swagger";
+
 export default function QuickLinks() {
   return (
     <div>
@@ -28,6 +30,7 @@ export default function QuickLinks() {
         title={"React Frontend Components"}
         url="https://ui-components-three.vercel.app"
       />
+      <Link title={"Swagger API Documentation"} url={swaggerUrl} />
     </div>
   );
 }

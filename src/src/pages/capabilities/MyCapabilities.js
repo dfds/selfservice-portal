@@ -19,6 +19,7 @@ import { MaterialReactTable } from 'material-react-table';
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 
+
 export default function MyCapabilities() {
   const { myCapabilities, metricsWrapper, appStatus, truncateString } = useContext(AppContext);
 
@@ -79,16 +80,19 @@ export default function MyCapabilities() {
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => { return { name: row.name, description: row.description } },
+        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status} },
         header: 'Name',
         size: 350,
         enableColumnFilterModes: false,
         Cell: ({ cell }) => {
-          return <div>
-            <Text styledAs="action" as={"div"}>
+          return <div >
+            {cell.getValue().status === "Pending Deletion" ? (
+              <Text><StatusAlert className={styles.warningIcon} /></Text>
+            ) : null}
+            <Text styledAs="action" style={{ marginLeft: '20px' }} as={"div"}>
               {cell.getValue().name}
             </Text>
-            <Text styledAs="caption" as={"div"}>
+            <Text styledAs="caption" style={{ marginLeft: '20px' }} as={"div"}>
               {cell.getValue().description}
             </Text>
           </div>
@@ -108,7 +112,7 @@ export default function MyCapabilities() {
         Cell: ({ cell }) => {
           return <div>
             <InlineAwsCountSummary data={
-              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue().id)
+              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue())
             } />
           </div>
         }
@@ -163,8 +167,6 @@ export default function MyCapabilities() {
 
     });
 
-
-
     setFullTableData(tableData);
 
   }, [isLoading, appStatus])
@@ -210,24 +212,40 @@ export default function MyCapabilities() {
                 sx: {
                   borderRadius: '0',
                 }
-              }
-              }
-              enablePagination={false}
-              enableTopToolbar={false}
-              enableBottomToolbar={false}
+              }}
+              muiTopToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+                }}
+              muiBottomToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+              }}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter= {true}
               enableColumnActions={false}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => {
-                  clickHandler(row.original.id)
+              muiTableBodyRowProps={({ row }) => {
+
+                return ({
+                  onClick: () => {
+                    clickHandler(row.original.id)
                 },
                 sx: {
                   cursor: 'pointer',
-                  background: row.original.status === 'Deleted' ? styles.deletedRow : '',
-                  padding: 0,
-                  margin: 0,
-                  minHeight: 0,
-                }
-              })}
+                  background: row.original.status === 'Deleted' ? '#d88' : '',
+                    padding: 0,
+                    margin: 0,
+                    minHeight: 0,
+                    '&:hover td': {
+                      backgroundColor: row.original.status === 'Deleted' ? 'rgba(187, 221, 243, 0.1)' : 'rgba(187, 221, 243, 0.4)',
+                    },
+                  }
+                })
+              }}
 
 
             />

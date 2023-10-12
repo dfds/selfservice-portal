@@ -2,20 +2,9 @@ import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "@dfds-ui/icons/system";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableHeaderCell,
-  TableDataCell,
-} from "@dfds-ui/react-components";
-import { TextField } from "@dfds-ui/react-components";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { Search } from "@dfds-ui/icons/system";
-import HighlightedText from "components/HighlightedText";
 import { useCapabilities } from "hooks/Capabilities";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from 'material-react-table';
@@ -177,6 +166,7 @@ export default function OtherCapabilities() {
                 size: 'small',
                 variant: 'outlined',
               }}
+              enablePagination={false}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
               enableFullScreenToggle={false}
@@ -199,7 +189,16 @@ export default function OtherCapabilities() {
                   minHeight: 0,
                 }
               })}
-
+              muiTopToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+                }}
+              muiBottomToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+              }}
               muiTableBodyRowProps={({ row }) => {
 
                 return ({
