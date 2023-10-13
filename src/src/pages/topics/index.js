@@ -160,8 +160,9 @@ function Topics() {
     () => [
       {
         accessorFn: (row) => row.name,
-        header: <div></div>,
-        size: '200',
+        header: 'name',
+        id: 'name',
+        size: '50',
         enableColumnFilterModes: true,
         disableFilters: false,
         enableGlobalFilter: true,
@@ -205,18 +206,17 @@ function Topics() {
         }
       },
       {
-        accessorFn: (row) => row.id,
+        accessorKey: 'arrow',
         header: 'arrow',
-        id: 'last arrow',
-        size: 1,
+        id: 'arrow',
+        size: '1',
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
           align: 'center',
         },
         Cell: () => {
           return <ChevronRight />
-        },
-        Header: <div></div> //enable empty header
+        }
       },
     ]
   )
@@ -294,6 +294,10 @@ function Topics() {
               enableGlobalFilterModes={true}
               initialState={{
                 showGlobalFilter: true,
+                columnOrder: [
+                  'name',
+                  'arrow',
+                ],
               }}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
