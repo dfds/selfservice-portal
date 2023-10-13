@@ -216,7 +216,7 @@ function Topics() {
         },
         Cell: ({ cell}) => {
           return <div>
-            {!cell.row.getIsExpanded() ? ( <ChevronDown /> ) : <ChevronUp />}
+            {cell.row.getIsExpanded() ? ( <ChevronUp /> ) : <ChevronDown />}
           </div>
         }
       },
@@ -236,7 +236,6 @@ function Topics() {
         ) : (
           <>
             <MaterialReactTable columns={columns} data={filteredData}
-              positionExpandColumn="left"
               displayColumnDefOptions={{
                 'mrt-row-expand': {
                   muiTableHeadCellProps: {
