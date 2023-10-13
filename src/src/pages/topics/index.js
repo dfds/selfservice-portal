@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
-import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
+import { ChevronRight, StatusAlert, ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
 
 
 function Topics() {
@@ -214,8 +214,10 @@ function Topics() {
         muiTableBodyCellProps: {
           align: 'center',
         },
-        Cell: () => {
-          return <ChevronRight />
+        Cell: ({ cell}) => {
+          return <div>
+            {!cell.row.getIsExpanded() ? ( <ChevronDown /> ) : <ChevronUp />}
+          </div>
         }
       },
     ]
