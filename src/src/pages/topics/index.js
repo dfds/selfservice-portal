@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -22,6 +22,13 @@ import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { useTopics } from "hooks/Topics";
+import { MaterialReactTable } from 'material-react-table';
+import { Link } from "react-router-dom";
+import Message from "../capabilities/KafkaCluster/MessageContract";
+import { RowDetails } from "./rowDetails";
+import { Badge } from "@dfds-ui/react-components";
+import { ChevronRight, StatusAlert, ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+
 
 function Topics() {
   const { selectedKafkaTopic, toggleSelectedKafkaTopic } =
@@ -40,9 +47,28 @@ function Topics() {
   const updateClustersMap = (k, v) => {
     setClustersMap(new Map(clustersMap.set(k, v)));
   };
+  const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+  const [contracts, setContracts] = useState([]);
+  const [selectedMessageContractId, setSelectedMessageContractId] =
+    useState(null);
 
   const handleTopicClicked = (topicId) => {
     toggleSelectedKafkaTopic(topicId);
+  };
+
+  const linkStyle = {
+    color: "#1874bc",
+    textDecoration: "none",
+  };
+
+  const handleMessageHeaderClicked = (messageId) => {
+    setSelectedMessageContractId((prev) => {
+      if (messageId === prev) {
+        return null; // deselect already selected (toggling)
+      }
+
+      return messageId;
+    });
   };
 
   const fetchKafkaclusters = async () => {
@@ -122,57 +148,207 @@ function Topics() {
     });
   }, [clustersMap, inputText]);
 
+  async function fetchData(data) {
+    setIsLoadingContracts(true);
+    const result = await selfServiceApiClient.getMessageContracts(data);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    setContracts(result);
+    setIsLoadingContracts(false);
+  }
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorFn: (row) => row.name,
+        header: 'name',
+        id: 'name',
+        size: '50',
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+
+
+        Cell: ({ cell, renderedCellValue }) => {
+          return <div>
+            <div className={styles.topicheader} >
+              <div className={styles.row}>
+                <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
+                  {renderedCellValue}
+                </h3>
+                <Badge
+                  className={styles.badgecluster}
+                  style={{ backgroundColor: cell.row.original.clusterColor }}
+                >
+                  {cell.row.original.kafkaClusterName}
+                </Badge>
+
+
+              </div >
+            </div >
+            {!cell.row.getIsExpanded() ? (
+              <div className={styles.infocontainer}>
+              <p>
+                {cell.row.original.description}
+              </p>
+              <div>
+                <div>
+                  Capability:{" "}
+                  <Link style={linkStyle} to={`/capabilities/${cell.row.original.capabilityId}`}>
+                    {cell.row.original.capabilityId}
+                  </Link>
+                </div>
+              </div>
+            </div>
+            ) : null}
+            
+          </div>
+        }
+      },
+      {
+        accessorKey: 'arrow',
+        header: 'arrow',
+        id: 'arrow',
+        size: '1',
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: 'center',
+        },
+        Cell: ({ cell}) => {
+          return <div>
+            {cell.row.getIsExpanded() ? ( <ChevronUp /> ) : <ChevronDown />}
+          </div>
+        }
+      },
+    ]
+  )
+
+
   return (
     <>
       <br />
       <br />
 
       <PageSection headline={`Public Topics`}>
-        <div style={{ marginTop: "1rem", marginBottom: "2rem" }}>
-          <TextField
-            name="basic"
-            onChange={inputHandler}
-            prefix="Test"
-            placeholder="Search"
-            icon={<Search />}
-            help="I need some more help"
-            style={{ marginBottom: "0" }}
-          />
-
-          <div className={styles.container_checkboxes}>
-            <Text as={"span"} style={{ color: "#4d4e4cb3" }}>
-              <i>{filteredData.length} Results</i>
-            </Text>
-            <div className={styles.checkboxes}>
-              {clusters.map((cluster) => (
-                <Checkbox
-                  key={cluster.id}
-                  checked={clustersMap.get(cluster.id)}
-                  onChange={() => {
-                    updateClustersMap(cluster.id, !clustersMap.get(cluster.id));
-                    inputHandler({
-                      target: {
-                        value: inputText,
-                      },
-                    });
-                  }}
-                >
-                  {cluster.name} ({cluster.id})
-                </Checkbox>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {isLoadingTopics ? (
           <Spinner instant />
         ) : (
           <>
-            {filteredData.map((x) => (
-              <div key={x.id} style={{ marginBottom: "15px" }}>
-                <SearchView data={x} onTopicClicked={handleTopicClicked} />
-              </div>
-            ))}
+            <MaterialReactTable columns={columns} data={filteredData}
+              displayColumnDefOptions={{
+                'mrt-row-expand': {
+                  muiTableHeadCellProps: {
+                    sx: {
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      fontFamily: 'DFDS',
+                      color: '#4d4e4c',
+                      padding: '5px',
+                      width: '1%',
+                      align: 'centre',
+                    },
+                  },
+                  muiTableBodyCellProps: {
+                    sx: {
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      fontFamily: 'DFDS',
+                      color: '#4d4e4c',
+                      padding: '5px',
+                      width: '1%',
+                      align: 'centre',
+                    },
+                  },
+                },
+              }}
+              muiTableHeadCellProps={{
+                sx: {
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#002b45',
+                  align: 'centre',
+                },
+              }}
+              filterFns={{
+                customFilterFn: (row, id, filterValue) => {
+                  return true;
+                },
+              }}
+              muiTableBodyCellProps={{
+                sx: {
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#4d4e4c',
+                  padding: '5px',
+                },
+              }}
+              muiTablePaperProps={{
+                elevation: 0, 
+                sx: {
+                  borderRadius: '0',
+                }
+              }
+              }
+              enableGlobalFilterModes={true}
+              initialState={{
+                showGlobalFilter: true,
+                columnOrder: [
+                  'name',
+                  'arrow',
+                ],
+              }}
+              positionGlobalFilter="left"
+              muiSearchTextFieldProps={{
+                placeholder: `Search`,
+                sx: {
+                  minWidth: '1120px',
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  padding: '5px',
+                },
+                size: 'small',
+                variant: 'outlined',
+              }}
+              enableTableHead={false}
+              globalFilterFn="contains"
+              enableFilterMatchHighlighting={true}
+              enableFullScreenToggle={false}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter={true}
+              enableTopToolbar={true}
+              enableBottomToolbar={true}
+              enableColumnActions={false}           
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => {
+                  row.toggleExpanded()
+                },
+                sx: {
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                }
+              })}
+              enablePagination={true}
+              renderDetailPanel={({ row }) =>
+              (
+
+                <Card
+                  sx={{
+                    display: 'flex',
+                    gridTemplateColumns: '1fr 1fr',
+                    width: '100%',
+                  }}
+                >
+                  <RowDetails data={row.original}></RowDetails>
+                </Card>
+              )}
+
+            />
           </>
         )}
       </PageSection>

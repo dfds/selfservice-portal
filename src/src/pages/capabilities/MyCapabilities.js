@@ -80,7 +80,7 @@ export default function MyCapabilities() {
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status} },
+        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status } },
         header: 'Name',
         size: 350,
         enableColumnFilterModes: false,
@@ -88,7 +88,7 @@ export default function MyCapabilities() {
           return <div >
             {cell.getValue().status === "Pending Deletion" ? (
               <Text><StatusAlert className={styles.warningIcon} /></Text>
-            ) : null}            
+            ) : null}
             <Text styledAs="action" style={{ marginLeft: '20px' }} as={"div"}>
               {cell.getValue().name}
             </Text>
@@ -217,7 +217,7 @@ export default function MyCapabilities() {
                 sx: {
                   background: 'none',
                 }
-                }}
+              }}
               muiBottomToolbarProps={{
                 sx: {
                   background: 'none',
@@ -226,7 +226,7 @@ export default function MyCapabilities() {
               enableDensityToggle={false}
               enableHiding={false}
               enableFilters={true}
-              enableGlobalFilter= {true}
+              enableGlobalFilter={true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => {
 
