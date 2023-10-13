@@ -6,9 +6,11 @@ import React, {
   useContext,
   useState,
 } from "react";
+
 import { useCapabilityById, useCapabilityMembers, useKafkaClustersAccessList, useCapabilityAwsAccount, useCapabilityMembersApplications} from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
+import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 
 const SelectedCapabilityContext = createContext();
 
@@ -22,9 +24,16 @@ function adjustRetention(kafkaTopic) {
   }
 }
 
+// TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
-    useContext(AppContext);
+  const {
+    shouldAutoReloadTopics,
+    setShouldAutoReloadTopics,
+    selfServiceApiClient,
+    myCapabilities,
+  } = useContext(AppContext);
+  const { deleteTopic } = useDeleteTopic();
+  const { updateTopic } = useUpdateTopic();
 
   //const [isLoading, setIsLoading] = useState(false);
   const [capabilityId, setCapabilityId] = useState(null);
@@ -35,14 +44,15 @@ function SelectedCapabilityProvider({ children }) {
   const [membershipApplications, setMembershipApplications] = useState([]);
   const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+  const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded } = useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
+  const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList, } = useCapabilityMembersApplications(details);
-
 
 
   useEffect(() => {
@@ -260,7 +270,7 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    await selfServiceApiClient.updateTopic(found, topicDescriptor);
+    updateTopic(found, topicDescriptor);
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -290,7 +300,7 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    await selfServiceApiClient.deleteTopic(found);
+    deleteTopic(found);
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -336,6 +346,7 @@ function SelectedCapabilityProvider({ children }) {
     if (isLoaded) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
+      setIsDeleted(capability.status === "Deleted");
     }
   }, [isLoaded, capability]);
 
@@ -374,7 +385,16 @@ function SelectedCapabilityProvider({ children }) {
     }, 5 * 1000);
 
     return () => clearInterval(handle);
-  }, [details]);
+  }, [details, shouldAutoReloadTopics]);
+
+  useEffect(() => {
+    if (awsAccountRequested) {
+      setAwsAccount({
+        ...awsAccount,
+        status: "Requested",
+      });
+    }
+  }, [awsAccountRequested])
 
   //--------------------------------------------------------------------
 
@@ -391,6 +411,7 @@ function SelectedCapabilityProvider({ children }) {
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
+    setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,
     addTopicToCluster,
@@ -407,6 +428,7 @@ function SelectedCapabilityProvider({ children }) {
     submitDeleteCapability,
     submitCancelDeleteCapability,
     isPendingDeletion,
+    isDeleted,
     updateDeletionStatus,
     showCosts,
   };

@@ -1,4 +1,5 @@
 import React from "react";
+import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
@@ -20,6 +21,7 @@ import TopicList from "./TopicList";
 import styles from './index.module.css';
 
 export default function KafkaCluster({ cluster, capabilityId }) {
+  const { setShouldAutoReloadTopics } = useContext(AppContext);
   const {
     id,
     selectedKafkaTopic,
@@ -62,6 +64,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       partitions,
       retention,
     });
+    setShouldAutoReloadTopics(true);
     setIsInProgress(false);
     setShowDialog(false);
   };
@@ -93,7 +96,16 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline={` `} headlineChildren={(<div className={styles.headlineContainer}><span style={{}}>Kafka Topics ({cluster.name.toLocaleLowerCase()})</span> <div className={styles.badges}><Badge className={styles.badge}>ID: <span>{cluster.id}</span></Badge></div></div>)}
+      headline="Kafka Topics" headlineChildren={(
+        <div className={styles.headlineContainer}>
+          <span>({cluster.name.toLocaleLowerCase()})</span>
+          <div className={styles.badges}>
+            <Badge className={styles.badge}>
+              ID: <span>{cluster.id}</span>
+            </Badge>
+          </div>
+        </div>
+      )}
     >
       <Text styledAs="label">Description</Text>
       {clusterDescription}

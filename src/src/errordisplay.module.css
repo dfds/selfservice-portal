@@ -1,16 +1,6 @@
-.bottom-right {
-  bottom: 12px;
-  right: 12px;
-  transition: transform 0.6s ease-in-out;
-  animation: toast-in-right 0.7s;
-}
-
-.errortoast {
-  position: fixed;
+.toasts_container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 1rem;
-  z-index: 10000;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  display: block;
-  width: 100%;
 }

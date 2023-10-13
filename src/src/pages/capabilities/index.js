@@ -13,7 +13,8 @@ import NewCapabilityDialog from "./NewCapabilityDialog";
 import MyCapabilities from "./MyCapabilities";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
-import SpashImage from "./splash.jpg";
+import SplashImage from "./splash.jpg";
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
@@ -28,12 +29,12 @@ export default function CapabilitiesPage() {
   };
 
   const splash = (
-    <CardMedia aspectRatio="3:2" media={<img src={SpashImage} alt="" />} />
+    <CardMedia aspectRatio="3:2" media={<img src={SplashImage} className={styles.cardMediaImage} alt=""/>} className={styles.cardMedia} />
   );
 
   return (
     <>
-      <Page title={"Capabilities"}>
+      <Page title="Capabilities">
         {showNewCapabilityDialog && (
           <NewCapabilityDialog
             inProgress={isCreatingNewCapability}

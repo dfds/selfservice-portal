@@ -1,31 +1,24 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "@dfds-ui/icons/system";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableHeaderCell,
-  TableDataCell,
-} from "@dfds-ui/react-components";
-import { TextField } from "@dfds-ui/react-components";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { Search } from "@dfds-ui/icons/system";
-import HighlightedText from "components/HighlightedText";
 import { useCapabilities } from "hooks/Capabilities";
+import styles from "./capabilities.module.css";
+import { MaterialReactTable } from 'material-react-table';
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
+  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const hasSearchInput = searchInput.replace(" ", "") !== "";
+
+
 
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
@@ -52,13 +45,12 @@ export default function OtherCapabilities() {
     let result = otherCapabilities || [];
 
     if (hasSearchInput) {
-      result = result.filter((x) => {
-        const nameAndDescription = `${x.name || ""} ${x.description}`;
+      result = result.filter((c) => {
+        const input = searchInput.toLocaleLowerCase()
         const isMatch =
-          nameAndDescription
-            .toLocaleLowerCase()
-            .indexOf(searchInput.toLocaleLowerCase()) > -1;
-
+          c.id.toLocaleLowerCase().includes(input) ||
+          c.name.toLocaleLowerCase().includes(input) ||
+          c.description.toLocaleLowerCase().includes(input)
         return isMatch;
       });
     }
@@ -72,6 +64,48 @@ export default function OtherCapabilities() {
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorFn: (row) => row.name,
+        header: 'Name',
+        size: 350,
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+
+
+        Cell: ({ cell, renderedCellValue }) => {
+          return <div> <Text styledAs="action" as={"div"}>
+            {renderedCellValue}
+          </Text>
+            <Text styledAs="caption" as={"div"}>
+              {cell.row.original.description}
+            </Text>
+          </div>
+        }
+
+      },
+      {
+        accessorFn: (row) => row.id,
+        header: 'arrow',
+        size: 1,
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: 'right',
+        },
+        Cell: ({ cell }) => {
+          return <ChevronRight />
+        },
+        Header: <div></div> //enable empty header
+      },
+    ],
+    [],
+  )
+
   return (
     <>
       <PageSection
@@ -81,52 +115,111 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
-            <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
-              <TextField
-                name="basic"
-                placeholder="Find a capability..."
-                icon={<Search />}
-                help="Find a capability..."
-                size="small"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                assistiveText={
-                  hasSearchInput ? `Found: ${searchResult.length}` : ""
-                }
-              />
-            </div>
 
-            <Table isInteractive width={"100%"}>
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell align="right"></TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {items.map((x) => (
-                  <TableRow key={x.id} onClick={() => clickHandler(x.id)}>
-                    <TableDataCell>
-                      <Text styledAs="action" as={"div"}>
-                        <HighlightedText
-                          text={x.name}
-                          highlight={searchInput}
-                        />
-                      </Text>
-                      <Text styledAs="caption" as={"div"}>
-                        <HighlightedText
-                          text={x.description}
-                          highlight={searchInput}
-                        />
-                      </Text>
-                    </TableDataCell>
-                    <TableDataCell align="right">
-                      <ChevronRight />
-                    </TableDataCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <MaterialReactTable columns={columns} data={otherCapabilities}
+              muiTableHeadCellProps={{
+                sx: {
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#002b45',
+                },
+              }}
+              filterFns={{
+                customFilterFn: (row, id, filterValue) => {
+                  console.log(row.getValue(id));
+                  console.log(row);
+                  return true;
+
+                },
+              }}
+              muiTableBodyCellProps={{
+                sx: {
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  fontFamily: 'DFDS',
+                  color: '#4d4e4c',
+                  padding: '5px',
+                },
+              }}
+              muiTablePaperProps={{
+                elevation: 0, //change the mui box shadow
+                //customize paper styles
+                sx: {
+                  borderRadius: '0',
+                }
+              }
+              }
+              enableGlobalFilterModes={true}
+              initialState={{
+                showGlobalFilter: true,
+              }}
+              positionGlobalFilter="left"
+              muiSearchTextFieldProps={{
+                placeholder: `Find a capability...`,
+                sx: {
+                  minWidth: '1120px',
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  padding: '5px',
+                },
+                size: 'small',
+                variant: 'outlined',
+              }}
+              enablePagination={false}
+              globalFilterFn="contains"
+              enableFilterMatchHighlighting={true}
+              enableFullScreenToggle={false}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter={true}
+              enableTopToolbar={true}
+              enableBottomToolbar={false}
+              enableColumnActions={false}
+              muiTableBodyRowProps2={({ row }) => ({
+                onClick: () => {
+                  clickHandler(row.original.id)
+                },
+                sx: {
+                  cursor: 'pointer',
+                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                }
+              })}
+              muiTopToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+                }}
+              muiBottomToolbarProps={{
+                sx: {
+                  background: 'none',
+                }
+              }}
+              muiTableBodyRowProps={({ row }) => {
+
+                return ({
+                  onClick: () => {
+                    clickHandler(row.original.id)
+                  },
+                  sx: {
+                    cursor: 'pointer',
+                    background: row.original.status === 'Deleted' ? '#d88' : '',
+                    padding: 0,
+                    margin: 0,
+                    minHeight: 0,
+                    '&:hover td': {
+                      backgroundColor: row.original.status === 'Deleted' ? 'rgba(187, 221, 243, 0.1)' : 'rgba(187, 221, 243, 0.4)',
+                    },
+                  }
+                })
+              }}
+
+            />
+
           </>
         )}
       </PageSection>

@@ -29,6 +29,18 @@
 
 .warningIcon {
   color: #be1e2d;
-  margin-left: -20px;
   float: left;
+}
+
+.deletedRow {
+  background-color: #d88;
+}
+
+.cardMediaImage {
+  position: unset!important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset!important;
 }

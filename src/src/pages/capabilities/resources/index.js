@@ -1,6 +1,7 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
+import PageSection from "components/PageSection";
 import {
   Card,
   CardContent,
@@ -9,16 +10,18 @@ import {
 } from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
-export default function Resources() {
+export default function Resources({capabilityId}) {
   const [showLogModal, setLogModal] = useState(false);
+  const { awsAccount } = useContext(SelectedCapabilityContext);
   const handleApplicationLogShow = async () => {
     setLogModal(true);
   };
 
   return (
     <>
-      <Text styledAs="sectionHeadline">Resources</Text>
+      <PageSection headline="Resources">
       <Card variant="fill" surface="main">
         <CardContent>
           <p>
@@ -30,19 +33,26 @@ export default function Resources() {
             may take a while before your resources are ready.
           </p>
 
-          <ResourceInfoBadges />
+          <ResourceInfoBadges/>
 
-          <ButtonStack align="left" style={{ marginTop: "15px" }}>
-            <Button
-              size="small"
-              variation="outlined"
-              onClick={handleApplicationLogShow}
-            >
-              How to see application logs?
-            </Button>
-          </ButtonStack>
+          {(awsAccount && awsAccount.status == "Completed") && (
+            <>
+              <br />
+
+              <ButtonStack align="center" style={{ margin: "auto", marginTop: "15px", width: "400px" }}>
+                <Button
+                  size="small"
+                  variation="outlined"
+                  onClick={handleApplicationLogShow}
+                >
+                  How to see application logs?
+                </Button>
+              </ButtonStack>
+            </>
+          )}
         </CardContent>
       </Card>
+      </PageSection>
 
       <Modal
         heading={"How do I see my application logs?"}
@@ -61,7 +71,7 @@ export default function Resources() {
         }}
       >
         <Text>
-          <Text styledAs={"smallHeadline"}>
+          <Text as="span" styledAs={"smallHeadline"}>
             For applications running in Kubernetes
           </Text>
         </Text>

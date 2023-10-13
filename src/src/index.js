@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { GlobalStyles } from "@dfds-ui/react-components";
@@ -13,7 +13,10 @@ import { TrackingProvider } from "TrackingContext";
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
 
-render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <MsalProvider instance={MsalInstance}>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
@@ -27,6 +30,5 @@ render(
         </ErrorProvider>
       </BrowserRouter>
     </MsalProvider>
-  </React.StrictMode>,
-  document.getElementById("root"),
+  </React.StrictMode>
 );

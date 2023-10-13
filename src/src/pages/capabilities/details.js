@@ -33,7 +33,9 @@ function CapabilityDetailsPageContent() {
     showResources,
     showCosts,
     isPendingDeletion,
+    isDeleted,
     updateDeletionStatus,
+    awsAccount,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -41,27 +43,30 @@ function CapabilityDetailsPageContent() {
     loadCapability(id);
   }, [id]);
 
+  const pagetitle = isDeleted ? `${name} [Deleted]` : name;
+
   return (
     <>
       <DeletionWarning
         deletionState={isPendingDeletion}
         updateDeletionState={updateDeletionStatus}
       />
-      <Page title={name} isLoading={isLoading} isNotFound={!isFound}>
+      <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showResources && <Resources />}
+        {showResources && <Resources capabilityId={id}/>}
 
         <MembershipApplications />
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
+
         {(kafkaClusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && <Costs />}
+        {showCosts && (awsAccount != undefined) && <Costs />}
         <CapabilityManagement
           deletionState={isPendingDeletion}
           updateDeletionState={updateDeletionStatus}
