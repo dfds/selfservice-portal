@@ -10,6 +10,7 @@ import {
   useCapabilities,
   useCapabilityById,
   useCapabilityMembers,
+  useKafkaClustersAccessList,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -53,32 +54,33 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
+  const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
 
-  // load kafka clusters and topics
-  const loadKafkaClustersAndTopics = useCallback(async () => {
-    const clusters = await selfServiceApiClient.getKafkaClusterAccessList(
-      details,
-    );
-    let allTopicsProvisioned = true;
-    for (const cluster of clusters) {
-      const topics = await selfServiceApiClient.getTopics(cluster);
+  useEffect(() => {
+    if (clustersList.length !== 0){
+      const promises = [];
+      for (const cluster of clustersList) {
+        let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
+          topics.forEach((kafkaTopic) => {
+            adjustRetention(kafkaTopic);
+            kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort(
+              (a, b) => a.messageType.localeCompare(b.messageType),
+            );
+          });
 
-      topics.forEach((kafkaTopic) => {
-        if (kafkaTopic.status !== "Provisioned") {
-          allTopicsProvisioned = false;
-        }
-        adjustRetention(kafkaTopic);
-        kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort(
-          (a, b) => a.messageType.localeCompare(b.messageType),
-        );
-      });
+          cluster.topics = topics;
+          return cluster;
+        });
+        promises.push(promise);
+        };
 
-      cluster.topics = topics;
-    }
+        Promise.all(promises).then((clusters) => {
+          setKafkaClusters(clusters);
+        });      
 
-    setShouldAutoReloadTopics(!allTopicsProvisioned);
-    setKafkaClusters(clusters);
-  }, [details]);
+    } 
+
+  }, [clustersList])
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -351,7 +353,7 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (details) {
       loadMembershipApplications();
-      loadKafkaClustersAndTopics();
+      // loadKafkaClustersAndTopics();
       loadAwsAccount();
     } else {
       setMembers([]);
@@ -364,7 +366,7 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     const handle = setInterval(() => {
       if (details && shouldAutoReloadTopics) {
-        loadKafkaClustersAndTopics();
+        // loadKafkaClustersAndTopics();
       }
     }, 5 * 1000);
 
