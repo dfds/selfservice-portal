@@ -104,11 +104,28 @@ function Repositories() {
                 background: "none",
               },
           }}
+          enableGlobalFilterModes={true}
+          positionGlobalFilter="left"
+          muiSearchTextFieldProps={{
+            placeholder: `Find a capability...`,
+            sx: {
+              minWidth: '1120px',
+              fontWeight: '400',
+              fontSize: '16px',
+              padding: '5px',
+            },
+            size: 'small',
+            variant: 'outlined',
+          }}
+          enablePagination={true}
+          globalFilterFn="contains"
           enableFilterMatchHighlighting={true}
           enableDensityToggle={false}
           enableHiding={false}
           enableFilters={true}
           enableGlobalFilter={true}
+          enableTopToolbar={true}
+          enableBottomToolbar={true}
           enableColumnActions={false}
         />
       )}

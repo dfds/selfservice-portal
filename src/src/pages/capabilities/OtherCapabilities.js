@@ -164,7 +164,7 @@ export default function OtherCapabilities() {
                 size: "small",
                 variant: "outlined",
               }}
-              enablePagination={false}
+              enablePagination={true}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
               enableDensityToggle={false}
@@ -172,7 +172,7 @@ export default function OtherCapabilities() {
               enableFilters={true}
               enableGlobalFilter={true}
               enableTopToolbar={true}
-              enableBottomToolbar={false}
+              enableBottomToolbar={true}
               enableColumnActions={false}
               muiTableBodyRowProps2={({ row }) => ({
                 onClick: () => {
