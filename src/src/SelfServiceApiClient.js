@@ -425,16 +425,16 @@ export class SelfServiceApiClient {
     }
   }
 
-  // async getKafkaClusters() {
-  //   const accessToken = await getSelfServiceAccessToken();
+  async getKafkaClusters() {
+    const accessToken = await getSelfServiceAccessToken();
 
-  //   const url = composeUrl("kafkaclusters");
-  //   const response = await callApi(url, accessToken);
-  //   this.responseHandler(response);
-  //   const { items } = await response.json();
+    const url = composeUrl("kafkaclusters");
+    const response = await callApi(url, accessToken);
+    this.responseHandler(response);
+    const { items } = await response.json();
 
-  //   return items || [];
-  // }
+    return items || [];
+  }
 
   // async getCapabilityAwsAccount(capabilityDefinition) {
   //   const awsAccountLink = capabilityDefinition?._links?.awsAccount;
