@@ -105,13 +105,6 @@ function SelectedCapabilityProvider({ children }) {
     });
   }, [details]);
 
-  // load AWS account
-  // const loadAwsAccount = useCallback(async () => {
-  //   const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
-  //   setAwsAccount(awsAcc);
-  // }, [details]);
-
-
   useEffect(() => {
     if (isLoadedAccount) {
       setAwsAccount(awsAccountInfo);

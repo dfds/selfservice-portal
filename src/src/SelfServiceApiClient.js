@@ -436,27 +436,6 @@ export class SelfServiceApiClient {
     return items || [];
   }
 
-  // async getCapabilityAwsAccount(capabilityDefinition) {
-  //   const awsAccountLink = capabilityDefinition?._links?.awsAccount;
-  //   if (!awsAccountLink) {
-  //     console.log(
-  //       "Warning! No AWS account link found on capability definition:",
-  //       capabilityDefinition,
-  //     );
-  //     return null;
-  //   }
-
-  //   const accessToken = await getSelfServiceAccessToken();
-  //   const response = await callApi(awsAccountLink.href, accessToken);
-  //   this.responseHandler(response);
-  //   if (!response.ok) {
-  //     return null;
-  //   }
-
-  //   const awsAccount = await response.json();
-  //   return awsAccount || null;
-  // }
-
   async requestAwsAccount(capabilityDefinition) {
     const capabilityId = capabilityDefinition?.details?.id;
 
