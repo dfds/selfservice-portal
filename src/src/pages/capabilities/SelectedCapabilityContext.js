@@ -56,7 +56,7 @@ function SelectedCapabilityProvider({ children }) {
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
 
-  useEffect(() => {
+  const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0){
       const promises = [];
       for (const cluster of clustersList) {
@@ -76,11 +76,16 @@ function SelectedCapabilityProvider({ children }) {
 
         Promise.all(promises).then((clusters) => {
           setKafkaClusters(clusters);
-        });      
+        });  
+      }
+    }    
+  
 
-    } 
-
+  useEffect(() => {
+    kafkaClusterTopicList();
   }, [clustersList])
+
+  
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -353,7 +358,6 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (details) {
       loadMembershipApplications();
-      // loadKafkaClustersAndTopics();
       loadAwsAccount();
     } else {
       setMembers([]);
@@ -366,7 +370,7 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     const handle = setInterval(() => {
       if (details && shouldAutoReloadTopics) {
-        // loadKafkaClustersAndTopics();
+        kafkaClusterTopicList();
       }
     }, 5 * 1000);
 
