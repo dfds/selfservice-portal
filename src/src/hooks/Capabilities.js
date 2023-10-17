@@ -198,3 +198,37 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   };
 }
 
+export function useCapabilityAwsAccount(capabilityDefinition) {
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
+  const [isLoadedAccount, setIsLoadedAccount] = useState(false);
+  const [awsAccountInfo, setAwsAccountInfo] = useState(null);
+
+  const link = capabilityDefinition?._links?.awsAccount;  
+
+  useEffect(() => {
+    if (link) {
+      sendRequest({
+        urlSegments: [link.href],
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setAwsAccountInfo(responseData);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (awsAccountInfo !== null) {
+      setIsLoadedAccount(true);
+    }
+  }, [awsAccountInfo]);
+
+  return {
+    isLoadedAccount,
+    awsAccountInfo,
+  };
+}
+
