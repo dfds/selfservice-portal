@@ -11,6 +11,7 @@ import {
   useCapabilityById,
   useCapabilityMembers,
   useKafkaClustersAccessList,
+  useCapabilityAwsAccount,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -55,6 +56,7 @@ function SelectedCapabilityProvider({ children }) {
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
+  const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0){
@@ -111,11 +113,11 @@ function SelectedCapabilityProvider({ children }) {
     });
   }, [details]);
 
-  // load AWS account
-  const loadAwsAccount = useCallback(async () => {
-    const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
-    setAwsAccount(awsAcc);
-  }, [details]);
+  useEffect(() => {
+    if (isLoadedAccount) {
+      setAwsAccount(awsAccountInfo);
+    }
+  }, [isLoadedAccount, awsAccountInfo]);
 
   //--------------------------------------------------------------------
 
@@ -358,7 +360,6 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (details) {
       loadMembershipApplications();
-      loadAwsAccount();
     } else {
       setMembers([]);
       setMembershipApplications([]);

@@ -216,7 +216,7 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 
   useEffect(() => {
     if (responseData !== null) {
-      setAwsAccountInfo(responseData || null);
+      setAwsAccountInfo(responseData);
     }
   }, [responseData]);
 
