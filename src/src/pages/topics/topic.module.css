@@ -30,3 +30,80 @@
 .cardMedia {
   position: unset!important;
 }
+
+.searchcontainer div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.row h3 {
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  margin-inline-start: 0.5px;
+  margin-inline-end: 0.5px;
+  padding-left: 1rem;
+}
+
+.badgecluster {
+  color: white !important;
+}
+
+.searchcontainer > * {
+  margin: 0 5px 0 0;
+}
+
+.topicheader {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  cursor: pointer;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 1rem;
+  margin-bottom: 0;
+  align-items: center;
+  justify-content: space-between;
+  align-content: center;
+  color: "#002b45b3";
+}
+
+.topicheaderselected {
+  background-color: #002b45;
+  color: #fff !important;
+}
+
+
+.messagecontractsheader {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infocontainer p {
+  margin-block-start: 0.1em;
+  margin-block-end: 0.1em;
+  margin-inline-start: 0.1px;
+  margin-inline-end: 0.1px;
+}
+
+.infocontainer {
+  padding-left: 2rem;
+}
+
+.card {
+  padding-top: 0px;
+  padding-right: 0rem;
+  padding-bottom: 0rem;
+  padding-left: 0rem;
+}
+

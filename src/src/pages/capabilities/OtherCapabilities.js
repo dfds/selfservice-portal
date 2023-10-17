@@ -18,6 +18,8 @@ export default function OtherCapabilities() {
   const [searchResult, setSearchResult] = useState([]);
   const hasSearchInput = searchInput.replace(" ", "") !== "";
 
+
+
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
       return;
@@ -67,7 +69,7 @@ export default function OtherCapabilities() {
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) =>  row.name ,
+        accessorFn: (row) => row.name,
         header: 'Name',
         size: 350,
         enableColumnFilterModes: true,
@@ -148,13 +150,13 @@ export default function OtherCapabilities() {
                 }
               }
               }
-              enableGlobalFilterModes= {true}
+              enableGlobalFilterModes={true}
               initialState={{
                 showGlobalFilter: true,
               }}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
-              placeholder: `Find a capability...`,
+                placeholder: `Find a capability...`,
                 sx: {
                   minWidth: '1120px',
                   fontWeight: '400',
@@ -171,7 +173,7 @@ export default function OtherCapabilities() {
               enableDensityToggle={false}
               enableHiding={false}
               enableFilters={true}
-              enableGlobalFilter= {true}
+              enableGlobalFilter={true}
               enableTopToolbar={true}
               enableBottomToolbar={false}
               enableColumnActions={false}
