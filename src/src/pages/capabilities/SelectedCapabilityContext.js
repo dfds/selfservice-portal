@@ -12,6 +12,7 @@ import {
   useCapabilityMembers,
   useKafkaClustersAccessList,
   useCapabilityAwsAccount,
+  useCapabilityMembersApplications,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -57,6 +58,7 @@ function SelectedCapabilityProvider({ children }) {
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+  const { isLoadedMembersApplications, membersApplicationsList, } = useCapabilityMembersApplications(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0){
@@ -112,6 +114,7 @@ function SelectedCapabilityProvider({ children }) {
       });
     });
   }, [details]);
+
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -358,14 +361,10 @@ function SelectedCapabilityProvider({ children }) {
   }, [isLoadedMembers, membersList]);
 
   useEffect(() => {
-    if (details) {
-      loadMembershipApplications();
-    } else {
-      setMembers([]);
-      setMembershipApplications([]);
-      setKafkaClusters([]);
-    }
-  }, [details]);
+    if (isLoadedMembersApplications) {
+      setMembershipApplications(membersApplicationsList);
+    }   
+  }, [isLoadedMembersApplications, membersApplicationsList]);
 
   // setup reload of kafka clusters and topics
   useEffect(() => {
