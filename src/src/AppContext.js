@@ -92,10 +92,14 @@ function AppProvider({ children }) {
 
   function updateMetrics() {
     metricsWrapper.tryUpdateMetrics().then(() => {
-      setAppStatus(prev => ({
+      setAppStatus((prev) => ({
         ...prev,
-        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(MetricsWrapper.CostsKey),
-        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(MetricsWrapper.ResourceCountsKey)
+        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(
+          MetricsWrapper.CostsKey,
+        ),
+        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(
+          MetricsWrapper.ResourceCountsKey,
+        ),
       }));
     });
   }
@@ -117,8 +121,8 @@ function AppProvider({ children }) {
       updateResourcesCount();
     }, 1000 * 60);
     return () => {
-      clearInterval(metricsInterval)
-      clearInterval(costsInterval)
+      clearInterval(metricsInterval);
+      clearInterval(costsInterval);
     };
   }, []);
 

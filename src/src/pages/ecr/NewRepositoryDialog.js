@@ -4,9 +4,7 @@ import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
 import { useECRRepositories } from "hooks/ECRRepositories";
 
-export default function NewRepositoryDialog({
-  onClose
-}) {
+export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
   const { createRepository } = useECRRepositories();
 
@@ -27,7 +25,7 @@ export default function NewRepositoryDialog({
   const changeName = (e) => {
     e.preventDefault();
     let newName = e?.target?.value || emptyValues.name;
-    
+
     setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
   };
 
@@ -36,7 +34,10 @@ export default function NewRepositoryDialog({
     let newName = e?.target?.value || emptyValues.repositoryName;
     newName = newName.replace(/\s+/g, "/");
 
-    setFormData((prev) => ({ ...prev, ...{ repositoryName: newName.toLowerCase() } }));
+    setFormData((prev) => ({
+      ...prev,
+      ...{ repositoryName: newName.toLowerCase() },
+    }));
   };
 
   const changeDescription = (e) => {
@@ -52,13 +53,13 @@ export default function NewRepositoryDialog({
     !formData.repositoryName.match(/^(_|-|\/)/g) &&
     !formData.repositoryName.match(/[-_\/\.\s]{2,}/g) &&
     !formData.repositoryName.match(/[^a-zA-Z0-9\/\-_ ]/g);
-  
+
   let repositoryNameErrorMessage = "";
   if (formData.repositoryName.length > 0 && !isRepositoryNameValid) {
     repositoryNameErrorMessage =
       'Allowed characters are a-z, 0-9, "-", "_", and "/". Repositories must not start or end with "_", "-", or "/". Do not use more than one of "-", "_", or "/" in a row.';
   }
-  
+
   if (formData.repositoryName.length > 150) {
     repositoryNameErrorMessage = "Please consider a shorter name.";
   }
@@ -88,14 +89,14 @@ export default function NewRepositoryDialog({
         backdrop
       >
         <SideSheetContent>
-            <TextField
-              label="Name"
-              placeholder="Enter name of repository"
-              required
-              value={formData.name}
-              onChange={changeName}
-              maxLength={255}
-            />
+          <TextField
+            label="Name"
+            placeholder="Enter name of repository"
+            required
+            value={formData.name}
+            onChange={changeName}
+            maxLength={255}
+          />
 
           <TextField
             label="Repository Name"

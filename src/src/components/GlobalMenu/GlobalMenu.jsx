@@ -10,7 +10,7 @@ import {
   MenuPopOverContext,
   ListText,
 } from "@dfds-ui/react-components";
-import { Account } from '@dfds-ui/icons/system'
+import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
@@ -66,7 +66,13 @@ export default function GlobalMenu() {
                     return (
                       <>
                         <AppBarListItem>
-                          <ListText><span><b>{user.name ?? "<noname>"}</b><br/>{user.title ?? "<untitled>"}</span></ListText>
+                          <ListText>
+                            <span>
+                              <b>{user.name ?? "<noname>"}</b>
+                              <br />
+                              {user.title ?? "<untitled>"}
+                            </span>
+                          </ListText>
                           <ProfilePicture
                             clickable
                             as={AppBarItem}
@@ -76,7 +82,7 @@ export default function GlobalMenu() {
                           />
                         </AppBarListItem>
                       </>
-                    )
+                    );
                   }}
                 </MenuPopOverContext.Consumer>
               </AppBarItem>
@@ -85,13 +91,23 @@ export default function GlobalMenu() {
         >
           {navLinks.map((x) =>
             /https:?\/\//.test(x.url) ? (
-              <a href={x.url} style={{ textDecoration: "none" }} key={x.title} className={styles.alignCenter}>
+              <a
+                href={x.url}
+                style={{ textDecoration: "none" }}
+                key={x.title}
+                className={styles.alignCenter}
+              >
                 <AppBarListItem clickable>
                   <ListText>{x.title}</ListText>
                 </AppBarListItem>
               </a>
             ) : (
-              <Link to={x.url} style={{ textDecoration: "none" }} key={x.title} className={styles.alignCenter}>
+              <Link
+                to={x.url}
+                style={{ textDecoration: "none" }}
+                key={x.title}
+                className={styles.alignCenter}
+              >
                 <AppBarListItem clickable>
                   <ListText>{x.title}</ListText>
                 </AppBarListItem>

@@ -14,7 +14,7 @@
   margin: 0;
 }
 
-.container_toast_message{
+.container_toast_message {
   display: flex;
   justify-content: center;
 }

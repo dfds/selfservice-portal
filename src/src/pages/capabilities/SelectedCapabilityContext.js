@@ -56,40 +56,39 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
-  const { clustersList, isLoadedClusters } = useKafkaClustersAccessList(details);
+  const { clustersList, isLoadedClusters } =
+    useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
-  const { isLoadedMembersApplications, membersApplicationsList, } = useCapabilityMembersApplications(details);
+  const { isLoadedMembersApplications, membersApplicationsList } =
+    useCapabilityMembersApplications(details);
 
   const kafkaClusterTopicList = () => {
-    if (clustersList.length !== 0){
+    if (clustersList.length !== 0) {
       const promises = [];
       for (const cluster of clustersList) {
         let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
           topics.forEach((kafkaTopic) => {
             adjustRetention(kafkaTopic);
-            kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort(
-              (a, b) => a.messageType.localeCompare(b.messageType),
-            );
+            kafkaTopic.messageContracts = (
+              kafkaTopic.messageContracts || []
+            ).sort((a, b) => a.messageType.localeCompare(b.messageType));
           });
 
           cluster.topics = topics;
           return cluster;
         });
         promises.push(promise);
-        };
-
-        Promise.all(promises).then((clusters) => {
-          setKafkaClusters(clusters);
-        });  
       }
-    }    
-  
+
+      Promise.all(promises).then((clusters) => {
+        setKafkaClusters(clusters);
+      });
+    }
+  };
 
   useEffect(() => {
     kafkaClusterTopicList();
-  }, [clustersList])
-
-  
+  }, [clustersList]);
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -114,7 +113,6 @@ function SelectedCapabilityProvider({ children }) {
       });
     });
   }, [details]);
-
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -363,7 +361,7 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (isLoadedMembersApplications) {
       setMembershipApplications(membersApplicationsList);
-    }   
+    }
   }, [isLoadedMembersApplications, membersApplicationsList]);
 
   // setup reload of kafka clusters and topics
@@ -384,7 +382,7 @@ function SelectedCapabilityProvider({ children }) {
         status: "Requested",
       });
     }
-  }, [awsAccountRequested])
+  }, [awsAccountRequested]);
 
   //--------------------------------------------------------------------
 

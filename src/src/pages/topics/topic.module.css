@@ -23,12 +23,12 @@
 }
 
 .cardMediaImage {
-  position: unset!important;
+  position: unset !important;
   float: right;
 }
 
 .cardMedia {
-  position: unset!important;
+  position: unset !important;
 }
 
 .searchcontainer div {
@@ -80,7 +80,6 @@
   color: #fff !important;
 }
 
-
 .messagecontractsheader {
   display: flex;
   flex-direction: row;
@@ -106,4 +105,3 @@
   padding-bottom: 0rem;
   padding-left: 0rem;
 }
-

@@ -5,7 +5,6 @@ import { useError } from "./Error";
 import { NewErrorContextBuilder } from "misc/error";
 import { useTracking } from "./Tracking";
 
-
 function isValidURL(urlString) {
   const urlRegex = /^(?:https?:\/\/)/;
   return urlRegex.test(urlString);
@@ -18,7 +17,7 @@ export function useSelfServiceRequest(errorParams) {
     ...errorParams,
     msg: "Oh no! We had an issue while retrieving data from the api. Please reload the page.",
   });
-  const {track} = useTracking();
+  const { track } = useTracking();
 
   const sendRequest = async ({ urlSegments, method, payload }) => {
     setInProgress(true);
@@ -30,7 +29,7 @@ export function useSelfServiceRequest(errorParams) {
       url = urlSegments[0];
     }
 
-    track('selfservice', `${method}::${url}`, '1')
+    track("selfservice", `${method}::${url}`, "1");
 
     try {
       const httpResponse = await callApi(url, accessToken, method, payload);
