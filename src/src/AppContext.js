@@ -5,7 +5,7 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useProfile } from "hooks/Profile";
+import { useProfile, useStats } from "hooks/Profile";
 
 const AppContext = React.createContext(null);
 
@@ -55,6 +55,7 @@ function AppProvider({ children }) {
 
   const { addCapability } = useCapabilities();
   const {profileInfo, isLoadedProfile} = useProfile();
+  const {statsInfo, isLoadedStats} = useStats();
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
@@ -63,11 +64,11 @@ function AppProvider({ children }) {
   }
 
   async function loadMyProfile() {  
-    if (isLoadedProfile) {
+    if (isLoadedProfile && isLoadedStats) {
         const profile = profileInfo;
         const { capabilities, autoReloadTopics } = profile;
 
-        const stats = await selfServiceApiClient.getStats();
+        const stats = statsInfo;
     
         setMyCapabilities(capabilities);
         setStats(stats);
@@ -85,7 +86,7 @@ function AppProvider({ children }) {
     if (user && user.isAuthenticated) {
       loadMyProfile();
     }
-  }, [user, profileInfo]);
+  }, [user, profileInfo, statsInfo]);
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
