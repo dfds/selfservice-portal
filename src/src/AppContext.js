@@ -5,6 +5,7 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
+import { useProfile } from "hooks/Profile";
 
 const AppContext = React.createContext(null);
 
@@ -53,6 +54,7 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
+  const {profileInfo, isLoadedProfile} = useProfile();
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
@@ -60,18 +62,20 @@ function AppProvider({ children }) {
     await loadMyProfile();
   }
 
-  async function loadMyProfile() {
-    const profile = await selfServiceApiClient.getMyPortalProfile();
-    const { capabilities, autoReloadTopics } = profile;
+  async function loadMyProfile() {  
+    if (isLoadedProfile) {
+        const profile = profileInfo;
+        const { capabilities, autoReloadTopics } = profile;
 
-    const stats = await selfServiceApiClient.getStats();
-
-    setMyCapabilities(capabilities);
-    setStats(stats);
-    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
-    setShouldAutoReloadTopics(autoReloadTopics);
-
-    setMyProfile(profile);
+        const stats = await selfServiceApiClient.getStats();
+    
+        setMyCapabilities(capabilities);
+        setStats(stats);
+        setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
+        setShouldAutoReloadTopics(autoReloadTopics);
+    
+        setMyProfile(profile);
+    }   
   }
 
   useEffect(() => {
@@ -81,7 +85,7 @@ function AppProvider({ children }) {
     if (user && user.isAuthenticated) {
       loadMyProfile();
     }
-  }, [user]);
+  }, [user, profileInfo]);
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
