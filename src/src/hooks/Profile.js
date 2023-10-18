@@ -30,3 +30,33 @@ export function useProfile() {
         profileInfo,
     };
 }
+
+export function useStats() {
+    const { inProgress, responseData, setErrorOptions, sendRequest } =
+        useSelfServiceRequest();
+    const [isLoadedStats, setIsLoadedStats] = useState(false);
+    const [statsInfo, setStatsInfo] = useState(null);
+
+    useEffect(() => {
+        sendRequest({
+            urlSegments: ["stats"],
+        });
+    }, []);
+
+    useEffect(() => {
+        if (responseData !== null) {
+            setStatsInfo(responseData);
+        }
+    }, [responseData]);
+
+    useEffect(() => {
+        if (statsInfo !== null) {
+            setIsLoadedStats(true);
+        }
+    }, [statsInfo]);
+
+    return {
+        isLoadedStats,
+        statsInfo,
+    };
+}
