@@ -170,8 +170,6 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
 
   const clustersLink = capabilityDefinition?._links?.clusters;
 
-  
-
   useEffect(() => {
     if (clustersLink) {
       sendRequest({
@@ -204,7 +202,7 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
   const [isLoadedAccount, setIsLoadedAccount] = useState(false);
   const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
-  const link = capabilityDefinition?._links?.awsAccount;  
+  const link = capabilityDefinition?._links?.awsAccount;
 
   useEffect(() => {
     if (link) {
@@ -235,7 +233,8 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 export function useCapabilityMembersApplications(capabilityDefinition) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
-  const [isLoadedMembersApplications, setIsLoadedMembersApplications] = useState(false);
+  const [isLoadedMembersApplications, setIsLoadedMembersApplications] =
+    useState(false);
   const [membersApplicationsList, setMembersApplicationsList] = useState([]);
 
   const link = capabilityDefinition?._links?.membershipApplications;
@@ -256,7 +255,10 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
             const profilePictureUrl = await getAnotherUserProfilePictureUrl(
               member.applicant,
             );
-            const updatedMember = { ...member, applicantProfilePictureUrl: profilePictureUrl };
+            const updatedMember = {
+              ...member,
+              applicantProfilePictureUrl: profilePictureUrl,
+            };
             return updatedMember;
           }),
         );
@@ -288,4 +290,3 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
     membersApplicationsList,
   };
 }
-

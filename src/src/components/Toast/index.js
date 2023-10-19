@@ -33,12 +33,12 @@ export default function Toast({ message, details }) {
         Close
       </ModalAction>
     </>
-  )
+  );
 
   useEffect(() => {
     setTimeout(() => {
-      setOpacity(0.8)
-    }, 100) // arbitrary delay to allow the toast to render before fading in
+      setOpacity(0.8);
+    }, 100); // arbitrary delay to allow the toast to render before fading in
   }, []);
 
   useEffect(() => {
@@ -59,41 +59,61 @@ export default function Toast({ message, details }) {
 
   return (
     <>
-    {showDetails && details && (
-    <Modal
-        heading={`Details`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={() => setShowDetails(false)}
-        actions={actions}
-    >
-      {console.log("details in component: ", details)}
-      {details ? <div>{'Got '+details.status+': "'+details.statusText+'" for '+details.url+'.'
-                      }
-                  </div>
-               : "No details available"
-      }
-    </Modal>)}
-    {showToast && (
-    <div className={`${styles.toast_container} ${hide ? styles.hidden : ''}`} style={{"opacity": opacity}}>
-        <div className={styles.toast_close_bar}>
-          <Button size="small" variation="link" fillWidth="true" onClick={() => setOpacity(0)} >
-            <Close className={styles.close_icon} />
-          </Button>
+      {showDetails && details && (
+        <Modal
+          heading={`Details`}
+          isOpen={true}
+          shouldCloseOnOverlayClick={true}
+          shouldCloseOnEsc={true}
+          onRequestClose={() => setShowDetails(false)}
+          actions={actions}
+        >
+          {console.log("details in component: ", details)}
+          {details ? (
+            <div>
+              {"Got " +
+                details.status +
+                ': "' +
+                details.statusText +
+                '" for ' +
+                details.url +
+                "."}
+            </div>
+          ) : (
+            "No details available"
+          )}
+        </Modal>
+      )}
+      {showToast && (
+        <div
+          className={`${styles.toast_container} ${hide ? styles.hidden : ""}`}
+          style={{ opacity: opacity }}
+        >
+          <div className={styles.toast_close_bar}>
+            <Button
+              size="small"
+              variation="link"
+              fillWidth="true"
+              onClick={() => setOpacity(0)}
+            >
+              <Close className={styles.close_icon} />
+            </Button>
+          </div>
+          <div className={styles.toast_message}>{message}</div>
+          {details && (
+            <div>
+              <Button
+                size="small"
+                variation="link"
+                fillWidth="true"
+                onClick={() => setShowDetails(true)}
+              >
+                <span className={styles.toast_details_button}>Details</span>
+              </Button>
+            </div>
+          )}
         </div>
-        <div className={styles.toast_message}>
-          {message}
-        </div>
-        {details && (
-        <div>
-          <Button size="small" variation="link" fillWidth="true" onClick={() => setShowDetails(true)}>
-            <span className={styles.toast_details_button}>Details</span>
-          </Button>
-        </div>
-        )}
-    </div>
-    )}
+      )}
     </>
   );
 }

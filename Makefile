@@ -54,3 +54,9 @@ runcontainer:
 	@docker run -it --rm -p 8080:80 selfservice-portal
 
 reruncontainer: clean build container runcontainer
+
+setup-pre-commit-hook:
+	@sh ./tools/setup-pre-commit-hook.sh
+
+pre-commit-hook:
+	@sh ./.git/hooks/pre-commit

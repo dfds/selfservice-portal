@@ -30,5 +30,5 @@ root.render(
         </ErrorProvider>
       </BrowserRouter>
     </MsalProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

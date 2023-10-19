@@ -14,21 +14,23 @@ import {
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
-import styles from "./capabilities.module.css"
-import { MaterialReactTable } from 'material-react-table';
+import styles from "./capabilities.module.css";
+import { MaterialReactTable } from "material-react-table";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
-
-
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus, truncateString } = useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
+    useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
   const isLoadingCosts = !appStatus.hasLoadedMyCapabilitiesCosts;
-  const isLoadingAwsResourcesCounts = !appStatus.hasLoadedMyCapabilitiesResourcesCounts;
+  const isLoadingAwsResourcesCounts =
+    !appStatus.hasLoadedMyCapabilitiesResourcesCounts;
   const [showCostsSpinner, setShowCostsSpinner] = useState(isLoadingCosts);
-  const [showAwsResourcesSpinner, setShowAwsResourcesSpinner] = useState(isLoadingAwsResourcesCounts);
+  const [showAwsResourcesSpinner, setShowAwsResourcesSpinner] = useState(
+    isLoadingAwsResourcesCounts,
+  );
   const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();
@@ -74,103 +76,117 @@ export default function MyCapabilities() {
     setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
   }, [isLoadingAwsResourcesCounts]);
 
-  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
-
+  const rowClass = (status) => (status === "Deleted" ? styles.deletedRow : "");
 
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => { return { name: row.name, description: row.description, status: row.status } },
-        header: 'Name',
+        accessorFn: (row) => {
+          return {
+            name: row.name,
+            description: row.description,
+            status: row.status,
+          };
+        },
+        header: "Name",
         size: 350,
         enableColumnFilterModes: false,
         Cell: ({ cell }) => {
-          return <div >
-            {cell.getValue().status === "Pending Deletion" ? (
-              <Text><StatusAlert className={styles.warningIcon} /></Text>
-            ) : null}
-            <Text styledAs="action" style={{ marginLeft: '20px' }} as={"div"}>
-              {cell.getValue().name}
-            </Text>
-            <Text styledAs="caption" style={{ marginLeft: '20px' }} as={"div"}>
-              {cell.getValue().description}
-            </Text>
-          </div>
-        }
+          return (
+            <div>
+              {cell.getValue().status === "Pending Deletion" ? (
+                <Text>
+                  <StatusAlert className={styles.warningIcon} />
+                </Text>
+              ) : null}
+              <Text styledAs="action" style={{ marginLeft: "20px" }} as={"div"}>
+                {cell.getValue().name}
+              </Text>
+              <Text
+                styledAs="caption"
+                style={{ marginLeft: "20px" }}
+                as={"div"}
+              >
+                {cell.getValue().description}
+              </Text>
+            </div>
+          );
+        },
       },
       {
         accessorFn: (row) => row.id,
-        header: 'Aws Resources',
+        header: "Aws Resources",
         size: 150,
         enableColumnFilterModes: false,
         muiTableHeadCellProps: {
-          align: 'center'
+          align: "center",
         },
         muiTableBodyCellProps: {
-          align: 'center',
+          align: "center",
         },
         Cell: ({ cell }) => {
-          return <div>
-            <InlineAwsCountSummary data={
-              metricsWrapper.getAwsResourcesTotalCountForCapability(cell.getValue())
-            } />
-          </div>
-        }
+          return (
+            <div>
+              <InlineAwsCountSummary
+                data={metricsWrapper.getAwsResourcesTotalCountForCapability(
+                  cell.getValue(),
+                )}
+              />
+            </div>
+          );
+        },
       },
       {
         accessorFn: (row) => row.id,
-        header: 'Costs',
+        header: "Costs",
         size: 150,
         enableColumnFilterModes: false,
         muiTableHeadCellProps: {
-          align: 'center'
+          align: "center",
         },
         muiTableBodyCellProps: {
-          align: 'right'
+          align: "right",
         },
         Cell: ({ cell }) => {
-          return <div className={styles.costs}>
-            <CapabilityCostSummary
-              data={metricsWrapper.getCostsForCapability(
-                cell.getValue().toLocaleString(),
-                7,
-              )}
-            />
-          </div>
-        }
+          return (
+            <div className={styles.costs}>
+              <CapabilityCostSummary
+                data={metricsWrapper.getCostsForCapability(
+                  cell.getValue().toLocaleString(),
+                  7,
+                )}
+              />
+            </div>
+          );
+        },
       },
       {
         accessorFn: (row) => row.id,
-        header: 'arrow',
-        id: 'details',
+        header: "arrow",
+        id: "details",
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
-          align: 'right',
+          align: "right",
         },
         Cell: () => {
-          return <ChevronRight />
+          return <ChevronRight />;
         },
-        Header: <div></div> //enable empty header
+        Header: <div></div>, //enable empty header
       },
     ],
     [],
-  )
+  );
 
   useEffect(() => {
-
     const tableData = items.map((item) => {
-
       const copy = { ...item };
 
       return copy;
-
     });
 
     setFullTableData(tableData);
-
-  }, [isLoading, appStatus])
-
+  }, [isLoading, appStatus]);
 
   return (
     <>
@@ -188,40 +204,42 @@ export default function MyCapabilities() {
 
         {!isLoading && items.length > 0 && (
           <>
-            <MaterialReactTable columns={columns} data={fullTableData}
+            <MaterialReactTable
+              columns={columns}
+              data={fullTableData}
               muiTableHeadCellProps={{
                 sx: {
-                  fontWeight: '700',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#002b45',
+                  fontWeight: "700",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#002b45",
                 },
               }}
               muiTableBodyCellProps={{
                 sx: {
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#4d4e4c',
-                  padding: '5px',
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#4d4e4c",
+                  padding: "5px",
                 },
               }}
               muiTablePaperProps={{
                 elevation: 0, //change the mui box shadow
                 //customize paper styles
                 sx: {
-                  borderRadius: '0',
-                }
+                  borderRadius: "0",
+                },
               }}
               muiTopToolbarProps={{
                 sx: {
-                  background: 'none',
-                }
+                  background: "none",
+                },
               }}
               muiBottomToolbarProps={{
                 sx: {
-                  background: 'none',
-                }
+                  background: "none",
+                },
               }}
               enableDensityToggle={false}
               enableHiding={false}
@@ -229,25 +247,25 @@ export default function MyCapabilities() {
               enableGlobalFilter={true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => {
-
-                return ({
+                return {
                   onClick: () => {
-                    clickHandler(row.original.id)
+                    clickHandler(row.original.id);
                   },
                   sx: {
-                    cursor: 'pointer',
-                    background: row.original.status === 'Deleted' ? '#d88' : '',
+                    cursor: "pointer",
+                    background: row.original.status === "Deleted" ? "#d88" : "",
                     padding: 0,
                     margin: 0,
                     minHeight: 0,
-                    '&:hover td': {
-                      backgroundColor: row.original.status === 'Deleted' ? 'rgba(187, 221, 243, 0.1)' : 'rgba(187, 221, 243, 0.4)',
+                    "&:hover td": {
+                      backgroundColor:
+                        row.original.status === "Deleted"
+                          ? "rgba(187, 221, 243, 0.1)"
+                          : "rgba(187, 221, 243, 0.4)",
                     },
-                  }
-                })
+                  },
+                };
               }}
-
-
             />
           </>
         )}

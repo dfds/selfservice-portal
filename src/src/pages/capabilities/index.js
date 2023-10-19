@@ -29,7 +29,11 @@ export default function CapabilitiesPage() {
   };
 
   const splash = (
-    <CardMedia aspectRatio="3:2" media={<img src={SplashImage} className={styles.cardMediaImage} alt=""/>} className={styles.cardMedia} />
+    <CardMedia
+      aspectRatio="3:2"
+      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
+      className={styles.cardMedia}
+    />
   );
 
   return (
