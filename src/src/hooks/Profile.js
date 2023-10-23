@@ -60,3 +60,41 @@ export function useStats() {
         statsInfo,
     };
 }
+
+export function useTopVisitors(myProfileDefinition) {
+    const { inProgress, responseData, setErrorOptions, sendRequest } =
+        useSelfServiceRequest();
+    const [isLoadedVisitors, setIsLoadedVisitors] = useState(false);
+    const [visitorsInfo, setVisitorsInfo] = useState(null);
+
+    const visitorsLink = myProfileDefinition?._links?.topVisitors;
+
+    useEffect(() => {
+        if (visitorsLink) {
+            sendRequest({
+                urlSegments: [visitorsLink.href],
+            });
+        }
+    }, [visitorsLink]);
+
+    useEffect(() => {
+        if (responseData?.items.length >= 0) {
+            setVisitorsInfo(responseData?.items || []);
+        }
+    }, [responseData]);
+
+    useEffect(() => {
+        if (visitorsInfo)
+        {
+            if (visitorsInfo.length !== 0) {
+                setIsLoadedVisitors(true);
+            }
+        }
+        
+    }, [visitorsInfo]);
+
+    return {
+        isLoadedVisitors,
+        visitorsInfo,
+    };
+}
