@@ -115,9 +115,11 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
+
             <MaterialReactTable
               columns={columns}
               data={otherCapabilities}
+              initialState={{pagination: {pageSize: 50}, showGlobalFilter: true}}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
@@ -150,9 +152,6 @@ export default function OtherCapabilities() {
                 },
               }}
               enableGlobalFilterModes={true}
-              initialState={{
-                showGlobalFilter: true,
-              }}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
                 placeholder: `Find a capability...`,
@@ -165,16 +164,15 @@ export default function OtherCapabilities() {
                 size: "small",
                 variant: "outlined",
               }}
-              enablePagination={false}
+              enablePagination={true}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
-              enableFullScreenToggle={false}
               enableDensityToggle={false}
               enableHiding={false}
               enableFilters={true}
               enableGlobalFilter={true}
               enableTopToolbar={true}
-              enableBottomToolbar={false}
+              enableBottomToolbar={true}
               enableColumnActions={false}
               muiTableBodyRowProps2={({ row }) => ({
                 onClick: () => {

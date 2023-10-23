@@ -4,12 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import {
   Spinner,
-  Table,
-  TableBody,
-  TableDataCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
 } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
@@ -165,14 +159,13 @@ export default function MyCapabilities() {
         header: "arrow",
         id: "details",
         size: 1,
-        enableColumnFilterModes: false,
         muiTableBodyCellProps: {
           align: "right",
         },
         Cell: () => {
           return <ChevronRight />;
         },
-        Header: <div></div>, //enable empty header
+        Header: <div></div> //force no column title
       },
     ],
     [],
@@ -207,6 +200,7 @@ export default function MyCapabilities() {
             <MaterialReactTable
               columns={columns}
               data={fullTableData}
+              initialState={{pagination: {pageSize: 25}, showGlobalFilter: true}}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
@@ -233,19 +227,37 @@ export default function MyCapabilities() {
               }}
               muiTopToolbarProps={{
                 sx: {
-                  background: "none",
-                },
+                  background: 'none',
+                }
               }}
+              enableGlobalFilterModes={true}
+              positionGlobalFilter="left"
+              muiSearchTextFieldProps={{
+                placeholder: `Find a capability...`,
+                sx: {
+                  minWidth: '1120px',
+                  fontWeight: '400',
+                  fontSize: '16px',
+                  padding: '5px',
+                },
+                size: 'small',
+                variant: 'outlined',
+              }}
+              enablePagination={true}
+              globalFilterFn="contains"
+              enableFilterMatchHighlighting={true}
+              enableDensityToggle={false}
+              enableHiding={false}
+              enableFilters={true}
+              enableGlobalFilter={true}
+              enableTopToolbar={true}
+              enableBottomToolbar={true}
+              enableColumnActions={false}
               muiBottomToolbarProps={{
                 sx: {
                   background: "none",
                 },
               }}
-              enableDensityToggle={false}
-              enableHiding={false}
-              enableFilters={true}
-              enableGlobalFilter={true}
-              enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => {
                 return {
                   onClick: () => {
