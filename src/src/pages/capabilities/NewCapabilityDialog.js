@@ -42,7 +42,7 @@ export default function NewCapabilityDialog({
 
   const changeInvitation = (e) => {
     e.preventDefault();
-    const newValue = e?.target?.value.split(/,\s*/) || emptyValues.invitations;
+    const newValue = e?.target?.value || emptyValues.invitations;
     setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
   }
 
