@@ -21,7 +21,7 @@ export default function NewCapabilityDialog({
   const emptyValues = {
     name: "",
     description: "",
-    invitations: "",
+    invitations: [],
   };
 
   const [formData, setFormData] = useState(emptyValues);
@@ -42,8 +42,8 @@ export default function NewCapabilityDialog({
 
   const changeInvitation = (e) => {
     e.preventDefault();
-    const newValue = e?.target?.value || emptyValues.invitations;
-    setFormData((prev) => ({ ...prev, ...{ invitations: [newValue] } }));
+    const newValue = e?.target?.value.split(/,\s*/) || emptyValues.invitations;
+    setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
   }
 
   const isNameValid =
