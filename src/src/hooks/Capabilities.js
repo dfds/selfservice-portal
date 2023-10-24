@@ -15,19 +15,21 @@ export function useCapabilities() {
     list.sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const createCapability = (name, description) => {
+  const createCapability = (name, description, invitations) => {
     addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
       payload: {
         name: name,
         description: description,
+        invitees: invitations,
       },
     });
   };
 
   useEffect(() => {
     if (addedCapability) {
+      console.log(addedCapability);
       setCapabilities((prev) => {
         const list = [...prev, addCapability];
         sortByName(list);

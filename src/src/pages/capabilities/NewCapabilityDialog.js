@@ -21,6 +21,7 @@ export default function NewCapabilityDialog({
   const emptyValues = {
     name: "",
     description: "",
+    invitations: "",
   };
 
   const [formData, setFormData] = useState(emptyValues);
@@ -38,6 +39,12 @@ export default function NewCapabilityDialog({
     const newValue = e?.target?.value || emptyValues.description;
     setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
   };
+
+  const changeInvitation = (e) => {
+    e.preventDefault();
+    const newValue = e?.target?.value || emptyValues.invitations;
+    setFormData((prev) => ({ ...prev, ...{ invitations: [newValue] } }));
+  }
 
   const isNameValid =
     formData.name !== "" &&
@@ -102,6 +109,14 @@ export default function NewCapabilityDialog({
             required
             value={formData.description}
             onChange={changeDescription}
+          ></TextField>
+
+          <TextField
+            label="Invite members"
+            placeholder="Enter users emails"
+            required
+            value={formData.invitations}
+            onChange={changeInvitation}
           ></TextField>
 
           <ButtonStack>
