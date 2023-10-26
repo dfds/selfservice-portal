@@ -45,19 +45,7 @@ function Repositories() {
             </Text>
           );
         },
-      },
-      {
-        accessorKey: "repositoryName",
-        header: "Repository Name",
-        size: 250,
-        Cell: ({ renderedCellValue }) => {
-          return (
-            <Text styledAs="action" as={"div"}>
-              {renderedCellValue}
-            </Text>
-          );
-        },
-      },
+      }
     ],
     [],
   );
