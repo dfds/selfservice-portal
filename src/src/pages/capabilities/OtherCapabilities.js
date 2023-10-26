@@ -115,11 +115,13 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
-
             <MaterialReactTable
               columns={columns}
               data={otherCapabilities}
-              initialState={{pagination: {pageSize: 50}, showGlobalFilter: true}}
+              initialState={{
+                pagination: { pageSize: 50 },
+                showGlobalFilter: true,
+              }}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",

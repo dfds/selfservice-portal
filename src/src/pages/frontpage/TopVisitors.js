@@ -59,7 +59,7 @@ export default function TopVisitors() {
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
   const { selfServiceApiClient } = useContext(AppContext);
-  const {isLoadedVisitors, visitorsInfo} = useTopVisitors(myProfile);
+  const { isLoadedVisitors, visitorsInfo } = useTopVisitors(myProfile);
 
   const handleVisitorClicked = (rank) => {
     if (rank === 1 && !showConfetti) {
@@ -80,9 +80,7 @@ export default function TopVisitors() {
   }, [showConfetti]);
 
   function loadVisitors() {
-
     const items = visitorsInfo;
-
 
     items.sort((a, b) => a.rank - b.rank);
 
@@ -92,11 +90,11 @@ export default function TopVisitors() {
       );
       setVisitors((prev) => {
         let copy;
-        if (prev.length === 0){
+        if (prev.length === 0) {
           copy = items;
-        }else{
+        } else {
           copy = prev;
-        } 
+        }
 
         const found = copy.find((x) => x.id === visitor.id);
 
@@ -107,14 +105,13 @@ export default function TopVisitors() {
         return copy;
       });
     });
-  };
+  }
 
   useEffect(() => {
-    if (isLoadedVisitors){
+    if (isLoadedVisitors) {
       loadVisitors();
-    }    
+    }
   }, [myProfile, visitorsInfo, isLoadedVisitors]);
-
 
   return (
     <div>
