@@ -18,7 +18,7 @@ import SplashImage from "./splash.jpg";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
-  const { addNewCapability } = useContext(AppContext);
+  const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
@@ -84,10 +84,12 @@ export default function CapabilitiesPage() {
           </CardActions>
         </Card>
 
-        <br />
-
-        <MyInvitations invitationType="Capability" />
-
+        {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href &&
+          <>
+            <br />
+            <MyInvitations invitationsLink={myProfile?._links?.invitationsLinks?.capabilityInvitations?.href} />
+          </>
+        }
         <br />
 
         <MyCapabilities />

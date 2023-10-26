@@ -8,14 +8,14 @@ import PageSection from "components/PageSection";
 import { useSelfServiceRequest } from "../../hooks/SelfServiceApi";
 import { MaterialReactTable } from "material-react-table";
 
-export default function MyInvitations({ invitationType }) {
+export default function MyInvitations({ invitationsLink }) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const { responseData: acceptResponse, sendRequest: acceptRequest } = useSelfServiceRequest();
   const { responseData: declineResponse, sendRequest: declineRequest } = useSelfServiceRequest();
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadInvitations = () => { sendRequest({ urlSegments: [`invitations?targetType=${invitationType}`] }); };
+  const loadInvitations = () => { sendRequest({ urlSegments: [invitationsLink] }); };
 
   useEffect(() => {
     setIsLoading(true);
@@ -131,25 +131,9 @@ export default function MyInvitations({ invitationType }) {
               background: 'none',
             }
           }}
-          enableGlobalFilterModes={true}
-          positionGlobalFilter="left"
-          muiSearchTextFieldProps={{
-            placeholder: `Find a capability...`,
-            sx: {
-              minWidth: '1120px',
-              fontWeight: '400',
-              fontSize: '16px',
-              padding: '5px',
-            },
-            size: 'small',
-            variant: 'outlined',
-          }}
+          enableGlobalFilterModes={false}
           enablePagination={true}
           globalFilterFn="contains"
-          enableDensityToggle={false}
-          enableHiding={false}
-          enableFilters={false}
-          enableGlobalFilter={false}
           enableTopToolbar={false}
           enableBottomToolbar={true}
           enableColumnActions={false}
