@@ -12,7 +12,7 @@ import { Modal } from "@dfds-ui/modal";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
-export default function Resources({capabilityId}) {
+export default function Resources({ capabilityId }) {
   const [showLogModal, setLogModal] = useState(false);
   const { awsAccount } = useContext(SelectedCapabilityContext);
   const handleApplicationLogShow = async () => {
@@ -22,36 +22,40 @@ export default function Resources({capabilityId}) {
   return (
     <>
       <PageSection headline="Resources">
-      <Card variant="fill" surface="main">
-        <CardContent>
-          <p>
-            A capability is the 'container' for your cloud resources. Currently
-            we support 1 AWS Account (sandbox) and 1 Kubernetes namespace per
-            capability. These are not added per default to a capability, but
-            must be requested by clicking the button below. Note that there is
-            manual processing involved in getting an AWS account attached so it
-            may take a while before your resources are ready.
-          </p>
+        <Card variant="fill" surface="main">
+          <CardContent>
+            <p>
+              A capability is the 'container' for your cloud resources.
+              Currently we support 1 AWS Account (sandbox) and 1 Kubernetes
+              namespace per capability. These are not added per default to a
+              capability, but must be requested by clicking the button below.
+              Note that there is manual processing involved in getting an AWS
+              account attached so it may take a while before your resources are
+              ready.
+            </p>
 
-          <ResourceInfoBadges/>
+            <ResourceInfoBadges />
 
-          {(awsAccount && awsAccount.status == "Completed") && (
-            <>
-              <br />
+            {awsAccount && awsAccount.status == "Completed" && (
+              <>
+                <br />
 
-              <ButtonStack align="center" style={{ margin: "auto", marginTop: "15px", width: "400px" }}>
-                <Button
-                  size="small"
-                  variation="outlined"
-                  onClick={handleApplicationLogShow}
+                <ButtonStack
+                  align="center"
+                  style={{ margin: "auto", marginTop: "15px", width: "400px" }}
                 >
-                  How to see application logs?
-                </Button>
-              </ButtonStack>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                  <Button
+                    size="small"
+                    variation="outlined"
+                    onClick={handleApplicationLogShow}
+                  >
+                    How to see application logs?
+                  </Button>
+                </ButtonStack>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </PageSection>
 
       <Modal

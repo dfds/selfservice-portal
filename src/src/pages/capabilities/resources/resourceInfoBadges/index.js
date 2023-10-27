@@ -49,10 +49,10 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
           <i>
             <strong>Please note</strong> <br />
             That manual steps are a part of the AWS Account & Kubernetes
-            Namespace creation, so please allow for some hours for the request to
-            be processed. Also remember that requests submitted late in the day,
-            or during weekends, will not picked up until the following business
-            day.
+            Namespace creation, so please allow for some hours for the request
+            to be processed. Also remember that requests submitted late in the
+            day, or during weekends, will not picked up until the following
+            business day.
           </i>
         </Text>
       </Modal>
@@ -118,9 +118,8 @@ const Completed = function ({ accountId, namespace, id }) {
 
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
-  const { id, awsAccount, links, requestAwsAccount, setAwsAccountRequested } = useContext(
-    SelectedCapabilityContext,
-  );
+  const { id, awsAccount, links, requestAwsAccount, setAwsAccountRequested } =
+    useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -144,42 +143,48 @@ export function ResourceInfoBadges() {
     <>
       <hr className={styles.divider} />
 
-      {(awsAccount != null) ? (
+      {awsAccount != null ? (
         <>
-          {awsAccount.status === "Completed" && <Completed accountId={awsAccount.accountId} namespace={awsAccount.namespace} id={id} />}
+          {awsAccount.status === "Completed" && (
+            <Completed
+              accountId={awsAccount.accountId}
+              namespace={awsAccount.namespace}
+              id={id}
+            />
+          )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
         </>
       ) : (
-      <>
-        {showDialog && (
-          <RequestDialog
-            isRequesting={isSubmitting}
-            onClose={closeDialog}
-            onSubmit={handleSubmitClicked}
-          />
-        )}
+        <>
+          {showDialog && (
+            <RequestDialog
+              isRequesting={isSubmitting}
+              onClose={closeDialog}
+              onSubmit={handleSubmitClicked}
+            />
+          )}
 
-        <div className={styles.pending}>
-          <div className={styles.items}>
-            <strong>
-              <em style={{ color: theme.colors.text.secondary.primary }}>
-                No AWS Account or Kubernetes Namespace linked with this
-                Capability.
-              </em>
-            </strong>
+          <div className={styles.pending}>
+            <div className={styles.items}>
+              <strong>
+                <em style={{ color: theme.colors.text.secondary.primary }}>
+                  No AWS Account or Kubernetes Namespace linked with this
+                  Capability.
+                </em>
+              </strong>
+            </div>
+            <div className={styles.items}>
+              <ButtonStack align="right">
+                {canRequest && (
+                  <Button onClick={() => setShowDialog(true)}>
+                    Request AWS Account & Kubernetes Namespace
+                  </Button>
+                )}
+              </ButtonStack>
+            </div>
           </div>
-          <div className={styles.items}>
-            <ButtonStack align="right">
-              {canRequest && (
-                <Button onClick={() => setShowDialog(true)}>
-                  Request AWS Account & Kubernetes Namespace
-                </Button>
-              )}
-            </ButtonStack>
-          </div>
-        </div>
-      </>
+        </>
       )}
     </>
   );

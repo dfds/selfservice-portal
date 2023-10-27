@@ -1,11 +1,11 @@
-.finout_link{
-    color: #7e7e7e;
+.finout_link {
+  color: #7e7e7e;
 }
 
 .container {
-    display: flex;
+  display: flex;
 }
 
 .column {
-    width: 33%;
+  width: 33%;
 }

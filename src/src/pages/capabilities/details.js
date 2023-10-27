@@ -54,19 +54,18 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showResources && <Resources capabilityId={id}/>}
+        {showResources && <Resources capabilityId={id} />}
 
         <MembershipApplications />
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
-
         {(kafkaClusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && (awsAccount != undefined) && <Costs />}
+        {showCosts && awsAccount != undefined && <Costs />}
         <CapabilityManagement
           deletionState={isPendingDeletion}
           updateDeletionState={updateDeletionStatus}

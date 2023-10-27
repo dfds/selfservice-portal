@@ -27,17 +27,16 @@ export function CapabilityCostSummary({ data }) {
     <div className={styles.chartContainer}>
       <div className={styles.costDataSummary}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}  >
+          <LineChart data={data}>
             <XAxis dataKey="timestamp" hide />
             <YAxis type="number" domain={domain} hide></YAxis>
             <Tooltip content={CostTooltip} />
-            <CartesianGrid strokeDasharray="1"/>
+            <CartesianGrid strokeDasharray="1" />
             <Line
               type="monotone"
               dataKey="pv"
               stroke="#014874"
               strokeWidth={2}
-
               dot={false}
               isAnimationActive={false}
             />
@@ -46,7 +45,9 @@ export function CapabilityCostSummary({ data }) {
       </div>
       <div className={styles.costDataSummaryCostContainer}>
         <div className={styles.costDataSummaryCostAvg}>Average</div>
-        <div className={styles.costDataSummaryCost}>{has_data ? displayedCost:"No data"}</div>
+        <div className={styles.costDataSummaryCost}>
+          {has_data ? displayedCost : "No data"}
+        </div>
       </div>
     </div>
   );

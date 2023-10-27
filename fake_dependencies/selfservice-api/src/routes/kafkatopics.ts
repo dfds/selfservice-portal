@@ -23,31 +23,31 @@ router.get("/kafkatopics", (req, res) => {
   }
 
   res.send({
-    items: result.map(x => convertKafkaTopic(x)),
-    "_embedded": {
+    items: result.map((x) => convertKafkaTopic(x)),
+    _embedded: {
       kafkaClusters: {
-          items: (state.kafkaClusters || []),
-          "_links": {
-              self: {
-                  href: composeUrl(`/kafkaclusters`),
-                  rel: "related",
-                  allow: ["GET"]
-              }
-          }
-      }  
-  },
-    "_links": {
+        items: state.kafkaClusters || [],
+        _links: {
+          self: {
+            href: composeUrl(`/kafkaclusters`),
+            rel: "related",
+            allow: ["GET"],
+          },
+        },
+      },
+    },
+    _links: {
       self: {
         href: composeUrl("kafkatopics"),
         rel: "self",
-        allow: ["GET"]
-      }
-    }
+        allow: ["GET"],
+      },
+    },
   });
 });
 
 router.get("/kafkatopics/:id", (req, res) => {
-  const foundTopic = state.kafkaTopics.find(x => x.id == req.params.id);
+  const foundTopic = state.kafkaTopics.find((x) => x.id == req.params.id);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
@@ -58,61 +58,67 @@ router.get("/kafkatopics/:id", (req, res) => {
 });
 
 router.get("/kafkatopics/:id/messagecontracts", (req, res) => {
-  const topicId : string = req?.params?.id || "";
+  const topicId: string = req?.params?.id || "";
 
-  const foundTopic = state.kafkaTopics.find(x => x.id == topicId);
+  const foundTopic = state.kafkaTopics.find((x) => x.id == topicId);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
   }
 
-  const result = state.messageContracts.filter(x => x.kafkaTopicId == topicId);
+  const result = state.messageContracts.filter(
+    (x) => x.kafkaTopicId == topicId,
+  );
   res.send({
-    items: result.map(x => convertMessageContract(x)),
-    "_links": {
+    items: result.map((x) => convertMessageContract(x)),
+    _links: {
       self: {
         href: req.path,
         rel: "self",
-        allow: ["GET"]
-      }
-    }
+        allow: ["GET"],
+      },
+    },
   });
 });
 
 router.post("/kafkatopics/:id/messagecontracts", (req, res) => {
-  const kafkaTopicId : string = req?.params?.id || "";
-  const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
+  const kafkaTopicId: string = req?.params?.id || "";
+  const foundTopic = state.kafkaTopics.find((x) => x.id == kafkaTopicId);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
   }
 
-  const newContract : MessageContract = {...req.body, ...{
-    id: "" + new Date().getTime(),
-    status: "In Progress",
-    kafkaTopicId: kafkaTopicId,
-  }};
+  const newContract: MessageContract = {
+    ...req.body,
+    ...{
+      id: "" + new Date().getTime(),
+      status: "In Progress",
+      kafkaTopicId: kafkaTopicId,
+    },
+  };
 
   state.messageContracts.push(newContract);
   log("Added new message contract: " + JSON.stringify(newContract, null, 2));
 
   const dto = convertMessageContract(newContract);
 
-  res
-    .set("Location", dto._links.self.href)
-    .status(201)
-    .send(newContract);
+  res.set("Location", dto._links.self.href).status(201).send(newContract);
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
       newContract.status = "Provisioned";
-      log(`Changed status on message contract ${newContract.id} to ${newContract.status}`);
-  }, (Math.random() * 2000)+2000);
-
+      log(
+        `Changed status on message contract ${newContract.id} to ${newContract.status}`,
+      );
+    },
+    Math.random() * 2000 + 2000,
+  );
 });
 
 router.put("/kafkatopics/:id/description", (req, res) => {
-  const kafkaTopicId : string = req?.params?.id || "";
-  const foundTopic = state.kafkaTopics.find(x => x.id == kafkaTopicId);
+  const kafkaTopicId: string = req?.params?.id || "";
+  const foundTopic = state.kafkaTopics.find((x) => x.id == kafkaTopicId);
   if (!foundTopic) {
     res.sendStatus(404);
     return;
@@ -120,7 +126,9 @@ router.put("/kafkatopics/:id/description", (req, res) => {
 
   foundTopic.description = req.body.description;
 
-  log(`Changed description on topic ${foundTopic.name} to "${foundTopic.description}"`);
+  log(
+    `Changed description on topic ${foundTopic.name} to "${foundTopic.description}"`,
+  );
 
   res.sendStatus(204);
 });

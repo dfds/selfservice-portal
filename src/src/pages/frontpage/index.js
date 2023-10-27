@@ -20,7 +20,7 @@ import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
-import {ExternalLink } from "@dfds-ui/icons/system";
+import { ExternalLink } from "@dfds-ui/icons/system";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -65,9 +65,7 @@ export default function FrontPage() {
 
   const onChatAsked = (e) => {
     e.preventDefault();
-    window.open(
-      `${aiChatUrl}?q=${chatInput}`,
-    );
+    window.open(`${aiChatUrl}?q=${chatInput}`);
   };
 
   return (
@@ -166,7 +164,8 @@ export default function FrontPage() {
                         disableTooltip
                         disableOverlay
                         type={"submit"}
-                       ariaLabel="Submit"/>
+                        ariaLabel="Submit"
+                      />
                     </div>
                   </form>
                 </SectionContent>
