@@ -32,7 +32,7 @@ export function useECRRepositories() {
       method: "POST",
       payload: {
         name: name,
-        description: description
+        description: description,
       },
     });
   };
