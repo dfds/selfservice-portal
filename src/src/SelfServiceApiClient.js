@@ -431,7 +431,7 @@ export class SelfServiceApiClient {
     const url = composeUrl("kafkaclusters");
     const response = await callApi(url, accessToken);
     this.responseHandler(response);
-    const items = await response.json();
+    const { items } = await response.json();
 
     return items || [];
   }

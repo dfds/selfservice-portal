@@ -54,8 +54,8 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
-  const { profileInfo, isLoadedProfile } = useProfile();
-  const { statsInfo, isLoadedStats } = useStats();
+  const { profileInfo, isLoadedProfile } = useProfile(user);
+  const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
