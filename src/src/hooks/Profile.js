@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 
-export function useProfile() {
+export function useProfile(user) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
   const [profileInfo, setProfileInfo] = useState(null);
 
   useEffect(() => {
+    console.log("useProfile", user);
     sendRequest({
       urlSegments: ["me"],
     });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -31,7 +32,7 @@ export function useProfile() {
   };
 }
 
-export function useStats() {
+export function useStats(user) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
   const [isLoadedStats, setIsLoadedStats] = useState(false);
@@ -41,7 +42,7 @@ export function useStats() {
     sendRequest({
       urlSegments: ["stats"],
     });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (responseData !== null) {
