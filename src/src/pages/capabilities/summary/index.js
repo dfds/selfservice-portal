@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
@@ -10,7 +10,9 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 
-function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
+import AppContext from "../../../AppContext.js";
+
+function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, canBypassMembershipApplications }) {
   const actions = (
     <>
       <ModalAction
@@ -28,12 +30,14 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
       >
         Cancel
       </ModalAction>
+
     </>
   );
 
   return (
     <>
       <Modal
+        style={{ position: "absolute" }}
         heading={`Want to join...?`}
         isOpen={true}
         shouldCloseOnOverlayClick={true}
@@ -54,12 +58,26 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
             been approved by existing members.
           </i>
         </Text>
+        {canBypassMembershipApplications && <Button
+          variation ="danger"
+          style={{
+            marginRight: "1rem",
+            alignSelf: "left",
+            position:"absolute"
+          }}
+          disabled={isSubmitting}
+          actionVariation="secondary"
+          onClick={onCloseRequested}
+        >
+          BYPASS JOIN (CE ONLY)
+      </Button>}
       </Modal>
     </>
   );
 }
 
 function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
+
   const actions = (
     <>
       <ModalAction
@@ -108,6 +126,7 @@ export default function Summary() {
     links,
     submitMembershipApplication,
     submitLeaveCapability,
+    canBypassMembershipApplication
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -138,14 +157,16 @@ export default function Summary() {
     }
   };
 
+
   return (
-    <PageSection headline="Summary">
+  <PageSection headline="Summary">
       {showJoinDialog && (
         <JoinDialog
           name={name}
           isSubmitting={isSubmitting}
           onCloseRequested={handleCloseRequested}
           onSubmitClicked={handleSubmitClicked}
+          canBypassMembershipApplications={canBypassMembershipApplication}
         />
       )}
       {showLeaveDialog && (

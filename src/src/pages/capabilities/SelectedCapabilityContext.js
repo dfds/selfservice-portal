@@ -14,6 +14,7 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
+import { SelfServiceApiClient } from "SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -35,6 +36,7 @@ function SelectedCapabilityProvider({ children }) {
     selfServiceApiClient,
     myCapabilities,
   } = useContext(AppContext);
+
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
 
@@ -53,6 +55,7 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
+  const [canBypassMembershipApplication, setcanBypassMembershipApplication] = useState(false);
 
   // load kafka clusters and topics
   const loadKafkaClustersAndTopics = useCallback(async () => {
@@ -79,6 +82,13 @@ function SelectedCapabilityProvider({ children }) {
     setShouldAutoReloadTopics(!allTopicsProvisioned);
     setKafkaClusters(clusters);
   }, [details]);
+
+  // load bypass rights:
+  const getBypassMembershipApplication = useCallback(async () => {
+    const result =
+      await selfServiceApiClient.CheckCanBypassMembershipApproval(details);
+    setcanBypassMembershipApplication(result)
+  }, [details])
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -353,6 +363,7 @@ function SelectedCapabilityProvider({ children }) {
       loadMembershipApplications();
       loadKafkaClustersAndTopics();
       loadAwsAccount();
+      getBypassMembershipApplication();
     } else {
       setMembers([]);
       setMembershipApplications([]);
@@ -379,6 +390,11 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   }, [awsAccountRequested])
+
+
+  useEffect(() => {
+
+  }, [])
 
   //--------------------------------------------------------------------
 
@@ -415,6 +431,7 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
+    canBypassMembershipApplication
   };
 
   return (

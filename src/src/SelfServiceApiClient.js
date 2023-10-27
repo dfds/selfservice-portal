@@ -620,6 +620,20 @@ export class SelfServiceApiClient {
       );
     }
   }
+
+  async CheckCanBypassMembershipApproval(capabilityDefinition){
+    const link = capabilityDefinition?._links?.joinCapability;
+    if (!link) {
+      throw Error(
+      "Error! No join link found for capability "+capabilityDefinition.capabilityId
+    );
+    }
+    if (link.allow.includes("POST")) {
+      return true;
+    }
+    return false;
+  }
+
 }
 
 function composeUrl(...args) {
