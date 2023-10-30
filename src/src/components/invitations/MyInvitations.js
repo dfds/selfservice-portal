@@ -69,8 +69,7 @@ export default function MyInvitations({ invitationsLink }) {
               <Button
                 onClick={() => {declineRequest({urlSegments: [cell.getValue().decline.href], method: 'POST'})}}
                 size="small"
-                variation="link"
-                style={{ color: "#ed8800" }}
+                variation="danger"
               >
                 Decline
               </Button>
