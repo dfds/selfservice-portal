@@ -61,7 +61,7 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, can
           disabled={isSubmitting}
           onClick={onBypassClicked}
         >
-          BYPASS JOIN (CE)
+          FORCE JOIN (CE)
         </Button>}
       </Modal>
     </>
