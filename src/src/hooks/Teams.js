@@ -15,11 +15,11 @@ export function useTeams() {
       method: "GET",
       payload: null,
     });
-  }, [addResponse]);
+  }, []);
 
   useEffect(() => {
     if (loadResponse != null) {
-      const teams = loadResponse || [];
+      const teams = loadResponse.items || [];
       setTeams(teams);
       setIsLoading(false);
     }

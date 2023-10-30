@@ -45,18 +45,6 @@ function Teams() {
           );
         },
       },
-      {
-        accessorKey: "capabilities",
-        header: "Capabilities Linked",
-        size: 250,
-        Cell: ({ renderedCellValue }) => {
-          return (
-            <Text styledAs="action" as={"div"}>
-              {renderedCellValue}
-            </Text>
-          );
-        },
-      },
     ],
     [],
   );
@@ -138,13 +126,11 @@ export default function TeamsPage() {
           <CardContent>
             <p>
               Here you will find a list of teams in the Self Service Portal.
-              Teams makes it possible to link users together and see what
-              capabilities they have access to.
             </p>
             <p>
               Teams are not a reflection of the organization structure, but
-              rather a way to group users together. The members of teams are
-              determined by the capabilities they are linked to.
+              rather a way to group capabilities together. The members of teams
+              are determined by the capabilities they are linked to.
             </p>
           </CardContent>
           <CardActions>
