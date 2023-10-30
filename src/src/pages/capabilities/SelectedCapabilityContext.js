@@ -47,16 +47,15 @@ function SelectedCapabilityProvider({ children }) {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  const [leaveCapability, setLeaveCapability] = useState([]);
+  //const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { capability, isLoaded } = useCapabilityById(capabilityId);
-  const { membersList, isLoadedMembers } = useCapabilityMembers(details);
+  const { capability, isLoaded, setReloadRequired} = useCapabilityById(capabilityId);
+  const { membersList, isLoadedMembers} = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const [canBypassMembershipApplication, setcanBypassMembershipApplication] = useState(false);
-
   // load kafka clusters and topics
   const loadKafkaClustersAndTopics = useCallback(async () => {
     const clusters = await selfServiceApiClient.getKafkaClusterAccessList(
@@ -245,6 +244,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
+    setReloadRequired(true);
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
@@ -332,6 +332,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const ByPassMembershipApproval = useCallback(async () => {
     await selfServiceApiClient.ByPassMembershipApproval(details);
+    setReloadRequired(true);
   }, [details]);
 
 
@@ -412,7 +413,6 @@ function SelectedCapabilityProvider({ children }) {
     links: details?._links,
     members,
     membershipApplications,
-    leaveCapability,
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
@@ -437,7 +437,7 @@ function SelectedCapabilityProvider({ children }) {
     updateDeletionStatus,
     showCosts,
     canBypassMembershipApplication,
-    ByPassMembershipApproval
+    ByPassMembershipApproval,
   };
 
   return (

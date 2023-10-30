@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
+import { set } from "date-fns";
 
 export function useCapabilities() {
   // const { errorMessage } = useSelfServiceRequest();
@@ -62,6 +63,7 @@ export function useCapabilities() {
 export function useCapabilityById(id) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [capability, setCapability] = useState(null);
+  const [reloadRequired, setReloadRequired] = useState(true);
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest({
       handler: (params) => {
@@ -85,23 +87,25 @@ export function useCapabilityById(id) {
     });
 
   useEffect(() => {
-    if (id != null) {
+    if (id != null && reloadRequired) {
       sendRequest({
         urlSegments: ["capabilities", id],
       });
     }
-  }, [id]);
+  }, [id, reloadRequired]);
 
   useEffect(() => {
     if (responseData != null) {
       setCapability(responseData);
       setIsLoaded(true);
+      setReloadRequired(false);
     }
   }, [responseData]);
 
   return {
     isLoaded,
     capability,
+    setReloadRequired,
   };
 }
 
@@ -109,6 +113,7 @@ export function useCapabilityMembers(capabilityDefinition) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
   const [isLoadedMembers, setIsLoadedMembers] = useState(false);
+  const [reloadRequired, setReloadRequired] = useState(false);
   const [membersList, setMembersList] = useState([]);
 
   const membersLink = capabilityDefinition?._links?.members;
@@ -119,7 +124,7 @@ export function useCapabilityMembers(capabilityDefinition) {
         urlSegments: [membersLink.href],
       });
     }
-  }, [membersLink]);
+  }, [membersLink, reloadRequired]);
 
   useEffect(() => {
     const updateMembers = async (members) => {
