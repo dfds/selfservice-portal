@@ -132,8 +132,6 @@ export default function OtherCapabilities() {
               }}
               filterFns={{
                 customFilterFn: (row, id, filterValue) => {
-                  console.log(row.getValue(id));
-                  console.log(row);
                   return true;
                 },
               }}

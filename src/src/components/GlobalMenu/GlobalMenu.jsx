@@ -28,6 +28,10 @@ export default function GlobalMenu() {
       url: "/topics",
     },
     {
+      title: "Teams",
+      url: "/teams",
+    },
+    {
       title: "ECR",
       url: "/ecr",
     },
