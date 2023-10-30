@@ -28,7 +28,6 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, can
       >
         Cancel
       </ModalAction>
-
     </>
   );
 
@@ -58,17 +57,12 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, can
         </Text>
         {canBypassMembershipApplications && <Button
           variation ="danger"
-          style={{
-            marginRight: "1rem",
-            alignSelf: "left",
-            position:"absolute"
-          }}
+          style={{ position: "absolute", bottom: "1rem" }}
           disabled={isSubmitting}
-          actionVariation="secondary"
           onClick={onBypassClicked}
         >
           BYPASS JOIN (CE)
-      </Button>}
+        </Button>}
       </Modal>
     </>
   );
