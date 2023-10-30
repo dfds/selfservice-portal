@@ -49,21 +49,23 @@ export default function DeletionWarning() {
               will be removed permanently.
             </p>
             <div style={{ paddingTop: "2rem" }}>
-              {canCancelDeleteCapability && <ButtonStack align="right">
-                {
-                  <button
-                    className="goodButton"
-                    css={css`
-                      :hover {
-                        cursor: pointer;
-                      }
-                    `}
-                    onClick={() => handleCancelDeleteClicked()}
-                  >
-                    Cancel Deletion
-                  </button>
-                }
-              </ButtonStack>}
+              {canCancelDeleteCapability && (
+                <ButtonStack align="right">
+                  {
+                    <button
+                      className="goodButton"
+                      css={css`
+                        :hover {
+                          cursor: pointer;
+                        }
+                      `}
+                      onClick={() => handleCancelDeleteClicked()}
+                    >
+                      Cancel Deletion
+                    </button>
+                  }
+                </ButtonStack>
+              )}
             </div>
           </CardContent>
         </div>

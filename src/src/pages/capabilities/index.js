@@ -11,13 +11,14 @@ import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityDialog from "./NewCapabilityDialog";
 import MyCapabilities from "./MyCapabilities";
+import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
-  const { addNewCapability } = useContext(AppContext);
+  const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
 
@@ -29,7 +30,11 @@ export default function CapabilitiesPage() {
   };
 
   const splash = (
-    <CardMedia aspectRatio="3:2" media={<img src={SplashImage} className={styles.cardMediaImage} alt=""/>} className={styles.cardMedia} />
+    <CardMedia
+      aspectRatio="3:2"
+      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
+      className={styles.cardMedia}
+    />
   );
 
   return (
@@ -79,6 +84,12 @@ export default function CapabilitiesPage() {
           </CardActions>
         </Card>
 
+        {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href &&
+          <>
+            <br />
+            <MyInvitations invitationsLink={myProfile?._links?.invitationsLinks?.capabilityInvitations?.href} />
+          </>
+        }
         <br />
 
         <MyCapabilities />

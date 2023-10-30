@@ -166,3 +166,132 @@ export function useCapabilityMembers(capabilityDefinition) {
     membersList,
   };
 }
+
+export function useKafkaClustersAccessList(capabilityDefinition) {
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
+  const [isLoadedClusters, setIsLoadedClusters] = useState(false);
+  const [clustersList, setClustersList] = useState([]);
+
+  const clustersLink = capabilityDefinition?._links?.clusters;
+
+  useEffect(() => {
+    if (clustersLink) {
+      sendRequest({
+        urlSegments: [clustersLink.href],
+      });
+    }
+  }, [clustersLink]);
+
+  useEffect(() => {
+    if (responseData?.items.length >= 0) {
+      setClustersList(responseData?.items || []);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (clustersList.length >= 0) {
+      setIsLoadedClusters(true);
+    }
+  }, [clustersList]);
+
+  return {
+    isLoadedClusters,
+    clustersList,
+  };
+}
+
+export function useCapabilityAwsAccount(capabilityDefinition) {
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
+  const [isLoadedAccount, setIsLoadedAccount] = useState(false);
+  const [awsAccountInfo, setAwsAccountInfo] = useState(null);
+
+  const link = capabilityDefinition?._links?.awsAccount;
+
+  useEffect(() => {
+    if (link) {
+      sendRequest({
+        urlSegments: [link.href],
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setAwsAccountInfo(responseData);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (awsAccountInfo !== null) {
+      setIsLoadedAccount(true);
+    }
+  }, [awsAccountInfo]);
+
+  return {
+    isLoadedAccount,
+    awsAccountInfo,
+  };
+}
+
+export function useCapabilityMembersApplications(capabilityDefinition) {
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
+  const [isLoadedMembersApplications, setIsLoadedMembersApplications] =
+    useState(false);
+  const [membersApplicationsList, setMembersApplicationsList] = useState([]);
+
+  const link = capabilityDefinition?._links?.membershipApplications;
+
+  useEffect(() => {
+    if (link) {
+      sendRequest({
+        urlSegments: [link.href],
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    const updateMembers = async (members) => {
+      if (members.length !== 0) {
+        const updatedList = await Promise.all(
+          members.map(async (member) => {
+            const profilePictureUrl = await getAnotherUserProfilePictureUrl(
+              member.applicant,
+            );
+            const updatedMember = {
+              ...member,
+              applicantProfilePictureUrl: profilePictureUrl,
+            };
+            return updatedMember;
+          }),
+        );
+        setMembersApplicationsList(updatedList);
+      }
+    };
+
+    if (responseData?.items.length !== 0) {
+      setMembersApplicationsList((prev) => {
+        if (prev.length === 0) {
+          return responseData?.items || [];
+        } else {
+          return prev;
+        }
+      });
+
+      updateMembers(responseData?.items || []);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (membersApplicationsList.length !== 0) {
+      setIsLoadedMembersApplications(true);
+    }
+  }, [membersApplicationsList]);
+
+  return {
+    isLoadedMembersApplications,
+    membersApplicationsList,
+  };
+}

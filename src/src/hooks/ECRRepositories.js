@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 
 export function useECRRepositories() {
-  const { responseData: loadResponse, sendRequest: loadRepositories } = useSelfServiceRequest();
-  const { responseData: addResponse, sendRequest: addRepository } = useSelfServiceRequest();
-  const [ repositories, setRepositories ] = useState([]);
-  const [ isLoading, setIsLoading ] = useState(false);
+  const { responseData: loadResponse, sendRequest: loadRepositories } =
+    useSelfServiceRequest();
+  const { responseData: addResponse, sendRequest: addRepository } =
+    useSelfServiceRequest();
+  const [repositories, setRepositories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadRepositories({
-              urlSegments: ["ecr/repositories"],
-              method: "GET",
-              payload: null,
+      urlSegments: ["ecr/repositories"],
+      method: "GET",
+      payload: null,
     });
   }, [addResponse]);
 
@@ -23,7 +25,7 @@ export function useECRRepositories() {
     }
   }, [loadResponse]);
 
-  const createRepository = async ({name, description, repositoryName}) => {
+  const createRepository = async ({ name, description }) => {
     setIsLoading(true);
     await addRepository({
       urlSegments: ["ecr/repositories"],
@@ -31,7 +33,6 @@ export function useECRRepositories() {
       payload: {
         name: name,
         description: description,
-        repositoryName: repositoryName,
       },
     });
   };

@@ -1,46 +1,46 @@
 .FlexContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 
 .SingleCountCard {
-    margin: 10px;
-    padding: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #ccc;
-    background-color: #e6e6e6;
-    color: #000;
-    font-size: 1.2em;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    width: 100px;
-    height: 100px;
+  margin: 10px;
+  padding: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #ccc;
+  background-color: #e6e6e6;
+  color: #000;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 100px;
+  height: 100px;
 }
 
 .SingleCountCardSubtitle {
-    font-size: 0.8em;
-    color: #666;
-    margin: 0 auto;
-    top: -10px;
-    position: relative;
+  font-size: 0.8em;
+  color: #666;
+  margin: 0 auto;
+  top: -10px;
+  position: relative;
 }
 
 .CountNumber {
-    font-size: 1.5em;
-    color: #000;
-    position: relative;
-    top: -10px;
+  font-size: 1.5em;
+  color: #000;
+  position: relative;
+  top: -10px;
 }
 
 .resourceHint {
-    font-size: 0.8em;
-    color: #666;
-    text-align: left;
-    padding: 0 5px;
+  font-size: 0.8em;
+  color: #666;
+  text-align: left;
+  padding: 0 5px;
 }

@@ -1,12 +1,10 @@
-
-
 .headlineContainer {
   display: inline-flex;
   align-items: center;
 }
 
 .headlineContainer .badge {
-  background-color: #ED8800;
+  background-color: #ed8800;
   color: #ffffff;
   max-width: calc(100%);
   height: 1.45rem;

@@ -183,13 +183,16 @@ export default function Summary() {
 
       <div className={styles.container}>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Name</Text> <span className={styles.breakwords}>{name}</span>
+          <Text styledAs={"smallHeadline"}>Name</Text>{" "}
+          <span className={styles.breakwords}>{name}</span>
         </div>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Root Id</Text> <span className={styles.breakwords}>{id}</span>
+          <Text styledAs={"smallHeadline"}>Root Id</Text>{" "}
+          <span className={styles.breakwords}>{id}</span>
         </div>
         <div className={styles.column}>
-          <Text styledAs={"smallHeadline"}>Description</Text> <span className={styles.breakwords}>{description}</span>
+          <Text styledAs={"smallHeadline"}>Description</Text>{" "}
+          <span className={styles.breakwords}>{description}</span>
         </div>
         <div className={styles.column} style={{ paddingTop: "2rem" }}>
           <MyMembershipApplication />

@@ -37,10 +37,10 @@
 }
 
 .cardMediaImage {
-  position: unset!important;
+  position: unset !important;
   float: right;
 }
 
 .cardMedia {
-  position: unset!important;
+  position: unset !important;
 }

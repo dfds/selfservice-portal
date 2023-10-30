@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
-import styles from './index.module.css';
+import styles from "./index.module.css";
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const { setShouldAutoReloadTopics } = useContext(AppContext);
@@ -96,7 +96,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline="Kafka Topics" headlineChildren={(
+      headline="Kafka Topics"
+      headlineChildren={
         <div className={styles.headlineContainer}>
           <span>({cluster.name.toLocaleLowerCase()})</span>
           <div className={styles.badges}>
@@ -105,7 +106,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
             </Badge>
           </div>
         </div>
-      )}
+      }
     >
       <Text styledAs="label">Description</Text>
       {clusterDescription}
@@ -129,8 +130,10 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         <Text>
           <Text styledAs={"smallHeadline"}>
             In order to connect to the Kafka cluster{" "}
-            <TextBlock>{cluster.name.toLocaleLowerCase()} ({cluster.id})</TextBlock>, please
-            use the following configuration:
+            <TextBlock>
+              {cluster.name.toLocaleLowerCase()} ({cluster.id})
+            </TextBlock>
+            , please use the following configuration:
           </Text>
         </Text>
         <Table>

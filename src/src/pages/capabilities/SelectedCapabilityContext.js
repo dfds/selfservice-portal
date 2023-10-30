@@ -10,6 +10,9 @@ import {
   useCapabilities,
   useCapabilityById,
   useCapabilityMembers,
+  useKafkaClustersAccessList,
+  useCapabilityAwsAccount,
+  useCapabilityMembersApplications,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -55,32 +58,39 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
+  const { clustersList, isLoadedClusters } =
+    useKafkaClustersAccessList(details);
+  const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+  const { isLoadedMembersApplications, membersApplicationsList } =
+    useCapabilityMembersApplications(details);
   const [canBypassMembershipApplication, setcanBypassMembershipApplication] = useState(false);
-  // load kafka clusters and topics
-  const loadKafkaClustersAndTopics = useCallback(async () => {
-    const clusters = await selfServiceApiClient.getKafkaClusterAccessList(
-      details,
-    );
-    let allTopicsProvisioned = true;
-    for (const cluster of clusters) {
-      const topics = await selfServiceApiClient.getTopics(cluster);
+  const kafkaClusterTopicList = () => {
+    if (clustersList.length !== 0) {
+      const promises = [];
+      for (const cluster of clustersList) {
+        let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
+          topics.forEach((kafkaTopic) => {
+            adjustRetention(kafkaTopic);
+            kafkaTopic.messageContracts = (
+              kafkaTopic.messageContracts || []
+            ).sort((a, b) => a.messageType.localeCompare(b.messageType));
+          });
 
-      topics.forEach((kafkaTopic) => {
-        if (kafkaTopic.status !== "Provisioned") {
-          allTopicsProvisioned = false;
-        }
-        adjustRetention(kafkaTopic);
-        kafkaTopic.messageContracts = (kafkaTopic.messageContracts || []).sort(
-          (a, b) => a.messageType.localeCompare(b.messageType),
-        );
+          cluster.topics = topics;
+          return cluster;
+        });
+        promises.push(promise);
+      }
+
+      Promise.all(promises).then((clusters) => {
+        setKafkaClusters(clusters);
       });
-
-      cluster.topics = topics;
     }
+  };
 
-    setShouldAutoReloadTopics(!allTopicsProvisioned);
-    setKafkaClusters(clusters);
-  }, [details]);
+  useEffect(() => {
+    kafkaClusterTopicList();
+  }, [clustersList]);
 
   // load bypass rights:
   const getBypassMembershipApplication = useCallback(async () => {
@@ -113,11 +123,11 @@ function SelectedCapabilityProvider({ children }) {
     });
   }, [details]);
 
-  // load AWS account
-  const loadAwsAccount = useCallback(async () => {
-    const awsAcc = await selfServiceApiClient.getCapabilityAwsAccount(details);
-    setAwsAccount(awsAcc);
-  }, [details]);
+  useEffect(() => {
+    if (isLoadedAccount) {
+      setAwsAccount(awsAccountInfo);
+    }
+  }, [isLoadedAccount, awsAccountInfo]);
 
   //--------------------------------------------------------------------
 
@@ -367,21 +377,25 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (details) {
       loadMembershipApplications();
-      loadKafkaClustersAndTopics();
-      loadAwsAccount();
       getBypassMembershipApplication();
     } else {
       setMembers([]);
       setMembershipApplications([]);
       setKafkaClusters([]);
     }
-  }, [details]);
+  }, [isLoadedMembersApplications, membersApplicationsList]);
+
+useEffect(() => {
+  if (isLoadedMembersApplications) {
+    setMembershipApplications(membersApplicationsList);
+  }
+}, [isLoadedMembersApplications, membersApplicationsList]);
 
   // setup reload of kafka clusters and topics
   useEffect(() => {
     const handle = setInterval(() => {
       if (details && shouldAutoReloadTopics) {
-        loadKafkaClustersAndTopics();
+        kafkaClusterTopicList();
       }
     }, 5 * 1000);
 
@@ -395,12 +409,14 @@ function SelectedCapabilityProvider({ children }) {
         status: "Requested",
       });
     }
-  }, [awsAccountRequested])
+  }, [awsAccountRequested]);
 
 
   useEffect(() => {
 
   }, [])
+
+
 
   //--------------------------------------------------------------------
 

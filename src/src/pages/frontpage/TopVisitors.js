@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useTopVisitors } from "hooks/Profile";
 
 import Confetti from "react-confetti";
 
@@ -58,6 +59,7 @@ export default function TopVisitors() {
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
   const { selfServiceApiClient } = useContext(AppContext);
+  const { isLoadedVisitors, visitorsInfo } = useTopVisitors(myProfile);
 
   const handleVisitorClicked = (rank) => {
     if (rank === 1 && !showConfetti) {
@@ -77,25 +79,25 @@ export default function TopVisitors() {
     };
   }, [showConfetti]);
 
-  const loadVisitors = useCallback(async () => {
-    const link = myProfile?._links?.topVisitors;
-    if (!link) {
-      return;
-    }
+  function loadVisitors() {
+    const items = visitorsInfo;
 
-    const items = await selfServiceApiClient.getTopVisitors(myProfile);
     items.sort((a, b) => a.rank - b.rank);
-
-    setVisitors(items);
 
     items.forEach(async (visitor) => {
       const profilePictureUrl = await getAnotherUserProfilePictureUrl(
         visitor.id,
       );
       setVisitors((prev) => {
-        const copy = prev ? [...prev] : [];
+        let copy;
+        if (prev.length === 0) {
+          copy = items;
+        } else {
+          copy = prev;
+        }
 
         const found = copy.find((x) => x.id === visitor.id);
+
         if (found) {
           found.pictureUrl = profilePictureUrl;
         }
@@ -103,11 +105,13 @@ export default function TopVisitors() {
         return copy;
       });
     });
-  }, [myProfile]);
+  }
 
   useEffect(() => {
-    loadVisitors();
-  }, [myProfile]);
+    if (isLoadedVisitors) {
+      loadVisitors();
+    }
+  }, [myProfile, visitorsInfo, isLoadedVisitors]);
 
   return (
     <div>

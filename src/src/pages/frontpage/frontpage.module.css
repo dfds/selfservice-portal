@@ -1,25 +1,25 @@
 .section {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .herowrapper {
-    padding-left: 2rem;
-    background-color: #002b45;
+  padding-left: 2rem;
+  background-color: #002b45;
 }
 
 .statscontainer {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .aichatcontainer {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
-.chatinput{
-    width: 100%
+.chatinput {
+  width: 100%;
 }

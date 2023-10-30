@@ -22,13 +22,17 @@ import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { useTopics } from "hooks/Topics";
-import { MaterialReactTable } from 'material-react-table';
+import { MaterialReactTable } from "material-react-table";
 import { Link } from "react-router-dom";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
-import { ChevronRight, StatusAlert, ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
-
+import {
+  ChevronRight,
+  StatusAlert,
+  ChevronDown,
+  ChevronUp,
+} from "@dfds-ui/icons/system";
 
 function Topics() {
   const { selectedKafkaTopic, toggleSelectedKafkaTopic } =
@@ -156,22 +160,21 @@ function Topics() {
     setIsLoadingContracts(false);
   }
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorFn: (row) => row.name,
-        header: 'name',
-        id: 'name',
-        size: '50',
-        enableColumnFilterModes: true,
-        disableFilters: false,
-        enableGlobalFilter: true,
-        enableFilterMatchHighlighting: true,
+  const columns = useMemo(() => [
+    {
+      accessorFn: (row) => row.name,
+      header: "name",
+      id: "name",
+      size: "50",
+      enableColumnFilterModes: true,
+      disableFilters: false,
+      enableGlobalFilter: true,
+      enableFilterMatchHighlighting: true,
 
-
-        Cell: ({ cell, renderedCellValue }) => {
-          return <div>
-            <div className={styles.topicheader} >
+      Cell: ({ cell, renderedCellValue }) => {
+        return (
+          <div>
+            <div className={styles.topicheader}>
               <div className={styles.row}>
                 <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
                   {renderedCellValue}
@@ -182,47 +185,46 @@ function Topics() {
                 >
                   {cell.row.original.kafkaClusterName}
                 </Badge>
-
-
-              </div >
-            </div >
-            {!cell.row.getIsExpanded() ? (
-              <div className={styles.infocontainer}>
-              <p>
-                {cell.row.original.description}
-              </p>
-              <div>
-                <div>
-                  Capability:{" "}
-                  <Link style={linkStyle} to={`/capabilities/${cell.row.original.capabilityId}`}>
-                    {cell.row.original.capabilityId}
-                  </Link>
-                </div>
               </div>
             </div>
+            {!cell.row.getIsExpanded() ? (
+              <div className={styles.infocontainer}>
+                <p>{cell.row.original.description}</p>
+                <div>
+                  <div>
+                    Capability:{" "}
+                    <Link
+                      style={linkStyle}
+                      to={`/capabilities/${cell.row.original.capabilityId}`}
+                    >
+                      {cell.row.original.capabilityId}
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ) : null}
-            
           </div>
-        }
+        );
       },
-      {
-        accessorKey: 'arrow',
-        header: 'arrow',
-        id: 'arrow',
-        size: '1',
-        enableColumnFilterModes: false,
-        muiTableBodyCellProps: {
-          align: 'center',
-        },
-        Cell: ({ cell}) => {
-          return <div>
-            {cell.row.getIsExpanded() ? ( <ChevronUp /> ) : <ChevronDown />}
+    },
+    {
+      accessorKey: "arrow",
+      header: "arrow",
+      id: "arrow",
+      size: "1",
+      enableColumnFilterModes: false,
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+      Cell: ({ cell }) => {
+        return (
+          <div>
+            {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
           </div>
-        }
+        );
       },
-    ]
-  )
-
+    },
+  ]);
 
   return (
     <>
@@ -230,45 +232,46 @@ function Topics() {
       <br />
 
       <PageSection headline={`Public Topics`}>
-
         {isLoadingTopics ? (
           <Spinner instant />
         ) : (
           <>
-            <MaterialReactTable columns={columns} data={filteredData}
+            <MaterialReactTable
+              columns={columns}
+              data={filteredData}
               displayColumnDefOptions={{
-                'mrt-row-expand': {
+                "mrt-row-expand": {
                   muiTableHeadCellProps: {
                     sx: {
-                      fontWeight: '400',
-                      fontSize: '16px',
-                      fontFamily: 'DFDS',
-                      color: '#4d4e4c',
-                      padding: '5px',
-                      width: '1%',
-                      align: 'centre',
+                      fontWeight: "400",
+                      fontSize: "16px",
+                      fontFamily: "DFDS",
+                      color: "#4d4e4c",
+                      padding: "5px",
+                      width: "1%",
+                      align: "centre",
                     },
                   },
                   muiTableBodyCellProps: {
                     sx: {
-                      fontWeight: '400',
-                      fontSize: '16px',
-                      fontFamily: 'DFDS',
-                      color: '#4d4e4c',
-                      padding: '5px',
-                      width: '1%',
-                      align: 'centre',
+                      fontWeight: "400",
+                      fontSize: "16px",
+                      fontFamily: "DFDS",
+                      color: "#4d4e4c",
+                      padding: "5px",
+                      width: "1%",
+                      align: "centre",
                     },
                   },
                 },
               }}
               muiTableHeadCellProps={{
                 sx: {
-                  fontWeight: '700',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#002b45',
-                  align: 'centre',
+                  fontWeight: "700",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#002b45",
+                  align: "centre",
                 },
               }}
               filterFns={{
@@ -278,39 +281,35 @@ function Topics() {
               }}
               muiTableBodyCellProps={{
                 sx: {
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#4d4e4c',
-                  padding: '5px',
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#4d4e4c",
+                  padding: "5px",
                 },
               }}
               muiTablePaperProps={{
-                elevation: 0, 
+                elevation: 0,
                 sx: {
-                  borderRadius: '0',
-                }
-              }
-              }
+                  borderRadius: "0",
+                },
+              }}
               enableGlobalFilterModes={true}
               initialState={{
                 showGlobalFilter: true,
-                columnOrder: [
-                  'name',
-                  'arrow',
-                ],
+                columnOrder: ["name", "arrow"],
               }}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
                 placeholder: `Search`,
                 sx: {
-                  minWidth: '1120px',
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  padding: '5px',
+                  minWidth: "1120px",
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  padding: "5px",
                 },
-                size: 'small',
-                variant: 'outlined',
+                size: "small",
+                variant: "outlined",
               }}
               enableTableHead={false}
               globalFilterFn="contains"
@@ -322,32 +321,29 @@ function Topics() {
               enableGlobalFilter={true}
               enableTopToolbar={true}
               enableBottomToolbar={true}
-              enableColumnActions={false}           
+              enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
                 onClick: () => {
-                  row.toggleExpanded()
+                  row.toggleExpanded();
                 },
                 sx: {
                   padding: 0,
                   margin: 0,
                   minHeight: 0,
-                }
+                },
               })}
               enablePagination={true}
-              renderDetailPanel={({ row }) =>
-              (
-
+              renderDetailPanel={({ row }) => (
                 <Card
                   sx={{
-                    display: 'flex',
-                    gridTemplateColumns: '1fr 1fr',
-                    width: '100%',
+                    display: "flex",
+                    gridTemplateColumns: "1fr 1fr",
+                    width: "100%",
                   }}
                 >
                   <RowDetails data={row.original}></RowDetails>
                 </Card>
               )}
-
             />
           </>
         )}
@@ -358,7 +354,11 @@ function Topics() {
 
 export default function TopicsPage() {
   const splash = (
-    <CardMedia aspectRatio="3:2" media={<img src={topicImage} alt="" className={styles.cardMediaImage} />} className={styles.cardMedia} />
+    <CardMedia
+      aspectRatio="3:2"
+      media={<img src={topicImage} alt="" className={styles.cardMediaImage} />}
+      className={styles.cardMedia}
+    />
   );
 
   return (

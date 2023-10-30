@@ -19,7 +19,9 @@ app.use(cors());
 app.use((req, res, next) => {
   setTimeout(() => {
     next();
-    log(`${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`);
+    log(
+      `${req.method} ${req.originalUrl} --> response status: ${res.statusCode}`,
+    );
   }, fakeDelay());
 });
 
@@ -40,7 +42,5 @@ app.use(membershipApplicationsRoutes);
 const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port ${port}`);
 });
-
-

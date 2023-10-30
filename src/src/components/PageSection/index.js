@@ -15,7 +15,15 @@ export function SectionContent({ title, children }) {
 export default function PageSection({ headline, headlineChildren, children }) {
   return (
     <div>
-      {headline && <Text as="div" styledAs="sectionHeadline" className={styles.sectionHeadline}>{headline} {headlineChildren}</Text>}
+      {headline && (
+        <Text
+          as="div"
+          styledAs="sectionHeadline"
+          className={styles.sectionHeadline}
+        >
+          {headline} {headlineChildren}
+        </Text>
+      )}
 
       <Card variant="fill" surface="main">
         <CardContent>{children}</CardContent>

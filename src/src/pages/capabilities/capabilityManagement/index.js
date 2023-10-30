@@ -83,50 +83,52 @@ export default function CapabilityManagement() {
 
   return (
     <>
-      {canDeleteCapability && <PageSection headline="Capability Management">
-        {showDeleteDialog && (
-          <DeleteDialog
-            onCloseRequested={() => {
-              setShowDeleteDialog(false);
-            }}
-            onDeleteClicked={handleDeleteClicked}
-          />
-        )}
-        <Card>
-          {/*Show deletion option only if deletion is not already pending*/}
-          {!isPendingDeletion && (
-            <CardContent>
-              <p>
-                Requesting the deletion of a capability will not immediately
-                delete neither the capability itself nor its related resources.
-                Deletion will commence after a 7 day period, during which it is
-                possible to cancel the deletion request.
-              </p>
-              <div style={{ paddingTop: "2rem" }}>
-                <ButtonStack align="right">
-                  {
-                    <Button
-                      variation="danger"
-                      onClick={() => setShowDeleteDialog(true)}
-                    >
-                      Delete Capability
-                    </Button>
-                  }
-                </ButtonStack>
-              </div>
-            </CardContent>
+      {canDeleteCapability && (
+        <PageSection headline="Capability Management">
+          {showDeleteDialog && (
+            <DeleteDialog
+              onCloseRequested={() => {
+                setShowDeleteDialog(false);
+              }}
+              onDeleteClicked={handleDeleteClicked}
+            />
           )}
-          {/*..otherwise show information around this*/}
-          {isPendingDeletion && (
-            <CardContent>
-              <p>
-                Deletion of this capability is pending. No other management
-                actions are available at this time.
-              </p>
-            </CardContent>
-          )}
-        </Card>
-      </PageSection>}
+          <Card>
+            {/*Show deletion option only if deletion is not already pending*/}
+            {!isPendingDeletion && (
+              <CardContent>
+                <p>
+                  Requesting the deletion of a capability will not immediately
+                  delete neither the capability itself nor its related
+                  resources. Deletion will commence after a 7 day period, during
+                  which it is possible to cancel the deletion request.
+                </p>
+                <div style={{ paddingTop: "2rem" }}>
+                  <ButtonStack align="right">
+                    {
+                      <Button
+                        variation="danger"
+                        onClick={() => setShowDeleteDialog(true)}
+                      >
+                        Delete Capability
+                      </Button>
+                    }
+                  </ButtonStack>
+                </div>
+              </CardContent>
+            )}
+            {/*..otherwise show information around this*/}
+            {isPendingDeletion && (
+              <CardContent>
+                <p>
+                  Deletion of this capability is pending. No other management
+                  actions are available at this time.
+                </p>
+              </CardContent>
+            )}
+          </Card>
+        </PageSection>
+      )}
     </>
   );
 }

@@ -534,39 +534,6 @@ export class SelfServiceApiClient {
     }
   }
 
-  async getTopVisitors(myProfileDefinition) {
-    const link = myProfileDefinition?._links?.topVisitors;
-    if (!link) {
-      throw Error(
-        "Error! No top visitors link found on my profile definition: " +
-          JSON.stringify(myProfileDefinition, null, 2),
-      );
-    }
-
-    if (!(link.allow || []).includes("GET")) {
-      throw Error(
-        "Error! You are not allowed to get top visitors. Options was " +
-          JSON.stringify(link.allow, null, 2),
-      );
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const response = await callApi(url, accessToken);
-    this.responseHandler(response);
-
-    if (!response.ok) {
-      console.log(
-        `Warning: failed getting top visitors using url ${url} - response was ${response.status} ${response.statusText}`,
-      );
-      return [];
-    }
-
-    const { items } = await response.json();
-    return items || [];
-  }
-
   async submitDeleteCapability(capabilityDefinition) {
     const capabilityId = capabilityDefinition?.details?.id;
 

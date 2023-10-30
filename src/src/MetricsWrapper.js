@@ -166,7 +166,6 @@ export class MetricsWrapper {
       !metric.capabilitiesMap.has(capabilityId) ||
       metric.capabilitiesMap.get(capabilityId).length === 0
     ) {
-      console.log("No costs found for capabilityId " + capabilityId);
       return [];
     }
 

@@ -5,6 +5,7 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
+import { useProfile, useStats } from "hooks/Profile";
 
 const AppContext = React.createContext(null);
 
@@ -53,6 +54,8 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
+  const { profileInfo, isLoadedProfile } = useProfile(user);
+  const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description) {
     addCapability(name, description);
@@ -61,17 +64,22 @@ function AppProvider({ children }) {
   }
 
   async function loadMyProfile() {
-    const profile = await selfServiceApiClient.getMyPortalProfile();
-    const { capabilities, autoReloadTopics } = profile;
+    if (isLoadedProfile && isLoadedStats) {
+      const profile = profileInfo;
+      const { capabilities, autoReloadTopics } = profile;
 
-    const stats = await selfServiceApiClient.getStats();
+      const stats = statsInfo;
 
-    setMyCapabilities(capabilities);
-    setStats(stats);
-    setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
-    setShouldAutoReloadTopics(autoReloadTopics);
+      setMyCapabilities(capabilities);
+      setStats(stats);
+      setAppStatus((prev) => ({
+        ...prev,
+        ...{ hasLoadedMyCapabilities: true },
+      }));
+      setShouldAutoReloadTopics(autoReloadTopics);
 
-    setMyProfile(profile);
+      setMyProfile(profile);
+    }
   }
 
   useEffect(() => {
@@ -81,7 +89,7 @@ function AppProvider({ children }) {
     if (user && user.isAuthenticated) {
       loadMyProfile();
     }
-  }, [user]);
+  }, [user, profileInfo, statsInfo]);
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
@@ -92,10 +100,14 @@ function AppProvider({ children }) {
 
   function updateMetrics() {
     metricsWrapper.tryUpdateMetrics().then(() => {
-      setAppStatus(prev => ({
+      setAppStatus((prev) => ({
         ...prev,
-        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(MetricsWrapper.CostsKey),
-        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(MetricsWrapper.ResourceCountsKey)
+        hasLoadedMyCapabilitiesCosts: metricsWrapper.hasLoaded(
+          MetricsWrapper.CostsKey,
+        ),
+        hasLoadedMyCapabilitiesResourcesCounts: metricsWrapper.hasLoaded(
+          MetricsWrapper.ResourceCountsKey,
+        ),
       }));
     });
   }
@@ -117,8 +129,8 @@ function AppProvider({ children }) {
       updateResourcesCount();
     }, 1000 * 60);
     return () => {
-      clearInterval(metricsInterval)
-      clearInterval(costsInterval)
+      clearInterval(metricsInterval);
+      clearInterval(costsInterval);
     };
   }, []);
 

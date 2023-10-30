@@ -7,7 +7,7 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "hooks/Capabilities";
 import styles from "./capabilities.module.css";
-import { MaterialReactTable } from 'material-react-table';
+import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
   const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
@@ -17,8 +17,6 @@ export default function OtherCapabilities() {
   const [searchInput, setSearchInput] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const hasSearchInput = searchInput.replace(" ", "") !== "";
-
-
 
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
@@ -46,11 +44,11 @@ export default function OtherCapabilities() {
 
     if (hasSearchInput) {
       result = result.filter((c) => {
-        const input = searchInput.toLocaleLowerCase()
+        const input = searchInput.toLocaleLowerCase();
         const isMatch =
           c.id.toLocaleLowerCase().includes(input) ||
           c.name.toLocaleLowerCase().includes(input) ||
-          c.description.toLocaleLowerCase().includes(input)
+          c.description.toLocaleLowerCase().includes(input);
         return isMatch;
       });
     }
@@ -64,47 +62,49 @@ export default function OtherCapabilities() {
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
-  const rowClass = (status) => status === "Deleted" ? styles.deletedRow : '';
+  const rowClass = (status) => (status === "Deleted" ? styles.deletedRow : "");
 
   const columns = useMemo(
     () => [
       {
         accessorFn: (row) => row.name,
-        header: 'Name',
+        header: "Name",
         size: 350,
         enableColumnFilterModes: true,
         disableFilters: false,
         enableGlobalFilter: true,
         enableFilterMatchHighlighting: true,
 
-
         Cell: ({ cell, renderedCellValue }) => {
-          return <div> <Text styledAs="action" as={"div"}>
-            {renderedCellValue}
-          </Text>
-            <Text styledAs="caption" as={"div"}>
-              {cell.row.original.description}
-            </Text>
-          </div>
-        }
-
+          return (
+            <div>
+              {" "}
+              <Text styledAs="action" as={"div"}>
+                {renderedCellValue}
+              </Text>
+              <Text styledAs="caption" as={"div"}>
+                {cell.row.original.description}
+              </Text>
+            </div>
+          );
+        },
       },
       {
         accessorFn: (row) => row.id,
-        header: 'arrow',
+        header: "arrow",
         size: 1,
         enableColumnFilterModes: false,
         muiTableBodyCellProps: {
-          align: 'right',
+          align: "right",
         },
         Cell: ({ cell }) => {
-          return <ChevronRight />
+          return <ChevronRight />;
         },
-        Header: <div></div> //enable empty header
+        Header: <div></div>, //enable empty header
       },
     ],
     [],
-  )
+  );
 
   return (
     <>
@@ -115,14 +115,19 @@ export default function OtherCapabilities() {
 
         {!isLoading && (
           <>
-
-            <MaterialReactTable columns={columns} data={otherCapabilities}
+            <MaterialReactTable
+              columns={columns}
+              data={otherCapabilities}
+              initialState={{
+                pagination: { pageSize: 50 },
+                showGlobalFilter: true,
+              }}
               muiTableHeadCellProps={{
                 sx: {
-                  fontWeight: '700',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#002b45',
+                  fontWeight: "700",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#002b45",
                 },
               }}
               filterFns={{
@@ -130,96 +135,90 @@ export default function OtherCapabilities() {
                   console.log(row.getValue(id));
                   console.log(row);
                   return true;
-
                 },
               }}
               muiTableBodyCellProps={{
                 sx: {
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  fontFamily: 'DFDS',
-                  color: '#4d4e4c',
-                  padding: '5px',
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  fontFamily: "DFDS",
+                  color: "#4d4e4c",
+                  padding: "5px",
                 },
               }}
               muiTablePaperProps={{
                 elevation: 0, //change the mui box shadow
                 //customize paper styles
                 sx: {
-                  borderRadius: '0',
-                }
-              }
-              }
-              enableGlobalFilterModes={true}
-              initialState={{
-                showGlobalFilter: true,
+                  borderRadius: "0",
+                },
               }}
+              enableGlobalFilterModes={true}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
                 placeholder: `Find a capability...`,
                 sx: {
-                  minWidth: '1120px',
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  padding: '5px',
+                  minWidth: "1120px",
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  padding: "5px",
                 },
-                size: 'small',
-                variant: 'outlined',
+                size: "small",
+                variant: "outlined",
               }}
-              enablePagination={false}
+              enablePagination={true}
               globalFilterFn="contains"
               enableFilterMatchHighlighting={true}
-              enableFullScreenToggle={false}
               enableDensityToggle={false}
               enableHiding={false}
               enableFilters={true}
               enableGlobalFilter={true}
               enableTopToolbar={true}
-              enableBottomToolbar={false}
+              enableBottomToolbar={true}
               enableColumnActions={false}
               muiTableBodyRowProps2={({ row }) => ({
                 onClick: () => {
-                  clickHandler(row.original.id)
+                  clickHandler(row.original.id);
                 },
                 sx: {
-                  cursor: 'pointer',
-                  background: row.original.status === 'Delete' ? '#d88' : '',
+                  cursor: "pointer",
+                  background: row.original.status === "Delete" ? "#d88" : "",
                   padding: 0,
                   margin: 0,
                   minHeight: 0,
-                }
+                },
               })}
               muiTopToolbarProps={{
                 sx: {
-                  background: 'none',
-                }
-                }}
+                  background: "none",
+                },
+              }}
               muiBottomToolbarProps={{
                 sx: {
-                  background: 'none',
-                }
+                  background: "none",
+                },
               }}
               muiTableBodyRowProps={({ row }) => {
-
-                return ({
+                return {
                   onClick: () => {
-                    clickHandler(row.original.id)
+                    clickHandler(row.original.id);
                   },
                   sx: {
-                    cursor: 'pointer',
-                    background: row.original.status === 'Deleted' ? '#d88' : '',
+                    cursor: "pointer",
+                    background: row.original.status === "Deleted" ? "#d88" : "",
                     padding: 0,
                     margin: 0,
                     minHeight: 0,
-                    '&:hover td': {
-                      backgroundColor: row.original.status === 'Deleted' ? 'rgba(187, 221, 243, 0.1)' : 'rgba(187, 221, 243, 0.4)',
+                    "&:hover td": {
+                      backgroundColor:
+                        row.original.status === "Deleted"
+                          ? "rgba(187, 221, 243, 0.1)"
+                          : "rgba(187, 221, 243, 0.4)",
                     },
-                  }
-                })
+                  },
+                };
               }}
-
             />
-
           </>
         )}
       </PageSection>
