@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext,} from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
@@ -10,9 +10,7 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 
-import AppContext from "../../../AppContext.js";
-
-function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, canBypassMembershipApplications }) {
+function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, canBypassMembershipApplications, onBypassClicked }) {
   const actions = (
     <>
       <ModalAction
@@ -67,9 +65,9 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, can
           }}
           disabled={isSubmitting}
           actionVariation="secondary"
-          onClick={onCloseRequested}
+          onClick={onBypassClicked}
         >
-          BYPASS JOIN (CE ONLY)
+          BYPASS JOIN (CE)
       </Button>}
       </Modal>
     </>
@@ -126,7 +124,7 @@ export default function Summary() {
     links,
     submitMembershipApplication,
     submitLeaveCapability,
-    canBypassMembershipApplication
+    ByPassMembershipApproval
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -136,6 +134,7 @@ export default function Summary() {
 
   const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
   const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
+  const canBypass = (links?.joinCapability?.allow || []).includes("POST");
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -157,6 +156,11 @@ export default function Summary() {
     }
   };
 
+  const handleBypassClicked = async () => {
+    await ByPassMembershipApproval();
+    setShowJoinDialog(false);
+  };
+
 
   return (
   <PageSection headline="Summary">
@@ -166,7 +170,8 @@ export default function Summary() {
           isSubmitting={isSubmitting}
           onCloseRequested={handleCloseRequested}
           onSubmitClicked={handleSubmitClicked}
-          canBypassMembershipApplications={canBypassMembershipApplication}
+          canBypassMembershipApplications={canBypass}
+          onBypassClicked={handleBypassClicked}
         />
       )}
       {showLeaveDialog && (

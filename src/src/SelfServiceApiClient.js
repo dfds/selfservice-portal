@@ -634,6 +634,31 @@ export class SelfServiceApiClient {
     return false;
   }
 
+  async ByPassMembershipApproval(capabilitdefinition){
+    const link = capabilitdefinition?._links?.joinCapability;
+    if (!link) {
+        throw Error(
+        "Error! No join link found for capability "+capabilitdefinition.capabilityId
+      );
+    }
+
+    if (!(link.allow || []).includes("POST")) {
+      throw Error(
+        "Error! Not possible for  client to directly join capability " +
+        capabilitdefinition.capabilityId,
+      );
+    }
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST", {});
+    this.responseHandler(response);
+
+    if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(
+        `Error! Response from server: (${response.status}) ${response.statusText}`,
+      );
+    }
+  }
 }
 
 function composeUrl(...args) {

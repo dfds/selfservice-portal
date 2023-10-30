@@ -330,6 +330,11 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
   }, [details]);
 
+  const ByPassMembershipApproval = useCallback(async () => {
+    await selfServiceApiClient.ByPassMembershipApproval(details);
+  }, [details]);
+
+
   const updateDeletionStatus = (value) => {
     setPendingDeletion(value);
   };
@@ -431,7 +436,8 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
-    canBypassMembershipApplication
+    canBypassMembershipApplication,
+    ByPassMembershipApproval
   };
 
   return (
