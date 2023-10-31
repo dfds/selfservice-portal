@@ -341,7 +341,7 @@ function SelectedCapabilityProvider({ children }) {
   }, [details]);
 
   const ByPassMembershipApproval = async () => {
-    await selfServiceApiClient.ByPassMembershipApproval(details);
+    await selfServiceApiClient.BypassMembershipApproval(details);
     setReloadRequired(true);
   };
 
