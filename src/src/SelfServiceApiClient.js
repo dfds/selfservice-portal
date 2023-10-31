@@ -602,12 +602,12 @@ export class SelfServiceApiClient {
   }
 
   async BypassMembershipApproval(capabilitdefinition){
-    // const link = capabilitdefinition?._links?.joinCapability;
-    // if (!link) {
-    //     throw Error(
-    //     "Error! No join link found for capability "+capabilitdefinition.capabilityId
-    //   );
-    // }
+    const link = capabilitdefinition?._links?.joinCapability;
+    if (!link) {
+        throw Error(
+        "Error! No join link found for capability "+capabilitdefinition.capabilityId
+      );
+    }
 
     // if (!(link.allow).includes("POST")) {
     //   throw Error(
