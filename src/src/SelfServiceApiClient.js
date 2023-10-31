@@ -622,7 +622,6 @@ export class SelfServiceApiClient {
     this.responseHandler(response);
 
     if (!response.ok) {
-      console.log("response was: ", await response.text());
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
