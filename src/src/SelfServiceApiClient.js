@@ -619,7 +619,6 @@ export class SelfServiceApiClient {
     }
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(link.href, accessToken, "POST", {});
-    this.responseHandler(response);
 
     if (!response.ok) {
       throw Error(
