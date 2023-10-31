@@ -301,7 +301,6 @@ export class SelfServiceApiClient {
     return response;
   }
 
-
   async getMyCapabilitiesCosts() {
     const response = await this.fetchWithToken(
       composeUrl("metrics/my-capabilities-costs"),
