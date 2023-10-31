@@ -634,7 +634,7 @@ export class SelfServiceApiClient {
 
     if (!response.ok) {
       throw Error(
-        `Error! Response from server: (${response.status}) ${response.statusText}`,
+        `got error`,
       );
     }
   }
