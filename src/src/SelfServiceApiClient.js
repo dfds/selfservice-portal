@@ -609,7 +609,7 @@ export class SelfServiceApiClient {
       );
     }
 
-    if (!(link.allow || []).includes("POST")) {
+    if (!(link.allow).includes("POST")) {
       throw Error(
         "Error! Not possible for  client to directly join capability " +
         capabilitdefinition.capabilityId,
