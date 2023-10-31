@@ -621,12 +621,12 @@ export class SelfServiceApiClient {
     const response = await callApi(link.href, accessToken, "POST", {});
     this.responseHandler(response);
 
-    // if (!response.ok) {
-    //   console.log("response was: ", await response.text());
-    //   throw Error(
-    //     `Error! Response from server: (${response.status}) ${response.statusText}`,
-    //   );
-    //}
+    if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(
+        `Error! Response from server: (${response.status}) ${response.statusText}`,
+      );
+    }
   }
 }
 
