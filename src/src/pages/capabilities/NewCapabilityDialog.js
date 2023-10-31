@@ -37,19 +37,17 @@ export default function NewCapabilityDialog({
   const [adUsers, setadUsers] = useState([]);
   const [invitationsInput, setInvitationsInput] = useState("")
   const [invitees, setInvitees] = useState([]);
-  const [isInviteesLoaded, setIsInviteesLoaded] = useState(false)
 
   useEffect(() => {
-    console.log(invitationsInput);
     if (invitationsInput !== ""){
       setInvitees((prev) => ( [...prev, invitationsInput]));
     } 
+    setFormData((prev) => ({ ...prev, ...{ invitations: emptyValues.invitations } }));
   }, [invitationsInput])
 
 
   useEffect(() => {
     if(invitees.length !== 0){
-      console.log(invitees)
     }
 
   },[invitees])
@@ -72,7 +70,7 @@ export default function NewCapabilityDialog({
     e.preventDefault();
     const regex = /[^,]*$/;
     setIsUserSearchActive(true);
-    const adValue = e?.target?.value.match(regex)[0].replace(/\s/g, '');
+    const adValue = e?.target?.value.match(regex)[0];
     const value = e?.target?.value;
     const newValue = value || emptyValues.invitations;
     setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
@@ -129,9 +127,18 @@ export default function NewCapabilityDialog({
 
   const handleAddCapabilityClicked = () => {
     if (onAddCapabilityClicked) {
-      onAddCapabilityClicked(formData);
+      onAddCapabilityClicked({...formData, invitations: invitees});
     }
   };
+
+  const OnKeyEnter = (e) => {
+    if (e.key === 'Enter'){
+      if (!Array.isArray(formData.invitations)) {
+        setInvitees((prev) => ( [...prev, formData.invitations]));
+        setFormData((prev) => ({ ...prev, ...{ invitations: emptyValues.invitations } }));
+      }      
+    }
+  }
 
   return (
     <>
@@ -176,6 +183,7 @@ export default function NewCapabilityDialog({
             required
             value={formData.invitations}
             onChange={(e)=>{changeInvitation(e)}}
+            onKeyDown={OnKeyEnter}
           ></TextField>
           { isUserSearchActive ? 
             <div className={styles.dropDownMenu}>
@@ -184,12 +192,13 @@ export default function NewCapabilityDialog({
                 setInvitationsInput={setInvitationsInput}
                 />
             </div> : <></>}
-
+          <div className={styles.invitees_container}>
           {
               (invitees || []).map((invitee) => (
-                <div key={invitee}>{invitee}</div>
+                <div className={styles.invitee_container}key={invitee}>{invitee}</div>
               )) 
           }
+          </div>
 
           <ButtonStack>
             <Button

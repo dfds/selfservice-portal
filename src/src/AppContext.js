@@ -58,8 +58,7 @@ function AppProvider({ children }) {
   const {statsInfo, isLoadedStats} = useStats();
 
   async function addNewCapability(name, description, invitations) {
-    const invitees = invitations.split(/,\s*/);
-    addCapability(name, description, invitees);
+    addCapability(name, description, invitations);
     await sleep(3000);
     await loadMyProfile();
   }

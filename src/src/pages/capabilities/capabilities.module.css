@@ -50,7 +50,20 @@
   top: -23px;
 }
 
-.dropDownMenu {
+.invitee_container {
+  display: flex;
+  border: 2px solid #d9dcde;
+  padding: 5px 5px 5px 5px;
+  margin-left: 4px;
+  border-radius: 20px;
+  background-color: #d9dcde;  
+  margin-bottom: 4px;
+}
+
+.invitees_container {
+  display: flex;
+  flex-direction: row;
   position: relative;
-  top: -23px;
+  top: -16px;
+  flex-wrap: wrap;
 }
