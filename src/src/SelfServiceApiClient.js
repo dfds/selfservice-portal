@@ -617,9 +617,9 @@ export class SelfServiceApiClient {
           capabilitdefinition.capabilityId,
       );
     }
-    // const accessToken = await getSelfServiceAccessToken();
-    // const response = await callApi(link.href, accessToken, "POST", {});
-    // this.responseHandler(response);
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(link.href, accessToken, "POST", {});
+    this.responseHandler(response);
 
     // if (!response.ok) {
     //   console.log("response was: ", await response.text());
