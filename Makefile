@@ -58,6 +58,14 @@ dev: ## Run the portal locally, listening for updates
 runcontainer: clean build container ## Run the portal in a container
 	@docker run -it --rm -p 8080:80 selfservice-portal
 
+.PHONY: setup-pre-commit-hook
+setup-pre-commit-hook:
+	@sh ./setup-pre-commit-hook.sh
+
+.PHONY: pre-commit-hook
+pre-commit-hook:
+	@sh ./.git/hooks/pre-commit
+
 .PHONY: format
 format: ## Runs prettier
 	@npx prettier . --write
