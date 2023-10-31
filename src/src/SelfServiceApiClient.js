@@ -633,9 +633,7 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(link.href, "POST");
 
     if (!response.ok) {
-      throw Error(
-        `got error`,
-      );
+      throw Error(`got error`);
     }
   }
 }
