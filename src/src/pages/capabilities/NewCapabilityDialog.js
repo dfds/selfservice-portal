@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
+import { getUsers } from "GraphApiClient";
+import DropDownMenu from "components/DropDownMenu";
+
+function TextWrapper(){
+  return <>
+  <div className=""></div>
+  </>
+}
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -25,6 +33,26 @@ export default function NewCapabilityDialog({
   };
 
   const [formData, setFormData] = useState(emptyValues);
+  const [isUserSearchActive, setIsUserSearchActive] = useState(false);
+  const [adUsers, setadUsers] = useState([]);
+  const [invitationsInput, setInvitationsInput] = useState("")
+  const [invitees, setInvitees] = useState([]);
+  const [isInviteesLoaded, setIsInviteesLoaded] = useState(false)
+
+  useEffect(() => {
+    console.log(invitationsInput);
+    if (invitationsInput !== ""){
+      setInvitees((prev) => ( [...prev, invitationsInput]));
+    } 
+  }, [invitationsInput])
+
+
+  useEffect(() => {
+    if(invitees.length !== 0){
+      console.log(invitees)
+    }
+
+  },[invitees])
 
   const changeName = (e) => {
     e.preventDefault();
@@ -40,10 +68,41 @@ export default function NewCapabilityDialog({
     setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
   };
 
-  const changeInvitation = (e) => {
+  async function changeInvitation(e) {
     e.preventDefault();
-    const newValue = e?.target?.value || emptyValues.invitations;
+    const regex = /[^,]*$/;
+    setIsUserSearchActive(true);
+    const adValue = e?.target?.value.match(regex)[0].replace(/\s/g, '');
+    const value = e?.target?.value;
+    const newValue = value || emptyValues.invitations;
     setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
+    const adUserstest = await getUsers(adValue);
+    setadUsers(adUserstest.value);
+  }
+
+  function updateInvitees(email) {
+    // const newValue = email || emptyValues.invitations;
+    // console.log(newValue);
+    // console.log(formData);
+    // const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    // console.log(formData.invitations[0]);
+    // const result = formData.invitations[0].split(',').map(part => {
+    //   console.log(part);
+    //   const trimmedPart = part.trim();
+    //   const isValidEmail = regex.test(trimmedPart);
+    //   if (isValidEmail) {
+    //     return trimmedPart
+    //   }
+      
+    // }).filter(email => email);
+
+    // console.log(result);
+    
+    // setFormData((prev) => ({ ...prev, invitations: [result, newValue] }));
+    
+
+
+
   }
 
   const isNameValid =
@@ -116,8 +175,21 @@ export default function NewCapabilityDialog({
             placeholder="Enter users emails"
             required
             value={formData.invitations}
-            onChange={changeInvitation}
+            onChange={(e)=>{changeInvitation(e)}}
           ></TextField>
+          { isUserSearchActive ? 
+            <div className={styles.dropDownMenu}>
+              <DropDownMenu items={adUsers}
+                setIsUserSearchActive={setIsUserSearchActive}
+                setInvitationsInput={setInvitationsInput}
+                />
+            </div> : <></>}
+
+          {
+              (invitees || []).map((invitee) => (
+                <div key={invitee}>{invitee}</div>
+              )) 
+          }
 
           <ButtonStack>
             <Button

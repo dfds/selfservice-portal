@@ -49,3 +49,15 @@ export async function getAnotherUserProfilePictureUrl(upn) {
 
   return url.createObjectURL(blob);
 }
+
+
+export async function getUsers(filterString) {
+  const accessToken = await getGraphAccessToken();
+  const adUsers = await callApi(
+    `https://graph.microsoft.com/v1.0/users?$filter=startswith(displayName, '${filterString}')`,
+    accessToken,
+  );
+  const users = await adUsers.json();
+
+  return users
+}
