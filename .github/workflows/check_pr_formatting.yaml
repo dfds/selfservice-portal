@@ -1,0 +1,19 @@
+name: Validate PR Formatting
+
+on:
+  pull_request:
+    branches: [ main, develop, ci/formatting ]
+jobs:
+  check_formatting:
+    runs-on: ubuntu-latest
+    name: Check Formatting
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check formatting
+        run: npx prettier . --check
