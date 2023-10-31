@@ -289,6 +289,19 @@ export class SelfServiceApiClient {
     return response;
   }
 
+  async requestWithToken(url, method = "GET", payload = null) {
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(url, accessToken, method, payload);
+    this.responseHandler(response);
+
+    if (!response.ok) {
+      console.log("response was: ", response.status);
+      return undefined;
+    }
+    return response;
+  }
+
+
   async getMyCapabilitiesCosts() {
     const response = await this.fetchWithToken(
       composeUrl("metrics/my-capabilities-costs"),
@@ -602,23 +615,23 @@ export class SelfServiceApiClient {
     return false;
   }
 
-  async BypassMembershipApproval(capabilitdefinition) {
-    const link = capabilitdefinition?._links?.joinCapability;
+  async BypassMembershipApproval(capabilitydefinition) {
+    const link = capabilitydefinition?._links?.joinCapability;
     if (!link) {
       throw Error(
         "Error! No join link found for capability " +
-          capabilitdefinition.capabilityId,
+          capabilitydefinition.capabilityId,
       );
     }
 
     if (!link.allow.includes("POST")) {
       throw Error(
         "Error! Not possible for  client to directly join capability " +
-          capabilitdefinition.capabilityId,
+          capabilitydefinition.capabilityId,
       );
     }
-    const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST", {});
+
+    const response = await this.requestWithToken(link.href, "POST");
 
     if (!response.ok) {
       throw Error(
