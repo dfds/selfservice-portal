@@ -588,12 +588,13 @@ export class SelfServiceApiClient {
     }
   }
 
-  async CheckCanBypassMembershipApproval(capabilityDefinition){
+  async CheckCanBypassMembershipApproval(capabilityDefinition) {
     const link = capabilityDefinition?._links?.joinCapability;
     if (!link) {
       throw Error(
-      "Error! No join link found for capability "+capabilityDefinition.capabilityId
-    );
+        "Error! No join link found for capability " +
+          capabilityDefinition.capabilityId,
+      );
     }
     if (link.allow.includes("POST")) {
       return true;
@@ -601,11 +602,12 @@ export class SelfServiceApiClient {
     return false;
   }
 
-  async BypassMembershipApproval(capabilitdefinition){
+  async BypassMembershipApproval(capabilitdefinition) {
     const link = capabilitdefinition?._links?.joinCapability;
     if (!link) {
-        throw Error(
-        "Error! No join link found for capability "+capabilitdefinition.capabilityId
+      throw Error(
+        "Error! No join link found for capability " +
+          capabilitdefinition.capabilityId,
       );
     }
 

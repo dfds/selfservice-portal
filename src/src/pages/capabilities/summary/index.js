@@ -1,4 +1,4 @@
-import React, { useContext,} from "react";
+import React, { useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
@@ -10,7 +10,14 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 
-function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, canBypassMembershipApplications, onBypassClicked }) {
+function JoinDialog({
+  name,
+  isSubmitting,
+  onCloseRequested,
+  onSubmitClicked,
+  canBypassMembershipApplications,
+  onBypassClicked,
+}) {
   const actions = (
     <>
       <ModalAction
@@ -55,21 +62,22 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked, can
             been approved by existing members.
           </i>
         </Text>
-        {canBypassMembershipApplications && <Button
-          variation ="danger"
-          style={{ position: "absolute", bottom: "1rem" }}
-          disabled={isSubmitting}
-          onClick={onBypassClicked}
-        >
-          FORCE JOIN (CE)
-        </Button>}
+        {canBypassMembershipApplications && (
+          <Button
+            variation="danger"
+            style={{ position: "absolute", bottom: "1rem" }}
+            disabled={isSubmitting}
+            onClick={onBypassClicked}
+          >
+            FORCE JOIN (CE)
+          </Button>
+        )}
       </Modal>
     </>
   );
 }
 
 function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
-
   const actions = (
     <>
       <ModalAction
@@ -118,7 +126,7 @@ export default function Summary() {
     links,
     submitMembershipApplication,
     submitLeaveCapability,
-    ByPassMembershipApproval
+    ByPassMembershipApproval,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -155,9 +163,8 @@ export default function Summary() {
     setShowJoinDialog(false);
   };
 
-
   return (
-  <PageSection headline="Summary">
+    <PageSection headline="Summary">
       {showJoinDialog && (
         <JoinDialog
           name={name}
