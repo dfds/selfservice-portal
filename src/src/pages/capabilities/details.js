@@ -33,7 +33,6 @@ function CapabilityDetailsPageContent() {
     name,
     kafkaClusters,
     loadCapability,
-    showResources,
     showCosts,
     isPendingDeletion,
     isDeleted,
@@ -44,9 +43,9 @@ function CapabilityDetailsPageContent() {
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     loadCapability(id);
-  }, [id]);
+  }, [id, loadCapability]);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -86,7 +85,7 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && awsAccount != undefined && <Costs />}
+        {showCosts && awsAccount !== undefined && <Costs />}
         {!isDeleted && (
           <CapabilityManagement
             deletionState={isPendingDeletion}

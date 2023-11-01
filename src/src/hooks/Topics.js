@@ -13,7 +13,7 @@ export function useTopics() {
       method: "GET",
       payload: null,
     });
-  }, []);
+  }, [sendRequest]);
 
   useEffect(() => {
     if (responseData != null) {

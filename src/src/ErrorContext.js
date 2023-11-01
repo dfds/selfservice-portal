@@ -1,5 +1,5 @@
 import ErrorDisplay from "ErrorDisplay";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 
 class ErrorContent {
   msg = null;

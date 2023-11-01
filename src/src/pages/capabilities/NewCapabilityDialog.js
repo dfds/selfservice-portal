@@ -41,7 +41,7 @@ export default function NewCapabilityDialog({
       ...prev,
       ...{ invitations: emptyValues.invitations },
     }));
-  }, [invitationsInput]);
+  }, [invitationsInput, emptyValues.invitations]);
 
   useEffect(() => {
     if (invitees.length !== 0) {
@@ -79,7 +79,7 @@ export default function NewCapabilityDialog({
     !formData.name.match(/^\s*$/g) &&
     !formData.name.match(/(_|-)$/g) &&
     !formData.name.match(/^(_|-)/g) &&
-    !formData.name.match(/[-_\.]{2,}/g) &&
+    !formData.name.match(/[-_.]{2,}/g) &&
     !formData.name.match(/[^a-zA-Z0-9\-_]/g);
 
   let nameErrorMessage = "";

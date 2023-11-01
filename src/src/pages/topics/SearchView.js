@@ -102,7 +102,7 @@ export function SearchView({ data, onTopicClicked }) {
     }
 
     fetchData(data);
-  }, [selectedKafkaTopic]);
+  }, [selectedKafkaTopic, data, selfServiceApiClient]);
 
   return (
     <>

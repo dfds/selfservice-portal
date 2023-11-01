@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useEffect } from "react";
 
 const TrackingContext = React.createContext(null);
 
@@ -19,7 +19,7 @@ function TrackingProvider({ children }) {
       g.src = "https://build.dfds.cloud/tr/js/container_nbYsx3GM.js";
       s.parentNode.insertBefore(g, s);
     }
-  }, []);
+  }, [isEnabled]);
 
   const state = {
     trackingIsEnabled: isEnabled,

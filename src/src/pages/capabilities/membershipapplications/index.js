@@ -101,7 +101,7 @@ export default function MembershipApplications() {
       });
       approveMembershipApplication(membershipApplicationId);
     },
-    [membershipApplications],
+    [approveMembershipApplication],
   );
 
   const hasPendingApplications = applications.length > 0;

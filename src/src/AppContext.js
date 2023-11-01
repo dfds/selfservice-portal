@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  useCallback,
+} from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
@@ -63,7 +69,7 @@ function AppProvider({ children }) {
     await loadMyProfile();
   }
 
-  async function loadMyProfile() {
+  const loadMyProfile = useCallback(() => {
     if (isLoadedProfile && isLoadedStats) {
       const profile = profileInfo;
       const { capabilities, autoReloadTopics } = profile;
@@ -80,7 +86,7 @@ function AppProvider({ children }) {
 
       setMyProfile(profile);
     }
-  }
+  }, [isLoadedProfile, isLoadedStats, profileInfo, statsInfo]);
 
   useEffect(() => {
     if (isAuthenticatedUser !== user.isAuthenticated) {
@@ -89,16 +95,16 @@ function AppProvider({ children }) {
     if (user && user.isAuthenticated) {
       loadMyProfile();
     }
-  }, [user, profileInfo, statsInfo]);
+  }, [user, profileInfo, statsInfo, isAuthenticatedUser, loadMyProfile]);
 
   useEffect(() => {
     if (user && user.isAuthenticated && myProfile) {
       selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
       selfServiceApiClient.registerMyVisit(myProfile);
     }
-  }, [myProfile, user]);
+  }, [myProfile, user, selfServiceApiClient]);
 
-  function updateMetrics() {
+  const updateMetrics = useCallback(() => {
     metricsWrapper.tryUpdateMetrics().then(() => {
       setAppStatus((prev) => ({
         ...prev,
@@ -110,7 +116,7 @@ function AppProvider({ children }) {
         ),
       }));
     });
-  }
+  }, [metricsWrapper]);
 
   function updateResourcesCount() {
     setAppStatus((prev) => ({ ...prev, ...{ hasLoadedResources: true } }));
@@ -119,7 +125,7 @@ function AppProvider({ children }) {
   useEffect(() => {
     updateMetrics();
     updateResourcesCount();
-  }, [myCapabilities]);
+  }, [myCapabilities, updateMetrics]);
 
   useEffect(() => {
     const metricsInterval = setInterval(() => {
@@ -132,7 +138,7 @@ function AppProvider({ children }) {
       clearInterval(metricsInterval);
       clearInterval(costsInterval);
     };
-  }, []);
+  }, [updateMetrics]);
 
   // ---------------------------------------------------------
 

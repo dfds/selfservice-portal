@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import styles from "./Topics.module.css";
 import {
@@ -21,19 +21,21 @@ export default function NewTopicDialog({
   onAddClicked,
   onCloseClicked,
 }) {
-  const emptyValues = {
-    name: "",
-    description: "",
-    partitions: 3,
-    retention: 7,
-    availability: "private",
-  };
+  const emptyValues = useMemo(() => {
+    return {
+      name: "",
+      description: "",
+      partitions: 3,
+      retention: 7,
+      availability: "private",
+    };
+  }, []);
 
   const [formData, setFormData] = useState(emptyValues);
 
   useEffect(() => {
     setFormData(emptyValues);
-  }, [capabilityId, clusterName]);
+  }, [capabilityId, clusterName, emptyValues]);
 
   const changeName = (e) => {
     e.preventDefault();

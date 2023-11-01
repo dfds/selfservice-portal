@@ -53,7 +53,7 @@ export function JsonMetadataWithSchemaViewer() {
     }
 
     void getAndSetSchema();
-  }, []);
+  }, [schemaString, selfServiceApiClient]);
 
   const checkIfJsonIsParsable = (json) => {
     try {

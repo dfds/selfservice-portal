@@ -1,6 +1,6 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
-import { useContext, useEffect, useState } from "react";
-import { composeUrl, composeSegmentsUrl } from "Utils";
+import { useState } from "react";
+import { composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
 import { NewErrorContextBuilder } from "misc/error";
 import { useTracking } from "./Tracking";

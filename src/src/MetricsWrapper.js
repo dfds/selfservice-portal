@@ -117,7 +117,7 @@ export class MetricsWrapper {
       return 0;
     }
     let total = 0;
-    for (let [_, value] of counts) {
+    for (let value of counts.values()) {
       total += value;
     }
     return total;
