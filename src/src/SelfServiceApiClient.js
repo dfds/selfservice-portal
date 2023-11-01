@@ -587,6 +587,18 @@ export class SelfServiceApiClient {
       );
     }
   }
+
+  async getCapabilityJsonMetadataSchema() {
+    const response = await this.fetchWithToken(
+      composeUrl("json-schema/capability"),
+    );
+    if (!response) {
+      return [];
+    }
+
+    let obj = await response.json();
+    return obj.schema.toString() || "";
+  }
 }
 
 function composeUrl(...args) {

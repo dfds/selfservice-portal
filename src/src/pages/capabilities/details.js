@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -25,6 +26,7 @@ export default function CapabilityDetailsPage() {
 function CapabilityDetailsPageContent() {
   const { id } = useParams();
   const {
+    links,
     isLoading,
     isFound,
     name,
@@ -45,6 +47,18 @@ function CapabilityDetailsPageContent() {
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
+  const [showJsonMetadata, setShowJsonMetadata] = useState(false);
+  useEffect(() => {
+    if (
+      links &&
+      links.getCapabilityMetadata &&
+      links.setCapabilityMetadata &&
+      links.setCapabilityMetadata.allow.includes("POST")
+    ) {
+      setShowJsonMetadata(true);
+    }
+  }, [links]);
+
   return (
     <>
       <DeletionWarning
@@ -54,6 +68,7 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
+        {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         {showResources && <Resources capabilityId={id} />}
 
         <MembershipApplications />

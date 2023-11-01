@@ -13,6 +13,7 @@ import {
   useKafkaClustersAccessList,
   useCapabilityAwsAccount,
   useCapabilityMembersApplications,
+  useCapabilityMetadata,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -61,6 +62,9 @@ function SelectedCapabilityProvider({ children }) {
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
+  const { metadata, setCapabilityJsonMetadata } =
+    useCapabilityMetadata(details);
+  const [showJsonMetadata, setShowJsonMetadata] = useState(false);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
@@ -419,6 +423,8 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
+    setCapabilityJsonMetadata,
+    metadata,
   };
 
   return (

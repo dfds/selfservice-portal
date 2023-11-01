@@ -1,0 +1,41 @@
+.jsonParent {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 400px;
+}
+.metadataView {
+  width: 50%;
+  height: 300px;
+  border: 1px solid #4d4e4cb3;
+  border-radius: 2px;
+  resize: vertical;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-size: 14px;
+  overflow-y: auto;
+  display: flex;
+  align-items: stretch;
+}
+
+.jsonInput {
+  width: 50%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  resize: vertical;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.jsonSchema {
+  width: 50%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  resize: vertical;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-size: 14px;
+}

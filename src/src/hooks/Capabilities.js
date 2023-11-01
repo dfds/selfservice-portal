@@ -290,3 +290,50 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
     membersApplicationsList,
   };
 }
+
+export function useCapabilityMetadata(capabilityDefinition) {
+  const { responseData, sendRequest: sendGetJsonMetadataRequest } =
+    useSelfServiceRequest();
+  const { sendRequest: sendSetJsonMetadataRequest } = useSelfServiceRequest();
+  const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
+  const [metadata, setMetadata] = useState(null);
+
+  const get_link = capabilityDefinition?._links?.getCapabilityMetadata;
+
+  useEffect(() => {
+    if (get_link) {
+      sendGetJsonMetadataRequest({
+        urlSegments: [get_link.href],
+      });
+    }
+  }, [get_link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setMetadata(responseData);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (metadata !== null) {
+      setIsLoadedMetadata(true);
+    }
+  }, [metadata]);
+
+  const set_link = capabilityDefinition?._links?.setCapabilityMetadata;
+  const setCapabilityJsonMetadata = (jsonMetadata) => {
+    sendSetJsonMetadataRequest({
+      urlSegments: [set_link.href],
+      method: "POST",
+      payload: {
+        jsonMetadata: JSON.parse(jsonMetadata),
+      },
+    });
+  };
+
+  return {
+    isLoadedMetadata,
+    metadata,
+    setCapabilityJsonMetadata,
+  };
+}
