@@ -203,9 +203,10 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
   const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
   const link = capabilityDefinition?._links?.awsAccount;
+  const shouldGet = (link?.allow || []).includes("GET");
 
   useEffect(() => {
-    if (link) {
+    if (link && shouldGet) {
       sendRequest({
         urlSegments: [link.href],
       });
