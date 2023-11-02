@@ -66,10 +66,12 @@ function CapabilityDetailsPageContent() {
         ))}
 
         {showCosts && awsAccount != undefined && <Costs />}
-        <CapabilityManagement
-          deletionState={isPendingDeletion}
-          updateDeletionState={updateDeletionStatus}
-        />
+        {!isDeleted && (
+          <CapabilityManagement
+            deletionState={isPendingDeletion}
+            updateDeletionState={updateDeletionStatus}
+          />
+        )}
       </Page>
 
       <br />
