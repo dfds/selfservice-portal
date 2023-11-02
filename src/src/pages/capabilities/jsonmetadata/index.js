@@ -23,8 +23,9 @@ export function JsonMetadataWithSchemaViewer() {
 
   useEffect(() => {
     if (metadata) {
-      setCurrentMetadata(metadata);
-      setJson(metadata);
+      const prettyMetadata = prettifyJsonString(json);
+      setCurrentMetadata(prettyMetadata);
+      setJson(prettyMetadata);
     }
   }, [metadata]);
 
@@ -65,10 +66,16 @@ export function JsonMetadataWithSchemaViewer() {
     return validationError === "";
   };
 
+  const prettifyJsonString = (json) => {
+    return JSON.stringify(JSON.parse(json), null, 2);
+  };
+
   const submitJsonMetadata = () => {
+    const prettyJson = prettifyJsonString(json);
     if (isDirty) {
-      setCapabilityJsonMetadata(json);
-      setCurrentMetadata(json);
+      setCapabilityJsonMetadata(prettyJson);
+      setCurrentMetadata(prettyJson);
+      setJson(prettyJson);
     }
     setIsEditing(false);
   };
