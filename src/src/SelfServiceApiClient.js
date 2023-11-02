@@ -289,7 +289,7 @@ export class SelfServiceApiClient {
     return response;
   }
 
-  async requestWithToken(url, method="GET", payload=null) {
+  async requestWithToken(url, method = "GET", payload = null) {
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(url, accessToken, method, payload);
     this.responseHandler(response);
@@ -600,23 +600,25 @@ export class SelfServiceApiClient {
     }
   }
 
-  CheckCanBypassMembershipApproval(capabilityDefinition){
+  CheckCanBypassMembershipApproval(capabilityDefinition) {
     const link = capabilityDefinition?._links?.joinCapability;
     if (!link || !link.allow.includes("POST")) {
       throw Error(
-        "Error! No join link found for capability "
-        +capabilityDefinition.capabilityId
-        +", or user not allowed to join directly"
+        "Error! No join link found for capability " +
+          capabilityDefinition.capabilityId +
+          ", or user not allowed to join directly",
       );
     }
     return link;
   }
 
-  async ByPassMembershipApproval(capabilitydefinition){
+  async ByPassMembershipApproval(capabilitydefinition) {
     const link = this.CheckCanBypassMembershipApproval(capabilitydefinition);
     const response = await this.requestWithToken(link.href, "POST");
     if (!response.ok) {
-      console.log(`response was: ", ${await response.text()} for url ${link.href}`);
+      console.log(
+        `response was: ", ${await response.text()} for url ${link.href}`,
+      );
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
