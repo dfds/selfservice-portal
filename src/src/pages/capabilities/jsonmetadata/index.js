@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
 import { Button, ButtonStack, Spinner } from "@dfds-ui/react-components";
-import { TextareaField } from "@dfds-ui/forms";
 import Ajv from "ajv";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
-import { nnfx as syntaxStyle } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import MonacoEditor, { loader, useMonaco } from "@monaco-editor/react";
-
+import MonacoEditor, { useMonaco } from "@monaco-editor/react";
+import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 export function JsonMetadataWithSchemaViewer() {
   const monaco = useMonaco();
   const { metadata, setCapabilityJsonMetadata } = useContext(
@@ -131,7 +129,7 @@ export function JsonMetadataWithSchemaViewer() {
         {isEditing && (
           <div>
             <div className={styles.jsonParent}>
-              <div className={styles.jsonInput}>
+              <div className={styles.jsonInputParent}>
                 <MonacoEditor
                   name={"jsonmetadata"}
                   language="json"
@@ -144,10 +142,12 @@ export function JsonMetadataWithSchemaViewer() {
                     if (!checkIfFollowsSchema(e)) return;
                     setValidationError("");
                   }}
+                  className={styles.jsonInputEditor}
                   options={{
                     minimap: { enabled: false },
                     overviewRulerLanes: 0,
                     scrollBeyondLastLine: false,
+                    lineNumbers: "off",
                     scrollbar: {
                       vertical: "auto",
                       horizontal: "hidden",
