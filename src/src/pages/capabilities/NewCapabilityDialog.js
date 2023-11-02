@@ -78,31 +78,6 @@ export default function NewCapabilityDialog({
     setadUsers(adUserstest.value);
   }
 
-  function updateInvitees(email) {
-    // const newValue = email || emptyValues.invitations;
-    // console.log(newValue);
-    // console.log(formData);
-    // const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    // console.log(formData.invitations[0]);
-    // const result = formData.invitations[0].split(',').map(part => {
-    //   console.log(part);
-    //   const trimmedPart = part.trim();
-    //   const isValidEmail = regex.test(trimmedPart);
-    //   if (isValidEmail) {
-    //     return trimmedPart
-    //   }
-      
-    // }).filter(email => email);
-
-    // console.log(result);
-    
-    // setFormData((prev) => ({ ...prev, invitations: [result, newValue] }));
-    
-
-
-
-  }
-
   const isNameValid =
     formData.name !== "" &&
     !formData.name.match(/^\s*$/g) &&
