@@ -321,14 +321,20 @@ export function useCapabilityMetadata(capabilityDefinition) {
   }, [metadata]);
 
   const set_link = capabilityDefinition?._links?.setCapabilityMetadata;
-  const setCapabilityJsonMetadata = (jsonMetadata) => {
-    sendSetJsonMetadataRequest({
+  const setCapabilityJsonMetadata = async (jsonMetadata) => {
+    let successful = true;
+    await sendSetJsonMetadataRequest({
       urlSegments: [set_link.href],
       method: "POST",
       payload: {
         jsonMetadata: JSON.parse(jsonMetadata),
       },
-    });
+    })
+      .then()
+      .catch(() => {
+        successful = false;
+      });
+    return successful;
   };
 
   return {

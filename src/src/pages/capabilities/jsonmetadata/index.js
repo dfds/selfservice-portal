@@ -8,31 +8,46 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
 import { nnfx as syntaxStyle } from "react-syntax-highlighter/dist/cjs/styles/hljs";
+import MonacoEditor, { loader, useMonaco } from "@monaco-editor/react";
 
 export function JsonMetadataWithSchemaViewer() {
+  const monaco = useMonaco();
   const { metadata, setCapabilityJsonMetadata } = useContext(
     SelectedCapabilityContext,
   );
   const [isEditing, setIsEditing] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const { selfServiceApiClient } = useContext(AppContext);
-  const [currentMetadata, setCurrentMetadata] = useState(metadata);
-  const [json, setJson] = useState("");
-  const [schema, setSchema] = useState(null);
+  const [currentMetadataString, setCurrentMetadataString] = useState(metadata);
+  const [jsonString, setJsonString] = useState("");
+  const [schemaString, setSchemaString] = useState("");
   const [validationError, setValidationError] = useState("");
 
   useEffect(() => {
+    if (monaco && schemaString) {
+      const monacoSchema = {
+        fileMatch: ["*"],
+        schema: JSON.parse(schemaString),
+      };
+      monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        validate: true,
+        schemas: [monacoSchema],
+      });
+    }
+  }, [schemaString, monaco]);
+
+  useEffect(() => {
     if (metadata) {
-      const prettyMetadata = prettifyJsonString(json);
-      setCurrentMetadata(prettyMetadata);
-      setJson(prettyMetadata);
+      const prettyMetadata = prettifyJsonString(metadata);
+      setCurrentMetadataString(prettyMetadata);
+      setJsonString(prettyMetadata);
     }
   }, [metadata]);
 
   useEffect(() => {
-    if (schema === null) {
+    if (schemaString === "") {
       selfServiceApiClient.getCapabilityJsonMetadataSchema().then((schema) => {
-        setSchema(schema);
+        setSchemaString(prettifyJsonString(schema));
       });
     }
   }, []);
@@ -50,7 +65,7 @@ export function JsonMetadataWithSchemaViewer() {
   const checkIfFollowsSchema = (json) => {
     try {
       const ajv = new Ajv();
-      const validate = ajv.compile(JSON.parse(schema));
+      const validate = ajv.compile(JSON.parse(schemaString));
       const valid = validate(JSON.parse(json));
       if (!valid) {
         setValidationError("Schema Error: " + validate.errors[0].message);
@@ -70,12 +85,13 @@ export function JsonMetadataWithSchemaViewer() {
     return JSON.stringify(JSON.parse(json), null, 2);
   };
 
-  const submitJsonMetadata = () => {
-    const prettyJson = prettifyJsonString(json);
+  const submitJsonMetadata = async () => {
+    const prettyJsonString = prettifyJsonString(jsonString);
     if (isDirty) {
-      setCapabilityJsonMetadata(prettyJson);
-      setCurrentMetadata(prettyJson);
-      setJson(prettyJson);
+      const success = await setCapabilityJsonMetadata(prettyJsonString);
+      if (!success) return;
+      setCurrentMetadataString(prettyJsonString);
+      setJsonString(prettyJsonString);
     }
     setIsEditing(false);
   };
@@ -85,7 +101,7 @@ export function JsonMetadataWithSchemaViewer() {
   };
   const cancelEditing = () => {
     setIsEditing(false);
-    setJson(currentMetadata);
+    setJsonString(currentMetadataString);
   };
 
   return (
@@ -102,7 +118,7 @@ export function JsonMetadataWithSchemaViewer() {
                   margin: "0",
                 }}
               >
-                {currentMetadata}
+                {currentMetadataString}
               </SyntaxHighlighter>
             </div>
             <ButtonStack>
@@ -116,22 +132,34 @@ export function JsonMetadataWithSchemaViewer() {
           <div>
             <div className={styles.jsonParent}>
               <div className={styles.jsonInput}>
-                JSON:
-                <TextareaField
+                <MonacoEditor
                   name={"jsonmetadata"}
-                  style={{ height: "300px" }}
-                  value={json}
+                  language="json"
+                  value={jsonString}
                   errorMessage={validationError}
                   onChange={(e) => {
                     setIsDirty(true);
-                    setJson(e.target.value);
-                    if (!checkIfJsonIsParsable(e.target.value)) {
-                      return;
-                    }
-                    checkIfFollowsSchema(e.target.value);
+                    setJsonString(e);
+                    if (!checkIfJsonIsParsable(e)) return;
+                    if (!checkIfFollowsSchema(e)) return;
                     setValidationError("");
                   }}
-                ></TextareaField>
+                  options={{
+                    minimap: { enabled: false },
+                    overviewRulerLanes: 0,
+                    scrollbar: {
+                      vertical: "auto",
+                      horizontal: "hidden",
+                      handleMouseWheel: true,
+                    },
+                  }}
+                ></MonacoEditor>
+                <textarea
+                  placeholder={"Validation errors appear here"}
+                  className={styles.validationErrorText}
+                  value={validationError}
+                  onChange={() => {}}
+                ></textarea>
                 <ButtonStack align={"right"}>
                   <Button
                     size="small"
@@ -144,7 +172,7 @@ export function JsonMetadataWithSchemaViewer() {
                     size="small"
                     variation="outlined"
                     onClick={submitJsonMetadata}
-                    disabled={isJsonValid(json) === false}
+                    disabled={isJsonValid(jsonString) === false}
                   >
                     Submit
                   </Button>
@@ -159,11 +187,11 @@ export function JsonMetadataWithSchemaViewer() {
                   customStyle={{
                     margin: "0",
                     padding: "0",
-                    height: "300px",
                     border: "1px solid #ccc",
+                    height: "370px",
                   }}
                 >
-                  {schema}
+                  {schemaString}
                 </SyntaxHighlighter>
               </div>
             </div>

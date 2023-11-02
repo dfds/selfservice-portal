@@ -4,6 +4,7 @@
   align-items: stretch;
   height: 400px;
 }
+
 .metadataView {
   width: 50%;
   height: 300px;
@@ -20,22 +21,24 @@
 
 .jsonInput {
   width: 50%;
-  height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  resize: vertical;
-  padding: 12px 20px;
-  box-sizing: border-box;
-  font-size: 14px;
+  padding: 0 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .jsonSchema {
   width: 50%;
   height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  resize: vertical;
-  padding: 12px 20px;
-  box-sizing: border-box;
-  font-size: 14px;
+  font-size: 12px;
+}
+
+.validationErrorText {
+  color: red;
+  font-size: 12px;
+  padding: 0;
+  margin-top: 5px;
+  height: 20%;
+  width: 100%;
+  resize: none;
 }
