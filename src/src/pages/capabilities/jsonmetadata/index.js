@@ -147,6 +147,7 @@ export function JsonMetadataWithSchemaViewer() {
                   options={{
                     minimap: { enabled: false },
                     overviewRulerLanes: 0,
+                    scrollBeyondLastLine: false,
                     scrollbar: {
                       vertical: "auto",
                       horizontal: "hidden",
