@@ -283,19 +283,19 @@ export class SelfServiceApiClient {
     this.responseHandler(response);
 
     if (!response.ok) {
-      console.log("response was: ", response.status);
+      console.log(`for url ${url} response was: ${response.status}`);
       return undefined;
     }
     return response;
   }
 
-  async requestWithToken(url, method = "GET", payload = null) {
+  async requestWithToken(url, method="GET", payload=null) {
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(url, accessToken, method, payload);
     this.responseHandler(response);
 
     if (!response.ok) {
-      console.log("response was: ", response.status);
+      console.log(`for url ${url} response was: ${response.status}`);
       return undefined;
     }
     return response;
@@ -600,38 +600,27 @@ export class SelfServiceApiClient {
     }
   }
 
-  async CheckCanBypassMembershipApproval(capabilityDefinition) {
+  CheckCanBypassMembershipApproval(capabilityDefinition){
     const link = capabilityDefinition?._links?.joinCapability;
-    if (!link) {
+    if (!link || !link.allow.includes("POST")) {
       throw Error(
-        "Error! No join link found for capability " +
-          capabilityDefinition.capabilityId,
+        "Error! No join link found for capability "
+        +capabilityDefinition.capabilityId
+        +", or user not allowed to join directly"
       );
     }
-    if (link.allow.includes("POST")) {
-      return true;
-    }
-    return false;
+    return link;
   }
 
-  async BypassMembershipApproval(capabilitydefinition) {
-    const link = capabilitydefinition?._links?.joinCapability;
-    if (!link) {
-      throw Error(
-        "Error! No join link found for capability " +
-          capabilitydefinition.capabilityId,
-      );
-    }
-
-    if (!link.allow.includes("POST")) {
-      throw Error(
-        "Error! Not possible for  client to directly join capability " +
-          capabilitydefinition.capabilityId,
-      );
-    }
-
+  async ByPassMembershipApproval(capabilitydefinition){
+    const link = this.CheckCanBypassMembershipApproval(capabilitydefinition);
     const response = await this.requestWithToken(link.href, "POST");
-    this.responseHandler(response);
+    if (!response.ok) {
+      console.log(`response was: ", ${await response.text()} for url ${link.href}`);
+      throw Error(
+        `Error! Response from server: (${response.status}) ${response.statusText}`,
+      );
+    }
   }
 }
 

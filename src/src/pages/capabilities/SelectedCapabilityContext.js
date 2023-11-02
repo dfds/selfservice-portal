@@ -53,9 +53,8 @@ function SelectedCapabilityProvider({ children }) {
   //const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { capability, isLoaded, setReloadRequired } =
-    useCapabilityById(capabilityId);
-  const { membersList, isLoadedMembers } = useCapabilityMembers(details);
+  const { capability, isLoaded, setReloadRequired} = useCapabilityById(capabilityId);
+  const { membersList, isLoadedMembers} = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
@@ -64,8 +63,7 @@ function SelectedCapabilityProvider({ children }) {
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
-  const [canBypassMembershipApplication, setcanBypassMembershipApplication] =
-    useState(false);
+  const [canBypassMembershipApplication, setcanBypassMembershipApplication] = useState(false);
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
       const promises = [];
@@ -98,8 +96,8 @@ function SelectedCapabilityProvider({ children }) {
   const getBypassMembershipApplication = useCallback(async () => {
     const result =
       await selfServiceApiClient.CheckCanBypassMembershipApproval(details);
-    setcanBypassMembershipApplication(result);
-  }, [details]);
+    setcanBypassMembershipApplication(result)
+  }, [details])
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -343,9 +341,10 @@ function SelectedCapabilityProvider({ children }) {
   }, [details]);
 
   const ByPassMembershipApproval = async () => {
-    await selfServiceApiClient.BypassMembershipApproval(details);
+    await selfServiceApiClient.ByPassMembershipApproval(details);
     setReloadRequired(true);
   };
+
 
   const updateDeletionStatus = (value) => {
     setPendingDeletion(value);
@@ -386,11 +385,11 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [isLoadedMembersApplications, membersApplicationsList]);
 
-  useEffect(() => {
-    if (isLoadedMembersApplications) {
-      setMembershipApplications(membersApplicationsList);
-    }
-  }, [isLoadedMembersApplications, membersApplicationsList]);
+useEffect(() => {
+  if (isLoadedMembersApplications) {
+    setMembershipApplications(membersApplicationsList);
+  }
+}, [isLoadedMembersApplications, membersApplicationsList]);
 
   // setup reload of kafka clusters and topics
   useEffect(() => {
@@ -412,7 +411,12 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [awsAccountRequested]);
 
-  useEffect(() => {}, []);
+
+  useEffect(() => {
+
+  }, [])
+
+
 
   //--------------------------------------------------------------------
 
