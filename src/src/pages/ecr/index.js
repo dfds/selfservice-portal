@@ -46,18 +46,6 @@ function Repositories() {
           );
         },
       },
-      {
-        accessorKey: "repositoryName",
-        header: "Repository Name",
-        size: 250,
-        Cell: ({ renderedCellValue }) => {
-          return (
-            <Text styledAs="action" as={"div"}>
-              {renderedCellValue}
-            </Text>
-          );
-        },
-      },
     ],
     [],
   );
@@ -65,70 +53,73 @@ function Repositories() {
   return (
     <>
       <PageSection headline={`Repositories`}>
-      {isLoading && <Spinner />}
-      {!isLoading && (
-        <MaterialReactTable
-          columns={columns}
-          data={repositories}
-          initialState={{pagination: {pageSize: 50}, showGlobalFilter: true}}
-          muiTableHeadCellProps={{
-            sx: {
-              fontWeight: '700',
-              fontSize: '16px',
-              fontFamily: 'DFDS',
-              color: '#002b45',
-            },
-          }}
-          muiTableBodyCellProps={{
-            sx: {
-              fontWeight: '400',
-              fontSize: '16px',
-              fontFamily: 'DFDS',
-              color: '#4d4e4c',
-              padding: '5px',
-            },
-          }}
-          muiTablePaperProps={{
-            elevation: 0,
-            sx: {
-              borderRadius: '0',
-            }
-          }}
-          muiTopToolbarProps={{
-            sx: {
-              background: 'none',
-            }
+        {isLoading && <Spinner />}
+        {!isLoading && (
+          <MaterialReactTable
+            columns={columns}
+            data={repositories}
+            initialState={{
+              pagination: { pageSize: 50 },
+              showGlobalFilter: true,
             }}
-          muiBottomToolbarProps={{
+            muiTableHeadCellProps={{
+              sx: {
+                fontWeight: "700",
+                fontSize: "16px",
+                fontFamily: "DFDS",
+                color: "#002b45",
+              },
+            }}
+            muiTableBodyCellProps={{
+              sx: {
+                fontWeight: "400",
+                fontSize: "16px",
+                fontFamily: "DFDS",
+                color: "#4d4e4c",
+                padding: "5px",
+              },
+            }}
+            muiTablePaperProps={{
+              elevation: 0,
+              sx: {
+                borderRadius: "0",
+              },
+            }}
+            muiTopToolbarProps={{
               sx: {
                 background: "none",
               },
-          }}
-          enableGlobalFilterModes={true}
-          positionGlobalFilter="left"
-          muiSearchTextFieldProps={{
-            placeholder: `Find a capability...`,
-            sx: {
-              minWidth: '1120px',
-              fontWeight: '400',
-              fontSize: '16px',
-              padding: '5px',
-            },
-            size: 'small',
-            variant: 'outlined',
-          }}
-          enablePagination={true}
-          globalFilterFn="contains"
-          enableFilterMatchHighlighting={true}
-          enableDensityToggle={false}
-          enableHiding={false}
-          enableFilters={true}
-          enableGlobalFilter={true}
-          enableTopToolbar={true}
-          enableBottomToolbar={true}
-          enableColumnActions={false}
-        />
-      )}
+            }}
+            muiBottomToolbarProps={{
+              sx: {
+                background: "none",
+              },
+            }}
+            enableGlobalFilterModes={true}
+            positionGlobalFilter="left"
+            muiSearchTextFieldProps={{
+              placeholder: `Find a capability...`,
+              sx: {
+                minWidth: "1120px",
+                fontWeight: "400",
+                fontSize: "16px",
+                padding: "5px",
+              },
+              size: "small",
+              variant: "outlined",
+            }}
+            enablePagination={true}
+            globalFilterFn="contains"
+            enableFilterMatchHighlighting={true}
+            enableDensityToggle={false}
+            enableHiding={false}
+            enableFilters={true}
+            enableGlobalFilter={true}
+            enableTopToolbar={true}
+            enableBottomToolbar={true}
+            enableColumnActions={false}
+          />
+        )}
       </PageSection>
     </>
   );

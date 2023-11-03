@@ -54,8 +54,8 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
-  const {profileInfo, isLoadedProfile} = useProfile();
-  const {statsInfo, isLoadedStats} = useStats();
+  const { profileInfo, isLoadedProfile } = useProfile(user);
+  const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description, invitations) {
     addCapability(name, description, invitations);
@@ -63,20 +63,23 @@ function AppProvider({ children }) {
     await loadMyProfile();
   }
 
-  async function loadMyProfile() {  
+  async function loadMyProfile() {
     if (isLoadedProfile && isLoadedStats) {
-        const profile = profileInfo;
-        const { capabilities, autoReloadTopics } = profile;
+      const profile = profileInfo;
+      const { capabilities, autoReloadTopics } = profile;
 
-        const stats = statsInfo;
-    
-        setMyCapabilities(capabilities);
-        setStats(stats);
-        setAppStatus((prev) => ({ ...prev, ...{ hasLoadedMyCapabilities: true } }));
-        setShouldAutoReloadTopics(autoReloadTopics);
-    
-        setMyProfile(profile);
-    }   
+      const stats = statsInfo;
+
+      setMyCapabilities(capabilities);
+      setStats(stats);
+      setAppStatus((prev) => ({
+        ...prev,
+        ...{ hasLoadedMyCapabilities: true },
+      }));
+      setShouldAutoReloadTopics(autoReloadTopics);
+
+      setMyProfile(profile);
+    }
   }
 
   useEffect(() => {

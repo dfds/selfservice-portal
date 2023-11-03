@@ -2,9 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
-import {
-  Spinner,
-} from "@dfds-ui/react-components";
+import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
@@ -165,7 +163,7 @@ export default function MyCapabilities() {
         Cell: () => {
           return <ChevronRight />;
         },
-        Header: <div></div> //force no column title
+        Header: <div></div>, //force no column title
       },
     ],
     [],
@@ -200,7 +198,10 @@ export default function MyCapabilities() {
             <MaterialReactTable
               columns={columns}
               data={fullTableData}
-              initialState={{pagination: {pageSize: 25}, showGlobalFilter: true}}
+              initialState={{
+                pagination: { pageSize: 25 },
+                showGlobalFilter: true,
+              }}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
@@ -227,21 +228,21 @@ export default function MyCapabilities() {
               }}
               muiTopToolbarProps={{
                 sx: {
-                  background: 'none',
-                }
+                  background: "none",
+                },
               }}
               enableGlobalFilterModes={true}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
                 placeholder: `Find a capability...`,
                 sx: {
-                  minWidth: '1120px',
-                  fontWeight: '400',
-                  fontSize: '16px',
-                  padding: '5px',
+                  minWidth: "1120px",
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  padding: "5px",
                 },
-                size: 'small',
-                variant: 'outlined',
+                size: "small",
+                variant: "outlined",
               }}
               enablePagination={true}
               globalFilterFn="contains"

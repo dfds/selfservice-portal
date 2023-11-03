@@ -25,7 +25,7 @@ export function useECRRepositories() {
     }
   }, [loadResponse]);
 
-  const createRepository = async ({ name, description, repositoryName }) => {
+  const createRepository = async ({ name, description }) => {
     setIsLoading(true);
     await addRepository({
       urlSegments: ["ecr/repositories"],
@@ -33,7 +33,6 @@ export function useECRRepositories() {
       payload: {
         name: name,
         description: description,
-        repositoryName: repositoryName,
       },
     });
   };

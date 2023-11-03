@@ -16,12 +16,12 @@ stages:
             displayName: 'Install Node.js'
           - bash: |
               chmod +x ./tools/push-container.sh
-              make cd BUILD_NUMBER="$(Build.BuildNumber)"              
+              make deliver BUILD_NUMBER="$(Build.BuildNumber)"              
             env: 
               AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
               AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
               ALLOW_PUSH_CONTAINER: $(ALLOW_PUSH_CONTAINER)
-            displayName: 'make cd'
+            displayName: 'make deliver'
             condition: succeeded()
           - task: PublishBuildArtifacts@1
             displayName: "Publish Artifact: manifests"
