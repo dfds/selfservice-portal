@@ -6,10 +6,12 @@ import styles from "./capabilities.module.css";
 import { getUsers } from "GraphApiClient";
 import DropDownMenu from "components/DropDownMenu";
 
-function TextWrapper(){
-  return <>
-  <div className=""></div>
-  </>
+function TextWrapper() {
+  return (
+    <>
+      <div className=""></div>
+    </>
+  );
 }
 
 export default function NewCapabilityDialog({
@@ -35,22 +37,23 @@ export default function NewCapabilityDialog({
   const [formData, setFormData] = useState(emptyValues);
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setadUsers] = useState([]);
-  const [invitationsInput, setInvitationsInput] = useState("")
+  const [invitationsInput, setInvitationsInput] = useState("");
   const [invitees, setInvitees] = useState([]);
 
   useEffect(() => {
-    if (invitationsInput !== ""){
-      setInvitees((prev) => ( [...prev, invitationsInput]));
-    } 
-    setFormData((prev) => ({ ...prev, ...{ invitations: emptyValues.invitations } }));
-  }, [invitationsInput])
-
+    if (invitationsInput !== "") {
+      setInvitees((prev) => [...prev, invitationsInput]);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      ...{ invitations: emptyValues.invitations },
+    }));
+  }, [invitationsInput]);
 
   useEffect(() => {
-    if(invitees.length !== 0){
+    if (invitees.length !== 0) {
     }
-
-  },[invitees])
+  }, [invitees]);
 
   const changeName = (e) => {
     e.preventDefault();
@@ -102,18 +105,21 @@ export default function NewCapabilityDialog({
 
   const handleAddCapabilityClicked = () => {
     if (onAddCapabilityClicked) {
-      onAddCapabilityClicked({...formData, invitations: invitees});
+      onAddCapabilityClicked({ ...formData, invitations: invitees });
     }
   };
 
   const OnKeyEnter = (e) => {
-    if (e.key === 'Enter'){
+    if (e.key === "Enter") {
       if (!Array.isArray(formData.invitations)) {
-        setInvitees((prev) => ( [...prev, formData.invitations]));
-        setFormData((prev) => ({ ...prev, ...{ invitations: emptyValues.invitations } }));
-      }      
+        setInvitees((prev) => [...prev, formData.invitations]);
+        setFormData((prev) => ({
+          ...prev,
+          ...{ invitations: emptyValues.invitations },
+        }));
+      }
     }
-  }
+  };
 
   return (
     <>
@@ -157,22 +163,28 @@ export default function NewCapabilityDialog({
             placeholder="Enter users emails"
             required
             value={formData.invitations}
-            onChange={(e)=>{changeInvitation(e)}}
+            onChange={(e) => {
+              changeInvitation(e);
+            }}
             onKeyDown={OnKeyEnter}
           ></TextField>
-          { isUserSearchActive ? 
+          {isUserSearchActive ? (
             <div className={styles.dropDownMenu}>
-              <DropDownMenu items={adUsers}
+              <DropDownMenu
+                items={adUsers}
                 setIsUserSearchActive={setIsUserSearchActive}
                 setInvitationsInput={setInvitationsInput}
-                />
-            </div> : <></>}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
           <div className={styles.invitees_container}>
-          {
-              (invitees || []).map((invitee) => (
-                <div className={styles.invitee_container}key={invitee}>{invitee}</div>
-              )) 
-          }
+            {(invitees || []).map((invitee) => (
+              <div className={styles.invitee_container} key={invitee}>
+                {invitee}
+              </div>
+            ))}
           </div>
 
           <ButtonStack>
