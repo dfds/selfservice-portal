@@ -19,7 +19,7 @@ export function useSelfServiceRequest(errorParams) {
   const { track } = useTracking();
 
   const httpResponseToErrorMessage = (httpResponse) => {
-    return `Got ${httpResponse.status}: "${httpResponse.title}" for ${httpResponse.url}`;
+    return `Got ${httpResponse.status}: "${httpResponse.statusText}" for ${httpResponse.url}`;
   };
 
   const sendRequest = async ({ urlSegments, method, payload }) => {
