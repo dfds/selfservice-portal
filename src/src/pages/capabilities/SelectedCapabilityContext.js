@@ -64,7 +64,6 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { metadata, setCapabilityJsonMetadata } =
     useCapabilityMetadata(details);
-  const [showJsonMetadata, setShowJsonMetadata] = useState(false);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {

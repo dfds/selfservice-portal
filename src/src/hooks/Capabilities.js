@@ -300,15 +300,16 @@ export function useCapabilityMetadata(capabilityDefinition) {
   const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
   const [metadata, setMetadata] = useState(null);
 
-  const get_link = capabilityDefinition?._links?.getCapabilityMetadata;
+  const link = capabilityDefinition?._links?.metadata;
 
   useEffect(() => {
-    if (get_link) {
+    if (link && (link.allow || []).includes("PUT")) {
       sendGetJsonMetadataRequest({
-        urlSegments: [get_link.href],
-      });
+        urlSegments: [link.href],
+        method: "GET",
+      }).then((_) => {});
     }
-  }, [get_link]);
+  }, [link]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -322,21 +323,17 @@ export function useCapabilityMetadata(capabilityDefinition) {
     }
   }, [metadata]);
 
-  const set_link = capabilityDefinition?._links?.setCapabilityMetadata;
   const setCapabilityJsonMetadata = async (jsonMetadata) => {
-    let successful = true;
+    if (!(link && (link.allow || []).includes("PUT"))) {
+      throw new Error("User is not allowed to set metadata");
+    }
     await sendSetJsonMetadataRequest({
-      urlSegments: [set_link.href],
-      method: "POST",
+      urlSegments: [link.href],
+      method: "PUT",
       payload: {
         jsonMetadata: JSON.parse(jsonMetadata),
       },
-    })
-      .then()
-      .catch(() => {
-        successful = false;
-      });
-    return successful;
+    });
   };
 
   return {

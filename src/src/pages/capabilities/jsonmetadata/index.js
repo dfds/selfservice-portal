@@ -86,8 +86,7 @@ export function JsonMetadataWithSchemaViewer() {
   const submitJsonMetadata = async () => {
     const prettyJsonString = prettifyJsonString(jsonString);
     if (isDirty) {
-      const success = await setCapabilityJsonMetadata(prettyJsonString);
-      if (!success) return;
+      setCapabilityJsonMetadata(prettyJsonString);
       setCurrentMetadataString(prettyJsonString);
       setJsonString(prettyJsonString);
     }
