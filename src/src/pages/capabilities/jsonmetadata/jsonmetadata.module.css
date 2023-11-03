@@ -43,7 +43,7 @@
 .validationErrorText {
   color: red;
   font-size: 12px;
-  padding: 0;
+  padding: 5px;
   margin-top: 5px;
   height: 20%;
   width: 100%;
