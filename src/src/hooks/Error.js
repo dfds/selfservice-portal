@@ -12,18 +12,18 @@ export function useError(opts) {
   ///   1: Handler provided via params
   ///   2: Handler provided via options
   ///   3: Error provided via params
-  ///   4: Msg provided via params
-  ///   5: fallbackMsg
+  ///   4: title provided via params
+  ///   5: fallbacktitle
   ///
   const triggerError = (params) => {
     // Setup
-    let fallbackMsg = "error";
+    let fallbackTitle = "error";
     if (params) {
       params.showError = showError;
     }
 
-    if (options?.msg != null) {
-      fallbackMsg = options.msg; // If a catch-all error message is available in options, make sure it is used as a fallback
+    if (options?.title != null) {
+      fallbackTitle = options.title; // If a catch-all error message is available in options, make sure it is used as a fallback
     }
 
     // Error handling flow
@@ -35,8 +35,8 @@ export function useError(opts) {
 
     if (options?.handler != null) {
       // 2: Handler provided via options
-      if (params.msg === null) {
-        params.msg = fallbackMsg;
+      if (params.title === null) {
+        params.title = fallbackTitle;
       }
       options.handler(params);
       return;
@@ -49,19 +49,24 @@ export function useError(opts) {
         return;
       }
 
-      if (params.msg) {
-        // 4: Msg provided via params
-        showError(params.msg, params.details);
+      if (params.title) {
+        // 4: title provided via params
+        showError(params.title, params.details);
         return;
       }
     }
 
-    showError(fallbackMsg, params.httpResponse); // 5: fallbackMsg
+    showError(fallbackTitle, params.httpResponse); // 5: fallbacktitle
+  };
+
+  const triggerErrorWithTitleAndDetails = (errorTitle, errorDetails) => {
+    showError(errorTitle, errorDetails);
   };
 
   return {
     options,
     setErrorOptions: setOptions,
+    triggerErrorWithTitleAndDetails,
     triggerError,
   };
 }

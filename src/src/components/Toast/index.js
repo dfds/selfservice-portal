@@ -15,7 +15,7 @@ function usePrevious(value) {
   return ref.current;
 }
 
-export default function Toast({ message, details }) {
+export default function ErrorToast({ message, errorTitle, errorDetails }) {
   const [showToast, setShowToast] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
   const [opacity, setOpacity] = useState(0);
@@ -59,29 +59,16 @@ export default function Toast({ message, details }) {
 
   return (
     <>
-      {showDetails && details && (
+      {showDetails && errorDetails && (
         <Modal
-          heading={`Details`}
+          heading={errorTitle}
           isOpen={true}
           shouldCloseOnOverlayClick={true}
           shouldCloseOnEsc={true}
           onRequestClose={() => setShowDetails(false)}
           actions={actions}
         >
-          {console.log("details in component: ", details)}
-          {details ? (
-            <div>
-              {"Got " +
-                details.status +
-                ': "' +
-                details.statusText +
-                '" for ' +
-                details.url +
-                "."}
-            </div>
-          ) : (
-            "No details available"
-          )}
+          {errorDetails ? <div>{errorDetails}</div> : "No details available"}
         </Modal>
       )}
       {showToast && (
@@ -100,7 +87,7 @@ export default function Toast({ message, details }) {
             </Button>
           </div>
           <div className={styles.toast_message}>{message}</div>
-          {details && (
+          {errorDetails && (
             <div>
               <Button
                 size="small"
