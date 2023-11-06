@@ -29,7 +29,6 @@ export function useCapabilities() {
 
   useEffect(() => {
     if (addedCapability) {
-      console.log(addedCapability);
       setCapabilities((prev) => {
         const list = [...prev, addCapability];
         sortByName(list);

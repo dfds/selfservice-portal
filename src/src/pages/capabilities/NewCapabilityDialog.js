@@ -4,15 +4,7 @@ import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { getUsers } from "GraphApiClient";
-import DropDownMenu from "components/DropDownMenu";
-
-function TextWrapper() {
-  return (
-    <>
-      <div className=""></div>
-    </>
-  );
-}
+import DropDownInvitationsMenu from "components/DropDownMenu";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -71,13 +63,13 @@ export default function NewCapabilityDialog({
 
   async function changeInvitation(e) {
     e.preventDefault();
-    const regex = /[^,]*$/;
+    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
     setIsUserSearchActive(true);
-    const adValue = e?.target?.value.match(regex)[0];
+    const adUsers = e?.target?.value.match(regex)[0];
     const value = e?.target?.value;
     const newValue = value || emptyValues.invitations;
     setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
-    const adUserstest = await getUsers(adValue);
+    const adUserstest = await getUsers(adUsers);
     setadUsers(adUserstest.value);
   }
 
@@ -111,7 +103,9 @@ export default function NewCapabilityDialog({
 
   const OnKeyEnter = (e) => {
     if (e.key === "Enter") {
-      if (!Array.isArray(formData.invitations)) {
+      if (Array.isArray(formData.invitations)) {
+        return;        
+      } else {
         setInvitees((prev) => [...prev, formData.invitations]);
         setFormData((prev) => ({
           ...prev,
@@ -170,7 +164,7 @@ export default function NewCapabilityDialog({
           ></TextField>
           {isUserSearchActive ? (
             <div className={styles.dropDownMenu}>
-              <DropDownMenu
+              <DropDownInvitationsMenu
                 items={adUsers}
                 setIsUserSearchActive={setIsUserSearchActive}
                 setInvitationsInput={setInvitationsInput}

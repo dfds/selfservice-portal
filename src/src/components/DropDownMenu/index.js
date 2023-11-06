@@ -2,7 +2,7 @@ import React from "react";
 import style from "./dropdownmenu.module.css";
 import ProfilePicture from "pages/capabilities/members/profilepicture";
 
-export default function DropDownMenu({
+export default function DropDownInvitationsMenu({
   items,
   setIsUserSearchActive,
   setInvitationsInput,
