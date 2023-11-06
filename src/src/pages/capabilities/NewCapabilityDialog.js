@@ -104,7 +104,7 @@ export default function NewCapabilityDialog({
   const OnKeyEnter = (e) => {
     if (e.key === "Enter") {
       if (Array.isArray(formData.invitations)) {
-        return;        
+        return;
       } else {
         setInvitees((prev) => [...prev, formData.invitations]);
         setFormData((prev) => ({
