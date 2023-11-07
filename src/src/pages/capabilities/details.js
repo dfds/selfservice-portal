@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import { Invitations } from "./invitations";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -55,6 +56,8 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
         {showResources && <Resources capabilityId={id} />}
+
+        <Invitations />
 
         <MembershipApplications />
 
