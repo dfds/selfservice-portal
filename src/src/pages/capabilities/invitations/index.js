@@ -5,8 +5,10 @@ import { Search } from "@dfds-ui/icons/system";
 import DropDownInvitationsMenu from "components/DropDownMenu";
 import { getUsers } from "GraphApiClient";
 import styles from "./../capabilities.module.css";
+import { Button, ButtonStack } from "@dfds-ui/react-components";
 
-export function Invitations() {
+
+export function Invitations({addNewInvitees}) {
     const [isUserSearchActive, setIsUserSearchActive] = useState(false);
     const [adUsers, setadUsers] = useState([]);
     const [invitationsInput, setInvitationsInput] = useState("");
@@ -17,11 +19,8 @@ export function Invitations() {
         if (invitationsInput !== "") {
             setInvitees((prev) => [...prev, invitationsInput]);
         }
-        setUserInput("")
+        setUserInput("");
     }, [invitationsInput]);
-
-    
-
 
     async function changeInvitation(e) {
         e.preventDefault();
@@ -33,6 +32,10 @@ export function Invitations() {
         setUserInput(newValue);
         const adUserstest = await getUsers(adUsers);
         setadUsers(adUserstest.value);
+    }
+
+    const handleAddInvitationClicked = () => {
+        addNewInvitees(invitees);
     }
     return (
         <>
@@ -46,7 +49,6 @@ export function Invitations() {
                         changeInvitation(e);
                     }}
                 //onKeyDown={OnKeyEnter}
-
                 ></TextField>
 
                 {isUserSearchActive ? (
@@ -67,6 +69,16 @@ export function Invitations() {
                         </div>
                     ))}
                 </div>
+
+                <Button
+                    size="small"
+                    variation="primary"
+                    onClick={handleAddInvitationClicked}
+                    //disabled={!canAdd}
+                    //submitting={inProgress}
+                >
+                    Add
+                </Button>
             </PageSection>
         </>
     );

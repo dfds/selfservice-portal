@@ -13,6 +13,7 @@ import {
   useKafkaClustersAccessList,
   useCapabilityAwsAccount,
   useCapabilityMembersApplications,
+  useCapabilityInvitees,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -61,6 +62,19 @@ function SelectedCapabilityProvider({ children }) {
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
+  const { addInvitees } = useCapabilityInvitees(details);
+  
+
+  function sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), duration);
+    });
+  }
+
+  async function addNewInvitees(invitations) {
+    addInvitees([invitations]);
+    await sleep(3000);
+  }
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
@@ -419,6 +433,7 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
+    addNewInvitees,
   };
 
   return (

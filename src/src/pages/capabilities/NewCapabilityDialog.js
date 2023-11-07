@@ -158,7 +158,7 @@ export default function NewCapabilityDialog({
             placeholder="Enter users emails"
             required
             value={formData.invitations}
-            icon= {Search}
+            icon={Search}
             onChange={(e) => {
               changeInvitation(e);
             }}
