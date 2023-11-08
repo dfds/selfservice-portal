@@ -41,10 +41,10 @@ export function useDeleteTopic() {
     useSelfServiceRequest();
   const deleteTopic = (topicDefinition) => {
     const link = topicDefinition?._links?.self;
-    if (!link) {
+    if (link) {
       triggerErrorWithTitleAndDetails(
-        "Error",
-        "No topic self link found on topic definition: " +
+        "Delete topic failed",
+        "No topic self link found on topic definition:\n" +
           JSON.stringify(topicDefinition, null, 2),
       );
       return;
@@ -52,8 +52,8 @@ export function useDeleteTopic() {
 
     if (!(link.allow || []).includes("DELETE")) {
       triggerErrorWithTitleAndDetails(
-        "Error",
-        "You are not allowed to delete the topic. Options was " +
+        "Delete topic failed",
+        "You are not allowed to delete the topic. Options are\n" +
           JSON.stringify(link.allow, null, 2),
       );
       return;
@@ -75,7 +75,7 @@ export function useUpdateTopic() {
     const link = topicDefinition?._links?.updateDescription;
     if (!link) {
       triggerErrorWithTitleAndDetails(
-        "Error",
+        "Update topic failed",
         "No update topic description link found on topic definition: " +
           JSON.stringify(topicDefinition, null, 2),
       );

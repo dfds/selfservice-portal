@@ -19,8 +19,9 @@
   justify-content: center;
 }
 
-.modal{
+.error_body {
   white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .toast_close_bar {

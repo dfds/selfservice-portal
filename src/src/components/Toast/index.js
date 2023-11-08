@@ -69,9 +69,19 @@ export default function ErrorToast({ message, errorTitle, errorDetails }) {
           fixedTopPosition={true}
           onRequestClose={() => setShowDetails(false)}
           actions={actions}
-          className={styles.modal}
+          sizes={{
+            s: "50%",
+            m: "50%",
+            l: "50%",
+            xl: "50%",
+            xxl: "50%",
+          }}
         >
-          {errorDetails ? <div>{errorDetails}</div> : "No details available"}
+          {errorDetails ? (
+            <div className={styles.error_body}>{errorDetails}</div>
+          ) : (
+            "No details available"
+          )}
         </Modal>
       )}
       {showToast && (
