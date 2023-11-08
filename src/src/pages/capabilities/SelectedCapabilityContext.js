@@ -414,7 +414,6 @@ function SelectedCapabilityProvider({ children }) {
     requestAwsAccount,
     getAccessToCluster,
     requestAccessToCluster,
-    showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
     updateKafkaTopic,
     deleteKafkaTopic,
     submitDeleteCapability,

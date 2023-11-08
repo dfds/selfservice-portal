@@ -8,7 +8,6 @@ export function useProfile(user) {
   const [profileInfo, setProfileInfo] = useState(null);
 
   useEffect(() => {
-    console.log("useProfile", user);
     sendRequest({
       urlSegments: ["me"],
     });

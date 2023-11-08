@@ -15,13 +15,14 @@ export function useCapabilities() {
     list.sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const createCapability = (name, description) => {
+  const createCapability = (name, description, invitations) => {
     addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
       payload: {
         name: name,
         description: description,
+        invitees: invitations,
       },
     });
   };
@@ -203,9 +204,10 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
   const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
   const link = capabilityDefinition?._links?.awsAccount;
+  const shouldGet = (link?.allow || []).includes("GET");
 
   useEffect(() => {
-    if (link) {
+    if (link && shouldGet) {
       sendRequest({
         urlSegments: [link.href],
       });

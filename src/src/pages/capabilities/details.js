@@ -69,8 +69,7 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
-        {showResources && <Resources capabilityId={id} />}
-
+        <Resources capabilityId={id} />
         <MembershipApplications />
 
         {/* <Logs /> */}
@@ -81,10 +80,12 @@ function CapabilityDetailsPageContent() {
         ))}
 
         {showCosts && awsAccount != undefined && <Costs />}
-        <CapabilityManagement
-          deletionState={isPendingDeletion}
-          updateDeletionState={updateDeletionStatus}
-        />
+        {!isDeleted && (
+          <CapabilityManagement
+            deletionState={isPendingDeletion}
+            updateDeletionState={updateDeletionStatus}
+          />
+        )}
       </Page>
 
       <br />
