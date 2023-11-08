@@ -6,14 +6,15 @@ import DropDownInvitationsMenu from "components/DropDownMenu";
 import { getUsers } from "GraphApiClient";
 import styles from "./../capabilities.module.css";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { useCapabilityInvitees } from "hooks/Capabilities";
 
-
-export function Invitations({addNewInvitees}) {
+export function Invitations({ addNewInvitees, inProgress }) {
     const [isUserSearchActive, setIsUserSearchActive] = useState(false);
     const [adUsers, setadUsers] = useState([]);
     const [invitationsInput, setInvitationsInput] = useState("");
     const [invitees, setInvitees] = useState([]);
     const [userInput, setUserInput] = useState("");
+
 
     useEffect(() => {
         if (invitationsInput !== "") {
@@ -21,6 +22,12 @@ export function Invitations({addNewInvitees}) {
         }
         setUserInput("");
     }, [invitationsInput]);
+
+    useEffect(() => {
+        console.log(inProgress);
+    }, [inProgress]);
+
+
 
     async function changeInvitation(e) {
         e.preventDefault();
@@ -36,13 +43,13 @@ export function Invitations({addNewInvitees}) {
 
     const handleAddInvitationClicked = () => {
         addNewInvitees(invitees);
-    }
+    };
     return (
         <>
-            <PageSection headline="Invitations">
+            <PageSection headline="Invite members">
                 <TextField
-                    label="Invite members"
-                    placeholder="Enter users emails"
+                    //label="Invite members"
+                    placeholder="Enter user name"
                     value={userInput}
                     icon={<Search />}
                     onChange={(e) => {
@@ -69,16 +76,18 @@ export function Invitations({addNewInvitees}) {
                         </div>
                     ))}
                 </div>
-
-                <Button
-                    size="small"
-                    variation="primary"
-                    onClick={handleAddInvitationClicked}
-                    //disabled={!canAdd}
-                    //submitting={inProgress}
-                >
-                    Add
-                </Button>
+                <ButtonStack align="right">
+                    <Button
+                        size="small"
+                        variation="primary"
+                        onClick={handleAddInvitationClicked}
+                        //disabled={!canAdd}
+                        submitting={inProgress}
+                        style={{ position: 'right' }}
+                    >
+                        Add
+                    </Button>
+                </ButtonStack>
             </PageSection>
         </>
     );

@@ -38,6 +38,7 @@ function CapabilityDetailsPageContent() {
     updateDeletionStatus,
     awsAccount,
     addNewInvitees,
+    isInviteesCreated,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ function CapabilityDetailsPageContent() {
         <Summary />
         {showResources && <Resources capabilityId={id} />}
 
-        <Invitations addNewInvitees={addNewInvitees} />
+        <Invitations addNewInvitees={addNewInvitees} inProgress={isInviteesCreated} />
 
         <MembershipApplications />
 

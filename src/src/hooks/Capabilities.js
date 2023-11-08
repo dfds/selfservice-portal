@@ -293,30 +293,26 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
 }
 
 export function useCapabilityInvitees(capabilityDefinition) {
-    const { responseData: addedCapability, sendRequest: addInvitees } =
+  const { inProgress, responseData: addedCapability, sendRequest: addInvitees } =
     useSelfServiceRequest();
 
-    const link = capabilityDefinition?._links?.sendInvitations.href;
-    //console.log(link)
+  const link = capabilityDefinition?._links?.sendInvitations.href;
+  //console.log(link)
 
-    const createInvitees = ([invitations]) => {
-      if(link) {
-        addInvitees({
-          urlSegments: ["capabilities", capabilityDefinition.id, "invitations"],
-          method: "POST",
-          payload: {
-            invitees: invitations,
-          },
-        });
-      }      
-    };
+  const createInvitees = ([invitations]) => {
+    if (link) {
+      addInvitees({
+        urlSegments: ["capabilities", capabilityDefinition.id, "invitations"],
+        method: "POST",
+        payload: {
+          invitees: invitations,
+        },
+      });
+    }
+  };
 
-
-
-
-    return {
-      addInvitees: createInvitees
-    };
-
-    
+  return {
+    addInvitees: createInvitees,
+    inProgress
+  };
 }

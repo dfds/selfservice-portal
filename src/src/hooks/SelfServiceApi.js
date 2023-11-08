@@ -22,15 +22,15 @@ export function useSelfServiceRequest(errorParams) {
   const sendRequest = async ({ urlSegments, method, payload }) => {
     setInProgress(true);
 
-    console.log(urlSegments)
-    console.log(payload)
+    console.log(urlSegments);
+    console.log(payload);
 
     const accessToken = await getSelfServiceAccessToken();
 
     let url = composeSegmentsUrl(urlSegments);
     if (isValidURL(urlSegments[0])) {
       url = urlSegments[0];
-      console.log(url)
+      console.log(url);
     }
 
     track("selfservice", `${method}::${url}`, "1");

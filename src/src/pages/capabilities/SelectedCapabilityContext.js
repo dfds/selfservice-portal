@@ -63,7 +63,7 @@ function SelectedCapabilityProvider({ children }) {
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
-  
+  const [isInviteesCreated, setIsInviteesCreated] = useState(false);
 
   function sleep(duration) {
     return new Promise((resolve) => {
@@ -72,8 +72,10 @@ function SelectedCapabilityProvider({ children }) {
   }
 
   async function addNewInvitees(invitations) {
+    setIsInviteesCreated(true);
     addInvitees([invitations]);
     await sleep(3000);
+    setIsInviteesCreated(false);
   }
 
   const kafkaClusterTopicList = () => {
@@ -434,6 +436,7 @@ function SelectedCapabilityProvider({ children }) {
     updateDeletionStatus,
     showCosts,
     addNewInvitees,
+    isInviteesCreated,
   };
 
   return (
