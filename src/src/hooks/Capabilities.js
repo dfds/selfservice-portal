@@ -293,8 +293,11 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
 }
 
 export function useCapabilityInvitees(capabilityDefinition) {
-  const { inProgress, responseData: addedCapability, sendRequest: addInvitees } =
-    useSelfServiceRequest();
+  const {
+    inProgress,
+    responseData: addedCapability,
+    sendRequest: addInvitees,
+  } = useSelfServiceRequest();
 
   const link = capabilityDefinition?._links?.sendInvitations.href;
   //console.log(link)
@@ -313,6 +316,6 @@ export function useCapabilityInvitees(capabilityDefinition) {
 
   return {
     addInvitees: createInvitees,
-    inProgress
+    inProgress,
   };
 }

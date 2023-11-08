@@ -15,7 +15,6 @@ export function Invitations({ addNewInvitees, inProgress }) {
     const [invitees, setInvitees] = useState([]);
     const [userInput, setUserInput] = useState("");
 
-
     useEffect(() => {
         if (invitationsInput !== "") {
             setInvitees((prev) => [...prev, invitationsInput]);
@@ -26,8 +25,6 @@ export function Invitations({ addNewInvitees, inProgress }) {
     useEffect(() => {
         console.log(inProgress);
     }, [inProgress]);
-
-
 
     async function changeInvitation(e) {
         e.preventDefault();
@@ -41,6 +38,13 @@ export function Invitations({ addNewInvitees, inProgress }) {
         setadUsers(adUserstest.value);
     }
 
+    const OnKeyEnter = (e) => {
+        if (e.key === "Enter") {
+            setInvitees((prev) => [...prev, userInput]);
+            setUserInput("");
+        }
+    };
+
     const handleAddInvitationClicked = () => {
         addNewInvitees(invitees);
     };
@@ -48,14 +52,13 @@ export function Invitations({ addNewInvitees, inProgress }) {
         <>
             <PageSection headline="Invite members">
                 <TextField
-                    //label="Invite members"
                     placeholder="Enter user name"
                     value={userInput}
                     icon={<Search />}
                     onChange={(e) => {
                         changeInvitation(e);
                     }}
-                //onKeyDown={OnKeyEnter}
+                    onKeyDown={OnKeyEnter}
                 ></TextField>
 
                 {isUserSearchActive ? (
@@ -83,7 +86,7 @@ export function Invitations({ addNewInvitees, inProgress }) {
                         onClick={handleAddInvitationClicked}
                         //disabled={!canAdd}
                         submitting={inProgress}
-                        style={{ position: 'right' }}
+                        style={{ position: "right" }}
                     >
                         Add
                     </Button>

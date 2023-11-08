@@ -59,7 +59,10 @@ function CapabilityDetailsPageContent() {
         <Summary />
         {showResources && <Resources capabilityId={id} />}
 
-        <Invitations addNewInvitees={addNewInvitees} inProgress={isInviteesCreated} />
+        <Invitations
+          addNewInvitees={addNewInvitees}
+          inProgress={isInviteesCreated}
+        />
 
         <MembershipApplications />
 
