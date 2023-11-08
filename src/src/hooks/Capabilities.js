@@ -295,15 +295,10 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
 export function useCapabilityInvitees(capabilityDefinition) {
   const {
     inProgress,
-    responseData: addedCapability,
     sendRequest: addInvitees,
   } = useSelfServiceRequest();
 
-  const link = capabilityDefinition?._links?.sendInvitations.href;
-  //console.log(link)
-
-  const createInvitees = ([invitations]) => {
-    if (link) {
+  const createInvitees = ([invitations]) => { 
       addInvitees({
         urlSegments: ["capabilities", capabilityDefinition.id, "invitations"],
         method: "POST",
@@ -311,7 +306,6 @@ export function useCapabilityInvitees(capabilityDefinition) {
           invitees: invitations,
         },
       });
-    }
   };
 
   return {
