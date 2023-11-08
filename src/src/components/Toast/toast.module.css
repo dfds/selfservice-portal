@@ -19,6 +19,10 @@
   justify-content: center;
 }
 
+.modal{
+  white-space: pre-wrap;
+}
+
 .toast_close_bar {
   width: 100%;
   height: 32px;

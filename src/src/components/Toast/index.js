@@ -65,8 +65,11 @@ export default function ErrorToast({ message, errorTitle, errorDetails }) {
           isOpen={true}
           shouldCloseOnOverlayClick={true}
           shouldCloseOnEsc={true}
+          showClose={false}
+          fixedTopPosition={true}
           onRequestClose={() => setShowDetails(false)}
           actions={actions}
+          className={styles.modal}
         >
           {errorDetails ? <div>{errorDetails}</div> : "No details available"}
         </Modal>

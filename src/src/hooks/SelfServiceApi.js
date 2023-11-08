@@ -45,7 +45,7 @@ export function useSelfServiceRequest(errorParams) {
         const errorDetails = newData.detail;
         const httpError = httpResponseToErrorMessage(httpResponse);
         if (errorDetails && errorTitle) {
-          const problemDetailsWithHttpError = `${errorDetails}\n${httpError}`;
+          const problemDetailsWithHttpError = errorDetails + "\n\n" + httpError;
           triggerErrorWithTitleAndDetails(
             errorTitle,
             problemDetailsWithHttpError,
