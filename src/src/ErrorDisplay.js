@@ -5,7 +5,7 @@ import styles from "errordisplay.module.css";
 
 const ErrorDisplay = () => {
   const defaultErrorMessage =
-    "Oh no! We had an issue while loading the page, you can try reloading to see if it fixes it.";
+    "Oh no! Something went wrong while loading the page. You can try refreshing to resolve the issue.";
   const { errors } = useContext(ErrorContext); //error is multiple errors
   if (errors.length === 0) {
     return null;

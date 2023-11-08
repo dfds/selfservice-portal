@@ -55,7 +55,8 @@ export function useSelfServiceRequest(errorParams) {
         }
       }
     } catch (error) {
-      const errorDetails = `Error when calling ${method} ${url}:\n${error}`;
+      const actualMethod = method || "GET";
+      const errorDetails = `Error when calling ${actualMethod} ${url}:\n${error}`;
       triggerErrorWithTitleAndDetails("Http Error", errorDetails);
     } finally {
       setInProgress(false);

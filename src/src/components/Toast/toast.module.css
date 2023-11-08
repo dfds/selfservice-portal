@@ -1,7 +1,7 @@
 .toast_container {
   position: relative;
   background-color: rgba(190, 30, 45);
-  width: 284px;
+  width: 290px;
   border-radius: 5px;
   margin: 5px;
   opacity: 0;
@@ -25,7 +25,7 @@
   text-align: right;
 }
 
-.toast_close_bar_button {
+.toast_close_bar button {
   width: 32px;
 }
 

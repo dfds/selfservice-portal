@@ -81,7 +81,6 @@ export default function ErrorToast({ message, errorTitle, errorDetails }) {
               size="small"
               variation="link"
               fillWidth="true"
-              className={styles.toast_close_bar_button}
               onClick={() => setOpacity(0)}
             >
               <Close className={styles.close_icon} />
