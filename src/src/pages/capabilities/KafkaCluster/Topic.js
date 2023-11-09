@@ -184,7 +184,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   };
 
   const handleAddMessageContract = async (formValues) => {
-    void addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
+    await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
     setShowMessageContractDialog(false);
     setIsLoadingContracts(true);
     await sleep(1000);
