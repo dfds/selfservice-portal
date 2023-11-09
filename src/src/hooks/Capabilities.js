@@ -302,12 +302,12 @@ export function useCapabilityMetadata(capabilityDefinition) {
 
   const link = capabilityDefinition?._links?.metadata;
 
-  useEffect(() => {
+  useEffect(async () => {
     if (link && (link.allow || []).includes("GET")) {
-      sendGetJsonMetadataRequest({
+      await sendGetJsonMetadataRequest({
         urlSegments: [link.href],
         method: "GET",
-      }).then((_) => {});
+      });
     }
   }, [link]);
 
