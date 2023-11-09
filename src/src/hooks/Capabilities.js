@@ -303,7 +303,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
   const link = capabilityDefinition?._links?.metadata;
 
   useEffect(() => {
-    if (link && (link.allow || []).includes("PUT")) {
+    if (link && (link.allow || []).includes("GET")) {
       sendGetJsonMetadataRequest({
         urlSegments: [link.href],
         method: "GET",
