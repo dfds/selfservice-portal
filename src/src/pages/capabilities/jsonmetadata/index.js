@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
-import { Button, ButtonStack, Spinner } from "@dfds-ui/react-components";
+import { Button, ButtonStack } from "@dfds-ui/react-components";
 import Ajv from "ajv";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
@@ -51,6 +51,7 @@ export function JsonMetadataWithSchemaViewer() {
         setSchemaString(prettifyJsonString(schema));
       }
     }
+
     void getAndSetSchema();
   }, []);
 
@@ -79,8 +80,11 @@ export function JsonMetadataWithSchemaViewer() {
     }
   };
 
-  const isJsonValid = (json) => {
-    return validationError === "";
+  const clearErrorMessage = () => {
+    setValidationError("");
+  };
+  const hasJsonValidationError = () => {
+    return validationError !== "";
   };
 
   const prettifyJsonString = (json) => {
@@ -102,6 +106,7 @@ export function JsonMetadataWithSchemaViewer() {
   };
   const cancelEditing = () => {
     setIsEditing(false);
+    clearErrorMessage();
     setJsonString(currentMetadataString);
   };
 
@@ -143,7 +148,7 @@ export function JsonMetadataWithSchemaViewer() {
                     setJsonString(e);
                     if (!checkIfJsonIsParsable(e)) return;
                     if (!checkIfFollowsSchema(e)) return;
-                    setValidationError("");
+                    clearErrorMessage();
                   }}
                   className={styles.jsonInputEditor}
                   options={{
@@ -163,7 +168,8 @@ export function JsonMetadataWithSchemaViewer() {
                   className={styles.validationErrorText}
                   value={validationError}
                   onChange={() => {}}
-                ></textarea>
+                  readOnly
+                />
                 <ButtonStack align={"right"}>
                   <Button
                     size="small"
@@ -176,7 +182,7 @@ export function JsonMetadataWithSchemaViewer() {
                     size="small"
                     variation="outlined"
                     onClick={submitJsonMetadata}
-                    disabled={isJsonValid(jsonString) === false}
+                    disabled={hasJsonValidationError()}
                   >
                     Submit
                   </Button>
