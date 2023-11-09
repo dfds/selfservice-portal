@@ -43,12 +43,15 @@ export function JsonMetadataWithSchemaViewer() {
     }
   }, [metadata]);
 
-  useEffect(async () => {
-    if (schemaString === "") {
-      const schema =
-        await selfServiceApiClient.getCapabilityJsonMetadataSchema();
-      setSchemaString(prettifyJsonString(schema));
+  useEffect(() => {
+    async function getAndSetSchema() {
+      if (schemaString === "") {
+        const schema =
+          await selfServiceApiClient.getCapabilityJsonMetadataSchema();
+        setSchemaString(prettifyJsonString(schema));
+      }
     }
+    void getAndSetSchema();
   }, []);
 
   const checkIfJsonIsParsable = (json) => {
@@ -61,7 +64,7 @@ export function JsonMetadataWithSchemaViewer() {
     }
   };
 
-  const checkIfJsonFollowsSchema = (json) => {
+  const checkIfFollowsSchema = (json) => {
     try {
       const ajv = new Ajv();
       const validate = ajv.compile(JSON.parse(schemaString));
@@ -139,7 +142,7 @@ export function JsonMetadataWithSchemaViewer() {
                     setIsDirty(true);
                     setJsonString(e);
                     if (!checkIfJsonIsParsable(e)) return;
-                    if (!checkIfJsonFollowsSchema(e)) return;
+                    if (!checkIfFollowsSchema(e)) return;
                     setValidationError("");
                   }}
                   className={styles.jsonInputEditor}
