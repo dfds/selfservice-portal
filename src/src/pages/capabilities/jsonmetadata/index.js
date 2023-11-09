@@ -8,6 +8,7 @@ import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
 export function JsonMetadataWithSchemaViewer() {
   const monaco = useMonaco();
   const { metadata, setCapabilityJsonMetadata } = useContext(
@@ -42,11 +43,11 @@ export function JsonMetadataWithSchemaViewer() {
     }
   }, [metadata]);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (schemaString === "") {
-      selfServiceApiClient.getCapabilityJsonMetadataSchema().then((schema) => {
-        setSchemaString(prettifyJsonString(schema));
-      });
+      const schema =
+        await selfServiceApiClient.getCapabilityJsonMetadataSchema();
+      setSchemaString(prettifyJsonString(schema));
     }
   }, []);
 
