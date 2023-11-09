@@ -119,6 +119,12 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const allowedToUpdate = !!topic._links?.updateDescription;
   const allowedToDelete = (topic._links?.self?.allow || []).includes("DELETE");
 
+  function sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), duration);
+    });
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -128,12 +134,11 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     }
 
     async function fetchData(topic) {
-      const result = await selfServiceApiClient.getMessageContracts(topic);
+      const contracts = await fetchAndSortMessageContractsForTopic(topic);
       const consumers = await selfServiceApiClient.getConsumers(topic);
-      result.sort((a, b) => a.messageType.localeCompare(b.messageType));
 
       if (isMounted) {
-        setContracts(result);
+        setContracts(contracts);
         setIsLoadingContracts(false);
         setConsumers(consumers);
         setIsLoadingConsumers(false);
@@ -172,9 +177,20 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     });
   };
 
+  const fetchAndSortMessageContractsForTopic = async (topic) => {
+    const result = await selfServiceApiClient.getMessageContracts(topic);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    return result;
+  };
+
   const handleAddMessageContract = async (formValues) => {
-    await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
+    void addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
     setShowMessageContractDialog(false);
+    setIsLoadingContracts(true);
+    await sleep(1000);
+    const contracts = await fetchAndSortMessageContractsForTopic(topic);
+    setContracts(contracts);
+    setIsLoadingContracts(false);
   };
 
   const handleUpdateTopic = useCallback(
