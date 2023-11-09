@@ -61,7 +61,7 @@ export function JsonMetadataWithSchemaViewer() {
     }
   };
 
-  const checkIfFollowsSchema = (json) => {
+  const checkIfJsonFollowsSchema = (json) => {
     try {
       const ajv = new Ajv();
       const validate = ajv.compile(JSON.parse(schemaString));
@@ -139,7 +139,7 @@ export function JsonMetadataWithSchemaViewer() {
                     setIsDirty(true);
                     setJsonString(e);
                     if (!checkIfJsonIsParsable(e)) return;
-                    if (!checkIfFollowsSchema(e)) return;
+                    if (!checkIfJsonFollowsSchema(e)) return;
                     setValidationError("");
                   }}
                   className={styles.jsonInputEditor}
