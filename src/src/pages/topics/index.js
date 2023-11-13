@@ -173,7 +173,7 @@ function Topics() {
 
       Cell: ({ cell, renderedCellValue }) => {
         return (
-          <div>
+          <div onClick={() => cell.row.toggleExpanded()}>
             <div className={styles.topicheader}>
               <div className={styles.row}>
                 <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
@@ -323,9 +323,6 @@ function Topics() {
               enableBottomToolbar={true}
               enableColumnActions={false}
               muiTableBodyRowProps={({ row }) => ({
-                onClick: () => {
-                  row.toggleExpanded();
-                },
                 sx: {
                   padding: 0,
                   margin: 0,
