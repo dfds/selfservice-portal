@@ -292,3 +292,22 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
     membersApplicationsList,
   };
 }
+
+export function useCapabilityInvitees(capabilityDefinition) {
+  const { inProgress, sendRequest: addInvitees } = useSelfServiceRequest();
+
+  const createInvitees = ([invitations]) => {
+    addInvitees({
+      urlSegments: ["capabilities", capabilityDefinition.id, "invitations"],
+      method: "POST",
+      payload: {
+        invitees: invitations,
+      },
+    });
+  };
+
+  return {
+    addInvitees: createInvitees,
+    inProgress,
+  };
+}

@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import { Invitations } from "./invitations";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -36,6 +37,8 @@ function CapabilityDetailsPageContent() {
     isDeleted,
     updateDeletionStatus,
     awsAccount,
+    addNewInvitees,
+    isInviteesCreated,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -55,6 +58,11 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
         <Resources capabilityId={id} />
+
+        <Invitations
+          addNewInvitees={addNewInvitees}
+          inProgress={isInviteesCreated}
+        />
 
         <MembershipApplications />
 
