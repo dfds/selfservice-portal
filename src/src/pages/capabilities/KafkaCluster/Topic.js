@@ -25,6 +25,7 @@ import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import AppContext from "../../../AppContext";
+import { useMessageContracts, useConsumers } from "hooks/Capabilities";
 
 function TopicHeader({
   name,
@@ -118,6 +119,9 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   ).includes("POST");
   const allowedToUpdate = !!topic._links?.updateDescription;
   const allowedToDelete = (topic._links?.self?.allow || []).includes("DELETE");
+  const [topicDefinition, setTopicDefinition] = useState(null);
+  const {isLoadedContracts, contractsList} = useMessageContracts(topicDefinition);
+    const {isLoadedConsumers, consumersList} = useConsumers(topicDefinition);
 
   useEffect(() => {
     let isMounted = true;
@@ -128,24 +132,27 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     }
 
     async function fetchData(topic) {
-      const result = await selfServiceApiClient.getMessageContracts(topic);
-      const consumers = await selfServiceApiClient.getConsumers(topic);
-      result.sort((a, b) => a.messageType.localeCompare(b.messageType));
 
-      if (isMounted) {
-        setContracts(result);
+      if (isMounted && isLoadedContracts) {
+        setContracts(contractsList);
         setIsLoadingContracts(false);
-        setConsumers(consumers);
+        
+      }
+      if (isMounted && isLoadedConsumers) {
+        setConsumers(consumersList);
         setIsLoadingConsumers(false);
       }
     }
 
     if (isPublic) {
+      if (isSelected){
+        setTopicDefinition(topic);
+      }
       fetchData(topic);
     }
 
     return () => (isMounted = false);
-  }, [topic, isSelected]);
+  }, [isSelected, isLoadedContracts, isLoadedConsumers]);
 
   useEffect(() => {
     setIsLoadingContracts(isSelected);
