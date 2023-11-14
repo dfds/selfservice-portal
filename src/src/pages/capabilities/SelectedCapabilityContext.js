@@ -39,6 +39,7 @@ function SelectedCapabilityProvider({ children }) {
     setShouldAutoReloadTopics,
     selfServiceApiClient,
     myCapabilities,
+    user,
   } = useContext(AppContext);
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
@@ -55,6 +56,7 @@ function SelectedCapabilityProvider({ children }) {
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded } = useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
+  const [isMember, setIsMember] = useState(false);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
@@ -108,6 +110,18 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     kafkaClusterTopicList();
   }, [clustersList]);
+
+  useEffect(() => {
+    if (members.length > 0) {
+      members.forEach((member) => {
+        if (member.id === user.email) {
+          setIsMember(true);
+        }
+      });
+    } else {
+      setIsMember(false);
+    }
+  }, [members]);
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -441,6 +455,7 @@ function SelectedCapabilityProvider({ children }) {
     isInviteesCreated,
     setCapabilityJsonMetadata,
     metadata,
+    isMember,
   };
 
   return (

@@ -41,6 +41,7 @@ function CapabilityDetailsPageContent() {
     awsAccount,
     addNewInvitees,
     isInviteesCreated,
+    isMember,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -72,10 +73,14 @@ function CapabilityDetailsPageContent() {
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
-        <Invitations
-          addNewInvitees={addNewInvitees}
-          inProgress={isInviteesCreated}
-        />
+        {isMember ? (
+          <Invitations
+            addNewInvitees={addNewInvitees}
+            inProgress={isInviteesCreated}
+          />
+        ) : (
+          <></>
+        )}
 
         <MembershipApplications />
 
