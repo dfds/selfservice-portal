@@ -173,8 +173,8 @@ function Topics() {
 
       Cell: ({ cell, renderedCellValue }) => {
         return (
-          <div onClick={() => cell.row.toggleExpanded()}>
-            <div className={styles.topicheader}>
+          <div>
+            <div className={styles.topicheader} onClick={() => cell.row.toggleExpanded()}>
               <div className={styles.row}>
                 <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
                   {renderedCellValue}
