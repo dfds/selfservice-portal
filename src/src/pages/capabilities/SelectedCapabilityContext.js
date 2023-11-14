@@ -113,11 +113,12 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {
     if (members.length > 0) {
-      members.forEach((member) => {
+      for (const member of members) {
         if (member.id === user.email) {
           setIsMember(true);
+          break;
         }
-      });
+      }
     } else {
       setIsMember(false);
     }
