@@ -68,13 +68,15 @@ function CapabilityDetailsPageContent() {
       />
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
+        <Summary />
+        {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
+        <Resources capabilityId={id} />
+
         <Invitations
           addNewInvitees={addNewInvitees}
           inProgress={isInviteesCreated}
         />
-        <Summary />
-        {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
-        <Resources capabilityId={id} />
+
         <MembershipApplications />
 
         {/* <Logs /> */}
