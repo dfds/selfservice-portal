@@ -156,9 +156,9 @@ export default function NewCapabilityDialog({
           <TextField
             label="Invite members"
             placeholder="Enter users emails"
+            icon={<Search />}
             required
             value={formData.invitations}
-            icon={Search}
             onChange={(e) => {
               changeInvitation(e);
             }}
