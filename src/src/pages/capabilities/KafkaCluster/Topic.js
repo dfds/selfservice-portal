@@ -200,6 +200,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
     setShowMessageContractDialog(false);
     setIsLoadingContracts(true);
+    // UX sleep, nicer to have it busy spin and then show updated list of contracts
     await sleep(1000);
     const contracts = await fetchAndSortMessageContractsForTopic(topic);
     setContracts(contracts);
