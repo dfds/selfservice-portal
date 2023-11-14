@@ -119,6 +119,12 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const allowedToUpdate = !!topic._links?.updateDescription;
   const allowedToDelete = (topic._links?.self?.allow || []).includes("DELETE");
 
+  function sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), duration);
+    });
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -127,21 +133,33 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       return;
     }
 
-    async function fetchData(topic) {
-      const result = await selfServiceApiClient.getMessageContracts(topic);
+    async function fetchConsumers(topic) {
       const consumers = await selfServiceApiClient.getConsumers(topic);
-      result.sort((a, b) => a.messageType.localeCompare(b.messageType));
-
       if (isMounted) {
-        setContracts(result);
-        setIsLoadingContracts(false);
         setConsumers(consumers);
         setIsLoadingConsumers(false);
       }
     }
+    async function fetchMessageContracts(topic) {
+      const contracts = await fetchAndSortMessageContractsForTopic(topic);
+      if (isMounted) {
+        setContracts(contracts);
+        setIsLoadingContracts(false);
+      }
+    }
 
     if (isPublic) {
-      fetchData(topic);
+      // TODO: Add localized error handling or at least use error context for these errors
+      try {
+        void fetchConsumers(topic);
+      } catch (e) {
+        console.log("Failed fetch consumers", e.message);
+      }
+      try {
+        void fetchMessageContracts(topic);
+      } catch (e) {
+        console.log("Failed fetch message contracts", e.message);
+      }
     }
 
     return () => (isMounted = false);
@@ -172,9 +190,21 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     });
   };
 
+  const fetchAndSortMessageContractsForTopic = async (topic) => {
+    const result = await selfServiceApiClient.getMessageContracts(topic);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    return result;
+  };
+
   const handleAddMessageContract = async (formValues) => {
     await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
     setShowMessageContractDialog(false);
+    setIsLoadingContracts(true);
+    // UX sleep, nicer to have it busy spin and then show updated list of contracts
+    await sleep(1000);
+    const contracts = await fetchAndSortMessageContractsForTopic(topic);
+    setContracts(contracts);
+    setIsLoadingContracts(false);
   };
 
   const handleUpdateTopic = useCallback(
