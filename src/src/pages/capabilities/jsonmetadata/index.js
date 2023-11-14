@@ -65,7 +65,7 @@ export function JsonMetadataWithSchemaViewer() {
     }
   };
 
-  const checkIfFollowsSchema = (json) => {
+  const checkIfJsonFollowsSchema = (json) => {
     try {
       const ajv = new Ajv();
       const validate = ajv.compile(JSON.parse(schemaString));
@@ -83,8 +83,10 @@ export function JsonMetadataWithSchemaViewer() {
   const clearErrorMessage = () => {
     setValidationError("");
   };
-  const hasJsonValidationError = () => {
-    return validationError !== "";
+
+  // has side effect where it sets error message if failing any of the checks
+  const isValidJson = (json) => {
+    return checkIfJsonIsParsable(json) && checkIfJsonFollowsSchema(json);
   };
 
   const prettifyJsonString = (json) => {
@@ -146,9 +148,7 @@ export function JsonMetadataWithSchemaViewer() {
                   onChange={(e) => {
                     setIsDirty(true);
                     setJsonString(e);
-                    if (!checkIfJsonIsParsable(e)) return;
-                    if (!checkIfFollowsSchema(e)) return;
-                    clearErrorMessage();
+                    if (isValidJson(e)) clearErrorMessage();
                   }}
                   className={styles.jsonInputEditor}
                   options={{
@@ -182,7 +182,7 @@ export function JsonMetadataWithSchemaViewer() {
                     size="small"
                     variation="outlined"
                     onClick={submitJsonMetadata}
-                    disabled={hasJsonValidationError()}
+                    disabled={!isValidJson(jsonString)}
                   >
                     Submit
                   </Button>
