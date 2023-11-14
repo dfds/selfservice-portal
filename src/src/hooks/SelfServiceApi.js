@@ -35,8 +35,9 @@ export function useSelfServiceRequest(errorParams) {
       const httpResponse = await callApi(url, accessToken, method, payload);
 
       if (httpResponse.ok) {
-        const newData = await httpResponse.json();
-        setResponseData(newData);
+        httpResponse.json().then((data) => {
+          setResponseData(data);
+        });
       } else {
         triggerError(
           NewErrorContextBuilder().setHttpResponse(httpResponse).build(),

@@ -293,6 +293,56 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
   };
 }
 
+export function useCapabilityMetadata(capabilityDefinition) {
+  const { responseData, sendRequest: sendGetJsonMetadataRequest } =
+    useSelfServiceRequest();
+  const { sendRequest: sendSetJsonMetadataRequest } = useSelfServiceRequest();
+  const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
+  const [metadata, setMetadata] = useState(null);
+
+  const link = capabilityDefinition?._links?.metadata;
+
+  useEffect(() => {
+    if (link && (link.allow || []).includes("GET")) {
+      void sendGetJsonMetadataRequest({
+        urlSegments: [link.href],
+        method: "GET",
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setMetadata(responseData);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (metadata !== null) {
+      setIsLoadedMetadata(true);
+    }
+  }, [metadata]);
+
+  const setCapabilityJsonMetadata = async (jsonMetadata) => {
+    if (!(link && (link.allow || []).includes("POST"))) {
+      throw new Error("User is not allowed to set metadata");
+    }
+    await sendSetJsonMetadataRequest({
+      urlSegments: [link.href],
+      method: "POST",
+      payload: {
+        jsonMetadata: JSON.parse(jsonMetadata),
+      },
+    });
+  };
+
+  return {
+    isLoadedMetadata,
+    metadata,
+    setCapabilityJsonMetadata,
+  };
+}
+
 export function useCapabilityInvitees(capabilityDefinition) {
   const { inProgress, sendRequest: addInvitees } = useSelfServiceRequest();
 
