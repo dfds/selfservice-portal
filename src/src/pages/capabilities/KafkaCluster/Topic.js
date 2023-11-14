@@ -133,20 +133,33 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       return;
     }
 
-    async function fetchData(topic) {
-      const contracts = await fetchAndSortMessageContractsForTopic(topic);
+    async function fetchConsumers(topic) {
       const consumers = await selfServiceApiClient.getConsumers(topic);
-
       if (isMounted) {
-        setContracts(contracts);
-        setIsLoadingContracts(false);
         setConsumers(consumers);
         setIsLoadingConsumers(false);
       }
     }
+    async function fetchMessageContracts(topic) {
+      const contracts = await fetchAndSortMessageContractsForTopic(topic);
+      if (isMounted) {
+        setContracts(contracts);
+        setIsLoadingContracts(false);
+      }
+    }
 
     if (isPublic) {
-      fetchData(topic);
+      // TODO: Add localized error handling or at least use error context for these errors
+      try {
+        void fetchConsumers(topic);
+      } catch (e) {
+        console.log("Failed fetch consumers", e.message);
+      }
+      try {
+        void fetchMessageContracts(topic);
+      } catch (e) {
+        console.log("Failed fetch message contracts", e.message);
+      }
     }
 
     return () => (isMounted = false);
