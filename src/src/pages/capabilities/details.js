@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import { Invitations } from "./invitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 
 export default function CapabilityDetailsPage() {
@@ -38,6 +39,8 @@ function CapabilityDetailsPageContent() {
     isDeleted,
     updateDeletionStatus,
     awsAccount,
+    addNewInvitees,
+    isInviteesCreated,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -68,6 +71,12 @@ function CapabilityDetailsPageContent() {
         <Summary />
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
+
+        <Invitations
+          addNewInvitees={addNewInvitees}
+          inProgress={isInviteesCreated}
+        />
+
         <MembershipApplications />
 
         {/* <Logs /> */}

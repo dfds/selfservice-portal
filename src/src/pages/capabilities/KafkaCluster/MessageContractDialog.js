@@ -15,9 +15,20 @@ import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/style
 import toJsonSchema from "to-json-schema";
 
 function getValidationErrorForType(value) {
-  const isValid =
-    value !== undefined && value != null && value !== "" && value.length > 0;
+  // matching backend validation
+  const isNameValid =
+    value !== "" &&
+    !value.match(/^\s*$/g) &&
+    !value.match(/([_\-])$/g) &&
+    !value.match(/^([_\-])/g) &&
+    !value.match(/[-_.]{2,}/g) &&
+    !value.match(/[^a-zA-Z0-9\-_]/g);
 
+  if (value.length > 0 && !isNameValid) {
+    return 'Allowed characters are a-z, 0-9, "-", and "_" and it must not start or end with "_" or "-". Do not use more than one of "-" or "_" in a row.';
+  }
+
+  const isValid = value !== "" && value.length > 0;
   return isValid ? "" : "Type is invalid";
 }
 
@@ -207,8 +218,9 @@ export default function MessageContractDialog({
 
   const changeType = (e) => {
     e?.preventDefault();
-    const newValue = e?.target?.value || "";
-    setType(newValue);
+    let newTopic = e?.target?.value || "";
+    newTopic = newTopic.replace(/\s+/g, "-");
+    setType(newTopic);
   };
 
   const changeDescription = (e) => {

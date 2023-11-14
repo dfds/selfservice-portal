@@ -6,7 +6,7 @@
   margin: 5px;
   opacity: 0;
   transition: 300ms all ease;
-  height: 120px;
+  transform: translateX(-50%);
 }
 .hidden {
   height: 0;
