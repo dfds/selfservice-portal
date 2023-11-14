@@ -324,12 +324,12 @@ export function useCapabilityMetadata(capabilityDefinition) {
   }, [metadata]);
 
   const setCapabilityJsonMetadata = async (jsonMetadata) => {
-    if (!(link && (link.allow || []).includes("PUT"))) {
+    if (!(link && (link.allow || []).includes("POST"))) {
       throw new Error("User is not allowed to set metadata");
     }
     await sendSetJsonMetadataRequest({
       urlSegments: [link.href],
-      method: "PUT",
+      method: "POST",
       payload: {
         jsonMetadata: JSON.parse(jsonMetadata),
       },

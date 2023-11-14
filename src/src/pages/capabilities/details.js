@@ -54,7 +54,7 @@ function CapabilityDetailsPageContent() {
   useEffect(() => {
     if (
       (links?.metadata?.allow || []).includes("GET") &&
-      (links?.metadata?.allow || []).includes("PUT")
+      (links?.metadata?.allow || []).includes("POST")
     ) {
       setShowJsonMetadata(true);
     }
