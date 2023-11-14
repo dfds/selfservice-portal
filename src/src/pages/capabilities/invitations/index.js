@@ -30,8 +30,21 @@ export function Invitations({ addNewInvitees, inProgress }) {
     const value = e?.target?.value;
     const newValue = value || "";
     setUserInput(newValue);
-    const adUserstest = await getUsers(adUsers);
-    setadUsers(adUserstest.value);
+
+    if (!adUsers) {
+      setadUsers([]);
+      return;
+    }
+    const fetchedAdUsers = await getUsers(adUsers);
+    if (!fetchedAdUsers) {
+      setadUsers([]);
+      return;
+    }
+
+    let filteredUsers = fetchedAdUsers.value
+      .filter((user) => user.mail)
+      .filter((user) => !invitees.find((x) => x === user.mail));
+    setadUsers(filteredUsers);
   }
 
   const OnKeyEnter = (e) => {
