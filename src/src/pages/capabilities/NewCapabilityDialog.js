@@ -153,7 +153,7 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          <TextField
+          {/*<TextField
             label="Invite members"
             placeholder="Enter users emails"
             icon={<Search />}
@@ -181,7 +181,7 @@ export default function NewCapabilityDialog({
                 {invitee}
               </div>
             ))}
-          </div>
+          </div>*/}
 
           <ButtonStack>
             <Button
