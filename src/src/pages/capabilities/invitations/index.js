@@ -56,50 +56,47 @@ export function Invitations({ addNewInvitees, inProgress }) {
 
   const handleAddInvitationClicked = () => {
     addNewInvitees(invitees);
+    setInvitees([]);
   };
   return (
     <>
-      <PageSection headline="Invite members">
-        <TextField
-          placeholder="Enter user name"
-          value={userInput}
-          icon={<Search />}
-          onChange={(e) => {
-            changeInvitation(e);
-          }}
-          onKeyDown={OnKeyEnter}
-        ></TextField>
+      <TextField
+        placeholder="Enter user name"
+        value={userInput}
+        icon={<Search />}
+        onChange={(e) => {
+          changeInvitation(e);
+        }}
+        onKeyDown={OnKeyEnter}
+      ></TextField>
 
-        {isUserSearchActive ? (
-          <div className={styles.dropDownMenu}>
-            <DropDownInvitationsMenu
-              items={adUsers}
-              setIsUserSearchActive={setIsUserSearchActive}
-              setInvitationsInput={setInvitationsInput}
-            />
-          </div>
-        ) : (
-          <></>
-        )}
-        <div className={styles.invitees_container}>
-          {(invitees || []).map((invitee) => (
-            <div className={styles.invitee_container} key={invitee}>
-              {invitee}
-            </div>
-          ))}
+      {isUserSearchActive ? (
+        <div className={styles.dropDownMenu}>
+          <DropDownInvitationsMenu
+            items={adUsers}
+            setIsUserSearchActive={setIsUserSearchActive}
+            setInvitationsInput={setInvitationsInput}
+          />
         </div>
-        <ButtonStack align="right">
-          <Button
-            size="small"
-            variation="primary"
-            onClick={handleAddInvitationClicked}
-            submitting={inProgress}
-            style={{ position: "right" }}
-          >
-            Add
-          </Button>
-        </ButtonStack>
-      </PageSection>
+      ) : (
+        <></>
+      )}
+      <div className={styles.invitees_container}>
+        {(invitees || []).map((invitee) => (
+          <div className={styles.invitee_container} key={invitee}>
+            {invitee}
+          </div>
+        ))}
+      </div>
+      <Button
+        size="small"
+        variation="primary"
+        onClick={handleAddInvitationClicked}
+        submitting={inProgress}
+        style={{ position: "right" }}
+      >
+        Send Invitations
+      </Button>
     </>
   );
 }

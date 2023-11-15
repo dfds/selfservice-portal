@@ -1,11 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./members.module.css";
 import { Text } from "@dfds-ui/typography";
 import ProfilePicture from "./profilepicture";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import { Invitations } from "../invitations";
 
 export default function Members() {
-  const { members } = useContext(SelectedCapabilityContext);
+  const { members, links, addNewInvitees, isInviteesCreated } = useContext(
+    SelectedCapabilityContext,
+  );
+  const [showInvitations, setShowInvitations] = useState(true);
+
+  useEffect(() => {
+    if (
+      (links?.invitations?.allow || []).includes("GET") &&
+      (links?.invitations?.allow || []).includes("POST")
+    ) {
+      setShowInvitations(true);
+    }
+  }, [links]);
 
   return (
     <>
@@ -19,6 +32,15 @@ export default function Members() {
           />
         ))}
       </div>
+      {showInvitations && (
+        <div style={{ width: "70%" }}>
+          <Text styledAs="smallHeadline">Invitations</Text>
+          <Invitations
+            addNewInvitees={addNewInvitees}
+            inProgress={isInviteesCreated}
+          />
+        </div>
+      )}
     </>
   );
 }
