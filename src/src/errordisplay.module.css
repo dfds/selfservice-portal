@@ -1,6 +1,6 @@
 .toasts_container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: sticky;
   bottom: 1rem;
+  width: 100%;
+  margin-left: 50%;
 }

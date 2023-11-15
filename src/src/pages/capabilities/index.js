@@ -24,7 +24,11 @@ export default function CapabilitiesPage() {
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
-    await addNewCapability(formData.name, formData.description);
+    await addNewCapability(
+      formData.name,
+      formData.description,
+      formData.invitations,
+    );
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
   };
@@ -84,12 +88,16 @@ export default function CapabilitiesPage() {
           </CardActions>
         </Card>
 
-        {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href &&
+        {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href && (
           <>
             <br />
-            <MyInvitations invitationsLink={myProfile?._links?.invitationsLinks?.capabilityInvitations?.href} />
+            <MyInvitations
+              invitationsLink={
+                myProfile?._links?.invitationsLinks?.capabilityInvitations?.href
+              }
+            />
           </>
-        }
+        )}
         <br />
 
         <MyCapabilities />

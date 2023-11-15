@@ -13,6 +13,8 @@ import {
   useKafkaClustersAccessList,
   useCapabilityAwsAccount,
   useCapabilityMembersApplications,
+  useCapabilityInvitees,
+  useCapabilityMetadata,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -61,6 +63,23 @@ function SelectedCapabilityProvider({ children }) {
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
+  const { addInvitees } = useCapabilityInvitees(details);
+  const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+
+  function sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), duration);
+    });
+  }
+
+  async function addNewInvitees(invitations) {
+    setIsInviteesCreated(true);
+    addInvitees([invitations]);
+    await sleep(3000);
+    setIsInviteesCreated(false);
+  }
+  const { metadata, setCapabilityJsonMetadata } =
+    useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
@@ -410,7 +429,6 @@ function SelectedCapabilityProvider({ children }) {
     requestAwsAccount,
     getAccessToCluster,
     requestAccessToCluster,
-    showResources: (details?._links?.awsAccount?.allow || []).includes("GET"),
     updateKafkaTopic,
     deleteKafkaTopic,
     submitDeleteCapability,
@@ -419,6 +437,10 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
+    addNewInvitees,
+    isInviteesCreated,
+    setCapabilityJsonMetadata,
+    metadata,
   };
 
   return (

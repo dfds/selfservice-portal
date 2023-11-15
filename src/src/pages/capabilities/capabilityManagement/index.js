@@ -63,7 +63,6 @@ function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
 export default function CapabilityManagement() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const {
-    pendingDeletion,
     links,
     submitDeleteCapability,
     isPendingDeletion,
