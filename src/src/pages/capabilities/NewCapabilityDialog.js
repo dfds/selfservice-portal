@@ -163,7 +163,7 @@ export default function NewCapabilityDialog({
               changeInvitation(e);
             }}
             onKeyDown={OnKeyEnter}
-          ></TextField>*/}
+          ></TextField>
           {isUserSearchActive ? (
             <div className={styles.dropDownMenu}>
               <DropDownInvitationsMenu
@@ -181,7 +181,7 @@ export default function NewCapabilityDialog({
                 {invitee}
               </div>
             ))}
-          </div>
+          </div>*/}
 
           <ButtonStack>
             <Button
