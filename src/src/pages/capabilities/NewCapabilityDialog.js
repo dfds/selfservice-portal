@@ -153,7 +153,7 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          <TextField
+          {/*<TextField
             label="Invite members"
             placeholder="Enter users emails"
             icon={<Search />}
@@ -163,7 +163,7 @@ export default function NewCapabilityDialog({
               changeInvitation(e);
             }}
             onKeyDown={OnKeyEnter}
-          ></TextField>
+          ></TextField>*/}
           {isUserSearchActive ? (
             <div className={styles.dropDownMenu}>
               <DropDownInvitationsMenu
