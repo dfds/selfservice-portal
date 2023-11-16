@@ -302,7 +302,7 @@ export class SelfServiceApiClient {
   }
 
   async getMyCapabilitiesCosts() {
-    const response = await this.fetchWithToken(
+    const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-costs"),
     );
     if (!response) {
@@ -313,7 +313,7 @@ export class SelfServiceApiClient {
   }
 
   async getMyCapabilitiesResourceCounts() {
-    const response = await this.fetchWithToken(
+    const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-resources"),
     );
     if (!response) {
@@ -600,20 +600,26 @@ export class SelfServiceApiClient {
     }
   }
 
-  CheckCanBypassMembershipApproval(capabilityDefinition) {
+  checkCanBypassMembershipApproval(capabilityDefinition) {
     const link = capabilityDefinition?._links?.joinCapability;
-    if (!link || !link.allow.includes("POST")) {
+    if (!link) {
       throw Error(
         "Error! No join link found for capability " +
+          capabilityDefinition.capabilityId
+      );
+    }
+    if (!link.allow.includes("POST")){
+      throw Error(
+        "Error! user not allowed to join capability " +
           capabilityDefinition.capabilityId +
-          ", or user not allowed to join directly",
+          " directly",
       );
     }
     return link;
   }
 
-  async ByPassMembershipApproval(capabilitydefinition) {
-    const link = this.CheckCanBypassMembershipApproval(capabilitydefinition);
+  async BypassMembershipApproval(capabilitydefinition) {
+    const link = this.checkCanBypassMembershipApproval(capabilitydefinition);
     const response = await this.requestWithToken(link.href, "POST");
     if (!response.ok) {
       console.log(

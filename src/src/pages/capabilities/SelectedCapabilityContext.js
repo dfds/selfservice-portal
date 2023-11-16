@@ -50,7 +50,6 @@ function SelectedCapabilityProvider({ children }) {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  //const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded, setReloadRequired } =
@@ -342,8 +341,13 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
   }, [details]);
 
-  const ByPassMembershipApproval = async () => {
-    await selfServiceApiClient.ByPassMembershipApproval(details);
+  const BypassMembershipApproval = async () => {
+    try{
+      await selfServiceApiClient.BypassMembershipApproval(details);
+    }
+    catch (error) {
+      console.log(error);
+    }
     setReloadRequired(true);
   };
 
@@ -449,7 +453,7 @@ function SelectedCapabilityProvider({ children }) {
     updateDeletionStatus,
     showCosts,
     canBypassMembershipApplication,
-    ByPassMembershipApproval,
+    BypassMembershipApproval,
   };
 
   return (

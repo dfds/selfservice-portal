@@ -126,7 +126,7 @@ export default function Summary() {
     links,
     submitMembershipApplication,
     submitLeaveCapability,
-    ByPassMembershipApproval,
+    BypassMembershipApproval,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -159,7 +159,7 @@ export default function Summary() {
   };
 
   const handleBypassClicked = async () => {
-    await ByPassMembershipApproval();
+    await BypassMembershipApproval();
     setShowJoinDialog(false);
   };
 

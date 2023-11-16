@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
-import { set } from "date-fns";
 
 export function useCapabilities() {
-  // const { errorMessage } = useSelfServiceRequest();
-  // ^to remind that useSelfServiceRequest() also returns an errorMessage, we might want to not ignore it someday
   const { responseData: getAllResponse, sendRequest } = useSelfServiceRequest();
   const { responseData: addedCapability, sendRequest: addCapability } =
     useSelfServiceRequest();
