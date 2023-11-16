@@ -1,5 +1,5 @@
-describe('My First Test', () => {
-  it('Does not do much!', () => {
+describe('Testing that testing works', () => {
+  it('Truth is truth!', () => {
     expect(true).to.equal(true)
   })
 });
