@@ -40,7 +40,6 @@ function CapabilityDetailsPageContent() {
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     loadCapability(id);
   }, [id, loadCapability]);
 
