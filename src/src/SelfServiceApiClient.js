@@ -605,10 +605,10 @@ export class SelfServiceApiClient {
     if (!link) {
       throw Error(
         "Error! No join link found for capability " +
-          capabilityDefinition.capabilityId
+          capabilityDefinition.capabilityId,
       );
     }
-    if (!link.allow.includes("POST")){
+    if (!link.allow.includes("POST")) {
       throw Error(
         "Error! user not allowed to join capability " +
           capabilityDefinition.capabilityId +

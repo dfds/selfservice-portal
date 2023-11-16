@@ -342,10 +342,9 @@ function SelectedCapabilityProvider({ children }) {
   }, [details]);
 
   const BypassMembershipApproval = async () => {
-    try{
+    try {
       await selfServiceApiClient.BypassMembershipApproval(details);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
     setReloadRequired(true);
