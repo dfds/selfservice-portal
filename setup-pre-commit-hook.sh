@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Installing prettier"
-npm install --save-dev --save-exact prettier
+./setup-tooling.sh
 
 echo "Creating pre-commit hook"
 mkdir .git/hooks 2>&-

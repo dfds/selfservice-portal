@@ -22,6 +22,7 @@ export default function QuickLinks() {
     <div>
       <Link title={"AWS Login"} url="https://dfds.awsapps.com/start" />
       <Link title={"Azure DevOps"} url="https://dev.azure.com/dfds" />
+      <Link title={"Finout"} url="https://app.finout.io/" />
       <Link title={"GitHub"} url="https://github.com/dfds" />
       <Link title={"Snyk"} url="https://app.snyk.io/login/sso" />
       <Link title={"1Password"} url="https://dfds.1password.com/signin" />
