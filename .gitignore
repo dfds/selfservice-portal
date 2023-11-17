@@ -25,3 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .output
+
+# dangerous variables perchance
+src/cypress.env.json
