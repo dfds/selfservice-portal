@@ -19,6 +19,7 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
+import { SelfServiceApiClient } from "SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -40,6 +41,7 @@ function SelectedCapabilityProvider({ children }) {
     selfServiceApiClient,
     myCapabilities,
   } = useContext(AppContext);
+
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
 
@@ -50,10 +52,10 @@ function SelectedCapabilityProvider({ children }) {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  const [leaveCapability, setLeaveCapability] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { capability, isLoaded } = useCapabilityById(capabilityId);
+  const { capability, isLoaded, setReloadRequired } =
+    useCapabilityById(capabilityId);
   const { membersList, isLoadedMembers } = useCapabilityMembers(details);
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
@@ -264,6 +266,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
+    setReloadRequired(true);
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
@@ -349,6 +352,15 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
   }, [details]);
 
+  const BypassMembershipApproval = async () => {
+    try {
+      await selfServiceApiClient.BypassMembershipApproval(details);
+    } catch (error) {
+      console.log(error);
+    }
+    setReloadRequired(true);
+  };
+
   const updateDeletionStatus = (value) => {
     setPendingDeletion(value);
   };
@@ -378,6 +390,16 @@ function SelectedCapabilityProvider({ children }) {
   }, [isLoadedMembers, membersList]);
 
   useEffect(() => {
+    if (details) {
+      loadMembershipApplications();
+    } else {
+      setMembers([]);
+      setMembershipApplications([]);
+      setKafkaClusters([]);
+    }
+  }, [isLoadedMembersApplications, membersApplicationsList]);
+
+  useEffect(() => {
     if (isLoadedMembersApplications) {
       setMembershipApplications(membersApplicationsList);
     }
@@ -403,6 +425,8 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [awsAccountRequested]);
 
+  useEffect(() => {}, []);
+
   //--------------------------------------------------------------------
 
   const state = {
@@ -414,7 +438,6 @@ function SelectedCapabilityProvider({ children }) {
     links: details?._links,
     members,
     membershipApplications,
-    leaveCapability,
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
@@ -437,6 +460,7 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
+    BypassMembershipApproval,
     addNewInvitees,
     isInviteesCreated,
     setCapabilityJsonMetadata,
