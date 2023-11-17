@@ -63,8 +63,6 @@ function SelectedCapabilityProvider({ children }) {
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
-  const [canBypassMembershipApplication, setcanBypassMembershipApplication] =
-    useState(false);
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
       const promises = [];
@@ -92,13 +90,6 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     kafkaClusterTopicList();
   }, [clustersList]);
-
-  // load bypass rights:
-  const getBypassMembershipApplication = useCallback(async () => {
-    const result =
-      await selfServiceApiClient.CheckCanBypassMembershipApproval(details);
-    setcanBypassMembershipApplication(result);
-  }, [details]);
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -381,7 +372,6 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (details) {
       loadMembershipApplications();
-      getBypassMembershipApplication();
     } else {
       setMembers([]);
       setMembershipApplications([]);
@@ -451,7 +441,6 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
-    canBypassMembershipApplication,
     BypassMembershipApproval,
   };
 
