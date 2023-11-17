@@ -61,6 +61,7 @@ export function useCapabilities() {
 export function useCapabilityById(id) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [capability, setCapability] = useState(null);
+  const [reloadRequired, setReloadRequired] = useState(false);
   const { responseData, sendRequest } = useSelfServiceRequest({
     handler: (params) => {
       if (params.error) {
@@ -88,7 +89,7 @@ export function useCapabilityById(id) {
         urlSegments: ["capabilities", id],
       });
     }
-  }, [id, sendRequest]);
+  }, [id, sendRequest, reloadRequired]);
 
   useEffect(() => {
     if (responseData != null) {
@@ -96,7 +97,7 @@ export function useCapabilityById(id) {
       setIsLoaded(true);
       setReloadRequired(false);
     }
-  }, [responseData]);
+  }, [responseData, reloadRequired]);
 
   return {
     isLoaded,
@@ -108,7 +109,6 @@ export function useCapabilityById(id) {
 export function useCapabilityMembers(capabilityDefinition) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedMembers, setIsLoadedMembers] = useState(false);
-  const [reloadRequired, setReloadRequired] = useState(false);
   const [membersList, setMembersList] = useState([]);
 
   const membersLink = capabilityDefinition?._links?.members;

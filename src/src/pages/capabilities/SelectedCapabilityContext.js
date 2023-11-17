@@ -18,7 +18,6 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
-import { SelfServiceApiClient } from "SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -34,12 +33,8 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const {
-    shouldAutoReloadTopics,
-    setShouldAutoReloadTopics,
-    selfServiceApiClient,
-    myCapabilities,
-  } = useContext(AppContext);
+  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
+    useContext(AppContext);
 
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
@@ -265,7 +260,7 @@ function SelectedCapabilityProvider({ children }) {
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
     setReloadRequired(true);
-  }, [details, selfServiceApiClient]);
+  }, [details, selfServiceApiClient, setReloadRequired]);
 
   const requestAwsAccount = useCallback(async () => {
     await selfServiceApiClient.requestAwsAccount(details);
@@ -395,7 +390,12 @@ function SelectedCapabilityProvider({ children }) {
       setMembershipApplications([]);
       setKafkaClusters([]);
     }
-  }, [isLoadedMembersApplications, membersApplicationsList]);
+  }, [
+    isLoadedMembersApplications,
+    membersApplicationsList,
+    details,
+    loadMembershipApplications,
+  ]);
 
   useEffect(() => {
     if (isLoadedMembersApplications) {
