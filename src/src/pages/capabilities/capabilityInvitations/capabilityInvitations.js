@@ -9,17 +9,21 @@ import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { useCapabilityInvitees } from "hooks/Capabilities";
 import { Invitations } from "../invitations";
 
-export function CapabilityInvitations({ addNewInvitees, inProgress}) {
+export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
 
-    const handleAddInvitationClicked = () => {
-        addNewInvitees(invitees);
-      };
-  
+  const handleAddInvitationClicked = () => {
+    addNewInvitees(invitees);
+  };
+
   return (
     <>
       <PageSection headline="Invite members">
-        <Invitations addNewInvitees={addNewInvitees} invitees={invitees} setInvitees={setInvitees} />
+        <Invitations
+          addNewInvitees={addNewInvitees}
+          invitees={invitees}
+          setInvitees={setInvitees}
+        />
         <ButtonStack align="right">
           <Button
             size="small"

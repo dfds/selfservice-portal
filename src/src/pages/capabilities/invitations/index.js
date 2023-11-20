@@ -8,79 +8,78 @@ import styles from "./../capabilities.module.css";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { useCapabilityInvitees } from "hooks/Capabilities";
 
+export function Invitations({ addNewInvitees, invitees, setInvitees }) {
+  const [isUserSearchActive, setIsUserSearchActive] = useState(false);
+  const [adUsers, setadUsers] = useState([]);
+  const [invitationsInput, setInvitationsInput] = useState("");
+  //const [invitees, setInvitees] = useState([]);
+  const [userInput, setUserInput] = useState("");
 
-export function Invitations({addNewInvitees, invitees, setInvitees}) {
-    const [isUserSearchActive, setIsUserSearchActive] = useState(false);
-    const [adUsers, setadUsers] = useState([]);
-    const [invitationsInput, setInvitationsInput] = useState("");
-    //const [invitees, setInvitees] = useState([]);
-    const [userInput, setUserInput] = useState("");
+  const userExists = (user) => {
+    return invitees.some((e) => e === user);
+  };
 
-    const userExists = (user) => {
-        return invitees.some((e) => e === user);
-    };
-
-    useEffect(() => {
-        if (invitationsInput !== "" && !userExists(invitationsInput)) {
-            setInvitees((prev) => [...prev, invitationsInput]);
-        }
-        setUserInput("");
-    }, [invitationsInput]);
-
-    async function changeInvitation(e) {
-        e.preventDefault();
-        const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
-        setIsUserSearchActive(true);
-        const adUsers = e?.target?.value.match(regex)[0];
-        const value = e?.target?.value;
-        const newValue = value || "";
-        setUserInput(newValue);
-        const adUserstest = await getUsers(adUsers);
-        setadUsers(adUserstest.value);
+  useEffect(() => {
+    if (invitationsInput !== "" && !userExists(invitationsInput)) {
+      setInvitees((prev) => [...prev, invitationsInput]);
     }
+    setUserInput("");
+  }, [invitationsInput]);
 
-    const OnKeyEnter = (e) => {
-        if (e.key === "Enter") {
-            if (!userExists(userInput)) {
-                setInvitees((prev) => [...prev, userInput]);
-                setUserInput("");
-            }
-        }
-    };
+  async function changeInvitation(e) {
+    e.preventDefault();
+    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
+    setIsUserSearchActive(true);
+    const adUsers = e?.target?.value.match(regex)[0];
+    const value = e?.target?.value;
+    const newValue = value || "";
+    setUserInput(newValue);
+    const adUserstest = await getUsers(adUsers);
+    setadUsers(adUserstest.value);
+  }
 
-    const handleAddInvitationClicked = () => {
-        addNewInvitees(invitees);
-    };
-    return (
-        <>
-            <TextField
-                placeholder="Enter user name"
-                value={userInput}
-                icon={<Search />}
-                onChange={(e) => {
-                    changeInvitation(e);
-                }}
-                onKeyDown={OnKeyEnter}
-            ></TextField>
+  const OnKeyEnter = (e) => {
+    if (e.key === "Enter") {
+      if (!userExists(userInput)) {
+        setInvitees((prev) => [...prev, userInput]);
+        setUserInput("");
+      }
+    }
+  };
 
-            {isUserSearchActive ? (
-                <div className={styles.dropDownMenu}>
-                    <DropDownInvitationsMenu
-                        items={adUsers}
-                        setIsUserSearchActive={setIsUserSearchActive}
-                        setInvitationsInput={setInvitationsInput}
-                    />
-                </div>
-            ) : (
-                <></>
-            )}
-            <div className={styles.invitees_container}>
-                {(invitees || []).map((invitee) => (
-                    <div className={styles.invitee_container} key={invitee}>
-                        {invitee}
-                    </div>
-                ))}
-            </div>
-        </>
-    );
+  const handleAddInvitationClicked = () => {
+    addNewInvitees(invitees);
+  };
+  return (
+    <>
+      <TextField
+        placeholder="Enter user name"
+        value={userInput}
+        icon={<Search />}
+        onChange={(e) => {
+          changeInvitation(e);
+        }}
+        onKeyDown={OnKeyEnter}
+      ></TextField>
+
+      {isUserSearchActive ? (
+        <div className={styles.dropDownMenu}>
+          <DropDownInvitationsMenu
+            items={adUsers}
+            setIsUserSearchActive={setIsUserSearchActive}
+            setInvitationsInput={setInvitationsInput}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
+      <div className={styles.invitees_container}>
+        {(invitees || []).map((invitee) => (
+          <div className={styles.invitee_container} key={invitee}>
+            {invitee}
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }
