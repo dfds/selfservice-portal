@@ -72,10 +72,10 @@ function CapabilityDetailsPageContent() {
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
-        {/*<Invitations
+        <Invitations
           addNewInvitees={addNewInvitees}
           inProgress={isInviteesCreated}
-        />*/}
+        />
 
         <MembershipApplications />
 

@@ -15,8 +15,12 @@ export function Invitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
   const [userInput, setUserInput] = useState("");
 
+  const userExists = (user) => {
+    return invitees.some(e => e === user)
+  }
+
   useEffect(() => {
-    if (invitationsInput !== "") {
+    if (invitationsInput !== "" && !userExists(invitationsInput)) {
       setInvitees((prev) => [...prev, invitationsInput]);
     }
     setUserInput("");
@@ -36,8 +40,10 @@ export function Invitations({ addNewInvitees, inProgress }) {
 
   const OnKeyEnter = (e) => {
     if (e.key === "Enter") {
-      setInvitees((prev) => [...prev, userInput]);
-      setUserInput("");
+      if (!userExists(userInput)) {
+        setInvitees((prev) => [...prev, userInput]);
+        setUserInput("");
+      }      
     }
   };
 

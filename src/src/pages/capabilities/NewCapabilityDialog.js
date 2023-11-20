@@ -34,7 +34,7 @@ export default function NewCapabilityDialog({
   const [invitees, setInvitees] = useState([]);
 
   useEffect(() => {
-    if (invitationsInput !== "") {
+    if (invitationsInput !== "" && !userExists(invitationsInput)) {
       setInvitees((prev) => [...prev, invitationsInput]);
     }
     setFormData((prev) => ({
@@ -47,6 +47,10 @@ export default function NewCapabilityDialog({
     if (invitees.length !== 0) {
     }
   }, [invitees]);
+
+  const userExists = (user) => {
+    return invitees.some(e => e === user)
+  }
 
   const changeName = (e) => {
     e.preventDefault();
@@ -107,11 +111,13 @@ export default function NewCapabilityDialog({
       if (Array.isArray(formData.invitations)) {
         return;
       } else {
-        setInvitees((prev) => [...prev, formData.invitations]);
-        setFormData((prev) => ({
-          ...prev,
-          ...{ invitations: emptyValues.invitations },
+        if (!userExists(formData.invitations)){
+          setInvitees((prev) => [...prev, formData.invitations]);
+          setFormData((prev) => ({
+            ...prev,
+            ...{ invitations: emptyValues.invitations },
         }));
+        }
       }
     }
   };
@@ -153,7 +159,7 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          {/*<TextField
+          <TextField
             label="Invite members"
             placeholder="Enter users emails"
             icon={<Search />}
@@ -181,7 +187,7 @@ export default function NewCapabilityDialog({
                 {invitee}
               </div>
             ))}
-          </div>*/}
+          </div>
 
           <ButtonStack>
             <Button
