@@ -2,7 +2,7 @@ const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:8000',
+    baseUrl: 'http://localhost:3000',
     env: {
       // Override through 'cypress.env.json'
       AUTH_TENANT_ID: 'what-a-tenant',

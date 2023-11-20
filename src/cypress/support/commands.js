@@ -13,10 +13,8 @@ Cypress.Commands.add('login', () => {
     body: {
       client_id: Cypress.env('AUTH_CLIENT_ID'),
       client_secret: Cypress.env('AUTH_CLIENT_SECRET'),
-      scope: 'openid profile email',
-      username: Cypress.env('AUTH_USERNAME'),
-      password: Cypress.env('AUTH_PASSWORD'),
-      grant_type: 'password',
+      scope: 'api://3007f683-c3c2-4bf9-b6bd-2af03fb94f6d/.default',
+      grant_type: 'client_credentials',
     },
   };
 
