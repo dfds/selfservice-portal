@@ -1,11 +1,12 @@
-describe('Capability page', () => {
+describe("Capability page", () => {
   beforeEach(() => {
-    cy.login(); // login to azure 
-    cy.visit('/');
+    console.log("LOGGING IN...");
+    cy.login(); // login to azure
+    console.log("GREAT SUCCESS");
+    cy.visit("/");
   });
-  
-  it('Loads correctly', () => {
-    cy.contains('Congratulations')
-  })
-});
 
+  it("Loads correctly", () => {
+    cy.contains("Congratulations");
+  });
+});
