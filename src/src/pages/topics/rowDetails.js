@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import AppContext from "../../AppContext";
 import { Spinner } from "@dfds-ui/react-components";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import { Text } from "@dfds-ui/typography";
-import { Card, CardContent, IconButton } from "@dfds-ui/react-components";
+import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 
 export function RowDetails(data) {
@@ -14,16 +14,15 @@ export function RowDetails(data) {
   const { selfServiceApiClient } = useContext(AppContext);
 
   useEffect(() => {
+    const fetchData = async (topic) => {
+      setIsLoadingContracts(true);
+      const result = await selfServiceApiClient.getMessageContracts(topic.data);
+      result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+      setContracts(result);
+      setIsLoadingContracts(false);
+    };
     fetchData(data);
-  }, []);
-
-  async function fetchData(topic) {
-    setIsLoadingContracts(true);
-    const result = await selfServiceApiClient.getMessageContracts(topic.data);
-    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
-    setContracts(result);
-    setIsLoadingContracts(false);
-  }
+  }, [data, selfServiceApiClient]);
 
   const handleMessageHeaderClicked = (messageId) => {
     setSelectedMessageContractId((prev) => {

@@ -59,7 +59,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app"
+      "react-app",
+      "plugin:react-hooks/recommended"
     ]
   },
   "browserslist": {
@@ -77,7 +78,8 @@
   "devDependencies": {
     "@azure/msal-browser": "^2.32.2",
     "@azure/msal-react": "^1.5.2",
-    "prettier": "3.0.1",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "react-app": "^1.1.2",
     "react-scripts": "^5.0.1"
   }
 }

@@ -70,6 +70,11 @@ pre-commit-hook:
 format: ## Runs prettier
 	@npx prettier . --write
 
+.PHONY: stylecheck
+stylecheck: ## checks formatting and linting
+	@npx prettier src/ --check
+	@npx eslint src/src/ --no-fix --max-warnings 0
+
 .PHONY: help
 help: ## Shows this list
 	@grep -F -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | grep -F -v grep -F | sed -e 's/\\$$//' | sed -e 's/##//'

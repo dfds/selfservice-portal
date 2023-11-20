@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
@@ -43,8 +43,8 @@ export default function NewRepositoryDialog({ onClose }) {
     !formData.name.match(/^\s*$/g) &&
     !formData.name.match(/(_|-|\/)$/g) &&
     !formData.name.match(/^(_|-|\/)/g) &&
-    !formData.name.match(/[-_\/\.\s]{2,}/g) &&
-    !formData.name.match(/[^a-zA-Z0-9\/\-_ ]/g);
+    !formData.name.match(/[-_/.\s]{2,}/g) &&
+    !formData.name.match(/[^a-zA-Z0-9/\-_ ]/g);
 
   let nameErrorMessage = "";
   if (formData.name.length > 0 && !isNameValid) {

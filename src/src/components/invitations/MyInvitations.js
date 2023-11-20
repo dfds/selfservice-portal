@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
@@ -14,14 +14,10 @@ export default function MyInvitations({ invitationsLink }) {
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadInvitations = () => {
-    sendRequest({ urlSegments: [invitationsLink] });
-  };
-
   useEffect(() => {
     setIsLoading(true);
-    loadInvitations();
-  }, [acceptResponse, declineResponse]);
+    sendRequest({ urlSegments: [invitationsLink] });
+  }, [acceptResponse, declineResponse, sendRequest, invitationsLink]);
 
   useEffect(() => {
     const invitations = responseData?.items || [];
@@ -97,7 +93,7 @@ export default function MyInvitations({ invitationsLink }) {
         },
       },
     ],
-    [],
+    [acceptRequest, declineRequest],
   );
 
   return (

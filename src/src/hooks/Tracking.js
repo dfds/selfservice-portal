@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import TrackingContext from "TrackingContext";
 
 export function useTracking(opts) {
