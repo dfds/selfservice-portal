@@ -16,8 +16,8 @@ export function Invitations({ addNewInvitees, inProgress }) {
   const [userInput, setUserInput] = useState("");
 
   const userExists = (user) => {
-    return invitees.some(e => e === user)
-  }
+    return invitees.some((e) => e === user);
+  };
 
   useEffect(() => {
     if (invitationsInput !== "" && !userExists(invitationsInput)) {
@@ -43,7 +43,7 @@ export function Invitations({ addNewInvitees, inProgress }) {
       if (!userExists(userInput)) {
         setInvitees((prev) => [...prev, userInput]);
         setUserInput("");
-      }      
+      }
     }
   };
 

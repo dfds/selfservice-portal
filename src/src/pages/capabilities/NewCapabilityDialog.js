@@ -49,8 +49,8 @@ export default function NewCapabilityDialog({
   }, [invitees]);
 
   const userExists = (user) => {
-    return invitees.some(e => e === user)
-  }
+    return invitees.some((e) => e === user);
+  };
 
   const changeName = (e) => {
     e.preventDefault();
@@ -111,12 +111,12 @@ export default function NewCapabilityDialog({
       if (Array.isArray(formData.invitations)) {
         return;
       } else {
-        if (!userExists(formData.invitations)){
+        if (!userExists(formData.invitations)) {
           setInvitees((prev) => [...prev, formData.invitations]);
           setFormData((prev) => ({
             ...prev,
             ...{ invitations: emptyValues.invitations },
-        }));
+          }));
         }
       }
     }
