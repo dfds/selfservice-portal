@@ -75,6 +75,7 @@ function CapabilityDetailsPageContent() {
         <CapabilityInvitations
           addNewInvitees={addNewInvitees}
           inProgress={isInviteesCreated}
+          invitees={[]}
         />
 
         <MembershipApplications />
