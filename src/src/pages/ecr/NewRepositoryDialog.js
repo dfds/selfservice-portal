@@ -15,7 +15,7 @@ export default function NewRepositoryDialog({ onClose }) {
   };
 
   const emptyValues = {
-    name: "",
+    repositoryName: "",
     description: "",
   };
 
