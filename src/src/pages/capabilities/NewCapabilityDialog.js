@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
+import { getUsers } from "GraphApiClient";
+import DropDownInvitationsMenu from "components/DropDownMenu";
+import { Search } from "@dfds-ui/icons/system";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -25,6 +28,25 @@ export default function NewCapabilityDialog({
   };
 
   const [formData, setFormData] = useState(emptyValues);
+  const [isUserSearchActive, setIsUserSearchActive] = useState(false);
+  const [adUsers, setadUsers] = useState([]);
+  const [invitationsInput, setInvitationsInput] = useState("");
+  const [invitees, setInvitees] = useState([]);
+
+  useEffect(() => {
+    if (invitationsInput !== "") {
+      setInvitees((prev) => [...prev, invitationsInput]);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      ...{ invitations: emptyValues.invitations },
+    }));
+  }, [invitationsInput]);
+
+  useEffect(() => {
+    if (invitees.length !== 0) {
+    }
+  }, [invitees]);
 
   const changeName = (e) => {
     e.preventDefault();
@@ -40,12 +62,24 @@ export default function NewCapabilityDialog({
     setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
   };
 
+  async function changeInvitation(e) {
+    e.preventDefault();
+    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
+    setIsUserSearchActive(true);
+    const adUsers = e?.target?.value.match(regex)[0];
+    const value = e?.target?.value;
+    const newValue = value || emptyValues.invitations;
+    setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
+    const adUserstest = await getUsers(adUsers);
+    setadUsers(adUserstest.value);
+  }
+
   const isNameValid =
     formData.name !== "" &&
     !formData.name.match(/^\s*$/g) &&
     !formData.name.match(/(_|-)$/g) &&
     !formData.name.match(/^(_|-)/g) &&
-    !formData.name.match(/[-_.]{2,}/g) &&
+    !formData.name.match(/[-_\.]{2,}/g) &&
     !formData.name.match(/[^a-zA-Z0-9\-_]/g);
 
   let nameErrorMessage = "";
@@ -64,7 +98,21 @@ export default function NewCapabilityDialog({
 
   const handleAddCapabilityClicked = () => {
     if (onAddCapabilityClicked) {
-      onAddCapabilityClicked({ ...formData });
+      onAddCapabilityClicked({ ...formData, invitations: invitees });
+    }
+  };
+
+  const OnKeyEnter = (e) => {
+    if (e.key === "Enter") {
+      if (Array.isArray(formData.invitations)) {
+        return;
+      } else {
+        setInvitees((prev) => [...prev, formData.invitations]);
+        setFormData((prev) => ({
+          ...prev,
+          ...{ invitations: emptyValues.invitations },
+        }));
+      }
     }
   };
 
@@ -104,6 +152,36 @@ export default function NewCapabilityDialog({
             value={formData.description}
             onChange={changeDescription}
           ></TextField>
+
+          {/*<TextField
+            label="Invite members"
+            placeholder="Enter users emails"
+            icon={<Search />}
+            required
+            value={formData.invitations}
+            onChange={(e) => {
+              changeInvitation(e);
+            }}
+            onKeyDown={OnKeyEnter}
+          ></TextField>
+          {isUserSearchActive ? (
+            <div className={styles.dropDownMenu}>
+              <DropDownInvitationsMenu
+                items={adUsers}
+                setIsUserSearchActive={setIsUserSearchActive}
+                setInvitationsInput={setInvitationsInput}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
+          <div className={styles.invitees_container}>
+            {(invitees || []).map((invitee) => (
+              <div className={styles.invitee_container} key={invitee}>
+                {invitee}
+              </div>
+            ))}
+          </div>*/}
 
           <ButtonStack>
             <Button

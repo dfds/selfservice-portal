@@ -4,7 +4,15 @@ import AppContext from "AppContext";
 import styles from "./AwsCount.module.css";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useState } from "react";
-import { Text } from "@dfds-ui/react-components";
+import {
+  Table,
+  TableBody,
+  TableDataCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  Text,
+} from "@dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
 
 export function InlineAwsCountSummary({ data }) {

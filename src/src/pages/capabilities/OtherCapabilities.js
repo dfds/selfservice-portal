@@ -6,12 +6,17 @@ import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "hooks/Capabilities";
+import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
+  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const hasSearchInput = searchInput.replace(" ", "") !== "";
 
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
@@ -30,10 +35,34 @@ export default function OtherCapabilities() {
     setOtherCapabilities(filteredList);
   }, [capabilities, myCapabilities, appStatus]);
 
+  useEffect(() => {
+    setSearchResult(otherCapabilities);
+  }, [otherCapabilities]);
+
+  useEffect(() => {
+    let result = otherCapabilities || [];
+
+    if (hasSearchInput) {
+      result = result.filter((c) => {
+        const input = searchInput.toLocaleLowerCase();
+        const isMatch =
+          c.id.toLocaleLowerCase().includes(input) ||
+          c.name.toLocaleLowerCase().includes(input) ||
+          c.description.toLocaleLowerCase().includes(input);
+        return isMatch;
+      });
+    }
+
+    setSearchResult(result);
+  }, [searchInput, otherCapabilities]);
+
+  const items = searchResult;
   const isLoading = !isLoaded;
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
+
+  const rowClass = (status) => (status === "Deleted" ? styles.deletedRow : "");
 
   const columns = useMemo(
     () => [
@@ -80,9 +109,7 @@ export default function OtherCapabilities() {
   return (
     <>
       <PageSection
-        headline={`Other Capabilities ${
-          isLoading ? "" : `(${otherCapabilities.length})`
-        }`}
+        headline={`Other Capabilities ${isLoading ? "" : `(${items.length})`}`}
       >
         {isLoading && <Spinner />}
 

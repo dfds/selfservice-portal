@@ -20,7 +20,7 @@ export default function EditTopicDialog({
     if (topicCopy.id !== originalTopic.id) {
       setTopicCopy(originalTopic);
     }
-  }, [originalTopic, topicCopy.id]);
+  }, [originalTopic]);
 
   useEffect(() => {
     setNewDescription(topicCopy.description);

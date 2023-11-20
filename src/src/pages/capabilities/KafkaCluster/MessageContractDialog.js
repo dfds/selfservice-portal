@@ -19,8 +19,8 @@ function getValidationErrorForType(value) {
   const isNameValid =
     value !== "" &&
     !value.match(/^\s*$/g) &&
-    !value.match(/([_-])$/g) &&
-    !value.match(/^([_-])/g) &&
+    !value.match(/([_\-])$/g) &&
+    !value.match(/^([_\-])/g) &&
     !value.match(/[-_.]{2,}/g) &&
     !value.match(/[^a-zA-Z0-9\-_]/g);
 
@@ -88,6 +88,22 @@ function ensureHasEnvelope(message, type) {
       };
 
       newValue = JSON.stringify(envelope, null, 2);
+    }
+  } catch {}
+  return newValue;
+}
+
+function removeEnvelope(message) {
+  let newValue = message;
+  try {
+    const data = JSON.parse(newValue);
+    const hasEnvelope =
+      data.hasOwnProperty("messageId") &&
+      data.hasOwnProperty("type") &&
+      data.hasOwnProperty("data");
+
+    if (hasEnvelope) {
+      newValue = JSON.stringify(data.data, null, 2);
     }
   } catch {}
   return newValue;

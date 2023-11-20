@@ -42,20 +42,20 @@ export default function Toast({ message, details }) {
   }, []);
 
   useEffect(() => {
-    if (prevOpacity !== undefined && opacity === 0) {
+    if (prevOpacity != undefined && opacity === 0) {
       setTimeout(() => {
         setHide(true);
       }, 300); // 300ms is the duration of the fade-out animation
     }
-  }, [opacity, prevOpacity]);
+  }, [opacity]);
 
   useEffect(() => {
-    if (prevHide !== undefined && hide === true) {
+    if (prevHide != undefined && hide === true) {
       setTimeout(() => {
         setShowToast(false);
       }, 2000); // 300ms is the duration of the squeeze animation
     }
-  }, [hide, prevHide]);
+  }, [hide]);
 
   return (
     <>

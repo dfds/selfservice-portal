@@ -15,7 +15,7 @@ export function useECRRepositories() {
       method: "GET",
       payload: null,
     });
-  }, [addResponse, loadRepositories]);
+  }, [addResponse]);
 
   useEffect(() => {
     if (loadResponse != null) {

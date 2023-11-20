@@ -33,7 +33,7 @@ export function useCapabilities() {
         return list;
       });
     }
-  }, [addedCapability, addCapability]);
+  }, [addedCapability]);
 
   useEffect(() => {
     sendRequest({
@@ -41,7 +41,7 @@ export function useCapabilities() {
       method: "GET",
       payload: null,
     });
-  }, [sendRequest]);
+  }, []);
 
   useEffect(() => {
     const list = getAllResponse?.items || [];
@@ -61,27 +61,28 @@ export function useCapabilities() {
 export function useCapabilityById(id) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [capability, setCapability] = useState(null);
-  const [reloadRequired, setReloadRequired] = useState(false);
-  const { responseData, sendRequest } = useSelfServiceRequest({
-    handler: (params) => {
-      if (params.error) {
-        params.showError(params.error.message);
-        return;
-      }
-
-      if (params.httpResponse) {
-        if (params.httpResponse.status === 404) {
-          params.showError("Capability not found");
+  const [reloadRequired, setReloadRequired] = useState(true);
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest({
+      handler: (params) => {
+        if (params.error) {
+          params.showError(params.error.message);
           return;
         }
 
-        params.showError(params.httpResponse.statusText);
-        return;
-      }
+        if (params.httpResponse) {
+          if (params.httpResponse.status === 404) {
+            params.showError("Capability not found");
+            return;
+          }
 
-      params.showError(params.msg);
-    },
-  });
+          params.showError(params.httpResponse.statusText);
+          return;
+        }
+
+        params.showError(params.msg);
+      },
+    });
 
   useEffect(() => {
     if (id != null && reloadRequired) {
@@ -89,7 +90,7 @@ export function useCapabilityById(id) {
         urlSegments: ["capabilities", id],
       });
     }
-  }, [id, sendRequest, reloadRequired]);
+  }, [id, reloadRequired]);
 
   useEffect(() => {
     if (responseData != null) {
@@ -97,7 +98,7 @@ export function useCapabilityById(id) {
       setIsLoaded(true);
       setReloadRequired(false);
     }
-  }, [responseData, reloadRequired]);
+  }, [responseData]);
 
   return {
     isLoaded,
@@ -107,8 +108,10 @@ export function useCapabilityById(id) {
 }
 
 export function useCapabilityMembers(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedMembers, setIsLoadedMembers] = useState(false);
+  const [reloadRequired, setReloadRequired] = useState(false);
   const [membersList, setMembersList] = useState([]);
 
   const membersLink = capabilityDefinition?._links?.members;
@@ -119,7 +122,7 @@ export function useCapabilityMembers(capabilityDefinition) {
         urlSegments: [membersLink.href],
       });
     }
-  }, [membersLink, sendRequest]);
+  }, [membersLink, reloadRequired]);
 
   useEffect(() => {
     const updateMembers = async (members) => {
@@ -163,7 +166,8 @@ export function useCapabilityMembers(capabilityDefinition) {
 }
 
 export function useKafkaClustersAccessList(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedClusters, setIsLoadedClusters] = useState(false);
   const [clustersList, setClustersList] = useState([]);
 
@@ -175,7 +179,7 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
         urlSegments: [clustersLink.href],
       });
     }
-  }, [clustersLink, sendRequest]);
+  }, [clustersLink]);
 
   useEffect(() => {
     if (responseData?.items.length >= 0) {
@@ -196,7 +200,8 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
 }
 
 export function useCapabilityAwsAccount(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedAccount, setIsLoadedAccount] = useState(false);
   const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
@@ -209,7 +214,7 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
         urlSegments: [link.href],
       });
     }
-  }, [link, sendRequest, shouldGet]);
+  }, [link]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -230,7 +235,8 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 }
 
 export function useCapabilityMembersApplications(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedMembersApplications, setIsLoadedMembersApplications] =
     useState(false);
   const [membersApplicationsList, setMembersApplicationsList] = useState([]);
@@ -243,7 +249,7 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
         urlSegments: [link.href],
       });
     }
-  }, [link, sendRequest]);
+  }, [link]);
 
   useEffect(() => {
     const updateMembers = async (members) => {
@@ -305,7 +311,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
         method: "GET",
       });
     }
-  }, [link, sendGetJsonMetadataRequest]);
+  }, [link]);
 
   useEffect(() => {
     if (responseData !== null) {

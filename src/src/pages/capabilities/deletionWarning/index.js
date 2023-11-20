@@ -3,6 +3,7 @@ import { CardContent, ButtonStack } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import styles from "./warning.css";
 import { css } from "@emotion/react";
 
 export default function DeletionWarning() {
