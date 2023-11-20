@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 
 export function useProfile(user) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
   const [profileInfo, setProfileInfo] = useState(null);
 
@@ -10,7 +11,7 @@ export function useProfile(user) {
     sendRequest({
       urlSegments: ["me"],
     });
-  }, [user, sendRequest]);
+  }, [user]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -31,7 +32,8 @@ export function useProfile(user) {
 }
 
 export function useStats(user) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedStats, setIsLoadedStats] = useState(false);
   const [statsInfo, setStatsInfo] = useState(null);
 
@@ -39,7 +41,7 @@ export function useStats(user) {
     sendRequest({
       urlSegments: ["stats"],
     });
-  }, [user, sendRequest]);
+  }, [user]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -60,7 +62,8 @@ export function useStats(user) {
 }
 
 export function useTopVisitors(myProfileDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
+  const { inProgress, responseData, setErrorOptions, sendRequest } =
+    useSelfServiceRequest();
   const [isLoadedVisitors, setIsLoadedVisitors] = useState(false);
   const [visitorsInfo, setVisitorsInfo] = useState(null);
 
@@ -72,7 +75,7 @@ export function useTopVisitors(myProfileDefinition) {
         urlSegments: [visitorsLink.href],
       });
     }
-  }, [visitorsLink, sendRequest]);
+  }, [visitorsLink]);
 
   useEffect(() => {
     if (responseData?.items.length >= 0) {

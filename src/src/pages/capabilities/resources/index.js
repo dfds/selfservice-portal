@@ -36,7 +36,7 @@ export default function Resources({ capabilityId }) {
 
             <ResourceInfoBadges />
 
-            {awsAccount && awsAccount.status === "Completed" && (
+            {awsAccount && awsAccount.status == "Completed" && (
               <>
                 <br />
 
@@ -82,11 +82,7 @@ export default function Resources({ capabilityId }) {
         <Text>
           1. Sign into the <i>dfds-logs</i> account using the{" "}
           <i>CapabilityLog</i> role at{" "}
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href="https://dfds.awsapps.com/start/"
-          >
+          <a target="_blank" href="https://dfds.awsapps.com/start/">
             https://dfds.awsapps.com/start/
           </a>
           <br />
@@ -96,7 +92,6 @@ export default function Resources({ capabilityId }) {
           or{" "}
           <a
             target="_blank"
-            rel="noreferrer"
             href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
           >
             this link
@@ -109,7 +104,6 @@ export default function Resources({ capabilityId }) {
           queries, please check our wiki article at{" "}
           <a
             target="_blank"
-            rel="noreferrer"
             href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
           >
             https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch

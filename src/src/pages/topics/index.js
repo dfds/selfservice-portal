@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Column,
@@ -8,45 +9,123 @@ import {
   CardContent,
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
+import { TextField } from "@dfds-ui/react-components";
+import { Search } from "@dfds-ui/icons/system";
+import { SearchView } from "./SearchView";
+import { Checkbox } from "@dfds-ui/forms/checkbox";
 import styles from "./topic.module.css";
 import { Spinner } from "@dfds-ui/react-components";
 import { H1 } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
+import TopicsContext from "pages/topics/TopicsContext";
 import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { useTopics } from "hooks/Topics";
 import { MaterialReactTable } from "material-react-table";
 import { Link } from "react-router-dom";
+import Message from "../capabilities/KafkaCluster/MessageContract";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import {
+  ChevronRight,
+  StatusAlert,
+  ChevronDown,
+  ChevronUp,
+} from "@dfds-ui/icons/system";
 
 function Topics() {
+  const { selectedKafkaTopic, toggleSelectedKafkaTopic } =
+    useContext(TopicsContext);
   const { selfServiceApiClient } = useContext(AppContext);
   const { topicsList, isLoaded } = useTopics();
 
   const [topics, setTopics] = useState([]);
+  const [filteredData, setfilteredData] = useState([]);
+  const navigate = useNavigate();
+  const [inputText, setInputText] = useState("");
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
+  const [clusters, setClusters] = useState([]);
+  const colors = ["#ED8800", "#4caf50", "#49a2df", "#F1A7AE", "purple"];
   const [clustersMap, setClustersMap] = useState(new Map());
+  const updateClustersMap = (k, v) => {
+    setClustersMap(new Map(clustersMap.set(k, v)));
+  };
+  const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+  const [contracts, setContracts] = useState([]);
+  const [selectedMessageContractId, setSelectedMessageContractId] =
+    useState(null);
+
+  const handleTopicClicked = (topicId) => {
+    toggleSelectedKafkaTopic(topicId);
+  };
+
+  const linkStyle = {
+    color: "#1874bc",
+    textDecoration: "none",
+  };
+
+  const handleMessageHeaderClicked = (messageId) => {
+    setSelectedMessageContractId((prev) => {
+      if (messageId === prev) {
+        return null; // deselect already selected (toggling)
+      }
+
+      return messageId;
+    });
+  };
+
+  const fetchKafkaclusters = async () => {
+    const result = await selfServiceApiClient.getKafkaClusters();
+    const clustersWithColor = result.map((cluster, index) => {
+      const color = colors[index % colors.length];
+      updateClustersMap(cluster.id, true);
+      return { ...cluster, color };
+    });
+
+    setClusters(clustersWithColor);
+    return clustersWithColor;
+  };
+
+  let inputHandler = (e) => {
+    var lowerCase = e.target.value.toLowerCase();
+    setInputText(lowerCase);
+  };
+
+  let filter = (e) => {
+    var lowerCase = e.target.value.toLowerCase();
+    const highlightedData = topics.map((topic) => {
+      const copy = { ...topic };
+      const nameAndDescription = `${copy.name || ""} ${copy.description}`;
+      const index = nameAndDescription.toLocaleLowerCase().indexOf(lowerCase);
+      if (index > -1) {
+        copy.highlight = lowerCase;
+      }
+
+      return copy;
+    });
+
+    let finalResult = highlightedData.filter((el) => el.highlight != null);
+
+    let filteredResult = [];
+
+    [...clustersMap.keys()].forEach((k) => {
+      let clusterState = clustersMap.get(k);
+      if (clusterState) {
+        filteredResult = filteredResult.concat(
+          finalResult.filter((el) => el.kafkaClusterId === k),
+        );
+      }
+
+      filteredResult.sort((a, b) => a.name.localeCompare(b.name));
+    });
+
+    setfilteredData(filteredResult);
+  };
+
+  const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
   useEffect(() => {
-    const updateClustersMap = (k, v) => {
-      setClustersMap(new Map(clustersMap.set(k, v)));
-    };
-
-    const colors = ["#ED8800", "#4caf50", "#49a2df", "#F1A7AE", "purple"];
-
-    const fetchKafkaclusters = async () => {
-      const result = await selfServiceApiClient.getKafkaClusters();
-      const clustersWithColor = result.map((cluster, index) => {
-        const color = colors[index % colors.length];
-        updateClustersMap(cluster.id, true);
-        return { ...cluster, color };
-      });
-
-      return clustersWithColor;
-    };
     if (isLoaded) {
       fetchKafkaclusters().then((c) => {
         const finalTopics = topicsList.map((topic) => {
@@ -59,82 +138,96 @@ function Topics() {
         });
 
         setTopics(finalTopics);
+        setfilteredData(finalTopics);
         setIsLoadingTopics(false);
       });
     }
-  }, [isLoaded, topicsList, selfServiceApiClient, setClustersMap, clustersMap]);
+  }, [isLoaded, topicsList]);
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorFn: (row) => row.name,
-        header: "name",
-        id: "name",
-        size: "50",
-        enableColumnFilterModes: true,
-        disableFilters: false,
-        enableGlobalFilter: true,
-        enableFilterMatchHighlighting: true,
+  useEffect(() => {
+    filter({
+      target: {
+        value: inputText,
+      },
+    });
+  }, [clustersMap, inputText]);
 
-        Cell: ({ cell, renderedCellValue }) => {
-          return (
-            <div>
-              <div
-                className={styles.topicheader}
-                onClick={() => cell.row.toggleExpanded()}
-              >
-                <div className={styles.row}>
-                  <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
-                    {renderedCellValue}
-                  </h3>
-                  <Badge
-                    className={styles.badgecluster}
-                    style={{ backgroundColor: cell.row.original.clusterColor }}
-                  >
-                    {cell.row.original.kafkaClusterName}
-                  </Badge>
-                </div>
+  async function fetchData(data) {
+    setIsLoadingContracts(true);
+    const result = await selfServiceApiClient.getMessageContracts(data);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    setContracts(result);
+    setIsLoadingContracts(false);
+  }
+
+  const columns = useMemo(() => [
+    {
+      accessorFn: (row) => row.name,
+      header: "name",
+      id: "name",
+      size: "50",
+      enableColumnFilterModes: true,
+      disableFilters: false,
+      enableGlobalFilter: true,
+      enableFilterMatchHighlighting: true,
+
+      Cell: ({ cell, renderedCellValue }) => {
+        return (
+          <div>
+            <div
+              className={styles.topicheader}
+              onClick={() => cell.row.toggleExpanded()}
+            >
+              <div className={styles.row}>
+                <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
+                  {renderedCellValue}
+                </h3>
+                <Badge
+                  className={styles.badgecluster}
+                  style={{ backgroundColor: cell.row.original.clusterColor }}
+                >
+                  {cell.row.original.kafkaClusterName}
+                </Badge>
               </div>
-              {!cell.row.getIsExpanded() ? (
-                <div className={styles.infocontainer}>
-                  <p>{cell.row.original.description}</p>
+            </div>
+            {!cell.row.getIsExpanded() ? (
+              <div className={styles.infocontainer}>
+                <p>{cell.row.original.description}</p>
+                <div>
                   <div>
-                    <div>
-                      Capability:{" "}
-                      <Link
-                        className={styles.link}
-                        to={`/capabilities/${cell.row.original.capabilityId}`}
-                      >
-                        {cell.row.original.capabilityId}
-                      </Link>
-                    </div>
+                    Capability:{" "}
+                    <Link
+                      style={linkStyle}
+                      to={`/capabilities/${cell.row.original.capabilityId}`}
+                    >
+                      {cell.row.original.capabilityId}
+                    </Link>
                   </div>
                 </div>
-              ) : null}
-            </div>
-          );
-        },
+              </div>
+            ) : null}
+          </div>
+        );
       },
-      {
-        accessorKey: "arrow",
-        header: "arrow",
-        id: "arrow",
-        size: "1",
-        enableColumnFilterModes: false,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
-            </div>
-          );
-        },
+    },
+    {
+      accessorKey: "arrow",
+      header: "arrow",
+      id: "arrow",
+      size: "1",
+      enableColumnFilterModes: false,
+      muiTableBodyCellProps: {
+        align: "center",
       },
-    ],
-    [],
-  );
+      Cell: ({ cell }) => {
+        return (
+          <div>
+            {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+          </div>
+        );
+      },
+    },
+  ]);
 
   return (
     <>
@@ -148,7 +241,7 @@ function Topics() {
           <>
             <MaterialReactTable
               columns={columns}
-              data={topics}
+              data={filteredData}
               displayColumnDefOptions={{
                 "mrt-row-expand": {
                   muiTableHeadCellProps: {

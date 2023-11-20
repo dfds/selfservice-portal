@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import { Invitations } from "./invitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 
 export default function CapabilityDetailsPage() {
@@ -32,16 +33,20 @@ function CapabilityDetailsPageContent() {
     name,
     kafkaClusters,
     loadCapability,
+    showResources,
     showCosts,
     isPendingDeletion,
     isDeleted,
     updateDeletionStatus,
     awsAccount,
+    addNewInvitees,
+    isInviteesCreated,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     loadCapability(id);
-  }, [id, loadCapability]);
+  }, [id]);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -81,7 +86,7 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && awsAccount !== undefined && <Costs />}
+        {showCosts && awsAccount != undefined && <Costs />}
         {!isDeleted && (
           <CapabilityManagement
             deletionState={isPendingDeletion}

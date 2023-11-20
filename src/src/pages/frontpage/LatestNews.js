@@ -15,12 +15,7 @@ function NewsItem({ date, title, text, link }) {
       </Text>
       <ButtonStack align="right">
         <Text styledAs="labelSmall">
-          <a
-            href={link}
-            target={"_blank"}
-            rel={"noreferrer"}
-            className={styles.newsitemlink}
-          >
+          <a href={link} target={"_blank"} className={styles.newsitemlink}>
             Read More
           </a>
         </Text>

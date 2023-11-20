@@ -11,14 +11,64 @@ import { MaterialReactTable } from "material-react-table";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
+    useContext(AppContext);
 
-  const [items, setItems] = useState([]);
+  const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
+  const isLoadingCosts = !appStatus.hasLoadedMyCapabilitiesCosts;
+  const isLoadingAwsResourcesCounts =
+    !appStatus.hasLoadedMyCapabilitiesResourcesCounts;
+  const [showCostsSpinner, setShowCostsSpinner] = useState(isLoadingCosts);
+  const [showAwsResourcesSpinner, setShowAwsResourcesSpinner] = useState(
+    isLoadingAwsResourcesCounts,
+  );
   const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
+    const timeout = setTimeout(() => {
+      if (isMounted) {
+        setShowCostsSpinner(false);
+      }
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    setShowCostsSpinner(isLoadingCosts);
+  }, [isLoadingCosts]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
+    const timeout = setTimeout(() => {
+      if (isMounted) {
+        setShowAwsResourcesSpinner(false);
+      }
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
+  }, [isLoadingAwsResourcesCounts]);
+
+  const rowClass = (status) => (status === "Deleted" ? styles.deletedRow : "");
 
   const columns = useMemo(
     () => [
@@ -68,11 +118,13 @@ export default function MyCapabilities() {
         },
         Cell: ({ cell }) => {
           return (
-            <InlineAwsCountSummary
-              data={metricsWrapper.getAwsResourcesTotalCountForCapability(
-                cell.getValue(),
-              )}
-            />
+            <div>
+              <InlineAwsCountSummary
+                data={metricsWrapper.getAwsResourcesTotalCountForCapability(
+                  cell.getValue(),
+                )}
+              />
+            </div>
           );
         },
       },
@@ -85,7 +137,7 @@ export default function MyCapabilities() {
           align: "center",
         },
         muiTableBodyCellProps: {
-          align: "center",
+          align: "right",
         },
         Cell: ({ cell }) => {
           return (
@@ -114,12 +166,8 @@ export default function MyCapabilities() {
         Header: <div></div>, //force no column title
       },
     ],
-    [metricsWrapper],
+    [],
   );
-
-  useEffect(() => {
-    setItems(myCapabilities);
-  }, [myCapabilities]);
 
   useEffect(() => {
     const tableData = items.map((item) => {
@@ -129,7 +177,7 @@ export default function MyCapabilities() {
     });
 
     setFullTableData(tableData);
-  }, [items]);
+  }, [isLoading, appStatus]);
 
   return (
     <>

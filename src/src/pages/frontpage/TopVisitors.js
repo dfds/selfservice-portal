@@ -1,6 +1,7 @@
 import AppContext from "AppContext";
 import { SmallProfilePicture } from "components/ProfilePicture";
 import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
+import { useCallback } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -57,6 +58,7 @@ export default function TopVisitors() {
   const [visitors, setVisitors] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
+  const { selfServiceApiClient } = useContext(AppContext);
   const { isLoadedVisitors, visitorsInfo } = useTopVisitors(myProfile);
 
   const handleVisitorClicked = (rank) => {
@@ -77,35 +79,35 @@ export default function TopVisitors() {
     };
   }, [showConfetti]);
 
-  useEffect(() => {
-    const loadVisitors = () => {
-      const items = visitorsInfo;
+  function loadVisitors() {
+    const items = visitorsInfo;
 
-      items.sort((a, b) => a.rank - b.rank);
+    items.sort((a, b) => a.rank - b.rank);
 
-      items.forEach(async (visitor) => {
-        const profilePictureUrl = await getAnotherUserProfilePictureUrl(
-          visitor.id,
-        );
-        setVisitors((prev) => {
-          let copy;
-          if (prev.length === 0) {
-            copy = items;
-          } else {
-            copy = prev;
-          }
+    items.forEach(async (visitor) => {
+      const profilePictureUrl = await getAnotherUserProfilePictureUrl(
+        visitor.id,
+      );
+      setVisitors((prev) => {
+        let copy;
+        if (prev.length === 0) {
+          copy = items;
+        } else {
+          copy = prev;
+        }
 
-          const found = copy.find((x) => x.id === visitor.id);
+        const found = copy.find((x) => x.id === visitor.id);
 
-          if (found) {
-            found.pictureUrl = profilePictureUrl;
-          }
+        if (found) {
+          found.pictureUrl = profilePictureUrl;
+        }
 
-          return copy;
-        });
+        return copy;
       });
-    };
+    });
+  }
 
+  useEffect(() => {
     if (isLoadedVisitors) {
       loadVisitors();
     }

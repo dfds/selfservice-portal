@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@dfds-ui/react-components";
 import {
   Card,
@@ -15,6 +15,7 @@ import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);

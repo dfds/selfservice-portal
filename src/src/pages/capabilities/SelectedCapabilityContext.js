@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import {
+  useCapabilities,
   useCapabilityById,
   useCapabilityMembers,
   useKafkaClustersAccessList,
@@ -18,6 +19,7 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
+import { SelfServiceApiClient } from "SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -33,8 +35,12 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
-    useContext(AppContext);
+  const {
+    shouldAutoReloadTopics,
+    setShouldAutoReloadTopics,
+    selfServiceApiClient,
+    myCapabilities,
+  } = useContext(AppContext);
 
   const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
@@ -54,7 +60,8 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
-  const { clustersList } = useKafkaClustersAccessList(details);
+  const { clustersList, isLoadedClusters } =
+    useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
@@ -76,7 +83,7 @@ function SelectedCapabilityProvider({ children }) {
   const { metadata, setCapabilityJsonMetadata } =
     useCapabilityMetadata(details);
 
-  const kafkaClusterTopicList = useCallback(() => {
+  const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
       const promises = [];
       for (const cluster of clustersList) {
@@ -98,11 +105,11 @@ function SelectedCapabilityProvider({ children }) {
         setKafkaClusters(clusters);
       });
     }
-  }, [clustersList, selfServiceApiClient]);
+  };
 
   useEffect(() => {
     kafkaClusterTopicList();
-  }, [clustersList, kafkaClusterTopicList]);
+  }, [clustersList]);
 
   // load membership applications
   const loadMembershipApplications = useCallback(async () => {
@@ -126,7 +133,7 @@ function SelectedCapabilityProvider({ children }) {
         return copy;
       });
     });
-  }, [details, selfServiceApiClient]);
+  }, [details]);
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -255,16 +262,16 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
-  }, [details, selfServiceApiClient]);
+  }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
     setReloadRequired(true);
-  }, [details, selfServiceApiClient, setReloadRequired]);
+  }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
     await selfServiceApiClient.requestAwsAccount(details);
-  }, [details, selfServiceApiClient]);
+  }, [details]);
 
   const getAccessToCluster = async (cluster) => {
     return await selfServiceApiClient.getAccessToCluster(cluster);
@@ -339,11 +346,11 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitDeleteCapability(details);
-  }, [details, selfServiceApiClient]);
+  }, [details]);
 
   const submitCancelDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
-  }, [details, selfServiceApiClient]);
+  }, [details]);
 
   const BypassMembershipApproval = async () => {
     try {
@@ -366,7 +373,7 @@ function SelectedCapabilityProvider({ children }) {
         myCapabilities.find((x) => x.id === capabilityId) !== undefined;
       setShowCosts(capabilityJoined);
     }
-  }, [details, myCapabilities, capabilityId]);
+  }, [details, myCapabilities]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -390,12 +397,7 @@ function SelectedCapabilityProvider({ children }) {
       setMembershipApplications([]);
       setKafkaClusters([]);
     }
-  }, [
-    isLoadedMembersApplications,
-    membersApplicationsList,
-    details,
-    loadMembershipApplications,
-  ]);
+  }, [isLoadedMembersApplications, membersApplicationsList]);
 
   useEffect(() => {
     if (isLoadedMembersApplications) {
@@ -412,7 +414,7 @@ function SelectedCapabilityProvider({ children }) {
     }, 5 * 1000);
 
     return () => clearInterval(handle);
-  }, [details, shouldAutoReloadTopics, kafkaClusterTopicList]);
+  }, [details, shouldAutoReloadTopics]);
 
   useEffect(() => {
     if (awsAccountRequested) {
@@ -421,7 +423,7 @@ function SelectedCapabilityProvider({ children }) {
         status: "Requested",
       });
     }
-  }, [awsAccountRequested, awsAccount]);
+  }, [awsAccountRequested]);
 
   useEffect(() => {}, []);
 

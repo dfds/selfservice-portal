@@ -28,6 +28,7 @@ import AppContext from "../../../AppContext";
 
 function TopicHeader({
   name,
+  description,
   partitions,
   retention,
   status,
@@ -124,15 +125,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     });
   }
 
-  const fetchAndSortMessageContractsForTopic = useCallback(
-    async (topic) => {
-      const result = await selfServiceApiClient.getMessageContracts(topic);
-      result.sort((a, b) => a.messageType.localeCompare(b.messageType));
-      return result;
-    },
-    [selfServiceApiClient],
-  );
-
   useEffect(() => {
     let isMounted = true;
 
@@ -171,13 +163,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     }
 
     return () => (isMounted = false);
-  }, [
-    topic,
-    isSelected,
-    selfServiceApiClient,
-    isPublic,
-    fetchAndSortMessageContractsForTopic,
-  ]);
+  }, [topic, isSelected]);
 
   useEffect(() => {
     setIsLoadingContracts(isSelected);
@@ -204,6 +190,12 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     });
   };
 
+  const fetchAndSortMessageContractsForTopic = async (topic) => {
+    const result = await selfServiceApiClient.getMessageContracts(topic);
+    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
+    return result;
+  };
+
   const handleAddMessageContract = async (formValues) => {
     await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
     setShowMessageContractDialog(false);
@@ -222,7 +214,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       setShowEditTopicDialog(false);
       setIsEditInProgress(false); // probably not needed
     },
-    [topic, updateKafkaTopic],
+    [topic],
   );
 
   const handleDeleteTopic = useCallback(async () => {
@@ -232,7 +224,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     // console.log("hiding edit dialog...");
     // setShowEditTopicDialog(false);
     // setIsEditInProgress(false);
-  }, [topic, deleteKafkaTopic]);
+  }, [topic]);
 
   const header = (
     <TopicHeader
