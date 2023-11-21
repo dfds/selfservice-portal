@@ -283,14 +283,26 @@ export class SelfServiceApiClient {
     this.responseHandler(response);
 
     if (!response.ok) {
-      console.log("response was: ", response.status);
+      console.log(`for url ${url} response was: ${response.status}`);
+      return undefined;
+    }
+    return response;
+  }
+
+  async requestWithToken(url, method = "GET", payload = null) {
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(url, accessToken, method, payload);
+    this.responseHandler(response);
+
+    if (!response.ok) {
+      console.log(`for url ${url} response was: ${response.status}`);
       return undefined;
     }
     return response;
   }
 
   async getMyCapabilitiesCosts() {
-    const response = await this.fetchWithToken(
+    const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-costs"),
     );
     if (!response) {
@@ -301,7 +313,7 @@ export class SelfServiceApiClient {
   }
 
   async getMyCapabilitiesResourceCounts() {
-    const response = await this.fetchWithToken(
+    const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-resources"),
     );
     if (!response) {
@@ -582,6 +594,49 @@ export class SelfServiceApiClient {
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
+      throw Error(
+        `Error! Response from server: (${response.status}) ${response.statusText}`,
+      );
+    }
+  }
+
+  async getCapabilityJsonMetadataSchema() {
+    const response = await this.fetchWithToken(
+      composeUrl("json-schema/capability"),
+    );
+    if (!response) {
+      return [];
+    }
+
+    let obj = await response.json();
+    return obj.schema.toString() || "";
+  }
+
+  checkCanBypassMembershipApproval(capabilityDefinition) {
+    const link = capabilityDefinition?._links?.joinCapability;
+    if (!link) {
+      throw Error(
+        "Error! No join link found for capability " +
+          capabilityDefinition.capabilityId,
+      );
+    }
+    if (!link.allow.includes("POST")) {
+      throw Error(
+        "Error! user not allowed to join capability " +
+          capabilityDefinition.capabilityId +
+          " directly",
+      );
+    }
+    return link;
+  }
+
+  async BypassMembershipApproval(capabilitydefinition) {
+    const link = this.checkCanBypassMembershipApproval(capabilitydefinition);
+    const response = await this.requestWithToken(link.href, "POST");
+    if (!response.ok) {
+      console.log(
+        `response was: ", ${await response.text()} for url ${link.href}`,
+      );
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );

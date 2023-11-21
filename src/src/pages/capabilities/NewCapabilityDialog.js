@@ -5,6 +5,7 @@ import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { getUsers } from "GraphApiClient";
 import DropDownInvitationsMenu from "components/DropDownMenu";
+import { Search } from "@dfds-ui/icons/system";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -152,9 +153,10 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          <TextField
+          {/*<TextField
             label="Invite members"
             placeholder="Enter users emails"
+            icon={<Search />}
             required
             value={formData.invitations}
             onChange={(e) => {
@@ -179,7 +181,7 @@ export default function NewCapabilityDialog({
                 {invitee}
               </div>
             ))}
-          </div>
+          </div>*/}
 
           <ButtonStack>
             <Button

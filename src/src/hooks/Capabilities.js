@@ -3,8 +3,6 @@ import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
 
 export function useCapabilities() {
-  // const { errorMessage } = useSelfServiceRequest();
-  // ^to remind that useSelfServiceRequest() also returns an errorMessage, we might want to not ignore it someday
   const { responseData: getAllResponse, sendRequest } = useSelfServiceRequest();
   const { responseData: addedCapability, sendRequest: addCapability } =
     useSelfServiceRequest();
@@ -63,27 +61,30 @@ export function useCapabilities() {
 export function useCapabilityById(id) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [capability, setCapability] = useState(null);
+  const [reloadRequired, setReloadRequired] = useState(true);
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
 
   useEffect(() => {
-    if (id != null) {
+    if (id != null && reloadRequired) {
       sendRequest({
         urlSegments: ["capabilities", id],
       });
     }
-  }, [id]);
+  }, [id, reloadRequired]);
 
   useEffect(() => {
     if (responseData != null) {
       setCapability(responseData);
       setIsLoaded(true);
+      setReloadRequired(false);
     }
   }, [responseData]);
 
   return {
     isLoaded,
     capability,
+    setReloadRequired,
   };
 }
 
@@ -91,6 +92,7 @@ export function useCapabilityMembers(capabilityDefinition) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
   const [isLoadedMembers, setIsLoadedMembers] = useState(false);
+  const [reloadRequired, setReloadRequired] = useState(false);
   const [membersList, setMembersList] = useState([]);
 
   const membersLink = capabilityDefinition?._links?.members;
@@ -101,7 +103,7 @@ export function useCapabilityMembers(capabilityDefinition) {
         urlSegments: [membersLink.href],
       });
     }
-  }, [membersLink]);
+  }, [membersLink, reloadRequired]);
 
   useEffect(() => {
     const updateMembers = async (members) => {
@@ -271,5 +273,74 @@ export function useCapabilityMembersApplications(capabilityDefinition) {
   return {
     isLoadedMembersApplications,
     membersApplicationsList,
+  };
+}
+
+export function useCapabilityMetadata(capabilityDefinition) {
+  const { responseData, sendRequest: sendGetJsonMetadataRequest } =
+    useSelfServiceRequest();
+  const { sendRequest: sendSetJsonMetadataRequest } = useSelfServiceRequest();
+  const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
+  const [metadata, setMetadata] = useState(null);
+
+  const link = capabilityDefinition?._links?.metadata;
+
+  useEffect(() => {
+    if (link && (link.allow || []).includes("GET")) {
+      void sendGetJsonMetadataRequest({
+        urlSegments: [link.href],
+        method: "GET",
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setMetadata(responseData);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (metadata !== null) {
+      setIsLoadedMetadata(true);
+    }
+  }, [metadata]);
+
+  const setCapabilityJsonMetadata = async (jsonMetadata) => {
+    if (!(link && (link.allow || []).includes("POST"))) {
+      throw new Error("User is not allowed to set metadata");
+    }
+    await sendSetJsonMetadataRequest({
+      urlSegments: [link.href],
+      method: "POST",
+      payload: {
+        jsonMetadata: JSON.parse(jsonMetadata),
+      },
+    });
+  };
+
+  return {
+    isLoadedMetadata,
+    metadata,
+    setCapabilityJsonMetadata,
+  };
+}
+
+export function useCapabilityInvitees(capabilityDefinition) {
+  const { inProgress, sendRequest: addInvitees } = useSelfServiceRequest();
+
+  const createInvitees = ([invitations]) => {
+    addInvitees({
+      urlSegments: ["capabilities", capabilityDefinition.id, "invitations"],
+      method: "POST",
+      payload: {
+        invitees: invitations,
+      },
+    });
+  };
+
+  return {
+    addInvitees: createInvitees,
+    inProgress,
   };
 }

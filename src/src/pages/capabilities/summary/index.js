@@ -10,7 +10,14 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 
-function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
+function JoinDialog({
+  name,
+  isSubmitting,
+  onCloseRequested,
+  onSubmitClicked,
+  canBypassMembershipApplications,
+  onBypassClicked,
+}) {
   const actions = (
     <>
       <ModalAction
@@ -34,6 +41,7 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
   return (
     <>
       <Modal
+        style={{ position: "absolute" }}
         heading={`Want to join...?`}
         isOpen={true}
         shouldCloseOnOverlayClick={true}
@@ -54,6 +62,16 @@ function JoinDialog({ name, isSubmitting, onCloseRequested, onSubmitClicked }) {
             been approved by existing members.
           </i>
         </Text>
+        {canBypassMembershipApplications && (
+          <Button
+            variation="danger"
+            style={{ position: "absolute", bottom: "1rem" }}
+            disabled={isSubmitting}
+            onClick={onBypassClicked}
+          >
+            FORCE JOIN (CE)
+          </Button>
+        )}
       </Modal>
     </>
   );
@@ -108,6 +126,7 @@ export default function Summary() {
     links,
     submitMembershipApplication,
     submitLeaveCapability,
+    BypassMembershipApproval,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -117,6 +136,7 @@ export default function Summary() {
 
   const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
   const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
+  const canBypass = (links?.joinCapability?.allow || []).includes("POST");
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -138,6 +158,11 @@ export default function Summary() {
     }
   };
 
+  const handleBypassClicked = async () => {
+    await BypassMembershipApproval();
+    setShowJoinDialog(false);
+  };
+
   return (
     <PageSection headline="Summary">
       {showJoinDialog && (
@@ -146,6 +171,8 @@ export default function Summary() {
           isSubmitting={isSubmitting}
           onCloseRequested={handleCloseRequested}
           onSubmitClicked={handleSubmitClicked}
+          canBypassMembershipApplications={canBypass}
+          onBypassClicked={handleBypassClicked}
         />
       )}
       {showLeaveDialog && (
