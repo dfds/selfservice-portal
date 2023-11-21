@@ -8,12 +8,17 @@ import styles from "./../capabilities.module.css";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { useCapabilityInvitees } from "hooks/Capabilities";
 
-export function Invitations({ addNewInvitees, invitees, setInvitees }) {
+export function Invitations({ addNewInvitees, invitees, setInvitees, formData, setFormData }) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setadUsers] = useState([]);
   const [invitationsInput, setInvitationsInput] = useState("");
-  //const [invitees, setInvitees] = useState([]);
   const [userInput, setUserInput] = useState("");
+
+  const emptyValues = {
+    name: "",
+    description: "",
+    invitations: [],
+  };
 
   const userExists = (user) => {
     return invitees.some((e) => e === user);
@@ -24,6 +29,12 @@ export function Invitations({ addNewInvitees, invitees, setInvitees }) {
       setInvitees((prev) => [...prev, invitationsInput]);
     }
     setUserInput("");
+    if (formData) {
+      setFormData((prev) => ({
+        ...prev,
+        ...{ invitations: emptyValues.invitations },
+      }));
+    }
   }, [invitationsInput]);
 
   async function changeInvitation(e) {
@@ -34,6 +45,9 @@ export function Invitations({ addNewInvitees, invitees, setInvitees }) {
     const value = e?.target?.value;
     const newValue = value || "";
     setUserInput(newValue);
+    if (formData) {
+      setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
+    }
     const adUserstest = await getUsers(adUsers);
     setadUsers(adUserstest.value);
   }
@@ -43,6 +57,12 @@ export function Invitations({ addNewInvitees, invitees, setInvitees }) {
       if (!userExists(userInput)) {
         setInvitees((prev) => [...prev, userInput]);
         setUserInput("");
+        if (formData){
+          setFormData((prev) => ({
+            ...prev,
+            ...{ invitations: emptyValues.invitations },
+          }));
+        }
       }
     }
   };
@@ -50,9 +70,12 @@ export function Invitations({ addNewInvitees, invitees, setInvitees }) {
   const handleAddInvitationClicked = () => {
     addNewInvitees(invitees);
   };
+
+
   return (
     <>
       <TextField
+        label= "Invitations"
         placeholder="Enter user name"
         value={userInput}
         icon={<Search />}

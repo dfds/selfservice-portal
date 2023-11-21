@@ -6,6 +6,7 @@ import styles from "./capabilities.module.css";
 import { getUsers } from "GraphApiClient";
 import DropDownInvitationsMenu from "components/DropDownMenu";
 import { Search } from "@dfds-ui/icons/system";
+import { Invitations } from "./invitations";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -28,25 +29,9 @@ export default function NewCapabilityDialog({
   };
 
   const [formData, setFormData] = useState(emptyValues);
-  const [isUserSearchActive, setIsUserSearchActive] = useState(false);
-  const [adUsers, setadUsers] = useState([]);
-  const [invitationsInput, setInvitationsInput] = useState("");
   const [invitees, setInvitees] = useState([]);
 
-  useEffect(() => {
-    if (invitationsInput !== "") {
-      setInvitees((prev) => [...prev, invitationsInput]);
-    }
-    setFormData((prev) => ({
-      ...prev,
-      ...{ invitations: emptyValues.invitations },
-    }));
-  }, [invitationsInput]);
 
-  useEffect(() => {
-    if (invitees.length !== 0) {
-    }
-  }, [invitees]);
 
   const changeName = (e) => {
     e.preventDefault();
@@ -61,18 +46,6 @@ export default function NewCapabilityDialog({
     const newValue = e?.target?.value || emptyValues.description;
     setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
   };
-
-  async function changeInvitation(e) {
-    e.preventDefault();
-    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
-    setIsUserSearchActive(true);
-    const adUsers = e?.target?.value.match(regex)[0];
-    const value = e?.target?.value;
-    const newValue = value || emptyValues.invitations;
-    setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
-    const adUserstest = await getUsers(adUsers);
-    setadUsers(adUserstest.value);
-  }
 
   const isNameValid =
     formData.name !== "" &&
@@ -102,19 +75,6 @@ export default function NewCapabilityDialog({
     }
   };
 
-  const OnKeyEnter = (e) => {
-    if (e.key === "Enter") {
-      if (Array.isArray(formData.invitations)) {
-        return;
-      } else {
-        setInvitees((prev) => [...prev, formData.invitations]);
-        setFormData((prev) => ({
-          ...prev,
-          ...{ invitations: emptyValues.invitations },
-        }));
-      }
-    }
-  };
 
   return (
     <>
@@ -153,35 +113,12 @@ export default function NewCapabilityDialog({
             onChange={changeDescription}
           ></TextField>
 
-          {/*<TextField
-            label="Invite members"
-            placeholder="Enter users emails"
-            icon={<Search />}
-            required
-            value={formData.invitations}
-            onChange={(e) => {
-              changeInvitation(e);
-            }}
-            onKeyDown={OnKeyEnter}
-          ></TextField>
-          {isUserSearchActive ? (
-            <div className={styles.dropDownMenu}>
-              <DropDownInvitationsMenu
-                items={adUsers}
-                setIsUserSearchActive={setIsUserSearchActive}
-                setInvitationsInput={setInvitationsInput}
-              />
-            </div>
-          ) : (
-            <></>
-          )}
-          <div className={styles.invitees_container}>
-            {(invitees || []).map((invitee) => (
-              <div className={styles.invitee_container} key={invitee}>
-                {invitee}
-              </div>
-            ))}
-          </div>*/}
+          <Invitations
+            invitees={invitees}
+            setInvitees={setInvitees}
+            formData={formData} 
+            setFormData={setFormData}
+          />
 
           <ButtonStack>
             <Button
