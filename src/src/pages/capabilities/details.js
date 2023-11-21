@@ -63,10 +63,7 @@ function CapabilityDetailsPageContent() {
   }, [links]);
 
   useEffect(() => {
-    if (
-      (links?.sendInvitations?.allow || []).includes("POST")
-      
-    ) {
+    if ((links?.sendInvitations?.allow || []).includes("POST")) {
       setShowInvitations(true);
     }
   }, [links]);
@@ -83,11 +80,13 @@ function CapabilityDetailsPageContent() {
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
-        { showInvitations && <CapabilityInvitations
-          addNewInvitees={addNewInvitees}
-          inProgress={isInviteesCreated}
-          invitees={[]}
-        />} 
+        {showInvitations && (
+          <CapabilityInvitations
+            addNewInvitees={addNewInvitees}
+            inProgress={isInviteesCreated}
+            invitees={[]}
+          />
+        )}
 
         <MembershipApplications />
 
