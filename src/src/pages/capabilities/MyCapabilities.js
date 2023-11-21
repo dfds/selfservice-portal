@@ -202,6 +202,11 @@ export default function MyCapabilities() {
                 pagination: { pageSize: 25 },
                 showGlobalFilter: true,
               }}
+              muiTableContainerProps={{
+                sx: {
+                  overflow: "visible",
+                },
+              }}
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
@@ -217,6 +222,7 @@ export default function MyCapabilities() {
                   fontFamily: "DFDS",
                   color: "#4d4e4c",
                   padding: "5px",
+                  overflow: "visible",
                 },
               }}
               muiTablePaperProps={{
