@@ -41,7 +41,7 @@ export function useDeleteTopic() {
     useSelfServiceRequest();
   const deleteTopic = (topicDefinition) => {
     const link = topicDefinition?._links?.self;
-    if (link) {
+    if (!link) {
       triggerErrorWithTitleAndDetails(
         "Delete topic failed",
         "No topic self link found on topic definition:\n" +
