@@ -12,10 +12,9 @@ function isValidURL(urlString) {
 export function useSelfServiceRequest(errorParams) {
   const [responseData, setResponseData] = useState(null);
   const [inProgress, setInProgress] = useState(false);
-  const { triggerError, triggerErrorWithTitleAndDetails, setErrorOptions } =
-    useError({
-      ...errorParams,
-    });
+  const { triggerErrorWithTitleAndDetails, setErrorOptions } = useError({
+    ...errorParams,
+  });
   const { track } = useTracking();
 
   const httpResponseToErrorMessage = (httpResponse) => {
@@ -66,7 +65,6 @@ export function useSelfServiceRequest(errorParams) {
   return {
     inProgress,
     responseData,
-    triggerError,
     triggerErrorWithTitleAndDetails,
     setErrorOptions,
     sendRequest,
