@@ -8,7 +8,13 @@ import styles from "./../capabilities.module.css";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { useCapabilityInvitees } from "hooks/Capabilities";
 
-export function Invitations({ addNewInvitees, invitees, setInvitees, formData, setFormData }) {
+export function Invitations({
+  addNewInvitees,
+  invitees,
+  setInvitees,
+  formData,
+  setFormData,
+}) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setadUsers] = useState([]);
   const [invitationsInput, setInvitationsInput] = useState("");
@@ -57,7 +63,7 @@ export function Invitations({ addNewInvitees, invitees, setInvitees, formData, s
       if (!userExists(userInput)) {
         setInvitees((prev) => [...prev, userInput]);
         setUserInput("");
-        if (formData){
+        if (formData) {
           setFormData((prev) => ({
             ...prev,
             ...{ invitations: emptyValues.invitations },
@@ -71,11 +77,10 @@ export function Invitations({ addNewInvitees, invitees, setInvitees, formData, s
     addNewInvitees(invitees);
   };
 
-
   return (
     <>
       <TextField
-        label= "Invitations"
+        label="Invitations"
         placeholder="Enter user name"
         value={userInput}
         icon={<Search />}

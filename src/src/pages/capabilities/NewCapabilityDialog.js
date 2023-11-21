@@ -31,8 +31,6 @@ export default function NewCapabilityDialog({
   const [formData, setFormData] = useState(emptyValues);
   const [invitees, setInvitees] = useState([]);
 
-
-
   const changeName = (e) => {
     e.preventDefault();
     let newName = e?.target?.value || "";
@@ -75,7 +73,6 @@ export default function NewCapabilityDialog({
     }
   };
 
-
   return (
     <>
       <SideSheet
@@ -116,7 +113,7 @@ export default function NewCapabilityDialog({
           <Invitations
             invitees={invitees}
             setInvitees={setInvitees}
-            formData={formData} 
+            formData={formData}
             setFormData={setFormData}
           />
 
