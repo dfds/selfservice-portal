@@ -15,7 +15,7 @@ export default function NewRepositoryDialog({ onClose }) {
   };
 
   const emptyValues = {
-    repositoryName: "",
+    name: "",
     description: "",
   };
 
@@ -23,7 +23,7 @@ export default function NewRepositoryDialog({ onClose }) {
 
   const changeName = (e) => {
     e.preventDefault();
-    let newName = e?.target?.value || emptyValues.repositoryName;
+    let newName = e?.target?.value || emptyValues.name;
     newName = newName.replace(/\s+/g, "/");
 
     setFormData((prev) => ({
@@ -41,10 +41,10 @@ export default function NewRepositoryDialog({ onClose }) {
   const isNameValid =
     formData.name !== "" &&
     !formData.name.match(/^\s*$/g) &&
-    !formData.name.match(/(_|-|\/)$/g) &&
-    !formData.name.match(/^(_|-|\/)/g) &&
+    !formData.name.match(/(_|-|\/\.)$/g) &&
+    !formData.name.match(/^(_|-|\/\.)/g) &&
     !formData.name.match(/[-_\/\.\s]{2,}/g) &&
-    !formData.name.match(/[^a-zA-Z0-9\/\-_ ]/g);
+    !formData.name.match(/[^a-zA-Z0-9\/\-_\. ]/g);
 
   let nameErrorMessage = "";
   if (formData.name.length > 0 && !isNameValid) {
