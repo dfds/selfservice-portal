@@ -63,26 +63,7 @@ export function useCapabilityById(id) {
   const [capability, setCapability] = useState(null);
   const [reloadRequired, setReloadRequired] = useState(true);
   const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest({
-      handler: (params) => {
-        if (params.error) {
-          params.showError(params.error.message);
-          return;
-        }
-
-        if (params.httpResponse) {
-          if (params.httpResponse.status === 404) {
-            params.showError("Capability not found");
-            return;
-          }
-
-          params.showError(params.httpResponse.statusText);
-          return;
-        }
-
-        params.showError(params.msg);
-      },
-    });
+    useSelfServiceRequest();
 
   useEffect(() => {
     if (id != null && reloadRequired) {
