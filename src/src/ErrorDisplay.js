@@ -17,8 +17,8 @@ const ErrorDisplay = () => {
           <ErrorToast
             key={index}
             message={defaultErrorMessage}
-            errorTitle={e.title}
-            errorDetails={e.details}
+            title={e.title}
+            details={e.details}
           ></ErrorToast>
         </>
       ))}
