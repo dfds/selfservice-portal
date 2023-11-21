@@ -35,6 +35,8 @@ function AppProvider({ children }) {
     hasLoadedMyCapabilitiesResourcesCounts: false,
   });
 
+  const [reload, setReload] = useState(false);
+
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
 
@@ -53,15 +55,18 @@ function AppProvider({ children }) {
     [selfServiceApiClient],
   );
 
-  const { addCapability } = useCapabilities();
-  const { profileInfo, isLoadedProfile } = useProfile(user);
+  const { capabilities, addCapability } = useCapabilities();
+  const { profileInfo, isLoadedProfile } = useProfile(user, reload);
   const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description, invitations) {
     addCapability(name, description, invitations);
-    await sleep(3000);
-    await loadMyProfile();
+    await sleep(1000); // purely here as it _feels_ better -- it is not strictly required
   }
+
+  useEffect(() => {
+    setReload(!reload);
+  }, [capabilities]);
 
   async function loadMyProfile() {
     if (isLoadedProfile && isLoadedStats) {

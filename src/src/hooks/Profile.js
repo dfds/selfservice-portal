@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 
-export function useProfile(user) {
+export function useProfile(user, reload) {
   const { inProgress, responseData, setErrorOptions, sendRequest } =
     useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
@@ -11,7 +11,7 @@ export function useProfile(user) {
     sendRequest({
       urlSegments: ["me"],
     });
-  }, [user]);
+  }, [user, reload]);
 
   useEffect(() => {
     if (responseData !== null) {
