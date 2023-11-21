@@ -51,12 +51,23 @@ function CapabilityDetailsPageContent() {
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
+  const [showInvitations, setShowInvitations] = useState(false);
+
   useEffect(() => {
     if (
       (links?.metadata?.allow || []).includes("GET") &&
       (links?.metadata?.allow || []).includes("POST")
     ) {
       setShowJsonMetadata(true);
+    }
+  }, [links]);
+
+  useEffect(() => {
+    if (
+      (links?.sendInvitations?.allow || []).includes("POST")
+      
+    ) {
+      setShowInvitations(true);
     }
   }, [links]);
 
@@ -72,11 +83,11 @@ function CapabilityDetailsPageContent() {
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
-        <CapabilityInvitations
+        { showInvitations && <CapabilityInvitations
           addNewInvitees={addNewInvitees}
           inProgress={isInviteesCreated}
           invitees={[]}
-        />
+        />} 
 
         <MembershipApplications />
 
