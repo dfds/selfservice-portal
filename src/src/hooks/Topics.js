@@ -71,7 +71,7 @@ export function useDeleteTopic() {
 export function useUpdateTopic() {
   const { triggerErrorWithTitleAndDetails, sendRequest } =
     useSelfServiceRequest();
-  return (topicDefinition, topicDescriptor) => {
+  const updateTopic = (topicDefinition, topicDescriptor) => {
     const link = topicDefinition?._links?.updateDescription;
     if (!link) {
       triggerErrorWithTitleAndDetails(
@@ -89,4 +89,5 @@ export function useUpdateTopic() {
       },
     });
   };
+  return { updateTopic };
 }

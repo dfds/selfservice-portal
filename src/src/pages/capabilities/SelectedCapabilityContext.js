@@ -42,8 +42,8 @@ function SelectedCapabilityProvider({ children }) {
     myCapabilities,
   } = useContext(AppContext);
 
-  const { deleteTopic } = useDeleteTopic();
   const { updateTopic } = useUpdateTopic();
+  const { deleteTopic } = useDeleteTopic();
 
   //const [isLoading, setIsLoading] = useState(false);
   const [capabilityId, setCapabilityId] = useState(null);
