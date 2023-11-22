@@ -26,6 +26,12 @@ export function Invitations({
     invitations: [],
   };
 
+  const emailValidator = (input) => {
+    const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
+    console.log(regex.test(input));
+    return regex.test(input)
+  } 
+
   const userExists = (user) => {
     return invitees.some((e) => e === user);
   };
@@ -60,7 +66,7 @@ export function Invitations({
 
   const OnKeyEnter = (e) => {
     if (e.key === "Enter") {
-      if (!userExists(userInput)) {
+      if (!userExists(userInput) && emailValidator(userInput)) {
         setInvitees((prev) => [...prev, userInput]);
         setUserInput("");
         if (formData) {
