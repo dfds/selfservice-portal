@@ -67,8 +67,8 @@ export function JsonMetadataWithSchemaViewer() {
   };
 
   const checkIfFollowsJsonSchema = (json) => {
-    const Ajv2020 = require("ajv/dist/2020")
-    const addFormats = require('ajv-formats').default;
+    const Ajv2020 = require("ajv/dist/2020");
+    const addFormats = require("ajv-formats").default;
 
     const ajv = new Ajv2020();
     addFormats(ajv);
