@@ -47,10 +47,10 @@ export function Invitations({
     e.preventDefault();
     if (e?.target?.value === "") {
       setIsUserSearchActive(false);
-    }else {
+    } else {
       setIsUserSearchActive(true);
     }
-    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array    
+    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
     const searchInput = e?.target?.value.match(regex)[0];
     const value = e?.target?.value;
     const newValue = value || "";
@@ -58,14 +58,13 @@ export function Invitations({
     if (formData) {
       setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
     }
-    if (searchInput){
+    if (searchInput) {
       const adUsersDropDown = await getUsers(searchInput);
       if (adUsersDropDown.value.length === 0) {
         setIsUserSearchActive(false);
       }
       setaAdUsers(adUsersDropDown.value);
     }
-    
   }
 
   const OnKeyEnter = (e) => {
