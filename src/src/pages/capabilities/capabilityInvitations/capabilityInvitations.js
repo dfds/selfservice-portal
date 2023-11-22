@@ -32,7 +32,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
             submitting={inProgress}
             style={{ position: "right" }}
           >
-            Add
+            Invite
           </Button>
         </ButtonStack>
       </PageSection>
