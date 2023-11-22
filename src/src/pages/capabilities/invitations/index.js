@@ -16,7 +16,7 @@ export function Invitations({
   setFormData,
 }) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
-  const [adUsers, setadUsers] = useState([]);
+  const [adUsers, setaAdUsers] = useState([]);
   const [invitationsInput, setInvitationsInput] = useState("");
   const [userInput, setUserInput] = useState("");
 
@@ -45,20 +45,27 @@ export function Invitations({
 
   async function changeInvitation(e) {
     e.preventDefault();
-    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array
-    setIsUserSearchActive(true);
-    const adUsers = e?.target?.value.match(regex)[0];
+    if (e?.target?.value === "") {
+      setIsUserSearchActive(false);
+    }else {
+      setIsUserSearchActive(true);
+    }
+    const regex = /[^,]*$/; //takes all invitees separate them by comma and add them to an array    
+    const searchInput = e?.target?.value.match(regex)[0];
     const value = e?.target?.value;
     const newValue = value || "";
     setUserInput(newValue);
     if (formData) {
       setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
     }
-    const adUsersDropDown = await getUsers(adUsers);
-    if (adUsersDropDown.value.length === 0) {
-      setIsUserSearchActive(false);
+    if (searchInput){
+      const adUsersDropDown = await getUsers(searchInput);
+      if (adUsersDropDown.value.length === 0) {
+        setIsUserSearchActive(false);
+      }
+      setaAdUsers(adUsersDropDown.value);
     }
-    setadUsers(adUsersDropDown.value);
+    
   }
 
   const OnKeyEnter = (e) => {
