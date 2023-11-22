@@ -54,8 +54,11 @@ export function Invitations({
     if (formData) {
       setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
     }
-    const adUserstest = await getUsers(adUsers);
-    setadUsers(adUserstest.value);
+    const adUsersDropDown = await getUsers(adUsers);
+    if (adUsersDropDown.value.length === 0){
+      setIsUserSearchActive(false);
+    }
+    setadUsers(adUsersDropDown.value);
   }
 
   const OnKeyEnter = (e) => {
