@@ -28,7 +28,6 @@ export function Invitations({
 
   const emailValidator = (input) => {
     const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
-    console.log(regex.test(input));
     return regex.test(input);
   };
 
