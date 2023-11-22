@@ -55,7 +55,7 @@ export function Invitations({
       setFormData((prev) => ({ ...prev, ...{ invitations: newValue } }));
     }
     const adUsersDropDown = await getUsers(adUsers);
-    if (adUsersDropDown.value.length === 0){
+    if (adUsersDropDown.value.length === 0) {
       setIsUserSearchActive(false);
     }
     setadUsers(adUsersDropDown.value);
