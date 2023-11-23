@@ -37,29 +37,24 @@ export function useTopics() {
 }
 
 export function useDeleteTopic() {
-  const { triggerError, sendRequest } = useSelfServiceRequest();
+  const { triggerErrorWithTitleAndDetails, sendRequest } =
+    useSelfServiceRequest();
   const deleteTopic = (topicDefinition) => {
     const link = topicDefinition?._links?.self;
     if (!link) {
-      triggerError(
-        NewErrorContextBuilder()
-          .setMsg(
-            "Error! No topic self link found on topic definition: " +
-              JSON.stringify(topicDefinition, null, 2),
-          )
-          .build(),
+      triggerErrorWithTitleAndDetails(
+        "Delete topic failed",
+        "No topic self link found on topic definition:\n" +
+          JSON.stringify(topicDefinition, null, 2),
       );
       return;
     }
 
     if (!(link.allow || []).includes("DELETE")) {
-      triggerError(
-        NewErrorContextBuilder()
-          .setMsg(
-            "Error! You are not allowed to delete the topic. Options was " +
-              JSON.stringify(link.allow, null, 2),
-          )
-          .build(),
+      triggerErrorWithTitleAndDetails(
+        "Delete topic failed",
+        "You are not allowed to delete the topic. Options are\n" +
+          JSON.stringify(link.allow, null, 2),
       );
       return;
     }
@@ -74,15 +69,15 @@ export function useDeleteTopic() {
 }
 
 export function useUpdateTopic() {
-  const { triggerError, sendRequest } = useSelfServiceRequest();
-  return (topicDefinition, topicDescriptor) => {
+  const { triggerErrorWithTitleAndDetails, sendRequest } =
+    useSelfServiceRequest();
+  const updateTopic = (topicDefinition, topicDescriptor) => {
     const link = topicDefinition?._links?.updateDescription;
     if (!link) {
-      triggerError(
-        NewErrorContextBuilder().setMsg(
-          "Error! No update topic description link found on topic definition: " +
-            JSON.stringify(topicDefinition, null, 2),
-        ),
+      triggerErrorWithTitleAndDetails(
+        "Update topic failed",
+        "No update topic description link found on topic definition: " +
+          JSON.stringify(topicDefinition, null, 2),
       );
     }
 
@@ -94,4 +89,5 @@ export function useUpdateTopic() {
       },
     });
   };
+  return { updateTopic };
 }
