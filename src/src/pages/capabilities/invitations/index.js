@@ -1,12 +1,9 @@
-import PageSection from "components/PageSection";
-import { useState, useContext, useEffect, useCallback } from "react";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
+import { useState } from "react";
+import { TextField } from "@dfds-ui/react-components";
 import { Search } from "@dfds-ui/icons/system";
 import DropDownInvitationsMenu from "components/DropDownMenu";
 import { getUsers } from "GraphApiClient";
 import styles from "./../capabilities.module.css";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { useCapabilityInvitees } from "hooks/Capabilities";
 
 export function Invitations({
   addNewInvitees,
@@ -17,7 +14,6 @@ export function Invitations({
 }) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setaAdUsers] = useState([]);
-  const [invitationsInput, setInvitationsInput] = useState("");
   const [userInput, setUserInput] = useState("");
 
   const emptyValues = {
@@ -32,21 +28,9 @@ export function Invitations({
   };
 
   const userExists = (user) => {
-    return invitees.some((e) => e === user);
+    let result = invitees.some((e) => e === user);
+    return result;
   };
-
-  useEffect(() => {
-    if (invitationsInput !== "" && !userExists(invitationsInput)) {
-      setInvitees((prev) => [...prev, invitationsInput]);
-    }
-    setUserInput("");
-    if (formData) {
-      setFormData((prev) => ({
-        ...prev,
-        ...{ invitations: emptyValues.invitations },
-      }));
-    }
-  }, [invitationsInput]);
 
   async function changeInvitation(e) {
     e.preventDefault();
@@ -72,23 +56,32 @@ export function Invitations({
     }
   }
 
-  const OnKeyEnter = (e) => {
-    if (e.key === "Enter") {
-      if (!userExists(userInput) && emailValidator(userInput)) {
-        setInvitees((prev) => [...prev, userInput]);
-        setUserInput("");
-        if (formData) {
-          setFormData((prev) => ({
-            ...prev,
-            ...{ invitations: emptyValues.invitations },
-          }));
-        }
+  const addInvitee = (invitee) => {
+    if (!userExists(invitee) && emailValidator(invitee)) {
+      setInvitees((prev) => [...prev, invitee]);
+      setUserInput("");
+      setIsUserSearchActive(false);
+      if (formData) {
+        setFormData((prev) => ({
+          ...prev,
+          ...{ invitations: emptyValues.invitations },
+        }));
       }
     }
   };
 
-  const handleAddInvitationClicked = () => {
-    addNewInvitees(invitees);
+  const OnKeyEnter = (e) => {
+    if (e.key === "Enter") {
+      addInvitee(userInput);
+    }
+  };
+
+  const addInviteeFromDropDown = (invitee) => {
+    addInvitee(invitee);
+  };
+
+  const handleInviteeClicked = (invitee) => {
+    setInvitees(invitees.filter((i) => i !== invitee));
   };
 
   return (
@@ -108,8 +101,7 @@ export function Invitations({
         <div className={styles.dropDownMenu}>
           <DropDownInvitationsMenu
             items={adUsers}
-            setIsUserSearchActive={setIsUserSearchActive}
-            setInvitationsInput={setInvitationsInput}
+            addInviteeFromDropDown={addInviteeFromDropDown}
           />
         </div>
       ) : (
@@ -117,8 +109,13 @@ export function Invitations({
       )}
       <div className={styles.invitees_container}>
         {(invitees || []).map((invitee) => (
-          <div className={styles.invitee_container} key={invitee}>
-            {invitee}
+          <div
+            className={styles.invitee_container}
+            key={invitee}
+            onClick={() => handleInviteeClicked(invitee)}
+          >
+            <div className={styles.invitee}>{invitee}</div>
+            <div className={styles.delete_invitee_overlay}>X</div>
           </div>
         ))}
       </div>
