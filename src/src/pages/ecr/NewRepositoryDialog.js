@@ -41,15 +41,15 @@ export default function NewRepositoryDialog({ onClose }) {
   const isNameValid =
     formData.name !== "" &&
     !formData.name.match(/^\s*$/g) &&
-    !formData.name.match(/(_|-|\/\.)$/g) &&
-    !formData.name.match(/^(_|-|\/\.)/g) &&
+    !formData.name.match(/(_|-|\/|\.)$/g) &&
+    !formData.name.match(/^(_|-|\/|\.)/g) &&
     !formData.name.match(/[-_\/\.\s]{2,}/g) &&
     !formData.name.match(/[^a-zA-Z0-9\/\-_\. ]/g);
 
   let nameErrorMessage = "";
   if (formData.name.length > 0 && !isNameValid) {
     nameErrorMessage =
-      'Allowed characters are a-z, 0-9, "-", "_", and "/". Repositories must not start or end with "_", "-", or "/". Do not use more than one of "-", "_", or "/" in a row.';
+      'Allowed characters are a-z, 0-9, ".", "-", "_", and "/". Repositories must not start or end with ".", "_", "-", or "/". Do not use more than one of ".", "-", "_", or "/" in a row.';
   }
 
   if (formData.name.length > 150) {
