@@ -51,13 +51,33 @@
 }
 
 .invitee_container {
-  display: flex;
+  display: inline-block;
+  cursor: pointer;
+  margin: 4px 2px;
+  height: 30px;
+}
+
+.invitee {
   border: 2px solid #d9dcde;
-  padding: 5px 5px 5px 5px;
-  margin-left: 4px;
+  padding: 5px;
   border-radius: 20px;
   background-color: #d9dcde;
-  margin-bottom: 4px;
+}
+
+.delete_invitee_overlay {
+  display: none;
+  padding: 7px;
+  border-radius: 20px;
+  font-weight: bold;
+  transform: translateY(-100%);
+  text-align: center;
+}
+
+.invitee_container:hover .invitee {
+  opacity: 0.5;
+}
+.invitee_container:hover .delete_invitee_overlay {
+  display: block;
 }
 
 .invitees_container {
