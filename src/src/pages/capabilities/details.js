@@ -11,7 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import { Invitations } from "./invitations";
+import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 
 export default function CapabilityDetailsPage() {
@@ -51,12 +51,20 @@ function CapabilityDetailsPageContent() {
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
+  const [showInvitations, setShowInvitations] = useState(false);
+
   useEffect(() => {
     if (
       (links?.metadata?.allow || []).includes("GET") &&
       (links?.metadata?.allow || []).includes("POST")
     ) {
       setShowJsonMetadata(true);
+    }
+  }, [links]);
+
+  useEffect(() => {
+    if ((links?.sendInvitations?.allow || []).includes("POST")) {
+      setShowInvitations(true);
     }
   }, [links]);
 
@@ -72,10 +80,13 @@ function CapabilityDetailsPageContent() {
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
-        {/*<Invitations
-          addNewInvitees={addNewInvitees}
-          inProgress={isInviteesCreated}
-        />*/}
+        {showInvitations && (
+          <CapabilityInvitations
+            addNewInvitees={addNewInvitees}
+            inProgress={isInviteesCreated}
+            invitees={[]}
+          />
+        )}
 
         <MembershipApplications />
 

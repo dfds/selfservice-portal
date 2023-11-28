@@ -2,7 +2,6 @@ import { callApi, getSelfServiceAccessToken } from "AuthService";
 import { useContext, useEffect, useState } from "react";
 import { composeUrl, composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
-import { NewErrorContextBuilder } from "misc/error";
 import { useTracking } from "./Tracking";
 
 function isValidURL(urlString) {
@@ -13,11 +12,14 @@ function isValidURL(urlString) {
 export function useSelfServiceRequest(errorParams) {
   const [responseData, setResponseData] = useState(null);
   const [inProgress, setInProgress] = useState(false);
-  const { triggerError, setErrorOptions } = useError({
+  const { triggerErrorWithTitleAndDetails, setErrorOptions } = useError({
     ...errorParams,
-    msg: "Oh no! We had an issue while retrieving data from the api. Please reload the page.",
   });
   const { track } = useTracking();
+
+  const httpResponseToErrorMessage = (httpResponse) => {
+    return `Got ${httpResponse.status}: "${httpResponse.statusText}" for ${httpResponse.url}`;
+  };
 
   const sendRequest = async ({ urlSegments, method, payload }) => {
     setInProgress(true);
@@ -33,18 +35,29 @@ export function useSelfServiceRequest(errorParams) {
 
     try {
       const httpResponse = await callApi(url, accessToken, method, payload);
-
       if (httpResponse.ok) {
         httpResponse.json().then((data) => {
           setResponseData(data);
         });
       } else {
-        triggerError(
-          NewErrorContextBuilder().setHttpResponse(httpResponse).build(),
-        );
+        const newData = await httpResponse.json();
+        const errorTitle = newData.title;
+        const errorDetails = newData.detail;
+        const httpError = httpResponseToErrorMessage(httpResponse);
+        if (errorDetails && errorTitle) {
+          const problemDetailsWithHttpError = errorDetails + "\n\n" + httpError;
+          triggerErrorWithTitleAndDetails(
+            errorTitle,
+            problemDetailsWithHttpError,
+          );
+        } else {
+          triggerErrorWithTitleAndDetails("Http Error", httpError);
+        }
       }
     } catch (error) {
-      triggerError(NewErrorContextBuilder().setMsg(error.message).build());
+      const actualMethod = method || "GET";
+      const errorDetails = `Error when calling ${actualMethod} ${url}:\n${error}`;
+      triggerErrorWithTitleAndDetails("Http Error", errorDetails);
     } finally {
       setInProgress(false);
     }
@@ -53,7 +66,7 @@ export function useSelfServiceRequest(errorParams) {
   return {
     inProgress,
     responseData,
-    triggerError,
+    triggerErrorWithTitleAndDetails,
     setErrorOptions,
     sendRequest,
   };

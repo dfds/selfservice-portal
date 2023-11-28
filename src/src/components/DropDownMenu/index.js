@@ -4,14 +4,8 @@ import ProfilePicture from "pages/capabilities/members/profilepicture";
 
 export default function DropDownInvitationsMenu({
   items,
-  setIsUserSearchActive,
-  setInvitationsInput,
+  addInviteeFromDropDown,
 }) {
-  const handleItemClick = (email) => {
-    setIsUserSearchActive(false);
-    setInvitationsInput(email);
-  };
-
   return (
     <>
       <div>
@@ -20,7 +14,7 @@ export default function DropDownInvitationsMenu({
             <div
               key={item.id}
               className={style.item}
-              onClick={() => handleItemClick(item.mail)}
+              onClick={() => addInviteeFromDropDown(item.mail)}
             >
               {item.displayName} {item.mail}
             </div>
