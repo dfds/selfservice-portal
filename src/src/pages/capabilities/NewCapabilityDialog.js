@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
-import { getUsers } from "GraphApiClient";
-import DropDownInvitationsMenu from "components/DropDownMenu";
-import { Search } from "@dfds-ui/icons/system";
 import { Invitations } from "./invitations";
 
 export default function NewCapabilityDialog({
@@ -50,7 +47,7 @@ export default function NewCapabilityDialog({
     !formData.name.match(/^\s*$/g) &&
     !formData.name.match(/(_|-)$/g) &&
     !formData.name.match(/^(_|-)/g) &&
-    !formData.name.match(/[-_\.]{2,}/g) &&
+    !formData.name.match(/[-_.]{2,}/g) &&
     !formData.name.match(/[^a-zA-Z0-9\-_]/g);
 
   let nameErrorMessage = "";

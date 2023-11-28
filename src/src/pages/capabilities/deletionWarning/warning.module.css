@@ -41,14 +41,14 @@
   padding: 10px 20px;
 }
 
-.fade-out-element {
+.fadeOutElement {
   opacity: 1;
   transition:
     opacity 0.5s ease-out,
     transform 0.5s ease-out;
 }
 
-.fade-out-element.fade-out {
+.fadeOutElement.fadeOut {
   opacity: 0;
   transform: translateY(-20px); /* Or any other desired effect */
 }

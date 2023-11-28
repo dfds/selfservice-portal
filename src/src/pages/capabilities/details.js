@@ -33,7 +33,6 @@ function CapabilityDetailsPageContent() {
     name,
     kafkaClusters,
     loadCapability,
-    showResources,
     showCosts,
     isPendingDeletion,
     isDeleted,
@@ -97,7 +96,7 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && awsAccount != undefined && <Costs />}
+        {showCosts && awsAccount !== undefined && <Costs />}
         {!isDeleted && (
           <CapabilityManagement
             deletionState={isPendingDeletion}

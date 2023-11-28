@@ -1,7 +1,6 @@
 import AppContext from "AppContext";
 import { SmallProfilePicture } from "components/ProfilePicture";
 import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
-import { useCallback } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -58,7 +57,6 @@ export default function TopVisitors() {
   const [visitors, setVisitors] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
-  const { selfServiceApiClient } = useContext(AppContext);
   const { isLoadedVisitors, visitorsInfo } = useTopVisitors(myProfile);
 
   const handleVisitorClicked = (rank) => {

@@ -68,7 +68,11 @@ pre-commit-hook:
 
 .PHONY: format
 format: ## Runs prettier
-	@npx prettier . --write
+	@cd src && $(MAKE) format
+
+.PHONY: stylecheck
+stylecheck: ## checks formatting and linting
+	@cd src && $(MAKE) stylecheck
 
 .PHONY: help
 help: ## Shows this list

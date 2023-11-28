@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import {
-  useCapabilities,
   useCapabilityById,
   useCapabilityMembers,
   useKafkaClustersAccessList,
@@ -19,7 +18,6 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
-import { SelfServiceApiClient } from "SelfServiceApiClient";
 
 const SelectedCapabilityContext = createContext();
 
@@ -35,17 +33,12 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const {
-    shouldAutoReloadTopics,
-    setShouldAutoReloadTopics,
-    selfServiceApiClient,
-    myCapabilities,
-  } = useContext(AppContext);
+  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
+    useContext(AppContext);
 
   const { updateTopic } = useUpdateTopic();
   const { deleteTopic } = useDeleteTopic();
 
-  //const [isLoading, setIsLoading] = useState(false);
   const [capabilityId, setCapabilityId] = useState(null);
   const [details, setDetails] = useState(null);
   const [members, setMembers] = useState([]);
@@ -60,8 +53,7 @@ function SelectedCapabilityProvider({ children }) {
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
-  const { clustersList, isLoadedClusters } =
-    useKafkaClustersAccessList(details);
+  const { clustersList } = useKafkaClustersAccessList(details);
   const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
