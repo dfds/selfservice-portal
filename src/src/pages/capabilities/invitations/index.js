@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TextField } from "@dfds-ui/react-components";
 import { Search } from "@dfds-ui/icons/system";
 import DropDownInvitationsMenu from "components/DropDownMenu";
@@ -11,7 +11,6 @@ export function Invitations({
   setInvitees,
   formData,
   setFormData,
-  inProgress,
 }) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setaAdUsers] = useState([]);
