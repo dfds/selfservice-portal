@@ -13,7 +13,9 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
 
   const handleAddInvitationClicked = () => {
-    addNewInvitees(invitees);
+    addNewInvitees(invitees).then(() => {
+      setInvitees([]);
+    });
   };
 
   return (
