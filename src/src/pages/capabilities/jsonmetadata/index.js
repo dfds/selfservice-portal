@@ -8,6 +8,7 @@ import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import Ajv2020 from "ajv/dist/2020";
 
 export function JsonMetadataWithSchemaViewer() {
   const monaco = useMonaco();
@@ -66,16 +67,26 @@ export function JsonMetadataWithSchemaViewer() {
   };
 
   const checkIfFollowsJsonSchema = (json) => {
+    const Ajv2020 = require("ajv/dist/2020");
+    const addFormats = require("ajv-formats").default;
+
+    const ajv = new Ajv2020();
+    addFormats(ajv);
+    const parsed = JSON.parse(schemaString);
     try {
-      const ajv = new Ajv();
-      const validate = ajv.compile(JSON.parse(schemaString));
-      const valid = validate(JSON.parse(json));
-      if (!valid) {
-        setValidationError("Schema Error: " + validate.errors[0].message);
+      const validate = ajv.compile(parsed);
+      try {
+        const valid = validate(JSON.parse(json));
+        if (!valid) {
+          setValidationError("Validation Error: " + validate.errors[0].message);
+        }
+        return valid;
+      } catch (exception) {
+        setValidationError("Validation Exception: " + exception.message);
+        return false;
       }
-      return valid;
     } catch (exception) {
-      setValidationError("Schema Error: " + exception.message);
+      setValidationError("Schema Exception: " + exception.message);
       return false;
     }
   };
