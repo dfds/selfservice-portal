@@ -13,10 +13,9 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
 
   const handleAddInvitationClicked = async () => {
-    await addNewInvitees(invitees)
+    await addNewInvitees(invitees);
     setInvitees([]);
   };
-
 
   return (
     <>
