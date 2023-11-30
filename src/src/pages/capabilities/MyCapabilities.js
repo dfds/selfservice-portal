@@ -11,64 +11,14 @@ import { MaterialReactTable } from "material-react-table";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
-    useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
-  const isLoadingCosts = !appStatus.hasLoadedMyCapabilitiesCosts;
-  const isLoadingAwsResourcesCounts =
-    !appStatus.hasLoadedMyCapabilitiesResourcesCounts;
-  const [showCostsSpinner, setShowCostsSpinner] = useState(isLoadingCosts);
-  const [showAwsResourcesSpinner, setShowAwsResourcesSpinner] = useState(
-    isLoadingAwsResourcesCounts,
-  );
   const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
-    const timeout = setTimeout(() => {
-      if (isMounted) {
-        setShowCostsSpinner(false);
-      }
-    }, 3000);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  useEffect(() => {
-    setShowCostsSpinner(isLoadingCosts);
-  }, [isLoadingCosts]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // after 3 seconds, hide the spinner regardless if costs have been loaded or not
-    const timeout = setTimeout(() => {
-      if (isMounted) {
-        setShowAwsResourcesSpinner(false);
-      }
-    }, 3000);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  useEffect(() => {
-    setShowAwsResourcesSpinner(isLoadingAwsResourcesCounts);
-  }, [isLoadingAwsResourcesCounts]);
-
-  const rowClass = (status) => (status === "Deleted" ? styles.deletedRow : "");
 
   const columns = useMemo(
     () => [

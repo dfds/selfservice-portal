@@ -1,21 +1,9 @@
-import React, { createContext, useEffect, useContext, useState } from "react";
-import AppContext from "../../AppContext";
+import React, { createContext, useState } from "react";
 
 const TopicsContext = createContext();
 
 function TopicsProvider({ children }) {
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
-  const [kafkaClusters, setKafkaClusters] = useState([]);
-  const { selfServiceApiClient } = useContext(AppContext);
-
-  useEffect(() => {
-    fetchKafkaclusters().then((x) => setKafkaClusters(x));
-  }, []);
-
-  const fetchKafkaclusters = async () => {
-    const result = await selfServiceApiClient.getKafkaClusters();
-    return result;
-  };
 
   const toggleSelectedKafkaTopic = (kafkaTopicId) => {
     setSelectedKafkaTopic((prev) => {

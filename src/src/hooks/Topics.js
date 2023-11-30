@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
-import { NewErrorContextBuilder } from "../misc/error";
 
 export function useTopics() {
   const { responseData, sendRequest } = useSelfServiceRequest();

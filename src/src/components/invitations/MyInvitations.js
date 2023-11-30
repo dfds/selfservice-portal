@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";

@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 
 export function useProfile(user) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
   const [profileInfo, setProfileInfo] = useState(null);
 
@@ -32,8 +31,7 @@ export function useProfile(user) {
 }
 
 export function useStats(user) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedStats, setIsLoadedStats] = useState(false);
   const [statsInfo, setStatsInfo] = useState(null);
 
@@ -62,8 +60,7 @@ export function useStats(user) {
 }
 
 export function useTopVisitors(myProfileDefinition) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedVisitors, setIsLoadedVisitors] = useState(false);
   const [visitorsInfo, setVisitorsInfo] = useState(null);
 

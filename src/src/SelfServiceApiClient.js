@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
