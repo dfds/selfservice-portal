@@ -6,8 +6,9 @@ import { Invitations } from "../invitations";
 export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
 
-  const handleAddInvitationClicked = () => {
-    addNewInvitees(invitees);
+  const handleAddInvitationClicked = async () => {
+    await addNewInvitees(invitees);
+    setInvitees([]);
   };
 
   return (
