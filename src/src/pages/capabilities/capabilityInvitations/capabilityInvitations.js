@@ -12,11 +12,11 @@ import { Invitations } from "../invitations";
 export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
 
-  const handleAddInvitationClicked = () => {
-    addNewInvitees(invitees).then(() => {
-      setInvitees([]);
-    });
+  const handleAddInvitationClicked = async () => {
+    await addNewInvitees(invitees)
+    setInvitees([]);
   };
+
 
   return (
     <>
