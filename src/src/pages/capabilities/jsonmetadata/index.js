@@ -2,13 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
-import Ajv from "ajv";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import Ajv2020 from "ajv/dist/2020";
 
 export function JsonMetadataWithSchemaViewer() {
   const monaco = useMonaco();
