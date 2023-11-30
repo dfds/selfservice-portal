@@ -7,9 +7,9 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
   const [invitees, setInvitees] = useState([]);
   const [isInvited, setIsInvited] = useState(false);
   const [showDoneLabel, setShowDoneLabel] = useState(false);
- 
+
   const handleAddInvitationClicked = async () => {
-    await addNewInvitees(invitees)
+    await addNewInvitees(invitees);
     setInvitees([]);
     setIsInvited(true);
     setShowDoneLabel(true);
@@ -21,7 +21,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
         setShowDoneLabel(false);
       }, 3000);
     }
-  }, [isInvited, showDoneLabel])
+  }, [isInvited, showDoneLabel]);
 
   return (
     <>
@@ -38,8 +38,10 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
             variation="primary"
             onClick={handleAddInvitationClicked}
             submitting={inProgress}
-            style={{ position: "right",
-            backgroundColor: showDoneLabel ? "#4caf50" : "#ED8800" }}
+            style={{
+              position: "right",
+              backgroundColor: showDoneLabel ? "#4caf50" : "#ED8800",
+            }}
           >
             {showDoneLabel ? "Success" : "Invite"}
           </Button>
