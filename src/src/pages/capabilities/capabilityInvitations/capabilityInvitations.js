@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { Invitations } from "../invitations";
 
-export function CapabilityInvitations({ addNewInvitees, inProgress }) {
+export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   const [invitees, setInvitees] = useState([]);
   const [isInvited, setIsInvited] = useState(false);
   const [showDoneLabel, setShowDoneLabel] = useState(false);
@@ -31,6 +31,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
           invitees={invitees}
           setInvitees={setInvitees}
           isInvited={isInvited}
+          members={members}
         />
         <ButtonStack align="right">
           <Button
