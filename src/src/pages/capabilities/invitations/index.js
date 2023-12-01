@@ -53,7 +53,12 @@ export function Invitations({
       if (adUsersDropDown.value.length === 0) {
         setIsUserSearchActive(false);
       }
-      setaAdUsers(removeActiveMembers(members, adUsersDropDown.value));
+      if (members){
+        setaAdUsers(removeActiveMembers(members, adUsersDropDown.value));
+      }else {
+        setaAdUsers(adUsersDropDown.value)
+      }
+      
     }
   }
 
