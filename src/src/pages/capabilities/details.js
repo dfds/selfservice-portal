@@ -40,6 +40,7 @@ function CapabilityDetailsPageContent() {
     awsAccount,
     addNewInvitees,
     isInviteesCreated,
+    members,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ function CapabilityDetailsPageContent() {
             addNewInvitees={addNewInvitees}
             inProgress={isInviteesCreated}
             invitees={[]}
+            members={members}
           />
         )}
 
