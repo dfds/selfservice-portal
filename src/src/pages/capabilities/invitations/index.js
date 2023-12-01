@@ -11,7 +11,7 @@ export function Invitations({
   setInvitees,
   formData,
   setFormData,
-  members
+  members,
 }) {
   const [isUserSearchActive, setIsUserSearchActive] = useState(false);
   const [adUsers, setaAdUsers] = useState([]);
@@ -53,25 +53,23 @@ export function Invitations({
       if (adUsersDropDown.value.length === 0) {
         setIsUserSearchActive(false);
       }
-      if (members){
+      if (members) {
         setaAdUsers(removeActiveMembers(members, adUsersDropDown.value));
-      }else {
-        setaAdUsers(adUsersDropDown.value)
+      } else {
+        setaAdUsers(adUsersDropDown.value);
       }
-      
     }
   }
 
   const removeActiveMembers = (members, adOutput) => {
-    let membersEmails = new Set()
-    for(let member of members) {
-      membersEmails.add(member.email)
+    let membersEmails = new Set();
+    for (let member of members) {
+      membersEmails.add(member.email);
     }
-    const filteredArray = adOutput.filter(el => {
+    const filteredArray = adOutput.filter((el) => {
       return !membersEmails.has(el.mail);
-
     });
-    return filteredArray
+    return filteredArray;
   };
 
   const addInvitee = (invitee) => {
