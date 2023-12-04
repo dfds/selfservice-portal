@@ -41,6 +41,7 @@ function CapabilityDetailsPageContent() {
     addNewInvitees,
     isInviteesCreated,
     members,
+    jsonMetadata,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -55,7 +56,6 @@ function CapabilityDetailsPageContent() {
 
   useEffect(() => {
     if (
-      (links?.metadata?.allow || []).includes("GET") &&
       (links?.metadata?.allow || []).includes("POST")
     ) {
       setShowJsonMetadata(true);
@@ -77,7 +77,7 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
+        {showJsonMetadata &&  <JsonMetadataWithSchemaViewer metadata={jsonMetadata} />}
         <Resources capabilityId={id} />
 
         {showInvitations && (

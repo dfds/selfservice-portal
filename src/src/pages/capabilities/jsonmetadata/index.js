@@ -8,16 +8,14 @@ import PageSection from "../../../components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-export function JsonMetadataWithSchemaViewer() {
+export function JsonMetadataWithSchemaViewer(metadata) {
   const monaco = useMonaco();
-  const { metadata, setCapabilityJsonMetadata } = useContext(
-    SelectedCapabilityContext,
-  );
+  const { setCapabilityJsonMetadata } = useContext(SelectedCapabilityContext);
   const [isEditing, setIsEditing] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const { selfServiceApiClient } = useContext(AppContext);
-  const [currentMetadataString, setCurrentMetadataString] = useState(metadata);
-  const [jsonString, setJsonString] = useState("");
+  const [currentMetadataString, setCurrentMetadataString] = useState(null); // string shown when editing
+  const [jsonString, setJsonString] = useState(""); // string shown in metadata view
   const [schemaString, setSchemaString] = useState("");
   const [validationError, setValidationError] = useState("");
 
@@ -36,7 +34,7 @@ export function JsonMetadataWithSchemaViewer() {
 
   useEffect(() => {
     if (metadata) {
-      const prettyMetadata = prettifyJsonString(metadata);
+      const prettyMetadata = prettifyJsonString(metadata.metadata);
       setCurrentMetadataString(prettyMetadata);
       setJsonString(prettyMetadata);
     }

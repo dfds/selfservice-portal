@@ -72,8 +72,8 @@ function SelectedCapabilityProvider({ children }) {
     await sleep(3000);
     setIsInviteesCreated(false);
   }
-  const { metadata, setCapabilityJsonMetadata } =
-    useCapabilityMetadata(details);
+
+  const { setCapabilityJsonMetadata } = useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
@@ -456,7 +456,7 @@ function SelectedCapabilityProvider({ children }) {
     addNewInvitees,
     isInviteesCreated,
     setCapabilityJsonMetadata,
-    metadata,
+    jsonMetadata: details?.jsonMetadata ?? "{}",
   };
 
   return (
