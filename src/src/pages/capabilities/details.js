@@ -55,9 +55,7 @@ function CapabilityDetailsPageContent() {
   const [showInvitations, setShowInvitations] = useState(false);
 
   useEffect(() => {
-    if (
-      (links?.metadata?.allow || []).includes("POST")
-    ) {
+    if ((links?.metadata?.allow || []).includes("POST")) {
       setShowJsonMetadata(true);
     }
   }, [links]);
@@ -77,7 +75,9 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
-        {showJsonMetadata &&  <JsonMetadataWithSchemaViewer metadata={jsonMetadata} />}
+        {showJsonMetadata && (
+          <JsonMetadataWithSchemaViewer metadata={jsonMetadata} />
+        )}
         <Resources capabilityId={id} />
 
         {showInvitations && (
