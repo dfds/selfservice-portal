@@ -27,9 +27,15 @@ export default async function globalSetup(config) {
   let parsedTotp = OTPAuth.URI.parse(process.env.E2E_TEST_USER_MFA_URL);
   let code = parsedTotp.generate();
 
-  await page.getByPlaceholder("Code").click();
-  await page.getByPlaceholder("Code").fill(code);
-  await page.getByRole("button", { name: "Verify" }).click();
+  await page.waitForTimeout(1500);
+  let requiresMfa = await page.getByPlaceholder("Code").isVisible();
+
+  if (requiresMfa) {
+    console.log("MFA detected");
+    await page.getByPlaceholder("Code").click();
+    await page.getByPlaceholder("Code").fill(code);
+    await page.getByRole("button", { name: "Verify" }).click();
+  }
 
   await page.waitForTimeout(6000);
   await page.reload();
