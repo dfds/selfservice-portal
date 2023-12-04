@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import AppContext from "../../AppContext";
 import { Spinner } from "@dfds-ui/react-components";
 import Message from "../capabilities/KafkaCluster/MessageContract";
 import { Text } from "@dfds-ui/typography";
-import { Card, CardContent, IconButton } from "@dfds-ui/react-components";
+import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 
 export function RowDetails(data) {

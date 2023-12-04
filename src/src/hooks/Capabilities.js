@@ -62,8 +62,7 @@ export function useCapabilityById(id) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [capability, setCapability] = useState(null);
   const [reloadRequired, setReloadRequired] = useState(true);
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
 
   useEffect(() => {
     if (id != null && reloadRequired) {
@@ -89,10 +88,8 @@ export function useCapabilityById(id) {
 }
 
 export function useCapabilityMembers(capabilityDefinition) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedMembers, setIsLoadedMembers] = useState(false);
-  const [reloadRequired, setReloadRequired] = useState(false);
   const [membersList, setMembersList] = useState([]);
 
   const membersLink = capabilityDefinition?._links?.members;
@@ -103,7 +100,7 @@ export function useCapabilityMembers(capabilityDefinition) {
         urlSegments: [membersLink.href],
       });
     }
-  }, [membersLink, reloadRequired]);
+  }, [membersLink]);
 
   useEffect(() => {
     const updateMembers = async (members) => {
@@ -147,8 +144,7 @@ export function useCapabilityMembers(capabilityDefinition) {
 }
 
 export function useKafkaClustersAccessList(capabilityDefinition) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedClusters, setIsLoadedClusters] = useState(false);
   const [clustersList, setClustersList] = useState([]);
 
@@ -181,8 +177,7 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
 }
 
 export function useCapabilityAwsAccount(capabilityDefinition) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedAccount, setIsLoadedAccount] = useState(false);
   const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
@@ -216,8 +211,7 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 }
 
 export function useCapabilityMembersApplications(capabilityDefinition) {
-  const { inProgress, responseData, setErrorOptions, sendRequest } =
-    useSelfServiceRequest();
+  const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedMembersApplications, setIsLoadedMembersApplications] =
     useState(false);
   const [membersApplicationsList, setMembersApplicationsList] = useState([]);

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
-import Ajv from "ajv";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
@@ -66,16 +65,26 @@ export function JsonMetadataWithSchemaViewer() {
   };
 
   const checkIfFollowsJsonSchema = (json) => {
+    const Ajv2020 = require("ajv/dist/2020");
+    const addFormats = require("ajv-formats").default;
+
+    const ajv = new Ajv2020();
+    addFormats(ajv);
+    const parsed = JSON.parse(schemaString);
     try {
-      const ajv = new Ajv();
-      const validate = ajv.compile(JSON.parse(schemaString));
-      const valid = validate(JSON.parse(json));
-      if (!valid) {
-        setValidationError("Schema Error: " + validate.errors[0].message);
+      const validate = ajv.compile(parsed);
+      try {
+        const valid = validate(JSON.parse(json));
+        if (!valid) {
+          setValidationError("Validation Error: " + validate.errors[0].message);
+        }
+        return valid;
+      } catch (exception) {
+        setValidationError("Validation Exception: " + exception.message);
+        return false;
       }
-      return valid;
     } catch (exception) {
-      setValidationError("Schema Error: " + exception.message);
+      setValidationError("Schema Exception: " + exception.message);
       return false;
     }
   };

@@ -3,8 +3,8 @@ import { CardContent, ButtonStack } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import styles from "./warning.css";
 import { css } from "@emotion/react";
+import styles from "./warning.module.css";
 
 export default function DeletionWarning() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(true);
@@ -33,15 +33,17 @@ export default function DeletionWarning() {
       {/*Banners are not quite flexible for what we want right now*/}
       {isPendingDeletion && (
         <div
-          className={`cardLike spacing warningBorder alertFill fade-out-element ${
-            showDeleteDialog ? "" : "fade-out"
+          className={`${styles.cardLike} ${styles.spacing} ${
+            styles.warningBorder
+          } ${styles.alertFill} ${styles.fadeOutElement} ${
+            showDeleteDialog ? "" : "fadeOut"
           }`}
         >
           <CardContent>
-            <Text styledAs="sectionHeadline" className="warningHeader">
+            <Text styledAs="sectionHeadline" className={styles.warningHeader}>
               Warning: Pending Deletion
             </Text>
-            <p className="warningContent">
+            <p className={styles.warningContent}>
               A member of this capability has requested that it be deleted.
               Deletion has not commenced yet, and it is still possible to cancel
               this deletion request. Once deletion commences, it will not be
@@ -53,7 +55,7 @@ export default function DeletionWarning() {
                 <ButtonStack align="right">
                   {
                     <button
-                      className="goodButton"
+                      className={styles.goodButton}
                       css={css`
                         :hover {
                           cursor: pointer;

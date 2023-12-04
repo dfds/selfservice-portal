@@ -1,20 +1,27 @@
 import PageSection from "components/PageSection";
-import { useState, useContext, useEffect, useCallback } from "react";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
-import { Search } from "@dfds-ui/icons/system";
-import DropDownInvitationsMenu from "components/DropDownMenu";
-import { getUsers } from "GraphApiClient";
-import styles from "./../capabilities.module.css";
+import { useState, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { useCapabilityInvitees } from "hooks/Capabilities";
 import { Invitations } from "../invitations";
 
-export function CapabilityInvitations({ addNewInvitees, inProgress }) {
+export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   const [invitees, setInvitees] = useState([]);
+  const [isInvited, setIsInvited] = useState(false);
+  const [showDoneLabel, setShowDoneLabel] = useState(false);
 
-  const handleAddInvitationClicked = () => {
-    addNewInvitees(invitees);
+  const handleAddInvitationClicked = async () => {
+    await addNewInvitees(invitees);
+    setInvitees([]);
+    setIsInvited(true);
+    setShowDoneLabel(true);
   };
+
+  useEffect(() => {
+    if (isInvited) {
+      setTimeout(() => {
+        setShowDoneLabel(false);
+      }, 3000);
+    }
+  }, [isInvited, showDoneLabel]);
 
   return (
     <>
@@ -23,6 +30,8 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
           addNewInvitees={addNewInvitees}
           invitees={invitees}
           setInvitees={setInvitees}
+          isInvited={isInvited}
+          members={members}
         />
         <ButtonStack align="right">
           <Button
@@ -30,9 +39,12 @@ export function CapabilityInvitations({ addNewInvitees, inProgress }) {
             variation="primary"
             onClick={handleAddInvitationClicked}
             submitting={inProgress}
-            style={{ position: "right" }}
+            style={{
+              position: "right",
+              backgroundColor: showDoneLabel ? "#4caf50" : "#ED8800",
+            }}
           >
-            Invite
+            {showDoneLabel ? "Success" : "Invite"}
           </Button>
         </ButtonStack>
       </PageSection>
