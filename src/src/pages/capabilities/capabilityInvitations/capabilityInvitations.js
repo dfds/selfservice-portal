@@ -7,6 +7,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   const [invitees, setInvitees] = useState([]);
   const [isInvited, setIsInvited] = useState(false);
   const [showDoneLabel, setShowDoneLabel] = useState(false);
+  const [disableSendButton, setDisableSendButton] = useState(true);
 
   const handleAddInvitationClicked = async () => {
     await addNewInvitees(invitees);
@@ -19,9 +20,17 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
     if (isInvited) {
       setTimeout(() => {
         setShowDoneLabel(false);
+        setDisableSendButton(true)
       }, 3000);
-    }
+    }    
   }, [isInvited, showDoneLabel]);
+
+  useEffect(() => {
+    if(invitees.length !== 0){
+      setDisableSendButton(false)
+    }
+
+  },[invitees])
 
   return (
     <>
@@ -39,6 +48,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
             variation="primary"
             onClick={handleAddInvitationClicked}
             submitting={inProgress}
+            disabled={disableSendButton}
             style={{
               position: "right",
               backgroundColor: showDoneLabel ? "#4caf50" : "#ED8800",
