@@ -20,17 +20,16 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
     if (isInvited) {
       setTimeout(() => {
         setShowDoneLabel(false);
-        setDisableSendButton(true)
+        setDisableSendButton(true);
       }, 3000);
-    }    
+    }
   }, [isInvited, showDoneLabel]);
 
   useEffect(() => {
-    if(invitees.length !== 0){
-      setDisableSendButton(false)
+    if (invitees.length !== 0) {
+      setDisableSendButton(false);
     }
-
-  },[invitees])
+  }, [invitees]);
 
   return (
     <>
