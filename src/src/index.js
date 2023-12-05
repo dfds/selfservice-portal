@@ -9,6 +9,7 @@ import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";
 import { TrackingProvider } from "TrackingContext";
+import Snowfall from "react-snowfall";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
@@ -21,6 +22,7 @@ root.render(
     <MsalProvider instance={MsalInstance}>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GlobalStyles />
+        <Snowfall />
         <ErrorProvider>
           <TrackingProvider>
             <AppProvider>
