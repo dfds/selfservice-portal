@@ -10,7 +10,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   const [disableSendButton, setDisableSendButton] = useState(true);
 
   const handleAddInvitationClicked = async () => {
-    if (invitees.length === 0){
+    if (invitees.length === 0) {
       return;
     }
     await addNewInvitees(invitees);
@@ -22,8 +22,8 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   useEffect(() => {
     if (isInvited) {
       setTimeout(() => {
-        setShowSuccessLabel(false);  
-        setDisableSendButton(true);      
+        setShowSuccessLabel(false);
+        setDisableSendButton(true);
       }, 3000);
     }
   }, [isInvited, showSuccessLabel]);
@@ -54,7 +54,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
             style={{
               position: "right",
               backgroundColor: showSuccessLabel ? "#4caf50" : "#ED8800",
-              cursor: disableSendButton ? "auto" : "pointer", //overwrite the build in style in order to prevent the user of clicking the button when it is green 
+              cursor: disableSendButton ? "auto" : "pointer", //overwrite the build in style in order to prevent the user of clicking the button when it is green
               opacity: disableSendButton && !showSuccessLabel ? "0.3" : "",
               pointerEvents: showSuccessLabel ? "none" : "auto",
             }}
