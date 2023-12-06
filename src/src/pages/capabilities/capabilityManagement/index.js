@@ -11,6 +11,7 @@ import {
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { css } from "@emotion/react";
+import AppContext from "../../../AppContext";
 
 function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
   const actions = (
@@ -69,6 +70,8 @@ export default function CapabilityManagement() {
     updateDeletionStatus,
   } = useContext(SelectedCapabilityContext);
 
+  const {reloadUser} = useContext(AppContext);
+
   const canDeleteCapability = (
     links?.requestCapabilityDeletion?.allow || []
   ).includes("POST");
@@ -77,6 +80,7 @@ export default function CapabilityManagement() {
     await submitDeleteCapability();
     updateDeletionStatus(true);
     setShowDeleteDialog(false);
+    reloadUser();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

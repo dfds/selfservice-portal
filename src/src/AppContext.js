@@ -54,7 +54,7 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
-  const { profileInfo, isLoadedProfile } = useProfile(user);
+  const { profileInfo, isLoadedProfile, reload: reloadUser} = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description, invitations) {
@@ -152,6 +152,7 @@ function AppProvider({ children }) {
     addCapability,
     addNewCapability,
     truncateString,
+    reloadUser,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
