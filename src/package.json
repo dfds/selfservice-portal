@@ -90,6 +90,7 @@
     "@azure/msal-react": "^1.5.2",
     "@playwright/test": "^1.40.1",
     "@types/node": "^20.10.2",
+    "async-mutex": "^0.4.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "otpauth": "^9.2.0",
     "prettier": "3.0.1",

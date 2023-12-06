@@ -1,5 +1,7 @@
+import { test } from "../base";
+
 // @ts-check
-const { test, expect } = require("@playwright/test");
+const { expect } = require("@playwright/test");
 
 const testUserName00 = "Hristiyana Toteva hritote@";
 const testUserSearchQuery00 = "Hristi";
