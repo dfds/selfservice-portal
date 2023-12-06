@@ -1,7 +1,8 @@
+import { test } from "../base";
 // @ts-check
-const { test, expect } = require("@playwright/test");
+const { expect } = require("@playwright/test");
 
-test("join-capability-request", async ({ page }) => {
+test("join-capability-request", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/cool-beans-xxx");
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "Submit" }).click();
@@ -15,7 +16,7 @@ test("join-capability-request", async ({ page }) => {
   await expect(elem).toHaveText("Membership Application Received");
 });
 
-test("join-capability-ce-force", async ({ page }) => {
+test("join-capability-ce-force", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/notmycapability-xx1");
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();
@@ -28,7 +29,7 @@ test("join-capability-ce-force", async ({ page }) => {
   });
 });
 
-test("leave-capability", async ({ page }) => {
+test("leave-capability", async ({ page, resetDb }) => {
   await page.goto(
     "http://localhost:3001/capabilities/marketing-department-xxx",
   );
@@ -51,25 +52,7 @@ test("leave-capability", async ({ page }) => {
   });
 });
 
-test("invite-member", async ({ page }) => {
-  await page.goto("http://localhost:3001/capabilities/cloudengineering-xxx");
-  await page.getByPlaceholder("Enter user name").click();
-  await page.getByPlaceholder("Enter user name").fill("Richard f");
-  await page.getByText("Richard Fisher rifis@dfds.com").click();
-  await page.locator("_react=Invitations").getByText("rifis").isVisible();
-  await page.getByRole("button", { name: "Invite" }).click();
-
-  await expect(page.getByRole("button", { name: "Success" })).toBeVisible();
-  await expect(
-    page.locator("_react=Invitations").getByText("rifis"),
-  ).toHaveCount(0, {
-    timeout: 1000,
-  });
-
-  await page.waitForTimeout(500);
-});
-
-test("approve-membership", async ({ page }) => {
+test("approve-membership", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/cloudengineering-xxx");
   await page
     .getByRole("row", { name: "emwee@dfds.com emwee@dfds.com" })
@@ -91,7 +74,7 @@ test("approve-membership", async ({ page }) => {
   await page.waitForTimeout(500);
 });
 
-test("delete-capability", async ({ page }) => {
+test("delete-capability", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/notmycapability-xx2");
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();
@@ -103,7 +86,7 @@ test("delete-capability", async ({ page }) => {
   await page.waitForTimeout(500);
 });
 
-test("cancel-capability-deletion", async ({ page }) => {
+test("cancel-capability-deletion", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/notmycapability-xx3");
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();

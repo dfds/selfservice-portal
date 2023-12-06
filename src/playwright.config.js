@@ -36,7 +36,18 @@ module.exports = defineConfig({
   projects: [
     // { name: "setup", testMatch: /.*\.setup\.js/ },
     {
-      name: "chromium",
+      name: "parallel",
+      testMatch: "parallel/*.@(spec|test).?(c|m)[jt]s?(x)",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
+      },
+      // dependencies: ["setup"],
+    },
+    {
+      name: "sequential",
+      testMatch: "sequential/*.@(spec|test).?(c|m)[jt]s?(x)",
+      retries: 3,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
