@@ -49,8 +49,10 @@ export function CapabilityTags({ setTagData }) {
           prettifyJsonString(removeNonRequiredJsonSchemaProperties(schema)),
         );
       } else {
-        console.log("");
-        setSchema(JSON.parse(schemaString));
+        // quick hack to change the title of the form, instead of changing the schema
+        var updated_schema = JSON.parse(schemaString);
+        updated_schema["title"] = "Capability Tags";
+        setSchema(updated_schema);
         setShowTagForm(true);
       }
     }
@@ -67,6 +69,7 @@ export function CapabilityTags({ setTagData }) {
           children={true} // hide submit button
         />
       ) : (
+        // [andfris] let's see if we need a spinner
         <p>Loading tag requirements</p>
       )}
     </>
