@@ -27,7 +27,7 @@ export default async function globalSetup(config) {
   let parsedTotp = OTPAuth.URI.parse(process.env.E2E_TEST_USER_MFA_URL);
   let code = parsedTotp.generate();
 
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(3000);
   let requiresMfa = await page.getByPlaceholder("Code").isVisible();
 
   if (requiresMfa) {
