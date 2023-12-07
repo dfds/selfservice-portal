@@ -13,7 +13,12 @@ export function useCapabilities() {
     list.sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const createCapability = (name, description, invitations) => {
+  const createCapability = (
+    name,
+    description,
+    invitations,
+    jsonMetadataString,
+  ) => {
     addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
@@ -21,6 +26,7 @@ export function useCapabilities() {
         name: name,
         description: description,
         invitees: invitations,
+        jsonMetadata: jsonMetadataString,
       },
     });
   };

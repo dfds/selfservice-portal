@@ -57,8 +57,13 @@ function AppProvider({ children }) {
   const { profileInfo, isLoadedProfile } = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
-  async function addNewCapability(name, description, invitations) {
-    addCapability(name, description, invitations);
+  async function addNewCapability(
+    name,
+    description,
+    invitations,
+    jsonMetadataString,
+  ) {
+    addCapability(name, description, invitations, jsonMetadataString);
     await sleep(3000);
     await loadMyProfile();
   }

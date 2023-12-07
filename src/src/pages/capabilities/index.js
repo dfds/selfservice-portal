@@ -27,6 +27,7 @@ export default function CapabilitiesPage() {
       formData.name,
       formData.description,
       formData.invitations,
+      formData.jsonMetadataString,
     );
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);

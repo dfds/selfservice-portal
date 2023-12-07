@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
-//import { CapabilityTags } from "./capabilityTags";
+import { CapabilityTagsSubForm } from "./capabilityTags";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -25,13 +25,8 @@ export default function NewCapabilityDialog({
 
   const [formData, setFormData] = useState(emptyValues);
   const [invitees, setInvitees] = useState([]);
-  /*
-  const [tagFormData, setTagFormData] = useState({});
-
-  useEffect(() => {
-    console.log(tagFormData);
-  }, [tagFormData]);
-  */
+  const [metadataFormData, setMetadataFormData] = useState({});
+  const [validMetadata, setValidMetadata] = useState(false);
 
   const changeName = (e) => {
     e.preventDefault();
@@ -67,11 +62,17 @@ export default function NewCapabilityDialog({
   const canAdd =
     formData.name !== "" &&
     formData.description !== "" &&
+    validMetadata &&
     nameErrorMessage === "";
 
   const handleAddCapabilityClicked = () => {
+    const jsonMetadataString = JSON.stringify(metadataFormData, null, 1);
     if (onAddCapabilityClicked) {
-      onAddCapabilityClicked({ ...formData, invitations: invitees });
+      onAddCapabilityClicked({
+        ...formData,
+        invitations: invitees,
+        jsonMetadataString,
+      });
     }
   };
 
@@ -119,7 +120,12 @@ export default function NewCapabilityDialog({
             setFormData={setFormData}
           />
 
-          {/*<CapabilityTags setTagData={setTagFormData} />*/}
+          <CapabilityTagsSubForm
+            title="Capability Tags"
+            setMetadata={setMetadataFormData}
+            setValidMetadata={setValidMetadata}
+            preexistingFormData={{}}
+          />
 
           <br />
 

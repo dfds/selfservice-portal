@@ -13,6 +13,7 @@ import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
+import { CapabilityTagViewer } from "./capabilityTags";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -77,6 +78,9 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
+
+        <CapabilityTagViewer />
+
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
