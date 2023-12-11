@@ -5,6 +5,7 @@ import Message from "../capabilities/KafkaCluster/MessageContract";
 import { Text } from "@dfds-ui/typography";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
+import styles from "./topic.module.css";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);

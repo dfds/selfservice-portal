@@ -81,10 +81,12 @@ function Topics() {
 
       Cell: ({ cell, renderedCellValue }) => {
         return (
-          <div>
+          <div
+            onClick={() => cell.row.toggleExpanded()}
+            className={styles.pointyCursor}
+          >
             <div
               className={styles.topicheader}
-              onClick={() => cell.row.toggleExpanded()}
             >
               <div className={styles.row}>
                 <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
@@ -129,7 +131,9 @@ function Topics() {
       },
       Cell: ({ cell }) => {
         return (
-          <div>
+          <div
+            onClick={() => cell.row.toggleExpanded()}
+          >
             {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
           </div>
         );
