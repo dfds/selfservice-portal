@@ -10,20 +10,20 @@ import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 function shallowEqual(object1, object2) {
   try {
-  const keys1 = Object.keys(object1);
-  const keys2 = Object.keys(object2);
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
 
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-
-  for (let key of keys1) {
-    if (object1[key] !== object2[key]) {
+    if (keys1.length !== keys2.length) {
       return false;
     }
-  }
 
-  return true;
+    for (let key of keys1) {
+      if (object1[key] !== object2[key]) {
+        return false;
+      }
+    }
+
+    return true;
   } catch {
     return false;
   }
@@ -58,7 +58,12 @@ const checkIfFollowsJsonSchema = (data, schema) => {
  * This component uses the react-jsonschema-form library to render the form.
  * The schema is fetched from the backend and filtered to only show required fields.
  */
-export function CapabilityTagsSubForm({ title, setMetadata, setValidMetadata, preexistingFormData }) {
+export function CapabilityTagsSubForm({
+  title,
+  setMetadata,
+  setValidMetadata,
+  preexistingFormData,
+}) {
   /*
   const testSchema = {
     title: "Tags",
@@ -89,7 +94,7 @@ export function CapabilityTagsSubForm({ title, setMetadata, setValidMetadata, pr
     } else {
       setValidMetadata(false);
     }
-  };  
+  };
 
   useEffect(() => {
     if (schemaString && schemaString !== "{}") {
@@ -102,9 +107,11 @@ export function CapabilityTagsSubForm({ title, setMetadata, setValidMetadata, pr
       if (schemaString === "{}") {
         const newSchemaString =
           await selfServiceApiClient.getCapabilityJsonMetadataSchema();
-          
+
         setSchemaString(
-          prettifyJsonString(removeNonRequiredJsonSchemaProperties(newSchemaString)),
+          prettifyJsonString(
+            removeNonRequiredJsonSchemaProperties(newSchemaString),
+          ),
         );
       } else {
         // quick hack to change the title of the form, instead of changing the schema itself
@@ -141,8 +148,8 @@ export function CapabilityTagViewer() {
     SelectedCapabilityContext,
   );
 
-  const [ isDirty, setIsDirty ] = useState(false);
-  const [ isValid, setIsValid ] = useState(true);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isValid, setIsValid] = useState(true);
 
   const [formData, setFormData] = useState({});
   const [existingFormData, setExistingFormData] = useState({});
@@ -180,7 +187,7 @@ export function CapabilityTagViewer() {
           preexistingFormData={existingFormData}
         />
 
-        <br/>
+        <br />
 
         <ButtonStack align={"right"}>
           <Button

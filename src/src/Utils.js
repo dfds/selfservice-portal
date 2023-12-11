@@ -39,7 +39,6 @@ export function composeSegmentsUrl(segments) {
 }
 
 export function removeNonRequiredJsonSchemaProperties(jsonSchemaString) {
-
   const jsonSchemaCopy = JSON.parse(jsonSchemaString);
   let newProperties = JSON.parse("{}");
   if (jsonSchemaCopy.required) {
