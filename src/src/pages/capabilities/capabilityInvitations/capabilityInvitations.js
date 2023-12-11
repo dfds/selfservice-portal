@@ -6,22 +6,34 @@ import { Invitations } from "../invitations";
 export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
   const [invitees, setInvitees] = useState([]);
   const [isInvited, setIsInvited] = useState(false);
-  const [showDoneLabel, setShowDoneLabel] = useState(false);
+  const [showSuccessLabel, setShowSuccessLabel] = useState(false);
+  const [disableSendButton, setDisableSendButton] = useState(true);
 
   const handleAddInvitationClicked = async () => {
+    if (invitees.length === 0) {
+      return;
+    }
     await addNewInvitees(invitees);
     setInvitees([]);
     setIsInvited(true);
-    setShowDoneLabel(true);
+    setShowSuccessLabel(true);
   };
 
   useEffect(() => {
     if (isInvited) {
       setTimeout(() => {
-        setShowDoneLabel(false);
+        setShowSuccessLabel(false);
+        setDisableSendButton(true);
       }, 3000);
     }
-  }, [isInvited, showDoneLabel]);
+  }, [isInvited, showSuccessLabel]);
+
+  useEffect(() => {
+    setDisableSendButton(true);
+    if (invitees.length !== 0) {
+      setDisableSendButton(false);
+    }
+  }, [invitees]);
 
   return (
     <>
@@ -41,10 +53,13 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
             submitting={inProgress}
             style={{
               position: "right",
-              backgroundColor: showDoneLabel ? "#4caf50" : "#ED8800",
+              backgroundColor: showSuccessLabel ? "#4caf50" : "#ED8800",
+              cursor: disableSendButton ? "auto" : "pointer", //overwrite the build in style in order to prevent the user of clicking the button when it is green
+              opacity: disableSendButton && !showSuccessLabel ? "0.3" : "",
+              pointerEvents: showSuccessLabel ? "none" : "auto",
             }}
           >
-            {showDoneLabel ? "Success" : "Invite"}
+            {showSuccessLabel ? "Success" : "Invite"}
           </Button>
         </ButtonStack>
       </PageSection>

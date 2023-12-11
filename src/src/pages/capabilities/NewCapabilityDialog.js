@@ -4,6 +4,7 @@ import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
+//import { CapabilityTags } from "./capabilityTags";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -16,9 +17,6 @@ export default function NewCapabilityDialog({
     }
   };
 
-  //error banner logic
-  //const displayConflictWarning =
-
   const emptyValues = {
     name: "",
     description: "",
@@ -27,6 +25,13 @@ export default function NewCapabilityDialog({
 
   const [formData, setFormData] = useState(emptyValues);
   const [invitees, setInvitees] = useState([]);
+  /*
+  const [tagFormData, setTagFormData] = useState({});
+
+  useEffect(() => {
+    console.log(tagFormData);
+  }, [tagFormData]);
+  */
 
   const changeName = (e) => {
     e.preventDefault();
@@ -113,6 +118,10 @@ export default function NewCapabilityDialog({
             formData={formData}
             setFormData={setFormData}
           />
+
+          {/*<CapabilityTags setTagData={setTagFormData} />*/}
+
+          <br />
 
           <ButtonStack>
             <Button

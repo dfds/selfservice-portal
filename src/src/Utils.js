@@ -37,3 +37,14 @@ export function composeSegmentsUrl(segments) {
   });
   return url;
 }
+
+export function removeNonRequiredJsonSchemaProperties(jsonSchema) {
+  const jsonSchemaCopy = JSON.parse(jsonSchema);
+  let newProperties = JSON.parse("{}");
+  jsonSchemaCopy.required.forEach((requiredProperty) => {
+    newProperties[requiredProperty] =
+      jsonSchemaCopy.properties[requiredProperty];
+  });
+  jsonSchemaCopy.properties = newProperties;
+  return JSON.stringify(jsonSchemaCopy, null, 2);
+}

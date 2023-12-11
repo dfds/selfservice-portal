@@ -68,6 +68,25 @@ export default function OtherCapabilities() {
         },
       },
       {
+        accessorFn: (row) => row.jsonMetadata,
+        header: "Cost Centre",
+        size: 50,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
+          if (jsonMetadata["dfds.cost.centre"] === undefined) {
+            return <div></div>;
+          }
+          return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
+        },
+      },
+      {
         accessorFn: (row) => row.id,
         header: "arrow",
         size: 1,
