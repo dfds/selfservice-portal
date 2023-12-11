@@ -34,3 +34,7 @@ hr.divider {
 .completed .items:last-child {
   border-right: 0px none;
 }
+
+.fixTopPadding {
+  padding-top: 15px !important;
+}

@@ -56,6 +56,10 @@
   color: white !important;
 }
 
+.badgecluster > p {
+  padding-top: 15px !important;
+}
+
 .searchcontainer > * {
   margin: 0 5px 0 0;
 }

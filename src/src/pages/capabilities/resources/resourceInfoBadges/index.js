@@ -96,9 +96,10 @@ const Completed = function ({ accountId, namespace, id }) {
             <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
           </p>
           <div>AWS Acount ready:</div>
-          <Badge>
+          <Badge className={styles.fixTopPadding}>
             <strong>{accountId} </strong>
           </Badge>
+          <br />
           <br />
           <DetailedAwsCountSummary capabilityId={id}></DetailedAwsCountSummary>
         </div>
@@ -107,7 +108,7 @@ const Completed = function ({ accountId, namespace, id }) {
             <img src={k8sLogo} alt="K8s icon" style={{ height: "2.5rem" }} />
           </p>
           <div>Kubernetes Namespace ready:</div>
-          <Badge>
+          <Badge className={styles.fixTopPadding}>
             <strong>{namespace}</strong>
           </Badge>
         </div>
