@@ -81,6 +81,10 @@
   color: #fff !important;
 }
 
+.chevronBox {
+  padding: 2rem 0;
+}
+
 .messagecontractsheader {
   display: flex;
   flex-direction: row;

@@ -85,9 +85,7 @@ function Topics() {
             onClick={() => cell.row.toggleExpanded()}
             className={styles.pointyCursor}
           >
-            <div
-              className={styles.topicheader}
-            >
+            <div className={styles.topicheader}>
               <div className={styles.row}>
                 <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
                   {renderedCellValue}
@@ -132,9 +130,12 @@ function Topics() {
       Cell: ({ cell }) => {
         return (
           <div
+            className={styles.pointyCursor}
             onClick={() => cell.row.toggleExpanded()}
           >
-            {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+            <div className={styles.chevronBox}>
+              {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+            </div>
           </div>
         );
       },
@@ -162,7 +163,7 @@ function Topics() {
                       fontSize: "16px",
                       fontFamily: "DFDS",
                       color: "#4d4e4c",
-                      padding: "5px",
+                      padding: "0",
                       width: "1%",
                       align: "centre",
                     },
@@ -173,7 +174,7 @@ function Topics() {
                       fontSize: "16px",
                       fontFamily: "DFDS",
                       color: "#4d4e4c",
-                      padding: "5px",
+                      padding: "0",
                       width: "1%",
                       align: "centre",
                     },
@@ -200,7 +201,12 @@ function Topics() {
                   fontSize: "16px",
                   fontFamily: "DFDS",
                   color: "#4d4e4c",
-                  padding: "5px",
+                  padding: "0",
+                },
+              }}
+              muiTableDetailPanelProps={{
+                sx: {
+                  padding: "0",
                 },
               }}
               muiTablePaperProps={{
@@ -221,7 +227,7 @@ function Topics() {
                   minWidth: "1120px",
                   fontWeight: "400",
                   fontSize: "16px",
-                  padding: "5px",
+                  padding: "0",
                 },
                 size: "small",
                 variant: "outlined",
