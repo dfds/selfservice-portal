@@ -15,11 +15,13 @@ import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import { useCapabilities } from "hooks/Capabilities";
 
 export default function CapabilitiesPage() {
-  const { addNewCapability, myProfile } = useContext(AppContext);
+  const { addNewCapability, myProfile, reloadUser } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
+  const { reloadCapabilities } = useCapabilities();
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
@@ -30,6 +32,8 @@ export default function CapabilitiesPage() {
     );
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
+    // reloadUser();
+    reloadCapabilities();
   };
 
   const splash = (

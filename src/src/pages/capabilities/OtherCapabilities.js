@@ -9,8 +9,8 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
-  const { capabilities, isLoaded } = useCapabilities();
+  const { myCapabilities, appStatus} = useContext(AppContext);
+  const { capabilities, isLoaded, reloadCapabilities } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
   const [searchResult, setSearchResult] = useState([]);
@@ -20,6 +20,9 @@ export default function OtherCapabilities() {
       return;
     }
 
+    // reloadCapabilities();
+    // console.log("reloadcapabilities")
+
     const filteredList = capabilities.filter((x) => {
       const myCap = myCapabilities.find((y) => y.id === x.id);
       if (myCap) {
@@ -28,7 +31,7 @@ export default function OtherCapabilities() {
         return true;
       }
     });
-
+    
     setOtherCapabilities(filteredList);
   }, [capabilities, myCapabilities, appStatus]);
 

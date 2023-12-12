@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
+import AppContext from "../../AppContext";
+// import { useCapabilities } from "hooks/Capabilities";
 
 export default function NewCapabilityDialog({
   inProgress,
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
+
+  const { reloadUser } = useContext(AppContext);
+  // const { reloadCapabilities } = useCapabilities();
+
   const handleClose = () => {
     if (onCloseClicked && !inProgress) {
       onCloseClicked();
@@ -67,6 +73,8 @@ export default function NewCapabilityDialog({
   const handleAddCapabilityClicked = () => {
     if (onAddCapabilityClicked) {
       onAddCapabilityClicked({ ...formData, invitations: invitees });
+      // console.log("reload")
+      // reloadCapabilities();
     }
   };
 
