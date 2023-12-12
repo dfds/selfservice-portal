@@ -38,13 +38,15 @@ export function composeSegmentsUrl(segments) {
   return url;
 }
 
-export function removeNonRequiredJsonSchemaProperties(jsonSchema) {
-  const jsonSchemaCopy = JSON.parse(jsonSchema);
+export function removeNonRequiredJsonSchemaProperties(jsonSchemaString) {
+  const jsonSchemaCopy = JSON.parse(jsonSchemaString);
   let newProperties = JSON.parse("{}");
-  jsonSchemaCopy.required.forEach((requiredProperty) => {
-    newProperties[requiredProperty] =
-      jsonSchemaCopy.properties[requiredProperty];
-  });
-  jsonSchemaCopy.properties = newProperties;
+  if (jsonSchemaCopy.required) {
+    jsonSchemaCopy.required.forEach((requiredProperty) => {
+      newProperties[requiredProperty] =
+        jsonSchemaCopy.properties[requiredProperty];
+    });
+    jsonSchemaCopy.properties = newProperties;
+  }
   return JSON.stringify(jsonSchemaCopy, null, 2);
 }
