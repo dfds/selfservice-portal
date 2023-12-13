@@ -13,7 +13,6 @@ import {
 import Page from "components/Page";
 import PageSection from "components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";
-import { useECRRepositories } from "hooks/ECRRepositories";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
 import AppContext from "AppContext";
