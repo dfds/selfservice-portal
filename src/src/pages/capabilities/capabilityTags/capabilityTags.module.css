@@ -1,4 +1,15 @@
-legend {
-  font-size: 1rem !important;
+.tagsform legend {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.tagsform fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tagformLabel {
+  font-size: 2.8rem;
   font-weight: bold;
 }
