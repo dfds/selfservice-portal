@@ -20,7 +20,7 @@ export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
-  const {reloadUser} = useContext(AppContext);
+  const { reloadUser } = useContext(AppContext);
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);

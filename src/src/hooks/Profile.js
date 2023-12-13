@@ -9,7 +9,7 @@ export function useProfile(user) {
 
   const reload = () => {
     setTriggerReload(!triggerReload);
-  }
+  };
 
   useEffect(() => {
     sendRequest({

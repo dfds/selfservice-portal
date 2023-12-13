@@ -8,7 +8,6 @@ import AppContext from "AppContext";
 export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
   const { addNewRepository } = useContext(AppContext);
- 
 
   const handleClose = () => {
     if (!isCreatingNewRepository) {

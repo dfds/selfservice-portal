@@ -12,7 +12,7 @@ export function useECRRepositories() {
 
   const reload = () => {
     setTriggerReload(true);
-  }
+  };
 
   useEffect(() => {
     loadRepositories({

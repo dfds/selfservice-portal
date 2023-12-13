@@ -55,8 +55,9 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
-  const {createRepository, reload, repositories, isLoading} = useECRRepositories();
-  const { profileInfo, isLoadedProfile, reload: reloadUser} = useProfile(user);
+  const { createRepository, reload, repositories, isLoading } =
+    useECRRepositories();
+  const { profileInfo, isLoadedProfile, reload: reloadUser } = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
   async function addNewCapability(name, description, invitations) {
@@ -70,8 +71,6 @@ function AppProvider({ children }) {
     await sleep(3000);
     reload();
   }
-
-
 
   async function loadMyProfile() {
     if (isLoadedProfile && isLoadedStats) {
@@ -166,7 +165,7 @@ function AppProvider({ children }) {
     addNewRepository,
     reload,
     repositories,
-    isLoading
+    isLoading,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

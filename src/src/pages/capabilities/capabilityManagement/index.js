@@ -70,7 +70,7 @@ export default function CapabilityManagement() {
     updateDeletionStatus,
   } = useContext(SelectedCapabilityContext);
 
-  const {reloadUser} = useContext(AppContext);
+  const { reloadUser } = useContext(AppContext);
 
   const canDeleteCapability = (
     links?.requestCapabilityDeletion?.allow || []
