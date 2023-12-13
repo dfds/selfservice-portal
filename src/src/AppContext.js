@@ -67,8 +67,7 @@ function AppProvider({ children }) {
   }
 
   async function addNewRepository(name, description) {
-    createRepository(name, description);
-    await sleep(3000);
+    await createRepository(name, description);
     reload();
   }
 
