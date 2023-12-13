@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Card,
@@ -16,9 +16,10 @@ import NewRepositoryDialog from "./NewRepositoryDialog";
 import { useECRRepositories } from "hooks/ECRRepositories";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
+import AppContext from "AppContext";
 
 function Repositories() {
-  const { repositories, isLoading } = useECRRepositories();
+  const { repositories, isLoading } = useContext(AppContext);
 
   const columns = useMemo(
     () => [

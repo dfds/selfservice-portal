@@ -6,6 +6,7 @@ import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
+import { useECRRepositories } from "hooks/ECRRepositories";
 
 const AppContext = React.createContext(null);
 
@@ -54,6 +55,7 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
+  const {createRepository, reload, repositories, isLoading} = useECRRepositories();
   const { profileInfo, isLoadedProfile, reload: reloadUser} = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
@@ -62,6 +64,14 @@ function AppProvider({ children }) {
     await sleep(3000);
     await loadMyProfile();
   }
+
+  async function addNewRepository(name, description) {
+    createRepository(name, description);
+    await sleep(3000);
+    reload();
+  }
+
+
 
   async function loadMyProfile() {
     if (isLoadedProfile && isLoadedStats) {
@@ -153,6 +163,10 @@ function AppProvider({ children }) {
     addNewCapability,
     truncateString,
     reloadUser,
+    addNewRepository,
+    reload,
+    repositories,
+    isLoading
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
