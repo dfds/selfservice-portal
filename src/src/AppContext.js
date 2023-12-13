@@ -53,7 +53,7 @@ function AppProvider({ children }) {
     [selfServiceApiClient],
   );
 
-  const { addCapability, reloadCapabilities } = useCapabilities();
+  const { addCapability } = useCapabilities();
   const { profileInfo, isLoadedProfile, reload: reloadUser} = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
@@ -61,7 +61,6 @@ function AppProvider({ children }) {
     addCapability(name, description, invitations);
     await sleep(3000);
     await loadMyProfile();
-    reloadCapabilities();
   }
 
   async function loadMyProfile() {

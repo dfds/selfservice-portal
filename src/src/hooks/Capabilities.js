@@ -8,12 +8,6 @@ export function useCapabilities() {
     useSelfServiceRequest();
   const [isLoaded, setIsLoaded] = useState(false);
   const [capabilities, setCapabilities] = useState([]);
-  const [triggerReload, setTriggerReload] = useState(false);
-
-  const reload = () => {
-    console.log("reload")
-    setTriggerReload(!triggerReload);
-  }
 
   const sortByName = (list) => {
     list.sort((a, b) => a.name.localeCompare(b.name));
@@ -47,7 +41,7 @@ export function useCapabilities() {
       method: "GET",
       payload: null,
     });
-  }, [triggerReload]);
+  }, []);
 
   useEffect(() => {
     const list = getAllResponse?.items || [];
@@ -61,7 +55,6 @@ export function useCapabilities() {
     isLoaded,
     capabilities,
     addCapability: createCapability,
-    reloadCapabilities: reload, 
   };
 }
 
