@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import styles from "./capabilityTags.module.css";
 import AppContext from "AppContext";
 import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/core";
+import Form from "@rjsf/mui";
 import { removeNonRequiredJsonSchemaProperties } from "Utils";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
