@@ -1,5 +1,5 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
 import { useTracking } from "./Tracking";
@@ -7,6 +7,88 @@ import { useTracking } from "./Tracking";
 function isValidURL(urlString) {
   const urlRegex = /^(?:https?:\/\/)/;
   return urlRegex.test(urlString);
+}
+
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), duration);
+  });
+}
+
+export class PollUntilExpectedDataOptions {
+  constructor() {
+    this.sendRequest = () => {};
+    this.responseData = {};
+    this.condFunc = (responseData) => false;
+    this.pollingInterval = 5000;
+    this.pollingEnabled = false;
+  }
+}
+
+/**
+ * @param {PollUntilExpectedDataOptions} options
+ */
+export function usePollUntilExpectedData(options) {
+  const [expectedDataDetected, setExpectedDataDetected] = useState(false);
+  const [keepPolling, setkeepPolling] = useState(false);
+  const [pollingId, setPollingId] = useState("");
+  const [pollingEnabled, setPollingEnabled] = useState(options.pollingEnabled);
+  const [internalOptions, setInternalOptions] = useState(options);
+
+  /**
+   * @param {PollUntilExpectedDataOptions} additionalOptions
+   */
+  const trigger = (additionalOptions) => {
+    setInternalOptions((iop) => {
+      return {
+        ...iop,
+        ...additionalOptions,
+      };
+    });
+    setPollingEnabled(true);
+  };
+
+  useEffect(() => {
+    const op = async () => {
+      if (expectedDataDetected) {
+        return;
+      }
+
+      if (internalOptions.condFunc(options.responseData)) {
+        // console.log("condition met, stop polling");
+        setExpectedDataDetected(true);
+        setkeepPolling(false);
+      } else {
+        setkeepPolling(true);
+      }
+    };
+
+    op();
+  }, [options.responseData]); // Need to use options rather than internalOptions for responseData, won't get updated otherwise
+
+  useEffect(() => {
+    if (!pollingEnabled) {
+      return;
+    }
+    // Setup polling
+    if (keepPolling) {
+      const id = setInterval(() => {
+        const op = async () => {
+          // Do another poll after x seconds
+          internalOptions.sendRequest();
+        };
+        op();
+      }, internalOptions.pollingInterval);
+      setPollingId(id);
+    } else {
+      clearInterval(pollingId);
+    }
+  }, [keepPolling, pollingEnabled]);
+
+  return {
+    expectedDataDetected,
+    triggerPolling: trigger,
+  };
 }
 
 export function useSelfServiceRequest(errorParams) {

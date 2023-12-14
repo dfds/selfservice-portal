@@ -15,12 +15,22 @@ import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import {
+  usePollUntilExpectedData,
+  PollUntilExpectedDataOptions,
+} from "hooks/SelfServiceApi";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
   const { reloadUser } = useContext(AppContext);
+  const waitForNewCapability = usePollUntilExpectedData({
+    ...new PollUntilExpectedDataOptions(),
+    responseData: myProfile,
+    sendRequest: reloadUser,
+    pollingEnabled: false,
+  });
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
@@ -32,7 +42,19 @@ export default function CapabilitiesPage() {
     );
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
-    reloadUser();
+    waitForNewCapability.triggerPolling({
+      condFunc: (data) => {
+        if (data == null) {
+          return false;
+        }
+        for (const cap of data.capabilities) {
+          if (cap.name.toLowerCase().includes(formData.name)) {
+            return true;
+          }
+        }
+        return false;
+      },
+    });
   };
 
   const splash = (

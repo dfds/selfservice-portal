@@ -8,7 +8,7 @@ export function useProfile(user) {
   const [triggerReload, setTriggerReload] = useState(false);
 
   const reload = () => {
-    setTriggerReload(!triggerReload);
+    setTriggerReload((prev) => !prev);
   };
 
   useEffect(() => {
