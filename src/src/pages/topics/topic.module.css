@@ -60,14 +60,15 @@
   margin: 0 5px 0 0;
 }
 
+.pointyCursor {
+  cursor: pointer;
+}
+
 .topicheader {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   cursor: pointer;
-  padding-left: 0;
-  padding-right: 0;
-  margin: 1rem;
   margin-bottom: 0;
   align-items: center;
   justify-content: space-between;
@@ -78,6 +79,10 @@
 .topicheaderselected {
   background-color: #002b45;
   color: #fff !important;
+}
+
+.chevronBox {
+  padding: 2rem 0;
 }
 
 .messagecontractsheader {
