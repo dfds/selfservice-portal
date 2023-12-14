@@ -29,6 +29,8 @@
 
 .warningIcon {
   color: #be1e2d;
+  margin: 0 -10px;
+  margin-top: 5px;
   float: left;
 }
 

@@ -9,7 +9,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
+  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
@@ -58,10 +58,10 @@ export default function OtherCapabilities() {
             <div>
               {" "}
               <Text styledAs="action" as={"div"}>
-                {renderedCellValue}
+                {truncateString(renderedCellValue)}
               </Text>
               <Text styledAs="caption" as={"div"}>
-                {cell.row.original.description}
+                {truncateString(cell.row.original.description)}
               </Text>
             </div>
           );
