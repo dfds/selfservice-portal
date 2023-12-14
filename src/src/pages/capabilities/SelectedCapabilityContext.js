@@ -254,6 +254,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
+    setReloadRequired(true);
   }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {

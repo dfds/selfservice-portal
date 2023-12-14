@@ -5,6 +5,7 @@ import { useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { css } from "@emotion/react";
 import styles from "./warning.module.css";
+import AppContext from "../../../AppContext";
 
 export default function DeletionWarning() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(true);
@@ -15,6 +16,8 @@ export default function DeletionWarning() {
     submitCancelDeleteCapability,
   } = useContext(SelectedCapabilityContext);
 
+  const { reloadUser } = useContext(AppContext);
+
   const canCancelDeleteCapability = (
     links?.cancelCapabilityDeletionRequest?.allow || []
   ).includes("POST");
@@ -22,6 +25,7 @@ export default function DeletionWarning() {
   const handleCancelDeleteClicked = async () => {
     await submitCancelDeleteCapability();
     setShowDeleteDialog(false);
+    reloadUser();
     setTimeout(() => {
       updateDeletionStatus(false);
       setShowDeleteDialog(true);

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
-import { useECRRepositories } from "hooks/ECRRepositories";
+import AppContext from "AppContext";
 
 export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
-  const { createRepository } = useECRRepositories();
+  const { addNewRepository } = useContext(AppContext);
 
   const handleClose = () => {
     if (!isCreatingNewRepository) {
@@ -63,7 +63,7 @@ export default function NewRepositoryDialog({ onClose }) {
 
   const handleAddRepositoryClicked = async () => {
     setIsCreatingNewRepository(true);
-    await createRepository(formData);
+    await addNewRepository(formData);
     setIsCreatingNewRepository(false);
     onClose();
   };

@@ -5,12 +5,17 @@ export function useProfile(user) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
   const [profileInfo, setProfileInfo] = useState(null);
+  const [triggerReload, setTriggerReload] = useState(false);
+
+  const reload = () => {
+    setTriggerReload(!triggerReload);
+  };
 
   useEffect(() => {
     sendRequest({
       urlSegments: ["me"],
     });
-  }, [user]);
+  }, [user, triggerReload]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -27,6 +32,7 @@ export function useProfile(user) {
   return {
     isLoadedProfile,
     profileInfo,
+    reload,
   };
 }
 
