@@ -82,7 +82,7 @@ export function CapabilityTagsSubForm({
   preexistingFormData,
 }) {
   const { selfServiceApiClient } = useContext(AppContext);
-  const [showTagForm, setShowTagForm] = useState(true);
+  const [showTagForm, setShowTagForm] = useState(false);
   const [schemaString, setSchemaString] = useState("{}");
   const [schema, setSchema] = useState({});
   const [formData, setFormData] = useState({});
@@ -116,8 +116,10 @@ export function CapabilityTagsSubForm({
       } else {
         var updated_schema = JSON.parse(schemaString);
         updated_schema["title"] = ""; // do not render title from schema
-        setSchema(updated_schema);
-        setShowTagForm(true);
+        if (!shallowEqual(updated_schema.properties, {})) {
+          setSchema(updated_schema);
+          setShowTagForm(true);
+        }
       }
     }
     void getAndSetSchema();
@@ -129,7 +131,7 @@ export function CapabilityTagsSubForm({
 
   return (
     <>
-      {showTagForm ? (
+      {showTagForm && (
         <>
           {label !== "" && <Text className={styles.label}>{label}</Text>}
           <Form
@@ -142,9 +144,6 @@ export function CapabilityTagsSubForm({
             children={true} // hide submit button
           />
         </>
-      ) : (
-        // [andfris] let's see if we need a spinner
-        <p>Loading tag requirements</p>
       )}
     </>
   );

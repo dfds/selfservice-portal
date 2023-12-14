@@ -47,6 +47,8 @@ export function removeNonRequiredJsonSchemaProperties(jsonSchemaString) {
         jsonSchemaCopy.properties[requiredProperty];
     });
     jsonSchemaCopy.properties = newProperties;
+  } else {
+    jsonSchemaCopy.properties = {};
   }
   return JSON.stringify(jsonSchemaCopy, null, 2);
 }
