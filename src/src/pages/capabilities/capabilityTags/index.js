@@ -55,7 +55,6 @@ const checkIfFollowsJsonSchema = (data, schema) => {
  */
 
 const CustomDropdown = function (props) {
-  console.log("props: ", props);
   const { options, value, onChange } = props;
   return (
     <Select
