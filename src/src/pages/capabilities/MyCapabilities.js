@@ -11,8 +11,7 @@ import { MaterialReactTable } from "material-react-table";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
-    useContext(AppContext);
+  const { myCapabilities, metricsWrapper, appStatus } = useContext(AppContext);
 
   const items = myCapabilities || [];
   const isLoading = !appStatus.hasLoadedMyCapabilities;
@@ -38,19 +37,19 @@ export default function MyCapabilities() {
           return (
             <div>
               {cell.getValue().status === "Pending Deletion" ? (
-                <Text styledAs="action" as={"div"}>
+                <Text>
                   <StatusAlert className={styles.warningIcon} />
                 </Text>
               ) : null}
               <Text styledAs="action" style={{ marginLeft: "20px" }} as={"div"}>
-                {truncateString(cell.getValue().name)}
+                {cell.getValue().name}
               </Text>
               <Text
                 styledAs="caption"
                 style={{ marginLeft: "20px" }}
                 as={"div"}
               >
-                {truncateString(cell.getValue().description)}
+                {cell.getValue().description}
               </Text>
             </div>
           );

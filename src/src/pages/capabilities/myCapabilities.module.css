@@ -1,3 +1,9 @@
+.warningIcon {
+  color: #be1e2d;
+  margin: 0px -20px;
+  float: left;
+}
+
 .costs {
   display: inline-flex;
   flex-direction: row;
