@@ -1,12 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
-import "./capabilityTags.module.css";
+import styles from "./capabilityTags.module.css";
 import AppContext from "AppContext";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/core";
 import { removeNonRequiredJsonSchemaProperties } from "Utils";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { Button, ButtonStack, Text } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import Select from "react-select";
 
 function shallowEqual(object1, object2) {
   try {
@@ -50,6 +51,22 @@ const checkIfFollowsJsonSchema = (data, schema) => {
 };
 
 /*
+ * Custom Widgets and Fields
+ */
+
+const CustomDropdown = function (props) {
+  const { options, value, onChange } = props;
+  return (
+    <Select
+      value={options.enumOptions.find((o) => o.value === value)}
+      options={options.enumOptions}
+      clearable={false}
+      onChange={(o) => onChange(o.value)}
+    />
+  );
+};
+
+/*
  * This component is responsible for rendering the capability tags form.
  * Whenever data is changed, the entire formData passed to the setTagData function.
  * The setMetadata function must be passed from the parent component.
@@ -59,30 +76,14 @@ const checkIfFollowsJsonSchema = (data, schema) => {
  * The schema is fetched from the backend and filtered to only show required fields.
  */
 export function CapabilityTagsSubForm({
-  title,
+  label,
   setMetadata,
+  setHasSchema,
   setValidMetadata,
   preexistingFormData,
 }) {
-  /*
-  const testSchema = {
-    title: "Tags",
-    type: "object",
-    required: ["dfds.cost.center"],
-    properties: {
-      "dfds.cost.center": {
-        enum: [
-          "Dummy CostCenter 1",
-          "Dummy CostCenter 2",
-          "Dummy CostCenter 3",
-        ],
-      },
-    },
-  };
-  */
-
   const { selfServiceApiClient } = useContext(AppContext);
-  const [showTagForm, setShowTagForm] = useState(true);
+  const [showTagForm, setShowTagForm] = useState(false);
   const [schemaString, setSchemaString] = useState("{}");
   const [schema, setSchema] = useState({});
   const [formData, setFormData] = useState({});
@@ -114,29 +115,37 @@ export function CapabilityTagsSubForm({
           ),
         );
       } else {
-        // quick hack to change the title of the form, instead of changing the schema itself
         var updated_schema = JSON.parse(schemaString);
-        updated_schema["title"] = title;
-        setSchema(updated_schema);
-        setShowTagForm(true);
+        updated_schema["title"] = ""; // do not render title from schema
+        if (!shallowEqual(updated_schema.properties, {})) {
+          setSchema(updated_schema);
+          setHasSchema(true);
+          setShowTagForm(true);
+        }
       }
     }
     void getAndSetSchema();
   }, [schemaString]);
 
+  const widgets = {
+    SelectWidget: CustomDropdown,
+  };
+
   return (
     <>
-      {showTagForm ? (
-        <Form
-          schema={schema}
-          validator={validator}
-          onChange={(type) => setFormData(type.formData)}
-          formData={preexistingFormData}
-          children={true} // hide submit button
-        />
-      ) : (
-        // [andfris] let's see if we need a spinner
-        <p>Loading tag requirements</p>
+      {showTagForm && (
+        <>
+          {label !== "" && <Text className={styles.label}>{label}</Text>}
+          <Form
+            className={styles.tagsform}
+            schema={schema}
+            validator={validator}
+            onChange={(type) => setFormData(type.formData)}
+            widgets={widgets}
+            formData={preexistingFormData}
+            children={true} // hide submit button
+          />
+        </>
       )}
     </>
   );
@@ -150,7 +159,7 @@ export function CapabilityTagViewer() {
 
   const [isDirty, setIsDirty] = useState(false);
   const [isValid, setIsValid] = useState(true);
-
+  const [hasSchema, setHasSchema] = useState(false);
   const [formData, setFormData] = useState({});
   const [existingFormData, setExistingFormData] = useState({});
 
@@ -178,28 +187,31 @@ export function CapabilityTagViewer() {
   };
 
   return (
-    <>
-      <PageSection headline="Capability Tags">
-        <CapabilityTagsSubForm
-          title=""
-          setMetadata={setFormData}
-          setValidMetadata={setIsValid}
-          preexistingFormData={existingFormData}
-        />
+    hasSchema && (
+      <>
+        <PageSection headline="Capability Tags">
+          <CapabilityTagsSubForm
+            title=""
+            setMetadata={setFormData}
+            setHasSchema={setHasSchema}
+            setValidMetadata={setIsValid}
+            preexistingFormData={existingFormData}
+          />
 
-        <br />
+          <br />
 
-        <ButtonStack align={"right"}>
-          <Button
-            size="small"
-            variation="outlined"
-            onClick={() => submitTags(formData)}
-            disabled={!(isValid && isDirty)}
-          >
-            Submit
-          </Button>
-        </ButtonStack>
-      </PageSection>
-    </>
+          <ButtonStack align={"right"}>
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={() => submitTags(formData)}
+              disabled={!(isValid && isDirty)}
+            >
+              Submit
+            </Button>
+          </ButtonStack>
+        </PageSection>
+      </>
+    )
   );
 }
