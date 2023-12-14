@@ -36,9 +36,10 @@ export function useSelfServiceRequest(errorParams) {
     try {
       const httpResponse = await callApi(url, accessToken, method, payload);
       if (httpResponse.ok) {
-        httpResponse.json().then((data) => {
-          setResponseData(data);
-        });
+        const contentType = httpResponse.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          setResponseData(await httpResponse.json());
+        }
       } else {
         const newData = await httpResponse.json();
         const errorTitle = newData.title;
