@@ -1,15 +1,12 @@
-.tagsform legend {
-  font-size: 1rem;
+.label {
+  color: #002b45;
   font-weight: bold;
+  line-height: 1.25;
+  display: block;
 }
 
 .tagsform fieldset {
   border: none;
   margin: 0;
   padding: 0;
-}
-
-.tagformLabel {
-  font-size: 2.8rem;
-  font-weight: bold;
 }

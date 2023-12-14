@@ -2,12 +2,12 @@ import React, { useEffect, useContext, useState } from "react";
 import styles from "./capabilityTags.module.css";
 import AppContext from "AppContext";
 import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/mui";
+import Form from "@rjsf/core";
 import { removeNonRequiredJsonSchemaProperties } from "Utils";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { Button, ButtonStack, Text } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import Select from 'react-select';
+import Select from "react-select";
 
 function shallowEqual(object1, object2) {
   try {
@@ -55,19 +55,17 @@ const checkIfFollowsJsonSchema = (data, schema) => {
  */
 
 const CustomDropdown = function (props) {
+  console.log("props: ", props);
   const { options, value, onChange } = props;
   return (
     <Select
+      value={options.enumOptions.find((o) => o.value === value)}
       options={options.enumOptions}
       clearable={false}
       onChange={(o) => onChange(o.value)}
-    >
-      {value}
-    </Select>
+    />
   );
 };
-
-
 
 /*
  * This component is responsible for rendering the capability tags form.
@@ -79,7 +77,7 @@ const CustomDropdown = function (props) {
  * The schema is fetched from the backend and filtered to only show required fields.
  */
 export function CapabilityTagsSubForm({
-  title,
+  label,
   setMetadata,
   setValidMetadata,
   preexistingFormData,
@@ -117,69 +115,34 @@ export function CapabilityTagsSubForm({
           ),
         );
       } else {
-        // quick hack to change the title of the form, instead of changing the schema itself
         var updated_schema = JSON.parse(schemaString);
-        updated_schema["title"] = title;
+        updated_schema["title"] = ""; // do not render title from schema
         setSchema(updated_schema);
         setShowTagForm(true);
       }
     }
     void getAndSetSchema();
   }, [schemaString]);
-  
-  /*
-  const customUiSchema = {
-    'dfds.cost.centre' : {
-      'ui.help': 'FLUTTERSHY: This is a help text',
-      'ui.title': "RAINBOWDASH"
-    }
-  }
-
-  const test = {
-    dfds: {cost: {centre: {
-      "ui:help": "This is a help text",
-      "ui:title": "This is a title",
-      "ui:widget": "string",
-    }}}
-  }
-  */
-  /*
-  function CustomFieldTemplate(props) {
-    console.log(props);
-    const {id, classNames, label, help, required, description, errors, children} = props;
-    return (
-      <div className={classNames}>
-        <label htmlFor={id}>{label}HEST{required ? "!!" : null}</label>
-        {description}
-        {children}
-        {errors}
-        {help}
-      </div>
-    );
-  }
-  */
 
   const widgets = {
     SelectWidget: CustomDropdown,
   };
 
-  //const theme = { templates: { FieldTemplate: CustomFieldTemplate } };
-  //const Form = withTheme(theme);
-
   return (
     <>
       {showTagForm ? (
-        <Form
-          //fields={fields}
-          //uiSchema={test}
-          className={styles.tagsform}
-          schema={schema}
-          validator={validator}
-          onChange={(type) => setFormData(type.formData)}
-          formData={preexistingFormData}
-          widgets={widgets}
-          children={true} // hide submit button
-        />
+        <>
+          {label !== "" && <Text className={styles.label}>{label}</Text>}
+          <Form
+            className={styles.tagsform}
+            schema={schema}
+            validator={validator}
+            onChange={(type) => setFormData(type.formData)}
+            widgets={widgets}
+            formData={preexistingFormData}
+            children={true} // hide submit button
+          />
+        </>
       ) : (
         // [andfris] let's see if we need a spinner
         <p>Loading tag requirements</p>

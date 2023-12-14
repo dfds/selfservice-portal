@@ -121,7 +121,7 @@ export default function NewCapabilityDialog({
           />
 
           <CapabilityTagsSubForm
-            title="Capability Tags"
+            label="Capability Tags"
             setMetadata={setMetadataFormData}
             setValidMetadata={setValidMetadata}
             preexistingFormData={{}}
