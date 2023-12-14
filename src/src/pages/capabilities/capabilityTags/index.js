@@ -78,6 +78,7 @@ const CustomDropdown = function (props) {
 export function CapabilityTagsSubForm({
   label,
   setMetadata,
+  setHasSchema,
   setValidMetadata,
   preexistingFormData,
 }) {
@@ -118,6 +119,7 @@ export function CapabilityTagsSubForm({
         updated_schema["title"] = ""; // do not render title from schema
         if (!shallowEqual(updated_schema.properties, {})) {
           setSchema(updated_schema);
+          setHasSchema(true);
           setShowTagForm(true);
         }
       }
@@ -157,7 +159,7 @@ export function CapabilityTagViewer() {
 
   const [isDirty, setIsDirty] = useState(false);
   const [isValid, setIsValid] = useState(true);
-
+  const [hasSchema, setHasSchema] = useState(false);
   const [formData, setFormData] = useState({});
   const [existingFormData, setExistingFormData] = useState({});
 
@@ -185,28 +187,31 @@ export function CapabilityTagViewer() {
   };
 
   return (
-    <>
-      <PageSection headline="Capability Tags">
-        <CapabilityTagsSubForm
-          title=""
-          setMetadata={setFormData}
-          setValidMetadata={setIsValid}
-          preexistingFormData={existingFormData}
-        />
+    hasSchema && (
+      <>
+        <PageSection headline="Capability Tags">
+          <CapabilityTagsSubForm
+            title=""
+            setMetadata={setFormData}
+            setHasSchema={setHasSchema}
+            setValidMetadata={setIsValid}
+            preexistingFormData={existingFormData}
+          />
 
-        <br />
+          <br />
 
-        <ButtonStack align={"right"}>
-          <Button
-            size="small"
-            variation="outlined"
-            onClick={() => submitTags(formData)}
-            disabled={!(isValid && isDirty)}
-          >
-            Submit
-          </Button>
-        </ButtonStack>
-      </PageSection>
-    </>
+          <ButtonStack align={"right"}>
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={() => submitTags(formData)}
+              disabled={!(isValid && isDirty)}
+            >
+              Submit
+            </Button>
+          </ButtonStack>
+        </PageSection>
+      </>
+    )
   );
 }
