@@ -59,7 +59,7 @@ export default function NewTopicDialog({
     e.preventDefault();
     const newValue = e?.target?.value || emptyValues.retention;
     let finalValue = newValue;
-    if (!isNaN(finalValue)) {
+    if (finalValue !== "forever") {
       finalValue = parseInt(newValue);
     }
     setFormData((prev) => ({ ...prev, ...{ retention: finalValue } }));
