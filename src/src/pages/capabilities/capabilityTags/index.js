@@ -1,17 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
-import styles from "./capabilityTags.module.css";
-import AppContext from "AppContext";
-import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/core";
-import {
-  removedNonRequiredJsonSchemaProperties,
-  removeNonRequiredJsonSchemaProperties,
-  shallowEqual,
-} from "Utils";
+import { shallowEqual } from "Utils";
 import { Button, ButtonStack, Text } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import Select from "react-select";
 import { CapabilityTagsSubForm } from "./capabilityTagsSubForm";
 import JsonSchemaContext from "../../../JsonSchemaContext";
 
