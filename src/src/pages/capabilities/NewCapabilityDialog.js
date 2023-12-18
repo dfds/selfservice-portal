@@ -5,7 +5,7 @@ import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
-import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
+import { JsonSchemaProvider } from "../../JsonSchemaContext";
 
 export default function NewCapabilityDialog({
   inProgress,
