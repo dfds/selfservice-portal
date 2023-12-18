@@ -14,12 +14,15 @@ import CapabilityManagement from "./capabilityManagement";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
+import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
 
 export default function CapabilityDetailsPage() {
   return (
     <>
       <SelectedCapabilityProvider>
-        <CapabilityDetailsPageContent />
+        <JsonSchemaProvider>
+          <CapabilityDetailsPageContent />
+        </JsonSchemaProvider>
       </SelectedCapabilityProvider>
     </>
   );

@@ -1,38 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import AppContext from "../../../AppContext";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import PageSection from "../../../components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import JsonSchemaContext from "../../../JsonSchemaContext";
+import { prettifyJsonString } from "../../../Utils";
 
 export function JsonMetadataWithSchemaViewer() {
   const monaco = useMonaco();
   const { metadata, setCapabilityJsonMetadata } = useContext(
     SelectedCapabilityContext,
   );
+  const { jsonSchema, jsonSchemaString } = useContext(JsonSchemaContext);
   const [isEditing, setIsEditing] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const { selfServiceApiClient } = useContext(AppContext);
   const [currentMetadataString, setCurrentMetadataString] = useState(metadata);
   const [jsonString, setJsonString] = useState("");
-  const [schemaString, setSchemaString] = useState("");
   const [validationError, setValidationError] = useState("");
 
   useEffect(() => {
-    if (monaco && schemaString) {
+    if (monaco && jsonSchemaString) {
       const monacoSchema = {
         fileMatch: ["*"],
-        schema: JSON.parse(schemaString),
+        schema: jsonSchema,
       };
       monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
         validate: true,
         schemas: [monacoSchema],
       });
     }
-  }, [schemaString, monaco]);
+  }, [jsonSchemaString, monaco]);
 
   useEffect(() => {
     if (metadata) {
@@ -41,18 +41,6 @@ export function JsonMetadataWithSchemaViewer() {
       setJsonString(prettyMetadata);
     }
   }, [metadata]);
-
-  useEffect(() => {
-    async function getAndSetSchema() {
-      if (schemaString === "") {
-        const schema =
-          await selfServiceApiClient.getCapabilityJsonMetadataSchema();
-        setSchemaString(prettifyJsonString(schema));
-      }
-    }
-
-    void getAndSetSchema();
-  }, []);
 
   const checkIfJsonIsParsable = (json) => {
     try {
@@ -70,9 +58,8 @@ export function JsonMetadataWithSchemaViewer() {
 
     const ajv = new Ajv2020();
     addFormats(ajv);
-    const parsed = JSON.parse(schemaString);
     try {
-      const validate = ajv.compile(parsed);
+      const validate = ajv.compile(jsonSchema);
       try {
         const valid = validate(JSON.parse(json));
         if (!valid) {
@@ -94,10 +81,6 @@ export function JsonMetadataWithSchemaViewer() {
   };
   const hasJsonValidationError = () => {
     return validationError !== "";
-  };
-
-  const prettifyJsonString = (json) => {
-    return JSON.stringify(JSON.parse(json), null, 2);
   };
 
   const submitJsonMetadata = async () => {
@@ -210,7 +193,7 @@ export function JsonMetadataWithSchemaViewer() {
                     height: "370px",
                   }}
                 >
-                  {schemaString}
+                  {jsonSchemaString}
                 </SyntaxHighlighter>
               </div>
             </div>
