@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import { shallowEqual } from "Utils";
-import { Button, ButtonStack, Text } from "@dfds-ui/react-components";
+import { Button, ButtonStack } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { CapabilityTagsSubForm } from "./capabilityTagsSubForm";
