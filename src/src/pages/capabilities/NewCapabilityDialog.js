@@ -4,7 +4,8 @@ import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
-import { CapabilityTagsSubForm } from "./capabilityTags";
+import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
+import { JsonSchemaProvider } from "../../JsonSchemaContext";
 
 export default function NewCapabilityDialog({
   inProgress,
@@ -120,13 +121,15 @@ export default function NewCapabilityDialog({
             setFormData={setFormData}
           />
 
-          <CapabilityTagsSubForm
-            label="Capability Tags"
-            setMetadata={setMetadataFormData}
-            setHasSchema={() => {}}
-            setValidMetadata={setValidMetadata}
-            preexistingFormData={{}}
-          />
+          <JsonSchemaProvider>
+            <CapabilityTagsSubForm
+              label="Capability Tags"
+              setMetadata={setMetadataFormData}
+              setHasSchema={() => {}}
+              setValidMetadata={setValidMetadata}
+              preexistingFormData={{}}
+            />
+          </JsonSchemaProvider>
 
           <br />
 
