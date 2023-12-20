@@ -87,6 +87,21 @@ export default function OtherCapabilities() {
         },
       },
       {
+        accessorFn: (row) => row.awsAccountId,
+        header: "AwsAccountId",
+        enableColumnFilterModes: false,
+        disableFilters: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          return <div>{cell.getValue()}</div>;
+        },
+      },
+      {
         accessorFn: (row) => row.id,
         header: "arrow",
         size: 1,
@@ -118,6 +133,7 @@ export default function OtherCapabilities() {
               initialState={{
                 pagination: { pageSize: 50 },
                 showGlobalFilter: true,
+                columnVisibility: { AwsAccountId: false },
               }}
               muiTableHeadCellProps={{
                 sx: {
