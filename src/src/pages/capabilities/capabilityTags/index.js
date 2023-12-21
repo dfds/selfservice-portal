@@ -8,15 +8,22 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
 
 export function CapabilityTagViewer() {
   // does set update the backend? How is this done in the metadata view?
-  const { metadata, setCapabilityJsonMetadata } = useContext(
+  const { metadata, setRequiredCapabilityJsonMetadata, links } = useContext(
     SelectedCapabilityContext,
   );
   const { hasFilteredJsonSchema } = useContext(JsonSchemaContext);
+  const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
 
   const [isDirty, setIsDirty] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [formData, setFormData] = useState({});
   const [existingFormData, setExistingFormData] = useState({});
+
+  useEffect(() => {
+    if (links && (links?.setRequiredMetadata?.allow || []).includes("POST")) {
+      setCanEditJsonMetadata(true);
+    }
+  }, [links]);
 
   useEffect(() => {
     if (metadata && metadata !== "{}") {
@@ -37,12 +44,13 @@ export function CapabilityTagViewer() {
       mergedMetaData[key] = formdata[key];
     });
 
-    setCapabilityJsonMetadata(JSON.stringify(mergedMetaData));
+    setRequiredCapabilityJsonMetadata(JSON.stringify(mergedMetaData));
     setIsDirty(false);
   };
 
   return (
-    hasFilteredJsonSchema && (
+    hasFilteredJsonSchema &&
+    canEditJsonMetadata && (
       <>
         <PageSection headline="Capability Tags">
           <CapabilityTagsSubForm

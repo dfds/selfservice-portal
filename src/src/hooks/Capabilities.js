@@ -280,15 +280,17 @@ export function useCapabilityMetadata(capabilityDefinition) {
   const { responseData, sendRequest: sendGetJsonMetadataRequest } =
     useSelfServiceRequest();
   const { sendRequest: sendSetJsonMetadataRequest } = useSelfServiceRequest();
+  const { sendRequest: sendSetRequiredCapabilityJsonMetadata } =
+    useSelfServiceRequest();
   const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
   const [metadata, setMetadata] = useState(null);
 
-  const link = capabilityDefinition?._links?.metadata;
+  const link = capabilityDefinition?._links;
 
   useEffect(() => {
-    if (link && (link.allow || []).includes("GET")) {
+    if (link?.metadata && (link.metadata.allow || []).includes("GET")) {
       void sendGetJsonMetadataRequest({
-        urlSegments: [link.href],
+        urlSegments: [link.metadata.href],
         method: "GET",
       });
     }
@@ -307,11 +309,29 @@ export function useCapabilityMetadata(capabilityDefinition) {
   }, [metadata]);
 
   const setCapabilityJsonMetadata = async (jsonMetadata) => {
-    if (!(link && (link.allow || []).includes("POST"))) {
+    if (!(link?.metadata && (link.metadata.allow || []).includes("POST"))) {
       throw new Error("User is not allowed to set metadata");
     }
     await sendSetJsonMetadataRequest({
-      urlSegments: [link.href],
+      urlSegments: [link.metadata.href],
+      method: "POST",
+      payload: {
+        jsonMetadata: JSON.parse(jsonMetadata),
+      },
+    });
+  };
+
+  const setRequiredCapabilityJsonMetadata = async (jsonMetadata) => {
+    if (
+      !(
+        link?.setRequiredMetadata &&
+        (link.setRequiredMetadata.allow || []).includes("POST")
+      )
+    ) {
+      throw new Error("User is not allowed to set required metadata");
+    }
+    await sendSetRequiredCapabilityJsonMetadata({
+      urlSegments: [link?.setRequiredMetadata.href],
       method: "POST",
       payload: {
         jsonMetadata: JSON.parse(jsonMetadata),
@@ -323,6 +343,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
     isLoadedMetadata,
     metadata,
     setCapabilityJsonMetadata,
+    setRequiredCapabilityJsonMetadata,
   };
 }
 
