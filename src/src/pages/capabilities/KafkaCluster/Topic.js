@@ -25,6 +25,7 @@ import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import AppContext from "../../../AppContext";
+import { useError } from "../../../hooks/Error";
 
 function TopicHeader({
   name,
@@ -94,6 +95,7 @@ function TopicHeader({
 export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
     useContext(SelectedCapabilityContext);
+  const { triggerErrorWithTitleAndDetails } = useError();
   const { selfServiceApiClient } = useContext(AppContext);
   const [contracts, setContracts] = useState([]);
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -153,12 +155,12 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       try {
         void fetchConsumers(topic);
       } catch (e) {
-        console.log("Failed fetch consumers", e.message);
+        triggerErrorWithTitleAndDetails("Error", e.message);
       }
       try {
         void fetchMessageContracts(topic);
       } catch (e) {
-        console.log("Failed fetch message contracts", e.message);
+        triggerErrorWithTitleAndDetails("Error", e.message);
       }
     }
 
@@ -189,7 +191,15 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       return messageId;
     });
   };
-
+  const handleRetryClicked = async (messageContract) => {
+    try {
+      await selfServiceApiClient.retryAddMessageContractToTopic(
+        messageContract,
+      );
+    } catch (e) {
+      triggerErrorWithTitleAndDetails("Error", e.message);
+    }
+  };
   const fetchAndSortMessageContractsForTopic = async (topic) => {
     const result = await selfServiceApiClient.getMessageContracts(topic);
     result.sort((a, b) => a.messageType.localeCompare(b.messageType));
@@ -370,6 +380,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                         messageContract.id === selectedMessageContractId
                       }
                       onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
+                      onRetryClicked={() => handleRetryClicked(messageContract)}
                     />
                   ))}
                 </>

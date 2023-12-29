@@ -349,9 +349,9 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
   }, [details]);
 
-  const BypassMembershipApproval = async () => {
+  const bypassMembershipApproval = async () => {
     try {
-      await selfServiceApiClient.BypassMembershipApproval(details);
+      await selfServiceApiClient.bypassMembershipApproval(details);
     } catch (error) {
       console.log(error);
     }
@@ -457,7 +457,7 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
-    BypassMembershipApproval,
+    bypassMembershipApproval,
     addNewInvitees,
     isInviteesCreated,
     setCapabilityJsonMetadata,

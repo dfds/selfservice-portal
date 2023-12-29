@@ -53,11 +53,6 @@
   color: #fff;
 }
 
-.notprovisioned {
-  color: #002b454d;
-  font-style: italic;
-}
-
 .messagecontractsheader {
   display: flex;
   flex-direction: row;
