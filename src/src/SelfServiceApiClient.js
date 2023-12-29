@@ -1,6 +1,11 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
+  logResponseErrorNotOk = (requestType, url, response) => {
+    console.log(
+      `Warning: failed ${requestType} using url ${url}, response was: ${response.status} ${response.statusText}`,
+    );
+  };
   async updateMyPersonalInformation(
     myProfileDefinition,
     personalInformationDescriptor,
@@ -20,20 +25,16 @@ export class SelfServiceApiClient {
       );
     }
 
-    const accessToken = await getSelfServiceAccessToken();
-
     const url = link.href;
     const payload = {
       name: personalInformationDescriptor.name,
       email: personalInformationDescriptor.email,
     };
 
-    const response = await callApi(url, accessToken, "PUT", payload);
+    const response = await this.requestWithToken(url, "PUT", payload);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed updating personal information using url ${url} - response was ${response.status} ${response.statusText}`,
-      );
+      this.logResponseErrorNotOk("updating personal information", response);
     }
   }
 
@@ -52,17 +53,13 @@ export class SelfServiceApiClient {
           JSON.stringify(link.allow, null, 2),
       );
     }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const payload = {};
-
-    const response = await callApi(url, accessToken, "POST", payload);
+    const response = await this.requestWithToken(link.href, "POST");
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed registering portal visit using url ${url} - response was ${response.status} ${response.statusText}`,
+      this.logResponseErrorNotOk(
+        "registering portal visit",
+        link.href,
+        response,
       );
     }
   }
@@ -110,10 +107,7 @@ export class SelfServiceApiClient {
     const response = await callApi(url, accessToken, "POST", payload);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed adding topic to capability using url ${url} - response was ${response.status} ${response.statusText}`,
-      );
-      // NOTE: [jandr] handle problem details instead
+      this.logResponseErrorNotOk("adding topic to capability", url, response);
       return;
     }
 
@@ -190,8 +184,10 @@ export class SelfServiceApiClient {
     const response = await callApi(url, accessToken, "POST", payload);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed adding message contract to topic on capability using url ${url} - response was ${response.status} ${response.statusText}`,
+      this.logResponseErrorNotOk(
+        "adding message contract to topic on capability",
+        url,
+        response,
       );
       // NOTE: [jandr] handle problem details instead
       return;
@@ -209,7 +205,7 @@ export class SelfServiceApiClient {
 
     if (!response.ok) {
       throw new Error(
-        `Failed retrying adding message contract to topic using url ${url} - response was ${response.status} ${response.statusText}`,
+        `Failed retrying adding message contract to topic using url ${link.href} - response was ${response.status} ${response.statusText}`,
       );
     }
 
