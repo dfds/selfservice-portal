@@ -200,17 +200,12 @@ export class SelfServiceApiClient {
     return await response.json();
   }
   async retryAddMessageContractToTopic(messageContractDescriptor) {
-    if (
-      !(
-        messageContractDescriptor?._links?.a &&
-        (messageContractDescriptor?._links?.retry.allow || []).includes("POST")
-      )
-    ) {
+    const link = messageContractDescriptor?._links?.retry;
+    if (!link || link.allow.indexOf("POST") === -1) {
       throw new Error("User is not allowed to retry creating message contract");
     }
-    const url = messageContractDescriptor._links.retry.href;
 
-    const response = await this.requestWithToken(url, "POST");
+    const response = await this.requestWithToken(link.href, "POST");
 
     if (!response.ok) {
       throw new Error(
