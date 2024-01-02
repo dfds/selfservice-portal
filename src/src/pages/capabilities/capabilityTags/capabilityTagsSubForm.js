@@ -19,6 +19,21 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  * Custom Widgets and Fields
  */
 
+function CustomFieldTemplate(props) {
+  const { id, label, required, rawDescription, children } = props;
+  return (
+    <div className={styles.field}>
+      {required ? <span className={styles.bold}>*</span> : null}
+      <label htmlFor={id}>{label}</label>
+      <br />
+      {rawDescription}
+      {children}
+      {/*errors*/}
+      {/*help*/}
+    </div>
+  );
+}
+
 const CustomDropdown = function (props) {
   const { options, value, onChange } = props;
   return (
@@ -28,6 +43,48 @@ const CustomDropdown = function (props) {
       clearable={false}
       onChange={(o) => onChange(o.value)}
     />
+  );
+};
+
+const CustomCheckbox = function (props) {
+  const { onChange } = props;
+  const [selectedOption, setSelectedOption] = useState(undefined);
+  let c1 = (Math.random() + 1).toString(36).substring(5);
+  let c2 = (Math.random() + 1).toString(36).substring(5);
+
+  useEffect(() => {
+    onChange(selectedOption);
+  }, [selectedOption]);
+
+  return (
+    <div>
+      <input
+        className={styles.checkBox}
+        id={"checkbox-" + c1}
+        name={"checkbox-" + c1}
+        type="checkbox"
+        checked={selectedOption === undefined ? false : selectedOption}
+        onChange={() =>
+          setSelectedOption(
+            selectedOption === undefined ? true : !selectedOption,
+          )
+        }
+      />
+      <label htmlFor={"checkbox-" + c1}>True</label>
+      <input
+        className={styles.checkBox}
+        id={"checkbox-" + c2}
+        name={"checkbox-" + c2}
+        type="checkbox"
+        checked={selectedOption === undefined ? false : !selectedOption}
+        onChange={() =>
+          setSelectedOption(
+            selectedOption === undefined ? false : !selectedOption,
+          )
+        }
+      />
+      <label htmlFor={"checkbox-" + c2}>False</label>
+    </div>
   );
 };
 
@@ -84,6 +141,7 @@ export function CapabilityTagsSubForm({
 
   const widgets = {
     SelectWidget: CustomDropdown,
+    CheckboxWidget: CustomCheckbox,
   };
 
   return (
@@ -97,6 +155,7 @@ export function CapabilityTagsSubForm({
             validator={validator}
             onChange={(type) => setFormData(type.formData)}
             widgets={widgets}
+            templates={{ FieldTemplate: CustomFieldTemplate }}
             formData={preexistingFormData}
             children={true} // hide submit button
           />
