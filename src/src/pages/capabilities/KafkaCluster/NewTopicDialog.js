@@ -58,7 +58,11 @@ export default function NewTopicDialog({
   const changeRetention = (e) => {
     e.preventDefault();
     const newValue = e?.target?.value || emptyValues.retention;
-    setFormData((prev) => ({ ...prev, ...{ retention: parseInt(newValue) } }));
+    let finalValue = newValue;
+    if (finalValue !== "forever") {
+      finalValue = parseInt(newValue);
+    }
+    setFormData((prev) => ({ ...prev, ...{ retention: finalValue } }));
   };
 
   const changeAvailability = (e) => {
@@ -103,11 +107,15 @@ export default function NewTopicDialog({
 
   const handleAddClicked = () => {
     if (onAddClicked) {
+      let retention = formData.retention;
+      if (!isNaN(retention)) {
+        retention = `${retention}d`;
+      }
       onAddClicked({
         name: fullTopicName,
         description: formData.description,
         partitions: formData.partitions,
-        retention: formData.retention,
+        retention: retention,
       });
     }
   };
@@ -213,7 +221,7 @@ export default function NewTopicDialog({
             <option value={7}>7 days</option>
             <option value={31}>31 days</option>
             <option value={365}>365 days</option>
-            <option value={-1}>Forever</option>
+            <option value={"forever"}>Forever</option>
           </SelectField>
         </div>
 

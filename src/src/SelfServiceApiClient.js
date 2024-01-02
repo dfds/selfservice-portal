@@ -154,7 +154,7 @@ export class SelfServiceApiClient {
       name: topicDefinition.name,
       description: topicDefinition.description,
       partitions: topicDefinition.partitions,
-      retention: topicDefinition.retention + "d",
+      retention: topicDefinition.retention,
     };
 
     const response = await callApi(url, accessToken, "POST", payload);
