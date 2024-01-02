@@ -1,77 +1,79 @@
 import React, { useEffect, useContext, useState } from "react";
-import "./capabilityTags.module.css";
-import AppContext from "AppContext";
-import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/core";
-import { removeNonRequiredJsonSchemaProperties } from "Utils";
+import { shallowEqual } from "Utils";
+import { Button, ButtonStack } from "@dfds-ui/react-components";
+import PageSection from "../../../components/PageSection";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import { CapabilityTagsSubForm } from "./capabilityTagsSubForm";
+import JsonSchemaContext from "../../../JsonSchemaContext";
 
-/*
- * This component is responsible for rendering the capability tags form.
- * Whenever data is changed, the entire formData passed to the setTagData function.
- * The setTagData function must be passed from the parent component.
- *
- * This component uses the react-jsonschema-form library to render the form.
- * The schema is fetched from the backend and filtered to only show required fields.
- */
-export function CapabilityTags({ setTagData }) {
-  /*
-  const testSchema = {
-    title: "Tags",
-    type: "object",
-    required: ["dfds.cost.center"],
-    properties: {
-      "dfds.cost.center": {
-        enum: [
-          "Dummy CostCenter 1",
-          "Dummy CostCenter 2",
-          "Dummy CostCenter 3",
-        ],
-      },
-    },
-  };
-  */
+export function CapabilityTagViewer() {
+  // does set update the backend? How is this done in the metadata view?
+  const { metadata, setRequiredCapabilityJsonMetadata, links } = useContext(
+    SelectedCapabilityContext,
+  );
+  const { hasFilteredJsonSchema } = useContext(JsonSchemaContext);
+  const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
 
-  const { selfServiceApiClient } = useContext(AppContext);
-  const [showTagForm, setShowTagForm] = useState(true);
-  const [schemaString, setSchemaString] = useState("");
-  const [schema, setSchema] = useState({});
-
-  const prettifyJsonString = (json) => {
-    return JSON.stringify(JSON.parse(json), null, 2);
-  };
+  const [isDirty, setIsDirty] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [formData, setFormData] = useState({});
+  const [existingFormData, setExistingFormData] = useState({});
 
   useEffect(() => {
-    async function getAndSetSchema() {
-      if (schemaString === "") {
-        const schema =
-          await selfServiceApiClient.getCapabilityJsonMetadataSchema();
-        setSchemaString(
-          prettifyJsonString(removeNonRequiredJsonSchemaProperties(schema)),
-        );
-      } else {
-        // quick hack to change the title of the form, instead of changing the schema
-        var updated_schema = JSON.parse(schemaString);
-        updated_schema["title"] = "Capability Tags";
-        setSchema(updated_schema);
-        setShowTagForm(true);
-      }
+    if (links && (links?.setRequiredMetadata?.allow || []).includes("POST")) {
+      setCanEditJsonMetadata(true);
     }
-    void getAndSetSchema();
-  }, [schemaString]);
+  }, [links]);
+
+  useEffect(() => {
+    if (metadata && metadata !== "{}") {
+      setExistingFormData(JSON.parse(metadata));
+    }
+
+    if (shallowEqual(formData, existingFormData)) {
+      setIsDirty(false);
+    } else {
+      setIsDirty(true);
+    }
+  }, [formData, metadata]);
+
+  const submitTags = (formdata) => {
+    // do not override non-required metadata fields, should they exist
+    var mergedMetaData = { ...existingFormData };
+    Object.keys(formdata).forEach((key) => {
+      mergedMetaData[key] = formdata[key];
+    });
+
+    setRequiredCapabilityJsonMetadata(JSON.stringify(mergedMetaData));
+    setIsDirty(false);
+  };
 
   return (
-    <>
-      {showTagForm ? (
-        <Form
-          schema={schema}
-          validator={validator}
-          onChange={(type) => setTagData(type.formData)}
-          children={true} // hide submit button
-        />
-      ) : (
-        // [andfris] let's see if we need a spinner
-        <p>Loading tag requirements</p>
-      )}
-    </>
+    hasFilteredJsonSchema &&
+    canEditJsonMetadata && (
+      <>
+        <PageSection headline="Capability Tags">
+          <CapabilityTagsSubForm
+            title=""
+            setMetadata={setFormData}
+            setValidMetadata={setIsValid}
+            preexistingFormData={existingFormData}
+          />
+
+          <br />
+
+          <ButtonStack align={"right"}>
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={() => submitTags(formData)}
+              disabled={!(isValid && isDirty)}
+            >
+              Submit
+            </Button>
+          </ButtonStack>
+        </PageSection>
+      </>
+    )
   );
 }

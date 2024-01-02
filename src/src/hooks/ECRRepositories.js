@@ -8,6 +8,11 @@ export function useECRRepositories() {
     useSelfServiceRequest();
   const [repositories, setRepositories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [triggerReload, setTriggerReload] = useState(false);
+
+  const reload = () => {
+    setTriggerReload(true);
+  };
 
   useEffect(() => {
     loadRepositories({
@@ -15,7 +20,7 @@ export function useECRRepositories() {
       method: "GET",
       payload: null,
     });
-  }, [addResponse]);
+  }, [addResponse, triggerReload]);
 
   useEffect(() => {
     if (loadResponse != null) {
@@ -41,5 +46,6 @@ export function useECRRepositories() {
     createRepository,
     isLoading,
     repositories,
+    reload,
   };
 }

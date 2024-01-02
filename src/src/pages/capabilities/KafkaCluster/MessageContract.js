@@ -1,34 +1,85 @@
 import React, { useEffect, useState } from "react";
 import { Text } from "@dfds-ui/typography";
-import { Switch } from "@dfds-ui/react-components";
+import { Button, Switch } from "@dfds-ui/react-components";
 import styles from "./MessageContract.module.css";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import Expandable from "components/Expandable";
 import Poles from "components/Poles";
 import { Divider } from "@dfds-ui/react-components/divider";
-import { StatusAlert } from "@dfds-ui/icons/system";
+import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
 
-function MessageHeader({ messageType, isOpen, status }) {
-  const notProvisioned = "Provisioned".toUpperCase() !== status?.toUpperCase();
+export const MessageStatus = {
+  PROVISIONED: "Provisioned",
+  FAILED: "Failed",
+  IN_PROGRESS: "In Progress",
+  REQUESTED: "Requested",
+};
+
+function MessageHeader({
+  messageType,
+  isOpen,
+  status,
+  canRetry,
+  onRetryClicked,
+}) {
+  const [showRetry, setShowRetry] = useState(canRetry);
+  const [shownStatus, setShownStatus] = useState(status);
+
+  const isPendingCreation =
+    shownStatus === MessageStatus.REQUESTED ||
+    status === MessageStatus.IN_PROGRESS;
+
+  const textClass = () => {
+    if (isPendingCreation) {
+      return styles.pendingcreation;
+    }
+    if (shownStatus === MessageStatus.FAILED) {
+      return styles.failed;
+    }
+    return null;
+  };
+
+  const onRetryButtonClicked = () => {
+    onRetryClicked();
+    setShowRetry(false);
+    setShownStatus(MessageStatus.REQUESTED);
+  };
 
   return (
     <div
       className={`${styles.header} ${isOpen ? styles.headerselected : null}`}
     >
       <Text
-        className={notProvisioned ? styles.notprovisioned : null}
+        className={textClass()}
         styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}
       >
-        {notProvisioned && (
+        {isPendingCreation && (
           <>
             <StatusAlert />
+            <span>&nbsp;</span>
+          </>
+        )}
+        {shownStatus === MessageStatus.FAILED && (
+          <>
+            <StatusError />
             <span>&nbsp;</span>
           </>
         )}
 
         {messageType}
 
-        {notProvisioned && <span>&nbsp;({status?.toLowerCase()})</span>}
+        {shownStatus !== MessageStatus.PROVISIONED && (
+          <span>&nbsp;({shownStatus?.toLowerCase()})&nbsp;&nbsp;</span>
+        )}
+        {shownStatus === MessageStatus.FAILED && { showRetry } && (
+          <Button
+            size="small"
+            variation={"outlined"}
+            onClick={onRetryButtonClicked}
+          >
+            Retry
+          </Button>
+        )}
       </Text>
     </div>
   );
@@ -54,11 +105,12 @@ export default function Message({
   example,
   schema,
   status,
+  _links,
+  onRetryClicked,
   isSelected,
   onHeaderClicked,
 }) {
   const [showSchema, setShowSchema] = useState(false);
-
   useEffect(() => {
     setShowSchema(false);
   }, [id, isSelected]);
@@ -73,14 +125,14 @@ export default function Message({
     }
   };
 
-  const isProvisioned = (status || "").toLowerCase() === "provisioned";
-
   const header = (
     <>
       <MessageHeader
         messageType={messageType}
-        isOpen={isSelected && isProvisioned}
+        isOpen={isSelected && status === MessageStatus.PROVISIONED}
         status={status}
+        canRetry={_links?.retry != null}
+        onRetryClicked={onRetryClicked}
       />
       <Divider />
     </>
@@ -99,7 +151,7 @@ export default function Message({
     <div className={styles.container}>
       <Expandable
         header={header}
-        isOpen={isSelected && isProvisioned}
+        isOpen={isSelected && status === MessageStatus.PROVISIONED}
         onHeaderClicked={headerClickHandler}
       >
         <div className={styles.contentcontainer}>

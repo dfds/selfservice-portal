@@ -72,8 +72,12 @@ function SelectedCapabilityProvider({ children }) {
     await sleep(3000);
     setIsInviteesCreated(false);
   }
-  const { metadata, setCapabilityJsonMetadata } =
-    useCapabilityMetadata(details);
+
+  const {
+    metadata,
+    setCapabilityJsonMetadata,
+    setRequiredCapabilityJsonMetadata,
+  } = useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList.length !== 0) {
@@ -254,6 +258,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
+    setReloadRequired(true);
   }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {
@@ -344,9 +349,9 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
   }, [details]);
 
-  const BypassMembershipApproval = async () => {
+  const bypassMembershipApproval = async () => {
     try {
-      await selfServiceApiClient.BypassMembershipApproval(details);
+      await selfServiceApiClient.bypassMembershipApproval(details);
     } catch (error) {
       console.log(error);
     }
@@ -452,10 +457,11 @@ function SelectedCapabilityProvider({ children }) {
     isDeleted,
     updateDeletionStatus,
     showCosts,
-    BypassMembershipApproval,
+    bypassMembershipApproval,
     addNewInvitees,
     isInviteesCreated,
     setCapabilityJsonMetadata,
+    setRequiredCapabilityJsonMetadata,
     metadata,
   };
 

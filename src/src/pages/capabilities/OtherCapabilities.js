@@ -9,7 +9,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus } = useContext(AppContext);
+  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
@@ -58,10 +58,10 @@ export default function OtherCapabilities() {
             <div>
               {" "}
               <Text styledAs="action" as={"div"}>
-                {renderedCellValue}
+                {truncateString(renderedCellValue)}
               </Text>
               <Text styledAs="caption" as={"div"}>
-                {cell.row.original.description}
+                {truncateString(cell.row.original.description)}
               </Text>
             </div>
           );
@@ -84,6 +84,21 @@ export default function OtherCapabilities() {
             return <div></div>;
           }
           return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
+        },
+      },
+      {
+        accessorFn: (row) => row.awsAccountId,
+        header: "AwsAccountId",
+        enableColumnFilterModes: false,
+        disableFilters: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
@@ -118,6 +133,7 @@ export default function OtherCapabilities() {
               initialState={{
                 pagination: { pageSize: 50 },
                 showGlobalFilter: true,
+                columnVisibility: { AwsAccountId: false },
               }}
               muiTableHeadCellProps={{
                 sx: {

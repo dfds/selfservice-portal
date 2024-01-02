@@ -11,8 +11,6 @@ import ECRPage from "./pages/ecr";
 
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
-import "bootstrap/dist/css/bootstrap.min.css";
-
 function Footer() {
   return (
     <div className="globalfooter">

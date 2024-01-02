@@ -38,13 +38,42 @@ export function composeSegmentsUrl(segments) {
   return url;
 }
 
-export function removeNonRequiredJsonSchemaProperties(jsonSchema) {
-  const jsonSchemaCopy = JSON.parse(jsonSchema);
+export function removeNonRequiredJsonSchemaProperties(jsonSchemaString) {
+  const jsonSchemaCopy = JSON.parse(jsonSchemaString);
   let newProperties = JSON.parse("{}");
-  jsonSchemaCopy.required.forEach((requiredProperty) => {
-    newProperties[requiredProperty] =
-      jsonSchemaCopy.properties[requiredProperty];
-  });
-  jsonSchemaCopy.properties = newProperties;
+  if (jsonSchemaCopy.required) {
+    jsonSchemaCopy.required.forEach((requiredProperty) => {
+      newProperties[requiredProperty] =
+        jsonSchemaCopy.properties[requiredProperty];
+    });
+    jsonSchemaCopy.properties = newProperties;
+  } else {
+    jsonSchemaCopy.properties = {};
+  }
   return JSON.stringify(jsonSchemaCopy, null, 2);
+}
+
+export function shallowEqual(object1, object2) {
+  try {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    for (let key of keys1) {
+      if (object1[key] !== object2[key]) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function prettifyJsonString(json) {
+  return JSON.stringify(JSON.parse(json), null, 2);
 }

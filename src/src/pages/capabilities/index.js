@@ -20,6 +20,7 @@ export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
+  const { reloadUser } = useContext(AppContext);
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
@@ -27,9 +28,11 @@ export default function CapabilitiesPage() {
       formData.name,
       formData.description,
       formData.invitations,
+      formData.jsonMetadataString,
     );
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
+    reloadUser();
   };
 
   const splash = (
