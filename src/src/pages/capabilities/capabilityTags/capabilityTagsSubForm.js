@@ -91,6 +91,15 @@ export function CapabilityTagsSubForm({
       {showTagForm && (
         <>
           {label !== "" && <Text className={styles.label}>{label}</Text>}
+          <a
+            href={
+              "https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+            }
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Text>See Tagging Policy</Text>
+          </a>
           <Form
             className={styles.tagsform}
             schema={filteredJsonSchema}
