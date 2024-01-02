@@ -1,36 +1,11 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
-  constructor(errorHandler) {
-    this.errorHandler = errorHandler;
-    this.responseHandler = () => {};
-  }
-
-  async getMyPortalProfile() {
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = composeUrl("me");
-    const response = await callApi(url, accessToken);
-    this.responseHandler(response);
-    const myProfile = await response.json();
-
-    const defaultValues = {
-      capabilities: [],
-    };
-
-    return { ...defaultValues, ...myProfile };
-  }
-
-  async getStats() {
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = composeUrl("stats");
-    const response = await callApi(url, accessToken);
-    this.responseHandler(response);
-    const stats = await response.json();
-    return stats || [];
-  }
-
+  logResponseErrorNotOk = (requestType, url, response) => {
+    console.log(
+      `Warning: failed ${requestType} using url ${url}, response was: ${response.status} ${response.statusText}`,
+    );
+  };
   async updateMyPersonalInformation(
     myProfileDefinition,
     personalInformationDescriptor,
@@ -50,21 +25,16 @@ export class SelfServiceApiClient {
       );
     }
 
-    const accessToken = await getSelfServiceAccessToken();
-
     const url = link.href;
     const payload = {
       name: personalInformationDescriptor.name,
       email: personalInformationDescriptor.email,
     };
 
-    const response = await callApi(url, accessToken, "PUT", payload);
-    this.responseHandler(response);
+    const response = await this.requestWithToken(url, "PUT", payload);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed updating personal information using url ${url} - response was ${response.status} ${response.statusText}`,
-      );
+      this.logResponseErrorNotOk("updating personal information", response);
     }
   }
 
@@ -83,38 +53,15 @@ export class SelfServiceApiClient {
           JSON.stringify(link.allow, null, 2),
       );
     }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const payload = {};
-
-    const response = await callApi(url, accessToken, "POST", payload);
+    const response = await this.requestWithToken(link.href, "POST");
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed registering portal visit using url ${url} - response was ${response.status} ${response.statusText}`,
+      this.logResponseErrorNotOk(
+        "registering portal visit",
+        link.href,
+        response,
       );
     }
-  }
-
-  async getKafkaClusterAccessList(capabilityDefinition) {
-    const clusterAccessLink = capabilityDefinition?._links?.clusters;
-    if (!clusterAccessLink) {
-      console.log(
-        "Warning! No kafka cluster access link found on capability definition:",
-        capabilityDefinition,
-      );
-      return [];
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = clusterAccessLink.href;
-    const response = await callApi(url, accessToken);
-    const { items } = await response.json();
-
-    return items;
   }
 
   async getTopics(clusterAccessDefinition) {
@@ -158,13 +105,9 @@ export class SelfServiceApiClient {
     };
 
     const response = await callApi(url, accessToken, "POST", payload);
-    this.responseHandler(response);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed adding topic to capability using url ${url} - response was ${response.status} ${response.statusText}`,
-      );
-      // NOTE: [jandr] handle problem details instead
+      this.logResponseErrorNotOk("adding topic to capability", url, response);
       return;
     }
 
@@ -178,7 +121,6 @@ export class SelfServiceApiClient {
 
     const url = messageContractsLink.href;
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
 
     if (!response.ok) {
       return [];
@@ -204,7 +146,6 @@ export class SelfServiceApiClient {
 
     const url = link.href;
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
 
     if (!response.ok) {
       return [];
@@ -241,11 +182,12 @@ export class SelfServiceApiClient {
     };
 
     const response = await callApi(url, accessToken, "POST", payload);
-    this.responseHandler(response);
 
     if (!response.ok) {
-      console.log(
-        `Warning: failed adding message contract to topic on capability using url ${url} - response was ${response.status} ${response.statusText}`,
+      this.logResponseErrorNotOk(
+        "adding message contract to topic on capability",
+        url,
+        response,
       );
       // NOTE: [jandr] handle problem details instead
       return;
@@ -253,33 +195,26 @@ export class SelfServiceApiClient {
 
     return await response.json();
   }
+  async retryAddMessageContractToTopic(messageContractDescriptor) {
+    const link = messageContractDescriptor?._links?.retry;
+    if (!link || link.allow.indexOf("POST") === -1) {
+      throw new Error("User is not allowed to retry creating message contract");
+    }
 
-  // async getCapabilityMembers(capabilityDefinition) {
-  //     const membersLink = capabilityDefinition?._links?.members;
-  //     if (!membersLink) {
-  //         return [];
-  //     }
+    const response = await this.requestWithToken(link.href, "POST");
 
-  //     const accessToken = await getSelfServiceAccessToken();
+    if (!response.ok) {
+      throw new Error(
+        `Failed retrying adding message contract to topic using url ${link.href} - response was ${response.status} ${response.statusText}`,
+      );
+    }
 
-  //     const url = membersLink.href;
-  //     const response = await callApi(url, accessToken);
-  //     this.responseHandler(response);
-
-  //     if (!response.ok) {
-  //         console.log(`Warning: failed getting all members from ${url} - response was ${response.status} ${response.statusText}`);
-  //         return [];
-  //     }
-
-  //     const { items } = await response.json();
-
-  //     return items || [];
-  // }
+    return await response.json();
+  }
 
   async fetchWithToken(url) {
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
@@ -291,7 +226,6 @@ export class SelfServiceApiClient {
   async requestWithToken(url, method = "GET", payload = null) {
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(url, accessToken, method, payload);
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
@@ -339,7 +273,6 @@ export class SelfServiceApiClient {
 
     const url = membershipApplicationsLink.href;
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
 
     if (!response.ok) {
       return [];
@@ -368,7 +301,6 @@ export class SelfServiceApiClient {
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(approvalsLink.href, accessToken, "POST", {});
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -401,8 +333,6 @@ export class SelfServiceApiClient {
       capabilityId: capabilityId,
     });
 
-    this.responseHandler(response);
-
     if (!response.ok) {
       console.log("response was: ", await response.text());
       throw Error(
@@ -426,7 +356,6 @@ export class SelfServiceApiClient {
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(link.href, accessToken, "POST", {});
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -441,31 +370,9 @@ export class SelfServiceApiClient {
 
     const url = composeUrl("kafkaclusters");
     const response = await callApi(url, accessToken);
-    this.responseHandler(response);
     const { items } = await response.json();
 
     return items || [];
-  }
-
-  async getCapabilityAwsAccount(capabilityDefinition) {
-    const awsAccountLink = capabilityDefinition?._links?.awsAccount;
-    if (!awsAccountLink) {
-      console.log(
-        "Warning! No AWS account link found on capability definition:",
-        capabilityDefinition,
-      );
-      return null;
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(awsAccountLink.href, accessToken);
-    this.responseHandler(response);
-    if (!response.ok) {
-      return null;
-    }
-
-    const awsAccount = await response.json();
-    return awsAccount || null;
   }
 
   async requestAwsAccount(capabilityDefinition) {
@@ -487,7 +394,6 @@ export class SelfServiceApiClient {
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(link.href, accessToken, "POST");
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -560,7 +466,6 @@ export class SelfServiceApiClient {
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(link.href, accessToken, "POST", {});
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -589,7 +494,6 @@ export class SelfServiceApiClient {
 
     const accessToken = await getSelfServiceAccessToken();
     const response = await callApi(link.href, accessToken, "POST", {});
-    this.responseHandler(response);
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -611,7 +515,7 @@ export class SelfServiceApiClient {
     return obj.schema.toString() || "";
   }
 
-  checkCanBypassMembershipApproval(capabilityDefinition) {
+  checkCanbypassMembershipApproval(capabilityDefinition) {
     const link = capabilityDefinition?._links?.joinCapability;
     if (!link) {
       throw Error(
@@ -629,8 +533,8 @@ export class SelfServiceApiClient {
     return link;
   }
 
-  async BypassMembershipApproval(capabilitydefinition) {
-    const link = this.checkCanBypassMembershipApproval(capabilitydefinition);
+  async bypassMembershipApproval(capabilityDefinition) {
+    const link = this.checkCanbypassMembershipApproval(capabilityDefinition);
     const response = await this.requestWithToken(link.href, "POST");
     if (!response.ok) {
       console.log(
@@ -653,50 +557,4 @@ function composeUrl(...args) {
     }
   });
   return url;
-}
-
-export async function getAccessToCluster(cluster) {
-  const link = cluster._links?.access;
-  if (!link) {
-    throw Error("Error! No request cluster access link found");
-  }
-
-  if (!(link.allow || []).includes("GET")) {
-    throw Error("Error! Not authorized to get access to cluster " + cluster.id);
-  }
-
-  const accessToken = await getSelfServiceAccessToken();
-  const response = await callApi(link.href, accessToken, "GET");
-
-  if (!response.ok) {
-    console.log("response was: ", await response.text());
-    throw Error(
-      `Error! Response from server: (${response.status}) ${response.statusText}`,
-    );
-  }
-
-  return response.json();
-}
-
-export async function requestAccessToCluster(cluster) {
-  const link = cluster._links?.requestAccess;
-  if (!link) {
-    throw Error("Error! No request cluster access link found");
-  }
-
-  if (!(link.allow || []).includes("POST")) {
-    throw Error(
-      "Error! Not authorized to request access to cluster " + cluster.id,
-    );
-  }
-
-  const accessToken = await getSelfServiceAccessToken();
-  const response = await callApi(link.href, accessToken, "POST");
-
-  if (!response.ok) {
-    console.log("response was: ", await response.text());
-    throw Error(
-      `Error! Response from server: (${response.status}) ${response.statusText}`,
-    );
-  }
 }

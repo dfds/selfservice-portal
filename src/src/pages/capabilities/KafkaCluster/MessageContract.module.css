@@ -64,8 +64,13 @@
   /* overflow-y: scroll; */
 }
 
-.notprovisioned {
+.pendingcreation {
   color: #002b454d;
+  font-style: italic;
+}
+
+.failed {
+  color: rgba(150, 0, 0, 0.58);
   font-style: italic;
 }
 
