@@ -49,8 +49,6 @@ const CustomDropdown = function (props) {
 const CustomCheckbox = function (props) {
   const { onChange } = props;
   const [selectedOption, setSelectedOption] = useState(undefined);
-  let c1 = (Math.random() + 1).toString(36).substring(5);
-  let c2 = (Math.random() + 1).toString(36).substring(5);
 
   useEffect(() => {
     onChange(selectedOption);
@@ -60,8 +58,6 @@ const CustomCheckbox = function (props) {
     <div>
       <input
         className={styles.checkBox}
-        id={"checkbox-" + c1}
-        name={"checkbox-" + c1}
         type="checkbox"
         checked={selectedOption === undefined ? false : selectedOption}
         onChange={() =>
@@ -70,11 +66,9 @@ const CustomCheckbox = function (props) {
           )
         }
       />
-      <label htmlFor={"checkbox-" + c1}>True</label>
+      <label>True</label>
       <input
         className={styles.checkBox}
-        id={"checkbox-" + c2}
-        name={"checkbox-" + c2}
         type="checkbox"
         checked={selectedOption === undefined ? false : !selectedOption}
         onChange={() =>
@@ -83,7 +77,7 @@ const CustomCheckbox = function (props) {
           )
         }
       />
-      <label htmlFor={"checkbox-" + c2}>False</label>
+      <label>False</label>
     </div>
   );
 };
