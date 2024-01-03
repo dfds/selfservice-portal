@@ -21,6 +21,8 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
 
 function CustomFieldTemplate(props) {
   const { id, label, required, rawDescription, children } = props;
+  // Further fields 'errors' and 'help' might come in handy later
+  // https://react-jsonschema-form.readthedocs.io/en/v1.8.1/advanced-customization/
   return (
     <div className={styles.field}>
       {required ? <span className={styles.bold}>*</span> : null}
@@ -28,8 +30,6 @@ function CustomFieldTemplate(props) {
       <br />
       {rawDescription}
       {children}
-      {/*errors*/}
-      {/*help*/}
     </div>
   );
 }
