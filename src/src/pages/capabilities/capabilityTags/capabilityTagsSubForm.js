@@ -19,6 +19,21 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  * Custom Widgets and Fields
  */
 
+function CustomFieldTemplate(props) {
+  const { id, label, required, rawDescription, children } = props;
+  // Further fields 'errors' and 'help' might come in handy later
+  // https://react-jsonschema-form.readthedocs.io/en/v1.8.1/advanced-customization/
+  return (
+    <div className={styles.field}>
+      {required ? <span className={styles.bold}>*</span> : null}
+      <label htmlFor={id}>{label}</label>
+      <br />
+      {rawDescription}
+      {children}
+    </div>
+  );
+}
+
 const CustomDropdown = function (props) {
   const { options, value, onChange } = props;
   return (
@@ -28,6 +43,42 @@ const CustomDropdown = function (props) {
       clearable={false}
       onChange={(o) => onChange(o.value)}
     />
+  );
+};
+
+const CustomCheckbox = function (props) {
+  const { onChange } = props;
+  const [selectedOption, setSelectedOption] = useState(undefined);
+
+  useEffect(() => {
+    onChange(selectedOption);
+  }, [selectedOption]);
+
+  return (
+    <div>
+      <input
+        className={styles.checkBox}
+        type="checkbox"
+        checked={selectedOption === undefined ? false : selectedOption}
+        onChange={() =>
+          setSelectedOption(
+            selectedOption === undefined ? true : !selectedOption,
+          )
+        }
+      />
+      <label>True</label>
+      <input
+        className={styles.checkBox}
+        type="checkbox"
+        checked={selectedOption === undefined ? false : !selectedOption}
+        onChange={() =>
+          setSelectedOption(
+            selectedOption === undefined ? false : !selectedOption,
+          )
+        }
+      />
+      <label>False</label>
+    </div>
   );
 };
 
@@ -84,6 +135,7 @@ export function CapabilityTagsSubForm({
 
   const widgets = {
     SelectWidget: CustomDropdown,
+    CheckboxWidget: CustomCheckbox,
   };
 
   return (
@@ -106,6 +158,7 @@ export function CapabilityTagsSubForm({
             validator={validator}
             onChange={(type) => setFormData(type.formData)}
             widgets={widgets}
+            templates={{ FieldTemplate: CustomFieldTemplate }}
             formData={preexistingFormData}
             children={true} // hide submit button
           />
