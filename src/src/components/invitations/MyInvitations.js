@@ -86,8 +86,10 @@ export default function MyInvitations({ invitationsLink }) {
                 onClick={() => {
                   acceptRequest({
                     urlSegments: [cell.getValue().accept.href],
-                    method: "POST",                  
-                  }).then(() => {reloadUser()})
+                    method: "POST",
+                  }).then(() => {
+                    reloadUser();
+                  });
                 }}
                 size="small"
                 variation="primary"
