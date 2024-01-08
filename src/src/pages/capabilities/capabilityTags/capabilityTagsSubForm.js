@@ -125,11 +125,14 @@ export function CapabilityTagsSubForm({
     if (hasFilteredJsonSchema) {
       validateAndSet(formData);
     }
-  }, [formData, filteredJsonSchemaString]);
+  }, [formData]);
 
   useEffect(() => {
     if (hasFilteredJsonSchema) {
+      setValidMetadata(false);
       setShowTagForm(true);
+    } else {
+      setValidMetadata(true);
     }
   }, [hasFilteredJsonSchema]);
 
