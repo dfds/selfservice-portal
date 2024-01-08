@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import { useSelfServiceRequest } from "../../hooks/SelfServiceApi";
 import { MaterialReactTable } from "material-react-table";
+import AppContext from "AppContext";
 
 export default function MyInvitations({ invitationsLink }) {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -13,6 +14,7 @@ export default function MyInvitations({ invitationsLink }) {
     useSelfServiceRequest();
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { reloadUser } = useContext(AppContext);
 
   const loadInvitations = () => {
     sendRequest({ urlSegments: [invitationsLink] });
@@ -84,8 +86,8 @@ export default function MyInvitations({ invitationsLink }) {
                 onClick={() => {
                   acceptRequest({
                     urlSegments: [cell.getValue().accept.href],
-                    method: "POST",
-                  });
+                    method: "POST",                  
+                  }).then(() => {reloadUser()})
                 }}
                 size="small"
                 variation="primary"
