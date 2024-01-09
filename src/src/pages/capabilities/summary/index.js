@@ -9,6 +9,7 @@ import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
+import AppContext from "AppContext";
 
 function JoinDialog({
   name,
@@ -137,6 +138,7 @@ export default function Summary() {
   const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
   const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
   const canBypass = (links?.joinCapability?.allow || []).includes("POST");
+  const { reloadUser } = useContext(AppContext);
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -148,6 +150,7 @@ export default function Summary() {
   const handleLeaveClicked = async () => {
     setIsLeaving(true);
     await submitLeaveCapability();
+    reloadUser();
     setIsLeaving(false);
     setShowLeaveDialog(false);
   };
@@ -160,6 +163,7 @@ export default function Summary() {
 
   const handleBypassClicked = async () => {
     await bypassMembershipApproval();
+    reloadUser();
     setShowJoinDialog(false);
   };
 
