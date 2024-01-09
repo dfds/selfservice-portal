@@ -11,7 +11,6 @@ import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
 
-
 function JoinDialog({
   name,
   isSubmitting,
