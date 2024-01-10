@@ -2,7 +2,7 @@ name: Frontend tests
 
 on:
   pull_request:
-    branches: [ main, develop, ci/formatting, ci/style ]
+    branches: [ main, develop, ci/formatting, ci/style, users/emcla/e2e-testing]
   workflow_dispatch:
     inputs:
       deploy:
