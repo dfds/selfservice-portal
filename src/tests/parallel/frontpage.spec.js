@@ -12,7 +12,7 @@ test("hello-text", async ({ page }) => {
 test("menu-profile-name", async ({ page }) => {
   await page.goto("http://localhost:3001/");
 
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(3000);
 
   await page.locator("_react=AppBarItem").click();
   await expect(page.locator("_react=AppBarItem")).toContainText("Emil Carlsen");

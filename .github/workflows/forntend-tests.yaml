@@ -1,0 +1,43 @@
+name: Frontend tests
+
+on:
+  pull_request:
+    branches: [ main, develop, ci/formatting, ci/style ]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        default: false
+        required: false
+        type: boolean
+        description: "Trigger build"
+jobs:
+  check_formatting:
+    runs-on: ubuntu-latest
+    name: Configure frontend
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: 'src'
+      - uses: actions/checkout@v4
+        with:
+          repository: 'dfds/selfservice-setup'
+          path: 'selfservice-setup'
+          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}
+      
+      - uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: cd src/src && npm install
+      - name: Install playwright
+        run: cd src/src && npx playwright install --with-deps chromium
+      - name: Start the frontend
+        run: cd src && make dev &
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Build and run necessary services for testing
+        shell: bash
+        run: |
+          cd selfservice-setup
+          ./init.sh --disablegitssh true --token ${{ secrets.SSU_SETUP_GH_TOKEN }}
+          docker-compose up -d
+      
