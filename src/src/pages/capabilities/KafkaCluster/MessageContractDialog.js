@@ -183,8 +183,8 @@ export default function MessageContractDialog({
         },
       });
 
-      // NOTE: not well documented how to insert enum into using toJsonSchema, so just inserting afterward
-      result["properties"]["schemaVersion"] = { type: "integer", enum: [1] };
+      // NOTE: not well documented how to insert const into using toJsonSchema, so just inserting afterward
+      result["properties"]["schemaVersion"] = { type: "integer", const: 1 };
       const text = JSON.stringify(result, null, 2);
       setPreviewSchema(text);
     } catch {
