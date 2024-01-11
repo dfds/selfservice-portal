@@ -40,7 +40,7 @@ jobs:
       - name: Install playwright
         run: cd src/src && npx playwright install --with-deps chromium
       - name: Start the frontend
-        run: cd src && make dev &
+        run: cd src && make dev
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Build and run necessary services for testing
