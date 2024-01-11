@@ -81,4 +81,4 @@ help: ## Shows this list
 .PHONY: test
 test:
 	@cd src && npx npx playwright test --project parallel
-	@cd src && npx npx playwright test --project sequential
+	@cd src && npx npx playwright test --project sequential --workers 1
