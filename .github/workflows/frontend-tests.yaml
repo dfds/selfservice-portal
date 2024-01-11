@@ -22,16 +22,8 @@ jobs:
         with:
           repository: 'dfds/selfservice-setup'
           path: 'selfservice-setup'
-          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}
-      - name: Build and run necessary services for testing
-        shell: bash
-        run: |
-          cd src
-          git branch
-          git status
-      
+          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}      
       - uses: actions/setup-node@v3
-
       - name: Install dependencies
         run: cd src/src && npm install
       - name: Install playwright
