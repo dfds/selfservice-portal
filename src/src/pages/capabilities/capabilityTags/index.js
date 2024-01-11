@@ -54,13 +54,10 @@ export function CapabilityTagViewer() {
       <>
         <PageSection headline="Capability Tags">
           <CapabilityTagsSubForm
-            title=""
             setMetadata={setFormData}
             setValidMetadata={setIsValid}
             preexistingFormData={existingFormData}
           />
-
-          <br />
 
           <ButtonStack align={"right"}>
             <Button

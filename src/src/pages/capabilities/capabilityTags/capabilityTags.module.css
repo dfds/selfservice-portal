@@ -3,10 +3,26 @@
   font-weight: bold;
   line-height: 1.25;
   display: block;
+  margin-bottom: 0;
+}
+
+.bold {
+  color: #002b45;
+  font-weight: bold;
 }
 
 .tagsform fieldset {
   border: none;
   margin: 0;
   padding: 0;
+}
+
+.field {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.checkBox {
+  margin-right: 0.25rem;
+  margin-left: 1rem;
 }
