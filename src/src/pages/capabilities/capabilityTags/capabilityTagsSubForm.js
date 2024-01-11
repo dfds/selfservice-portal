@@ -35,7 +35,7 @@ function CustomFieldTemplate(props) {
 }
 
 const CustomDropdown = function (props) {
-  const { options, value, onChange} = props;
+  const { options, value, onChange } = props;
   return (
     <Select
       value={options.enumOptions.find((o) => o.value === value)}
