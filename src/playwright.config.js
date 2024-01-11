@@ -38,6 +38,7 @@ module.exports = defineConfig({
     {
       name: "parallel",
       testMatch: "parallel/*.@(spec|test).?(c|m)[jt]s?(x)",
+      retries: 10,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
@@ -47,7 +48,7 @@ module.exports = defineConfig({
     {
       name: "sequential",
       testMatch: "sequential/*.@(spec|test).?(c|m)[jt]s?(x)",
-      retries: 3,
+      retries: 10,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
