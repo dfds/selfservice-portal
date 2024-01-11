@@ -42,7 +42,7 @@ const CustomDropdown = function (props) {
       options={options.enumOptions}
       clearable={false}
       onChange={(o) => onChange(o.value)}
-      id= "hristiyana"
+      id="hristiyana"
     />
   );
 };

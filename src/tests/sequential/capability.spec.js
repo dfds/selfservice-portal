@@ -5,7 +5,10 @@ const { expect } = require("@playwright/test");
 test("join-capability-request", async ({ page, resetDb }) => {
   await page.goto("http://localhost:3001/capabilities/cool-beans-xxx");
   await page.getByRole("button", { name: "Join" }).click();
-  await page.getByText('Want to join...?Hey, so you').getByRole("button", { name: "Submit" }).click();
+  await page
+    .getByText("Want to join...?Hey, so you")
+    .getByRole("button", { name: "Submit" })
+    .click();
 
   await page.waitForTimeout(1000);
   await page.goto("http://localhost:3001/capabilities/cool-beans-xxx");
