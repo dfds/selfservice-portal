@@ -78,13 +78,15 @@ function ensureHasEnvelope(message, type) {
     const hasEnvelope =
       data.hasOwnProperty("messageId") &&
       data.hasOwnProperty("type") &&
-      data.hasOwnProperty("data");
+      data.hasOwnProperty("data") &&
+      data.hasOwnProperty("schemaVersion");
 
     if (!hasEnvelope) {
       const envelope = {
         messageId: "<123>",
         type: type || "<type>",
         data: data,
+        schemaVersion: 1,
       };
 
       newValue = JSON.stringify(envelope, null, 2);
@@ -107,8 +109,6 @@ export default function MessageContractDialog({
 
   const [previewSchema, setPreviewSchema] = useState("");
   const [previewMessage, setPerviewMessage] = useState("");
-
-  const [useEnvelope, setUseEnvelope] = useState(true);
   const [previewAsSchema, setPreviewAsSchema] = useState(false);
 
   const [canAdd, setCanAdd] = useState(false);
@@ -157,9 +157,7 @@ export default function MessageContractDialog({
   // update previews
   useEffect(() => {
     let messageValue = message;
-    if (useEnvelope) {
-      messageValue = ensureHasEnvelope(messageValue, type);
-    }
+    messageValue = ensureHasEnvelope(messageValue, type);
 
     // update schema preview
     try {
@@ -184,6 +182,9 @@ export default function MessageContractDialog({
           return result;
         },
       });
+
+      // NOTE: not well documented how to insert const into using toJsonSchema, so just inserting afterward
+      result["properties"]["schemaVersion"] = { type: "integer", const: 1 };
       const text = JSON.stringify(result, null, 2);
       setPreviewSchema(text);
     } catch {
@@ -198,7 +199,7 @@ export default function MessageContractDialog({
     } catch {
       setPerviewMessage("");
     }
-  }, [type, message, useEnvelope]);
+  }, [type, message]);
 
   const changeType = (e) => {
     e?.preventDefault();
@@ -217,10 +218,6 @@ export default function MessageContractDialog({
     e?.preventDefault();
     const newValue = e?.target?.value || "";
     setMessage(newValue);
-  };
-
-  const changeUseEnvelope = (e) => {
-    setUseEnvelope((prev) => !prev);
   };
 
   const changePreviewAsSchema = (e) => {
@@ -304,10 +301,6 @@ export default function MessageContractDialog({
               onChange={changeMessage}
               errorMessage={messageError}
             />
-
-            <Switch checked={useEnvelope} onChange={changeUseEnvelope}>
-              Wrap in DFDS envelope
-            </Switch>
           </div>
           <div className={styles.column}>
             <Text as={"label"} styledAs="label" style={{ color: "#002b45" }}>
