@@ -15,7 +15,6 @@ import {
   Delete as DeleteIcon,
 } from "@dfds-ui/icons/system";
 
-import Message from "./MessageContract";
 import Consumer from "./Consumer";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
@@ -387,6 +386,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                   {Object.entries(contracts).map(
                     ([messageType, messageContracts]) => (
                       <MessageContracts
+                        key={messageType}
                         messageType={messageType}
                         contracts={messageContracts}
                         isSelected={messageType === selectedMessageContractType}
