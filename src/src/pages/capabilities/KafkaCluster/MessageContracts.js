@@ -192,12 +192,14 @@ export default function MessageContracts({
         onHeaderClicked={headerClickHandler}
       >
         <div className={styles.contentcontainer}>
+          <div className={styles.version}>
           <SelectField
             name="version"
             label="Version"
             value={selectedContract.id}
             required
             onChange={changeSelectedSchemaVersion}
+            style={{ width: "20rem" }}
           >
             {shownContracts.map((contract) => (
               <option key={contract.id} value={contract.id}>
@@ -205,6 +207,16 @@ export default function MessageContracts({
               </option>
             ))}
           </SelectField>
+          <Button
+            variation="primary"
+            disabled={false}
+            size="small"
+            // submitting={isInProgress}
+            // onClick={handleAddClicked}
+          >
+            Evolve
+          </Button>
+          </div>
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
