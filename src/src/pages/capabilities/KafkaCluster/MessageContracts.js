@@ -4,10 +4,12 @@ import Poles from "../../../components/Poles";
 import { Text } from "@dfds-ui/typography";
 import { SelectField, Switch } from "@dfds-ui/react-components";
 import React, { useEffect, useState } from "react";
-import { MessageHeader, MessageStatus } from "./MessageContract";
+// import { MessageHeader, MessageStatus } from "./MessageContract";
 import { Divider } from "@dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
+import { Button} from "@dfds-ui/react-components";
 
 function JsonViewer({ json }) {
   return (
@@ -25,6 +27,83 @@ function JsonViewer({ json }) {
       >
         {json}
       </SyntaxHighlighter>
+    </div>
+  );
+}
+
+export const MessageStatus = {
+  PROVISIONED: "Provisioned",
+  FAILED: "Failed",
+  IN_PROGRESS: "In Progress",
+  REQUESTED: "Requested",
+};
+
+function MessageHeader({
+  messageType,
+  isOpen,
+  status,
+  canRetry,
+  onRetryClicked,
+}) {
+  const [showRetry, setShowRetry] = useState(canRetry);
+  const [shownStatus, setShownStatus] = useState(status);
+
+  const isPendingCreation =
+    shownStatus === MessageStatus.REQUESTED ||
+    status === MessageStatus.IN_PROGRESS;
+
+  const textClass = () => {
+    if (isPendingCreation) {
+      return styles.pendingcreation;
+    }
+    if (shownStatus === MessageStatus.FAILED) {
+      return styles.failed;
+    }
+    return null;
+  };
+
+  const onRetryButtonClicked = () => {
+    onRetryClicked();
+    setShowRetry(false);
+    setShownStatus(MessageStatus.REQUESTED);
+  };
+
+  return (
+    <div
+      className={`${styles.header} ${isOpen ? styles.headerselected : null}`}
+    >
+      <Text
+        className={textClass()}
+        styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}
+      >
+        {isPendingCreation && (
+          <>
+            <StatusAlert />
+            <span>&nbsp;</span>
+          </>
+        )}
+        {shownStatus === MessageStatus.FAILED && (
+          <>
+            <StatusError />
+            <span>&nbsp;</span>
+          </>
+        )}
+
+        {messageType}
+
+        {shownStatus !== MessageStatus.PROVISIONED && (
+          <span>&nbsp;({shownStatus?.toLowerCase()})&nbsp;&nbsp;</span>
+        )}
+        {shownStatus === MessageStatus.FAILED && { showRetry } && (
+          <Button
+            size="small"
+            variation={"outlined"}
+            onClick={onRetryButtonClicked}
+          >
+            Retry
+          </Button>
+        )}
+      </Text>
     </div>
   );
 }
@@ -61,13 +140,9 @@ export default function MessageContracts({
   const headerClickHandler = () => {
     if (onHeaderClicked) {
       onHeaderClicked(messageType);
-      setSelectedContract(contracts.find((x) => x.Id === id));
+      setSelectedContract(contracts.find((x) => x.schemaVersion === 1));
     }
   };
-
-  useEffect(() => {
-    console.log(selectedContract);
-  }, [selectedContract]);
 
   const setShownContract = (contractId) => {
     setSelectedContract(contracts.find((x) => x.id === contractId));
@@ -112,7 +187,7 @@ export default function MessageContracts({
               </option>
             ))}
           </SelectField>
-          <div className={styles.contentcontainer2}>
+          <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
                 <Text styledAs="label" style={{ marginBottom: "0" }}>
