@@ -8,7 +8,7 @@ import { Divider } from "@dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
-import { Button} from "@dfds-ui/react-components";
+import { Button } from "@dfds-ui/react-components";
 
 function JsonViewer({ json }) {
   return (
