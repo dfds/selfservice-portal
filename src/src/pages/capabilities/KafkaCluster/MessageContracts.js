@@ -139,8 +139,12 @@ export default function MessageContracts({
   const headerClickHandler = () => {
     if (onHeaderClicked) {
       onHeaderClicked(messageType);
-      const minContractVer = Math.min(...contracts.map(item => item.schemaVersion));
-      setSelectedContract(contracts.find((x) => x.schemaVersion === minContractVer));
+      const minContractVer = Math.min(
+        ...contracts.map((item) => item.schemaVersion),
+      );
+      setSelectedContract(
+        contracts.find((x) => x.schemaVersion === minContractVer),
+      );
     }
   };
 
