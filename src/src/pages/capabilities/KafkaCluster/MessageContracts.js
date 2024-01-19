@@ -9,6 +9,7 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
 import { Button } from "@dfds-ui/react-components";
+import { prettifyJsonString } from "../../../Utils";
 
 function JsonViewer({ json }) {
   return (
@@ -24,7 +25,7 @@ function JsonViewer({ json }) {
           height: "370px",
         }}
       >
-        {json}
+        {prettifyJsonString(json)}
       </SyntaxHighlighter>
     </div>
   );
