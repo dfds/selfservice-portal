@@ -10,6 +10,7 @@ import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs
 import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
 import { Button } from "@dfds-ui/react-components";
 import { prettifyJsonString } from "../../../Utils";
+import MessageContractDialog from "./MessageContractDialog";
 
 function JsonViewer({ json }) {
   return (
@@ -128,6 +129,7 @@ export default function MessageContracts({
   onRetryClicked,
   isSelected,
   onHeaderClicked,
+  onAddClicked
 }) {
   const [canExpand, setCanExpand] = useState(false);
   const [headerStatus, setHeaderStatus] = useState(MessageStatus.PROVISIONED);
@@ -137,6 +139,8 @@ export default function MessageContracts({
   const handleToggleSchema = () => {
     setShowSchema((prev) => !prev);
   };
+  const [showMessageContractDialog, setShowMessageContractDialog] =
+    useState(false);
 
   useEffect(() => {
     if (contracts) {
@@ -184,6 +188,10 @@ export default function MessageContracts({
     </>
   );
 
+  const handleAddClicked = (contract) => {
+    setShowMessageContractDialog((prev) => !prev);
+  }
+
   return (
     <div className={styles.container}>
       <Expandable
@@ -212,11 +220,20 @@ export default function MessageContracts({
             disabled={false}
             size="small"
             // submitting={isInProgress}
-            // onClick={handleAddClicked}
+            onClick={handleAddClicked}
           >
             Evolve
           </Button>
           </div>
+
+          {showMessageContractDialog && (
+                  <MessageContractDialog
+                    // topicName={}
+                    onCloseClicked={() => setShowMessageContractDialog(false)}
+                    onAddClicked={onAddClicked}
+                    evolveContract={selectedContract}                    
+                  />
+                )}
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={

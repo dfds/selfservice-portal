@@ -100,6 +100,7 @@ export default function MessageContractDialog({
   onAddClicked,
   onCloseClicked,
   targetVersion,
+  evolveContract,
 }) {
   const [type, setType] = useState("");
   const [typeError, setTypeError] = useState("");
@@ -115,6 +116,15 @@ export default function MessageContractDialog({
   const [canAdd, setCanAdd] = useState(false);
   const [isInProgress, setIsInProgress] = useState(false);
   const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
+
+  useEffect(() => {
+    if(evolveContract){
+      setType(evolveContract.messageType);
+      setMessage(evolveContract.schema)
+      // setMessage
+
+    }
+  },[evolveContract])
 
   useEffect(() => {
     let error = "";

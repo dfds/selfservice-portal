@@ -399,6 +399,9 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                         onRetryClicked={() =>
                           handleRetryClicked(messageContracts[0])
                         }
+                        onAddClicked={(formValues) =>
+                          handleAddMessageContract(formValues)
+                        }
                       />
                     ),
                   )}

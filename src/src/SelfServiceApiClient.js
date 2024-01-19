@@ -130,6 +130,22 @@ export class SelfServiceApiClient {
     return data.items;
   }
 
+  async validateMessageSchema(topicDefinition) {
+    const link = topicDefinition?._links?.['messagecontracts-validate'];
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = link.href;
+    const response = await callApi(url, accessToken);
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return await response.json();
+
+  }
+
   async getConsumers(topicDefinition) {
     const link = topicDefinition?._links?.consumers;
 
