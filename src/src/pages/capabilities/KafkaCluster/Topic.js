@@ -358,6 +358,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                     onAddClicked={(formValues) =>
                       handleAddMessageContract(formValues)
                     }
+                    targetVersion={1}
                   />
                 )}
                 <Text styledAs="actionBold">
