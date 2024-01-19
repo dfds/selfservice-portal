@@ -205,15 +205,17 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     result.sort((a, b) => a.messageType.localeCompare(b.messageType));
 
     if (isMounted) {
-      setContractCount(result.length);
+      let count = 0;
       let contractsWithVersion = {};
       result.forEach((contract) => {
         if (!contractsWithVersion[contract.messageType]) {
+          count += 1;
           contractsWithVersion[contract.messageType] = [];
         }
         contractsWithVersion[contract.messageType].push(contract);
       });
 
+      setContractCount(count);
       setContracts(contractsWithVersion);
       setIsLoadingContracts(false);
     }
