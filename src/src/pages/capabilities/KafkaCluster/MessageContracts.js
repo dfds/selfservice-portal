@@ -45,17 +45,31 @@ function MessageHeader({
   onRetryClicked,
 }) {
   const [showRetry, setShowRetry] = useState(canRetry);
-  const [shownStatus, setShownStatus] = useState(status);
+  const [shownStatus, setShownStatus] = useState(MessageStatus.IN_PROGRESS);
+  const [isPendingCreation, setIsPendingCreation] = useState(
+    status === MessageStatus.REQUESTED || status === MessageStatus.IN_PROGRESS,
+  );
 
-  const isPendingCreation =
-    shownStatus === MessageStatus.REQUESTED ||
-    status === MessageStatus.IN_PROGRESS;
+  useEffect(() => {
+    if (status) {
+      setShownStatus(status);
+    }
+  }, [status]);
 
-  const textClass = () => {
+  useEffect(() => {
+    if (shownStatus) {
+      setIsPendingCreation(
+        shownStatus === MessageStatus.REQUESTED ||
+          shownStatus === MessageStatus.IN_PROGRESS,
+      );
+    }
+  }, [shownStatus]);
+
+  const textClass = (pendingCreation, s) => {
     if (isPendingCreation) {
       return styles.pendingcreation;
     }
-    if (shownStatus === MessageStatus.FAILED) {
+    if (s === MessageStatus.FAILED) {
       return styles.failed;
     }
     return null;
@@ -72,7 +86,7 @@ function MessageHeader({
       className={`${styles.header} ${isOpen ? styles.headerselected : null}`}
     >
       <Text
-        className={textClass()}
+        className={textClass(isPendingCreation, shownStatus)}
         styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}
       >
         {isPendingCreation && (
@@ -108,7 +122,6 @@ function MessageHeader({
 }
 
 export default function MessageContracts({
-  id,
   messageType,
   contracts,
   onRetryClicked,
@@ -157,12 +170,12 @@ export default function MessageContracts({
     setShownContract(e?.target?.value || selectedContract);
   };
 
-  const getHeader = (headerStatus) => (
+  const getHeader = (s) => (
     <>
       <MessageHeader
         messageType={messageType}
         isOpen={isSelected && canExpand}
-        status={headerStatus}
+        status={s}
         canRetry={false}
         onRetryClicked={onRetryClicked}
       />
