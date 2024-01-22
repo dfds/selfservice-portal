@@ -1,3 +1,4 @@
+import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
@@ -133,13 +134,14 @@ export class SelfServiceApiClient {
   async validateMessageSchema(topicId, messageContract) {
     const response = await this.requestWithToken(
       composeUrl(`kafkatopics/${topicId}/messagecontracts-validate`),
-      "POST", messageContract);
-    if (!response) {
-      return [];
+      "POST",
+      messageContract,
+    );
+    if (response.detail !== "") {
+      return response;
     }
     let obj = await response.json();
     return obj || [];
-
   }
 
   async getConsumers(topicDefinition) {
@@ -241,7 +243,12 @@ export class SelfServiceApiClient {
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
-      return undefined;
+      const errorDetails = await response.json();
+      if (errorDetails.detail) {
+        return errorDetails;
+      } else {
+        return undefined;
+      }
     }
     return response;
   }
@@ -250,7 +257,7 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-costs"),
     );
-    if (!response) {
+    if (response.detail) {
       return [];
     }
     let obj = await response.json();
@@ -261,7 +268,7 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-resources"),
     );
-    if (!response) {
+    if (response.detail) {
       return [];
     }
 

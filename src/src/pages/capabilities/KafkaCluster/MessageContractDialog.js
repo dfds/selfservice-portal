@@ -9,9 +9,7 @@ import {
 import styles from "./MessageContractDialog.module.css";
 import { Switch, TextareaField, TextField } from "@dfds-ui/forms";
 import SyntaxHighlighter from "react-syntax-highlighter";
-// import { codepenEmbed as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import AppContext from "../../../AppContext";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 import toJsonSchema from "to-json-schema";
@@ -103,7 +101,6 @@ export default function MessageContractDialog({
   onCloseClicked,
   targetVersion,
   evolveContract,
-  onValidation
 }) {
   const [type, setType] = useState("");
   const [typeError, setTypeError] = useState("");
@@ -119,17 +116,16 @@ export default function MessageContractDialog({
   const [canAdd, setCanAdd] = useState(false);
   const [isInProgress, setIsInProgress] = useState(false);
   const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
-  const { selfServiceApiClient } = useContext(AppContext);
-  const {  validateContract } =
-    useContext(SelectedCapabilityContext);
-  
+  const { validateContract } = useContext(SelectedCapabilityContext);
+  const [isValidationInProgress, setIsValidationInProgress] = useState(false);
+  const [showSuccessLabel, setShowSuccessLabel] = useState(false);
 
   useEffect(() => {
-    if(evolveContract){
+    if (evolveContract) {
       setType(evolveContract.messageType);
-      setMessage(evolveContract.schema)
+      setMessage(evolveContract.example);
     }
-  },[evolveContract])
+  }, [evolveContract]);
 
   useEffect(() => {
     let error = "";
@@ -266,16 +262,27 @@ export default function MessageContractDialog({
   };
 
   const handleValidateClicked = async () => {
-      await validateContract(evolveContract.kafkaTopicId, {
-        messageType: type,
-        schema: previewMessage,
-      })
-    
-  }
+    setIsValidationInProgress(true);
+    var response = await validateContract(evolveContract.kafkaTopicId, {
+      messageType: type,
+      schema: JSON.stringify(JSON.parse(previewMessage).data),
+    });
+    if (response.detail) {
+      setMessageError(response.detail);
+    } else {
+      setShowSuccessLabel(true);
+    }
+
+    setIsValidationInProgress(false);
+  };
 
   return (
     <SideSheet
-      header={`Add message contract...`}
+      header={
+        evolveContract
+          ? `Evolve message contract...`
+          : `Add message contract...`
+      }
       onRequestClose={handleCloseClicked}
       isOpen={true}
       width="50%"
@@ -284,14 +291,24 @@ export default function MessageContractDialog({
       backdrop
     >
       <SideSheetContent>
-        <Text>
-          Add a new message contract to your topic{" "}
-          <span className={styles.topicname}>{topicName}</span> by filling in
-          your information below. By default, the message that you define below
-          is wrapped in the DFDS message envelope and it is recommended that you
-          continue to use that for your messages - you can see a full preview of
-          you final message payload on the right.
-        </Text>
+        {evolveContract ? (
+          <Text>
+            Evolve your message contract by introducing a new version. By
+            default, the message that you define below is wrapped in the DFDS
+            message envelope and it is recommended that you continue to use that
+            for your messages - you can see a full preview of you final message
+            payload on the right.
+          </Text>
+        ) : (
+          <Text>
+            Add a new message contract to your topic{" "}
+            <span className={styles.topicname}>{topicName}</span> by filling in
+            your information below. By default, the message that you define
+            below is wrapped in the DFDS message envelope and it is recommended
+            that you continue to use that for your messages - you can see a full
+            preview of you final message payload on the right.
+          </Text>
+        )}
 
         <br />
 
@@ -303,6 +320,8 @@ export default function MessageContractDialog({
           help="The message type is recommended to be the name of a domain event (e.g. order-has-been-placed) that would signal that a specific event has occured within your domain. On a technical level it will act as a discriminator to identify and distinguish between different types of messages produced to the same topic. It is recommended to use the kebab-case as the naming convention (words in lower case separated by dashes e.g. order-has-been-placed) and domain events would be phrased in past tense. None of these recommendations are technically enforced, but please remember that they WILL become part of your message contract."
           onChange={changeType}
           errorMessage={typeError}
+          readOnly={evolveContract ? true : false}
+          cursor={evolveContract ? "auto" : "text"}
         />
 
         <br />
@@ -385,17 +404,27 @@ export default function MessageContractDialog({
         <br />
 
         <ButtonStack>
-        <Button
-            variation="primary"
-            // disabled={!canAdd}
-            // submitting={isInProgress}
-            onClick={handleValidateClicked}
-          >
-            Validate
-          </Button>
+          {evolveContract ? (
+            <Button
+              variation="primary"
+              disabled={!canAdd}
+              submitting={isValidationInProgress}
+              onClick={handleValidateClicked}
+              style={{
+                position: "right",
+                backgroundColor: showSuccessLabel ? "#4caf50" : "#ED8800",
+                pointerEvents: showSuccessLabel ? "none" : "auto",
+              }}
+            >
+              {showSuccessLabel ? "Valid" : "Validate"}
+            </Button>
+          ) : (
+            <></>
+          )}
+
           <Button
             variation="primary"
-            disabled={!canAdd}
+            disabled={evolveContract ? !showSuccessLabel : !canAdd}
             submitting={isInProgress}
             onClick={handleAddClicked}
           >

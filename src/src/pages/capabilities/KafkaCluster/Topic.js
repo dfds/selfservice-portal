@@ -93,7 +93,7 @@ function TopicHeader({
 }
 
 export default function Topic({ topic, isSelected, onHeaderClicked }) {
-  const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic, validateContract } =
+  const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
     useContext(SelectedCapabilityContext);
   const { triggerErrorWithTitleAndDetails } = useError();
   const { selfServiceApiClient } = useContext(AppContext);
@@ -220,12 +220,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       setIsLoadingContracts(false);
     }
   };
-
-  const handleMessageContractValidation = async (contract) => {
-    await validateContract( topic.id, contract);
-  };
-
-
 
   const handleAddMessageContract = async (formValues) => {
     await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
@@ -408,8 +402,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                         onAddClicked={(formValues) =>
                           handleAddMessageContract(formValues)
                         }
-                        onValidation={(contract)=> handleMessageContractValidation(contract)}
-  
                       />
                     ),
                   )}

@@ -129,7 +129,7 @@ export default function MessageContracts({
   onRetryClicked,
   isSelected,
   onHeaderClicked,
-  onAddClicked
+  onAddClicked,
 }) {
   const [canExpand, setCanExpand] = useState(false);
   const [headerStatus, setHeaderStatus] = useState(MessageStatus.PROVISIONED);
@@ -190,7 +190,7 @@ export default function MessageContracts({
 
   const handleAddClicked = (contract) => {
     setShowMessageContractDialog((prev) => !prev);
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -201,39 +201,39 @@ export default function MessageContracts({
       >
         <div className={styles.contentcontainer}>
           <div className={styles.version}>
-          <SelectField
-            name="version"
-            label="Version"
-            value={selectedContract.id}
-            required
-            onChange={changeSelectedSchemaVersion}
-            style={{ width: "20rem" }}
-          >
-            {shownContracts.map((contract) => (
-              <option key={contract.id} value={contract.id}>
-                Version {contract.schemaVersion}
-              </option>
-            ))}
-          </SelectField>
-          <Button
-            variation="primary"
-            disabled={false}
-            size="small"
-            // submitting={isInProgress}
-            onClick={handleAddClicked}
-          >
-            Evolve
-          </Button>
+            <SelectField
+              name="version"
+              label="Version"
+              value={selectedContract.id}
+              required
+              onChange={changeSelectedSchemaVersion}
+              style={{ width: "20rem" }}
+            >
+              {shownContracts.map((contract) => (
+                <option key={contract.id} value={contract.id}>
+                  Version {contract.schemaVersion}
+                </option>
+              ))}
+            </SelectField>
+            <Button
+              variation="primary"
+              disabled={false}
+              size="small"
+              // submitting={isInProgress}
+              onClick={handleAddClicked}
+            >
+              Evolve
+            </Button>
           </div>
 
           {showMessageContractDialog && (
-                  <MessageContractDialog
-                    // topicName={}
-                    onCloseClicked={() => setShowMessageContractDialog(false)}
-                    onAddClicked={onAddClicked}
-                    evolveContract={selectedContract}                    
-                  />
-                )}
+            <MessageContractDialog
+              // topicName={}
+              onCloseClicked={() => setShowMessageContractDialog(false)}
+              onAddClicked={onAddClicked}
+              evolveContract={selectedContract}
+            />
+          )}
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
