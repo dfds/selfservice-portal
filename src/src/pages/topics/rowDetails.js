@@ -1,21 +1,37 @@
 import React, { useEffect, useState, useContext } from "react";
 import AppContext from "../../AppContext";
 import { Spinner } from "@dfds-ui/react-components";
-import Message from "../capabilities/KafkaCluster/MessageContract";
 import { Text } from "@dfds-ui/typography";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
+import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
   const [contracts, setContracts] = useState([]);
-  const [selectedMessageContractId, setSelectedMessageContractId] =
+  const [selectedMessageContractType, setSelectedMessageContractType] =
     useState(null);
+  const [contractsGroupedByVersion, setContractsGroupedByVersion] = useState(
+    [],
+  );
   const { selfServiceApiClient } = useContext(AppContext);
 
   useEffect(() => {
     fetchData(data);
   }, []);
+
+  useEffect(() => {
+    if (contracts || contracts.length === 0) {
+      let contractsWithVersion = {};
+      contracts.forEach((contract) => {
+        if (!contractsWithVersion[contract.messageType]) {
+          contractsWithVersion[contract.messageType] = [];
+        }
+        contractsWithVersion[contract.messageType].push(contract);
+      });
+      setContractsGroupedByVersion(contractsWithVersion);
+    }
+  }, [contracts]);
 
   async function fetchData(topic) {
     setIsLoadingContracts(true);
@@ -25,13 +41,12 @@ export function RowDetails(data) {
     setIsLoadingContracts(false);
   }
 
-  const handleMessageHeaderClicked = (messageId) => {
-    setSelectedMessageContractId((prev) => {
-      if (messageId === prev) {
+  const handleMessageHeaderClicked = (messageType) => {
+    setSelectedMessageContractType((prev) => {
+      if (messageType === prev) {
         return null; // deselect already selected (toggling)
       }
-
-      return messageId;
+      return messageType;
     });
   };
 
@@ -61,17 +76,19 @@ export function RowDetails(data) {
                     Message Contracts ({(contracts || []).length})
                   </Text>
                 )}
-
-                {(contracts || []).map((messageContract) => (
-                  <Message
-                    key={messageContract.id}
-                    {...messageContract}
-                    isSelected={
-                      messageContract.id === selectedMessageContractId
-                    }
-                    onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
-                  />
-                ))}
+                {Object.entries(contractsGroupedByVersion).map(
+                  ([messageType, messageContracts]) => (
+                    <MessageContracts
+                      key={messageType}
+                      messageType={messageType}
+                      contracts={messageContracts}
+                      isSelected={messageType === selectedMessageContractType}
+                      onHeaderClicked={(messageType) =>
+                        handleMessageHeaderClicked(messageType)
+                      }
+                    />
+                  ),
+                )}
               </>
             )}
           </>
