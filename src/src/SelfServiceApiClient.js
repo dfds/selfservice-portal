@@ -1,4 +1,3 @@
-import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
