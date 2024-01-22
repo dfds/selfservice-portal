@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import {
   Button,
@@ -11,6 +11,8 @@ import { Switch, TextareaField, TextField } from "@dfds-ui/forms";
 import SyntaxHighlighter from "react-syntax-highlighter";
 // import { codepenEmbed as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import AppContext from "../../../AppContext";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 import toJsonSchema from "to-json-schema";
 
@@ -101,6 +103,7 @@ export default function MessageContractDialog({
   onCloseClicked,
   targetVersion,
   evolveContract,
+  onValidation
 }) {
   const [type, setType] = useState("");
   const [typeError, setTypeError] = useState("");
@@ -116,13 +119,15 @@ export default function MessageContractDialog({
   const [canAdd, setCanAdd] = useState(false);
   const [isInProgress, setIsInProgress] = useState(false);
   const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
+  const { selfServiceApiClient } = useContext(AppContext);
+  const {  validateContract } =
+    useContext(SelectedCapabilityContext);
+  
 
   useEffect(() => {
     if(evolveContract){
       setType(evolveContract.messageType);
       setMessage(evolveContract.schema)
-      // setMessage
-
     }
   },[evolveContract])
 
@@ -260,6 +265,14 @@ export default function MessageContractDialog({
     }
   };
 
+  const handleValidateClicked = async () => {
+      await validateContract(evolveContract.kafkaTopicId, {
+        messageType: type,
+        schema: previewMessage,
+      })
+    
+  }
+
   return (
     <SideSheet
       header={`Add message contract...`}
@@ -372,6 +385,14 @@ export default function MessageContractDialog({
         <br />
 
         <ButtonStack>
+        <Button
+            variation="primary"
+            // disabled={!canAdd}
+            // submitting={isInProgress}
+            onClick={handleValidateClicked}
+          >
+            Validate
+          </Button>
           <Button
             variation="primary"
             disabled={!canAdd}

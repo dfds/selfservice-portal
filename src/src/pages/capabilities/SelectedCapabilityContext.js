@@ -193,6 +193,19 @@ function SelectedCapabilityProvider({ children }) {
     });
   };
 
+  const validateContract = async (
+    kafkaTopicId,
+    messageContractDescriptor,
+  ) => {
+  const result =
+    await selfServiceApiClient.validateMessageSchema(
+      kafkaTopicId,
+      messageContractDescriptor,
+    );
+
+    return result;
+  }
+
   const addMessageContractToTopic = async (
     kafkaClusterId,
     kafkaTopicId,
@@ -463,6 +476,7 @@ function SelectedCapabilityProvider({ children }) {
     setCapabilityJsonMetadata,
     setRequiredCapabilityJsonMetadata,
     metadata,
+    validateContract,
   };
 
   return (

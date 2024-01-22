@@ -130,19 +130,15 @@ export class SelfServiceApiClient {
     return data.items;
   }
 
-  async validateMessageSchema(topicDefinition) {
-    const link = topicDefinition?._links?.['messagecontracts-validate'];
-
-    const accessToken = await getSelfServiceAccessToken();
-
-    const url = link.href;
-    const response = await callApi(url, accessToken);
-
-    if (!response.ok) {
+  async validateMessageSchema(topicId, messageContract) {
+    const response = await this.requestWithToken(
+      composeUrl(`kafkatopics/${topicId}/messagecontracts-validate`),
+      "POST", messageContract);
+    if (!response) {
       return [];
     }
-
-    return await response.json();
+    let obj = await response.json();
+    return obj || [];
 
   }
 
