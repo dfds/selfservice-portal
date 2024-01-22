@@ -15,7 +15,6 @@ import {
   Delete as DeleteIcon,
 } from "@dfds-ui/icons/system";
 
-import Message from "./MessageContract";
 import Consumer from "./Consumer";
 import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
@@ -26,6 +25,7 @@ import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import AppContext from "../../../AppContext";
 import { useError } from "../../../hooks/Error";
+import MessageContracts from "./MessageContracts";
 
 function TopicHeader({
   name,
@@ -97,13 +97,15 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     useContext(SelectedCapabilityContext);
   const { triggerErrorWithTitleAndDetails } = useError();
   const { selfServiceApiClient } = useContext(AppContext);
-  const [contracts, setContracts] = useState([]);
+  const [contracts, setContracts] = useState({});
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
 
   const [consumers, setConsumers] = useState([]);
   const [isLoadingConsumers, setIsLoadingConsumers] = useState(false);
 
-  const [selectedMessageContractId, setSelectedMessageContractId] =
+  const [contractCount, setContractCount] = useState(0);
+
+  const [selectedMessageContractType, setSelectedMessageContractType] =
     useState(null);
   const [showMessageContractDialog, setShowMessageContractDialog] =
     useState(false);
@@ -131,7 +133,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     let isMounted = true;
 
     if (!isSelected) {
-      setContracts([]);
+      setContracts({});
       return;
     }
 
@@ -142,12 +144,9 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
         setIsLoadingConsumers(false);
       }
     }
+
     async function fetchMessageContracts(topic) {
-      const contracts = await fetchAndSortMessageContractsForTopic(topic);
-      if (isMounted) {
-        setContracts(contracts);
-        setIsLoadingContracts(false);
-      }
+      await fetchContractsAndSetState(topic, isMounted);
     }
 
     if (isPublic) {
@@ -182,13 +181,13 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     setShowMessageContractDialog((prev) => !prev);
   };
 
-  const handleMessageHeaderClicked = (messageId) => {
-    setSelectedMessageContractId((prev) => {
-      if (messageId === prev) {
+  const handleMessageHeaderClicked = (messageType) => {
+    setSelectedMessageContractType((prev) => {
+      if (messageType === prev) {
         return null; // deselect already selected (toggling)
       }
 
-      return messageId;
+      return messageType;
     });
   };
   const handleRetryClicked = async (messageContract) => {
@@ -200,10 +199,26 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
       triggerErrorWithTitleAndDetails("Error", e.message);
     }
   };
-  const fetchAndSortMessageContractsForTopic = async (topic) => {
+
+  const fetchContractsAndSetState = async (topic, isMounted = true) => {
     const result = await selfServiceApiClient.getMessageContracts(topic);
     result.sort((a, b) => a.messageType.localeCompare(b.messageType));
-    return result;
+
+    if (isMounted) {
+      let count = 0;
+      let contractsWithVersion = {};
+      result.forEach((contract) => {
+        if (!contractsWithVersion[contract.messageType]) {
+          count += 1;
+          contractsWithVersion[contract.messageType] = [];
+        }
+        contractsWithVersion[contract.messageType].push(contract);
+      });
+
+      setContractCount(count);
+      setContracts(contractsWithVersion);
+      setIsLoadingContracts(false);
+    }
   };
 
   const handleAddMessageContract = async (formValues) => {
@@ -212,9 +227,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     setIsLoadingContracts(true);
     // UX sleep, nicer to have it busy spin and then show updated list of contracts
     await sleep(1000);
-    const contracts = await fetchAndSortMessageContractsForTopic(topic);
-    setContracts(contracts);
-    setIsLoadingContracts(false);
+    await fetchContractsAndSetState(topic);
   };
 
   const handleUpdateTopic = useCallback(
@@ -347,10 +360,11 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                     onAddClicked={(formValues) =>
                       handleAddMessageContract(formValues)
                     }
+                    targetVersion={1}
                   />
                 )}
                 <Text styledAs="actionBold">
-                  Message Contracts ({(contracts || []).length})
+                  Message Contracts ({contractCount})
                 </Text>
 
                 {canAddMessageContracts && (
@@ -368,21 +382,26 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                 <Spinner instant />
               ) : (
                 <>
-                  {(contracts || []).length === 0 && (
+                  {contractCount === 0 && (
                     <div>No message contracts defined...yet!</div>
                   )}
 
-                  {(contracts || []).map((messageContract) => (
-                    <Message
-                      key={messageContract.id}
-                      {...messageContract}
-                      isSelected={
-                        messageContract.id === selectedMessageContractId
-                      }
-                      onHeaderClicked={(id) => handleMessageHeaderClicked(id)}
-                      onRetryClicked={() => handleRetryClicked(messageContract)}
-                    />
-                  ))}
+                  {Object.entries(contracts).map(
+                    ([messageType, messageContracts]) => (
+                      <MessageContracts
+                        key={messageType}
+                        messageType={messageType}
+                        contracts={messageContracts}
+                        isSelected={messageType === selectedMessageContractType}
+                        onHeaderClicked={(messageType) =>
+                          handleMessageHeaderClicked(messageType)
+                        }
+                        onRetryClicked={() =>
+                          handleRetryClicked(messageContracts[0])
+                        }
+                      />
+                    ),
+                  )}
                 </>
               )}
 

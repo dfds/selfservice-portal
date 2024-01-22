@@ -15,7 +15,7 @@ export const MessageStatus = {
   REQUESTED: "Requested",
 };
 
-function MessageHeader({
+export function MessageHeader({
   messageType,
   isOpen,
   status,

@@ -7,7 +7,7 @@ import {
   SideSheetContent,
 } from "@dfds-ui/react-components";
 import styles from "./MessageContractDialog.module.css";
-import { TextareaField, TextField, Switch } from "@dfds-ui/forms";
+import { Switch, TextareaField, TextField } from "@dfds-ui/forms";
 import SyntaxHighlighter from "react-syntax-highlighter";
 // import { codepenEmbed as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
@@ -71,20 +71,22 @@ function isAllWithValues(data) {
   return result;
 }
 
-function ensureHasEnvelope(message, type) {
+function ensureHasEnvelope(message, type, targetVersion) {
   let newValue = message;
   try {
     const data = JSON.parse(newValue);
     const hasEnvelope =
       data.hasOwnProperty("messageId") &&
       data.hasOwnProperty("type") &&
-      data.hasOwnProperty("data");
+      data.hasOwnProperty("data") &&
+      data.hasOwnProperty("schemaVersion");
 
     if (!hasEnvelope) {
       const envelope = {
         messageId: "<123>",
         type: type || "<type>",
         data: data,
+        schemaVersion: targetVersion,
       };
 
       newValue = JSON.stringify(envelope, null, 2);
@@ -97,6 +99,7 @@ export default function MessageContractDialog({
   topicName,
   onAddClicked,
   onCloseClicked,
+  targetVersion,
 }) {
   const [type, setType] = useState("");
   const [typeError, setTypeError] = useState("");
@@ -106,13 +109,12 @@ export default function MessageContractDialog({
   const [messageError, setMessageError] = useState("");
 
   const [previewSchema, setPreviewSchema] = useState("");
-  const [previewMessage, setPerviewMessage] = useState("");
-
-  const [useEnvelope, setUseEnvelope] = useState(true);
+  const [previewMessage, setPreviewMessage] = useState("");
   const [previewAsSchema, setPreviewAsSchema] = useState(false);
 
   const [canAdd, setCanAdd] = useState(false);
   const [isInProgress, setIsInProgress] = useState(false);
+  const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
 
   useEffect(() => {
     let error = "";
@@ -157,9 +159,7 @@ export default function MessageContractDialog({
   // update previews
   useEffect(() => {
     let messageValue = message;
-    if (useEnvelope) {
-      messageValue = ensureHasEnvelope(messageValue, type);
-    }
+    messageValue = ensureHasEnvelope(messageValue, type, targetVersion);
 
     // update schema preview
     try {
@@ -167,23 +167,27 @@ export default function MessageContractDialog({
       const result = toJsonSchema(json, {
         required: true,
         postProcessFnc: (type, schema, value, defaultFunc) => {
-          const result =
-            type !== "object"
-              ? {
-                  ...schema,
-                  ...{
-                    examples: type === "array" ? value : [value],
-                    // required: true
-                  },
-                }
-              : {
-                  ...defaultFunc(type, schema, value),
-                  ...{ required: Object.getOwnPropertyNames(value) },
-                };
-
-          return result;
+          return type !== "object"
+            ? {
+                ...schema,
+                ...{
+                  examples: type === "array" ? value : [value],
+                  // required: true
+                },
+              }
+            : {
+                ...defaultFunc(type, schema, value),
+                ...{ required: Object.getOwnPropertyNames(value) },
+                ...{ additionalProperties: isUsingOpenContentModel },
+              };
         },
       });
+
+      // NOTE: not well documented how to insert const into using toJsonSchema, so just inserting afterward
+      result["properties"]["schemaVersion"] = {
+        type: "integer",
+        const: targetVersion,
+      };
       const text = JSON.stringify(result, null, 2);
       setPreviewSchema(text);
     } catch {
@@ -194,11 +198,11 @@ export default function MessageContractDialog({
     try {
       const json = JSON.parse(messageValue);
       const text = JSON.stringify(json, null, 2);
-      setPerviewMessage(text);
+      setPreviewMessage(text);
     } catch {
-      setPerviewMessage("");
+      setPreviewMessage("");
     }
-  }, [type, message, useEnvelope]);
+  }, [type, message, isUsingOpenContentModel]);
 
   const changeType = (e) => {
     e?.preventDefault();
@@ -219,14 +223,12 @@ export default function MessageContractDialog({
     setMessage(newValue);
   };
 
-  const changeUseEnvelope = (e) => {
-    setUseEnvelope((prev) => !prev);
-  };
-
   const changePreviewAsSchema = (e) => {
     setPreviewAsSchema((prev) => !prev);
   };
-
+  const changeIsOpenContentModel = (e) => {
+    setIsUsingOpenContentModel((prev) => !prev);
+  };
   const handleCloseClicked = () => {
     if (onCloseClicked) {
       onCloseClicked();
@@ -304,9 +306,21 @@ export default function MessageContractDialog({
               onChange={changeMessage}
               errorMessage={messageError}
             />
-
-            <Switch checked={useEnvelope} onChange={changeUseEnvelope}>
-              Wrap in DFDS envelope
+            <Switch
+              checked={isUsingOpenContentModel}
+              onChange={changeIsOpenContentModel}
+            >
+              Open Content Model (See{" "}
+              <a
+                href={
+                  "https://yokota.blog/2021/03/29/understanding-json-schema-compatibility/"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                link
+              </a>
+              )
             </Switch>
           </div>
           <div className={styles.column}>

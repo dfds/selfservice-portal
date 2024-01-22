@@ -45,6 +45,7 @@ function CapabilityDetailsPageContent() {
     addNewInvitees,
     isInviteesCreated,
     members,
+    metadata,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ function CapabilityDetailsPageContent() {
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
+  const [costCentre, setCostCentre] = useState("");
 
   useEffect(() => {
     if (
@@ -71,6 +73,13 @@ function CapabilityDetailsPageContent() {
       setShowInvitations(true);
     }
   }, [links]);
+
+  useEffect(() => {
+    if (metadata && metadata !== "{}") {
+      const parsedMetadata = JSON.parse(metadata);
+      setCostCentre(parsedMetadata["dfds.cost.centre"]);
+    }
+  }, [metadata]);
 
   return (
     <>
@@ -105,7 +114,9 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))}
 
-        {showCosts && awsAccount !== undefined && <Costs />}
+        {showCosts && awsAccount !== undefined && (
+          <Costs costCentre={costCentre} />
+        )}
         {!isDeleted && (
           <CapabilityManagement
             deletionState={isPendingDeletion}
