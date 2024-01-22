@@ -75,5 +75,10 @@ export function shallowEqual(object1, object2) {
 }
 
 export function prettifyJsonString(json) {
-  return JSON.stringify(JSON.parse(json), null, 2);
+  try {
+    const obj = JSON.parse(json);
+    return JSON.stringify(obj, null, 2);
+  } catch (e) {
+    return json;
+  }
 }
