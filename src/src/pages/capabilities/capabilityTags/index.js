@@ -11,7 +11,7 @@ export function CapabilityTagViewer() {
   const { metadata, setRequiredCapabilityJsonMetadata, links } = useContext(
     SelectedCapabilityContext,
   );
-  const { hasFilteredJsonSchema } = useContext(JsonSchemaContext);
+  const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
   const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
 
   const [isDirty, setIsDirty] = useState(false);
@@ -49,7 +49,7 @@ export function CapabilityTagViewer() {
   };
 
   return (
-    hasFilteredJsonSchema &&
+    hasJsonSchemaProperties &&
     canEditJsonMetadata && (
       <>
         <PageSection headline="Capability Tags">

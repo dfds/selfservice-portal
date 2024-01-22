@@ -104,16 +104,13 @@ export function CapabilityTagsSubForm({
   setValidMetadata,
   preexistingFormData,
 }) {
-  const {
-    hasFilteredJsonSchema,
-    filteredJsonSchema,
-    filteredJsonSchemaString,
-  } = useContext(JsonSchemaContext);
+  const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
+    useContext(JsonSchemaContext);
   const [showTagForm, setShowTagForm] = useState(false);
   const [formData, setFormData] = useState({});
 
   const validateAndSet = (formData) => {
-    if (checkIfFollowsJsonSchema(formData, filteredJsonSchemaString)) {
+    if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
       setValidMetadata(true);
       setMetadata(formData);
     } else {
@@ -122,19 +119,19 @@ export function CapabilityTagsSubForm({
   };
 
   useEffect(() => {
-    if (hasFilteredJsonSchema) {
+    if (hasJsonSchemaProperties) {
       validateAndSet(formData);
     }
   }, [formData]);
 
   useEffect(() => {
-    if (hasFilteredJsonSchema) {
+    if (hasJsonSchemaProperties) {
       setValidMetadata(false);
       setShowTagForm(true);
     } else {
       setValidMetadata(true);
     }
-  }, [hasFilteredJsonSchema]);
+  }, [hasJsonSchemaProperties]);
 
   const widgets = {
     SelectWidget: CustomDropdown,
@@ -157,7 +154,7 @@ export function CapabilityTagsSubForm({
           </a>
           <Form
             className={styles.tagsform}
-            schema={filteredJsonSchema}
+            schema={jsonSchema}
             validator={validator}
             onChange={(type) => setFormData(type.formData)}
             widgets={widgets}
