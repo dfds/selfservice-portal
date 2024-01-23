@@ -1,19 +1,19 @@
 import AppContext from "AppContext";
 import React, {
   createContext,
-  useEffect,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import {
-  useCapabilityById,
-  useCapabilityMembers,
-  useKafkaClustersAccessList,
   useCapabilityAwsAccount,
-  useCapabilityMembersApplications,
+  useCapabilityById,
   useCapabilityInvitees,
+  useCapabilityMembers,
+  useCapabilityMembersApplications,
   useCapabilityMetadata,
+  useKafkaClustersAccessList,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -193,13 +193,18 @@ function SelectedCapabilityProvider({ children }) {
     });
   };
 
-  const validateContract = async (kafkaTopicId, messageContractDescriptor) => {
-    const result = await selfServiceApiClient.validateMessageSchema(
+  const validateContract = async (kafkaTopicId, messageType, schema) => {
+    const messageContractDescriptor = {
+      messageType: messageType,
+      schema: schema,
+    };
+    const response = await selfServiceApiClient.validateMessageSchema(
       kafkaTopicId,
       messageContractDescriptor,
     );
+    if (response.status === 200) return { IsValid: true };
 
-    return result;
+    return { IsValid: false, FailureReason: response.detail };
   };
 
   const addMessageContractToTopic = async (

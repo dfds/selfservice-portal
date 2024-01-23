@@ -102,7 +102,7 @@ export default function MessageContractDialog({
   targetVersion,
   evolveContract,
 }) {
-  const [type, setType] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [typeError, setTypeError] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -122,7 +122,7 @@ export default function MessageContractDialog({
 
   useEffect(() => {
     if (evolveContract) {
-      setType(evolveContract.messageType);
+      setMessageType(evolveContract.messageType);
       console.log(evolveContract.example);
       setMessage(JSON.stringify(JSON.parse(evolveContract.example).data));
     }
@@ -130,11 +130,11 @@ export default function MessageContractDialog({
 
   useEffect(() => {
     let error = "";
-    if (type !== "") {
-      error = getValidationErrorForType(type);
+    if (messageType !== "") {
+      error = getValidationErrorForType(messageType);
     }
     setTypeError(error);
-  }, [type]);
+  }, [messageType]);
 
   useEffect(() => {
     let error = "";
@@ -154,7 +154,7 @@ export default function MessageContractDialog({
 
   // toggle add button
   useEffect(() => {
-    const allWithValues = isAllWithValues([type, description, message]);
+    const allWithValues = isAllWithValues([messageType, description, message]);
     const hasError = !isAllEmptyValues([
       typeError,
       descriptionError,
@@ -166,18 +166,24 @@ export default function MessageContractDialog({
     } else {
       setCanAdd(false);
     }
-  }, [type, description, message, typeError, descriptionError, messageError]);
+  }, [
+    messageType,
+    description,
+    message,
+    typeError,
+    descriptionError,
+    messageError,
+  ]);
 
   // update previews
   useEffect(() => {
     let messageValue = message;
-    messageValue = ensureHasEnvelope(messageValue, type, targetVersion);
+    messageValue = ensureHasEnvelope(messageValue, messageType, targetVersion);
 
     // update schema preview
     try {
       const json = JSON.parse(messageValue);
       const result = toJsonSchema(json, {
-        required: true,
         postProcessFnc: (type, schema, value, defaultFunc) => {
           return type !== "object"
             ? {
@@ -189,12 +195,12 @@ export default function MessageContractDialog({
               }
             : {
                 ...defaultFunc(type, schema, value),
-                ...{ required: Object.getOwnPropertyNames(value) },
                 ...{ additionalProperties: isUsingOpenContentModel },
               };
         },
       });
 
+      result["required"] = ["messageId", "type", "data", "schemaVersion"];
       // NOTE: not well documented how to insert const into using toJsonSchema, so just inserting afterward
       result["properties"]["schemaVersion"] = {
         type: "integer",
@@ -214,13 +220,13 @@ export default function MessageContractDialog({
     } catch {
       setPreviewMessage("");
     }
-  }, [type, message, isUsingOpenContentModel]);
+  }, [messageType, message, isUsingOpenContentModel]);
 
   const changeType = (e) => {
     e?.preventDefault();
     let newTopic = e?.target?.value || "";
     newTopic = newTopic.replace(/\s+/g, "-");
-    setType(newTopic);
+    setMessageType(newTopic);
   };
 
   const changeDescription = (e) => {
@@ -253,7 +259,7 @@ export default function MessageContractDialog({
 
       // NOTE: [jandr] handle errors
       await onAddClicked({
-        messageType: type,
+        messageType: messageType,
         description: description,
         example: previewMessage,
         schema: previewSchema,
@@ -264,17 +270,17 @@ export default function MessageContractDialog({
 
   const handleValidateClicked = async () => {
     setIsValidationInProgress(true);
-    var response = await validateContract(evolveContract.kafkaTopicId, {
-      messageType: type,
-      schema: JSON.stringify(JSON.parse(previewMessage)),
-    });
-    console.log(response);
-    if (response.isValid === false) {
-      setMessageError(response.FailureReason);
+    const validationResult = await validateContract(
+      evolveContract.kafkaTopicId,
+      messageType,
+      previewSchema,
+    );
+
+    if (validationResult.IsValid === false) {
+      setMessageError(validationResult.FailureReason);
     } else {
       setShowSuccessLabel(true);
     }
-
     setIsValidationInProgress(false);
   };
 
@@ -318,7 +324,7 @@ export default function MessageContractDialog({
           label="Type"
           placeholder="Enter message type (e.g. order-has-been-placed)"
           required
-          value={type}
+          value={messageType}
           help="The message type is recommended to be the name of a domain event (e.g. order-has-been-placed) that would signal that a specific event has occured within your domain. On a technical level it will act as a discriminator to identify and distinguish between different types of messages produced to the same topic. It is recommended to use the kebab-case as the naming convention (words in lower case separated by dashes e.g. order-has-been-placed) and domain events would be phrased in past tense. None of these recommendations are technically enforced, but please remember that they WILL become part of your message contract."
           onChange={changeType}
           errorMessage={typeError}
@@ -330,7 +336,9 @@ export default function MessageContractDialog({
 
         <TextField
           label={evolveContract ? "Describe reason for change" : "Description"}
-          placeholder="Enter a description"
+          placeholder={
+            evolveContract ? "Enter a reason" : "Enter a description"
+          }
           required
           value={description}
           onChange={changeDescription}
@@ -409,7 +417,6 @@ export default function MessageContractDialog({
           {evolveContract ? (
             <Button
               variation="primary"
-              disabled={!canAdd}
               submitting={isValidationInProgress}
               onClick={handleValidateClicked}
               style={{

@@ -131,16 +131,11 @@ export class SelfServiceApiClient {
   }
 
   async validateMessageSchema(topicId, messageContract) {
-    const response = await this.requestWithToken(
+    return await this.requestWithToken(
       composeUrl(`kafkatopics/${topicId}/messagecontracts-validate`),
       "POST",
       messageContract,
     );
-    if (response.detail !== "") {
-      return { isValid: false, FailureReason: response.detail };
-    }
-    let obj = await response.json();
-    return obj || [];
   }
 
   async getConsumers(topicDefinition) {
