@@ -141,6 +141,7 @@ export default function MessageContracts({
   };
   const [showMessageContractDialog, setShowMessageContractDialog] =
     useState(false);
+  const [maxContractVer, setMaxContractVer] = useState(0);
 
   useEffect(() => {
     if (contracts) {
@@ -162,6 +163,9 @@ export default function MessageContracts({
       );
       setSelectedContract(
         contracts.find((x) => x.schemaVersion === minContractVer),
+      );
+      setMaxContractVer(
+        Math.max(...contracts.map((item) => item.schemaVersion)),
       );
     }
   };
@@ -231,7 +235,10 @@ export default function MessageContracts({
               // topicName={}
               onCloseClicked={() => setShowMessageContractDialog(false)}
               onAddClicked={onAddClicked}
-              evolveContract={selectedContract}
+              targetVersion={maxContractVer + 1}
+              evolveContract={contracts.find(
+                (x) => x.schemaVersion === maxContractVer,
+              )}
             />
           )}
           <div className={styles.jsoncontainer}>

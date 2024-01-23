@@ -137,7 +137,7 @@ export class SelfServiceApiClient {
       messageContract,
     );
     if (response.detail !== "") {
-      return response;
+      return { isValid: false, FailureReason: response.detail };
     }
     let obj = await response.json();
     return obj || [];

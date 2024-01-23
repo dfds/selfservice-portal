@@ -123,7 +123,8 @@ export default function MessageContractDialog({
   useEffect(() => {
     if (evolveContract) {
       setType(evolveContract.messageType);
-      setMessage(evolveContract.example);
+      console.log(evolveContract.example);
+      setMessage(JSON.stringify(JSON.parse(evolveContract.example).data));
     }
   }, [evolveContract]);
 
@@ -265,10 +266,11 @@ export default function MessageContractDialog({
     setIsValidationInProgress(true);
     var response = await validateContract(evolveContract.kafkaTopicId, {
       messageType: type,
-      schema: JSON.stringify(JSON.parse(previewMessage).data),
+      schema: JSON.stringify(JSON.parse(previewMessage)),
     });
-    if (response.detail) {
-      setMessageError(response.detail);
+    console.log(response);
+    if (response.isValid === false) {
+      setMessageError(response.FailureReason);
     } else {
       setShowSuccessLabel(true);
     }
@@ -327,7 +329,7 @@ export default function MessageContractDialog({
         <br />
 
         <TextField
-          label="Description"
+          label={evolveContract ? "Describe reason for change" : "Description"}
           placeholder="Enter a description"
           required
           value={description}
