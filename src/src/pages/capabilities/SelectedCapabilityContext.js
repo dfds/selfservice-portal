@@ -59,6 +59,8 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+  const [adoptionLevelInformation, setAdoptionLevelInformation] =
+    useState(null);
 
   function sleep(duration) {
     return new Promise((resolve) => {
@@ -438,6 +440,36 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {}, []);
 
+  useEffect(() => {
+    const dummyData = {
+      overallAdoptionLevel: "PARTIAL",
+      metrics: [
+        {
+          description: "Public topics with schemas",
+          suggestion: "Create chemas for all public topics",
+          isFocusMetric: true,
+          level: "PARTIAL",
+        },
+        {
+          description: "Indicate cost centre for capability",
+          suggestion: "Set the dfds.cost.centre tag for this capability",
+          isFocusMetric: true,
+          level: "COMPLETE",
+        },
+        {
+          description: "Indicate capability criticality",
+          suggestion: "Set the right tags",
+          isFocusMetric: false,
+          level: "NONE",
+        },
+      ],
+    };
+
+    if (!adoptionLevelInformation) {
+      setAdoptionLevelInformation(dummyData);
+    }
+  }, [adoptionLevelInformation]);
+
   //--------------------------------------------------------------------
 
   const state = {
@@ -478,6 +510,7 @@ function SelectedCapabilityProvider({ children }) {
     setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
+    adoptionLevelInformation,
   };
 
   return (

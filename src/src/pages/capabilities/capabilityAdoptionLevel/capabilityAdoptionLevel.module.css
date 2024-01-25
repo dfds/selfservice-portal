@@ -1,0 +1,64 @@
+.columnWrapper {
+  width: 100%;
+  display: flex;
+}
+
+.column {
+  width: 50%;
+  display: inline-block;
+}
+
+.metricRow {
+  margin-bottom: 15px;
+  display: inline-block;
+  width: 100%;
+  line-height: 25px;
+  vertical-align: middle;
+}
+
+.metricRowTextWrapper {
+  height: 100%;
+  line-height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -15px;
+}
+
+.metricRowText {
+  width: 100%;
+  display: inline-block;
+}
+
+.metricRowSuggestion {
+  line-height: 0.8em;
+  font-size: 0.8em;
+}
+
+.levelIndicator {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: grey;
+  border-color: #a0a0a0;
+  box-shadow: 0px 0px 10px 1px grey;
+  margin-right: 15px;
+}
+
+.complete {
+  background-color: #4cb443;
+  border-color: #3c8d35;
+  box-shadow: 0px 0px 10px 1px #4cb443;
+}
+
+.partial {
+  background-color: orange;
+  border-color: rgb(187, 122, 1);
+  box-shadow: 0px 0px 10px 1px orange;
+}
+
+.none {
+  background-color: brown;
+  border-color: rgb(145, 38, 38);
+  box-shadow: 0px 0px 10px 1px brown;
+}

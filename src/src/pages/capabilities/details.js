@@ -14,6 +14,7 @@ import CapabilityManagement from "./capabilityManagement";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
+import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 
 export default function CapabilityDetailsPage() {
@@ -90,6 +91,8 @@ function CapabilityDetailsPageContent() {
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
         <Members />
         <Summary />
+
+        <CapabilityAdoptionLevel />
 
         <CapabilityTagViewer />
 

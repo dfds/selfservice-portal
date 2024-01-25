@@ -201,7 +201,9 @@ export default function Summary() {
           <Text styledAs={"smallHeadline"}>Root Id</Text>{" "}
           <span className={styles.breakwords}>{id}</span>
         </div>
-        <div className={styles.column}>
+      </div>
+      <div className={styles.container}>
+        <div className={styles.doubleColumn}>
           <Text styledAs={"smallHeadline"}>Description</Text>{" "}
           <span className={styles.breakwords}>{description}</span>
         </div>
