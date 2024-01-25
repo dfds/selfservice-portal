@@ -14,6 +14,7 @@ import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import Select from "react-select";
 import JsonSchemaContext from "../../../JsonSchemaContext";
+import DOMPurify from "dompurify";
 
 /*
  * Custom Widgets and Fields
@@ -28,7 +29,13 @@ function CustomFieldTemplate(props) {
       {required ? <span className={styles.bold}>*</span> : null}
       <label htmlFor={id}>{label}</label>
       <br />
-      {rawDescription}
+      {rawDescription ? (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(rawDescription),
+          }}
+        />
+      ) : null}
       {children}
     </div>
   );
