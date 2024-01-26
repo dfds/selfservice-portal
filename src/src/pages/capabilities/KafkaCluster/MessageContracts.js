@@ -219,15 +219,17 @@ export default function MessageContracts({
                 </option>
               ))}
             </SelectField>
-            <Button
-              variation="primary"
-              disabled={false}
-              size="small"
-              // submitting={isInProgress}
-              onClick={handleAddClicked}
-            >
-              Evolve
-            </Button>
+            {onAddClicked && (
+              <Button
+                variation="primary"
+                disabled={false}
+                size="small"
+                // submitting={isInProgress}
+                onClick={handleAddClicked}
+              >
+                Evolve
+              </Button>
+            )}
           </div>
 
           {showMessageContractDialog && (
