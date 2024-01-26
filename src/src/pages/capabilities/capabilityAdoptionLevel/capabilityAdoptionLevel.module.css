@@ -21,44 +21,37 @@
   line-height: 100%;
   display: inline-block;
   vertical-align: middle;
-  margin-top: -15px;
 }
 
 .metricRowText {
   width: 100%;
   display: inline-block;
-}
-
-.metricRowSuggestion {
-  line-height: 0.8em;
-  font-size: 0.8em;
+  font-size: 1.1em;
 }
 
 .levelIndicator {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  display: inline-block;
-  background-color: grey;
-  border-color: #a0a0a0;
-  box-shadow: 0px 0px 10px 1px grey;
-  margin-right: 15px;
+    margin-right: 15px;
+    display: inline-block;
 }
 
-.complete {
-  background-color: #4cb443;
-  border-color: #3c8d35;
-  box-shadow: 0px 0px 10px 1px #4cb443;
+.levelIndicatorIcon {
+    width: 25px;
+    height: 25px;
+    color: grey;
 }
 
-.partial {
-  background-color: orange;
-  border-color: rgb(187, 122, 1);
-  box-shadow: 0px 0px 10px 1px orange;
+.completeAdoption {
+    color: #4cb443;
+}
+.partialAdoption {
+    color: orange;
+}
+.noAdoption {
+    color: brown;
 }
 
-.none {
-  background-color: brown;
-  border-color: rgb(145, 38, 38);
-  box-shadow: 0px 0px 10px 1px brown;
+.metricRowSuggestion {
+  line-height: 0.9em;
+  font-size: 0.9em;
+  color: rgb(122, 122, 122);
 }

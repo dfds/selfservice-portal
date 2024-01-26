@@ -3,6 +3,7 @@ import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import styles from "./capabilityAdoptionLevel.module.css";
 import { Text } from "@dfds-ui/typography";
+import { StatusSuccess, StatusAlert, Information, Help } from "@dfds-ui/icons/system";
 
 function parseAdoptionLevelInformation(adoptionLevelInformation) {
   const keyMetrics = adoptionLevelInformation.metrics.filter(
@@ -16,16 +17,16 @@ function parseAdoptionLevelInformation(adoptionLevelInformation) {
 
 function MetricRow({ description, suggestion, level }) {
   var showSuggestion = true;
-  var statusColor = "unknown";
+  var statusIcon = <Help className={styles.levelIndicatorIcon}/>;
   switch (level) {
     case "NONE":
-      statusColor = "none";
+      statusIcon = <StatusAlert className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}/>;
       break;
     case "PARTIAL":
-      statusColor = "partial";
+      statusIcon = <Information className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}/>;
       break;
     case "COMPLETE":
-      statusColor = "complete";
+      statusIcon = <StatusSuccess className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}/>;
       showSuggestion = false;
       break;
     default:
@@ -34,7 +35,9 @@ function MetricRow({ description, suggestion, level }) {
 
   return (
     <div className={styles.metricRow}>
-      <div className={`${styles.levelIndicator} ${styles[statusColor]}`} />
+      <div className={styles.levelIndicator}>
+        {statusIcon}
+      </div>
       <div className={styles.metricRowTextWrapper}>
         <div>
           <div className={styles.metricRowText}>{description}</div>
@@ -42,7 +45,7 @@ function MetricRow({ description, suggestion, level }) {
             <div
               className={`${styles.metricRowText} ${styles.metricRowSuggestion}`}
             >
-              {suggestion}
+              Suggestion: {suggestion}
             </div>
           )}
         </div>
@@ -67,10 +70,6 @@ export function CapabilityAdoptionLevel() {
       setGeneralGuidance(generalGuidance);
     }
   }, [adoptionLevelInformation]);
-
-  useEffect(() => {
-    console.log(generalGuidance);
-  }, [generalGuidance]);
 
   return (
     <>
