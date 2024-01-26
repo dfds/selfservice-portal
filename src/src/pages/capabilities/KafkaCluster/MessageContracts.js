@@ -7,7 +7,12 @@ import React, { useEffect, useState } from "react";
 import { Divider } from "@dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
+import {
+  StatusAlert,
+  StatusError,
+  ChevronDown,
+  ChevronUp,
+} from "@dfds-ui/icons/system";
 import { Button } from "@dfds-ui/react-components";
 import { prettifyJsonString } from "../../../Utils";
 import MessageContractDialog from "./MessageContractDialog";
@@ -85,7 +90,9 @@ function MessageHeader({
 
   return (
     <div
-      className={`${styles.header} ${isOpen ? styles.headerselected : null}`}
+      className={`${styles.header} ${isOpen ? styles.headerselected : null} ${
+        !isPendingCreation ? styles.pointerCursor : null
+      }`}
     >
       <Text
         className={textClass(isPendingCreation, shownStatus)}
@@ -119,6 +126,12 @@ function MessageHeader({
           </Button>
         )}
       </Text>
+      {!isPendingCreation && !isOpen && (
+        <ChevronDown className={styles.chevronSize} />
+      )}
+      {!isPendingCreation && isOpen && (
+        <ChevronUp className={styles.chevronSize} />
+      )}
     </div>
   );
 }
