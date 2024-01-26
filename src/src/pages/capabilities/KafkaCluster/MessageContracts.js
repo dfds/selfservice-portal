@@ -10,6 +10,7 @@ import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs
 import { StatusAlert, StatusError } from "@dfds-ui/icons/system";
 import { Button } from "@dfds-ui/react-components";
 import { prettifyJsonString } from "../../../Utils";
+import MessageContractDialog from "./MessageContractDialog";
 
 function JsonViewer({ json }) {
   return (
@@ -128,6 +129,7 @@ export default function MessageContracts({
   onRetryClicked,
   isSelected,
   onHeaderClicked,
+  onAddClicked,
 }) {
   const [canExpand, setCanExpand] = useState(false);
   const [headerStatus, setHeaderStatus] = useState(MessageStatus.PROVISIONED);
@@ -137,6 +139,9 @@ export default function MessageContracts({
   const handleToggleSchema = () => {
     setShowSchema((prev) => !prev);
   };
+  const [showMessageContractDialog, setShowMessageContractDialog] =
+    useState(false);
+  const [maxContractVer, setMaxContractVer] = useState(0);
 
   useEffect(() => {
     if (contracts) {
@@ -158,6 +163,9 @@ export default function MessageContracts({
       );
       setSelectedContract(
         contracts.find((x) => x.schemaVersion === minContractVer),
+      );
+      setMaxContractVer(
+        Math.max(...contracts.map((item) => item.schemaVersion)),
       );
     }
   };
@@ -184,6 +192,10 @@ export default function MessageContracts({
     </>
   );
 
+  const handleAddClicked = (contract) => {
+    setShowMessageContractDialog((prev) => !prev);
+  };
+
   return (
     <div className={styles.container}>
       <Expandable
@@ -192,19 +204,43 @@ export default function MessageContracts({
         onHeaderClicked={headerClickHandler}
       >
         <div className={styles.contentcontainer}>
-          <SelectField
-            name="version"
-            label="Version"
-            value={selectedContract.id}
-            required
-            onChange={changeSelectedSchemaVersion}
-          >
-            {shownContracts.map((contract) => (
-              <option key={contract.id} value={contract.id}>
-                Version {contract.schemaVersion}
-              </option>
-            ))}
-          </SelectField>
+          <div className={styles.version}>
+            <SelectField
+              name="version"
+              label="Version"
+              value={selectedContract.id}
+              required
+              onChange={changeSelectedSchemaVersion}
+              style={{ width: "20rem" }}
+            >
+              {shownContracts.map((contract) => (
+                <option key={contract.id} value={contract.id}>
+                  Version {contract.schemaVersion}
+                </option>
+              ))}
+            </SelectField>
+            <Button
+              variation="primary"
+              disabled={false}
+              size="small"
+              // submitting={isInProgress}
+              onClick={handleAddClicked}
+            >
+              Evolve
+            </Button>
+          </div>
+
+          {showMessageContractDialog && (
+            <MessageContractDialog
+              // topicName={}
+              onCloseClicked={() => setShowMessageContractDialog(false)}
+              onAddClicked={onAddClicked}
+              targetVersion={maxContractVer + 1}
+              evolveContract={contracts.find(
+                (x) => x.schemaVersion === maxContractVer,
+              )}
+            />
+          )}
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
