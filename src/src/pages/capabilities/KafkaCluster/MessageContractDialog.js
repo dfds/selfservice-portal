@@ -120,7 +120,6 @@ export default function MessageContractDialog({
   const { validateContract } = useContext(SelectedCapabilityContext);
   const [isValidationInProgress, setIsValidationInProgress] = useState(false);
   const [hasBeenValidated, setHasBeenValidated] = useState(false);
-  const [showSuccessLabel, setShowSuccessLabel] = useState(false);
 
   useEffect(() => {
     if (evolveContract) {
@@ -262,6 +261,8 @@ export default function MessageContractDialog({
       onCloseClicked();
     }
   };
+
+  const hasMessageError = () => messageError !== "";
 
   const handleAddClicked = async () => {
     if (onAddClicked) {
@@ -429,13 +430,14 @@ export default function MessageContractDialog({
               variation="primary"
               submitting={isValidationInProgress}
               onClick={handleValidateClicked}
+              disabled={hasMessageError()}
               style={{
                 position: "right",
                 backgroundColor: hasBeenValidated ? "#4caf50" : "#ED8800",
                 pointerEvents: hasBeenValidated ? "none" : "auto",
               }}
             >
-              {hasBeenValidated ? "Valid" : "Validate"}
+              {hasBeenValidated ? "Valid Contract" : "Validate"}
             </Button>
           ) : (
             <></>
@@ -447,7 +449,7 @@ export default function MessageContractDialog({
             submitting={isInProgress}
             onClick={handleAddClicked}
           >
-            Add
+            {evolveContract ? "Evolve" : "Add"}
           </Button>
           <Button variation="outlined" onClick={handleCloseClicked}>
             Cancel
