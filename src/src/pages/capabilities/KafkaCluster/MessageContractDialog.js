@@ -244,7 +244,7 @@ export default function MessageContractDialog({
   const changeMessage = (e) => {
     e?.preventDefault();
     const newValue = e?.target?.value || "";
-    if (newValue !== message) {
+    if (newValue !== message && evolveContract) {
       setHasBeenValidated(false);
     }
     setMessage(newValue);

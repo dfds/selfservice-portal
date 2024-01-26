@@ -233,6 +233,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     // UX sleep, nicer to have it busy spin and then show updated list of contracts
     await sleep(1000);
     await fetchContractsAndSetState(topic);
+    setSelectedMessageContractType("");
   };
 
   const handleUpdateTopic = useCallback(
