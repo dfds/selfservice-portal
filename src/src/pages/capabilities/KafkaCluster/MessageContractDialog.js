@@ -13,6 +13,7 @@ import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/style
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 import toJsonSchema from "to-json-schema";
+import { prettifyJsonString } from "../../../Utils";
 
 function getValidationErrorForType(value) {
   // matching backend validation
@@ -118,13 +119,19 @@ export default function MessageContractDialog({
   const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
   const { validateContract } = useContext(SelectedCapabilityContext);
   const [isValidationInProgress, setIsValidationInProgress] = useState(false);
+  const [hasBeenValidated, setHasBeenValidated] = useState(false);
   const [showSuccessLabel, setShowSuccessLabel] = useState(false);
 
   useEffect(() => {
     if (evolveContract) {
       setMessageType(evolveContract.messageType);
-      console.log(evolveContract.example);
-      setMessage(JSON.stringify(JSON.parse(evolveContract.example).data));
+      setMessage(
+        prettifyJsonString(
+          JSON.stringify(JSON.parse(evolveContract.example).data),
+        ),
+      );
+    } else {
+      setHasBeenValidated(true);
     }
   }, [evolveContract]);
 
@@ -160,8 +167,7 @@ export default function MessageContractDialog({
       descriptionError,
       messageError,
     ]);
-
-    if (allWithValues && !hasError) {
+    if (allWithValues && !hasError && hasBeenValidated) {
       setCanAdd(true);
     } else {
       setCanAdd(false);
@@ -173,6 +179,7 @@ export default function MessageContractDialog({
     typeError,
     descriptionError,
     messageError,
+    hasBeenValidated,
   ]);
 
   // update previews
@@ -238,6 +245,9 @@ export default function MessageContractDialog({
   const changeMessage = (e) => {
     e?.preventDefault();
     const newValue = e?.target?.value || "";
+    if (newValue !== message) {
+      setHasBeenValidated(false);
+    }
     setMessage(newValue);
   };
 
@@ -276,10 +286,10 @@ export default function MessageContractDialog({
       previewSchema,
     );
 
-    if (validationResult.IsValid === false) {
-      setMessageError(validationResult.FailureReason);
+    if (!validationResult.isContractValid) {
+      setMessageError(validationResult.failureReason || "failed to validate");
     } else {
-      setShowSuccessLabel(true);
+      setHasBeenValidated(true);
     }
     setIsValidationInProgress(false);
   };
@@ -421,11 +431,11 @@ export default function MessageContractDialog({
               onClick={handleValidateClicked}
               style={{
                 position: "right",
-                backgroundColor: showSuccessLabel ? "#4caf50" : "#ED8800",
-                pointerEvents: showSuccessLabel ? "none" : "auto",
+                backgroundColor: hasBeenValidated ? "#4caf50" : "#ED8800",
+                pointerEvents: hasBeenValidated ? "none" : "auto",
               }}
             >
-              {showSuccessLabel ? "Valid" : "Validate"}
+              {hasBeenValidated ? "Valid" : "Validate"}
             </Button>
           ) : (
             <></>
@@ -433,7 +443,7 @@ export default function MessageContractDialog({
 
           <Button
             variation="primary"
-            disabled={evolveContract ? !showSuccessLabel : !canAdd}
+            disabled={!canAdd}
             submitting={isInProgress}
             onClick={handleAddClicked}
           >

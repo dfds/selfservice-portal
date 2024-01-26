@@ -202,9 +202,9 @@ function SelectedCapabilityProvider({ children }) {
       kafkaTopicId,
       messageContractDescriptor,
     );
-    if (response.status === 200) return { IsValid: true };
+    if (response.status === 200) return { isContractValid: true };
 
-    return { IsValid: false, FailureReason: response.detail };
+    return { isContractValid: false, failureReason: response.detail };
   };
 
   const addMessageContractToTopic = async (
