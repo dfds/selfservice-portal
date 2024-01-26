@@ -14,6 +14,7 @@ import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import Select from "react-select";
 import JsonSchemaContext from "../../../JsonSchemaContext";
+import DOMPurify from "dompurify";
 
 /*
  * Custom Widgets and Fields
@@ -28,7 +29,13 @@ function CustomFieldTemplate(props) {
       {required ? <span className={styles.bold}>*</span> : null}
       <label htmlFor={id}>{label}</label>
       <br />
-      {rawDescription}
+      {rawDescription ? (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(rawDescription),
+          }}
+        />
+      ) : null}
       {children}
     </div>
   );
@@ -104,16 +111,13 @@ export function CapabilityTagsSubForm({
   setValidMetadata,
   preexistingFormData,
 }) {
-  const {
-    hasFilteredJsonSchema,
-    filteredJsonSchema,
-    filteredJsonSchemaString,
-  } = useContext(JsonSchemaContext);
+  const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
+    useContext(JsonSchemaContext);
   const [showTagForm, setShowTagForm] = useState(false);
   const [formData, setFormData] = useState({});
 
   const validateAndSet = (formData) => {
-    if (checkIfFollowsJsonSchema(formData, filteredJsonSchemaString)) {
+    if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
       setValidMetadata(true);
       setMetadata(formData);
     } else {
@@ -122,19 +126,19 @@ export function CapabilityTagsSubForm({
   };
 
   useEffect(() => {
-    if (hasFilteredJsonSchema) {
+    if (hasJsonSchemaProperties) {
       validateAndSet(formData);
     }
   }, [formData]);
 
   useEffect(() => {
-    if (hasFilteredJsonSchema) {
+    if (hasJsonSchemaProperties) {
       setValidMetadata(false);
       setShowTagForm(true);
     } else {
       setValidMetadata(true);
     }
-  }, [hasFilteredJsonSchema]);
+  }, [hasJsonSchemaProperties]);
 
   const widgets = {
     SelectWidget: CustomDropdown,
@@ -157,7 +161,7 @@ export function CapabilityTagsSubForm({
           </a>
           <Form
             className={styles.tagsform}
-            schema={filteredJsonSchema}
+            schema={jsonSchema}
             validator={validator}
             onChange={(type) => setFormData(type.formData)}
             widgets={widgets}
