@@ -214,6 +214,11 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
         }
         contractsWithVersion[contract.messageType].push(contract);
       });
+      Object.entries(contractsWithVersion).forEach(([key, value]) => {
+        value.sort(
+          (a, b) => parseInt(a.schemaVersion) - parseInt(b.schemaVersion),
+        );
+      });
 
       setContractCount(count);
       setContracts(contractsWithVersion);
