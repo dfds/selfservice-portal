@@ -130,6 +130,14 @@ export class SelfServiceApiClient {
     return data.items;
   }
 
+  async validateMessageSchema(topicId, messageContract) {
+    return await this.requestWithToken(
+      composeUrl(`kafkatopics/${topicId}/messagecontracts-validate`),
+      "POST",
+      messageContract,
+    );
+  }
+
   async getConsumers(topicDefinition) {
     const link = topicDefinition?._links?.consumers;
 
@@ -229,7 +237,12 @@ export class SelfServiceApiClient {
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
-      return undefined;
+      const errorDetails = await response.json();
+      if (errorDetails.detail) {
+        return errorDetails;
+      } else {
+        return undefined;
+      }
     }
     return response;
   }
@@ -238,7 +251,7 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-costs"),
     );
-    if (!response) {
+    if (response.detail) {
       return [];
     }
     let obj = await response.json();
@@ -249,7 +262,7 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(
       composeUrl("metrics/my-capabilities-resources"),
     );
-    if (!response) {
+    if (response.detail) {
       return [];
     }
 

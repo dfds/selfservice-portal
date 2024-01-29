@@ -214,6 +214,11 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
         }
         contractsWithVersion[contract.messageType].push(contract);
       });
+      Object.entries(contractsWithVersion).forEach(([key, value]) => {
+        value.sort(
+          (a, b) => parseInt(a.schemaVersion) - parseInt(b.schemaVersion),
+        );
+      });
 
       setContractCount(count);
       setContracts(contractsWithVersion);
@@ -228,6 +233,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     // UX sleep, nicer to have it busy spin and then show updated list of contracts
     await sleep(1000);
     await fetchContractsAndSetState(topic);
+    setSelectedMessageContractType("");
   };
 
   const handleUpdateTopic = useCallback(
@@ -398,6 +404,9 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                         }
                         onRetryClicked={() =>
                           handleRetryClicked(messageContracts[0])
+                        }
+                        onAddClicked={(formValues) =>
+                          handleAddMessageContract(formValues)
                         }
                       />
                     ),
