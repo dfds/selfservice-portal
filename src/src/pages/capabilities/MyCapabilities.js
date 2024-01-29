@@ -9,17 +9,45 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+import { useCapabilities } from "hooks/Capabilities";
 
 export default function MyCapabilities() {
   const { myCapabilities, metricsWrapper, appStatus, truncateString } =
     useContext(AppContext);
+  const { capabilities, isLoaded } = useCapabilities();
 
-  const items = myCapabilities || [];
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (isLoaded && capabilities && myCapabilities) {
+      const filteredList = capabilities.filter((x) => {
+        const myCap = myCapabilities.find((y) => y.id === x.id);
+        if (myCap) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      setItems(filteredList);
+    }
+  }, [isLoaded, capabilities, myCapabilities]);
+
   const isLoading = !appStatus.hasLoadedMyCapabilities;
   const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
+
+  useEffect(() => {
+    if (items) {
+      const tableData = items.map((item) => {
+        const copy = { ...item };
+
+        return copy;
+      });
+      setFullTableData(tableData);
+    }
+  }, [items]);
 
   const columns = useMemo(
     () => [
@@ -123,6 +151,21 @@ export default function MyCapabilities() {
         },
       },
       {
+        accessorFn: (row) => row.awsAccountId,
+        header: "AwsAccountId",
+        enableColumnFilterModes: false,
+        disableFilters: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          return <div>{cell.getValue()}</div>;
+        },
+      },
+      {
         accessorFn: (row) => row.id,
         header: "arrow",
         id: "details",
@@ -138,16 +181,6 @@ export default function MyCapabilities() {
     ],
     [],
   );
-
-  useEffect(() => {
-    const tableData = items.map((item) => {
-      const copy = { ...item };
-
-      return copy;
-    });
-
-    setFullTableData(tableData);
-  }, [isLoading, appStatus]);
 
   return (
     <>
@@ -171,11 +204,7 @@ export default function MyCapabilities() {
               initialState={{
                 pagination: { pageSize: 25 },
                 showGlobalFilter: true,
-              }}
-              muiTableContainerProps={{
-                sx: {
-                  overflow: "visible",
-                },
+                columnVisibility: { AwsAccountId: false },
               }}
               muiTableHeadCellProps={{
                 sx: {
@@ -192,7 +221,6 @@ export default function MyCapabilities() {
                   fontFamily: "DFDS",
                   color: "#4d4e4c",
                   padding: "5px",
-                  overflow: "visible",
                 },
               }}
               muiTablePaperProps={{
