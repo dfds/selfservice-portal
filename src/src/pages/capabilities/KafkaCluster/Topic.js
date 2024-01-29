@@ -42,7 +42,11 @@ function TopicHeader({
     }
   };
 
-  const provisioned = "Provisioned".toUpperCase() === status?.toUpperCase();
+  const TopicStatus = {
+    PROVISIONED: "Provisioned",
+  };
+
+  const provisioned = status === TopicStatus.PROVISIONED;
   const notProvisioned = !provisioned;
 
   return (
