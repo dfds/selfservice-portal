@@ -42,13 +42,18 @@ function TopicHeader({
     }
   };
 
-  const notProvisioned = "Provisioned".toUpperCase() !== status?.toUpperCase();
+  const TopicStatus = {
+    PROVISIONED: "Provisioned",
+  };
+
+  const provisioned = status === TopicStatus.PROVISIONED;
+  const notProvisioned = !provisioned;
 
   return (
     <div
       className={`${styles.topicheader} ${
-        isOpen ? styles.topicheaderselected : ""
-      }`}
+        isOpen ? styles.topicheaderselected : null
+      } ${provisioned ? styles.cursorPointer : null}`}
       onClick={notProvisioned ? null : handleClick}
     >
       <div style={{ flexGrow: "1" }}>
@@ -77,7 +82,7 @@ function TopicHeader({
       </div>
 
       <div style={{ width: "5rem", textAlign: "right" }}>
-        {isOpen ? (
+        {provisioned && isOpen ? (
           <IconButton
             icon={ChevronUp}
             disableTooltip
@@ -85,7 +90,9 @@ function TopicHeader({
             style={{ color: "white" }}
           />
         ) : (
-          <IconButton icon={ChevronDown} disableTooltip disableOverlay />
+          provisioned && (
+            <IconButton icon={ChevronDown} disableTooltip disableOverlay />
+          )
         )}
       </div>
     </div>

@@ -27,7 +27,6 @@
   flex-direction: row;
   flex-wrap: nowrap;
   /* border: 1px solid orange; */
-  cursor: pointer;
   padding-left: 1rem;
   padding-right: 1rem;
   margin: 1rem;
@@ -37,6 +36,10 @@
   align-content: center;
   /* background-color: #002b45; */
   /* color: #fff */
+}
+
+.cursorPointer {
+  cursor: pointer;
 }
 
 .topicheader:hover {
