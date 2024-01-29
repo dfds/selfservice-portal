@@ -47,6 +47,7 @@ function CapabilityDetailsPageContent() {
     isInviteesCreated,
     members,
     metadata,
+    adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -92,7 +93,9 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
 
-        <CapabilityAdoptionLevel />
+        <CapabilityAdoptionLevel
+          adoptionLevelInformation={adoptionLevelInformation}
+        />
 
         <CapabilityTagViewer />
 

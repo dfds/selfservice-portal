@@ -1,15 +1,20 @@
 import React, { useEffect, useContext, useState } from "react";
 import PageSection from "../../../components/PageSection";
-import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import styles from "./capabilityAdoptionLevel.module.css";
 import { Text } from "@dfds-ui/typography";
-import { StatusSuccess, StatusAlert, Information, Help } from "@dfds-ui/icons/system";
+import {
+  StatusSuccess,
+  StatusAlert,
+  Information,
+  Help,
+} from "@dfds-ui/icons/system";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
-function parseAdoptionLevelInformation(adoptionLevelInformation) {
-  const keyMetrics = adoptionLevelInformation.metrics.filter(
+function parseConfigurationLevelInformation(configurationLevelInformation) {
+  const keyMetrics = configurationLevelInformation.breakdown.filter(
     (metric) => metric.isFocusMetric,
   );
-  const generalGuidance = adoptionLevelInformation.metrics.filter(
+  const generalGuidance = configurationLevelInformation.breakdown.filter(
     (metric) => !metric.isFocusMetric,
   );
   return [keyMetrics, generalGuidance];
@@ -17,16 +22,28 @@ function parseAdoptionLevelInformation(adoptionLevelInformation) {
 
 function MetricRow({ description, suggestion, level }) {
   var showSuggestion = true;
-  var statusIcon = <Help className={styles.levelIndicatorIcon}/>;
-  switch (level) {
+  var statusIcon = <Help className={styles.levelIndicatorIcon} />;
+  switch (level.toUpperCase()) {
     case "NONE":
-      statusIcon = <StatusAlert className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}/>;
+      statusIcon = (
+        <StatusAlert
+          className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
+        />
+      );
       break;
     case "PARTIAL":
-      statusIcon = <Information className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}/>;
+      statusIcon = (
+        <Information
+          className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
+        />
+      );
       break;
     case "COMPLETE":
-      statusIcon = <StatusSuccess className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}/>;
+      statusIcon = (
+        <StatusSuccess
+          className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
+        />
+      );
       showSuggestion = false;
       break;
     default:
@@ -35,9 +52,7 @@ function MetricRow({ description, suggestion, level }) {
 
   return (
     <div className={styles.metricRow}>
-      <div className={styles.levelIndicator}>
-        {statusIcon}
-      </div>
+      <div className={styles.levelIndicator}>{statusIcon}</div>
       <div className={styles.metricRowTextWrapper}>
         <div>
           <div className={styles.metricRowText}>{description}</div>
@@ -55,48 +70,52 @@ function MetricRow({ description, suggestion, level }) {
 }
 
 export function CapabilityAdoptionLevel() {
-  // does set update the backend? How is this done in the metadata view?
-  const { adoptionLevelInformation } = useContext(SelectedCapabilityContext);
-
   const [keyMetrics, setKeyMetrics] = useState([]);
   const [generalGuidance, setGeneralGuidance] = useState([]);
+  const { configurationLevelInformation } = useContext(
+    SelectedCapabilityContext,
+  );
 
   useEffect(() => {
-    if (adoptionLevelInformation) {
-      const [keyMetrics, generalGuidance] = parseAdoptionLevelInformation(
-        adoptionLevelInformation,
+    if (configurationLevelInformation) {
+      const [keyMetrics, generalGuidance] = parseConfigurationLevelInformation(
+        configurationLevelInformation,
       );
       setKeyMetrics(keyMetrics);
       setGeneralGuidance(generalGuidance);
     }
-  }, [adoptionLevelInformation]);
+  }, [configurationLevelInformation]);
 
   return (
     <>
-      <PageSection headline="Adoption Level">
-        <div className={styles.columnWrapper}>
-          <div className={styles.column}>
-            <Text styledAs={"smallHeadline"}>Key Metrics</Text>
-            {(keyMetrics || []).map((metric) => (
-              <MetricRow
-                description={metric.description}
-                suggestion={metric.suggestion}
-                level={metric.level}
-              ></MetricRow>
-            ))}
+      {configurationLevelInformation && (
+        <PageSection headline="Adoption Level">
+          <div className={styles.columnWrapper}>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>Key Metrics</Text>
+              {(keyMetrics || []).map((metric) => (
+                <MetricRow
+                  key={metric.identifier}
+                  description={metric.description}
+                  suggestion={metric.suggestion}
+                  level={metric.level}
+                ></MetricRow>
+              ))}
+            </div>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>General Guidance</Text>
+              {(generalGuidance || []).map((metric) => (
+                <MetricRow
+                  key={metric.identifier}
+                  description={metric.description}
+                  suggestion={metric.suggestion}
+                  level={metric.level}
+                ></MetricRow>
+              ))}
+            </div>
           </div>
-          <div className={styles.column}>
-            <Text styledAs={"smallHeadline"}>General Guidance</Text>
-            {(generalGuidance || []).map((metric) => (
-              <MetricRow
-                description={metric.description}
-                suggestion={metric.suggestion}
-                level={metric.level}
-              ></MetricRow>
-            ))}
-          </div>
-        </div>
-      </PageSection>
+        </PageSection>
+      )}
     </>
   );
 }

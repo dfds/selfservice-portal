@@ -18,6 +18,7 @@
 
 .metricRowTextWrapper {
   height: 100%;
+  width: 80%;
   line-height: 100%;
   display: inline-block;
   vertical-align: middle;
@@ -30,24 +31,24 @@
 }
 
 .levelIndicator {
-    margin-right: 15px;
-    display: inline-block;
+  margin-right: 15px;
+  display: inline-block;
 }
 
 .levelIndicatorIcon {
-    width: 25px;
-    height: 25px;
-    color: grey;
+  width: 25px;
+  height: 25px;
+  color: grey;
 }
 
 .completeAdoption {
-    color: #4cb443;
+  color: #4cb443;
 }
 .partialAdoption {
-    color: orange;
+  color: orange;
 }
 .noAdoption {
-    color: brown;
+  color: brown;
 }
 
 .metricRowSuggestion {
