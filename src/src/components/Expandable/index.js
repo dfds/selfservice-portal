@@ -1,5 +1,3 @@
-import styles from "./expandable.module.css";
-
 export default function Expandable({
   header,
   isOpen,
@@ -13,11 +11,9 @@ export default function Expandable({
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header} onClick={clickHandler}>
-        {header}
-      </div>
-      {isOpen && <div className={styles.content}>{children}</div>}
+    <div>
+      <div onClick={clickHandler}>{header}</div>
+      {isOpen && <div>{children}</div>}
     </div>
   );
 }
