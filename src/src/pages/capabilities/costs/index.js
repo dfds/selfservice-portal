@@ -32,7 +32,7 @@ export default function Costs({ costCentre }) {
     <PageSection headline="Costs">
       <span>
         Use Finout to explore the costs for this capability or its entire cost
-        center.
+        centre, if a cost centre is set.
       </span>
       <p>
         <a
@@ -40,8 +40,8 @@ export default function Costs({ costCentre }) {
           rel="noreferrer"
           href={`${getFinoutLinkForCostCentre({ costCentre })}`}
         >
-          <Button size="small" variation="primary">
-            Entire cost center ({costCentre})
+          <Button size="small" variation="primary" disabled={!costCentre}>
+            Entire cost center {costCentre && { costCentre }}
           </Button>
         </a>
       </p>
