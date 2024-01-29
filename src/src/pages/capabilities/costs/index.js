@@ -41,7 +41,7 @@ export default function Costs({ costCentre }) {
           href={`${getFinoutLinkForCostCentre({ costCentre })}`}
         >
           <Button size="small" variation="primary" disabled={!costCentre}>
-            Entire cost center {costCentre && { costCentre }}
+            Entire cost center {costCentre && `(${costCentre})`}
           </Button>
         </a>
       </p>
