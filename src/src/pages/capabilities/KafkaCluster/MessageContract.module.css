@@ -75,6 +75,7 @@
   animation-name: slidein;
   animation-duration: 0.5s;
   animation-timing-function: ease;
+  /* opacity: 0.25; */
 }
 
 .messagecontent {
