@@ -29,6 +29,12 @@ export function RowDetails(data) {
         }
         contractsWithVersion[contract.messageType].push(contract);
       });
+      Object.entries(contractsWithVersion).forEach(([key, value]) => {
+        value.sort(
+          (a, b) => parseInt(a.schemaVersion) - parseInt(b.schemaVersion),
+        );
+      });
+
       setContractsGroupedByVersion(contractsWithVersion);
     }
   }, [contracts]);
