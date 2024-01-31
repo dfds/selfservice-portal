@@ -20,25 +20,31 @@ function parseConfigurationLevelInformation(configurationLevelInformation) {
   return [keyMetrics, generalGuidance];
 }
 
+const ConfigurationLevel = {
+  NONE: "NONE",
+  PARTIAL: "PARTIAL",
+  COMPLETE: "COMPLETE",
+};
+
 function MetricRow({ description, suggestion, level }) {
   var showSuggestion = true;
   var statusIcon = <Help className={styles.levelIndicatorIcon} />;
   switch (level.toUpperCase()) {
-    case "NONE":
+    case ConfigurationLevel.NONE:
       statusIcon = (
         <StatusAlert
           className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
         />
       );
       break;
-    case "PARTIAL":
+    case ConfigurationLevel.PARTIAL:
       statusIcon = (
         <Information
           className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
         />
       );
       break;
-    case "COMPLETE":
+    case ConfigurationLevel.COMPLETE:
       statusIcon = (
         <StatusSuccess
           className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
