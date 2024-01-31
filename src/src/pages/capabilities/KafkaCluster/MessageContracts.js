@@ -154,7 +154,7 @@ export default function MessageContracts({
   };
   const [showMessageContractDialog, setShowMessageContractDialog] =
     useState(false);
-  const [maxContractVer, setMaxContractVer] = useState(0);
+  const [maxContractVer, setMaxContractVer] = useState([]);
 
   useEffect(() => {
     if (contracts) {
@@ -177,7 +177,9 @@ export default function MessageContracts({
       setSelectedContract(
         contracts.find((x) => x.schemaVersion === maxContractVer),
       );
-      setMaxContractVer(maxContractVer);
+      setMaxContractVer(
+        contracts.find((x) => x.schemaVersion === maxContractVer),
+      );
     }
   };
 
@@ -241,7 +243,7 @@ export default function MessageContracts({
                   style={{ color: "red", margin: "4px" }}
                   styledAs="caption"
                 >
-                  Evolution cannot occur until the message contract is
+                  Evolution cannot occur until the latest message contract is
                   provisioned
                 </Text>
               ) : (
@@ -250,9 +252,7 @@ export default function MessageContracts({
               {onAddClicked && (
                 <Button
                   variation="primary"
-                  disabled={
-                    selectedContract.status !== MessageStatus.PROVISIONED
-                  }
+                  disabled={maxContractVer.status !== MessageStatus.PROVISIONED}
                   size="small"
                   // submitting={isInProgress}
                   onClick={handleAddClicked}
@@ -268,9 +268,9 @@ export default function MessageContracts({
               // topicName={}
               onCloseClicked={() => setShowMessageContractDialog(false)}
               onAddClicked={onAddClicked}
-              targetVersion={maxContractVer + 1}
+              targetVersion={maxContractVer.schemaVersion + 1}
               evolveContract={contracts.find(
-                (x) => x.schemaVersion === maxContractVer,
+                (x) => x.schemaVersion === maxContractVer.schemaVersion,
               )}
             />
           )}
