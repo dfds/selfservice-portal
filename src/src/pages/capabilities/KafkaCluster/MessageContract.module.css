@@ -59,7 +59,7 @@
   background-color: #fff;
   border: 1px solid #4d4e4c29;
 
-  height: 43rem;
+  height: 45rem;
   animation-name: slidein;
   animation-duration: 0.5s;
   animation-timing-function: ease;
@@ -75,7 +75,6 @@
   animation-name: slidein;
   animation-duration: 0.5s;
   animation-timing-function: ease;
-  /* opacity: 0.25; */
 }
 
 .messagecontent {
@@ -97,6 +96,13 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+}
+
+.evolve {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
 }
 

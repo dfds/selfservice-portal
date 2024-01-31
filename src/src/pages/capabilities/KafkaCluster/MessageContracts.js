@@ -226,27 +226,40 @@ export default function MessageContracts({
             >
               {shownContracts.map((contract) => (
                 <option key={contract.id} value={contract.id}>
-                  {`Version${contract.schemaVersion}${
-                    contract.status !== "Provisioned"
+                  {`Version ${contract.schemaVersion}${
+                    contract.status !== MessageStatus.PROVISIONED
                       ? ` (${contract.status})`
                       : ""
                   }`}
                 </option>
               ))}
             </SelectField>
-            {onAddClicked && (
-              <Button
-                variation="primary"
-                disabled={
-                  selectedContract.status !== "Provisioned" ? true : false
-                }
-                size="small"
-                // submitting={isInProgress}
-                onClick={handleAddClicked}
-              >
-                Evolve
-              </Button>
-            )}
+            <div className={styles.evolve}>
+              {selectedContract.status !== MessageStatus.PROVISIONED ? (
+                <Text
+                  style={{ color: "red", margin: "4px" }}
+                  styledAs="caption"
+                >
+                  Evolution cannot occur until the message contract is
+                  provisioned
+                </Text>
+              ) : (
+                <></>
+              )}
+              {onAddClicked && (
+                <Button
+                  variation="primary"
+                  disabled={
+                    selectedContract.status !== MessageStatus.PROVISIONED
+                  }
+                  size="small"
+                  // submitting={isInProgress}
+                  onClick={handleAddClicked}
+                >
+                  Evolve
+                </Button>
+              )}
+            </div>
           </div>
 
           {showMessageContractDialog && (
@@ -260,13 +273,14 @@ export default function MessageContracts({
               )}
             />
           )}
+
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
                 <Text
                   styledAs="label"
                   style={
-                    selectedContract.status !== "Provisioned"
+                    selectedContract.status !== MessageStatus.PROVISIONED
                       ? { opacity: 0.25, marginBottom: "0" }
                       : { marginBottom: "0" }
                   }
@@ -291,7 +305,7 @@ export default function MessageContracts({
             />
             <Text
               style={
-                selectedContract.status !== "Provisioned"
+                selectedContract.status !== MessageStatus.PROVISIONED
                   ? { opacity: 0.25 }
                   : {}
               }
@@ -302,7 +316,7 @@ export default function MessageContracts({
             <br />
             <div
               style={
-                selectedContract.status !== "Provisioned"
+                selectedContract.status !== MessageStatus.PROVISIONED
                   ? { opacity: 0.25 }
                   : {}
               }
