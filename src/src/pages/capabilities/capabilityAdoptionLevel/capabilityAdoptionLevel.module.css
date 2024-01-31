@@ -1,0 +1,58 @@
+.columnWrapper {
+  width: 100%;
+  display: flex;
+}
+
+.column {
+  width: 50%;
+  display: inline-block;
+}
+
+.metricRow {
+  margin-bottom: 15px;
+  display: inline-block;
+  width: 100%;
+  line-height: 25px;
+  vertical-align: middle;
+}
+
+.metricRowTextWrapper {
+  height: 100%;
+  width: 80%;
+  line-height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.metricRowText {
+  width: 100%;
+  display: inline-block;
+  font-size: 1.1em;
+}
+
+.levelIndicator {
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.levelIndicatorIcon {
+  width: 25px;
+  height: 25px;
+  color: grey;
+}
+
+.completeAdoption {
+  color: #4cb443;
+}
+.partialAdoption {
+  color: orange;
+}
+.noAdoption {
+  color: brown;
+}
+
+.metricRowSuggestion {
+  line-height: 0.9em;
+  font-size: 0.9em;
+  color: rgb(122, 122, 122);
+}
