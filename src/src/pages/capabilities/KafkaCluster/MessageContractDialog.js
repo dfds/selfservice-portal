@@ -121,6 +121,13 @@ export default function MessageContractDialog({
   const [isValidationInProgress, setIsValidationInProgress] = useState(false);
   const [hasBeenValidated, setHasBeenValidated] = useState(false);
 
+  const CheckRequiredFields = async () => {
+    if (description === "" || messageType === "" || message === "") {
+      return false
+    }
+    return true
+  }
+
   useEffect(() => {
     if (evolveContract) {
       setMessageType(evolveContract.messageType);
@@ -346,6 +353,9 @@ export default function MessageContractDialog({
         <br />
 
         <TextField
+          className={styles.descriptionfield}
+          // css = {{borderColor: description === "" ? 'red' : 'blue'}}
+          
           label={evolveContract ? "Describe reason for change" : "Description"}
           placeholder={
             evolveContract ? "Enter a reason" : "Enter a description"
