@@ -77,3 +77,8 @@ stylecheck: ## checks formatting and linting
 .PHONY: help
 help: ## Shows this list
 	@grep -F -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | grep -F -v grep -F | sed -e 's/\\$$//' | sed -e 's/##//'
+
+.PHONY: test
+test:
+	@cd src && npx npx playwright test --project parallel
+	@cd src && npx npx playwright test --project sequential --workers 1

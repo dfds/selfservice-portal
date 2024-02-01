@@ -1,0 +1,52 @@
+name: Frontend tests
+
+on:
+  pull_request:
+    branches: [ main, develop, users/emcla/e2e-testing]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        default: false
+        required: false
+        type: boolean
+        description: "Trigger build"
+jobs:
+  check_formatting:
+    runs-on: ubuntu-latest
+    name: Frontend tests
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: 'src'
+      - uses: actions/checkout@v4
+        with:
+          repository: 'dfds/selfservice-setup'
+          path: 'selfservice-setup'
+          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}      
+      - uses: actions/setup-node@v3
+      - name: Install dependencies
+        run: cd src/src && npm install
+      - name: Install playwright
+        run: cd src/src && npx playwright install --with-deps chromium
+      - name: Start the frontend
+        env:
+          REACT_APP_API_BASE_URL: http://localhost:8080
+          REACT_APP_AUTH_REDIRECT_URL: http://localhost:3001/login
+          PORT: 3001
+          REACT_APP_PUBLIC_URL: http://localhost:8080
+        run: cd src && make dev &
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Build and run necessary services for testing
+        shell: bash
+        run: |
+          cd selfservice-setup
+          ./init.sh --disablegitssh true --token ${{ secrets.SSU_SETUP_GH_TOKEN }}
+          docker-compose up -d --scale selfservice-portal=0
+      - name: Run tests
+        run: cd src && make test
+        env: 
+          E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
+          E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
+          E2E_TEST_USER_MFA_URL: ${{ secrets.E2E_TEST_USER_MFA_URL }}
+
