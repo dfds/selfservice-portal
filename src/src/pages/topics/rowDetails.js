@@ -5,6 +5,7 @@ import { Text } from "@dfds-ui/typography";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
+import { useError } from "../../hooks/Error";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -15,6 +16,7 @@ export function RowDetails(data) {
     [],
   );
   const { selfServiceApiClient } = useContext(AppContext);
+  const { triggerErrorWithTitleAndDetails } = useError();
 
   useEffect(() => {
     fetchData(data);
@@ -61,6 +63,16 @@ export function RowDetails(data) {
     textDecoration: "none",
   };
 
+  const handleRetryClicked = async (messageContract) => {
+    try {
+      await selfServiceApiClient.retryAddMessageContractToTopic(
+        messageContract,
+      );
+    } catch (e) {
+      triggerErrorWithTitleAndDetails("Error", e.message);
+    }
+  };
+
   return (
     <Card variant="fill" surface="secondary">
       <CardContent>
@@ -91,6 +103,9 @@ export function RowDetails(data) {
                       isSelected={messageType === selectedMessageContractType}
                       onHeaderClicked={(messageType) =>
                         handleMessageHeaderClicked(messageType)
+                      }
+                      onRetryClicked={() =>
+                        handleRetryClicked(messageContracts[0])
                       }
                     />
                   ),
