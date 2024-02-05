@@ -135,7 +135,7 @@ export default function MessageContractDialog({
       setTypeError(getValidationErrorForType(messageType));
       return false;
     }
-  }
+  };
 
   useEffect(() => {
     if (evolveContract) {
@@ -176,11 +176,7 @@ export default function MessageContractDialog({
 
   useEffect(() => {
     isAllWithValues([messageType, description, message]);
-    isAllEmptyValues([
-      typeError,
-      descriptionError,
-      messageError,
-    ]);
+    isAllEmptyValues([typeError, descriptionError, messageError]);
   }, [
     messageType,
     description,
@@ -280,17 +276,15 @@ export default function MessageContractDialog({
 
       const validForm = await CheckRequiredFields();
 
-      if (validForm){
+      if (validForm) {
         await onAddClicked({
           messageType: messageType,
           description: description,
           example: previewMessage,
           schema: previewSchema,
-      });
-      
+        });
       }
       setIsInProgress(false);
-      
     }
   };
 
