@@ -114,7 +114,6 @@ export default function MessageContractDialog({
   const [previewMessage, setPreviewMessage] = useState("");
   const [previewAsSchema, setPreviewAsSchema] = useState(false);
 
-  const [canAdd, setCanAdd] = useState(false);
   const [isInProgress, setIsInProgress] = useState(false);
   const [isUsingOpenContentModel, setIsUsingOpenContentModel] = useState(false);
   const { validateContract } = useContext(SelectedCapabilityContext);
@@ -122,10 +121,20 @@ export default function MessageContractDialog({
   const [hasBeenValidated, setHasBeenValidated] = useState(false);
 
   const CheckRequiredFields = async () => {
-    if (description === "" || messageType === "" || message === "") {
-      return false
+    const allWithValues = isAllWithValues([messageType, description, message]);
+    const hasError = !isAllEmptyValues([
+      typeError,
+      descriptionError,
+      messageError,
+    ]);
+    if (allWithValues && !hasError && hasBeenValidated) {
+      return true;
+    } else {
+      setMessageError(getValidationErrorForMessage(message));
+      setDescriptionError(getValidationErrorForDescription(description));
+      setTypeError(getValidationErrorForType(messageType));
+      return false;
     }
-    return true
   }
 
   useEffect(() => {
@@ -165,19 +174,13 @@ export default function MessageContractDialog({
     setMessageError(error);
   }, [message]);
 
-  // toggle add button
   useEffect(() => {
-    const allWithValues = isAllWithValues([messageType, description, message]);
-    const hasError = !isAllEmptyValues([
+    isAllWithValues([messageType, description, message]);
+    isAllEmptyValues([
       typeError,
       descriptionError,
       messageError,
     ]);
-    if (allWithValues && !hasError && hasBeenValidated) {
-      setCanAdd(true);
-    } else {
-      setCanAdd(false);
-    }
   }, [
     messageType,
     description,
@@ -275,14 +278,19 @@ export default function MessageContractDialog({
     if (onAddClicked) {
       setIsInProgress(true);
 
-      // NOTE: [jandr] handle errors
-      await onAddClicked({
-        messageType: messageType,
-        description: description,
-        example: previewMessage,
-        schema: previewSchema,
+      const validForm = await CheckRequiredFields();
+
+      if (validForm){
+        await onAddClicked({
+          messageType: messageType,
+          description: description,
+          example: previewMessage,
+          schema: previewSchema,
       });
-      // setIsInProgress(false);
+      
+      }
+      setIsInProgress(false);
+      
     }
   };
 
@@ -353,9 +361,6 @@ export default function MessageContractDialog({
         <br />
 
         <TextField
-          className={styles.descriptionfield}
-          // css = {{borderColor: description === "" ? 'red' : 'blue'}}
-          
           label={evolveContract ? "Describe reason for change" : "Description"}
           placeholder={
             evolveContract ? "Enter a reason" : "Enter a description"
@@ -455,7 +460,7 @@ export default function MessageContractDialog({
 
           <Button
             variation="primary"
-            disabled={!canAdd}
+            disabled={!hasBeenValidated}
             submitting={isInProgress}
             onClick={handleAddClicked}
           >

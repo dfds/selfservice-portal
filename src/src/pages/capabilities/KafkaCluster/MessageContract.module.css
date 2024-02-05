@@ -39,13 +39,6 @@
   cursor: pointer;
 }
 
-.descriptionfield {
-  background-color: red;
-
-  div {
-    background-color: red;
-  }
-}
 
 .header:hover {
   background-color: #bbddf3;
