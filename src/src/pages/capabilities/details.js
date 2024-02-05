@@ -14,7 +14,7 @@ import CapabilityManagement from "./capabilityManagement";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
-import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
+//import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 
 export default function CapabilityDetailsPage() {
@@ -47,7 +47,7 @@ function CapabilityDetailsPageContent() {
     isInviteesCreated,
     members,
     metadata,
-    adoptionLevelInformation,
+    //adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
@@ -93,9 +93,11 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
 
+        {/*
         <CapabilityAdoptionLevel
           adoptionLevelInformation={adoptionLevelInformation}
         />
+        */}
 
         <CapabilityTagViewer />
 
