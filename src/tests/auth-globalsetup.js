@@ -39,6 +39,7 @@ export default async function globalSetup(config) {
 
   await page.waitForTimeout(6000);
   await page.reload();
+  await page.waitForTimeout(6000);
 
   await expect(page.locator("#root")).toContainText(
     "Hello Emil Carlsen, and welcome to the Developer Portal.",
