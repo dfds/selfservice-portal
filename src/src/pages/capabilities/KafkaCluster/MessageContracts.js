@@ -235,7 +235,8 @@ export default function MessageContracts({
               ))}
             </SelectField>
             <div className={styles.evolve}>
-              {selectedContract.status !== MessageStatus.PROVISIONED ? (
+              {selectedContract.status !== MessageStatus.PROVISIONED &&
+              onAddClicked ? (
                 <Text
                   style={{ color: "red", margin: "4px" }}
                   styledAs="caption"
