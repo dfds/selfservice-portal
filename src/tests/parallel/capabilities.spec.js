@@ -17,8 +17,11 @@ test("create-capability", async ({ page }) => {
   await page.getByPlaceholder("Enter name of capability").fill(capabilityName);
   await page.getByPlaceholder("Enter a description").click();
   await page.getByPlaceholder("Enter a description").fill("new cap");
-  await page.locator("#cost-center-dropdown").click();
-  await page.locator("#cost-center-dropdown").getByText("ti-logistics").click();
+  await page.locator("#root_dfds.cost.centre").click();
+  await page
+    .locator("#root_dfds.cost.centre")
+    .getByText("ti-logistics")
+    .click();
 
   await page.getByRole("button", { name: "Add" }).first().click();
 
@@ -37,8 +40,11 @@ test("create-capability-with-invitees", async ({ page }) => {
   await page.getByPlaceholder("Enter name of capability").fill(capabilityName);
   await page.getByPlaceholder("Enter a description").click();
   await page.getByPlaceholder("Enter a description").fill("new cap");
-  await page.locator("#cost-center-dropdown").click();
-  await page.locator("#cost-center-dropdown").getByText("ti-logistics").click();
+  await page.locator("#root_dfds.cost.centre").click();
+  await page
+    .locator("#root_dfds.cost.centre")
+    .getByText("ti-logistics")
+    .click();
 
   // Invite user
   await page.waitForTimeout(1000);

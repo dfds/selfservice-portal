@@ -41,14 +41,14 @@ function CustomFieldTemplate(props) {
 }
 
 const CustomDropdown = function (props) {
-  const { options, value, onChange } = props;
+  const { options, value, onChange, id } = props;
   return (
     <Select
       value={options.enumOptions.find((o) => o.value === value)}
       options={options.enumOptions}
       clearable={false}
       onChange={(o) => onChange(o.value)}
-      id="cost-center-dropdown"
+      id={id}
     />
   );
 };
