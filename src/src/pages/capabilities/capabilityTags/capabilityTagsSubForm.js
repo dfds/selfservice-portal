@@ -41,14 +41,17 @@ function CustomFieldTemplate(props) {
 }
 
 const CustomDropdown = function (props) {
-  const { options, value, onChange } = props;
+  const { options, value, onChange, id } = props;
+
+  // remove 'root_' prefix and replace '.' with '-' to have a valid css id
+  var cleanId = id.replace(/^[a-zA-Z0-9]*_/, "").replace(/\./g, "-");
   return (
     <Select
       value={options.enumOptions.find((o) => o.value === value)}
       options={options.enumOptions}
       clearable={false}
       onChange={(o) => onChange(o.value)}
-      id="cost-center-dropdown"
+      id={cleanId}
     />
   );
 };
