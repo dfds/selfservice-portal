@@ -10,6 +10,11 @@ on:
         required: false
         type: boolean
         description: "Trigger build"
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
 jobs:
   check_formatting:
     runs-on: ubuntu-latest
@@ -22,7 +27,52 @@ jobs:
         with:
           repository: 'dfds/selfservice-setup'
           path: 'selfservice-setup'
-          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}      
+          ref: 'dev'
+          token: ${{ secrets.SSU_SETUP_GH_TOKEN }}
+# download pre-built dev images
+      - name: Configure AWS credentials # account 1
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ECR_PULL_EXECUTION_ROLE_ARN_1 }}
+          aws-region: eu-central-1
+          mask-aws-account-id: 'true'
+      - name: Login to Amazon ECR
+        id: login-ecr-1
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Pull pre-built dev images
+        shell: bash
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.ECR_PULL_ACCOUNT_ID_1 }}
+        run: |
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-portal:develop
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-api/app:develop
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-api/dbmigrations:develop
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway:develop
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway/dbmigrations:develop
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/ded/harald:develop
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-portal:develop ce/selfservice-portal:latest
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-api/app:develop ce/selfservice-api:latest
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice-api/dbmigrations:develop ce/selfservice-api-db-migration:latest
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway:develop ce/confluent-gateway:latest
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/selfservice/confluent-gateway/dbmigrations:develop ce/confluent-gateway-db-migration:latest
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/ded/harald:develop ce/harald:latest
+      - name: Configure AWS credentials # account 2
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ECR_PULL_EXECUTION_ROLE_ARN_2 }}
+          aws-region: eu-west-1
+          mask-aws-account-id: 'true'
+      - name: Login to Amazon ECR
+        id: login-ecr-2
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Pull pre-built dev images
+        shell: bash
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.ECR_PULL_ACCOUNT_ID_2 }}
+        run: |
+          docker pull $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/dfds.platform-data-api:develop
+          docker tag $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/dfds.platform-data-api:develop ce/platform-data-api:latest
+# run testing
       - uses: actions/setup-node@v3
       - name: Install dependencies
         run: cd src/src && npm install
@@ -42,10 +92,14 @@ jobs:
         run: |
           cd selfservice-setup
           ./init.sh --disablegitssh true --token ${{ secrets.SSU_SETUP_GH_TOKEN }}
-          docker-compose up -d --scale selfservice-portal=0
+          docker images
+          docker-compose pull
+          docker-compose build tool-api-db-reset k8s-janitor accepter-service
+          docker-compose up -d --no-build --scale selfservice-portal=0
+          docker images
       - name: Run tests
         run: cd src && make test
-        env: 
+        env:
           E2E_TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL }}
           E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
           E2E_TEST_USER_MFA_URL: ${{ secrets.E2E_TEST_USER_MFA_URL }}
