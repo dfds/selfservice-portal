@@ -18,6 +18,7 @@ import {
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
+import { useSelfServiceRequest } from "hooks/SelfServiceApi";
 
 const SelectedCapabilityContext = createContext();
 
@@ -59,6 +60,24 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+
+  const configurationLevelLink = details?._links?.configurationLevel?.href;
+  const {
+    responseData: configurationLevelInformation,
+    sendRequest: getConfiguraitionLevelInformation,
+  } = useSelfServiceRequest();
+  const loadConfigurationLevelInformation = () => {
+    if (configurationLevelLink) {
+      getConfiguraitionLevelInformation({
+        urlSegments: [configurationLevelLink],
+      });
+    }
+  };
+  useEffect(() => {
+    if (!configurationLevelInformation && configurationLevelLink) {
+      loadConfigurationLevelInformation();
+    }
+  }, [configurationLevelInformation, configurationLevelLink]);
 
   function sleep(duration) {
     return new Promise((resolve) => {
@@ -436,8 +455,6 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [awsAccountRequested]);
 
-  useEffect(() => {}, []);
-
   //--------------------------------------------------------------------
 
   const state = {
@@ -478,6 +495,7 @@ function SelectedCapabilityProvider({ children }) {
     setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
+    configurationLevelInformation,
   };
 
   return (

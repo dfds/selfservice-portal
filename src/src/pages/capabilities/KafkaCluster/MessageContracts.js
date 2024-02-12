@@ -154,7 +154,7 @@ export default function MessageContracts({
   };
   const [showMessageContractDialog, setShowMessageContractDialog] =
     useState(false);
-  const [maxContractVer, setMaxContractVer] = useState(0);
+  const [maxContractVer, setMaxContractVer] = useState([]);
 
   useEffect(() => {
     if (contracts) {
@@ -171,14 +171,14 @@ export default function MessageContracts({
   const headerClickHandler = () => {
     if (onHeaderClicked) {
       onHeaderClicked(messageType);
-      const minContractVer = Math.min(
+      const maxContractVer = Math.max(
         ...contracts.map((item) => item.schemaVersion),
       );
       setSelectedContract(
-        contracts.find((x) => x.schemaVersion === minContractVer),
+        contracts.find((x) => x.schemaVersion === maxContractVer),
       );
       setMaxContractVer(
-        Math.max(...contracts.map((item) => item.schemaVersion)),
+        contracts.find((x) => x.schemaVersion === maxContractVer),
       );
     }
   };
@@ -228,21 +228,39 @@ export default function MessageContracts({
             >
               {shownContracts.map((contract) => (
                 <option key={contract.id} value={contract.id}>
-                  Version {contract.schemaVersion}
+                  {`Version ${contract.schemaVersion}${
+                    contract.status !== MessageStatus.PROVISIONED
+                      ? ` (${contract.status})`
+                      : ""
+                  }`}
                 </option>
               ))}
             </SelectField>
-            {onAddClicked && (
-              <Button
-                variation="primary"
-                disabled={false}
-                size="small"
-                // submitting={isInProgress}
-                onClick={handleAddClicked}
-              >
-                Evolve
-              </Button>
-            )}
+            <div className={styles.evolve}>
+              {selectedContract.status !== MessageStatus.PROVISIONED &&
+              onAddClicked ? (
+                <Text
+                  style={{ color: "red", margin: "4px" }}
+                  styledAs="caption"
+                >
+                  Evolution cannot occur until the latest message contract is
+                  provisioned
+                </Text>
+              ) : (
+                <></>
+              )}
+              {onAddClicked && (
+                <Button
+                  variation="primary"
+                  disabled={maxContractVer.status !== MessageStatus.PROVISIONED}
+                  size="small"
+                  // submitting={isInProgress}
+                  onClick={handleAddClicked}
+                >
+                  Evolve
+                </Button>
+              )}
+            </div>
           </div>
 
           {showMessageContractDialog && (
@@ -250,16 +268,24 @@ export default function MessageContracts({
               // topicName={}
               onCloseClicked={() => setShowMessageContractDialog(false)}
               onAddClicked={onAddClicked}
-              targetVersion={maxContractVer + 1}
+              targetVersion={maxContractVer.schemaVersion + 1}
               evolveContract={contracts.find(
-                (x) => x.schemaVersion === maxContractVer,
+                (x) => x.schemaVersion === maxContractVer.schemaVersion,
               )}
             />
           )}
+
           <div className={styles.jsoncontainer}>
             <Poles
               leftContent={
-                <Text styledAs="label" style={{ marginBottom: "0" }}>
+                <Text
+                  styledAs="label"
+                  style={
+                    selectedContract.status !== MessageStatus.PROVISIONED
+                      ? { opacity: 0.25, marginBottom: "0" }
+                      : { marginBottom: "0" }
+                  }
+                >
                   Description
                 </Text>
               }
@@ -278,15 +304,33 @@ export default function MessageContracts({
                 />
               }
             />
-            {selectedContract.description}
+            <Text
+              style={
+                selectedContract.status !== MessageStatus.PROVISIONED
+                  ? { opacity: 0.25 }
+                  : {}
+              }
+            >
+              {selectedContract.description}
+            </Text>
 
             <br />
-            <Text styledAs="label">{showSchema ? "Schema" : "Example"}</Text>
-            <JsonViewer
-              json={
-                showSchema ? selectedContract.schema : selectedContract.example
+            <div
+              style={
+                selectedContract.status !== MessageStatus.PROVISIONED
+                  ? { opacity: 0.25 }
+                  : {}
               }
-            />
+            >
+              <Text styledAs="label">{showSchema ? "Schema" : "Example"}</Text>
+              <JsonViewer
+                json={
+                  showSchema
+                    ? selectedContract.schema
+                    : selectedContract.example
+                }
+              />
+            </div>
           </div>
         </div>
       </Expandable>

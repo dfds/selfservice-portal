@@ -25,3 +25,10 @@ yarn-debug.log*
 yarn-error.log*
 
 .output
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+src/playwright/
+src/playwright-report/
+src/test-results/

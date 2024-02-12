@@ -6,6 +6,10 @@
   width: 33%;
 }
 
+.doubleColumn {
+  width: 66%;
+}
+
 .breakwords {
   overflow-wrap: break-word;
 }

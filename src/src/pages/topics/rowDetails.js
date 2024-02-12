@@ -5,6 +5,7 @@ import { Text } from "@dfds-ui/typography";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
+import { useError } from "../../hooks/Error";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -15,6 +16,7 @@ export function RowDetails(data) {
     [],
   );
   const { selfServiceApiClient } = useContext(AppContext);
+  const { triggerErrorWithTitleAndDetails } = useError();
 
   useEffect(() => {
     fetchData(data);
@@ -29,6 +31,12 @@ export function RowDetails(data) {
         }
         contractsWithVersion[contract.messageType].push(contract);
       });
+      Object.entries(contractsWithVersion).forEach(([key, value]) => {
+        value.sort(
+          (a, b) => parseInt(a.schemaVersion) - parseInt(b.schemaVersion),
+        );
+      });
+
       setContractsGroupedByVersion(contractsWithVersion);
     }
   }, [contracts]);
@@ -53,6 +61,16 @@ export function RowDetails(data) {
   const linkStyle = {
     color: "#1874bc",
     textDecoration: "none",
+  };
+
+  const handleRetryClicked = async (messageContract) => {
+    try {
+      await selfServiceApiClient.retryAddMessageContractToTopic(
+        messageContract,
+      );
+    } catch (e) {
+      triggerErrorWithTitleAndDetails("Error", e.message);
+    }
   };
 
   return (
@@ -85,6 +103,9 @@ export function RowDetails(data) {
                       isSelected={messageType === selectedMessageContractType}
                       onHeaderClicked={(messageType) =>
                         handleMessageHeaderClicked(messageType)
+                      }
+                      onRetryClicked={() =>
+                        handleRetryClicked(messageContracts[0])
                       }
                     />
                   ),
