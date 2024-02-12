@@ -120,7 +120,7 @@ export default function MessageContractDialog({
   const [isValidationInProgress, setIsValidationInProgress] = useState(false);
   const [hasBeenValidated, setHasBeenValidated] = useState(false);
 
-  const CheckRequiredFields = async () => {
+  const checkRequiredFields = async () => {
     const allWithValues = isAllWithValues([messageType, description, message]);
     const hasError = !isAllEmptyValues([
       typeError,
@@ -274,7 +274,7 @@ export default function MessageContractDialog({
     if (onAddClicked) {
       setIsInProgress(true);
 
-      const validForm = await CheckRequiredFields();
+      const validForm = await checkRequiredFields();
 
       if (validForm) {
         await onAddClicked({
