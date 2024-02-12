@@ -4,7 +4,7 @@ const { test, expect } = require("@playwright/test");
 test("hello-text", async ({ page }) => {
   await page.goto("http://localhost:3001/");
 
-  await expect(page.locator("#root")).toContainText(
+  await expect(page.locator("#welcome-content")).toContainText(
     "Hello Emil Carlsen, and welcome to the Developer Portal.",
   );
 });
