@@ -7,8 +7,8 @@ import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
 import CapabilityDetailsPage from "./pages/capabilities/details";
+import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import ECRPage from "./pages/ecr";
-
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
 function Footer() {
@@ -50,6 +50,10 @@ export default function App() {
           <Route path="topics" element={<TopicsPage />} />
           <Route path="capabilities" element={<CapabilitiesPage />} />
           <Route path="ecr" element={<ECRPage />} />
+          <Route
+            path="capabilities/criticality"
+            element={<CapabilityCriticalityPage />}
+          />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
         </Route>
       </Routes>
