@@ -1,12 +1,15 @@
 // @ts-check
 const { test, expect } = require("@playwright/test");
 
+const profileFullName = "Emil Carlsen";
+
 test("hello-text", async ({ page }) => {
   await page.goto("http://localhost:3001/");
 
-  await expect(page.locator("#root")).toContainText(
-    "Hello Emil Carlsen, and welcome to the Developer Portal.",
+  let elem = await page.getByText(
+    `Hello ${profileFullName}, and welcome to the Developer Portal`,
   );
+  await expect(elem).toContainText(profileFullName);
 });
 
 test("menu-profile-name", async ({ page }) => {
