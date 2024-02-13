@@ -20,18 +20,17 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  */
 
 function CustomFieldTemplate(props) {
-  
-  const { id, label, required, rawDescription, children, errors, rawErrors } = props;
+  const { id, label, required, rawDescription, children, errors, rawErrors } =
+    props;
   const [classNames, setClassNames] = useState(styles.field);
   useEffect(() => {
     if (rawErrors) {
       setClassNames(`${styles.field}`);
-    }else {
+    } else {
       setClassNames(`${styles.field}`);
     }
-  }, [rawErrors])
-  
-  
+  }, [rawErrors]);
+
   // Further fields 'errors' and 'help' might come in handy later
   // https://react-jsonschema-form.readthedocs.io/en/v1.8.1/advanced-customization/
   return (
@@ -46,7 +45,9 @@ function CustomFieldTemplate(props) {
           }}
         />
       ) : null}
-      <div className={rawErrors ? styles.fieldError : null} key={id}>{children}</div>
+      <div className={rawErrors ? styles.fieldError : null} key={id}>
+        {children}
+      </div>
       <div className={styles.errorMessage}>{rawErrors}</div>
     </div>
   );
@@ -162,8 +163,7 @@ export function CapabilityTagsSubForm({
 
   const errorHandler = (parameters) => {
     console.log(parameters);
-  }
-
+  };
 
   return (
     <>
@@ -188,9 +188,9 @@ export function CapabilityTagsSubForm({
             templates={{ FieldTemplate: CustomFieldTemplate }}
             formData={preexistingFormData}
             children={true} // hide submit button
-            ref = {formRef}
-            showErrorList = {false}
-            onError = {errorHandler}
+            ref={formRef}
+            showErrorList={false}
+            onError={errorHandler}
           />
         </>
       )}
