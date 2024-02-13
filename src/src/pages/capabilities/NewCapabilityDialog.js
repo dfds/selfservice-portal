@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, createRef, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
@@ -6,17 +6,22 @@ import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import AppContext from "../../AppContext";
+import { isValid } from "date-fns";
 
 export default function NewCapabilityDialog({
   inProgress,
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
-  const handleClose = () => {
-    if (onCloseClicked && !inProgress) {
-      onCloseClicked();
-    }
-  };
+  const { isAllWithValues } = useContext(AppContext);
+  const [descriptionError, setDescriptionError] = useState("");
+  const [nameError, setNameError] = useState("");
+
+  const [invitees, setInvitees] = useState([]);
+  const [metadataFormData, setMetadataFormData] = useState({});
+  const [validMetadata, setValidMetadata] = useState(false);
+  const formRef = createRef();
 
   const emptyValues = {
     name: "",
@@ -25,22 +30,11 @@ export default function NewCapabilityDialog({
   };
 
   const [formData, setFormData] = useState(emptyValues);
-  const [invitees, setInvitees] = useState([]);
-  const [metadataFormData, setMetadataFormData] = useState({});
-  const [validMetadata, setValidMetadata] = useState(false);
 
-  const changeName = (e) => {
-    e.preventDefault();
-    let newName = e?.target?.value || "";
-    newName = newName.replace(/\s+/g, "-");
-
-    setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
-  };
-
-  const changeDescription = (e) => {
-    e.preventDefault();
-    const newValue = e?.target?.value || emptyValues.description;
-    setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
+  const handleClose = () => {
+    if (onCloseClicked && !inProgress) {
+      onCloseClicked();
+    }
   };
 
   const isNameValid =
@@ -60,20 +54,59 @@ export default function NewCapabilityDialog({
     nameErrorMessage = "Please consider a shorter name.";
   }
 
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    validMetadata &&
-    nameErrorMessage === "";
+  const checkRequiredFields = async () => {
+    const allWithValues = isAllWithValues([
+      formData.name,
+      formData.description,
+    ]);
+    if (allWithValues && validMetadata) {
+      return true;
+    } else {
+      setDescriptionError(
+        getValidationError(formData.description, "Please write a description"),
+      );
+      setNameError(
+        getValidationError(formData.description, "Please write a name"),
+      );
+      return false;
+    }
+  };
 
-  const handleAddCapabilityClicked = () => {
-    const jsonMetadataString = JSON.stringify(metadataFormData, null, 1);
-    if (onAddCapabilityClicked) {
-      onAddCapabilityClicked({
-        ...formData,
-        invitations: invitees,
-        jsonMetadataString,
-      });
+  function getValidationError(value, errorText) {
+    const isValid =
+      value !== undefined && value != null && value !== "" && value.length > 0;
+
+    return isValid ? "" : errorText;
+  }
+
+  const changeName = (e) => {
+    e.preventDefault();
+    let newName = e?.target?.value || "";
+    newName = newName.replace(/\s+/g, "-");
+
+    setFormData((prev) => ({ ...prev, ...{ name: newName.toLowerCase() } }));
+  };
+
+  const changeDescription = (e) => {
+    e.preventDefault();
+    const newValue = e?.target?.value || emptyValues.description;
+    setFormData((prev) => ({ ...prev, ...{ description: newValue } }));
+  };
+
+  const handleAddCapabilityClicked = async () => {
+    // calling the function twice because of weird ref behavior
+    formRef.current.validateForm();
+    formRef.current.validateForm();
+    const validForm = await checkRequiredFields();
+    if (validForm) {
+      const jsonMetadataString = JSON.stringify(metadataFormData, null, 1);
+      if (onAddCapabilityClicked) {
+        onAddCapabilityClicked({
+          ...formData,
+          invitations: invitees,
+          jsonMetadataString,
+        });
+      }
     }
   };
 
@@ -101,7 +134,7 @@ export default function NewCapabilityDialog({
               required
               value={formData.name}
               onChange={changeName}
-              errorMessage={nameErrorMessage}
+              errorMessage={nameErrorMessage ? nameErrorMessage : nameError}
               maxLength={255}
             />
           </div>
@@ -112,6 +145,7 @@ export default function NewCapabilityDialog({
             required
             value={formData.description}
             onChange={changeDescription}
+            errorMessage={descriptionError}
           ></TextField>
 
           <Invitations
@@ -128,6 +162,7 @@ export default function NewCapabilityDialog({
               setHasSchema={() => {}}
               setValidMetadata={setValidMetadata}
               preexistingFormData={{}}
+              formRef={formRef}
             />
           </JsonSchemaProvider>
 
@@ -138,7 +173,6 @@ export default function NewCapabilityDialog({
               size="small"
               variation="primary"
               onClick={handleAddCapabilityClicked}
-              disabled={!canAdd}
               submitting={inProgress}
             >
               Add

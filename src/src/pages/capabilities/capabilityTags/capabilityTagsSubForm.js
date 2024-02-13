@@ -20,11 +20,22 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  */
 
 function CustomFieldTemplate(props) {
-  const { id, label, required, rawDescription, children } = props;
+  
+  const { id, label, required, rawDescription, children, errors, rawErrors } = props;
+  const [classNames, setClassNames] = useState(styles.field);
+  useEffect(() => {
+    if (rawErrors) {
+      setClassNames(`${styles.field}`);
+    }else {
+      setClassNames(`${styles.field}`);
+    }
+  }, [rawErrors])
+  
+  
   // Further fields 'errors' and 'help' might come in handy later
   // https://react-jsonschema-form.readthedocs.io/en/v1.8.1/advanced-customization/
   return (
-    <div className={styles.field}>
+    <div className={classNames}>
       {required ? <span className={styles.bold}>*</span> : null}
       <label htmlFor={id}>{label}</label>
       <br />
@@ -35,14 +46,14 @@ function CustomFieldTemplate(props) {
           }}
         />
       ) : null}
-      {children}
+      <div className={rawErrors ? styles.fieldError : null} key={id}>{children}</div>
+      <div className={styles.errorMessage}>{rawErrors}</div>
     </div>
   );
 }
 
 const CustomDropdown = function (props) {
-  const { options, value, onChange, id } = props;
-
+  const { options, value, onChange, id, rawErrors } = props;
   // remove 'root_' prefix and replace '.' with '-' to have a valid css id
   var cleanId = id.replace(/^[a-zA-Z0-9]*_/, "").replace(/\./g, "-");
   return (
@@ -113,6 +124,7 @@ export function CapabilityTagsSubForm({
   setMetadata,
   setValidMetadata,
   preexistingFormData,
+  formRef,
 }) {
   const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
     useContext(JsonSchemaContext);
@@ -148,6 +160,11 @@ export function CapabilityTagsSubForm({
     CheckboxWidget: CustomCheckbox,
   };
 
+  const errorHandler = (parameters) => {
+    console.log(parameters);
+  }
+
+
   return (
     <>
       {showTagForm && (
@@ -171,6 +188,9 @@ export function CapabilityTagsSubForm({
             templates={{ FieldTemplate: CustomFieldTemplate }}
             formData={preexistingFormData}
             children={true} // hide submit button
+            ref = {formRef}
+            showErrorList = {false}
+            onError = {errorHandler}
           />
         </>
       )}

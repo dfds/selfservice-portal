@@ -26,3 +26,18 @@
   margin-right: 0.25rem;
   margin-left: 1rem;
 }
+
+.fieldError > div {
+  border: 2px solid #be1e2d;
+}
+
+.errorMessage {
+  font-size: 12px;
+  line-height: 15px;
+  color: #be1e2d;
+  margin-top: 3px;
+}
+
+
+
+
