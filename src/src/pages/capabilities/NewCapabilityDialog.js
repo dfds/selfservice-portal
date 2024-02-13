@@ -1,4 +1,4 @@
-import React, { useState, useContext, createRef, useEffect } from "react";
+import React, { useState, useContext, createRef } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
@@ -7,7 +7,6 @@ import { Invitations } from "./invitations";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import AppContext from "../../AppContext";
-import { isValid } from "date-fns";
 
 export default function NewCapabilityDialog({
   inProgress,

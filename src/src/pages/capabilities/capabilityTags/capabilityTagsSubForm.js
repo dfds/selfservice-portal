@@ -20,7 +20,7 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  */
 
 function CustomFieldTemplate(props) {
-  const { id, label, required, rawDescription, children, errors, rawErrors } =
+  const { id, label, required, rawDescription, children, rawErrors } =
     props;
   const [classNames, setClassNames] = useState(styles.field);
   useEffect(() => {
@@ -54,7 +54,7 @@ function CustomFieldTemplate(props) {
 }
 
 const CustomDropdown = function (props) {
-  const { options, value, onChange, id, rawErrors } = props;
+  const { options, value, onChange, id } = props;
   // remove 'root_' prefix and replace '.' with '-' to have a valid css id
   var cleanId = id.replace(/^[a-zA-Z0-9]*_/, "").replace(/\./g, "-");
   return (
