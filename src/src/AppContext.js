@@ -16,6 +16,13 @@ function sleep(duration) {
   });
 }
 
+function getValidationError(value, errorText) {
+  const isValid =
+    value !== undefined && value != null && value !== "" && value.length > 0;
+
+  return isValid ? "" : errorText;
+}
+
 function isAllWithValues(data) {
   let result = true;
   data.forEach((x) => {
@@ -181,6 +188,7 @@ function AppProvider({ children }) {
     repositories,
     isLoading,
     isAllWithValues,
+    getValidationError,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

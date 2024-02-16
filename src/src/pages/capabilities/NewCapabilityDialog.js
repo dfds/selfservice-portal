@@ -13,7 +13,7 @@ export default function NewCapabilityDialog({
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
-  const { isAllWithValues } = useContext(AppContext);
+  const { isAllWithValues, getValidationError } = useContext(AppContext);
   const [descriptionError, setDescriptionError] = useState("");
   const [nameError, setNameError] = useState("");
 
@@ -70,13 +70,6 @@ export default function NewCapabilityDialog({
       return false;
     }
   };
-
-  function getValidationError(value, errorText) {
-    const isValid =
-      value !== undefined && value != null && value !== "" && value.length > 0;
-
-    return isValid ? "" : errorText;
-  }
 
   const changeName = (e) => {
     e.preventDefault();
