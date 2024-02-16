@@ -1,4 +1,4 @@
-import React, { useState, useContext, createRef } from "react";
+import React, { useState, useContext, createRef, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { Tooltip, TextField } from "@dfds-ui/react-components";
@@ -64,9 +64,7 @@ export default function NewCapabilityDialog({
       setDescriptionError(
         getValidationError(formData.description, "Please write a description"),
       );
-      setNameError(
-        getValidationError(formData.description, "Please write a name"),
-      );
+      setNameError(getValidationError(formData.name, "Please write a name"));
       return false;
     }
   };
@@ -108,6 +106,25 @@ export default function NewCapabilityDialog({
       }
     }
   };
+
+  useEffect(() => {
+    let error = "";
+    if (formData.description !== "") {
+      error = getValidationError(
+        formData.description,
+        "Please write a description",
+      );
+    }
+    setDescriptionError(error);
+  }, [formData.description]);
+
+  useEffect(() => {
+    let error = "";
+    if (formData.name !== "") {
+      error = getValidationError(formData.name, "Please write a name");
+    }
+    setNameError(error);
+  }, [formData.name]);
 
   return (
     <>
