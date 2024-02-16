@@ -59,11 +59,6 @@ export default function NewRepositoryDialog({ onClose }) {
     nameErrorMessage = "Please consider a shorter name.";
   }
 
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    nameErrorMessage === "";
-
   const handleAddRepositoryClicked = async () => {
     setIsCreatingNewRepository(true);
     const validForm = await checkRequiredFields();
@@ -146,7 +141,6 @@ export default function NewRepositoryDialog({ onClose }) {
               size="small"
               variation="primary"
               onClick={handleAddRepositoryClicked}
-              // disabled={!canAdd}
               submitting={isCreatingNewRepository}
             >
               Add
