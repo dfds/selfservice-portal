@@ -238,7 +238,7 @@ export default function MessageContractDialog({
     e?.preventDefault();
     let newTopic = e?.target?.value || "";
     newTopic = newTopic.replace(/\s+/g, "-");
-    setMessageType(newTopic);
+    setMessageType(newTopic.toLowerCase());
   };
 
   const changeDescription = (e) => {
