@@ -6,7 +6,8 @@ import AppContext from "AppContext";
 
 export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
-  const { addNewRepository, isAllWithValues, getValidationError} = useContext(AppContext);
+  const { addNewRepository, isAllWithValues, getValidationError } =
+    useContext(AppContext);
   const [descriptionError, setDescriptionError] = useState("");
   const [nameError, setNameError] = useState("");
 
@@ -71,14 +72,13 @@ export default function NewRepositoryDialog({ onClose }) {
       onClose();
     }
 
-    
     setIsCreatingNewRepository(false);
   };
 
   useEffect(() => {
     let error = "";
     if (formData.name !== "") {
-      error = getValidationError(formData.name , "Please write a name");
+      error = getValidationError(formData.name, "Please write a name");
     }
     setNameError(error);
   }, [formData.name]);
@@ -86,7 +86,10 @@ export default function NewRepositoryDialog({ onClose }) {
   useEffect(() => {
     let error = "";
     if (formData.description !== "") {
-      error = getValidationError(formData.description , "Please write a description");
+      error = getValidationError(
+        formData.description,
+        "Please write a description",
+      );
     }
     setDescriptionError(error);
   }, [formData.description]);
@@ -100,11 +103,9 @@ export default function NewRepositoryDialog({ onClose }) {
       return true;
     } else {
       setDescriptionError(
-        getValidationError(formData.description , "Please write a description"),
+        getValidationError(formData.description, "Please write a description"),
       );
-      setNameError(
-        getValidationError(formData.name, "Please write a name"),
-      );
+      setNameError(getValidationError(formData.name, "Please write a name"));
       return false;
     }
   };
