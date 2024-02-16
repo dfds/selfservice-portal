@@ -20,8 +20,7 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
  */
 
 function CustomFieldTemplate(props) {
-  const { id, label, required, rawDescription, children, rawErrors } =
-    props;
+  const { id, label, required, rawDescription, children, rawErrors } = props;
   const [classNames, setClassNames] = useState(styles.field);
   useEffect(() => {
     if (rawErrors) {
