@@ -197,12 +197,16 @@ export default function MessageContractDialog({
       const json = JSON.parse(messageValue);
       const result = toJsonSchema(json, {
         postProcessFnc: (type, schema, value, defaultFunc) => {
+          console.log(value);
+          console.log(type);
+          // console.log(schema);
           return type !== "object"
             ? {
                 ...schema,
                 ...{
-                  examples: type === "array" ? value : [value],
+                  //examples: type === "array" ? value : value,
                   // required: true
+                  weeeeee: type === "array" ? value : [value]
                 },
               }
             : {
@@ -220,7 +224,9 @@ export default function MessageContractDialog({
       };
       const text = JSON.stringify(result, null, 2);
       setPreviewSchema(text);
-    } catch {
+    } catch(e) {
+      console.log(e);
+      console.log("hi");
       setPreviewSchema("");
     }
 
