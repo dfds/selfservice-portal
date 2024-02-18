@@ -1,0 +1,68 @@
+name: Ephemeral env - Image build
+
+on:
+  pull_request:
+    types:
+      - "opened"
+      - "synchronize"
+      - "labeled"
+  workflow_dispatch:
+    inputs:
+      deploy:
+        default: false
+        required: false
+        type: boolean
+        description: "Trigger build"
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+jobs:
+  deploy:
+    name:  '01 - Linux'
+    runs-on: [ubuntu-22.04]
+    if: contains(github.event.pull_request.labels.*.name, 'preview-env')
+    strategy:
+      matrix:
+        arch: ['x86_64']
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: 'src'
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v3
+        with:
+          repository: 'dfds/ssu-apps'
+          path: 'ssu-apps'
+          token: ${{ secrets.SSU_APPS_GH_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set outputs
+        id: vars
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          cd ./src
+          export sanitised_name=$(echo $BRANCH_NAME | sed 's/\//-/g' | head -c 23)
+          echo "branch_name=$(echo $sanitised_name)" >> $GITHUB_OUTPUT
+          echo "commit_id=$(git rev-parse --short --verify $BRANCH_NAME)" >> $GITHUB_OUTPUT
+          git rev-parse --short --verify $BRANCH_NAME
+        shell: bash
+      - uses: ./ssu-apps/.github/actions/build_push_container_ecr
+        name: Build & push container
+        id: build_push_container
+        with:
+          context_path: ./src
+          tag: ee-${{ steps.vars.outputs.commit_id }}
+          repo: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/selfservice-portal
+          role_arn: ${{ secrets.SSU_APPS_GH_IAM_ROLE }}
+          aws_region: eu-central-1
+          sha_tag_prefix: sha
+          args: |
+            REACT_APP_API_BASE_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/develop/api
+            REACT_APP_AUTH_REDIRECT_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
+            REACT_APP_PUBLIC_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
+            PUBLIC_URL=/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
