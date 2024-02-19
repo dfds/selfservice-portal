@@ -79,7 +79,6 @@ function SelectedCapabilityProvider({ children }) {
     }
   };
   useEffect(() => {
-    console.log(canAccessConfigurationLevel);
     if (
       !configurationLevelInformation &&
       configurationLevelLink &&
