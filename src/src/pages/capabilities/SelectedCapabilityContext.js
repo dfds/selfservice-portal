@@ -62,7 +62,9 @@ function SelectedCapabilityProvider({ children }) {
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
-  const canAccessConfigurationLevel = (details?._links?.configurationLevel?.allow || []).includes("GET");  
+  const canAccessConfigurationLevel = (
+    details?._links?.configurationLevel?.allow || []
+  ).includes("GET");
 
   const {
     responseData: configurationLevelInformation,
@@ -78,7 +80,11 @@ function SelectedCapabilityProvider({ children }) {
   };
   useEffect(() => {
     console.log(canAccessConfigurationLevel);
-    if (!configurationLevelInformation && configurationLevelLink && canAccessConfigurationLevel) {
+    if (
+      !configurationLevelInformation &&
+      configurationLevelLink &&
+      canAccessConfigurationLevel
+    ) {
       loadConfigurationLevelInformation();
     }
   }, [configurationLevelInformation, configurationLevelLink]);
