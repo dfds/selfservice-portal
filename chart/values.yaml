@@ -48,6 +48,9 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   match: Host(`localhost`)
+  prefixMiddleware:
+    enabled: true
+    prefix: /replaceme
   middlewares: []
   services: []
   routes: []
