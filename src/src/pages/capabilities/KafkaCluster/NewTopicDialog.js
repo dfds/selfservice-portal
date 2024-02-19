@@ -95,12 +95,6 @@ export default function NewTopicDialog({
       'Allowed characters are a-z, 0-9, "-", "_" and it must not start or end with "-" or "_". Do not use more than one of "-" and "_" in a row.';
   }
 
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    !inProgress &&
-    nameErrorMessage === "";
-
   const nameContainsUnderscores = formData.name.match(/_/g);
 
   let nameHintMessage = "";
