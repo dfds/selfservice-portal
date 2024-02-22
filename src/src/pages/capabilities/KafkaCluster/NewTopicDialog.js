@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import styles from "./Topics.module.css";
+import AppContext from "AppContext";
 import {
   Button,
   Banner,
@@ -30,6 +31,9 @@ export default function NewTopicDialog({
   };
 
   const [formData, setFormData] = useState(emptyValues);
+  const { isAllWithValues, getValidationError } = useContext(AppContext);
+  const [descriptionError, setDescriptionError] = useState("");
+  const [nameError, setNameError] = useState("");
 
   useEffect(() => {
     setFormData(emptyValues);
@@ -91,12 +95,6 @@ export default function NewTopicDialog({
       'Allowed characters are a-z, 0-9, "-", "_" and it must not start or end with "-" or "_". Do not use more than one of "-" and "_" in a row.';
   }
 
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    !inProgress &&
-    nameErrorMessage === "";
-
   const nameContainsUnderscores = formData.name.match(/_/g);
 
   let nameHintMessage = "";
@@ -105,24 +103,63 @@ export default function NewTopicDialog({
       'It is recommended to use "-" instead of "_" in topic names.';
   }
 
-  const handleAddClicked = () => {
+  useEffect(() => {
+    let error = "";
+    if (formData.name !== "") {
+      error = getValidationError(formData.name, "Please write a name");
+    }
+    setNameError(error);
+  }, [formData.name]);
+
+  useEffect(() => {
+    let error = "";
+    if (formData.description !== "") {
+      error = getValidationError(
+        formData.description,
+        "Please write a description",
+      );
+    }
+    setDescriptionError(error);
+  }, [formData.description]);
+
+  const handleAddClicked = async () => {
     if (onAddClicked) {
       let retention = formData.retention;
       if (!isNaN(retention)) {
         retention = `${retention}d`;
       }
-      onAddClicked({
-        name: fullTopicName,
-        description: formData.description,
-        partitions: formData.partitions,
-        retention: retention,
-      });
+
+      const validForm = await checkRequiredFields();
+      if (validForm) {
+        onAddClicked({
+          name: fullTopicName,
+          description: formData.description,
+          partitions: formData.partitions,
+          retention: retention,
+        });
+      }
     }
   };
 
   const handleCloseClicked = () => {
     if (onCloseClicked) {
       onCloseClicked();
+    }
+  };
+
+  const checkRequiredFields = async () => {
+    const allWithValues = isAllWithValues([
+      formData.name,
+      formData.description,
+    ]);
+    if (allWithValues && isNameValid) {
+      return true;
+    } else {
+      setDescriptionError(
+        getValidationError(formData.description, "Please write a description"),
+      );
+      setNameError(getValidationError(formData.name, "Please write a name"));
+      return false;
     }
   };
 
@@ -173,8 +210,8 @@ export default function NewTopicDialog({
             required
             value={formData.name}
             onChange={changeName}
-            errorMessage={nameErrorMessage}
             assistiveText={nameHintMessage}
+            errorMessage={nameErrorMessage ? nameErrorMessage : nameError}
           />
         </div>
 
@@ -184,6 +221,7 @@ export default function NewTopicDialog({
           required
           value={formData.description}
           onChange={changeDescription}
+          errorMessage={descriptionError}
         ></TextField>
 
         <div className={styles.tooltipsection}>
@@ -272,7 +310,6 @@ export default function NewTopicDialog({
         <Button
           size="small"
           type="button"
-          disabled={!canAdd}
           submitting={inProgress}
           onClick={handleAddClicked}
         >

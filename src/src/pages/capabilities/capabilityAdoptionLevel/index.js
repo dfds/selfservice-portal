@@ -26,8 +26,7 @@ const ConfigurationLevel = {
   COMPLETE: "COMPLETE",
 };
 
-function MetricRow({ description, suggestion, level }) {
-  var showSuggestion = true;
+function MetricRow({ description, level }) {
   var statusIcon = <Help className={styles.levelIndicatorIcon} />;
   switch (level.toUpperCase()) {
     case ConfigurationLevel.NONE:
@@ -50,7 +49,6 @@ function MetricRow({ description, suggestion, level }) {
           className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
         />
       );
-      showSuggestion = false;
       break;
     default:
       break;
@@ -62,13 +60,6 @@ function MetricRow({ description, suggestion, level }) {
       <div className={styles.metricRowTextWrapper}>
         <div>
           <div className={styles.metricRowText}>{description}</div>
-          {showSuggestion && (
-            <div
-              className={`${styles.metricRowText} ${styles.metricRowSuggestion}`}
-            >
-              Suggestion: {suggestion}
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -95,10 +86,22 @@ export function CapabilityAdoptionLevel() {
   return (
     <>
       {configurationLevelInformation && (
-        <PageSection headline="Adoption Level">
+        <PageSection headline="Capability Health">
+          <p>
+            Capability Health is based on a continuously growing list of
+            recommendations. This overview is an indication of the current state
+            of the capability. For an in depth description you can read our{" "}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://wiki.dfds.cloud/en/playbooks/standards/capability_recommendations"
+            >
+              Guide to Capability Recommendations
+            </a>
+          </p>
           <div className={styles.columnWrapper}>
             <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Key Metrics</Text>
+              <Text styledAs={"smallHeadline"}>Key Recommendations</Text>
               {(keyMetrics || []).map((metric) => (
                 <MetricRow
                   key={metric.identifier}
@@ -109,7 +112,7 @@ export function CapabilityAdoptionLevel() {
               ))}
             </div>
             <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>General Guidance</Text>
+              <Text styledAs={"smallHeadline"}>Other Recommendations</Text>
               {(generalGuidance || []).map((metric) => (
                 <MetricRow
                   key={metric.identifier}

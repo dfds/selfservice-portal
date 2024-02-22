@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
@@ -6,7 +6,10 @@ import AppContext from "AppContext";
 
 export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
-  const { addNewRepository } = useContext(AppContext);
+  const { addNewRepository, isAllWithValues, getValidationError } =
+    useContext(AppContext);
+  const [descriptionError, setDescriptionError] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const handleClose = () => {
     if (!isCreatingNewRepository) {
@@ -56,16 +59,50 @@ export default function NewRepositoryDialog({ onClose }) {
     nameErrorMessage = "Please consider a shorter name.";
   }
 
-  const canAdd =
-    formData.name !== "" &&
-    formData.description !== "" &&
-    nameErrorMessage === "";
-
   const handleAddRepositoryClicked = async () => {
     setIsCreatingNewRepository(true);
-    await addNewRepository(formData);
+    const validForm = await checkRequiredFields();
+    if (validForm) {
+      await addNewRepository(formData);
+      onClose();
+    }
+
     setIsCreatingNewRepository(false);
-    onClose();
+  };
+
+  useEffect(() => {
+    let error = "";
+    if (formData.name !== "") {
+      error = getValidationError(formData.name, "Please write a name");
+    }
+    setNameError(error);
+  }, [formData.name]);
+
+  useEffect(() => {
+    let error = "";
+    if (formData.description !== "") {
+      error = getValidationError(
+        formData.description,
+        "Please write a description",
+      );
+    }
+    setDescriptionError(error);
+  }, [formData.description]);
+
+  const checkRequiredFields = async () => {
+    const allWithValues = isAllWithValues([
+      formData.name,
+      formData.description,
+    ]);
+    if (allWithValues && isNameValid) {
+      return true;
+    } else {
+      setDescriptionError(
+        getValidationError(formData.description, "Please write a description"),
+      );
+      setNameError(getValidationError(formData.name, "Please write a name"));
+      return false;
+    }
   };
 
   return (
@@ -85,7 +122,7 @@ export default function NewRepositoryDialog({ onClose }) {
             placeholder="Enter name of repository"
             required
             value={formData.name}
-            errorMessage={nameErrorMessage}
+            errorMessage={nameErrorMessage ? nameErrorMessage : nameError}
             onChange={changeName}
             maxLength={255}
           />
@@ -96,6 +133,7 @@ export default function NewRepositoryDialog({ onClose }) {
             required
             value={formData.description}
             onChange={changeDescription}
+            errorMessage={descriptionError}
           />
 
           <ButtonStack>
@@ -103,7 +141,6 @@ export default function NewRepositoryDialog({ onClose }) {
               size="small"
               variation="primary"
               onClick={handleAddRepositoryClicked}
-              disabled={!canAdd}
               submitting={isCreatingNewRepository}
             >
               Add

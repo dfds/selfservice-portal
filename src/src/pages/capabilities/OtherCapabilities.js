@@ -189,18 +189,6 @@ export default function OtherCapabilities() {
               enableTopToolbar={true}
               enableBottomToolbar={true}
               enableColumnActions={false}
-              muiTableBodyRowProps2={({ row }) => ({
-                onClick: () => {
-                  clickHandler(row.original.id);
-                },
-                sx: {
-                  cursor: "pointer",
-                  background: row.original.status === "Delete" ? "#d88" : "",
-                  padding: 0,
-                  margin: 0,
-                  minHeight: 0,
-                },
-              })}
               muiTopToolbarProps={{
                 sx: {
                   background: "none",

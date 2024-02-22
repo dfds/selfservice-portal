@@ -112,7 +112,9 @@ export default function FrontPage() {
             <Column>
               <PageSection>
                 <SectionContent title="Welcome">
-                  Hello {name}, and welcome to the Developer Portal.
+                  <div id="welcome-content">
+                    Hello {name}, and welcome to the Developer Portal.
+                  </div>
                 </SectionContent>
 
                 <SectionContent title="Capabilities">

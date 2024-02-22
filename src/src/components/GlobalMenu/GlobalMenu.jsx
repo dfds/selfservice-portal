@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AppBar as DFDSAppBar,
@@ -15,8 +15,21 @@ import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture
 import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 
+function checkIfCloudEngineer(title) {
+  const regex = /^\s*cloud[-_\.\s]engineer\s*$/g;
+  const match = title?.toLowerCase().match(regex);
+  return match && match.length > 0;
+}
+
 export default function GlobalMenu() {
   const { user } = useContext(AppContext);
+
+  const [isCloudEngineer, setIsCloudEngineer] = useState(false);
+  useEffect(() => {
+    if (user && user.isAuthenticated) {
+      setIsCloudEngineer(checkIfCloudEngineer(user.title));
+    }
+  }, [user]);
 
   const navLinks = [
     {
@@ -44,6 +57,13 @@ export default function GlobalMenu() {
       url: "https://dfdsit.statuspage.io/",
     },
   ];
+
+  if (isCloudEngineer) {
+    navLinks.push({
+      title: "Criticality",
+      url: "/capabilities/criticality",
+    });
+  }
 
   return (
     <>
