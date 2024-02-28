@@ -55,6 +55,8 @@ export async function getUsers(filterString) {
   const adUsers = await callApi(
     `https://graph.microsoft.com/v1.0/users?$filter=startswith(displayName, '${encodeURIComponent(
       filterString,
+    )}') and mail ge '!' or startswith(mail, '${encodeURIComponent(
+      filterString,
     )}') and mail ge '!'`,
     accessToken,
   );
