@@ -256,9 +256,11 @@ export default function MessageContractDialog({
   };
 
   const processSchema = (schema, json) => {
-    for (const [key, value] of Object.entries(schema.properties.data.properties)) {
+    for (const [key, value] of Object.entries(
+      schema.properties.data.properties,
+    )) {
       if (value.type === "array") {
-        schema.properties.data.properties[key].examples = json.data[key]
+        schema.properties.data.properties[key].examples = json.data[key];
       }
     }
   };
