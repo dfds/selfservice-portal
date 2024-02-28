@@ -195,22 +195,9 @@ export default function MessageContractDialog({
     // update schema preview
     try {
       const json = JSON.parse(messageValue);
-      const result = toJsonSchema(json, {
-        postProcessFnc: (type, schema, value, defaultFunc) => {
-          return type !== "object"
-            ? {
-                ...schema,
-                ...{
-                  examples: type === "array" ? value : [value],
-                  // required: true
-                },
-              }
-            : {
-                ...defaultFunc(type, schema, value),
-                ...{ additionalProperties: isUsingOpenContentModel },
-              };
-        },
-      });
+      const result = toJsonSchema(json);
+
+      processSchema(result, json);
 
       result["required"] = ["messageId", "type", "data", "schemaVersion"];
       // NOTE: not well documented how to insert const into using toJsonSchema, so just inserting afterward
@@ -220,7 +207,7 @@ export default function MessageContractDialog({
       };
       const text = JSON.stringify(result, null, 2);
       setPreviewSchema(text);
-    } catch {
+    } catch (e) {
       setPreviewSchema("");
     }
 
@@ -265,6 +252,16 @@ export default function MessageContractDialog({
   const handleCloseClicked = () => {
     if (onCloseClicked) {
       onCloseClicked();
+    }
+  };
+
+  const processSchema = (schema, json) => {
+    for (const [key, value] of Object.entries(
+      schema.properties.data.properties,
+    )) {
+      if (value.type === "array") {
+        schema.properties.data.properties[key].examples = json.data[key];
+      }
     }
   };
 
