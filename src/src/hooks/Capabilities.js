@@ -280,8 +280,10 @@ export function useCapabilityMetadata(capabilityDefinition) {
   const { responseData, sendRequest: sendGetJsonMetadataRequest } =
     useSelfServiceRequest();
   const { sendRequest: sendSetJsonMetadataRequest } = useSelfServiceRequest();
-  const { inProgress: inProgressMetadata, sendRequest: sendSetRequiredCapabilityJsonMetadata } =
-    useSelfServiceRequest();
+  const {
+    inProgress: inProgressMetadata,
+    sendRequest: sendSetRequiredCapabilityJsonMetadata,
+  } = useSelfServiceRequest();
   const [isLoadedMetadata, setIsLoadedMetadata] = useState(false);
   const [metadata, setMetadata] = useState(null);
 
