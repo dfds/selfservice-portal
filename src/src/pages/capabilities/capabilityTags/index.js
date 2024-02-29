@@ -8,7 +8,7 @@ import JsonSchemaContext from "../../../JsonSchemaContext";
 
 export function CapabilityTagViewer() {
   // does set update the backend? How is this done in the metadata view?
-  const { metadata, setRequiredCapabilityJsonMetadata, links } = useContext(
+  const { metadata, setRequiredCapabilityJsonMetadata, links, inProgressMetadata } = useContext(
     SelectedCapabilityContext,
   );
   const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
@@ -63,6 +63,7 @@ export function CapabilityTagViewer() {
             <Button
               size="small"
               variation="outlined"
+              submitting={inProgressMetadata}
               onClick={() => submitTags(formData)}
               disabled={!(isValid && isDirty)}
             >
