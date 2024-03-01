@@ -113,7 +113,8 @@ export default function FrontPage() {
               <PageSection>
                 <SectionContent title="Welcome">
                   <div id="welcome-content">
-                    Hello {name}, and welcome to the Developer Portal.
+                    HIIII DEMO PEOPLE, HIIIIIIIIIIIII 😳 👉👈 Hello {name}, and
+                    welcome to the Developer Portal.
                   </div>
                 </SectionContent>
 
