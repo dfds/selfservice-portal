@@ -71,14 +71,14 @@ export default function MyCapabilities() {
                 </Text>
               ) : null}
               <Text styledAs="action" style={{ marginLeft: "20px" }} as={"div"}>
-                {truncateString(cell.getValue().name)}
+                {truncateString(cell.getValue().name, 70)}
               </Text>
               <Text
                 styledAs="caption"
                 style={{ marginLeft: "20px" }}
                 as={"div"}
               >
-                {truncateString(cell.getValue().description)}
+                {truncateString(cell.getValue().description, 70)}
               </Text>
             </div>
           );

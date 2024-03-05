@@ -33,8 +33,7 @@ function isAllWithValues(data) {
   return result;
 }
 
-function truncateString(str) {
-  const maxLength = 70;
+function truncateString(str, maxLength) {
   if (str.length > maxLength) {
     return str.substring(0, maxLength) + "...";
   } else {
