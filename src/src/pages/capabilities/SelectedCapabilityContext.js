@@ -105,6 +105,7 @@ function SelectedCapabilityProvider({ children }) {
     metadata,
     setCapabilityJsonMetadata,
     setRequiredCapabilityJsonMetadata,
+    inProgressMetadata,
   } = useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
@@ -505,6 +506,7 @@ function SelectedCapabilityProvider({ children }) {
     metadata,
     validateContract,
     configurationLevelInformation,
+    inProgressMetadata,
   };
 
   return (
