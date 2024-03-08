@@ -229,7 +229,7 @@ export default function CapabilitiesCriticalityPage() {
               data={enrichedCapabilities}
               initialState={{
                 pagination: { pageSize: 50 },
-                showGlobalFilter: false,
+                showGlobalFilter: true,
                 showColumnFilters: true,
               }}
               muiTableHeadCellProps={{
