@@ -95,7 +95,7 @@ export default function FrontPage() {
                   <i>Did you know</i> that there is a <strong>Slack</strong>{" "}
                   channel where you can ask your peers a question and/or answer
                   some of them yourself?
-                  <img src="https://cdn.cx12.seq.tf/pub/OAEWfFCFoixf.png"></img>
+                  <img src="https://cdn.cx12.seq.tf/pub/PWuG9ztYu6iy.jpeg"></img>
                   <br />
                   <br />
                   <LinkButton
