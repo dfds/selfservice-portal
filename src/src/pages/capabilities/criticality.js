@@ -61,12 +61,30 @@ export default function CapabilitiesCriticalityPage() {
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+  const enrichedCapabilities = capabilities.map((capability) => {
+    const enrichedCapability = { ...capability };
+    const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
+    enrichedCapability.availability =
+      jsonMetadata["dfds.service.availability"] || "unknown";
+    enrichedCapability.criticality =
+      jsonMetadata["dfds.service.criticality"] || "unknown";
+    enrichedCapability.classification =
+      jsonMetadata["dfds.data.classification"] || "unknown";
+    enrichedCapability.criticalityLevel = calculateCriticalityLevel(
+      jsonMetadata["dfds.service.availability"],
+      jsonMetadata["dfds.service.criticality"],
+      jsonMetadata["dfds.data.classification"],
+      enrichedCapability.status,
+    );
+    return enrichedCapability;
+  });
+
   const columns = useMemo(
     () => [
       {
         accessorFn: (row) => row.name,
         header: "Name",
-        size: 350,
+        size: 250,
         enableColumnFilterModes: true,
         disableFilters: false,
         enableGlobalFilter: true,
@@ -77,14 +95,14 @@ export default function CapabilitiesCriticalityPage() {
             <div>
               {" "}
               <Text styledAs="action" as={"div"}>
-                {truncateString(renderedCellValue)}
+                {truncateString(renderedCellValue, 40)}
               </Text>
             </div>
           );
         },
       },
       {
-        accessorFn: (row) => row,
+        accessorFn: (row) => row.criticalityLevel,
         header: "Score",
         size: 25,
         enableColumnFilterModes: false,
@@ -95,22 +113,11 @@ export default function CapabilitiesCriticalityPage() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue().jsonMetadata ?? "{}");
-          const status = cell.getValue().status;
-          return (
-            <Text>
-              {calculateCriticalityLevel(
-                jsonMetadata["dfds.service.availability"],
-                jsonMetadata["dfds.service.criticality"],
-                jsonMetadata["dfds.data.classification"],
-                status,
-              )}
-            </Text>
-          );
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
-        accessorFn: (row) => row.jsonMetadata,
+        accessorFn: (row) => row.criticality,
         header: "Criticality",
         size: 25,
         enableColumnFilterModes: false,
@@ -121,15 +128,11 @@ export default function CapabilitiesCriticalityPage() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
-          if (jsonMetadata["dfds.service.criticality"] === undefined) {
-            return <div>unknown</div>;
-          }
-          return <div>{jsonMetadata["dfds.service.criticality"]}</div>;
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
-        accessorFn: (row) => row.jsonMetadata,
+        accessorFn: (row) => row.availability,
         header: "Availability",
         size: 25,
         enableColumnFilterModes: false,
@@ -140,15 +143,11 @@ export default function CapabilitiesCriticalityPage() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
-          if (jsonMetadata["dfds.service.availability"] === undefined) {
-            return <div>unknown</div>;
-          }
-          return <div>{jsonMetadata["dfds.service.availability"]}</div>;
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
-        accessorFn: (row) => row.jsonMetadata,
+        accessorFn: (row) => row.classification,
         header: "Classification",
         size: 25,
         enableColumnFilterModes: false,
@@ -159,11 +158,7 @@ export default function CapabilitiesCriticalityPage() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
-          if (jsonMetadata["dfds.data.classification"] === undefined) {
-            return <div>unknown</div>;
-          }
-          return <div>{jsonMetadata["dfds.data.classification"]}</div>;
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
@@ -231,10 +226,11 @@ export default function CapabilitiesCriticalityPage() {
           {isLoaded && (
             <MaterialReactTable
               columns={columns}
-              data={capabilities}
+              data={enrichedCapabilities}
               initialState={{
                 pagination: { pageSize: 50 },
                 showGlobalFilter: true,
+                showColumnFilters: true,
               }}
               muiTableHeadCellProps={{
                 sx: {
@@ -299,7 +295,7 @@ export default function CapabilitiesCriticalityPage() {
               enableFullScreenToggle={true}
               enableHiding={true}
               enableFilters={true}
-              enableGlobalFilter={true}
+              enableGlobalFilter={false}
               enableTopToolbar={true}
               enableBottomToolbar={true}
               enableColumnActions={true}

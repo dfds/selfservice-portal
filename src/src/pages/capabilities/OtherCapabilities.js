@@ -58,10 +58,10 @@ export default function OtherCapabilities() {
             <div>
               {" "}
               <Text styledAs="action" as={"div"}>
-                {truncateString(renderedCellValue)}
+                {truncateString(renderedCellValue, 70)}
               </Text>
               <Text styledAs="caption" as={"div"}>
-                {truncateString(cell.row.original.description)}
+                {truncateString(cell.row.original.description, 70)}
               </Text>
             </div>
           );

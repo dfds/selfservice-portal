@@ -5,7 +5,6 @@ import {
   AppBarProvider,
   AppBarDrawer,
   AppBarItem,
-  AppBarIconButton,
   AppBarListItem,
   MenuPopOverContext,
   ListText,
@@ -16,7 +15,7 @@ import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 
 function checkIfCloudEngineer(title) {
-  const regex = /^\s*cloud[-_\.\s]engineer\s*$/g;
+  const regex = /^\s*cloud[-_.\s]engineer\s*$/g;
   const match = title?.toLowerCase().match(regex);
   return match && match.length > 0;
 }
