@@ -1,67 +1,84 @@
-import React, { useContext, useEffect, useState, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "@dfds-ui/icons/system";
+import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
-import PageSection from "components/PageSection";
-import { useCapabilities } from "hooks/Capabilities";
+import PageSection from "@/components/PageSection";
+import CapabilityCostSummary from "@/components/BasicCapabilityCost";
+import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
+import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+import { useCapabilities } from "hooks/Capabilities";
 
-export default function OtherCapabilities() {
-  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
+export default function MyCapabilities() {
+  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
+    useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
-  const [otherCapabilities, setOtherCapabilities] = useState([]);
 
-  const [searchResult, setSearchResult] = useState([]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    if (!appStatus.hasLoadedMyCapabilities) {
-      return;
+    if (isLoaded && capabilities && myCapabilities) {
+      const filteredList = capabilities.filter((x) => {
+        const myCap = myCapabilities.find((y) => y.id === x.id);
+        if (myCap) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      setItems(filteredList);
     }
+  }, [isLoaded, capabilities, myCapabilities]);
 
-    const filteredList = capabilities.filter((x) => {
-      const myCap = myCapabilities.find((y) => y.id === x.id);
-      if (myCap) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    setOtherCapabilities(filteredList);
-  }, [capabilities, myCapabilities, appStatus]);
-
-  useEffect(() => {
-    setSearchResult(otherCapabilities);
-  }, [otherCapabilities]);
-
-  const items = searchResult;
-  const isLoading = !isLoaded;
+  const isLoading = !appStatus.hasLoadedMyCapabilities;
+  const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
+  useEffect(() => {
+    if (items) {
+      const tableData = items.map((item) => {
+        const copy = { ...item };
+
+        return copy;
+      });
+      setFullTableData(tableData);
+    }
+  }, [items]);
+
   const columns = useMemo(
     () => [
       {
-        accessorFn: (row) => row.name,
+        accessorFn: (row) => {
+          return {
+            name: row.name,
+            description: row.description,
+            status: row.status,
+          };
+        },
         header: "Name",
         size: 350,
-        enableColumnFilterModes: true,
-        disableFilters: false,
-        enableGlobalFilter: true,
-        enableFilterMatchHighlighting: true,
-
-        Cell: ({ cell, renderedCellValue }) => {
+        enableColumnFilterModes: false,
+        Cell: ({ cell }) => {
           return (
             <div>
-              {" "}
-              <Text styledAs="action" as={"div"}>
-                {truncateString(renderedCellValue, 70)}
+              {cell.getValue().status === "Pending Deletion" ? (
+                <Text styledAs="action" as={"div"}>
+                  <StatusAlert className={styles.warningIcon} />
+                </Text>
+              ) : null}
+              <Text styledAs="action" style={{ marginLeft: "20px" }} as={"div"}>
+                {truncateString(cell.getValue().name, 70)}
               </Text>
-              <Text styledAs="caption" as={"div"}>
-                {truncateString(cell.row.original.description, 70)}
+              <Text
+                styledAs="caption"
+                style={{ marginLeft: "20px" }}
+                as={"div"}
+              >
+                {truncateString(cell.getValue().description, 70)}
               </Text>
             </div>
           );
@@ -87,6 +104,53 @@ export default function OtherCapabilities() {
         },
       },
       {
+        accessorFn: (row) => row.id,
+        header: "Aws Resources",
+        size: 150,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          return (
+            <div>
+              <InlineAwsCountSummary
+                data={metricsWrapper.getAwsResourcesTotalCountForCapability(
+                  cell.getValue(),
+                )}
+              />
+            </div>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => row.id,
+        header: "Costs",
+        size: 150,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        Cell: ({ cell }) => {
+          return (
+            <div className={styles.costs}>
+              <CapabilityCostSummary
+                data={metricsWrapper.getCostsForCapability(
+                  cell.getValue().toLocaleString(),
+                  7,
+                )}
+              />
+            </div>
+          );
+        },
+      },
+      {
         accessorFn: (row) => row.awsAccountId,
         header: "AwsAccountId",
         enableColumnFilterModes: false,
@@ -104,15 +168,15 @@ export default function OtherCapabilities() {
       {
         accessorFn: (row) => row.id,
         header: "arrow",
+        id: "details",
         size: 1,
-        enableColumnFilterModes: false,
         muiTableBodyCellProps: {
           align: "right",
         },
-        Cell: ({ cell }) => {
+        Cell: () => {
           return <ChevronRight />;
         },
-        Header: <div></div>, //enable empty header
+        Header: <div></div>, //force no column title
       },
     ],
     [],
@@ -121,17 +185,24 @@ export default function OtherCapabilities() {
   return (
     <>
       <PageSection
-        headline={`Other Capabilities ${isLoading ? "" : `(${items.length})`}`}
+        headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}
       >
         {isLoading && <Spinner />}
 
-        {!isLoading && (
+        {!isLoading && items.length === 0 && (
+          <Text>
+            Oh no! You have not joined a capability...yet! Knock yourself out
+            with the ones below...
+          </Text>
+        )}
+
+        {!isLoading && items.length > 0 && (
           <>
             <MaterialReactTable
               columns={columns}
-              data={otherCapabilities}
+              data={fullTableData}
               initialState={{
-                pagination: { pageSize: 50 },
+                pagination: { pageSize: 25 },
                 showGlobalFilter: true,
                 columnVisibility: { AwsAccountId: false },
               }}
@@ -141,13 +212,6 @@ export default function OtherCapabilities() {
                   fontSize: "16px",
                   fontFamily: "DFDS",
                   color: "#002b45",
-                },
-              }}
-              filterFns={{
-                customFilterFn: (row, id, filterValue) => {
-                  console.log(row.getValue(id));
-                  console.log(row);
-                  return true;
                 },
               }}
               muiTableBodyCellProps={{
@@ -164,6 +228,11 @@ export default function OtherCapabilities() {
                 //customize paper styles
                 sx: {
                   borderRadius: "0",
+                },
+              }}
+              muiTopToolbarProps={{
+                sx: {
+                  background: "none",
                 },
               }}
               enableGlobalFilterModes={true}
@@ -189,11 +258,6 @@ export default function OtherCapabilities() {
               enableTopToolbar={true}
               enableBottomToolbar={true}
               enableColumnActions={false}
-              muiTopToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
               muiBottomToolbarProps={{
                 sx: {
                   background: "none",

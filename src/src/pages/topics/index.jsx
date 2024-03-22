@@ -11,7 +11,7 @@ import { Text } from "@dfds-ui/typography";
 import styles from "./topic.module.css";
 import { Spinner } from "@dfds-ui/react-components";
 import { H1 } from "@dfds-ui/react-components";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";

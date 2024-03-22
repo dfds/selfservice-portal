@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
-import { useLatestNews } from "hooks/LatestNews";
+import { useLatestNews } from "./hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
-import { useCapabilities } from "hooks/Capabilities";
+import { useCapabilities } from "./hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useProfile, useStats } from "hooks/Profile";
-import { useECRRepositories } from "hooks/ECRRepositories";
+import { useProfile, useStats } from "./hooks/Profile";
+import { useECRRepositories } from "./hooks/ECRRepositories";
 
 const AppContext = React.createContext(null);
 

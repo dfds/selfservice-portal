@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import Page from "components/Page";
-import { useCapabilities } from "hooks/Capabilities";
-import AppContext from "AppContext";
+import Page from "@/components/Page";
+import { useCapabilities } from "@/hooks/Capabilities";
+import AppContext from "@/AppContext";
 import { Text } from "@dfds-ui/typography";
 import {
   Card,
@@ -11,7 +11,7 @@ import {
   Spinner,
 } from "@dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 
 function calculateCriticalityLevel(
   availability,

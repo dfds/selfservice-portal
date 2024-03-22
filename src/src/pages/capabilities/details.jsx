@@ -6,7 +6,7 @@ import Summary from "./summary";
 import Costs from "./costs";
 import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";

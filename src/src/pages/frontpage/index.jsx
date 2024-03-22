@@ -11,14 +11,14 @@ import {
 import { Link } from "react-router-dom";
 import { TextField } from "@dfds-ui/forms";
 
-import PageSection, { SectionContent } from "components/PageSection";
-import Page from "components/Page";
-import StatsCounter from "components/StatsCounter";
+import PageSection, { SectionContent } from "@/components/PageSection";
+import Page from "@/components/Page";
+import StatsCounter from "@/components/StatsCounter";
 import styles from "./frontpage.module.css";
 import HeroImage from "./hero.jpg";
 import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
-import { TextBlock } from "components/Text";
+import { TextBlock } from "@/components/Text";
 import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
 

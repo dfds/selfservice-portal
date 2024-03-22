@@ -1,5 +1,5 @@
 import AppContext from "AppContext";
-import { SmallProfilePicture } from "components/ProfilePicture";
+import { SmallProfilePicture } from "@/components/ProfilePicture";
 import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
 import { useContext } from "react";
 import { useEffect } from "react";

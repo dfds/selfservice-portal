@@ -1,4 +1,4 @@
-import { callApi, getSelfServiceAccessToken } from "AuthService";
+import { callApi, getSelfServiceAccessToken } from "@/AuthService";
 import { useState } from "react";
 import { composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";

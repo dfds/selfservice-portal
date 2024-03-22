@@ -3,7 +3,7 @@ import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
-import PageSection from "../../../components/PageSection";
+import PageSection from "@/components/PageSection";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import JsonSchemaContext from "../../../JsonSchemaContext";

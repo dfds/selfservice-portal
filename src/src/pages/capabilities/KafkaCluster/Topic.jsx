@@ -20,7 +20,7 @@ import styles from "./Topics.module.css";
 import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import Poles from "components/Poles";
+import Poles from "@/components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import AppContext from "../../../AppContext";

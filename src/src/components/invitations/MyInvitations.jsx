@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { useSelfServiceRequest } from "../../hooks/SelfServiceApi";
 import { MaterialReactTable } from "material-react-table";
 import AppContext from "AppContext";

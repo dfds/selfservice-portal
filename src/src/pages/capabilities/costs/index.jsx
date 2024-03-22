@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../../AppContext";
 import { useParams } from "react-router-dom";
-import PageSection from "../../../components/PageSection";
+import PageSection from "@/components/PageSection";
 import { Text } from "@dfds-ui/typography";
 import { LargeCapabilityCostSummary } from "../../../components/BasicCapabilityCost";
 import { Spinner } from "@dfds-ui/react-components";

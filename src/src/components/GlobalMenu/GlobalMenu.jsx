@@ -10,7 +10,7 @@ import {
   ListText,
 } from "@dfds-ui/react-components";
 import { Account } from "@dfds-ui/icons/system";
-import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
+import { SmallProfilePicture as ProfilePicture } from "@/components/ProfilePicture";
 import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 

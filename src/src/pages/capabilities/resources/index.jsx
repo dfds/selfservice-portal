@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import {
   Card,
   CardContent,

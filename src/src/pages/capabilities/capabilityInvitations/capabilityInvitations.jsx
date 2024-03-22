@@ -1,4 +1,4 @@
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { useState, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { Invitations } from "../invitations";

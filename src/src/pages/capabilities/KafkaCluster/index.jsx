@@ -1,7 +1,7 @@
 import React from "react";
 import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
-import { TextBlock } from "components/Text";
+import { TextBlock } from "@/components/Text";
 import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
 import {
   Table,
@@ -12,7 +12,7 @@ import {
   TableDataCell,
 } from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
 import { useContext } from "react";

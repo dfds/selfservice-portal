@@ -10,12 +10,12 @@ import {
   Text,
   Spinner,
 } from "@dfds-ui/react-components";
-import Page from "components/Page";
-import PageSection from "components/PageSection";
+import Page from "../../components/Page";
+import PageSection from "../../components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
-import AppContext from "AppContext";
+import AppContext from "../../AppContext";
 
 function Repositories() {
   const { repositories, isLoading } = useContext(AppContext);

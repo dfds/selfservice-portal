@@ -8,12 +8,12 @@ import {
   CardActions,
 } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import NewCapabilityDialog from "./NewCapabilityDialog";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import SplashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {

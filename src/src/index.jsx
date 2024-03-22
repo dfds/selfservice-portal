@@ -7,8 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
-import { ErrorProvider } from "ErrorContext";
-import { TrackingProvider } from "TrackingContext";
+import { ErrorProvider } from "./ErrorContext";
+import { TrackingProvider } from "./TrackingContext";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;

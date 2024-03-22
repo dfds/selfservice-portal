@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import ErrorContext from "./ErrorContext";
-import ErrorToast from "components/Toast/index.js";
-import styles from "errordisplay.module.css";
+import ErrorToast from "./components/Toast/index.jsx";
+import styles from "./errordisplay.module.css";
 
 const ErrorDisplay = () => {
   const defaultErrorMessage =
