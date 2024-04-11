@@ -472,6 +472,8 @@ function SelectedCapabilityProvider({ children }) {
     isFound: details != null,
     id: capabilityId,
     name: details?.name,
+    createdAt: details?.createdAt,
+    createdBy: details?.createdBy,
     description: details?.description,
     links: details?._links,
     members,

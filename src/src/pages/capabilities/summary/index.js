@@ -122,6 +122,8 @@ function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
 export default function Summary() {
   const {
     name,
+    createdAt,
+    createdBy,
     id,
     description,
     links,
@@ -167,6 +169,16 @@ export default function Summary() {
     setShowJoinDialog(false);
   };
 
+  const asDate = (dateString) => {
+    let millis = Date.parse(dateString);
+    let date = new Date(millis);
+    return date.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <PageSection headline="Summary">
       {showJoinDialog && (
@@ -200,6 +212,12 @@ export default function Summary() {
         <div className={styles.column}>
           <Text styledAs={"smallHeadline"}>Root Id</Text>{" "}
           <span className={styles.breakwords}>{id}</span>
+        </div>
+        <div className={styles.column}>
+          <Text styledAs={"smallHeadline"}>Creation</Text>{" "}
+          <span className={styles.breakwords}>
+            {asDate(createdAt)}, by {createdBy}
+          </span>
         </div>
       </div>
       <div className={styles.container}>
