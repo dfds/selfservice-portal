@@ -99,13 +99,14 @@ function TopicHeader({
   );
 }
 
-export default function Topic({ topic, isSelected, onHeaderClicked }) {
+export default function Topic({ topic, onHeaderClicked }) {
   const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
     useContext(SelectedCapabilityContext);
   const { triggerErrorWithTitleAndDetails } = useError();
   const { selfServiceApiClient } = useContext(AppContext);
   const [contracts, setContracts] = useState({});
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
 
   const [consumers, setConsumers] = useState([]);
   const [isLoadingConsumers, setIsLoadingConsumers] = useState(false);
@@ -179,9 +180,10 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   }, [isSelected]);
 
   const handleHeaderClicked = () => {
-    if (onHeaderClicked) {
-      onHeaderClicked(id);
-    }
+    // if (onHeaderClicked) {
+    //   onHeaderClicked(id);
+    // }
+    setIsSelected((prev) => !prev);
   };
 
   const handleAddMessageContractClicked = () => {

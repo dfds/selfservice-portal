@@ -19,6 +19,11 @@ import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
 import styles from "./index.module.css";
+import {
+  updateSelectedTopic,
+} from "../../../redux/capabilityState";
+import { useSelector, useDispatch } from 'react-redux'
+
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const { setShouldAutoReloadTopics } = useContext(AppContext);
@@ -26,7 +31,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     id,
     selectedKafkaTopic,
     addTopicToCluster,
-    toggleSelectedKafkaTopic,
+    // toggleSelectedKafkaTopic,
     getAccessToCluster,
     requestAccessToCluster,
   } = useContext(SelectedCapabilityContext);
@@ -41,6 +46,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     password: "",
   });
 
+  const selectedTopic = useSelector(state => state.selectedCapability.selectedTopic)
+
   const topics = cluster.topics;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
   const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
@@ -50,6 +57,40 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   const handleAddTopicToClusterClicked = () => setShowDialog(true);
   const handleCloseTopicFormClicked = () => setShowDialog(false);
+   const dispatch = useDispatch();
+
+
+  const clusters = useSelector(state => state.selectedCapability.topics)
+
+  const toggleSelectedKafkaTopic = (kafkaClusterId, kafkaTopicId) => {
+    let newSelection = null;
+   
+
+    
+
+    // deselect current
+    if (
+      selectedTopic?.kafkaClusterId === kafkaClusterId &&
+      selectedTopic?.id === kafkaTopicId
+    ) {
+      newSelection = null;
+    } else {
+      // find the topic and assign it to selectedTopic
+      const foundCluster = (clusters || []).find(
+        (cluster) => cluster.id === kafkaClusterId,
+      );
+      const foundTopic = (foundCluster?.topics || []).find(
+        (topic) => topic.id === kafkaTopicId,
+      );
+
+      if (foundTopic) {
+        newSelection = foundTopic;
+      }
+    }
+
+    dispatch(updateSelectedTopic(newSelection));
+
+  };
 
   const handleAddTopic = async ({
     name,
@@ -300,7 +341,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         name="Public"
         topics={publicTopics}
         clusterId={cluster.id}
-        selectedTopic={selectedKafkaTopic}
+        selectedTopic={selectedTopic}
         onTopicClicked={handleTopicClicked}
       />
       <br />
@@ -311,7 +352,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
             name="Private"
             topics={privateTopcis}
             clusterId={cluster.id}
-            selectedTopic={selectedKafkaTopic}
+            selectedTopic={selectedTopic}
             onTopicClicked={handleTopicClicked}
           />
           <br />

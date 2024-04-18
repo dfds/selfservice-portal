@@ -1,7 +1,10 @@
 import AppContext from "AppContext";
 import React, { useContext, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux'
+import { decrement, increment } from '../../redux/CounterSlice'
 
 import {
+  Button,
   Column,
   Container,
   Hero as DfdsHero,
@@ -60,6 +63,8 @@ export default function FrontPage() {
   const { user } = useContext(AppContext);
   const [chatInput, setChatInput] = useState("");
   const aiChatUrl = process.env.REACT_APP_AI_CHAT_URL;
+  const count = useSelector(state => state.counter.value)
+  const dispatch = useDispatch()
 
   const name = user ? user.name : "there";
 
@@ -77,6 +82,14 @@ export default function FrontPage() {
 
         <Section>
           <FunStats />
+        </Section>
+
+        <Section>
+          <Button onClick={() => dispatch(increment())}>Increment</Button>
+          <span>{count}</span>
+          <Button onClick={() => dispatch(decrement())}>Decrement</Button>
+
+
         </Section>
 
         <Section>

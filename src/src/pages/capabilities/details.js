@@ -16,6 +16,9 @@ import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
 import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import { useSelector } from 'react-redux'
+import Counter from "../../redux/counter";
+import KafkaClusters from "../../redux/KafkaClusters";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -61,6 +64,8 @@ function CapabilityDetailsPageContent() {
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
 
+  // const clusters = useSelector(state => state.selectedCapability.topics)
+
   useEffect(() => {
     if (
       (links?.metadata?.allow || []).includes("GET") &&
@@ -97,6 +102,8 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
+        <Counter/>
+
         <CapabilityTagViewer />
 
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
@@ -116,9 +123,15 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
-        {(kafkaClusters || []).map((cluster) => (
+        {/* {(clusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
-        ))}
+        ))} */}
+
+        <KafkaClusters 
+          capabilityId={id}
+        />
+
+
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />

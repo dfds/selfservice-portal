@@ -20,6 +20,13 @@ import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
 
+import { useSelector, useDispatch } from "react-redux";
+import {
+  updateMembers,
+  updateTopics,
+  updateSelectedTopic,
+} from "../../redux/capabilityState";
+
 const SelectedCapabilityContext = createContext();
 
 function adjustRetention(kafkaTopic) {
@@ -65,6 +72,16 @@ function SelectedCapabilityProvider({ children }) {
   const canAccessConfigurationLevel = (
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
+
+  // const selectedTopic = useSelector(
+  //   (state) => state.selectedCapability.selectedTopic,
+  // );
+  const selectedTopic = "";
+  const clusters = "";
+
+  // const clusters = useSelector((state) => state.selectedCapability.topics);
+
+  const dispatch = useDispatch();
 
   const {
     responseData: configurationLevelInformation,
@@ -127,7 +144,8 @@ function SelectedCapabilityProvider({ children }) {
       }
 
       Promise.all(promises).then((clusters) => {
-        setKafkaClusters(clusters);
+        // setKafkaClusters(clusters);
+        dispatch(updateTopics(clusters));
       });
     }
   };
@@ -169,31 +187,55 @@ function SelectedCapabilityProvider({ children }) {
   //--------------------------------------------------------------------
 
   const toggleSelectedKafkaTopic = (kafkaClusterId, kafkaTopicId) => {
-    setSelectedKafkaTopic((prev) => {
-      let newSelection = null;
+    let newSelection = null;
 
-      // deselect current
-      if (
-        prev?.kafkaClusterId === kafkaClusterId &&
-        prev?.id === kafkaTopicId
-      ) {
-        newSelection = null;
-      } else {
-        // find the topic and assign it to selectedTopic
-        const foundCluster = (kafkaClusters || []).find(
-          (cluster) => cluster.id === kafkaClusterId,
-        );
-        const foundTopic = (foundCluster?.topics || []).find(
-          (topic) => topic.id === kafkaTopicId,
-        );
+    // deselect current
+    if (
+      selectedTopic?.kafkaClusterId === kafkaClusterId &&
+      selectedTopic?.id === kafkaTopicId
+    ) {
+      newSelection = null;
+    } else {
+      // find the topic and assign it to selectedTopic
+      const foundCluster = (clusters || []).find(
+        (cluster) => cluster.id === kafkaClusterId,
+      );
+      const foundTopic = (foundCluster?.topics || []).find(
+        (topic) => topic.id === kafkaTopicId,
+      );
 
-        if (foundTopic) {
-          newSelection = foundTopic;
-        }
+      if (foundTopic) {
+        newSelection = foundTopic;
       }
+    }
 
-      return newSelection;
-    });
+    dispatch(updateSelectedTopic(newSelection));
+
+    // setSelectedKafkaTopic((prev) => {
+    //   let newSelection = null;
+
+    //   // deselect current
+    //   if (
+    //     prev?.kafkaClusterId === kafkaClusterId &&
+    //     prev?.id === kafkaTopicId
+    //   ) {
+    //     newSelection = null;
+    //   } else {
+    //     // find the topic and assign it to selectedTopic
+    //     const foundCluster = (kafkaClusters || []).find(
+    //       (cluster) => cluster.id === kafkaClusterId,
+    //     );
+    //     const foundTopic = (foundCluster?.topics || []).find(
+    //       (topic) => topic.id === kafkaTopicId,
+    //     );
+
+    //     if (foundTopic) {
+    //       newSelection = foundTopic;
+    //     }
+    //   }
+
+    //   return newSelection;
+    // });
   };
 
   const addTopicToCluster = async (kafkaCluster, kafkaTopicDescriptor) => {
@@ -426,6 +468,10 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (isLoadedMembers) {
       setMembers(membersList);
+
+      console.log(membersList);
+
+      dispatch(updateMembers(membersList));
     }
   }, [isLoadedMembers, membersList]);
 
