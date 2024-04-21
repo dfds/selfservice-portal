@@ -16,6 +16,9 @@ import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
 import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import Counter from "../../mobx/Counter";
+import KafkaClusters from "../../mobx/KafkaClusters";
+
 
 export default function CapabilityDetailsPage() {
   return (
@@ -97,6 +100,8 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
+        <Counter/>
+
         <CapabilityTagViewer />
 
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
@@ -116,9 +121,13 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
-        {(kafkaClusters || []).map((cluster) => (
+        {/* {(kafkaClusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
-        ))}
+        ))} */}
+
+        <KafkaClusters capabilityId={id}/>
+
+
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />

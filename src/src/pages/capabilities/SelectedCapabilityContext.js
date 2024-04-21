@@ -19,7 +19,7 @@ import {
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
-
+import { store } from "../../mobx/store";
 const SelectedCapabilityContext = createContext();
 
 function adjustRetention(kafkaTopic) {
@@ -127,7 +127,8 @@ function SelectedCapabilityProvider({ children }) {
       }
 
       Promise.all(promises).then((clusters) => {
-        setKafkaClusters(clusters);
+        // setKafkaClusters(clusters);
+        store.updateTopics(clusters);
       });
     }
   };
@@ -180,7 +181,7 @@ function SelectedCapabilityProvider({ children }) {
         newSelection = null;
       } else {
         // find the topic and assign it to selectedTopic
-        const foundCluster = (kafkaClusters || []).find(
+        const foundCluster = (store.topics || []).find(
           (cluster) => cluster.id === kafkaClusterId,
         );
         const foundTopic = (foundCluster?.topics || []).find(

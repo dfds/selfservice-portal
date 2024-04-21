@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
@@ -19,14 +19,16 @@ import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
 import styles from "./index.module.css";
+import {store} from "../../../mobx/store";
+import { observer } from "mobx-react-lite";
 
-export default function KafkaCluster({ cluster, capabilityId }) {
+const KafkaCluster = observer(({ cluster, capabilityId }) => {
   const { setShouldAutoReloadTopics } = useContext(AppContext);
   const {
     id,
     selectedKafkaTopic,
     addTopicToCluster,
-    toggleSelectedKafkaTopic,
+    // toggleSelectedKafkaTopic,
     getAccessToCluster,
     requestAccessToCluster,
   } = useContext(SelectedCapabilityContext);
@@ -67,6 +69,37 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     setShouldAutoReloadTopics(true);
     setIsInProgress(false);
     setShowDialog(false);
+  };
+
+  useEffect(() => {
+    console.log(store.selectedTopic);
+  }, [store.selectedTopic])
+
+  const toggleSelectedKafkaTopic = (kafkaClusterId, kafkaTopicId) => {
+    let newSelection = null;
+
+    // deselect current
+    if (
+      store.selectedTopic?.kafkaClusterId === kafkaClusterId &&
+      store.selectedTopic?.id === kafkaTopicId
+    ) {
+      newSelection = null;
+    } else {
+      // find the topic and assign it to selectedTopic
+      const foundCluster = (store.topics || []).find(
+        (cluster) => cluster.id === kafkaClusterId,
+      );
+      const foundTopic = (foundCluster?.topics || []).find(
+        (topic) => topic.id === kafkaTopicId,
+      );
+
+      if (foundTopic) {
+        newSelection = foundTopic;
+      }
+    }
+
+    store.updateSelectedTopic(newSelection);
+
   };
 
   const handleGetCredentials = async () => {
@@ -300,7 +333,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         name="Public"
         topics={publicTopics}
         clusterId={cluster.id}
-        selectedTopic={selectedKafkaTopic}
+        selectedTopic={store.selectedTopic}
         onTopicClicked={handleTopicClicked}
       />
       <br />
@@ -311,7 +344,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
             name="Private"
             topics={privateTopcis}
             clusterId={cluster.id}
-            selectedTopic={selectedKafkaTopic}
+            selectedTopic={store.selectedTopic}
             onTopicClicked={handleTopicClicked}
           />
           <br />
@@ -332,3 +365,6 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     </PageSection>
   );
 }
+);
+
+export default KafkaCluster;

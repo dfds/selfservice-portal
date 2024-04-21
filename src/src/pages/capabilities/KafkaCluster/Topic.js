@@ -99,7 +99,7 @@ function TopicHeader({
   );
 }
 
-export default function Topic({ topic, isSelected, onHeaderClicked }) {
+export default function Topic({ topic, onHeaderClicked }) {
   const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
     useContext(SelectedCapabilityContext);
   const { triggerErrorWithTitleAndDetails } = useError();
@@ -120,6 +120,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const [showEditTopicDialog, setShowEditTopicDialog] = useState(false);
   const [showDeleteTopicDialog, setShowDeleteTopicDialog] = useState(false);
   const [isEditInProgress, setIsEditInProgress] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
 
   const { id, name, description, partitions, retention, status } = topic;
   const isPublic = name.startsWith("pub.");
@@ -179,9 +180,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   }, [isSelected]);
 
   const handleHeaderClicked = () => {
-    if (onHeaderClicked) {
-      onHeaderClicked(id);
-    }
+    setIsSelected((prev) => !prev);
   };
 
   const handleAddMessageContractClicked = () => {
