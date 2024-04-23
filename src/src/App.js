@@ -11,6 +11,9 @@ import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import ECRPage from "./pages/ecr";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 
+
+
+
 function Footer() {
   return (
     <div className="globalfooter">

@@ -9,26 +9,31 @@ import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";
 import { TrackingProvider } from "TrackingContext";
+import { createActorContext } from "@xstate/react";
+import countMachine from "./xstate/CounterMachine";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
 
 const container = document.getElementById("root");
 const root = createRoot(container);
+export const CounterMachineContext = createActorContext(countMachine);
 
 root.render(
   <React.StrictMode>
-    <MsalProvider instance={MsalInstance}>
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <GlobalStyles />
-        <ErrorProvider>
-          <TrackingProvider>
-            <AppProvider>
-              <App />
-            </AppProvider>
-          </TrackingProvider>
-        </ErrorProvider>
-      </BrowserRouter>
-    </MsalProvider>
+    <CounterMachineContext.Provider>
+      <MsalProvider instance={MsalInstance}>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
+          <GlobalStyles />
+          <ErrorProvider>
+            <TrackingProvider>
+              <AppProvider>
+                <App />
+              </AppProvider>
+            </TrackingProvider>
+          </ErrorProvider>
+        </BrowserRouter>
+      </MsalProvider>
+    </CounterMachineContext.Provider>
   </React.StrictMode>,
 );

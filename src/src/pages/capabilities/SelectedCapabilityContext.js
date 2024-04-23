@@ -19,6 +19,9 @@ import {
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
+import { useMachine } from "@xstate/react";
+import countMachine from "../../xstate/CounterMachine";
+import { CounterMachineContext } from "../../index";
 
 const SelectedCapabilityContext = createContext();
 
@@ -60,12 +63,15 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+  const [xstate, send] = useMachine(countMachine);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
 
+  const topics = CounterMachineContext.useSelector((state) => state.context.topic);
+  const CounterActorRef = CounterMachineContext.useActorRef();
   const {
     responseData: configurationLevelInformation,
     sendRequest: getConfiguraitionLevelInformation,
@@ -127,7 +133,7 @@ function SelectedCapabilityProvider({ children }) {
       }
 
       Promise.all(promises).then((clusters) => {
-        setKafkaClusters(clusters);
+        CounterActorRef.send({ type: "updateTopic", value: clusters });
       });
     }
   };

@@ -16,6 +16,11 @@ import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
 import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import Counter from "../../xstate/counter";
+import countMachine from "../../xstate/CounterMachine";
+import { useMachine } from "@xstate/react";
+import { CounterMachineContext } from "../../index";
+import KafkaClusters from "../../xstate/KafkaClusters";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -50,6 +55,9 @@ function CapabilityDetailsPageContent() {
     adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
 
+  // const [state, send] = useMachine(countMachine);
+  const topics = CounterMachineContext.useSelector((state) => state.context.topic);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     loadCapability(id);
@@ -60,6 +68,8 @@ function CapabilityDetailsPageContent() {
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
+
+
 
   useEffect(() => {
     if (
@@ -97,6 +107,9 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
+        <Counter />
+        <Counter />
+
         <CapabilityTagViewer />
 
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
@@ -116,9 +129,11 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
-        {(kafkaClusters || []).map((cluster) => (
+        {/* {(topics || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
-        ))}
+        ))} */}
+
+        <KafkaClusters capabilityId={id}/>
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
