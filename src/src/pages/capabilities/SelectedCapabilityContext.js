@@ -25,6 +25,7 @@ import {
   updateMembers,
   updateTopics,
   updateSelectedTopic,
+  updateDetails,
 } from "../../redux/capabilityState";
 
 const SelectedCapabilityContext = createContext();
@@ -47,9 +48,23 @@ function SelectedCapabilityProvider({ children }) {
   const { updateTopic } = useUpdateTopic();
   const { deleteTopic } = useDeleteTopic();
 
-  const [capabilityId, setCapabilityId] = useState(null);
-  const [details, setDetails] = useState(null);
-  const [members, setMembers] = useState([]);
+  const capabilityId = useSelector(
+    (state) => state.selectedCapability.id,
+  );
+
+  useEffect(() => {
+    console.log(capabilityId);
+  }, [capabilityId]);
+
+  const details = useSelector(
+    (state) => state.selectedCapability.details,
+  );
+
+  
+
+  // const [capabilityId, setCapabilityId] = useState(null);
+  // const [details, setDetails] = useState(null);
+  // const [members, setMembers] = useState([]);
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
@@ -76,6 +91,8 @@ function SelectedCapabilityProvider({ children }) {
   // const selectedTopic = useSelector(
   //   (state) => state.selectedCapability.selectedTopic,
   // );
+
+  
   const selectedTopic = "";
   const clusters = "";
 
@@ -458,8 +475,13 @@ function SelectedCapabilityProvider({ children }) {
   }, [details, myCapabilities]);
 
   useEffect(() => {
+    console.log(details);
+  }, [details]);
+
+  useEffect(() => {
     if (isLoaded) {
-      setDetails(capability);
+      dispatch(updateDetails(capability));
+      // setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
       setIsDeleted(capability.status === "Deleted");
     }
@@ -467,7 +489,7 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {
     if (isLoadedMembers) {
-      setMembers(membersList);
+      // setMembers(membersList);
 
       console.log(membersList);
 
@@ -479,7 +501,8 @@ function SelectedCapabilityProvider({ children }) {
     if (details) {
       loadMembershipApplications();
     } else {
-      setMembers([]);
+      dispatch(updateMembers([]));
+      // setMembers([]);
       setMembershipApplications([]);
       setKafkaClusters([]);
     }
@@ -520,13 +543,13 @@ function SelectedCapabilityProvider({ children }) {
     name: details?.name,
     description: details?.description,
     links: details?._links,
-    members,
+    // members,
     membershipApplications,
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
     setAwsAccountRequested,
-    loadCapability: (id) => setCapabilityId(id),
+    // loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,
     addTopicToCluster,
     addMessageContractToTopic,

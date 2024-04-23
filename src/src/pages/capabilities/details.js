@@ -16,9 +16,10 @@ import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
 import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Counter from "../../redux/counter";
 import KafkaClusters from "../../redux/KafkaClusters";
+import { updateCapabilityId, updateDetails } from "../../redux/capabilityState";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -40,7 +41,7 @@ function CapabilityDetailsPageContent() {
     isFound,
     name,
     kafkaClusters,
-    loadCapability,
+    // loadCapability,
     showCosts,
     isPendingDeletion,
     isDeleted,
@@ -53,9 +54,12 @@ function CapabilityDetailsPageContent() {
     adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadCapability(id);
+    // loadCapability(id);
+    dispatch(updateCapabilityId(id));
   }, [id]);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
@@ -63,6 +67,8 @@ function CapabilityDetailsPageContent() {
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
+
+  
 
   // const clusters = useSelector(state => state.selectedCapability.topics)
 

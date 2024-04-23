@@ -6,6 +6,8 @@ export const selectedCapability = createSlice({
       members: [],
       topics: [],
       selectedTopic: [],
+      id: null,
+      details: {},
     },
     reducers: {
       updateMembers: (state, action) => {
@@ -15,27 +17,19 @@ export const selectedCapability = createSlice({
       updateTopics: (state, action) => {
         state.topics = action.payload
       },
-
-      increment: (state) => {
-        // Redux Toolkit allows us to write "mutating" logic in reducers. It
-        // doesn't actually mutate the state because it uses the Immer library,
-        // which detects changes to a "draft state" and produces a brand new
-        // immutable state based off those changes
-        state.value += 1;
-      },
       updateSelectedTopic: (state, action) => {
         state.selectedTopic = action.payload
       },
-      decrement: (state) => {
-        state.value -= 1;
+      updateCapabilityId: (state, action) => {
+        state.id = action.payload;
       },
-      incrementByAmount: (state, action) => {
-        state.value += action.payload;
-      },
+      updateDetails: (state, action) => {
+        state.details = action.payload;
+      }
     },
   });
   
   // Action creators are generated for each case reducer function
-  export const { increment, decrement, incrementByAmount, updateMembers, updateTopics, updateSelectedTopic } = selectedCapability.actions;
+  export const { updateMembers, updateTopics, updateSelectedTopic, updateCapabilityId, updateDetails } = selectedCapability.actions;
   
   export default selectedCapability.reducer;
