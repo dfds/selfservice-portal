@@ -7,7 +7,7 @@ export const selectedCapability = createSlice({
       topics: [],
       selectedTopic: [],
       id: null,
-      details: {},
+      details: null,
     },
     reducers: {
       updateMembers: (state, action) => {
