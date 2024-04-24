@@ -7,6 +7,8 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
+import { useSelector, useDispatch } from "react-redux";
+import { updateMyCapabilities }  from "./redux/capabilitiesState";
 
 const AppContext = React.createContext(null);
 
@@ -69,6 +71,7 @@ function AppProvider({ children }) {
     () => new MetricsWrapper(selfServiceApiClient),
     [selfServiceApiClient],
   );
+  const dispatch = useDispatch();
 
   const { addCapability } = useCapabilities();
   const { createRepository, reload, repositories, isLoading } =
@@ -85,6 +88,7 @@ function AppProvider({ children }) {
     addCapability(name, description, invitations, jsonMetadataString);
     await sleep(3000);
     await loadMyProfile();
+    // reload();
   }
 
   async function addNewRepository(name, description) {
@@ -96,6 +100,8 @@ function AppProvider({ children }) {
     if (isLoadedProfile && isLoadedStats) {
       const profile = profileInfo;
       const { capabilities, autoReloadTopics } = profile;
+
+      dispatch(updateMyCapabilities(capabilities));
 
       const stats = statsInfo;
 
