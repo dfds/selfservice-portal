@@ -7,18 +7,30 @@ import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "hooks/Capabilities";
 import { MaterialReactTable } from "material-react-table";
+import { useSelector, useDispatch } from "react-redux";
+import { updateOtherCapabilities }  from "../../redux/capabilitiesState";
 
 export default function OtherCapabilities() {
   const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
-  const [otherCapabilities, setOtherCapabilities] = useState([]);
+  // const [otherCapabilities, setOtherCapabilities] = useState([]);
+  const otherCapabilities = useSelector((state) => state.capabilities.otherCapabilities);
+
 
   const [searchResult, setSearchResult] = useState([]);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(myCapabilities);
+  }, [myCapabilities])
 
   useEffect(() => {
     if (!appStatus.hasLoadedMyCapabilities) {
       return;
     }
+
+
 
     const filteredList = capabilities.filter((x) => {
       const myCap = myCapabilities.find((y) => y.id === x.id);
@@ -29,7 +41,8 @@ export default function OtherCapabilities() {
       }
     });
 
-    setOtherCapabilities(filteredList);
+    // setOtherCapabilities(filteredList);
+    dispatch(updateOtherCapabilities(filteredList));
   }, [capabilities, myCapabilities, appStatus]);
 
   useEffect(() => {

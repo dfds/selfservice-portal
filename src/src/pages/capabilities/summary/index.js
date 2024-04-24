@@ -136,7 +136,7 @@ export default function Summary() {
   const [isLeaving, setIsLeaving] = useState(false);
 
   const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
-  const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
+  const canLeave = true;
   const canBypass = (links?.joinCapability?.allow || []).includes("POST");
   const { reloadUser } = useContext(AppContext);
 

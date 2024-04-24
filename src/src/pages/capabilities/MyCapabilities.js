@@ -12,6 +12,7 @@ import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import { useCapabilities } from "hooks/Capabilities";
 import { useSelector, useDispatch } from "react-redux";
 
+
 export default function MyCapabilities() {
   const { metricsWrapper, appStatus, truncateString } =
     useContext(AppContext);
