@@ -19,7 +19,7 @@ import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 import AppContext from "AppContext";
 import { onRender } from "../../index";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import Counter from "../../redux/counter";
 import KafkaClusters from "../../redux/KafkaClusters";
 import { updateCapabilityId, updateDetails } from "../../redux/capabilityState";
@@ -92,8 +92,6 @@ function CapabilityDetailsPageContent() {
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
 
-  
-
   // const clusters = useSelector(state => state.selectedCapability.topics)
 
   useEffect(() => {
@@ -132,7 +130,7 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
-        <Counter/>
+        <Counter />
 
         <CapabilityTagViewer />
 
@@ -153,7 +151,7 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
         <KafkaMessagesCounter />
-        {(kafkaClusters || []).map((cluster) => (
+        {/* {(kafkaClusters || []).map((cluster) => (
           <Profiler id="KafkaCluster" onRender={onRender}>
             <KafkaCluster
               key={cluster.id}
@@ -161,17 +159,14 @@ function CapabilityDetailsPageContent() {
               capabilityId={id}
             />
           </Profiler>
-        ))}
+        ))} */}
 
         {/* {(clusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))} */}
-
-        <KafkaClusters 
-          capabilityId={id}
-        />
-
-
+        <Profiler id="KafkaCluster" onRender={onRender}>
+          <KafkaClusters capabilityId={id} />
+        </Profiler>
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />

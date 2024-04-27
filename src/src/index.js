@@ -28,7 +28,7 @@ export function onRender(
   commitTime,
 ) {
   console.log(
-    `${id} ${phase} ${actualDuration} ${baseDuration} ${startTime} ${commitTime}`,
+    `id= ${id} phase= ${phase} actualDurantion=${actualDuration}  starttime=${startTime}`,
   );
 }
 
