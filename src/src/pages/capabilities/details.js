@@ -19,6 +19,10 @@ import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 import AppContext from "AppContext";
 import { onRender } from "../../index";
+import { useSelector, useDispatch } from 'react-redux'
+import Counter from "../../redux/counter";
+import KafkaClusters from "../../redux/KafkaClusters";
+import { updateCapabilityId, updateDetails } from "../../redux/capabilityState";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -40,7 +44,7 @@ function CapabilityDetailsPageContent() {
     isFound,
     name,
     kafkaClusters,
-    loadCapability,
+    // loadCapability,
     showCosts,
     isPendingDeletion,
     isDeleted,
@@ -54,9 +58,12 @@ function CapabilityDetailsPageContent() {
   } = useContext(SelectedCapabilityContext);
   const { user, updateCounter } = useContext(AppContext);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadCapability(id);
+    // loadCapability(id);
+    dispatch(updateCapabilityId(id));
   }, [id]);
 
   useEffect(() => {
@@ -84,6 +91,10 @@ function CapabilityDetailsPageContent() {
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
+
+  
+
+  // const clusters = useSelector(state => state.selectedCapability.topics)
 
   useEffect(() => {
     if (
@@ -121,6 +132,8 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
+        <Counter/>
+
         <CapabilityTagViewer />
 
         {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
@@ -149,6 +162,16 @@ function CapabilityDetailsPageContent() {
             />
           </Profiler>
         ))}
+
+        {/* {(clusters || []).map((cluster) => (
+          <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
+        ))} */}
+
+        <KafkaClusters 
+          capabilityId={id}
+        />
+
+
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />

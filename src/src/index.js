@@ -10,6 +10,8 @@ import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";
 import { TrackingProvider } from "TrackingContext";
+import store from "./redux/store";
+import { Provider } from "react-redux";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
@@ -32,17 +34,19 @@ export function onRender(
 
 root.render(
   <React.StrictMode>
-    <MsalProvider instance={MsalInstance}>
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <GlobalStyles />
-        <ErrorProvider>
-          <TrackingProvider>
-            <AppProvider>
-              <App />
-            </AppProvider>
-          </TrackingProvider>
-        </ErrorProvider>
-      </BrowserRouter>
-    </MsalProvider>
+    <Provider store={store}>
+      <MsalProvider instance={MsalInstance}>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
+          <GlobalStyles />
+          <ErrorProvider>
+            <TrackingProvider>
+              <AppProvider>
+                <App />
+              </AppProvider>
+            </TrackingProvider>
+          </ErrorProvider>
+        </BrowserRouter>
+      </MsalProvider>
+    </Provider>
   </React.StrictMode>,
 );

@@ -3,9 +3,12 @@ import styles from "./members.module.css";
 import { Text } from "@dfds-ui/typography";
 import ProfilePicture from "./profilepicture";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import { useSelector } from 'react-redux'
 
 export default function Members() {
-  const { members } = useContext(SelectedCapabilityContext);
+  // const { members } = useContext(SelectedCapabilityContext);
+  const members = useSelector(state => state.selectedCapability.members)
+
 
   return (
     <>
