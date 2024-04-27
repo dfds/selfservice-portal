@@ -1,5 +1,6 @@
 import AppContext from "AppContext";
 import React, { useContext, useState } from "react";
+import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 
 import {
   Column,
@@ -57,7 +58,7 @@ function FunStats() {
 }
 
 export default function FrontPage() {
-  const { user } = useContext(AppContext);
+  const { user, updateCounter } = useContext(AppContext);
   const [chatInput, setChatInput] = useState("");
   const aiChatUrl = process.env.REACT_APP_AI_CHAT_URL;
 
@@ -67,6 +68,8 @@ export default function FrontPage() {
     e.preventDefault();
     window.open(`${aiChatUrl}?q=${chatInput}`);
   };
+
+  // updateCounter();
 
   return (
     <>
@@ -78,6 +81,8 @@ export default function FrontPage() {
         <Section>
           <FunStats />
         </Section>
+
+        <KafkaMessagesCounter />
 
         <Section>
           <Container>
