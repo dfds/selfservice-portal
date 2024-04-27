@@ -79,7 +79,7 @@ function AppProvider({ children }) {
   const [kafkaCount, setKafkaCount] = useState(0);
 
   async function updateCounter() {
-    sleep(1).then(() => {
+    sleep(1000).then(() => {
       setKafkaCount((prev) => prev + 1);
       updateCounter();
     });
