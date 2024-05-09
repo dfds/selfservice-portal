@@ -2,16 +2,19 @@ import React, { useContext }  from "react";
 import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
 
+import { kafkaStore } from "../../mobx/KafkaMessagesStore";
+import { observer } from "mobx-react-lite"
 
 
-export default function KafkaMessagesCounter() {
 
-const {kafkaCount} = useContext(AppContext);
+const  KafkaMessagesCounter = observer(() => {
  
+    return (
+      <>
+        <Text>Total Kafka Messages For Today: {kafkaStore.count}</Text>
+      </>
+    );
+  }
+); 
 
-  return (
-    <>
-      <Text>Total Kafka Messages For Today: {kafkaCount}</Text>
-    </>
-  );
-}
+export default KafkaMessagesCounter;

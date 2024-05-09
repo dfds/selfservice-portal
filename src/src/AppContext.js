@@ -7,6 +7,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
+import { kafkaStore } from "./mobx/KafkaMessagesStore";
 
 const AppContext = React.createContext(null);
 
@@ -80,7 +81,8 @@ function AppProvider({ children }) {
 
   async function updateCounter() {
     sleep(1000).then(() => {
-      setKafkaCount((prev) => prev + 1);
+      kafkaStore.updateCounter();
+      // setKafkaCount((prev) => prev + 1);
       updateCounter();
     });
   }

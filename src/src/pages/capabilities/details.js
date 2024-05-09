@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, Profiler } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
@@ -22,6 +22,7 @@ import KafkaClusters from "../../mobx/KafkaClusters";
 import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 import AppContext from "AppContext";
 import { onRender } from "../../index";
+import { Profiler } from "@hrisy/tools";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -124,7 +125,7 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
-        <Counter/>
+        <Counter />
 
         <CapabilityTagViewer />
 
@@ -149,19 +150,13 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))} */}
 
-        <KafkaClusters capabilityId={id}/>
+        <Profiler title="counter">
+          <KafkaMessagesCounter />
+        </Profiler>
 
-
-        <KafkaMessagesCounter />
-        {(kafkaClusters || []).map((cluster) => (
-          <Profiler id="KafkaCluster" onRender={onRender}>
-            <KafkaCluster
-              key={cluster.id}
-              cluster={cluster}
-              capabilityId={id}
-            />
-          </Profiler>
-        ))}
+        <Profiler title="KafkaCluster">
+          <KafkaClusters capabilityId={id} />
+        </Profiler>
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
