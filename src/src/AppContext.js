@@ -76,6 +76,15 @@ function AppProvider({ children }) {
   const { profileInfo, isLoadedProfile, reload: reloadUser } = useProfile(user);
   const { statsInfo, isLoadedStats } = useStats(user);
 
+  const [kafkaCount, setKafkaCount] = useState(0);
+
+  async function updateCounter() {
+    sleep(1000).then(() => {
+      setKafkaCount((prev) => prev + 1);
+      updateCounter();
+    });
+  }
+
   async function addNewCapability(
     name,
     description,
@@ -188,6 +197,8 @@ function AppProvider({ children }) {
     isLoading,
     isAllWithValues,
     getValidationError,
+    kafkaCount,
+    updateCounter,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
