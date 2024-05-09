@@ -8,7 +8,8 @@ import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
 import { useSelector, useDispatch } from "react-redux";
-import { updateMyCapabilities }  from "./redux/capabilitiesState";
+import { updateMyCapabilities } from "./redux/capabilitiesState";
+import { updateKafkaCounter } from "./redux/kafkaCounter";
 
 const AppContext = React.createContext(null);
 
@@ -82,8 +83,8 @@ function AppProvider({ children }) {
   const [kafkaCount, setKafkaCount] = useState(0);
 
   async function updateCounter() {
-    sleep(1000).then(() => {
-      setKafkaCount((prev) => prev + 1);
+    sleep(10).then(() => {
+      dispatch(updateKafkaCounter());
       updateCounter();
     });
   }
@@ -120,7 +121,7 @@ function AppProvider({ children }) {
         ...prev,
         ...{ hasLoadedMyCapabilities: true },
       }));
-      setShouldAutoReloadTopics(autoReloadTopics);
+      setShouldAutoReloadTopics(false);
 
       setMyProfile(profile);
     }
