@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, Profiler } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
@@ -19,6 +19,9 @@ import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import Counter from "../../mobx/Counter";
 import KafkaClusters from "../../mobx/KafkaClusters";
 
+import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
+import AppContext from "AppContext";
+import { onRender } from "../../index";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -52,11 +55,32 @@ function CapabilityDetailsPageContent() {
     metadata,
     adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
+  const { user, updateCounter } = useContext(AppContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     loadCapability(id);
   }, [id]);
+
+  useEffect(() => {
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    updateCounter();
+  }, []);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -128,6 +152,16 @@ function CapabilityDetailsPageContent() {
         <KafkaClusters capabilityId={id}/>
 
 
+        <KafkaMessagesCounter />
+        {(kafkaClusters || []).map((cluster) => (
+          <Profiler id="KafkaCluster" onRender={onRender}>
+            <KafkaCluster
+              key={cluster.id}
+              cluster={cluster}
+              capabilityId={id}
+            />
+          </Profiler>
+        ))}
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
