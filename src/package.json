@@ -12,6 +12,7 @@
     "@dfds-ui/react-components": "2.0.12",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@hrisy/tools": "^1.0.6",
     "@monaco-editor/react": "^4.6.0",
     "@reduxjs/toolkit": "^2.2.3",
     "@rjsf/core": "^5.15.0",

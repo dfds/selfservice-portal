@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, Profiler } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Counter from "../../redux/counter";
 import KafkaClusters from "../../redux/KafkaClusters";
 import { updateCapabilityId, updateDetails } from "../../redux/capabilityState";
+import { Profiler } from "@hrisy/tools";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -150,7 +151,9 @@ function CapabilityDetailsPageContent() {
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
-        <KafkaMessagesCounter />
+        <Profiler title="KafkaMessages">
+          <KafkaMessagesCounter />
+        </Profiler>
         {/* {(kafkaClusters || []).map((cluster) => (
           <Profiler id="KafkaCluster" onRender={onRender}>
             <KafkaCluster
@@ -164,7 +167,7 @@ function CapabilityDetailsPageContent() {
         {/* {(clusters || []).map((cluster) => (
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))} */}
-        <Profiler id="KafkaCluster" onRender={onRender}>
+        <Profiler title="KafkaCluster">
           <KafkaClusters capabilityId={id} />
         </Profiler>
 
