@@ -5,9 +5,11 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useProfile, useStats } from "hooks/Profile";
+import { useStats, useProfile } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
 
+
+import { KafkaMachineContext } from "./index";
 const AppContext = React.createContext(null);
 
 function sleep(duration) {
@@ -78,9 +80,12 @@ function AppProvider({ children }) {
 
   const [kafkaCount, setKafkaCount] = useState(0);
 
+  const CounterActorRef = KafkaMachineContext.useActorRef();
+
   async function updateCounter() {
-    sleep(1000).then(() => {
-      setKafkaCount((prev) => prev + 1);
+    sleep(10).then(() => {
+      // setKafkaCount((prev) => prev + 1);
+      CounterActorRef.send({ type: "incrementCount" });
       updateCounter();
     });
   }

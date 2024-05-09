@@ -12,6 +12,7 @@ import { ErrorProvider } from "ErrorContext";
 import { TrackingProvider } from "TrackingContext";
 import { createActorContext } from "@xstate/react";
 import countMachine from "./xstate/CounterMachine";
+import KafkaMessagesCounterMachine from "./xstate/KafkaMessagesCounterMachine";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
@@ -19,6 +20,9 @@ window.env = process.env.NODE_ENV;
 const container = document.getElementById("root");
 const root = createRoot(container);
 export const CounterMachineContext = createActorContext(countMachine);
+export const KafkaMachineContext = createActorContext(
+  KafkaMessagesCounterMachine,
+);
 
 export function onRender(
   id,
@@ -36,18 +40,20 @@ export function onRender(
 root.render(
   <React.StrictMode>
     <CounterMachineContext.Provider>
-      <MsalProvider instance={MsalInstance}>
-        <BrowserRouter basename={process.env.PUBLIC_URL}>
-          <GlobalStyles />
-          <ErrorProvider>
-            <TrackingProvider>
-              <AppProvider>
-                <App />
-              </AppProvider>
-            </TrackingProvider>
-          </ErrorProvider>
-        </BrowserRouter>
-      </MsalProvider>
+      <KafkaMachineContext.Provider>
+        <MsalProvider instance={MsalInstance}>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <GlobalStyles />
+            <ErrorProvider>
+              <TrackingProvider>
+                <AppProvider>
+                  <App />
+                </AppProvider>
+              </TrackingProvider>
+            </ErrorProvider>
+          </BrowserRouter>
+        </MsalProvider>
+      </KafkaMachineContext.Provider>
     </CounterMachineContext.Provider>
   </React.StrictMode>,
 );

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, Profiler } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import Members from "./members";
@@ -24,6 +24,8 @@ import KafkaClusters from "../../xstate/KafkaClusters";
 import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 import AppContext from "AppContext";
 import { onRender } from "../../index";
+import { Profiler } from "@hrisy/tools";
+
 
 export default function CapabilityDetailsPage() {
   return (
@@ -60,7 +62,9 @@ function CapabilityDetailsPageContent() {
   const { user, updateCounter } = useContext(AppContext);
 
   // const [state, send] = useMachine(countMachine);
-  const topics = CounterMachineContext.useSelector((state) => state.context.topic);
+  const topics = CounterMachineContext.useSelector(
+    (state) => state.context.topic,
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -92,8 +96,6 @@ function CapabilityDetailsPageContent() {
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
   const [costCentre, setCostCentre] = useState("");
-
-
 
   useEffect(() => {
     if (
@@ -157,17 +159,12 @@ function CapabilityDetailsPageContent() {
           <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
         ))} */}
 
-        <KafkaClusters capabilityId={id}/>
-        <KafkaMessagesCounter />
-        {(kafkaClusters || []).map((cluster) => (
-          <Profiler id="KafkaCluster" onRender={onRender}>
-            <KafkaCluster
-              key={cluster.id}
-              cluster={cluster}
-              capabilityId={id}
-            />
-          </Profiler>
-        ))}
+        <Profiler title="KafkaMessageCounter">
+          <KafkaMessagesCounter />
+        </Profiler>
+        <Profiler title="KafkaCluster">
+          <KafkaClusters capabilityId={id} />
+        </Profiler>
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
