@@ -6,6 +6,7 @@ import App from "./App";
 import { GlobalStyles } from "@dfds-ui/react-components";
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
+import { KafkaMessagesCounterProvider } from "KafkaMessagesContext";
 import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";

@@ -1,13 +1,29 @@
-import React, { useContext }  from "react";
-import AppContext from "AppContext";
+import React, { useContext, useEffect } from "react";
+import KafkaMessagesContext from "KafkaMessagesContext";
 import { Text } from "@dfds-ui/typography";
 
-
-
 export default function KafkaMessagesCounter() {
+  const { kafkaCount, updateCounter } = useContext(KafkaMessagesContext);
 
-const {kafkaCount} = useContext(AppContext);
- 
+  useEffect(() => {
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    // updateCounter();
+    updateCounter();
+  }, []);
 
   return (
     <>

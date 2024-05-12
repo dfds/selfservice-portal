@@ -18,6 +18,9 @@ import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import KafkaMessagesCounter from "components/KafkaMessagesCounter/KafkaMessagesCounter";
 import AppContext from "AppContext";
+import KafkaMessagesCounterContext, {
+  KafkaMessagesCounterProvider,
+} from "KafkaMessagesContext";
 import { onRender } from "../../index";
 
 export default function CapabilityDetailsPage() {
@@ -52,32 +55,12 @@ function CapabilityDetailsPageContent() {
     metadata,
     adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
-  const { user, updateCounter } = useContext(AppContext);
+  const { user } = useContext(AppContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     loadCapability(id);
   }, [id]);
-
-  useEffect(() => {
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    // updateCounter();
-    updateCounter();
-  }, []);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -139,7 +122,9 @@ function CapabilityDetailsPageContent() {
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
-        <KafkaMessagesCounter />
+        {/* <KafkaMessagesCounterProvider>
+          <KafkaMessagesCounter />
+        </KafkaMessagesCounterProvider> */}
         {(kafkaClusters || []).map((cluster) => (
           <Profiler id="KafkaCluster" onRender={onRender}>
             <KafkaCluster
