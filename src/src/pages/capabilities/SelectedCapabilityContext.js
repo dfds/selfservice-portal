@@ -14,6 +14,7 @@ import {
   useCapabilityMembersApplications,
   useCapabilityMetadata,
   useKafkaClustersAccessList,
+  useCapabilityAzureResources,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -60,11 +61,14 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+  const { azureResources, isLoadedAzure } = useCapabilityAzureResources(details);
+  const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
+
 
   const {
     responseData: configurationLevelInformation,
@@ -430,6 +434,12 @@ function SelectedCapabilityProvider({ children }) {
   }, [isLoadedMembers, membersList]);
 
   useEffect(() => {
+    if (isLoadedAzure) {
+      setAzureResourcesList(azureResources);
+    }
+  }, [isLoadedAzure, azureResources]);
+
+  useEffect(() => {
     if (details) {
       loadMembershipApplications();
     } else {
@@ -509,6 +519,7 @@ function SelectedCapabilityProvider({ children }) {
     validateContract,
     configurationLevelInformation,
     inProgressMetadata,
+    azureResourcesList,
   };
 
   return (

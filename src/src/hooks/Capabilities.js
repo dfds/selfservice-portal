@@ -368,3 +368,53 @@ export function useCapabilityInvitees(capabilityDefinition) {
     inProgress,
   };
 }
+
+export function useCapabilityAzureResources(capabilityDefinition) {
+  const { responseData, sendRequest: sendGetAzureResources } =
+    useSelfServiceRequest();
+  const [isLoadedAzure, setIsLoadedAzure] = useState(false);
+  const [azureResources, setAzureResources] = useState(null);
+
+  const link = capabilityDefinition?._links?.azureResources;
+  const shouldGet = (link?.allow || []).includes("GET");
+  const { inProgress, sendRequest: requestAzureResources } =
+  useSelfServiceRequest();
+
+  const requestAzure = (environment) => {
+    requestAzureResources({
+      // urlSegments: ["capabilities", capabilityDefinition.id, "azureresources"],
+      // method: "POST",
+      // payload: {
+      //   environment: environment,
+      // },
+    });
+  };
+
+
+
+  useEffect(() => {
+    if (link && shouldGet) {
+      sendGetAzureResources({
+        urlSegments: [link.href],
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (responseData !== null) {
+      setAzureResources(responseData.items);
+    }
+  }, [responseData]);
+
+  useEffect(() => {
+    if (azureResources !== null) {
+      setIsLoadedAzure(true);
+    }
+  }, [azureResources]);
+
+  return {
+    isLoadedAzure,
+    azureResources,
+    requestAzure,
+  };
+}

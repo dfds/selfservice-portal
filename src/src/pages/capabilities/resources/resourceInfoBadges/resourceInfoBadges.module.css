@@ -34,3 +34,14 @@ hr.divider {
 .completed .items:last-child {
   border-right: 0px none;
 }
+
+.azure {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.azure .items {
+  text-align: center;
+  border-right: 1px solid #dedede;
+}
