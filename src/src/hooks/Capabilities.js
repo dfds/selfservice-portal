@@ -377,18 +377,18 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   const link = capabilityDefinition?._links?.azureResources;
   const shouldGet = (link?.allow || []).includes("GET");
-  const { inProgress, sendRequest: requestAzureResources } =
-  useSelfServiceRequest();
+  // const { inProgress, sendRequest: requestAzureResources } =
+  // useSelfServiceRequest();
 
-  const requestAzure = (environment) => {
-    requestAzureResources({
-      // urlSegments: ["capabilities", capabilityDefinition.id, "azureresources"],
-      // method: "POST",
-      // payload: {
-      //   environment: environment,
-      // },
-    });
-  };
+  // const requestAzure = (environment) => {
+  //   requestAzureResources({
+  //     // urlSegments: ["capabilities", capabilityDefinition.id, "azureresources"],
+  //     // method: "POST",
+  //     // payload: {
+  //     //   environment: environment,
+  //     // },
+  //   });
+  // };
 
 
 
@@ -415,6 +415,6 @@ export function useCapabilityAzureResources(capabilityDefinition) {
   return {
     isLoadedAzure,
     azureResources,
-    requestAzure,
+    // requestAzure,
   };
 }

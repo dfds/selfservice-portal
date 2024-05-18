@@ -129,7 +129,7 @@ export function ResourceInfoBadges() {
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [test, setTest] = useState([]);
+  const [showAzureResourcesDialog, setShowAzureResourcesDialog] = useState(false);
 
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
 
@@ -210,12 +210,12 @@ export function ResourceInfoBadges() {
               style={{ height: "2.5rem" }}
             />
           </p>
-          <Button> Request Azure Resource Group </Button>
+          <Button > Request Azure Resource Group </Button>
         </div>
         <div className={styles.items}>
           {azureResourcesList != [] ? (
             azureResourcesList.map((x) => 
-            <div>{x}</div>
+            <div key={x.id}>{x.id}</div>
             )
           ) : (
             // )
