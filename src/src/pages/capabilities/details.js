@@ -122,9 +122,9 @@ function CapabilityDetailsPageContent() {
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
-        {/* <KafkaMessagesCounterProvider>
+        <KafkaMessagesCounterProvider>
           <KafkaMessagesCounter />
-        </KafkaMessagesCounterProvider> */}
+        </KafkaMessagesCounterProvider>
         {(kafkaClusters || []).map((cluster) => (
           <Profiler id="KafkaCluster" onRender={onRender}>
             <KafkaCluster
