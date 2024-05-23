@@ -61,7 +61,7 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  const { azureResources, isLoadedAzure } = useCapabilityAzureResources(details);
+  const { azureResources, isLoadedAzure, requestAzure } = useCapabilityAzureResources(details);
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
@@ -409,6 +409,12 @@ function SelectedCapabilityProvider({ children }) {
     setPendingDeletion(value);
   };
 
+  const addNewAzure = (
+    environment
+  )  => {
+    requestAzure(environment);
+  }
+
   //--------------------------------------------------------------------
 
   useEffect(() => {
@@ -475,6 +481,8 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [awsAccountRequested]);
 
+  
+
   //--------------------------------------------------------------------
 
   const state = {
@@ -520,6 +528,7 @@ function SelectedCapabilityProvider({ children }) {
     configurationLevelInformation,
     inProgressMetadata,
     azureResourcesList,
+    addNewAzure,
   };
 
   return (

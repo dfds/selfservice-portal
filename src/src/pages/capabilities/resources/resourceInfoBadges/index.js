@@ -1,4 +1,11 @@
-import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
+import {
+  Badge,
+  ButtonStack,
+  Button,
+  Spinner,
+  Dropdown,
+  MenuItem,
+} from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
@@ -10,6 +17,7 @@ import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
+import { set } from "date-fns";
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
@@ -126,16 +134,26 @@ export function ResourceInfoBadges() {
     requestAwsAccount,
     setAwsAccountRequested,
     azureResourcesList,
+    addNewAzure,
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAzureResourcesDialog, setShowAzureResourcesDialog] = useState(false);
-
+  // const [filteredAzureResources, setFilteredAzureResources] =
+  //   useState(null);
+  const [environment, setEnvironment] = useState("prod");
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
 
-  useEffect(() => {
-    console.log(azureResourcesList);
-  }, [azureResourcesList]);
+  const handleChange = (event) => {
+    setEnvironment(event.target.value);
+  };
+
+  // useEffect(() => {
+  //   if (azureResourcesList != null){
+  //     console.log(azureResourcesList);
+  //           let arr = azureResourcesList.sort((a, b) => a.environment.localeCompare(b.environment));
+  //     setFilteredAzureResources(arr);
+  //   }
+  // }, [azureResourcesList]);
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -150,6 +168,12 @@ export function ResourceInfoBadges() {
       setShowDialog(false);
     }
   };
+
+  const handleNewAzureResource = () => {
+    addNewAzure(environment);
+  };
+
+  const environments = ["prod", "dev"];
 
   return (
     <>
@@ -210,17 +234,50 @@ export function ResourceInfoBadges() {
               style={{ height: "2.5rem" }}
             />
           </p>
-          <Button > Request Azure Resource Group </Button>
-        </div>
-        <div className={styles.items}>
-          {azureResourcesList != [] ? (
-            azureResourcesList.map((x) => 
-            <div key={x.id}>{x.id}</div>
-            )
+          {azureResourcesList != null ? (
+            azureResourcesList.map((x) => (
+              <div key={x.id}>
+                <div className={styles.environment} key={x.id}>
+                  Azure resources for the {x.environment} environment:
+                </div>
+                <div className={styles.azureresource} key={x.id}>
+                  <Badge>
+                    <strong>{x.id} </strong>
+                  </Badge>
+                </div>
+              </div>
+            ))
           ) : (
             // )
             <div></div>
           )}
+        </div>
+
+        <div className={styles.items}>
+          <p>
+            <img
+              src={azureLogo}
+              alt="Azure icon"
+              style={{ height: "2.5rem" }}
+            />
+          </p>
+          <div>
+            <label>
+              Choose environment..
+              <select value={environment} onChange={handleChange}>
+                {environments.map((env) => (
+                  <option value={env} key={env}>
+                    {env}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <Button onClick={() => handleNewAzureResource()}>
+            {" "}
+            Request Azure Resource Group{" "}
+          </Button>
         </div>
       </div>
     </>

@@ -26,7 +26,7 @@ export default function NewAzureResourcesDialog({}) {
 
   
 
-  const changeName = (e) => {
+  const changeE = (e) => {
     e.preventDefault();
     let newName = e?.target?.value || "";
     newName = newName.replace(/\s+/g, "-");
