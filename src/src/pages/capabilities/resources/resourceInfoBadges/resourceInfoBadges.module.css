@@ -46,11 +46,55 @@ hr.divider {
   border-right: 1px solid #dedede;
 }
 
-.environment  {
+.environment {
   text-align: centre;
   margin: 10px 0px 10px 0px;
 }
 
 .azureresource {
   text-align: center;
+}
+
+.envbutton {
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  background: white;
+  border: 2px solid #49a2df;
+  color: #49a2df; 
+  border-radius: 5px;
+  cursor: pointer;
+  width: 70px;
+  height: 30px; 
+  font-size: 16px;
+  font-weight: 550;
+  font-family: "DFDS";
+  /* box-sizing: border-box;
+  padding: 5px; Optional:  */
+  text-align: center; 
+}
+
+.envitems {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; 
+  /* flex-wrap: nowrap; */
+  /* align-items: flex-end; */
+  /* align-content: flex-end; */
+}
+
+.envbutton:hover {
+  background-color: #bbddf3;
+  border: 2px solid #1874bc;
+  color: #1874bc; 
+}
+
+.envbutton:focus-visible {
+  outline: none;
+}
+
+.envsection{
+  text-align: center;
+  margin: 0 auto;
 }

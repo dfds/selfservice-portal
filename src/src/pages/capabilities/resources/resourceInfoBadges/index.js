@@ -8,7 +8,7 @@ import {
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Modal, ModalAction, setGlobalAppElement } from "@dfds-ui/modal";
 import { useContext, useState, useEffect } from "react";
 import { theme } from "@dfds-ui/theme";
 import awsLogo from "./aws-logo.svg";
@@ -142,18 +142,40 @@ export function ResourceInfoBadges() {
   //   useState(null);
   const [environment, setEnvironment] = useState("prod");
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
+  const environments = ["prod", "dev", "staging", "uat", "training", "test"];
+  const [envAvailability, setEnvAvailability] = useState(null);
+
+
 
   const handleChange = (event) => {
     setEnvironment(event.target.value);
   };
 
-  // useEffect(() => {
-  //   if (azureResourcesList != null){
-  //     console.log(azureResourcesList);
-  //           let arr = azureResourcesList.sort((a, b) => a.environment.localeCompare(b.environment));
-  //     setFilteredAzureResources(arr);
-  //   }
-  // }, [azureResourcesList]);
+
+  useEffect(() => {
+    if (azureResourcesList != null){
+      setEnvAvailability(() => {
+        const copy = [...azureResourcesList];
+        var payload = [];
+        environments.forEach(env => {
+          const found = copy.find(x => x.environment == env);
+          if (found){
+            payload.push({env: found.environment, exist: true});
+          }else {
+            payload.push({env: env, exist: false})
+          }
+        })
+        return payload;
+      })
+    } 
+
+    // console.log(envAveildability);
+
+  }, [azureResourcesList])
+  useEffect(() => {
+    console.log(envAvailability);
+
+  }, [envAvailability])
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -173,8 +195,7 @@ export function ResourceInfoBadges() {
     addNewAzure(environment);
   };
 
-  const environments = ["prod", "dev"];
-
+ 
   return (
     <>
       <hr className={styles.divider} />
@@ -223,24 +244,23 @@ export function ResourceInfoBadges() {
         </>
       )}
 
+   
+
       <hr className={styles.divider} />
+
+      <p style={{textAlign: "center"}}>
+        <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
+      </p>
 
       <div className={styles.azure}>
         <div className={styles.items}>
-          <p>
-            <img
-              src={azureLogo}
-              alt="Azure icon"
-              style={{ height: "2.5rem" }}
-            />
-          </p>
           {azureResourcesList != null ? (
             azureResourcesList.map((x) => (
               <div key={x.id}>
-                <div className={styles.environment} key={x.id}>
+                <div className={styles.environment}>
                   Azure resources for the {x.environment} environment:
                 </div>
-                <div className={styles.azureresource} key={x.id}>
+                <div className={styles.azureresource}>
                   <Badge>
                     <strong>{x.id} </strong>
                   </Badge>
@@ -254,30 +274,36 @@ export function ResourceInfoBadges() {
         </div>
 
         <div className={styles.items}>
-          <p>
-            <img
-              src={azureLogo}
-              alt="Azure icon"
-              style={{ height: "2.5rem" }}
-            />
-          </p>
-          <div>
-            <label>
-              Choose environment..
-              <select value={environment} onChange={handleChange}>
-                {environments.map((env) => (
-                  <option value={env} key={env}>
-                    {env}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className={styles.envsection}>
+          <div className={styles.envitems}>
+            <label>To create a new Azure resource choose an environment:</label>
+
+            {envAvailability != null ? (
+              <select
+              style={{ marginLeft: "3px" }}
+              className={styles.envbutton}
+              value={environment}
+              onChange={handleChange}
+            >
+              {envAvailability.map((env) => (
+                <option value={env.env} key={env.env} disabled={env.exist}>
+                  {env.env}
+                </option>
+              ))}
+            </select>
+            ) : (<div></div>)
+            }
+            
           </div>
 
-          <Button onClick={() => handleNewAzureResource()}>
+          <Button
+            style={{ marginTop: "1rem" }}
+            onClick={() => handleNewAzureResource()}
+          >
             {" "}
             Request Azure Resource Group{" "}
           </Button>
+        </div>
         </div>
       </div>
     </>

@@ -377,7 +377,7 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   const link = capabilityDefinition?._links?.azureResources;
   const shouldGet = (link?.allow || []).includes("GET");
-  const { inProgress, sendRequest: requestAzureResources } =
+  const { responseData: createdAzure, inProgress, sendRequest: requestAzureResources } =
   useSelfServiceRequest();
 
   const requestAzure = (environment) => {
@@ -397,7 +397,7 @@ export function useCapabilityAzureResources(capabilityDefinition) {
         urlSegments: [link.href],
       });
     }
-  }, [link]);
+  }, [link, createdAzure]);
 
   useEffect(() => {
     if (responseData !== null) {
