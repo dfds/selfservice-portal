@@ -401,13 +401,15 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   useEffect(() => {
     if (responseData !== null) {
-      setAzureResources(responseData.items);
+      setAzureResources(responseData);
     }
   }, [responseData]);
 
   useEffect(() => {
-    if (azureResources !== null) {
-      setIsLoadedAzure(true);
+    if (azureResources !== null ) {
+      if (azureResources.items.length != 0){
+        setIsLoadedAzure(true); 
+      }         
     }
   }, [azureResources]);
 

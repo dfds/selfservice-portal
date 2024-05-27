@@ -441,7 +441,7 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {
     if (isLoadedAzure) {
-      setAzureResourcesList(azureResources);
+      setAzureResourcesList(azureResources.items);
     }
   }, [isLoadedAzure, azureResources]);
 
@@ -529,6 +529,7 @@ function SelectedCapabilityProvider({ children }) {
     inProgressMetadata,
     azureResourcesList,
     addNewAzure,
+    isLoadedAzure,
   };
 
   return (
