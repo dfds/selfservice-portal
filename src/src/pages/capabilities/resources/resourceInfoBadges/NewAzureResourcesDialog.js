@@ -11,7 +11,6 @@ import AppContext from "../../AppContext";
 export default function NewAzureResourcesDialog({}) {
   const { isAllWithValues, getValidationError } = useContext(AppContext);
 
-
   const emptyValues = {
     environment: "",
   };
@@ -23,8 +22,6 @@ export default function NewAzureResourcesDialog({}) {
       onCloseClicked();
     }
   };
-
-  
 
   const changeE = (e) => {
     e.preventDefault();
@@ -100,7 +97,9 @@ export default function NewAzureResourcesDialog({}) {
               required
               value={formData.name}
               onChange={changeName}
-              errorMessage={environmentErrorMessage ? environmentErrorMessage : nameError}
+              errorMessage={
+                environmentErrorMessage ? environmentErrorMessage : nameError
+              }
               maxLength={255}
             />
           </div>

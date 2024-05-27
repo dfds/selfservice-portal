@@ -61,14 +61,14 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  const { azureResources, isLoadedAzure, requestAzure } = useCapabilityAzureResources(details);
+  const { azureResources, isLoadedAzure, requestAzure } =
+    useCapabilityAzureResources(details);
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
-
 
   const {
     responseData: configurationLevelInformation,
@@ -409,11 +409,9 @@ function SelectedCapabilityProvider({ children }) {
     setPendingDeletion(value);
   };
 
-  const addNewAzure = (
-    environment
-  )  => {
+  const addNewAzure = (environment) => {
     requestAzure(environment);
-  }
+  };
 
   //--------------------------------------------------------------------
 
@@ -480,8 +478,6 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   }, [awsAccountRequested]);
-
-  
 
   //--------------------------------------------------------------------
 

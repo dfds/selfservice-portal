@@ -377,8 +377,11 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   const link = capabilityDefinition?._links?.azureResources;
   const shouldGet = (link?.allow || []).includes("GET");
-  const { responseData: createdAzure, inProgress, sendRequest: requestAzureResources } =
-  useSelfServiceRequest();
+  const {
+    responseData: createdAzure,
+    inProgress,
+    sendRequest: requestAzureResources,
+  } = useSelfServiceRequest();
 
   const requestAzure = (environment) => {
     requestAzureResources({
@@ -389,7 +392,6 @@ export function useCapabilityAzureResources(capabilityDefinition) {
       },
     });
   };
-
 
   useEffect(() => {
     if (link && shouldGet) {
@@ -406,10 +408,10 @@ export function useCapabilityAzureResources(capabilityDefinition) {
   }, [responseData]);
 
   useEffect(() => {
-    if (azureResources !== null ) {
-      if (azureResources.items.length != 0){
-        setIsLoadedAzure(true); 
-      }         
+    if (azureResources !== null) {
+      if (azureResources.items.length != 0) {
+        setIsLoadedAzure(true);
+      }
     }
   }, [azureResources]);
 

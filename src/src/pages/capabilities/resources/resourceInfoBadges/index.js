@@ -241,7 +241,7 @@ export function ResourceInfoBadges() {
 
       <div className={styles.azure}>
         <div className={styles.items}>
-          {(azureResourcesList != [] && isLoadedAzure) ? (
+          {azureResourcesList != [] && isLoadedAzure ? (
             azureResourcesList.map((x) => (
               <div key={x.id}>
                 <div className={styles.environment}>
@@ -273,7 +273,7 @@ export function ResourceInfoBadges() {
                 To create a new Azure resource choose an environment:
               </label>
 
-              {envAvailability != null  ? (
+              {envAvailability != null ? (
                 <select
                   style={{ marginLeft: "3px" }}
                   className={styles.envbutton}
