@@ -3,8 +3,6 @@ import {
   ButtonStack,
   Button,
   Spinner,
-  Dropdown,
-  MenuItem,
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
@@ -17,7 +15,6 @@ import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
-import { set } from "date-fns";
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
@@ -143,7 +140,6 @@ export function ResourceInfoBadges() {
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
   const environments = ["prod", "dev", "staging", "uat", "training", "test"];
   const [envAvailability, setEnvAvailability] = useState(null);
-  const [test, setTest] = useState(false);
 
   const handleChange = (event) => {
     setEnvironment(event.target.value);

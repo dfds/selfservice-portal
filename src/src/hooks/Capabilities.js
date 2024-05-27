@@ -379,7 +379,6 @@ export function useCapabilityAzureResources(capabilityDefinition) {
   const shouldGet = (link?.allow || []).includes("GET");
   const {
     responseData: createdAzure,
-    inProgress,
     sendRequest: requestAzureResources,
   } = useSelfServiceRequest();
 
@@ -409,7 +408,7 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   useEffect(() => {
     if (azureResources !== null) {
-      if (azureResources.items.length != 0) {
+      if (azureResources.items.length !== 0) {
         setIsLoadedAzure(true);
       }
     }
