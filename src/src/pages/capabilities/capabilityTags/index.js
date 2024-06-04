@@ -68,7 +68,7 @@ export function CapabilityTagViewer() {
               onClick={() => submitTags(formData)}
               disabled={!isValid || !isDirty || !canEditJsonMetadata}
             >
-             Submit
+              Submit
             </Button>
           </ButtonStack>
         </PageSection>
