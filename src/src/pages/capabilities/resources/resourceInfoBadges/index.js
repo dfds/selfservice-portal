@@ -1,7 +1,7 @@
 import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
-import { Modal, ModalAction, setGlobalAppElement } from "@dfds-ui/modal";
+import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useContext, useState, useEffect } from "react";
 import { theme } from "@dfds-ui/theme";
 import awsLogo from "./aws-logo.svg";
@@ -146,7 +146,7 @@ export function ResourceInfoBadges() {
         const copy = [...azureResourcesList];
         var payload = [];
         environments.forEach((env) => {
-          const found = copy.find((x) => x.environment == env);
+          const found = copy.find((x) => x.environment === env);
           if (found) {
             payload.push({ env: found.environment, exist: true });
           } else {
@@ -232,7 +232,7 @@ export function ResourceInfoBadges() {
 
       <div className={styles.azure}>
         <div className={styles.items}>
-          {azureResourcesList != [] && isLoadedAzure ? (
+          {azureResourcesList !== [] && isLoadedAzure ? (
             azureResourcesList.map((x) => (
               <div key={x.id}>
                 <div className={styles.environment}>
