@@ -377,10 +377,8 @@ export function useCapabilityAzureResources(capabilityDefinition) {
 
   const link = capabilityDefinition?._links?.azureResources;
   const shouldGet = (link?.allow || []).includes("GET");
-  const {
-    responseData: createdAzure,
-    sendRequest: requestAzureResources,
-  } = useSelfServiceRequest();
+  const { responseData: createdAzure, sendRequest: requestAzureResources } =
+    useSelfServiceRequest();
 
   const requestAzure = (environment) => {
     requestAzureResources({

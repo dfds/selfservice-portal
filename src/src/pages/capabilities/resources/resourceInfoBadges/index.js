@@ -1,9 +1,4 @@
-import {
-  Badge,
-  ButtonStack,
-  Button,
-  Spinner,
-} from "@dfds-ui/react-components";
+import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Modal, ModalAction, setGlobalAppElement } from "@dfds-ui/modal";
