@@ -288,8 +288,7 @@ export function ResourceInfoBadges() {
               style={{ marginTop: "1rem" }}
               onClick={() => handleNewAzureResource()}
             >
-              {" "}
-              Request Azure Resource Group{" "}
+              Request Azure Resource Group
             </Button>
           </div>
         </div>
