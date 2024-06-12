@@ -97,8 +97,6 @@ jobs:
           docker-compose build tool-api-db-reset k8s-janitor accepter-service
           docker-compose up -d --no-build --scale selfservice-portal=0
           docker images
-      - name: Await services to be ready
-        run: sleep 30
       - name: Run tests
         run: cd src && make test
         env:
