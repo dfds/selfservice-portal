@@ -3,6 +3,9 @@ const { test, expect } = require("@playwright/test");
 
 test("invite-member", async ({ page }) => {
   await page.goto("http://localhost:3001/capabilities/cloudengineering-xxx");
+
+  await page.waitForTimeout(4000); // wait for load
+
   await page.getByPlaceholder("Enter user name").click();
   await page.getByPlaceholder("Enter user name").fill("Richard f");
   await page.getByText("Richard Fisher rifis@dfds.com").click();
