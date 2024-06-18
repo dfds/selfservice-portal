@@ -13,6 +13,8 @@ import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
+import { Switch } from "@dfds-ui/forms";
+import PreAppContext from "../../preAppContext";
 
 function checkIfCloudEngineer(title) {
   const regex = /^\s*cloud[-_.\s]engineer\s*$/g;
@@ -22,6 +24,8 @@ function checkIfCloudEngineer(title) {
 
 export default function GlobalMenu() {
   const { user } = useContext(AppContext);
+  const { falseUserPermissions, setFalseUserPermissions } =
+    useContext(PreAppContext);
 
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
   useEffect(() => {
@@ -64,6 +68,11 @@ export default function GlobalMenu() {
     });
   }
 
+  const toggleCloudEngineer = () => {
+    console.log("hi");
+    setFalseUserPermissions((prev) => !prev);
+  };
+
   return (
     <>
       <AppBarProvider>
@@ -100,6 +109,12 @@ export default function GlobalMenu() {
                             placement="bottom-end"
                           />
                         </AppBarListItem>
+                        <Switch
+                            checked={falseUserPermissions}
+                            onChange={toggleCloudEngineer}
+                          >
+                            Cloud Engineer
+                          </Switch>
                       </>
                     );
                   }}
