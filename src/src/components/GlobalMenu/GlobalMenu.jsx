@@ -109,7 +109,7 @@ export default function GlobalMenu() {
                             placement="bottom-end"
                           />
                         </AppBarListItem>
-                        <Switch
+                        <Switch style={{marginLeft: "1rem"}}
                             checked={falseUserPermissions}
                             onChange={toggleCloudEngineer}
                           >
