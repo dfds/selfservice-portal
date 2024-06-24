@@ -24,10 +24,10 @@ root.render(
         <GlobalStyles />
         <ErrorProvider>
           <TrackingProvider>
-          <PreAppProvider>
-            <AppProvider>
-              <App />
-            </AppProvider>
+            <PreAppProvider>
+              <AppProvider>
+                <App />
+              </AppProvider>
             </PreAppProvider>
           </TrackingProvider>
         </ErrorProvider>

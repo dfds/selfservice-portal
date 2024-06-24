@@ -7,7 +7,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
-import  PreAppContext from "preAppContext";
+import PreAppContext from "preAppContext";
 
 const AppContext = React.createContext(null);
 
@@ -55,7 +55,7 @@ function AppProvider({ children }) {
 
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
-  const {falseUserPermissions} = useContext(PreAppContext);
+  const { falseUserPermissions } = useContext(PreAppContext);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -189,7 +189,7 @@ function AppProvider({ children }) {
     repositories,
     isLoading,
     isAllWithValues,
-    getValidationError
+    getValidationError,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

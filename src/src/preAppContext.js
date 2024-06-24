@@ -1,13 +1,14 @@
 import React, { createContext, useState } from "react";
 
-
 const PreAppContext = createContext();
 
 function PreAppProvider({ children }) {
-    const [falseUserPermissions, setFalseUserPermissions] = useState(true);
+  const [falseUserPermissions, setFalseUserPermissions] = useState(true);
 
   return (
-    <PreAppContext.Provider value={{ falseUserPermissions, setFalseUserPermissions }}>
+    <PreAppContext.Provider
+      value={{ falseUserPermissions, setFalseUserPermissions }}
+    >
       {children}
     </PreAppContext.Provider>
   );

@@ -3,7 +3,7 @@ import { useContext, useState } from "react";
 import { composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
 import { useTracking } from "./Tracking";
-import  PreAppContext from "../preAppContext";
+import PreAppContext from "../preAppContext";
 
 function isValidURL(urlString) {
   const urlRegex = /^(?:https?:\/\/)/;
@@ -17,8 +17,8 @@ export function useSelfServiceRequest(errorParams) {
     ...errorParams,
   });
 
-  const {falseUserPermissions} = useContext(PreAppContext);
-  
+  const { falseUserPermissions } = useContext(PreAppContext);
+
   const { track } = useTracking();
 
   const httpResponseToErrorMessage = (httpResponse) => {
@@ -38,7 +38,13 @@ export function useSelfServiceRequest(errorParams) {
     track("selfservice", `${method}::${url}`, "1");
 
     try {
-      const httpResponse = await callApi(url, accessToken, method, payload, falseUserPermissions);
+      const httpResponse = await callApi(
+        url,
+        accessToken,
+        method,
+        payload,
+        falseUserPermissions,
+      );
       if (httpResponse.ok) {
         const contentType = httpResponse.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {

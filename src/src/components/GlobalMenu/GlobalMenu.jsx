@@ -69,7 +69,6 @@ export default function GlobalMenu() {
   }
 
   const toggleCloudEngineer = () => {
-    console.log("hi");
     setFalseUserPermissions((prev) => !prev);
   };
 
@@ -109,12 +108,13 @@ export default function GlobalMenu() {
                             placement="bottom-end"
                           />
                         </AppBarListItem>
-                        <Switch style={{marginLeft: "1rem"}}
-                            checked={falseUserPermissions}
-                            onChange={toggleCloudEngineer}
-                          >
-                            Cloud Engineer
-                          </Switch>
+                        <Switch
+                          style={{ marginLeft: "1rem" }}
+                          checked={falseUserPermissions}
+                          onChange={toggleCloudEngineer}
+                        >
+                          Cloud Engineer
+                        </Switch>
                       </>
                     );
                   }}
