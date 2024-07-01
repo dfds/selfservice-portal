@@ -18,7 +18,7 @@ import PreAppContext from "../../preAppContext";
 
 function checkIfCloudEngineer(roles) {
   const regex = /^\s*cloud\.engineer\s*$/i;
-  const match = roles?.some(element => regex.test(element.toLowerCase()));
+  const match = roles?.some((element) => regex.test(element.toLowerCase()));
   return match;
 }
 
@@ -37,7 +37,7 @@ export default function GlobalMenu() {
 
   useEffect(() => {
     console.log(isCloudEngineer);
-  }, [isCloudEngineer])
+  }, [isCloudEngineer]);
 
   const navLinks = [
     {
@@ -114,14 +114,16 @@ export default function GlobalMenu() {
                           />
                         </AppBarListItem>
                         {isCloudEngineer ? (
-                        <Switch
-                          style={{ marginLeft: "1rem" }}
-                          checked={isEnabledCloudEngineer}
-                          onChange={toggleCloudEngineer}
-                        >
-                          Cloud Engineer
-                        </Switch>
-                        ): <></>}
+                          <Switch
+                            style={{ marginLeft: "1rem" }}
+                            checked={isEnabledCloudEngineer}
+                            onChange={toggleCloudEngineer}
+                          >
+                            Cloud Engineer
+                          </Switch>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     );
                   }}

@@ -106,14 +106,12 @@ export function useCurrentUser() {
           ...prev,
           ...profile,
           ...{ profilePictureUrl: profilePictureUrl, isAuthenticated: true },
-          ...{ roles: currentAccount.idTokenClaims.roles},
-
+          ...{ roles: currentAccount.idTokenClaims.roles },
         }));
       }
 
       getUserInfo();
     }
-
   }, [accounts, isAuthenticated]);
 
   return user;

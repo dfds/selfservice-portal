@@ -64,7 +64,8 @@ function AppProvider({ children }) {
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
-    () => new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
+    () =>
+      new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
     [handleError],
   );
   const metricsWrapper = useMemo(
