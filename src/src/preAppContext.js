@@ -3,11 +3,11 @@ import React, { createContext, useState } from "react";
 const PreAppContext = createContext();
 
 function PreAppProvider({ children }) {
-  const [falseUserPermissions, setFalseUserPermissions] = useState(true);
+  const [isEnabledCloudEngineer, setIsEnabledCloudEngineer] = useState(true);
 
   return (
     <PreAppContext.Provider
-      value={{ falseUserPermissions, setFalseUserPermissions }}
+      value={{ isEnabledCloudEngineer, setIsEnabledCloudEngineer }}
     >
       {children}
     </PreAppContext.Provider>

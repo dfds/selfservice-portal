@@ -1,8 +1,8 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
-  constructor(handleError, falseUserPermissions) {
-    this.falseUserPermissions = falseUserPermissions;
+  constructor(handleError, isEnabledCloudEngineer) {
+    this.isEnabledCloudEngineer = isEnabledCloudEngineer;
   }
 
   logResponseErrorNotOk = (requestType, url, response) => {
@@ -86,7 +86,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
     const { items } = await response.json();
 
@@ -119,7 +119,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       payload,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -141,7 +141,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -180,7 +180,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -222,7 +222,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       payload,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -261,7 +261,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -278,7 +278,7 @@ export class SelfServiceApiClient {
       accessToken,
       method,
       payload,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -336,7 +336,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -370,7 +370,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -407,7 +407,7 @@ export class SelfServiceApiClient {
       {
         capabilityId: capabilityId,
       },
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -437,7 +437,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -457,7 +457,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
     const { items } = await response.json();
 
@@ -487,7 +487,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -516,7 +516,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -547,7 +547,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       null,
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -577,7 +577,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {
@@ -611,7 +611,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.falseUserPermissions,
+      this.isEnabledCloudEngineer,
     );
 
     if (!response.ok) {

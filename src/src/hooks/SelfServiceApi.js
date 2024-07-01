@@ -17,7 +17,7 @@ export function useSelfServiceRequest(errorParams) {
     ...errorParams,
   });
 
-  const { falseUserPermissions } = useContext(PreAppContext);
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   const { track } = useTracking();
 
@@ -43,7 +43,7 @@ export function useSelfServiceRequest(errorParams) {
         accessToken,
         method,
         payload,
-        falseUserPermissions,
+        isEnabledCloudEngineer,
       );
       if (httpResponse.ok) {
         const contentType = httpResponse.headers.get("Content-Type");

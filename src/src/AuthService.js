@@ -32,14 +32,14 @@ export function callApi(
   accessToken,
   method = "GET",
   payload = null,
-  falseUserPermissions = false,
+  isEnabledCloudEngineer = false,
 ) {
   const headers = new Headers();
 
   const bearer = `Bearer ${accessToken}`;
   headers.append("Authorization", bearer);
 
-  if (!falseUserPermissions) {
+  if (!isEnabledCloudEngineer) {
     headers.append("x-selfservice-permissions", "1");
   }
 
@@ -106,11 +106,14 @@ export function useCurrentUser() {
           ...prev,
           ...profile,
           ...{ profilePictureUrl: profilePictureUrl, isAuthenticated: true },
+          ...{ roles: currentAccount.idTokenClaims.roles},
+
         }));
       }
 
       getUserInfo();
     }
+
   }, [accounts, isAuthenticated]);
 
   return user;
