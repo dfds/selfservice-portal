@@ -1,8 +1,9 @@
 import { callApi, getSelfServiceAccessToken } from "AuthService";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { composeSegmentsUrl } from "Utils";
 import { useError } from "./Error";
 import { useTracking } from "./Tracking";
+import PreAppContext from "../preAppContext";
 
 function isValidURL(urlString) {
   const urlRegex = /^(?:https?:\/\/)/;
@@ -15,6 +16,9 @@ export function useSelfServiceRequest(errorParams) {
   const { triggerErrorWithTitleAndDetails, setErrorOptions } = useError({
     ...errorParams,
   });
+
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+
   const { track } = useTracking();
 
   const httpResponseToErrorMessage = (httpResponse) => {
@@ -34,7 +38,13 @@ export function useSelfServiceRequest(errorParams) {
     track("selfservice", `${method}::${url}`, "1");
 
     try {
-      const httpResponse = await callApi(url, accessToken, method, payload);
+      const httpResponse = await callApi(
+        url,
+        accessToken,
+        method,
+        payload,
+        isEnabledCloudEngineer,
+      );
       if (httpResponse.ok) {
         const contentType = httpResponse.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {

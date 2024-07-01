@@ -7,6 +7,7 @@ import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
+import PreAppContext from "preAppContext";
 
 const AppContext = React.createContext(null);
 
@@ -54,6 +55,7 @@ function AppProvider({ children }) {
 
   const [topics, setTopics] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -62,7 +64,8 @@ function AppProvider({ children }) {
   const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
-    () => new ApiClient.SelfServiceApiClient(handleError),
+    () =>
+      new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
     [handleError],
   );
   const metricsWrapper = useMemo(

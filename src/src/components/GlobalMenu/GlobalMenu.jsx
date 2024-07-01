@@ -13,22 +13,31 @@ import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
+import { Switch } from "@dfds-ui/forms";
+import PreAppContext from "../../preAppContext";
 
-function checkIfCloudEngineer(title) {
-  const regex = /^\s*cloud[-_.\s]engineer\s*$/g;
-  const match = title?.toLowerCase().match(regex);
-  return match && match.length > 0;
+function checkIfCloudEngineer(roles) {
+  const regex = /^\s*cloud\.engineer\s*$/i;
+  const match = roles?.some((element) => regex.test(element.toLowerCase()));
+  return match;
 }
 
 export default function GlobalMenu() {
   const { user } = useContext(AppContext);
+  const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
+    useContext(PreAppContext);
 
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
   useEffect(() => {
     if (user && user.isAuthenticated) {
-      setIsCloudEngineer(checkIfCloudEngineer(user.title));
+      console.log(user.roles);
+      setIsCloudEngineer(checkIfCloudEngineer(user.roles));
     }
   }, [user]);
+
+  useEffect(() => {
+    console.log(isCloudEngineer);
+  }, [isCloudEngineer]);
 
   const navLinks = [
     {
@@ -63,6 +72,10 @@ export default function GlobalMenu() {
       url: "/capabilities/criticality",
     });
   }
+
+  const toggleCloudEngineer = () => {
+    setIsEnabledCloudEngineer((prev) => !prev);
+  };
 
   return (
     <>
@@ -100,6 +113,17 @@ export default function GlobalMenu() {
                             placement="bottom-end"
                           />
                         </AppBarListItem>
+                        {isCloudEngineer ? (
+                          <Switch
+                            style={{ marginLeft: "1rem" }}
+                            checked={isEnabledCloudEngineer}
+                            onChange={toggleCloudEngineer}
+                          >
+                            Cloud Engineer
+                          </Switch>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     );
                   }}
