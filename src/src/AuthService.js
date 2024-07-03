@@ -27,11 +27,21 @@ const msalInstance = new PublicClientApplication({
 
 export { msalInstance as MsalInstance };
 
-export function callApi(url, accessToken, method = "GET", payload = null) {
+export function callApi(
+  url,
+  accessToken,
+  method = "GET",
+  payload = null,
+  isEnabledCloudEngineer = false,
+) {
   const headers = new Headers();
 
   const bearer = `Bearer ${accessToken}`;
   headers.append("Authorization", bearer);
+
+  if (!isEnabledCloudEngineer) {
+    headers.append("x-selfservice-permissions", "1");
+  }
 
   const options = {
     method: method,
@@ -96,6 +106,7 @@ export function useCurrentUser() {
           ...prev,
           ...profile,
           ...{ profilePictureUrl: profilePictureUrl, isAuthenticated: true },
+          ...{ roles: currentAccount.idTokenClaims.roles },
         }));
       }
 

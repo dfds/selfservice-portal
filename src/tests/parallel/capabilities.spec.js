@@ -13,6 +13,9 @@ test("create-capability", async ({ page }) => {
 
   await page.goto("http://localhost:3001/capabilities");
   await page.getByRole("button", { name: "Add" }).click();
+
+  await page.waitForTimeout(4000); // wait for jsonschema to load
+
   await page.getByPlaceholder("Enter name of capability").click();
   await page.getByPlaceholder("Enter name of capability").fill(capabilityName);
   await page.getByPlaceholder("Enter a description").click();
@@ -34,6 +37,9 @@ test("create-capability-with-invitees", async ({ page }) => {
 
   await page.goto("http://localhost:3001/capabilities");
   await page.getByRole("button", { name: "Add" }).click();
+
+  await page.waitForTimeout(4000); // wait for jsonschema to load
+
   await page.getByPlaceholder("Enter name of capability").click();
   await page.getByPlaceholder("Enter name of capability").fill(capabilityName);
   await page.getByPlaceholder("Enter a description").click();

@@ -12,11 +12,13 @@ export default async function globalSetup(config) {
   console.log("Setting up global auth. This may take a few seconds.");
 
   await page.goto("http://localhost:3001/");
+
   await page.getByPlaceholder("someone@dfds.com").click();
   await page
     .getByPlaceholder("someone@dfds.com")
     .fill(process.env.E2E_TEST_USER_EMAIL);
   await page.getByRole("button", { name: "Next" }).click();
+
   await page.getByPlaceholder("Password").click();
   await page
     .getByPlaceholder("Password")
@@ -39,6 +41,7 @@ export default async function globalSetup(config) {
 
   await page.waitForTimeout(6000);
   await page.reload();
+  await page.waitForTimeout(6000);
 
   await expect(page.locator("#root")).toContainText(
     "Hello Emil Carlsen, and welcome to the Developer Portal.",

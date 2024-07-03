@@ -10,8 +10,8 @@ test("join-capability-request", async ({ page, resetDb }) => {
     .getByRole("button", { name: "Submit" })
     .click();
 
-  await page.waitForTimeout(1000);
   await page.goto("http://localhost:3001/capabilities/cool-beans-xxx");
+
   let elem = await page.getByRole("heading", {
     name: "Membership Application",
   });
@@ -24,9 +24,7 @@ test("join-capability-ce-force", async ({ page, resetDb }) => {
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();
 
-  await page.waitForTimeout(1000);
   await page.goto("http://localhost:3001/capabilities/notmycapability-xx1");
-  await page.waitForTimeout(1000);
   await expect(page.getByRole("button", { name: "Join" })).toHaveCount(0, {
     timeout: 1000,
   });
@@ -39,13 +37,6 @@ test("leave-capability", async ({ page, resetDb }) => {
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();
 
-  await page.waitForTimeout(1000);
-  await page.goto(
-    "http://localhost:3001/capabilities/marketing-department-xxx",
-  );
-  await page.getByRole("button", { name: "Leave" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Leave" }).click();
-  await page.waitForTimeout(1000);
   await page.goto(
     "http://localhost:3001/capabilities/marketing-department-xxx",
   );
@@ -53,6 +44,12 @@ test("leave-capability", async ({ page, resetDb }) => {
   await expect(page.getByRole("button", { name: "Join" })).toHaveCount(0, {
     timeout: 1000,
   });
+
+  await page.goto(
+    "http://localhost:3001/capabilities/marketing-department-xxx",
+  );
+  await page.getByRole("button", { name: "Leave" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Leave" }).click();
 });
 
 test("approve-membership", async ({ page, resetDb }) => {
@@ -73,8 +70,6 @@ test("approve-membership", async ({ page, resetDb }) => {
   ).toHaveCount(0, {
     timeout: 1000,
   });
-
-  await page.waitForTimeout(500);
 });
 
 test("delete-capability", async ({ page, resetDb }) => {
@@ -85,11 +80,10 @@ test("delete-capability", async ({ page, resetDb }) => {
   await page.getByRole("button", { name: "Delete", exact: true }).click();
 
   await page.getByText("Warning: Pending Deletion").isVisible();
-
-  await page.waitForTimeout(500);
 });
 
 test("cancel-capability-deletion", async ({ page, resetDb }) => {
+  await page.screenshot({ path: "beforejoin1.png" });
   await page.goto("http://localhost:3001/capabilities/notmycapability-xx3");
   await page.getByRole("button", { name: "Join" }).click();
   await page.getByRole("button", { name: "FORCE JOIN (CE)" }).click();
@@ -100,8 +94,6 @@ test("cancel-capability-deletion", async ({ page, resetDb }) => {
 
   await page.getByRole("button", { name: "Cancel Deletion" }).click();
   await page.getByRole("button", { name: "Delete Capability" }).isVisible();
-
-  await page.waitForTimeout(500);
 });
 
 // getByTitle('You have already submitted')

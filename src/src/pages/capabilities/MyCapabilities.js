@@ -5,14 +5,14 @@ import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import CapabilityCostSummary from "components/BasicCapabilityCost";
+//import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
-import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+//import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import { useCapabilities } from "hooks/Capabilities";
 
 export default function MyCapabilities() {
-  const { myCapabilities, metricsWrapper, appStatus, truncateString } =
+  const { myCapabilities, /*metricsWrapper,*/ appStatus, truncateString } =
     useContext(AppContext);
   const { capabilities, isLoaded } = useCapabilities();
 
@@ -103,6 +103,7 @@ export default function MyCapabilities() {
           return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
         },
       },
+      /*
       {
         accessorFn: (row) => row.id,
         header: "Aws Resources",
@@ -150,6 +151,7 @@ export default function MyCapabilities() {
           );
         },
       },
+      */
       {
         accessorFn: (row) => row.awsAccountId,
         header: "AwsAccountId",

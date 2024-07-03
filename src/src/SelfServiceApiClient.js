@@ -1,6 +1,10 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
+  constructor(handleError, isEnabledCloudEngineer) {
+    this.isEnabledCloudEngineer = isEnabledCloudEngineer;
+  }
+
   logResponseErrorNotOk = (requestType, url, response) => {
     console.log(
       `Warning: failed ${requestType} using url ${url}, response was: ${response.status} ${response.statusText}`,
@@ -77,7 +81,13 @@ export class SelfServiceApiClient {
     const accessToken = await getSelfServiceAccessToken();
 
     const url = topicsLink.href;
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
     const { items } = await response.json();
 
     return items;
@@ -104,7 +114,13 @@ export class SelfServiceApiClient {
       retention: topicDefinition.retention,
     };
 
-    const response = await callApi(url, accessToken, "POST", payload);
+    const response = await callApi(
+      url,
+      accessToken,
+      "POST",
+      payload,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       this.logResponseErrorNotOk("adding topic to capability", url, response);
@@ -120,7 +136,13 @@ export class SelfServiceApiClient {
     const accessToken = await getSelfServiceAccessToken();
 
     const url = messageContractsLink.href;
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       return [];
@@ -153,7 +175,13 @@ export class SelfServiceApiClient {
     const accessToken = await getSelfServiceAccessToken();
 
     const url = link.href;
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       return [];
@@ -189,7 +217,13 @@ export class SelfServiceApiClient {
       schema: messageContractDescriptor.schema,
     };
 
-    const response = await callApi(url, accessToken, "POST", payload);
+    const response = await callApi(
+      url,
+      accessToken,
+      "POST",
+      payload,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       this.logResponseErrorNotOk(
@@ -222,7 +256,13 @@ export class SelfServiceApiClient {
 
   async fetchWithToken(url) {
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
@@ -233,7 +273,13 @@ export class SelfServiceApiClient {
 
   async requestWithToken(url, method = "GET", payload = null) {
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(url, accessToken, method, payload);
+    const response = await callApi(
+      url,
+      accessToken,
+      method,
+      payload,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log(`for url ${url} response was: ${response.status}`);
@@ -285,7 +331,13 @@ export class SelfServiceApiClient {
     // check for allow get access!
 
     const url = membershipApplicationsLink.href;
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       return [];
@@ -313,7 +365,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(approvalsLink.href, accessToken, "POST", {});
+    const response = await callApi(
+      approvalsLink.href,
+      accessToken,
+      "POST",
+      {},
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -342,9 +400,15 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST", {
-      capabilityId: capabilityId,
-    });
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      {
+        capabilityId: capabilityId,
+      },
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -368,7 +432,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST", {});
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      {},
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -382,7 +452,13 @@ export class SelfServiceApiClient {
     const accessToken = await getSelfServiceAccessToken();
 
     const url = composeUrl("kafkaclusters");
-    const response = await callApi(url, accessToken);
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
     const { items } = await response.json();
 
     return items || [];
@@ -406,7 +482,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST");
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -429,7 +511,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "GET");
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -454,7 +542,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST");
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      null,
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -478,7 +572,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST", {});
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      {},
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());
@@ -506,7 +606,13 @@ export class SelfServiceApiClient {
     }
 
     const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(link.href, accessToken, "POST", {});
+    const response = await callApi(
+      link.href,
+      accessToken,
+      "POST",
+      {},
+      this.isEnabledCloudEngineer,
+    );
 
     if (!response.ok) {
       console.log("response was: ", await response.text());

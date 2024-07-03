@@ -14,6 +14,7 @@ import {
   useCapabilityMembersApplications,
   useCapabilityMetadata,
   useKafkaClustersAccessList,
+  useCapabilityAzureResources,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -60,6 +61,9 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
+  const { azureResources, isLoadedAzure, requestAzure } =
+    useCapabilityAzureResources(details);
+  const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
@@ -405,6 +409,10 @@ function SelectedCapabilityProvider({ children }) {
     setPendingDeletion(value);
   };
 
+  const addNewAzure = (environment) => {
+    requestAzure(environment);
+  };
+
   //--------------------------------------------------------------------
 
   useEffect(() => {
@@ -428,6 +436,12 @@ function SelectedCapabilityProvider({ children }) {
       setMembers(membersList);
     }
   }, [isLoadedMembers, membersList]);
+
+  useEffect(() => {
+    if (isLoadedAzure) {
+      setAzureResourcesList(azureResources.items);
+    }
+  }, [isLoadedAzure, azureResources]);
 
   useEffect(() => {
     if (details) {
@@ -472,6 +486,8 @@ function SelectedCapabilityProvider({ children }) {
     isFound: details != null,
     id: capabilityId,
     name: details?.name,
+    createdAt: details?.createdAt,
+    createdBy: details?.createdBy,
     description: details?.description,
     links: details?._links,
     members,
@@ -507,6 +523,9 @@ function SelectedCapabilityProvider({ children }) {
     validateContract,
     configurationLevelInformation,
     inProgressMetadata,
+    azureResourcesList,
+    addNewAzure,
+    isLoadedAzure,
   };
 
   return (

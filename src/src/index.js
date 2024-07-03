@@ -9,6 +9,7 @@ import { MsalProvider } from "@azure/msal-react";
 import { MsalInstance } from "./AuthService";
 import { ErrorProvider } from "ErrorContext";
 import { TrackingProvider } from "TrackingContext";
+import { PreAppProvider } from "preAppContext";
 
 window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 window.env = process.env.NODE_ENV;
@@ -23,9 +24,11 @@ root.render(
         <GlobalStyles />
         <ErrorProvider>
           <TrackingProvider>
-            <AppProvider>
-              <App />
-            </AppProvider>
+            <PreAppProvider>
+              <AppProvider>
+                <App />
+              </AppProvider>
+            </PreAppProvider>
           </TrackingProvider>
         </ErrorProvider>
       </BrowserRouter>
