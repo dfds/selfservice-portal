@@ -4,7 +4,9 @@ const TrackingContext = React.createContext(null);
 
 function TrackingProvider({ children }) {
   let isEnabled = false;
-  if (window.env === "production") {
+  // eslint-disable-next-line no-restricted-globals
+  let hostname = location.hostname;
+  if (hostname.includes("build.dfds.cloud")) {
     isEnabled = true;
   }
 
