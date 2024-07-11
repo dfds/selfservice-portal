@@ -226,13 +226,13 @@ export function ResourceInfoBadges() {
 
       {/* azure section, enable when ready */}
 
-      {/* <hr className={styles.divider} />
+      <hr className={styles.divider} />
 
       <p style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
-      </p> */}
+      </p>
 
-      {/* <div className={styles.azure}>
+      <div className={styles.azure}>
         <div className={styles.items}>
           {azureResourcesList !== [] && isLoadedAzure ? (
             azureResourcesList.map((x) => (
@@ -294,7 +294,7 @@ export function ResourceInfoBadges() {
             </Button>
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   );
 }

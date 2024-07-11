@@ -61,8 +61,8 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  // const { azureResources, isLoadedAzure, requestAzure } = // re-enable when azure functionality is live
-  //   useCapabilityAzureResources(details);
+  const { azureResources, isLoadedAzure, requestAzure } = // re-enable when azure functionality is live
+    useCapabilityAzureResources(details);
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
@@ -410,7 +410,7 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   const addNewAzure = (environment) => {
-    // requestAzure(environment); enable when azure functionality is going live
+    requestAzure(environment); // enable when azure functionality is going live
   };
 
   //--------------------------------------------------------------------
@@ -437,11 +437,11 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [isLoadedMembers, membersList]);
 
-  // useEffect(() => {
-  //   if (isLoadedAzure) {
-  //     setAzureResourcesList(azureResources.items);
-  //   }
-  // }, [isLoadedAzure, azureResources]); // enable when azure functionality is going live
+  useEffect(() => {
+    if (isLoadedAzure) {
+      setAzureResourcesList(azureResources.items);
+    }
+  }, [isLoadedAzure, azureResources]); // enable when azure functionality is going live
 
   useEffect(() => {
     if (details) {
@@ -525,7 +525,7 @@ function SelectedCapabilityProvider({ children }) {
     inProgressMetadata,
     azureResourcesList,
     addNewAzure,
-    // isLoadedAzure, // enable when azure functionality is going live
+    isLoadedAzure, // enable when azure functionality is going live
   };
 
   return (
