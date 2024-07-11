@@ -30,14 +30,9 @@ export default function GlobalMenu() {
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
   useEffect(() => {
     if (user && user.isAuthenticated) {
-      console.log(user.roles);
       setIsCloudEngineer(checkIfCloudEngineer(user.roles));
     }
   }, [user]);
-
-  useEffect(() => {
-    console.log(isCloudEngineer);
-  }, [isCloudEngineer]);
 
   const navLinks = [
     {
