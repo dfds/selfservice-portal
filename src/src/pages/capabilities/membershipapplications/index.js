@@ -69,13 +69,13 @@ export default function MembershipApplications() {
   const [applications, setApplications] = useState([]);
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
   const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
-  useContext(PreAppContext);
+    useContext(PreAppContext);
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
       setIsCloudEngineer(checkIfCloudEngineer(user.roles));
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     const list = (membershipApplications || [])
@@ -186,21 +186,25 @@ export default function MembershipApplications() {
                     </Button>
                   )}
                 </TableDataCell>
-                { isCloudEngineer && isEnabledCloudEngineer ? ( <TableDataCell style={{minWidth:"6rem"}}>
-                <Button
-                    variation="danger"
-                    disabled={!x.canApprove}
-                    submitting={x.isApproving}
-                    title={
-                      x.canApprove
-                        ? "Submit your approval of this membership"
-                        : "You have already submitted your approval for this membership. Waiting for other members to approve."
-                    }
-                    onClick={() => handleDeleteClicked(x.id)}
-                  >
-                    Delete
-                  </Button>
-                </TableDataCell>) : <></>}    
+                {isCloudEngineer && isEnabledCloudEngineer ? (
+                  <TableDataCell style={{ minWidth: "6rem" }}>
+                    <Button
+                      variation="danger"
+                      disabled={!x.canApprove}
+                      submitting={x.isApproving}
+                      title={
+                        x.canApprove
+                          ? "Submit your approval of this membership"
+                          : "You have already submitted your approval for this membership. Waiting for other members to approve."
+                      }
+                      onClick={() => handleDeleteClicked(x.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableDataCell>
+                ) : (
+                  <></>
+                )}
               </TableRow>
             ))}
           </TableBody>
