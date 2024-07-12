@@ -289,6 +289,20 @@ function SelectedCapabilityProvider({ children }) {
     });
   };
 
+  const deleteMembershipApplication = async (membershipApplicationId) => {
+    const found = membershipApplications.find(
+      (x) => x.id === membershipApplicationId,
+    );
+    if (!found) {
+      throw Error(
+        `Error! Membership application "${membershipApplicationId}" is unknown!`,
+      );
+    }
+
+    await selfServiceApiClient.deleteMembershipApplicationApproval(found);
+    await loadMembershipApplications();
+  };
+
   const approveMembershipApplication = async (membershipApplicationId) => {
     const found = membershipApplications.find(
       (x) => x.id === membershipApplicationId,
@@ -525,6 +539,7 @@ function SelectedCapabilityProvider({ children }) {
     inProgressMetadata,
     azureResourcesList,
     addNewAzure,
+    deleteMembershipApplication,
     // isLoadedAzure, // enable when azure functionality is going live
   };
 
