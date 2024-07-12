@@ -381,6 +381,40 @@ export class SelfServiceApiClient {
     }
   }
 
+  async deleteMembershipApplicationApproval(membershipApplicationDefinition) {
+    const approvalsLink =
+      membershipApplicationDefinition?.approvals?._links?.self;
+    if (!approvalsLink) {
+      throw Error(
+        "Error! No approval link found on memberships application " +
+          membershipApplicationDefinition.id,
+      );
+    }
+
+    if (!(approvalsLink.allow || []).includes("DELETE")) {
+      throw Error(
+        "Error! Not authorized to delete approval for membership application " +
+          membershipApplicationDefinition.id,
+      );
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+    const response = await callApi(
+      approvalsLink.href,
+      accessToken,
+      "DELETE",
+      {},
+      this.isEnabledCloudEngineer,
+    );
+
+    if (!response.ok) {
+      console.log("response was: ", await response.text());
+      throw Error(
+        `Error! Response from server: (${response.status}) ${response.statusText}`,
+      );
+    }
+  }
+
   async submitMembershipApplication(capabilityDefinition) {
     const capabilityId = capabilityDefinition?.details?.id;
 

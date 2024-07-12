@@ -18,6 +18,7 @@ import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from "./ProfilePicture";
 import AppContext from "AppContext";
 import { StatusSuccess } from "@dfds-ui/icons/system";
+import PreAppContext from "../../../preAppContext";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -59,11 +60,22 @@ function ExpirationDate({ date }) {
 }
 
 export default function MembershipApplications() {
-  const { membershipApplications, approveMembershipApplication } = useContext(
-    SelectedCapabilityContext,
-  );
-  const { myProfile } = useContext(AppContext);
+  const {
+    membershipApplications,
+    approveMembershipApplication,
+    deleteMembershipApplication,
+  } = useContext(SelectedCapabilityContext);
+  const { myProfile, checkIfCloudEngineer, user } = useContext(AppContext);
   const [applications, setApplications] = useState([]);
+  const [isCloudEngineer, setIsCloudEngineer] = useState(false);
+  const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
+    useContext(PreAppContext);
+
+  useEffect(() => {
+    if (user && user.isAuthenticated) {
+      setIsCloudEngineer(checkIfCloudEngineer(user.roles));
+    }
+  }, [user]);
 
   useEffect(() => {
     const list = (membershipApplications || [])
@@ -100,6 +112,23 @@ export default function MembershipApplications() {
         return copy;
       });
       approveMembershipApplication(membershipApplicationId);
+    },
+    [membershipApplications],
+  );
+
+  const handleDeleteClicked = useCallback(
+    (membershipApplicationId) => {
+      setApplications((prev) => {
+        const copy = [...prev];
+        const found = copy.find((x) => x.id === membershipApplicationId);
+
+        if (found) {
+          found.isApproving = true;
+        }
+
+        return copy;
+      });
+      deleteMembershipApplication(membershipApplicationId);
     },
     [membershipApplications],
   );
@@ -157,6 +186,25 @@ export default function MembershipApplications() {
                     </Button>
                   )}
                 </TableDataCell>
+                {isCloudEngineer && isEnabledCloudEngineer ? (
+                  <TableDataCell style={{ minWidth: "6rem" }}>
+                    <Button
+                      variation="danger"
+                      disabled={!x.canApprove}
+                      submitting={x.isApproving}
+                      title={
+                        x.canApprove
+                          ? "Submit your approval of this membership"
+                          : "You have already submitted your approval for this membership. Waiting for other members to approve."
+                      }
+                      onClick={() => handleDeleteClicked(x.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableDataCell>
+                ) : (
+                  <></>
+                )}
               </TableRow>
             ))}
           </TableBody>

@@ -114,6 +114,12 @@ function AppProvider({ children }) {
     }
   }
 
+  function checkIfCloudEngineer(roles) {
+    const regex = /^\s*cloud\.engineer\s*$/i;
+    const match = roles?.some((element) => regex.test(element.toLowerCase()));
+    return match;
+  }
+
   useEffect(() => {
     if (isAuthenticatedUser !== user.isAuthenticated) {
       setIsAuthenticatedUser(user.isAuthenticated);
@@ -191,6 +197,7 @@ function AppProvider({ children }) {
     isLoading,
     isAllWithValues,
     getValidationError,
+    checkIfCloudEngineer,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
