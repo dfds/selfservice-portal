@@ -15,6 +15,7 @@ import {
   useCapabilityMetadata,
   useKafkaClustersAccessList,
   useCapabilityAzureResources,
+  useCapabilityClaims,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
