@@ -1,31 +1,30 @@
- 
 .claimRow {
-    margin-bottom: 15px;
-    display: inline-block;
-    width: 100%;
-    line-height: 40px;
-    vertical-align: middle;
-    display: flex;
+  margin-bottom: 15px;
+  display: inline-block;
+  width: 100%;
+  line-height: 40px;
+  vertical-align: middle;
+  display: flex;
 }
-  
+
 .claimDescriptionWrapper {
-    height: 100%;
-    width: 80%;
-    line-height: 100%;
-    display: inline-block;
-    vertical-align: middle;
-    font-size: 1.1em;
+  height: 100%;
+  width: 80%;
+  line-height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1.1em;
 }
 
 .claimButton {
-    width: 40px;
-    display: inline-block;
-    margin-right: 10px;
+  width: 40px;
+  display: inline-block;
+  margin-right: 10px;
 }
-  
+
 .claimedIcon {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
-    color: #4cb443;
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  color: #4cb443;
 }
