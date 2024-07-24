@@ -76,7 +76,7 @@ export default function CapabilityClaims() {
             <p>
               Some external dependencies and integrations for capabilities are monitored automatically and others are not.
               In order to still indicate such integrations or even just adherance to company rules, capability owners can say that they live up to these standards.
-              Thus, a Capability Claim is nothing more, than capability members indicating (claiming) such adherance.
+              Thus, a Capability Claim is nothing more than capability members indicating (claiming) such adherance.
             </p>
 
             {(claims || []).map((claim) => (
