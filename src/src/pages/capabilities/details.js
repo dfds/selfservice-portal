@@ -11,6 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+import CapabilityClaims from "./capabilityClaims";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
@@ -123,6 +124,9 @@ function CapabilityDetailsPageContent() {
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
         )}
+
+        <CapabilityClaims />
+
         {!isDeleted && (
           <CapabilityManagement
             deletionState={isPendingDeletion}

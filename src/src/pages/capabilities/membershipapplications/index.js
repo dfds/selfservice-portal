@@ -68,8 +68,7 @@ export default function MembershipApplications() {
   const { myProfile, checkIfCloudEngineer, user } = useContext(AppContext);
   const [applications, setApplications] = useState([]);
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
-  const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
-    useContext(PreAppContext);
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
