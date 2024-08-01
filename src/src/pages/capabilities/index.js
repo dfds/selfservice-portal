@@ -13,6 +13,7 @@ import NewCapabilityDialog from "./NewCapabilityDialog";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
+import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 
@@ -89,6 +90,8 @@ export default function CapabilitiesPage() {
             </Button>
           </CardActions>
         </Card>
+
+        <MembershipApplicationsUserCanApprove />
 
         {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href && (
           <>
