@@ -14,7 +14,6 @@ import {
   useCapabilityMembersApplications,
   useCapabilityMetadata,
   useKafkaClustersAccessList,
-  useCapabilityAzureResources,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -63,7 +62,7 @@ function SelectedCapabilityProvider({ children }) {
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
   // const { azureResources, isLoadedAzure, requestAzure } = // re-enable when azure functionality is live
   //   useCapabilityAzureResources(details);
-  const [azureResourcesList, setAzureResourcesList] = useState([]);
+  const [azureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
