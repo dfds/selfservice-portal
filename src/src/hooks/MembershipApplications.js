@@ -12,7 +12,7 @@ export function useMembershipApplications() {
 
   const reload = () => {
     sendRequest({
-      urlSegments: ["membershipapplications/me"],
+      urlSegments: ["membershipapplications/eligible-for-approval"],
       method: "GET",
       payload: null,
     });
