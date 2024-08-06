@@ -13,15 +13,7 @@ import {
   Spinner,
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
-import { StatusAlert } from "@dfds-ui/icons/system";
-import {
-  useState,
-  useContext,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
