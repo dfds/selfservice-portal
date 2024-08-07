@@ -129,6 +129,30 @@ const Completed = function ({ accountId, namespace, id }) {
   );
 };
 
+const VPCPeerings = function ({ awsAccountInformation }) {
+  return (
+    <div className={styles.awsaccountinformationbox}>
+      <span className={styles.subheader}>Peering VPCs</span>
+      &emsp;
+      <a
+        href="https://wiki.dfds.cloud/en/documentation/aws/vpc-peering#using-the-vpc-peering-connection"
+        className={styles.link}
+      >
+        (learn more)
+      </a>
+      {awsAccountInformation.vpcs?.length > 0 ? (
+        awsAccountInformation.vpcs.map((vpc, index) => (
+          <div key={index}>
+            {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
+          </div>
+        ))
+      ) : (
+        <div>No peering VPCs found</div>
+      )}
+    </div>
+  );
+};
+
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
@@ -208,25 +232,7 @@ export function ResourceInfoBadges() {
           )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
-          <div className={styles.awsaccountinformationbox}>
-            <span className={styles.subheader}>Peering VPCs</span>
-            &emsp;
-            <a
-              href="https://wiki.dfds.cloud/en/documentation/aws/vpc-peering#using-the-vpc-peering-connection"
-              className={styles.link}
-            >
-              (learn more)
-            </a>
-            {awsAccountInformation.vpcs?.length > 0 ? (
-              awsAccountInformation.vpcs.map((vpc, index) => (
-                <div key={index}>
-                  {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
-                </div>
-              ))
-            ) : (
-              <div>No peering VPCs found</div>
-            )}
-          </div>
+          <VPCPeerings awsAccountInformation={awsAccountInformation} />
         </>
       ) : (
         <>

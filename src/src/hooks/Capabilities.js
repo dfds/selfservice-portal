@@ -187,17 +187,8 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
   const [isLoadedAccount, setIsLoadedAccount] = useState(false);
   const [awsAccountDetails, setAwsAccountDetails] = useState(null);
 
-  const { responseData: informationData, sendRequest: requestInformationData } =
-    useSelfServiceRequest();
-  const [isLoadedAccountInformation, setIsLoadedAccountInformation] =
-    useState(false);
-  const [awsAccountInformation, setAwsAccountInformation] = useState(null);
-
   const link = capabilityDefinition?._links?.awsAccount;
   const shouldGet = (link?.allow || []).includes("GET");
-
-  const informationLink = capabilityDefinition?._links?.awsAccountInformation;
-  const shouldGetInformation = (informationLink?.allow || []).includes("GET");
 
   useEffect(() => {
     if (link && shouldGet) {
@@ -219,13 +210,29 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
     }
   }, [awsAccountDetails]);
 
+  return {
+    isLoadedAccount,
+    awsAccountDetails,
+  };
+}
+
+export function useCapabilityAwsAccountInformation(capabilityDefinition) {
+  const { responseData: informationData, sendRequest: requestInformationData } =
+    useSelfServiceRequest();
+  const [isLoadedAccountInformation, setIsLoadedAccountInformation] =
+    useState(false);
+  const [awsAccountInformation, setAwsAccountInformation] = useState(null);
+
+  const informationLink = capabilityDefinition?._links?.awsAccountInformation;
+  const shouldGetInformation = (informationLink?.allow || []).includes("GET");
+
   useEffect(() => {
     if (informationLink && shouldGetInformation) {
       requestInformationData({
         urlSegments: [informationLink.href],
       });
     }
-  }, [link]);
+  }, [informationLink]);
 
   useEffect(() => {
     if (informationData !== null) {
@@ -240,8 +247,6 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
   }, [awsAccountInformation]);
 
   return {
-    isLoadedAccount,
-    awsAccountDetails,
     isLoadedAccountInformation,
     awsAccountInformation,
   };

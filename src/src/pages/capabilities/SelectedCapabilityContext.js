@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import {
   useCapabilityAwsAccount,
+  useCapabilityAwsAccountInformation,
   useCapabilityById,
   useCapabilityInvitees,
   useCapabilityMembers,
@@ -55,12 +56,10 @@ function SelectedCapabilityProvider({ children }) {
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList } = useKafkaClustersAccessList(details);
-  const {
-    awsAccountDetails,
-    isLoadedAccount,
-    awsAccountInformation,
-    isLoadedAccountInformation,
-  } = useCapabilityAwsAccount(details);
+  const { awsAccountDetails, isLoadedAccount } =
+    useCapabilityAwsAccount(details);
+  const { awsAccountInformation, isLoadedAccountInformation } =
+    useCapabilityAwsAccountInformation(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
