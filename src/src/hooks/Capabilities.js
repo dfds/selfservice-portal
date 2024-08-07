@@ -182,12 +182,11 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   };
 }
 
-export function useCapabilityAwsAccount(capabilityDefinition) {
+export function useGetUrlData(link) {
   const { responseData, sendRequest } = useSelfServiceRequest();
-  const [isLoadedAccount, setIsLoadedAccount] = useState(false);
-  const [awsAccountDetails, setAwsAccountDetails] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [data, setData] = useState(null);
 
-  const link = capabilityDefinition?._links?.awsAccount;
   const shouldGet = (link?.allow || []).includes("GET");
 
   useEffect(() => {
@@ -200,53 +199,19 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 
   useEffect(() => {
     if (responseData !== null) {
-      setAwsAccountDetails(responseData);
+      setData(responseData);
     }
   }, [responseData]);
 
   useEffect(() => {
-    if (awsAccountDetails !== null) {
-      setIsLoadedAccount(true);
+    if (data !== null) {
+      setIsLoaded(true);
     }
-  }, [awsAccountDetails]);
+  }, [data]);
 
   return {
-    isLoadedAccount,
-    awsAccountDetails,
-  };
-}
-
-export function useCapabilityAwsAccountInformation(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  const [isLoadedAccountInformation, setIsLoadedAccountInformation] = useState(false);
-  const [awsAccountInformation, setAwsAccountInformation] = useState(null);
-
-  const link = capabilityDefinition?._links?.awsAccountInformation;
-  const shouldGet = (link?.allow || []).includes("GET");
-
-  useEffect(() => {
-    if (link && shouldGet) {
-      sendRequest({
-        urlSegments: [link.href],
-      });
-    }
-  }, [link]);
-
-  useEffect(() => {
-    if (responseData !== null) {
-      setAwsAccountInformation(responseData);
-    }
-  }, [responseData]);
-
-  useEffect(() => {
-    if (awsAccountInformation !== null) {
-      setIsLoadedAccountInformation(true);
-    }
-  }, [awsAccountInformation]);
-
-  return {
-    isLoadedAccountInformation,
-    awsAccountInformation,
+    isLoaded,
+    data,
   };
 }
 

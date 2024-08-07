@@ -7,8 +7,7 @@ import React, {
   useState,
 } from "react";
 import {
-  useCapabilityAwsAccount,
-  useCapabilityAwsAccountInformation,
+  useGetUrlData,
   useCapabilityById,
   useCapabilityInvitees,
   useCapabilityMembers,
@@ -56,10 +55,11 @@ function SelectedCapabilityProvider({ children }) {
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList } = useKafkaClustersAccessList(details);
-  const { awsAccountDetails, isLoadedAccount } =
-    useCapabilityAwsAccount(details);
-  const { awsAccountInformation, isLoadedAccountInformation } =
-    useCapabilityAwsAccountInformation(details);
+  const { data: awsAccountDetails, isLoaded: isLoadedAccount } = useGetUrlData(
+    details?._links?.awsAccount,
+  );
+  const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
+    useGetUrlData(details?._links?.awsAccountInformation);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
