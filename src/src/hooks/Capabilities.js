@@ -217,28 +217,26 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 }
 
 export function useCapabilityAwsAccountInformation(capabilityDefinition) {
-  const { responseData: informationData, sendRequest: requestInformationData } =
-    useSelfServiceRequest();
-  const [isLoadedAccountInformation, setIsLoadedAccountInformation] =
-    useState(false);
+  const { responseData, sendRequest } = useSelfServiceRequest();
+  const [isLoadedAccountInformation, setIsLoadedAccountInformation] = useState(false);
   const [awsAccountInformation, setAwsAccountInformation] = useState(null);
 
-  const informationLink = capabilityDefinition?._links?.awsAccountInformation;
-  const shouldGetInformation = (informationLink?.allow || []).includes("GET");
+  const link = capabilityDefinition?._links?.awsAccountInformation;
+  const shouldGet = (link?.allow || []).includes("GET");
 
   useEffect(() => {
-    if (informationLink && shouldGetInformation) {
-      requestInformationData({
-        urlSegments: [informationLink.href],
+    if (link && shouldGet) {
+      sendRequest({
+        urlSegments: [link.href],
       });
     }
-  }, [informationLink]);
+  }, [link]);
 
   useEffect(() => {
-    if (informationData !== null) {
-      setAwsAccountInformation(informationData);
+    if (responseData !== null) {
+      setAwsAccountInformation(responseData);
     }
-  }, [informationData]);
+  }, [responseData]);
 
   useEffect(() => {
     if (awsAccountInformation !== null) {
