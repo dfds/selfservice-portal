@@ -185,10 +185,19 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
 export function useCapabilityAwsAccount(capabilityDefinition) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedAccount, setIsLoadedAccount] = useState(false);
-  const [awsAccountInfo, setAwsAccountInfo] = useState(null);
+  const [awsAccountDetails, setAwsAccountDetails] = useState(null);
+
+  const { responseData: informationData, sendRequest: requestInformationData } =
+    useSelfServiceRequest();
+  const [isLoadedAccountInformation, setIsLoadedAccountInformation] =
+    useState(false);
+  const [awsAccountInformation, setAwsAccountInformation] = useState(null);
 
   const link = capabilityDefinition?._links?.awsAccount;
   const shouldGet = (link?.allow || []).includes("GET");
+
+  const informationLink = capabilityDefinition?._links?.awsAccountInformation;
+  const shouldGetInformation = (informationLink?.allow || []).includes("GET");
 
   useEffect(() => {
     if (link && shouldGet) {
@@ -200,19 +209,41 @@ export function useCapabilityAwsAccount(capabilityDefinition) {
 
   useEffect(() => {
     if (responseData !== null) {
-      setAwsAccountInfo(responseData);
+      setAwsAccountDetails(responseData);
     }
   }, [responseData]);
 
   useEffect(() => {
-    if (awsAccountInfo !== null) {
+    if (awsAccountDetails !== null) {
       setIsLoadedAccount(true);
     }
-  }, [awsAccountInfo]);
+  }, [awsAccountDetails]);
+
+  useEffect(() => {
+    if (informationLink && shouldGetInformation) {
+      requestInformationData({
+        urlSegments: [informationLink.href],
+      });
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (informationData !== null) {
+      setAwsAccountInformation(informationData);
+    }
+  }, [informationData]);
+
+  useEffect(() => {
+    if (awsAccountInformation !== null) {
+      setIsLoadedAccountInformation(true);
+    }
+  }, [awsAccountInformation]);
 
   return {
     isLoadedAccount,
-    awsAccountInfo,
+    awsAccountDetails,
+    isLoadedAccountInformation,
+    awsAccountInformation,
   };
 }
 

@@ -46,7 +46,7 @@ function SelectedCapabilityProvider({ children }) {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+  const [awsAccount, setAwsAccount] = useState(null);
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded, setReloadRequired } =
     useCapabilityById(capabilityId);
@@ -55,7 +55,12 @@ function SelectedCapabilityProvider({ children }) {
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList } = useKafkaClustersAccessList(details);
-  const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+  const {
+    awsAccountDetails,
+    isLoadedAccount,
+    awsAccountInformation,
+    isLoadedAccountInformation,
+  } = useCapabilityAwsAccount(details);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
@@ -165,9 +170,9 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {
     if (isLoadedAccount) {
-      setAwsAccount(awsAccountInfo);
+      setAwsAccount(awsAccountDetails);
     }
-  }, [isLoadedAccount, awsAccountInfo]);
+  }, [isLoadedAccount, awsAccountDetails]);
 
   //--------------------------------------------------------------------
 
@@ -508,6 +513,8 @@ function SelectedCapabilityProvider({ children }) {
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
+    awsAccountInformation,
+    isLoadedAccountInformation,
     setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,

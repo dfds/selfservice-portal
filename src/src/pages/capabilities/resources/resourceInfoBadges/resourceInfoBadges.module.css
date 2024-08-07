@@ -28,11 +28,9 @@ hr.divider {
 
 .completed .items {
   text-align: center;
-  border-right: 1px solid #dedede;
 }
 
 .completed .items:last-child {
-  border-right: 0px none;
 }
 
 .azure {
@@ -43,7 +41,6 @@ hr.divider {
 
 .azure .items {
   text-align: center;
-  border-right: 1px solid #dedede;
 }
 
 .environment {
@@ -97,4 +94,24 @@ hr.divider {
 .envsection {
   text-align: center;
   margin: 0 auto;
+}
+
+.awsaccountinformationbox {
+  padding: 30px 10px;
+}
+
+.subheader {
+  font-size: 16px;
+  font-weight: 550;
+  font-family: "DFDS";
+}
+
+.informationtext {
+  font-weight: 550;
+  font-family: "DFDS";
+}
+
+.link {
+  color: #49a2df;
+  text-decoration: none;
 }
