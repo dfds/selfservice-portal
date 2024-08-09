@@ -9,13 +9,15 @@ import {
 } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
-import NewCapabilityDialog from "./NewCapabilityDialog";
+//import NewCapabilityDialog from "./NewCapabilityDialog";
+import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import { set } from "date-fns";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
@@ -24,6 +26,8 @@ export default function CapabilitiesPage() {
   const { reloadUser } = useContext(AppContext);
 
   const handleAddCapability = async (formData) => {
+
+    /*
     setIsCreatingNewCapability(true);
     await addNewCapability(
       formData.name,
@@ -34,6 +38,9 @@ export default function CapabilitiesPage() {
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
     reloadUser();
+    */
+   alert("You asked to create a new capability");
+   setShowNewCapabilityDialog(false);
   };
 
   const splash = (
@@ -48,7 +55,7 @@ export default function CapabilitiesPage() {
     <>
       <Page title="Capabilities">
         {showNewCapabilityDialog && (
-          <NewCapabilityDialog
+          <NewCapabilityWizard
             inProgress={isCreatingNewCapability}
             onAddCapabilityClicked={handleAddCapability}
             onCloseClicked={() => setShowNewCapabilityDialog(false)}
