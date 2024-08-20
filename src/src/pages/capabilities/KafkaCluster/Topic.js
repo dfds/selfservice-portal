@@ -389,6 +389,10 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                     Add
                   </Button>
                 )}
+                <span>
+                  We have temporarily disabled the creation of message
+                  contracts.
+                </span>
               </div>
 
               {isLoadingContracts ? (
