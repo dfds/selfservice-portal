@@ -7,13 +7,14 @@ import React, {
   useState,
 } from "react";
 import {
-  useCapabilityAwsAccount,
+  useGetUrlData,
   useCapabilityById,
   useCapabilityInvitees,
   useCapabilityMembers,
   useCapabilityMembersApplications,
   useCapabilityMetadata,
   useKafkaClustersAccessList,
+  useCapabilityAzureResources,
 } from "hooks/Capabilities";
 
 import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
@@ -46,7 +47,7 @@ function SelectedCapabilityProvider({ children }) {
   const [kafkaClusters, setKafkaClusters] = useState([]);
   const [selectedKafkaTopic, setSelectedKafkaTopic] = useState(null);
   const [membershipApplications, setMembershipApplications] = useState([]);
-  const [awsAccount, setAwsAccount] = useState(null); //TODO: more than just a string
+  const [awsAccount, setAwsAccount] = useState(null);
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
   const { capability, isLoaded, setReloadRequired } =
     useCapabilityById(capabilityId);
@@ -55,14 +56,18 @@ function SelectedCapabilityProvider({ children }) {
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { clustersList } = useKafkaClustersAccessList(details);
-  const { awsAccountInfo, isLoadedAccount } = useCapabilityAwsAccount(details);
+  const { data: awsAccountDetails, isLoaded: isLoadedAccount } = useGetUrlData(
+    details?._links?.awsAccount,
+  );
+  const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
+    useGetUrlData(details?._links?.awsAccountInformation);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  // const { azureResources, isLoadedAzure, requestAzure } = // re-enable when azure functionality is live
-  //   useCapabilityAzureResources(details);
-  const [azureResourcesList] = useState([]);
+  const { azureResources, isLoadedAzure, requestAzure } =
+    useCapabilityAzureResources(details);
+  const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
   const canAccessConfigurationLevel = (
@@ -165,9 +170,9 @@ function SelectedCapabilityProvider({ children }) {
 
   useEffect(() => {
     if (isLoadedAccount) {
-      setAwsAccount(awsAccountInfo);
+      setAwsAccount(awsAccountDetails);
     }
-  }, [isLoadedAccount, awsAccountInfo]);
+  }, [isLoadedAccount, awsAccountDetails]);
 
   //--------------------------------------------------------------------
 
@@ -423,7 +428,7 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   const addNewAzure = (environment) => {
-    // requestAzure(environment); enable when azure functionality is going live
+    requestAzure(environment);
   };
 
   //--------------------------------------------------------------------
@@ -450,11 +455,11 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [isLoadedMembers, membersList]);
 
-  // useEffect(() => {
-  //   if (isLoadedAzure) {
-  //     setAzureResourcesList(azureResources.items);
-  //   }
-  // }, [isLoadedAzure, azureResources]); // enable when azure functionality is going live
+  useEffect(() => {
+    if (isLoadedAzure) {
+      setAzureResourcesList(azureResources.items);
+    }
+  }, [isLoadedAzure, azureResources]);
 
   useEffect(() => {
     if (details) {
@@ -508,6 +513,8 @@ function SelectedCapabilityProvider({ children }) {
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
+    awsAccountInformation,
+    isLoadedAccountInformation,
     setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,
@@ -539,7 +546,7 @@ function SelectedCapabilityProvider({ children }) {
     azureResourcesList,
     addNewAzure,
     deleteMembershipApplication,
-    // isLoadedAzure, // enable when azure functionality is going live
+    isLoadedAzure,
   };
 
   return (

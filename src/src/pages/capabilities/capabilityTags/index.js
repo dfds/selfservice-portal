@@ -52,8 +52,7 @@ export function CapabilityTagViewer() {
   };
 
   return (
-    hasJsonSchemaProperties &&
-    canEditJsonMetadata && (
+    hasJsonSchemaProperties && (
       <>
         <PageSection headline="Capability Tags">
           <CapabilityTagsSubForm
@@ -61,14 +60,13 @@ export function CapabilityTagViewer() {
             setValidMetadata={setIsValid}
             preexistingFormData={existingFormData}
           />
-
           <ButtonStack align={"right"}>
             <Button
               size="small"
               variation="outlined"
               submitting={inProgressMetadata}
               onClick={() => submitTags(formData)}
-              disabled={!(isValid && isDirty)}
+              disabled={!isValid || !isDirty || !canEditJsonMetadata}
             >
               Submit
             </Button>

@@ -93,9 +93,9 @@ jobs:
           cd selfservice-setup
           ./init.sh --disablegitssh true --token ${{ secrets.SSU_SETUP_GH_TOKEN }}
           docker images
-          docker-compose pull
-          docker-compose build tool-api-db-reset k8s-janitor accepter-service
-          docker-compose up -d --no-build --scale selfservice-portal=0
+          docker compose pull
+          docker compose build tool-api-db-reset k8s-janitor accepter-service
+          docker compose up -d --no-build --scale selfservice-portal=0
           docker images
       - name: Run tests
         run: cd src && make test

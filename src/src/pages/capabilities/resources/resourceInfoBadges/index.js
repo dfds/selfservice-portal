@@ -2,14 +2,26 @@ import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
 import { Modal, ModalAction } from "@dfds-ui/modal";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { theme } from "@dfds-ui/theme";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
 import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
-//import azureLogo from "./azure-logo.svg";
+import azureLogo from "./azure-logo.svg";
+
+function VPCInformation(id, region, cidrBlock) {
+  return (
+    <div>
+      VPC id: <span className={styles.informationtext}>{id}</span>, Region:{" "}
+      <span className={styles.informationtext}>{region}</span>, CIDR:{" "}
+      <span className={styles.informationtext}>
+        {(cidrBlock !== "" && cidrBlock) || "unknown"}
+      </span>
+    </div>
+  );
+}
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
@@ -117,31 +129,54 @@ const Completed = function ({ accountId, namespace, id }) {
   );
 };
 
+const VPCPeerings = function ({ awsAccountInformation }) {
+  return (
+    <div className={styles.awsaccountinformationbox}>
+      <span className={styles.subheader}>Peering VPCs</span>
+      &emsp;
+      <a
+        href="https://wiki.dfds.cloud/en/documentation/aws/vpc-peering#using-the-vpc-peering-connection"
+        className={styles.link}
+      >
+        (learn more)
+      </a>
+      {awsAccountInformation.vpcs?.length > 0 ? (
+        awsAccountInformation.vpcs.map((vpc, index) => (
+          <div key={index}>
+            {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
+          </div>
+        ))
+      ) : (
+        <div>No peering VPCs found</div>
+      )}
+    </div>
+  );
+};
+
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
     id,
     awsAccount,
+    awsAccountInformation,
     links,
     requestAwsAccount,
     setAwsAccountRequested,
-    //azureResourcesList,
-    //addNewAzure,
-    //isLoadedAzure,
+    azureResourcesList,
+    addNewAzure,
+    isLoadedAzure,
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  //const [environment, setEnvironment] = useState("prod");
+  const [environment, setEnvironment] = useState("prod");
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
-  //const environments = ["prod", "dev", "staging", "uat", "training", "test"];
-  //const [envAvailability, setEnvAvailability] = useState(null);
+  const environments = ["prod", "dev", "staging", "uat", "training", "test"];
+  const [envAvailability, setEnvAvailability] = useState(null);
 
-  /*
   const handleChange = (event) => {
     setEnvironment(event.target.value);
   };
-  */
-  /*
+
   useEffect(() => {
     if (azureResourcesList != null) {
       setEnvAvailability(() => {
@@ -159,7 +194,7 @@ export function ResourceInfoBadges() {
       });
     }
   }, [azureResourcesList]);
-  */
+
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
     await requestAwsAccount();
@@ -174,11 +209,9 @@ export function ResourceInfoBadges() {
     }
   };
 
-  /*
   const handleNewAzureResource = () => {
     addNewAzure(environment);
   };
-  */
 
   return (
     <>
@@ -195,6 +228,7 @@ export function ResourceInfoBadges() {
           )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
+          <VPCPeerings awsAccountInformation={awsAccountInformation} />
         </>
       ) : (
         <>
@@ -228,17 +262,17 @@ export function ResourceInfoBadges() {
         </>
       )}
 
-      {/* azure section, enable when ready */}
-
-      {/* <hr className={styles.divider} />
+      <hr className={styles.divider} />
 
       <p style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
-      </p> */}
+      </p>
 
-      {/* <div className={styles.azure}>
+      <div className={styles.azure}>
         <div className={styles.items}>
-          {azureResourcesList !== [] && isLoadedAzure ? (
+          {azureResourcesList &&
+          azureResourcesList.length !== 0 &&
+          isLoadedAzure ? (
             azureResourcesList.map((x) => (
               <div key={x.id}>
                 <div className={styles.environment}>
@@ -298,7 +332,7 @@ export function ResourceInfoBadges() {
             </Button>
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   );
 }
