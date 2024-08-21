@@ -140,7 +140,7 @@ const VPCPeerings = function ({ awsAccountInformation }) {
       >
         (learn more)
       </a>
-      {awsAccountInformation.vpcs && awsAccountInformation.vpcs?.length > 0 ? (
+      {awsAccountInformation.vpcs?.length > 0 ? (
         awsAccountInformation.vpcs.map((vpc, index) => (
           <div key={index}>
             {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
