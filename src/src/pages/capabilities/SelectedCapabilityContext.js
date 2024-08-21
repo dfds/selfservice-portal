@@ -59,8 +59,8 @@ function SelectedCapabilityProvider({ children }) {
   const { data: awsAccountDetails, isLoaded: isLoadedAccount } = useGetUrlData(
     details?._links?.awsAccount,
   );
-  const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
-    useGetUrlData(details?._links?.awsAccountInformation);
+  //const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
+    //useGetUrlData(details?._links?.awsAccountInformation);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
@@ -513,7 +513,7 @@ function SelectedCapabilityProvider({ children }) {
     kafkaClusters,
     selectedKafkaTopic,
     awsAccount,
-    awsAccountInformation,
+    //awsAccountInformation,
     isLoadedAccountInformation,
     setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),

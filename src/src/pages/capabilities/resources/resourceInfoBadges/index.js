@@ -129,6 +129,7 @@ const Completed = function ({ accountId, namespace, id }) {
   );
 };
 
+/*
 const VPCPeerings = function ({ awsAccountInformation }) {
   return (
     <div className={styles.awsaccountinformationbox}>
@@ -152,13 +153,14 @@ const VPCPeerings = function ({ awsAccountInformation }) {
     </div>
   );
 };
+*/
 
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
     id,
     awsAccount,
-    awsAccountInformation,
+    //awsAccountInformation,
     links,
     requestAwsAccount,
     setAwsAccountRequested,
@@ -228,7 +230,7 @@ export function ResourceInfoBadges() {
           )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
-          <VPCPeerings awsAccountInformation={awsAccountInformation} />
+          {/*<VPCPeerings awsAccountInformation={awsAccountInformation} />*/}
         </>
       ) : (
         <>
