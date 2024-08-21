@@ -11,6 +11,7 @@ import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 
+/*
 function VPCInformation(id, region, cidrBlock) {
   return (
     <div>
@@ -22,6 +23,7 @@ function VPCInformation(id, region, cidrBlock) {
     </div>
   );
 }
+*/
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (

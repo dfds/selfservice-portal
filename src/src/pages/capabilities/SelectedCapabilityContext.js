@@ -60,7 +60,7 @@ function SelectedCapabilityProvider({ children }) {
     details?._links?.awsAccount,
   );
   //const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
-    //useGetUrlData(details?._links?.awsAccountInformation);
+  //useGetUrlData(details?._links?.awsAccountInformation);
   const { isLoadedMembersApplications, membersApplicationsList } =
     useCapabilityMembersApplications(details);
   const { addInvitees } = useCapabilityInvitees(details);
@@ -514,7 +514,7 @@ function SelectedCapabilityProvider({ children }) {
     selectedKafkaTopic,
     awsAccount,
     //awsAccountInformation,
-    isLoadedAccountInformation,
+    //isLoadedAccountInformation,
     setAwsAccountRequested,
     loadCapability: (id) => setCapabilityId(id),
     toggleSelectedKafkaTopic,
