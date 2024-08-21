@@ -50,7 +50,7 @@ jobs:
         run: |
           cd selfservice-setup
           ./init.sh --disablegitssh true --token ${{ secrets.SSU_SETUP_GH_TOKEN }}
-          docker compose up -d
+          docker-compose up -d
       # - uses: ./ssu-apps/.github/actions/build_push_container_ecr
       #   name: Build & push container
       #   id: build_push_container

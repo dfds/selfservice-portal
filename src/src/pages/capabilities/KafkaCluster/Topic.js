@@ -389,12 +389,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
                     Add
                   </Button>
                 )}
-                <span>
-                  We have temporarily disabled the creation of message contracts
-                  in the self-service portal. You can still create topic schemas
-                  directly against the Confluent Cloud API using your
-                  credentials. Please reach out if you have any questions.
-                </span>
               </div>
 
               {isLoadingContracts ? (

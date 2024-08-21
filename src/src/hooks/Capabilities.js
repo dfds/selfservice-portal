@@ -182,11 +182,12 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   };
 }
 
-export function useGetUrlData(link) {
+export function useCapabilityAwsAccount(capabilityDefinition) {
   const { responseData, sendRequest } = useSelfServiceRequest();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [data, setData] = useState(null);
+  const [isLoadedAccount, setIsLoadedAccount] = useState(false);
+  const [awsAccountInfo, setAwsAccountInfo] = useState(null);
 
+  const link = capabilityDefinition?._links?.awsAccount;
   const shouldGet = (link?.allow || []).includes("GET");
 
   useEffect(() => {
@@ -199,19 +200,19 @@ export function useGetUrlData(link) {
 
   useEffect(() => {
     if (responseData !== null) {
-      setData(responseData);
+      setAwsAccountInfo(responseData);
     }
   }, [responseData]);
 
   useEffect(() => {
-    if (data !== null) {
-      setIsLoaded(true);
+    if (awsAccountInfo !== null) {
+      setIsLoadedAccount(true);
     }
-  }, [data]);
+  }, [awsAccountInfo]);
 
   return {
-    isLoaded,
-    data,
+    isLoadedAccount,
+    awsAccountInfo,
   };
 }
 

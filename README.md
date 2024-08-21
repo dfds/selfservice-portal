@@ -16,7 +16,7 @@ This project comes with a "fake" api (also a react app) which produces responses
 To sping this fake dependency up, simply run
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 Then to start the react app run

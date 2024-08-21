@@ -203,7 +203,7 @@ export class SelfServiceApiClient {
 
     if (messageContractsLink.allow.indexOf("POST") === -1) {
       throw Error(
-        "Nobody is allowed to post new message contracts to topics via this GUI currently. We are working on the better version of this feature. If you in the meantime you can still create topic schemas directly in Confluent Cloud using your credetials.",
+        "Error! You are not allowed to post new message contracts to this topic.",
       );
     }
 
