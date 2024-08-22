@@ -266,29 +266,27 @@ export function ResourceInfoBadges() {
   };
 
   useEffect(() => {
-    console.log("Metadata changed to: ", metadata);
-  }, [metadata]);
+    if (metadata !== null && requiredTags.length > 0) {
+      const meta = JSON.parse(metadata);
+      const missing = requiredTags.filter((tag) => !meta.hasOwnProperty(tag));
 
-  const azureTagsCheck = () => {
-    setMissingTags([]);
-    const meta = JSON.parse(metadata);
-    console.log("Existing meta data: ", meta);
-    requiredTags.forEach((tag) => {
-      if (!meta.hasOwnProperty(tag)) {
-        setMissingTags((prev) => [...prev, tag]);
-        console.log("Missing Tag: ", tag);
-        return false;
-      }
-    });
-    console.log("Missing Tags: ", missingTags);
-    if (missingTags.length === 0) {
-      return true; // no tags are missing
+      // Only update state if the missing tags array has changed
+      setMissingTags((prevMissingTags) => {
+        if (
+          prevMissingTags.length !== missing.length ||
+          !prevMissingTags.every((tag, index) => tag === missing[index])
+        ) {
+          return missing;
+        }
+        return prevMissingTags; // No need to update if the array is the same
+      });
+    } else {
+      setMissingTags([]); // Reset to empty array if metadata is null or requiredTags is empty
     }
-    return false; // some tags are missing
-  };
+  }, [metadata, requiredTags]);
 
   const handleNewAzureResource = () => {
-    if (azureTagsCheck()) {
+    if (missingTags.length === 0) {
       addNewAzure(environment);
     } else {
       setShowAzureTagsWarning(true);
@@ -299,7 +297,7 @@ export function ResourceInfoBadges() {
     <>
       <hr className={styles.divider} />
 
-      {awsAccount != null ? (
+      {awsAccount !== null ? (
         <>
           {awsAccount.status === "Completed" && (
             <Completed
