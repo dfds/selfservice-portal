@@ -25,6 +25,49 @@ function VPCInformation(id, region, cidrBlock) {
 }
 */
 
+function AzureTagsWarning({ onClose, missingTags }) {
+  const actions = (
+    <>
+      <ModalAction
+        style={{ marginRight: "1rem" }}
+        actionVariation="secondary"
+        onClick={onClose}
+      >
+        Close
+      </ModalAction>
+    </>
+  );
+
+  return (
+    <>
+      <Modal
+        heading={`Azure Resource Groups Tags Required`}
+        isOpen={true}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
+        onRequestClose={onClose}
+        actions={actions}
+      >
+        <Text>
+          Your capability are missing needed tags (see:{" "}
+          <a href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy">
+            tagging guideline
+          </a>
+          ) in its metadata in order to create an Azure Resource group. Please
+          add the following tags:
+        </Text>
+        <div>
+          <ul>
+            {missingTags.map((tag) => (
+              <li key={tag}>{tag}</li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
     <>
@@ -169,12 +212,21 @@ export function ResourceInfoBadges() {
     azureResourcesList,
     addNewAzure,
     isLoadedAzure,
+    metadata,
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [environment, setEnvironment] = useState("prod");
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
   const environments = ["prod", "dev", "staging", "uat", "training", "test"];
+  const requiredTags = [
+    "dfds.planned_sunset",
+    "dfds.owner",
+    "dfds.cost.centre",
+    "dfds.service.availability",
+  ];
+  const [missingTags, setMissingTags] = useState([]);
+  const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
   const [envAvailability, setEnvAvailability] = useState(null);
 
   const handleChange = (event) => {
@@ -213,8 +265,34 @@ export function ResourceInfoBadges() {
     }
   };
 
+  useEffect(() => {
+    console.log("Metadata changed to: ", metadata);
+  }, [metadata]);
+
+  const azureTagsCheck = () => {
+    setMissingTags([]);
+    const meta = JSON.parse(metadata);
+    console.log("Existing meta data: ", meta);
+    requiredTags.forEach((tag) => {
+      if (!meta.hasOwnProperty(tag)) {
+        setMissingTags((prev) => [...prev, tag]);
+        console.log("Missing Tag: ", tag);
+        return false;
+      }
+    });
+    console.log("Missing Tags: ", missingTags);
+    if (missingTags.length === 0) {
+      return true; // no tags are missing
+    }
+    return false; // some tags are missing
+  };
+
   const handleNewAzureResource = () => {
-    addNewAzure(environment);
+    if (azureTagsCheck()) {
+      addNewAzure(environment);
+    } else {
+      setShowAzureTagsWarning(true);
+    }
   };
 
   return (
@@ -236,6 +314,13 @@ export function ResourceInfoBadges() {
         </>
       ) : (
         <>
+          {showAzureTagsWarning && (
+            <AzureTagsWarning
+              onClose={() => setShowAzureTagsWarning(false)}
+              missingTags={missingTags}
+            />
+          )}
+
           {showDialog && (
             <RequestDialog
               isRequesting={isSubmitting}

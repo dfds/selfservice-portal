@@ -288,13 +288,17 @@ export function useCapabilityMetadata(capabilityDefinition) {
 
   const link = capabilityDefinition?._links;
 
-  useEffect(() => {
+  const getMetaData = async () => {
     if (link?.metadata && (link.metadata.allow || []).includes("GET")) {
-      void sendGetJsonMetadataRequest({
+      sendGetJsonMetadataRequest({
         urlSegments: [link.metadata.href],
         method: "GET",
       });
     }
+  };
+
+  useEffect(() => {
+    getMetaData();
   }, [link]);
 
   useEffect(() => {
@@ -320,6 +324,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
         jsonMetadata: JSON.parse(jsonMetadata),
       },
     });
+    getMetaData();
   };
 
   const setRequiredCapabilityJsonMetadata = async (jsonMetadata) => {
@@ -338,6 +343,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
         jsonMetadata: JSON.parse(jsonMetadata),
       },
     });
+    getMetaData();
   };
 
   return {
