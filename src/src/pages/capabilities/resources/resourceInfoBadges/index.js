@@ -299,18 +299,12 @@ export function ResourceInfoBadges() {
   }, [metadata, requiredTags]);
 
   const handleNewAzureResource = () => {
-    console.log("missing tags: ", missingTags);
     if (missingTags.length === 0) {
       addNewAzure(environment);
     } else {
       setShowAzureTagsWarning(true);
-      console.log("showAzureTagsWarning: ", showAzureTagsWarning);
     }
   };
-
-  useEffect(() => {
-    console.log(showAzureTagsWarning);
-  }, [showAzureTagsWarning]);
 
   return (
     <>
