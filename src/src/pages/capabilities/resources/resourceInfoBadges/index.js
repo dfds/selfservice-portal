@@ -216,9 +216,9 @@ export function ResourceInfoBadges() {
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [environment, setEnvironment] = useState("prod");
+  const [environment, setEnvironment] = useState("test");
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
-  const environments = ["prod", "dev", "staging", "uat", "training", "test"];
+  const environments = ["dev", "staging", "test", "uat", "training", "prod"];
   const requiredTags = [
     "dfds.planned_sunset",
     "dfds.owner",
@@ -232,6 +232,19 @@ export function ResourceInfoBadges() {
   const handleChange = (event) => {
     setEnvironment(event.target.value);
   };
+
+  // set environment to first non-existing environment type
+  useEffect(() => {
+    if (envAvailability != null) {
+      setEnvironment(() => {
+        for (let i = 0; i < envAvailability.length; i++) {
+          if (!envAvailability[i].exist) {
+            return envAvailability[i].env;
+          }
+        }
+      });
+    }
+  }, [envAvailability]);
 
   useEffect(() => {
     if (azureResourcesList != null) {
@@ -312,13 +325,6 @@ export function ResourceInfoBadges() {
         </>
       ) : (
         <>
-          {showAzureTagsWarning && (
-            <AzureTagsWarning
-              onClose={() => setShowAzureTagsWarning(false)}
-              missingTags={missingTags}
-            />
-          )}
-
           {showDialog && (
             <RequestDialog
               isRequesting={isSubmitting}
@@ -350,6 +356,13 @@ export function ResourceInfoBadges() {
       )}
 
       <hr className={styles.divider} />
+
+      {showAzureTagsWarning && (
+        <AzureTagsWarning
+          onClose={() => setShowAzureTagsWarning(false)}
+          missingTags={missingTags}
+        />
+      )}
 
       <p style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
