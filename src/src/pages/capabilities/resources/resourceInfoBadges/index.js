@@ -11,7 +11,6 @@ import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 
-/*
 function VPCInformation(id, region, cidrBlock) {
   return (
     <div>
@@ -23,7 +22,6 @@ function VPCInformation(id, region, cidrBlock) {
     </div>
   );
 }
-*/
 
 function AzureTagsWarning({ onClose, missingTags }) {
   const actions = (
@@ -174,7 +172,6 @@ const Completed = function ({ accountId, namespace, id }) {
   );
 };
 
-/*
 const VPCPeerings = function ({ awsAccountInformation }) {
   return (
     <div className={styles.awsaccountinformationbox}>
@@ -186,7 +183,8 @@ const VPCPeerings = function ({ awsAccountInformation }) {
       >
         (learn more)
       </a>
-      {awsAccountInformation.vpcs && awsAccountInformation.vpcs?.length > 0 ? (
+      {awsAccountInformation?.vpcs &&
+      awsAccountInformation?.vpcs?.length > 0 ? (
         awsAccountInformation.vpcs.map((vpc, index) => (
           <div key={index}>
             {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
@@ -198,14 +196,13 @@ const VPCPeerings = function ({ awsAccountInformation }) {
     </div>
   );
 };
-*/
 
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
     id,
     awsAccount,
-    //awsAccountInformation,
+    awsAccountInformation,
     links,
     requestAwsAccount,
     setAwsAccountRequested,
@@ -321,7 +318,9 @@ export function ResourceInfoBadges() {
           )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
-          {/*<VPCPeerings awsAccountInformation={awsAccountInformation} />*/}
+          {awsAccountInformation !== null && (
+            <VPCPeerings awsAccountInformation={awsAccountInformation} />
+          )}
         </>
       ) : (
         <>
