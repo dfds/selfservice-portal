@@ -9,7 +9,7 @@ import {
 } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
-//import NewCapabilityDialog from "./NewCapabilityDialog";
+import NewCapabilityDialog from "./NewCapabilityDialog";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
@@ -27,7 +27,7 @@ export default function CapabilitiesPage() {
 
   const handleAddCapability = async (formData) => {
 
-    /*
+    
     setIsCreatingNewCapability(true);
     await addNewCapability(
       formData.name,
@@ -38,7 +38,7 @@ export default function CapabilitiesPage() {
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
     reloadUser();
-    */
+    
    alert("You asked to create a new capability");
    setShowNewCapabilityDialog(false);
   };
@@ -60,6 +60,11 @@ export default function CapabilitiesPage() {
             onAddCapabilityClicked={handleAddCapability}
             onCloseClicked={() => setShowNewCapabilityDialog(false)}
           />
+        //   <NewCapabilityDialog
+        //   inProgress={isCreatingNewCapability}
+        //   onAddCapabilityClicked={handleAddCapability}
+        //   onCloseClicked={() => setShowNewCapabilityDialog(false)}
+        // />
         )}
 
         <Card
