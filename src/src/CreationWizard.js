@@ -16,6 +16,7 @@ export default function CreationWizard({
   onComplete,
   steps,
   title,
+  emptyFormValues,
   sizes = {
     s: "75%",
     m: "75%",
@@ -24,11 +25,7 @@ export default function CreationWizard({
     xxl: "75%",
   }
 }) {
-  const emptyFormValues = {
-    name: "",
-    description: "",
-    mandatoryTags: "",
-  };
+  
 
   const [canContinue, setCanContinue] = useState(true);
   const [formValues, setFormValues] = useState(emptyFormValues);
@@ -54,6 +51,7 @@ export default function CreationWizard({
             onComplete={onComplete}
             steps={steps}
             canContinue={canContinue}
+            formValues={formValues}
           />
         }
       >
@@ -109,7 +107,7 @@ const Header = ({ steps }) => {
   );
 };
 
-const Footer = ({ onComplete, steps, canContinue }) => {
+const Footer = ({ onComplete, steps, canContinue, formValues }) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
 
   return (
@@ -172,7 +170,7 @@ const Footer = ({ onComplete, steps, canContinue }) => {
       {activeStep + 1 === stepCount && (
         <Button
           className={styles.nextButton}
-          onClick={onComplete}
+          onClick={() => {onComplete(formValues)}}
           variation="primary"
           size="small"
         >

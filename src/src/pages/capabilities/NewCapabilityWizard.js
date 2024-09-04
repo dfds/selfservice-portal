@@ -4,12 +4,16 @@ import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";
+import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 
 export default function NewCapabilityWizard({
   inProgress,
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
+  const [invitees, setInvitees] = useState([]);
+
   const steps = [
     {
       title: "Basic Information",
@@ -23,37 +27,32 @@ export default function NewCapabilityWizard({
       optional: false,
       skipped: false,
     },
-    {
-      title: "Additional Tags",
-      content: (props) => <WizardStep {...props} />,
-      optional: true,
-      skipped: false,
-    },
-    {
-      title: "AWS and Azure",
-      content: (props) => <WizardStep {...props} />,
-      optional: true,
-      skipped: false,
-    },
-    {
-      title: "Invitations",
-      content: (props) => <WizardStep {...props} />,
-      optional: true,
-      skipped: false,
-    },
-    {
-      title: "Summary",
-      content: (props) => <WizardStep {...props} />,
-    },
   ];
+
+  const handleAddCapabilityClicked = async (formData) => {
+    console.log(formData);
+    const jsonMetadataString = JSON.stringify(formData.mandatoryTags, null, 1);
+    onAddCapabilityClicked({
+      ...formData,
+      invitations: invitees,
+      jsonMetadataString,
+    });
+  };
+  const emptyFormValues = {
+    name: "",
+    description: "",
+    mandatoryTags: "",
+    formRef: createRef(),
+  };
 
   return (
     <CreationWizard
       isOpen={true}
       onClose={onCloseClicked}
-      onComplete={onAddCapabilityClicked}
+      onComplete={handleAddCapabilityClicked}
       steps={steps}
       title="New Capability Wizard"
+      emptyFormValues={emptyFormValues}
     />
   );
 }
@@ -165,6 +164,9 @@ const BasicInformationStep = ({
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [formData, setFormData] = useState(formValues);
   const [formValid, setFormValid] = useState(false);
+  const [validMetadata, setValidMetadata] = useState(false);
+  const formRef = createRef();
+  const [metadataFormData, setMetadataFormData] = useState({});
 
   useEffect(() => {
     if (formValid) {
@@ -174,10 +176,10 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
     }
   }, [formValid]);
 
-  const validateMandatoryTags = (tags) => {
-    if (tags.length === 0) {
-      return false;
-    }
+  const validateMandatoryTags = async () => {
+    formRef.current.validateForm();
+    formRef.current.validateForm();
+
     return true;
   };
 
@@ -192,10 +194,12 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   };
 
   useEffect(() => {
-    let tagsValid = validateMandatoryTags(formData.mandatoryTags);
+    let tagsValid = validateMandatoryTags(metadataFormData);
     setFormValid(tagsValid);
-    setFormValues(formData);
-  }, [formData]);
+    setFormValues((prev) => {
+      return { ...prev, mandatoryTags: metadataFormData };
+    });
+  }, [metadataFormData]);
 
   return (
     <>
@@ -211,6 +215,17 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         //errorMessage={tagsError}
         maxLength={255}
       />
+
+      <JsonSchemaProvider>
+        <CapabilityTagsSubForm
+          label="Capability Tags"
+          setMetadata={setMetadataFormData}
+          setHasSchema={() => {}}
+          setValidMetadata={setValidMetadata}
+          preexistingFormData={{}}
+          formRef={formRef}
+        />
+      </JsonSchemaProvider>
     </>
   );
 };
