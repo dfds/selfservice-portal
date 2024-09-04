@@ -133,7 +133,6 @@ export function CapabilityTagsSubForm({
 
   const [canEdit, setCanEdit] = useState(canEditJsonMetadata);
 
-
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
       setValidMetadata(true);

@@ -26,8 +26,6 @@ export default function CapabilitiesPage() {
   const { reloadUser } = useContext(AppContext);
 
   const handleAddCapability = async (formData) => {
-
-    
     setIsCreatingNewCapability(true);
     await addNewCapability(
       formData.name,
@@ -38,9 +36,9 @@ export default function CapabilitiesPage() {
     setShowNewCapabilityDialog(false);
     setIsCreatingNewCapability(false);
     reloadUser();
-    
-   alert("You asked to create a new capability");
-   setShowNewCapabilityDialog(false);
+
+    alert("You asked to create a new capability");
+    setShowNewCapabilityDialog(false);
   };
 
   const splash = (
@@ -60,11 +58,11 @@ export default function CapabilitiesPage() {
             onAddCapabilityClicked={handleAddCapability}
             onCloseClicked={() => setShowNewCapabilityDialog(false)}
           />
-        //   <NewCapabilityDialog
-        //   inProgress={isCreatingNewCapability}
-        //   onAddCapabilityClicked={handleAddCapability}
-        //   onCloseClicked={() => setShowNewCapabilityDialog(false)}
-        // />
+          //   <NewCapabilityDialog
+          //   inProgress={isCreatingNewCapability}
+          //   onAddCapabilityClicked={handleAddCapability}
+          //   onCloseClicked={() => setShowNewCapabilityDialog(false)}
+          // />
         )}
 
         <Card
