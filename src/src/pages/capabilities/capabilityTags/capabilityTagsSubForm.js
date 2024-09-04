@@ -131,7 +131,6 @@ export function CapabilityTagsSubForm({
   const [showTagForm, setShowTagForm] = useState(false);
   const [formData, setFormData] = useState({});
 
-
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
       setValidMetadata(true);

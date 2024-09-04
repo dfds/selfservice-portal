@@ -23,14 +23,10 @@ export default function CreationWizard({
     l: "75%",
     xl: "75%",
     xxl: "75%",
-  }
+  },
 }) {
-  
-
   const [canContinue, setCanContinue] = useState(true);
   const [formValues, setFormValues] = useState(emptyFormValues);
-
-
 
   return (
     <Modal
@@ -170,7 +166,9 @@ const Footer = ({ onComplete, steps, canContinue, formValues }) => {
       {activeStep + 1 === stepCount && (
         <Button
           className={styles.nextButton}
-          onClick={() => {onComplete(formValues)}}
+          onClick={() => {
+            onComplete(formValues);
+          }}
           variation="primary"
           size="small"
         >
@@ -180,4 +178,3 @@ const Footer = ({ onComplete, steps, canContinue, formValues }) => {
     </div>
   );
 };
-
