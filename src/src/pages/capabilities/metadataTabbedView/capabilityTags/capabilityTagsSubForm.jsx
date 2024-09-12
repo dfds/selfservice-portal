@@ -148,6 +148,15 @@ export function CapabilityTagsSubForm({
     }
   }, [formData]);
 
+  useEffect(() => {
+    if (hasJsonSchemaProperties) {
+      validateAndSet(preexistingFormData);
+      setShowTagForm(true);
+    } else {
+      setValidMetadata(true);
+    }
+  }, [hasJsonSchemaProperties]);
+
   const widgets = {
     SelectWidget: CustomDropdown,
     CheckboxWidget: CustomCheckbox,
