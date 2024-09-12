@@ -125,11 +125,12 @@ export function CapabilityTagsSubForm({
   setValidMetadata,
   preexistingFormData,
   formRef,
+  jsonSchema,
 }) {
-  const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
-    useContext(JsonSchemaContext);
   const [showTagForm, setShowTagForm] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(preexistingFormData);
+  const jsonSchemaString = JSON.stringify(jsonSchema);
+  const hasJsonSchemaProperties = jsonSchemaString !== "{}";
 
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
@@ -148,7 +149,7 @@ export function CapabilityTagsSubForm({
 
   useEffect(() => {
     if (hasJsonSchemaProperties) {
-      setValidMetadata(false);
+      validateAndSet(preexistingFormData);
       setShowTagForm(true);
     } else {
       setValidMetadata(true);

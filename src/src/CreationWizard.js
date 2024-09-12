@@ -16,7 +16,9 @@ export default function CreationWizard({
   onComplete,
   steps,
   title,
+  jsonSchemaString,
   emptyFormValues,
+  completeName,
   sizes = {
     s: "75%",
     m: "75%",
@@ -48,12 +50,13 @@ export default function CreationWizard({
             steps={steps}
             canContinue={canContinue}
             formValues={formValues}
+            completeName={completeName}
           />
         }
       >
         {steps.map((step) => (
           <div key={step.title}>
-            {step.content({ formValues, setFormValues, setCanContinue })}
+            {step.content({ formValues, setFormValues, setCanContinue, jsonSchemaString })}
           </div>
         ))}
       </Wizard>
@@ -103,7 +106,7 @@ const Header = ({ steps }) => {
   );
 };
 
-const Footer = ({ onComplete, steps, canContinue, formValues }) => {
+const Footer = ({ onComplete, steps, canContinue, formValues, completeName }) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
 
   return (
@@ -172,7 +175,7 @@ const Footer = ({ onComplete, steps, canContinue, formValues }) => {
           variation="primary"
           size="small"
         >
-          Complete
+          {completeName}
         </Button>
       )}
     </div>

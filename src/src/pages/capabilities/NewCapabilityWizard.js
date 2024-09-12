@@ -1,19 +1,18 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
 import { Button } from "@dfds-ui/react-components";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
+import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";
-import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
+import { Invitations } from "./invitations";
 
 export default function NewCapabilityWizard({
   inProgress,
   onAddCapabilityClicked,
   onCloseClicked,
 }) {
-  const [invitees, setInvitees] = useState([]);
-
   const steps = [
     {
       title: "Basic Information",
@@ -22,8 +21,26 @@ export default function NewCapabilityWizard({
       skipped: false,
     },
     {
-      title: "Tags",
+      title: "Mandatory Tags",
       content: (props) => <MandatoryTagsStep {...props} />,
+      optional: false,
+      skipped: false,
+    },
+    {
+      title: "Other Tags",
+      content: (props) => <OptionalTagsStep {...props} />,
+      optional: true,
+      skipped: false,
+    },
+    {
+      title: "Invite Members",
+      content: (props) => <InviteMemberStep {...props} />,
+      optional: true,
+      skipped: false,
+    },
+    {
+      title: "Summary",
+      content: (props) => <SummaryStep {...props} />,
       optional: false,
       skipped: false,
     },
@@ -31,21 +48,22 @@ export default function NewCapabilityWizard({
 
   const handleAddCapabilityClicked = async (formData) => {
     console.log(formData);
-    const jsonMetadataString = JSON.stringify(formData.mandatoryTags, null, 1);
+    const jsonMetadataString = JSON.stringify(formData, null, 1);
     onAddCapabilityClicked({
       ...formData,
-      invitations: invitees,
-      jsonMetadataString,
     });
   };
+
   const emptyFormValues = {
     name: "",
     description: "",
-    mandatoryTags: "",
-    formRef: createRef(),
+    mandatoryTags: {},
+    optionalTags: {},
+    invitations: [],
   };
 
   return (
+    <JsonSchemaProvider>
     <CreationWizard
       isOpen={true}
       onClose={onCloseClicked}
@@ -53,7 +71,9 @@ export default function NewCapabilityWizard({
       steps={steps}
       title="New Capability Wizard"
       emptyFormValues={emptyFormValues}
+      completeName={"Add Capability"}
     />
+    </JsonSchemaProvider>
   );
 }
 
@@ -162,70 +182,105 @@ const BasicInformationStep = ({
 };
 
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
-  const [formData, setFormData] = useState(formValues);
   const [formValid, setFormValid] = useState(false);
-  const [validMetadata, setValidMetadata] = useState(false);
   const formRef = createRef();
-  const [metadataFormData, setMetadataFormData] = useState({});
+  const [metadataFormData, setMetadataFormData] = useState(formValues.mandatoryTags);
+  const { mandatoryJsonSchema, hasJsonSchemaProperties } = useContext(JsonSchemaContext);
 
   useEffect(() => {
     if (formValid) {
+      setFormValues((prev) => {
+        return { ...prev, mandatoryTags: metadataFormData };
+      });
       setCanContinue(true);
     } else {
       setCanContinue(false);
     }
   }, [formValid]);
 
-  const validateMandatoryTags = async () => {
-    formRef.current.validateForm();
-    formRef.current.validateForm();
-
-    return true;
-  };
-
-  const changeTags = (e) => {
-    e.preventDefault();
-    let newTags = e?.target?.value || "";
-    setFormData((prev) => ({
-      ...prev,
-      ...{ mandatoryTags: newTags.toLowerCase() },
-    }));
-    validateMandatoryTags(newTags);
-  };
-
-  useEffect(() => {
-    let tagsValid = validateMandatoryTags(metadataFormData);
-    setFormValid(tagsValid);
-    setFormValues((prev) => {
-      return { ...prev, mandatoryTags: metadataFormData };
-    });
-  }, [metadataFormData]);
-
   return (
     <>
-      <div className={styles.tooltip}>
-        <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'></Tooltip>
-      </div>
-      <TextField
-        label="Tags"
-        placeholder="Commaseparated list of tags"
-        required
-        value={formData.mandatoryTags}
-        onChange={changeTags}
-        //errorMessage={tagsError}
-        maxLength={255}
-      />
-
-      <JsonSchemaProvider>
+      <Text>FLUTTERSHY: Insert guide on tagging here</Text>
+        {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"
           setMetadata={setMetadataFormData}
           setHasSchema={() => {}}
-          setValidMetadata={setValidMetadata}
-          preexistingFormData={{}}
+          setValidMetadata={setFormValid}
+          preexistingFormData={formValues.mandatoryTags}
           formRef={formRef}
-        />
-      </JsonSchemaProvider>
+          jsonSchema={mandatoryJsonSchema}
+        />) : (<Text>There are no mandatory tags to set</Text>)
+        }
+
+    </>
+  );
+};
+
+const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
+  const [formValid, setFormValid] = useState(false);
+  const formRef = createRef();
+  const [metadataFormData, setMetadataFormData] = useState(formValues.optionalTags);
+  const { optionalJsonSchema, hasJsonSchemaProperties } = useContext(JsonSchemaContext);
+
+  useEffect(() => {
+    if (formValid) {
+      setFormValues((prev) => {
+        return { ...prev, optionalTags: metadataFormData };
+      });
+      setCanContinue(true);
+    } else {
+      setCanContinue(false);
+    }
+  }, [formValid, metadataFormData]); // formValid will not change value between modifying optional tags
+
+
+  return (
+    <>
+      <Text>RAINBOWDASH: Insert guide on tagging here</Text>
+      {hasJsonSchemaProperties ? (
+        <CapabilityTagsSubForm
+          label="Capability Tags"
+          setMetadata={setMetadataFormData}
+          setHasSchema={() => {}}
+          setValidMetadata={setFormValid}
+          preexistingFormData={formValues.optionalTags}
+          formRef={formRef}
+          jsonSchema={optionalJsonSchema}
+        />) : (<Text>There are no optional tags to set</Text>)
+      }
+    </>
+  );
+};
+
+const InviteMemberStep = ({ formValues, setFormValues }) => {
+  const [formData, setFormData] = useState({});
+  const [invitees, setInvitees] = useState(formValues.invitations || []);
+
+  useEffect(() => {
+    setFormValues((prev) => {
+      return { ...prev, invitations: invitees };
+    });
+  }, [invitees]);
+
+  return (
+    <>
+      <h1>Invite Members</h1>
+      <Invitations
+        invitees={invitees}
+        setInvitees={setInvitees}
+        formData={formData}
+        setFormData={setFormData}
+      />
+    </>
+  );
+};
+
+const SummaryStep = ({ formValues }) => {
+  return (
+    <>
+      <h1>Summary</h1>
+      <pre>{JSON.stringify(formValues, null, 2)}</pre>
     </>
   );
 };
