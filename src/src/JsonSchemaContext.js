@@ -31,36 +31,42 @@ function JsonSchemaProvider({ children }) {
       const splitSchema = (schema) => {
         const requiredFields = schema.required || [];
         const properties = schema.properties || {};
-      
+
         // Mandatory schema
-        const mandatoryProperties = Object.keys(properties).reduce((acc, key) => {
-          if (requiredFields.includes(key)) {
-            acc[key] = properties[key];
-          }
-          return acc;
-        }, {});
-      
+        const mandatoryProperties = Object.keys(properties).reduce(
+          (acc, key) => {
+            if (requiredFields.includes(key)) {
+              acc[key] = properties[key];
+            }
+            return acc;
+          },
+          {},
+        );
+
         const mandatorySchema = {
           $schema: schema.$schema,
           type: schema.type,
           properties: mandatoryProperties,
-          required: requiredFields
+          required: requiredFields,
         };
-      
+
         // Optional schema
-        const optionalProperties = Object.keys(properties).reduce((acc, key) => {
-          if (!requiredFields.includes(key)) {
-            acc[key] = properties[key];
-          }
-          return acc;
-        }, {});
-      
+        const optionalProperties = Object.keys(properties).reduce(
+          (acc, key) => {
+            if (!requiredFields.includes(key)) {
+              acc[key] = properties[key];
+            }
+            return acc;
+          },
+          {},
+        );
+
         const optionalSchema = {
           $schema: schema.$schema,
           type: schema.type,
-          properties: optionalProperties
+          properties: optionalProperties,
         };
-      
+
         setMandatoryJsonSchema(mandatorySchema);
         setOptionalJsonSchema(optionalSchema);
       };
