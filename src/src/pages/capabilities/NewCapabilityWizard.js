@@ -64,15 +64,15 @@ export default function NewCapabilityWizard({
 
   return (
     <JsonSchemaProvider>
-    <CreationWizard
-      isOpen={true}
-      onClose={onCloseClicked}
-      onComplete={handleAddCapabilityClicked}
-      steps={steps}
-      title="New Capability Wizard"
-      emptyFormValues={emptyFormValues}
-      completeName={"Add Capability"}
-    />
+      <CreationWizard
+        isOpen={true}
+        onClose={onCloseClicked}
+        onComplete={handleAddCapabilityClicked}
+        steps={steps}
+        title="New Capability Wizard"
+        emptyFormValues={emptyFormValues}
+        completeName={"Add Capability"}
+      />
     </JsonSchemaProvider>
   );
 }
@@ -184,8 +184,11 @@ const BasicInformationStep = ({
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [formValid, setFormValid] = useState(false);
   const formRef = createRef();
-  const [metadataFormData, setMetadataFormData] = useState(formValues.mandatoryTags);
-  const { mandatoryJsonSchema, hasJsonSchemaProperties } = useContext(JsonSchemaContext);
+  const [metadataFormData, setMetadataFormData] = useState(
+    formValues.mandatoryTags,
+  );
+  const { mandatoryJsonSchema, hasJsonSchemaProperties } =
+    useContext(JsonSchemaContext);
 
   useEffect(() => {
     if (formValid) {
@@ -201,7 +204,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   return (
     <>
       <Text>FLUTTERSHY: Insert guide on tagging here</Text>
-        {hasJsonSchemaProperties ? (
+      {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"
           setMetadata={setMetadataFormData}
@@ -210,9 +213,10 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           preexistingFormData={formValues.mandatoryTags}
           formRef={formRef}
           jsonSchema={mandatoryJsonSchema}
-        />) : (<Text>There are no mandatory tags to set</Text>)
-        }
-
+        />
+      ) : (
+        <Text>There are no mandatory tags to set</Text>
+      )}
     </>
   );
 };
@@ -220,8 +224,11 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [formValid, setFormValid] = useState(false);
   const formRef = createRef();
-  const [metadataFormData, setMetadataFormData] = useState(formValues.optionalTags);
-  const { optionalJsonSchema, hasJsonSchemaProperties } = useContext(JsonSchemaContext);
+  const [metadataFormData, setMetadataFormData] = useState(
+    formValues.optionalTags,
+  );
+  const { optionalJsonSchema, hasJsonSchemaProperties } =
+    useContext(JsonSchemaContext);
 
   useEffect(() => {
     if (formValid) {
@@ -233,7 +240,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       setCanContinue(false);
     }
   }, [formValid, metadataFormData]); // formValid will not change value between modifying optional tags
-
 
   return (
     <>
@@ -247,8 +253,10 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           preexistingFormData={formValues.optionalTags}
           formRef={formRef}
           jsonSchema={optionalJsonSchema}
-        />) : (<Text>There are no optional tags to set</Text>)
-      }
+        />
+      ) : (
+        <Text>There are no optional tags to set</Text>
+      )}
     </>
   );
 };

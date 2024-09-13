@@ -56,7 +56,12 @@ export default function CreationWizard({
       >
         {steps.map((step) => (
           <div key={step.title}>
-            {step.content({ formValues, setFormValues, setCanContinue, jsonSchemaString })}
+            {step.content({
+              formValues,
+              setFormValues,
+              setCanContinue,
+              jsonSchemaString,
+            })}
           </div>
         ))}
       </Wizard>
@@ -106,7 +111,13 @@ const Header = ({ steps }) => {
   );
 };
 
-const Footer = ({ onComplete, steps, canContinue, formValues, completeName }) => {
+const Footer = ({
+  onComplete,
+  steps,
+  canContinue,
+  formValues,
+  completeName,
+}) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
 
   return (
@@ -148,6 +159,7 @@ const Footer = ({ onComplete, steps, canContinue, formValues, completeName }) =>
           Next
         </Button>
       )}
+      {/*
       {activeStep + 1 < stepCount && steps[activeStep].optional && (
         <Button
           className={styles.skipButton}
@@ -166,6 +178,7 @@ const Footer = ({ onComplete, steps, canContinue, formValues, completeName }) =>
           Skip
         </Button>
       )}
+      */}
       {activeStep + 1 === stepCount && (
         <Button
           className={styles.nextButton}
