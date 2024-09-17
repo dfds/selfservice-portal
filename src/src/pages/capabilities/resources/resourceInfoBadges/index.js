@@ -10,7 +10,6 @@ import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
-import awsLogo from "./aws-logo.svg";
 
 function VPCInformation(id, region, cidrBlock) {
   return (
@@ -362,6 +361,11 @@ export function ResourceInfoBadges() {
   const [showNewAzureResourcePopup, setShowNewAzureResourcePopup] =
     useState(false);
 
+  const [showLogModal, setLogModal] = useState(false);
+  const handleApplicationLogShow = async () => {
+    setLogModal(true);
+  };
+
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
     await requestAwsAccount();
@@ -404,28 +408,38 @@ export function ResourceInfoBadges() {
     }
   };
 
+  const generateResourceGroupLink = (environment) => {
+    const urlmap = {
+      dev: "9a68caae-8d74-4289-9f3c-31e96120aef9",
+      staging: "",
+      test: "bad472ab-19cd-4654-9657-8c91ab59f248",
+      uat: "6be18e97-e76a-4a58-8a31-5628be3efeeb",
+      training: "",
+      prod: "60773f07-9b34-4256-968b-c07d5abe447a",
+    };
+    return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
+  };
+
   return (
     <>
       <hr className={styles.divider} />
 
-      <p style={{ textAlign: "center" }}>
-        <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
-      </p>
-
       {awsAccount !== null ? (
         <>
           {awsAccount.status === "Completed" && (
-            <Completed
-              accountId={awsAccount.accountId}
-              namespace={awsAccount.namespace}
-              id={id}
-            />
+            <>
+              <Completed
+                accountId={awsAccount.accountId}
+                namespace={awsAccount.namespace}
+                id={id}
+              />
+              {awsAccountInformation !== null && (
+                <VPCPeerings awsAccountInformation={awsAccountInformation} />
+              )}
+            </>
           )}
           {awsAccount.status === "Requested" && <Requested />}
           {awsAccount.status === "Pending" && <Pending />}
-          {awsAccountInformation !== null && (
-            <VPCPeerings awsAccountInformation={awsAccountInformation} />
-          )}
         </>
       ) : (
         <>
@@ -437,6 +451,11 @@ export function ResourceInfoBadges() {
             />
           )}
 
+          <p style={{ textAlign: "center" }}>
+            <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
+            &nbsp;&nbsp;&nbsp;
+            <img src={k8sLogo} alt="K8S icon" style={{ height: "2.5rem" }} />
+          </p>
           <div className={styles.pending}>
             <div className={styles.items}>
               <strong>
@@ -458,6 +477,83 @@ export function ResourceInfoBadges() {
           </div>
         </>
       )}
+      {awsAccount && awsAccount.status === "Completed" && (
+        <>
+          <br />
+
+          <ButtonStack
+            align="center"
+            style={{ margin: "auto", marginTop: "15px", width: "400px" }}
+          >
+            <Button
+              size="small"
+              variation="outlined"
+              onClick={handleApplicationLogShow}
+            >
+              How to see application logs?
+            </Button>
+          </ButtonStack>
+        </>
+      )}
+
+      <Modal
+        heading={"How do I see my application logs?"}
+        isOpen={showLogModal}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
+        onRequestClose={() => {
+          setLogModal(false);
+        }}
+        sizes={{
+          s: "50%",
+          m: "50%",
+          l: "50%",
+          xl: "50%",
+          xxl: "50%",
+        }}
+      >
+        <Text>
+          <Text as="span" styledAs={"smallHeadline"}>
+            For applications running in Kubernetes
+          </Text>
+        </Text>
+        <Text>
+          1. Sign into the <i>dfds-logs</i> account using the{" "}
+          <i>CapabilityLog</i> role at{" "}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://dfds.awsapps.com/start/"
+          >
+            https://dfds.awsapps.com/start/
+          </a>
+          <br />
+          2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
+          <br />
+          3. Navigate to the CloudWatch service either using the navigation menu
+          or{" "}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
+          >
+            this link
+          </a>
+          <br />
+          4. Once there, select "Logs" in the menu on your left, and then "Logs
+          Insights"
+          <br />
+          5. From this view, you can query logs in Kubernetes. For example
+          queries, please check our wiki article at{" "}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
+          >
+            https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
+          </a>
+        </Text>
+      </Modal>
 
       <hr className={styles.divider} />
 
@@ -477,6 +573,16 @@ export function ResourceInfoBadges() {
 
       <p style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
+        <Text>
+          Please refer to the{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://wiki.dfds.cloud/en/documentation/azure/azure-capability-developer"
+          >
+            Azure Capability Developer Guide
+          </a>
+        </Text>
       </p>
 
       <div className={styles.azure}>
@@ -484,18 +590,26 @@ export function ResourceInfoBadges() {
           {azureResourcesList &&
           azureResourcesList.length !== 0 &&
           isLoadedAzure ? (
-            azureResourcesList.map((x) => (
-              <div key={x.id}>
-                <div className={styles.environment}>
-                  Azure resources for the {x.environment} environment:
+            <>
+              <Text>
+                Your have the following existing Azure Resource Groups
+                environments:
+              </Text>
+              {azureResourcesList.map((resource) => (
+                <div key={resource.id} className={styles.environmentlist}>
+                  <a
+                    className={styles.environmentlink}
+                    href={generateResourceGroupLink(resource.environment)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <div className={styles.environmentbadge}>
+                      {resource.environment}
+                    </div>
+                  </a>
                 </div>
-                <div className={styles.azureresource}>
-                  <Badge>
-                    <strong>{x.id} </strong>
-                  </Badge>
-                </div>
-              </div>
-            ))
+              ))}
+            </>
           ) : (
             <div>
               {" "}
@@ -510,12 +624,14 @@ export function ResourceInfoBadges() {
 
         <div className={styles.items}>
           <div className={styles.envsection}>
-            <Button
-              style={{ marginTop: "1rem" }}
-              onClick={() => handleNewAzureResource()}
-            >
-              Request New Azure Resource Group
-            </Button>
+            <ButtonStack align="right">
+              <Button
+                style={{ marginTop: "1rem" }}
+                onClick={() => handleNewAzureResource()}
+              >
+                Request New Azure Resource Group
+              </Button>
+            </ButtonStack>
           </div>
         </div>
       </div>
