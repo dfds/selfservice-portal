@@ -70,19 +70,19 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
   const actions = (
     <>
       <ModalAction
-        actionVariation="primary"
-        submitting={isRequesting}
-        onClick={onSubmit}
-      >
-        Request
-      </ModalAction>
-      <ModalAction
         style={{ marginRight: "1rem" }}
         disabled={isRequesting}
         actionVariation="secondary"
         onClick={onClose}
       >
         Cancel
+      </ModalAction>
+      <ModalAction
+        actionVariation="primary"
+        submitting={isRequesting}
+        onClick={onSubmit}
+      >
+        Request
       </ModalAction>
     </>
   );
@@ -197,51 +197,13 @@ const VPCPeerings = function ({ awsAccountInformation }) {
   );
 };
 
-export function ResourceInfoBadges() {
-  // if user cannot see: return <> </>
-  const {
-    id,
-    awsAccount,
-    awsAccountInformation,
-    links,
-    requestAwsAccount,
-    setAwsAccountRequested,
-    azureResourcesList,
-    addNewAzure,
-    isLoadedAzure,
-    metadata,
-  } = useContext(SelectedCapabilityContext);
-  const [showDialog, setShowDialog] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+function AzureResourceRequest({ onClose, azureResourcesList }) {
+  const { addNewAzure } = useContext(SelectedCapabilityContext);
+  const [acceptedCloudUsageGuidelines, setAcceptedCloudUsageGuidelines] =
+    useState(false);
   const [environment, setEnvironment] = useState("test");
-  const canRequest = (links?.awsAccount?.allow || []).includes("POST");
   const environments = ["dev", "staging", "test", "uat", "training", "prod"];
-  const requiredTags = [
-    "dfds.planned_sunset",
-    "dfds.owner",
-    "dfds.cost.centre",
-    "dfds.service.availability",
-  ];
-  const [missingTags, setMissingTags] = useState([]);
-  const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
   const [envAvailability, setEnvAvailability] = useState(null);
-
-  const handleChange = (event) => {
-    setEnvironment(event.target.value);
-  };
-
-  // set environment to first non-existing environment type
-  useEffect(() => {
-    if (envAvailability != null) {
-      setEnvironment(() => {
-        for (let i = 0; i < envAvailability.length; i++) {
-          if (!envAvailability[i].exist) {
-            return envAvailability[i].env;
-          }
-        }
-      });
-    }
-  }, [envAvailability]);
 
   useEffect(() => {
     if (azureResourcesList != null) {
@@ -260,6 +222,144 @@ export function ResourceInfoBadges() {
       });
     }
   }, [azureResourcesList]);
+
+  const handleChange = (event) => {
+    setEnvironment(event.target.value);
+  };
+
+  // set environment to first non-existing environment type
+  useEffect(() => {
+    if (envAvailability != null) {
+      setEnvironment(() => {
+        for (let i = 0; i < envAvailability.length; i++) {
+          if (!envAvailability[i].exist) {
+            return envAvailability[i].env;
+          }
+        }
+      });
+    }
+  }, [envAvailability]);
+
+  const actions = (
+    <>
+      <ModalAction
+        style={{ marginRight: "1rem" }}
+        actionVariation="secondary"
+        onClick={onClose}
+      >
+        Cancel
+      </ModalAction>
+      <ModalAction
+        style={{ marginRight: "1rem" }}
+        actionVariation="primary"
+        onClick={() => {
+          addNewAzure(environment);
+          onClose();
+        }}
+        disabled={!acceptedCloudUsageGuidelines}
+      >
+        Request
+      </ModalAction>
+    </>
+  );
+
+  return (
+    <>
+      <Modal
+        heading={`Request New Azure Resource Group`}
+        isOpen={true}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
+        onRequestClose={onClose}
+        actions={actions}
+      >
+        <div className={styles.items}>
+          <Text>
+            Please select an target environment for this new resource group.
+          </Text>
+          <div className={styles.envsection}>
+            <div className={styles.envitems}>
+              <label>Environment:</label>
+              {envAvailability != null ? (
+                <select
+                  style={{ marginLeft: "3px" }}
+                  className={styles.envbutton}
+                  value={environment}
+                  onChange={handleChange}
+                >
+                  {envAvailability.map((env) => (
+                    <option value={env.env} key={env.env} disabled={env.exist}>
+                      {env.env}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <>
+                  <div>error</div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <Text>
+            Please confirm that you have read and understood{" "}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://wiki.dfds.cloud/en/architecture/adrs/which-cloud"
+            >
+              the DFDS Cloud Usage Guidelines
+            </a>
+            . This document outlines what usecases are permitted for Azure, for
+            Vercel, and for AWS.
+          </Text>
+          <div className={styles.envsection}>
+            <div>
+              <input
+                type="checkbox"
+                checked={acceptedCloudUsageGuidelines}
+                style={{ marginRight: "5px" }}
+                onChange={() => {
+                  setAcceptedCloudUsageGuidelines(
+                    !acceptedCloudUsageGuidelines,
+                  );
+                }}
+              />
+              <label>I have read the Cloud Usage Guidelines</label>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
+export function ResourceInfoBadges() {
+  // if user cannot see: return <> </>
+  const {
+    id,
+    awsAccount,
+    awsAccountInformation,
+    links,
+    requestAwsAccount,
+    setAwsAccountRequested,
+    azureResourcesList,
+    isLoadedAzure,
+    metadata,
+  } = useContext(SelectedCapabilityContext);
+  const [showDialog, setShowDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const canRequest = (links?.awsAccount?.allow || []).includes("POST");
+  const requiredTags = [
+    "dfds.planned_sunset",
+    "dfds.owner",
+    "dfds.cost.centre",
+    "dfds.service.availability",
+  ];
+  const [missingTags, setMissingTags] = useState([]);
+  const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
+  const [showNewAzureResourcePopup, setShowNewAzureResourcePopup] =
+    useState(false);
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -297,7 +397,7 @@ export function ResourceInfoBadges() {
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
-      addNewAzure(environment);
+      setShowNewAzureResourcePopup(true);
     } else {
       setShowAzureTagsWarning(true);
     }
@@ -363,6 +463,13 @@ export function ResourceInfoBadges() {
         />
       )}
 
+      {showNewAzureResourcePopup && (
+        <AzureResourceRequest
+          onClose={() => setShowNewAzureResourcePopup(false)}
+          azureResourcesList={azureResourcesList}
+        />
+      )}
+
       <p style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
       </p>
@@ -398,36 +505,11 @@ export function ResourceInfoBadges() {
 
         <div className={styles.items}>
           <div className={styles.envsection}>
-            <div className={styles.envitems}>
-              <label>
-                To create a new Azure resource choose an environment:
-              </label>
-
-              {envAvailability != null ? (
-                <select
-                  style={{ marginLeft: "3px" }}
-                  className={styles.envbutton}
-                  value={environment}
-                  onChange={handleChange}
-                >
-                  {envAvailability.map((env) => (
-                    <option value={env.env} key={env.env} disabled={env.exist}>
-                      {env.env}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <>
-                  <div></div>
-                </>
-              )}
-            </div>
-
             <Button
               style={{ marginTop: "1rem" }}
               onClick={() => handleNewAzureResource()}
             >
-              Request Azure Resource Group
+              Request New Azure Resource Group
             </Button>
           </div>
         </div>
