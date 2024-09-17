@@ -10,6 +10,7 @@ import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
+import awsLogo from "./aws-logo.svg";
 
 function VPCInformation(id, region, cidrBlock) {
   return (
@@ -406,6 +407,10 @@ export function ResourceInfoBadges() {
   return (
     <>
       <hr className={styles.divider} />
+
+      <p style={{ textAlign: "center" }}>
+        <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
+      </p>
 
       {awsAccount !== null ? (
         <>
