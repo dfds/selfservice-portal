@@ -11,7 +11,7 @@ import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import CapabilityClaims from "./capabilityClaims";
+//import CapabilityClaims from "./capabilityClaims";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import { CapabilityTagViewer } from "./capabilityTags";
@@ -125,7 +125,7 @@ function CapabilityDetailsPageContent() {
           <Costs costCentre={costCentre} />
         )}
 
-        <CapabilityClaims />
+        {/* <CapabilityClaims /> */}
 
         {!isDeleted && (
           <CapabilityManagement
