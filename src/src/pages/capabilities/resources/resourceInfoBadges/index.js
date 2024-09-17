@@ -202,7 +202,7 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
   const [acceptedCloudUsageGuidelines, setAcceptedCloudUsageGuidelines] =
     useState(false);
   const [environment, setEnvironment] = useState("test");
-  const environments = ["dev", "staging", "test", "uat", "training", "prod"];
+  const environments = ["dev", "test", "uat", "prod"];
   const [envAvailability, setEnvAvailability] = useState(null);
 
   useEffect(() => {
@@ -411,10 +411,8 @@ export function ResourceInfoBadges() {
   const generateResourceGroupLink = (environment) => {
     const urlmap = {
       dev: "9a68caae-8d74-4289-9f3c-31e96120aef9",
-      staging: "",
       test: "bad472ab-19cd-4654-9657-8c91ab59f248",
       uat: "6be18e97-e76a-4a58-8a31-5628be3efeeb",
-      training: "",
       prod: "60773f07-9b34-4256-968b-c07d5abe447a",
     };
     return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
