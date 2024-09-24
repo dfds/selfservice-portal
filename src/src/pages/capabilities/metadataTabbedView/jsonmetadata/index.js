@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import SelectedCapabilityContext from "../../SelectedCapabilityContext";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";

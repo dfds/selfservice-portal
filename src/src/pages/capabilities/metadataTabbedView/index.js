@@ -76,7 +76,7 @@ export function MetadataTabbedView() {
         setValidMetadata={setIsValid}
         preexistingFormData={metadataObject}
         canEditJsonMetadata={canEditJsonMetadata}
-    />
+      />
     ),
     json: (
       <JsonMetadataWithSchemaViewer

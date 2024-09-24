@@ -77,7 +77,7 @@ export function TabbedPageSection({
           {/* Render the content based on the active tab */}
           {Object.keys(tabsContent).map(
             (index) =>
-              selectedTab == index && (
+              selectedTab === index && (
                 <div key={index}>{tabsContent[index]}</div>
               ),
           )}

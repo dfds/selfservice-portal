@@ -131,8 +131,6 @@ export function CapabilityTagsSubForm({
     useContext(JsonSchemaContext);
   const [formData, setFormData] = useState(preexistingFormData);
 
-  const [canEdit, setCanEdit] = useState(canEditJsonMetadata);
-
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
       setValidMetadata(true);
@@ -172,7 +170,7 @@ export function CapabilityTagsSubForm({
         ref={formRef}
         showErrorList={false}
         onError={errorHandler}
-        disabled={canEdit}
+        disabled={!canEditJsonMetadata}
       />
     </>
   );
