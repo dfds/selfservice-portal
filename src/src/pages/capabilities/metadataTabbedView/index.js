@@ -1,14 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Card, CardContent } from "@dfds-ui/react-components";
 import { TabbedPageSection } from "components/PageSection";
-import styles from "./../../../components/PageSection/PageSection.module.css";
 import JsonSchemaContext from "../../../JsonSchemaContext";
 import { Button, Text } from "@dfds-ui/react-components";
-import { CapabilityTagViewer } from "./capabilityTags";
+import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { shallowEqual } from "Utils";
-import { set } from "date-fns";
 
 export function MetadataTabbedView() {
   const { metadata, setCapabilityJsonMetadata, links } = useContext(
@@ -74,12 +71,12 @@ export function MetadataTabbedView() {
 
   const tabsContent = {
     form: (
-      <CapabilityTagViewer
-        metadataObject={currentMetadataObject}
-        setCurrentMetadataObject={setCurrentMetadataObject}
-        setIsValidMetadata={setIsValid}
+      <CapabilityTagsSubForm
+        setMetadata={setCurrentMetadataObject}
+        setValidMetadata={setIsValid}
+        preexistingFormData={metadataObject}
         canEditJsonMetadata={canEditJsonMetadata}
-      />
+    />
     ),
     json: (
       <JsonMetadataWithSchemaViewer
