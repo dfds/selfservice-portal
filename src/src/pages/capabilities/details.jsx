@@ -13,10 +13,9 @@ import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
 //import CapabilityClaims from "./capabilityClaims";
 import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
-import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
-import { CapabilityTagViewer } from "./capabilityTags";
 import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
+import { MetadataTabbedView } from "./metadataTabbedView";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -98,9 +97,8 @@ function CapabilityDetailsPageContent() {
           adoptionLevelInformation={adoptionLevelInformation}
         />
 
-        <CapabilityTagViewer />
+        {showJsonMetadata && <MetadataTabbedView />}
 
-        {showJsonMetadata && <JsonMetadataWithSchemaViewer />}
         <Resources capabilityId={id} />
 
         {showInvitations && (

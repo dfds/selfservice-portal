@@ -13,7 +13,7 @@ import styles from "./capabilityTags.module.css";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import Select from "react-select";
-import JsonSchemaContext from "../../../JsonSchemaContext";
+import JsonSchemaContext from "../../../../JsonSchemaContext";
 
 /*
  * Custom Widgets and Fields
@@ -125,11 +125,13 @@ export function CapabilityTagsSubForm({
   setValidMetadata,
   preexistingFormData,
   formRef,
+  canEditJsonMetadata,
 }) {
   const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
     useContext(JsonSchemaContext);
-  const [showTagForm, setShowTagForm] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(preexistingFormData);
+
+  const [canEdit, setCanEdit] = useState(canEditJsonMetadata);
 
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
@@ -146,15 +148,6 @@ export function CapabilityTagsSubForm({
     }
   }, [formData]);
 
-  useEffect(() => {
-    if (hasJsonSchemaProperties) {
-      setValidMetadata(false);
-      setShowTagForm(true);
-    } else {
-      setValidMetadata(true);
-    }
-  }, [hasJsonSchemaProperties]);
-
   const widgets = {
     SelectWidget: CustomDropdown,
     CheckboxWidget: CustomCheckbox,
@@ -166,33 +159,21 @@ export function CapabilityTagsSubForm({
 
   return (
     <>
-      {showTagForm && (
-        <>
-          {label !== "" && <Text className={styles.label}>{label}</Text>}
-          <a
-            href={
-              "https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Text>See Tagging Policy</Text>
-          </a>
-          <Form
-            className={styles.tagsform}
-            schema={jsonSchema}
-            validator={validator}
-            onChange={(type) => setFormData(type.formData)}
-            widgets={widgets}
-            templates={{ FieldTemplate: CustomFieldTemplate }}
-            formData={preexistingFormData}
-            children={true} // hide submit button
-            ref={formRef}
-            showErrorList={false}
-            onError={errorHandler}
-          />
-        </>
-      )}
+      {label !== "" && <Text className={styles.label}>{label}</Text>}
+      <Form
+        className={styles.tagsform}
+        schema={jsonSchema}
+        validator={validator}
+        onChange={(type) => setFormData(type.formData)}
+        widgets={widgets}
+        templates={{ FieldTemplate: CustomFieldTemplate }}
+        formData={preexistingFormData}
+        children={true} // hide submit button
+        ref={formRef}
+        showErrorList={false}
+        onError={errorHandler}
+        disabled={canEdit}
+      />
     </>
   );
 }
