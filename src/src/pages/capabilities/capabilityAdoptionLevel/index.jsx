@@ -11,13 +11,13 @@ import {
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 function parseConfigurationLevelInformation(configurationLevelInformation) {
-  const keyMetrics = configurationLevelInformation.breakdown.filter(
-    (metric) => metric.isFocusMetric,
+  const recommendations = configurationLevelInformation.breakdown.filter(
+    (metric) => !metric.isSelfAssessed,
   );
-  const generalGuidance = configurationLevelInformation.breakdown.filter(
-    (metric) => !metric.isFocusMetric,
+  const selfAssessments = configurationLevelInformation.breakdown.filter(
+    (metric) => metric.isSelfAssessed,
   );
-  return [keyMetrics, generalGuidance];
+  return [recommendations, selfAssessments];
 }
 
 const ConfigurationLevel = {
@@ -67,19 +67,19 @@ function MetricRow({ description, level }) {
 }
 
 export function CapabilityAdoptionLevel() {
-  const [keyMetrics, setKeyMetrics] = useState([]);
-  const [generalGuidance, setGeneralGuidance] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [selfAssessments, setSelfAssessments] = useState([]);
   const { configurationLevelInformation } = useContext(
     SelectedCapabilityContext,
   );
 
   useEffect(() => {
     if (configurationLevelInformation) {
-      const [keyMetrics, generalGuidance] = parseConfigurationLevelInformation(
+      const [recommendations, selfAssessments] = parseConfigurationLevelInformation(
         configurationLevelInformation,
       );
-      setKeyMetrics(keyMetrics);
-      setGeneralGuidance(generalGuidance);
+      setRecommendations(recommendations);
+      setSelfAssessments(selfAssessments);
     }
   }, [configurationLevelInformation]);
 
@@ -101,8 +101,8 @@ export function CapabilityAdoptionLevel() {
           </p>
           <div className={styles.columnWrapper}>
             <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Key Recommendations</Text>
-              {(keyMetrics || []).map((metric) => (
+              <Text styledAs={"smallHeadline"}>Recommendations</Text>
+              {(recommendations || []).map((metric) => (
                 <MetricRow
                   key={metric.identifier}
                   description={metric.description}
@@ -112,8 +112,8 @@ export function CapabilityAdoptionLevel() {
               ))}
             </div>
             <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Other Recommendations</Text>
-              {(generalGuidance || []).map((metric) => (
+              <Text styledAs={"smallHeadline"}>Self Assessments</Text>
+              {(selfAssessments || []).map((metric) => (
                 <MetricRow
                   key={metric.identifier}
                   description={metric.description}
