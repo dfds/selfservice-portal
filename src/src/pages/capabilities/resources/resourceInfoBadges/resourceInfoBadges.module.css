@@ -48,6 +48,25 @@ hr.divider {
   margin: 10px 0px 10px 0px;
 }
 
+.environmentlist {
+  text-align: center;
+  margin: 5px 0px 5px 0px;
+  display: inline-block;
+}
+.environmentbadge {
+  display: inline-block;
+  background-color: #d4d9dc;
+  border-color: #b9bec1;
+  padding: 5px;
+  margin: 0px 10px;
+  border-radius: 10px;
+}
+.environmentlink {
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.15em;
+}
+
 .azureresource {
   text-align: center;
 }
