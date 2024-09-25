@@ -590,8 +590,8 @@ export function ResourceInfoBadges() {
           isLoadedAzure ? (
             <>
               <Text>
-                Your have the following existing Azure Resource Groups
-                environments:
+                The following Azure Resource Group environments have been
+                created for this capability:
               </Text>
               {azureResourcesList.map((resource) => (
                 <div key={resource.id} className={styles.environmentlist}>

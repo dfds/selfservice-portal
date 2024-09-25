@@ -1,13 +1,9 @@
 import React from "react";
-import { useContext } from "react";
 import PageSection from "components/PageSection";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
-import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
 export default function Resources({ capabilityId }) {
-  const { awsAccount } = useContext(SelectedCapabilityContext);
-
   return (
     <>
       <PageSection headline="Resources">
