@@ -9,7 +9,6 @@ import {
 } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
-import NewCapabilityDialog from "./NewCapabilityDialog";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
@@ -17,28 +16,31 @@ import OtherCapabilities from "./OtherCapabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
-import { set } from "date-fns";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
-  const [showNewCapabilityDialog, setShowNewCapabilityDialog] = useState(false);
+  const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
   const { reloadUser } = useContext(AppContext);
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
+    const mergedObject = Object.assign(
+      {},
+      formData.mandatoryTags,
+      formData.optionalTags,
+    );
+    const jsonMetadataString = JSON.stringify(mergedObject, null, 1);
     await addNewCapability(
       formData.name,
       formData.description,
       formData.invitations,
-      formData.jsonMetadataString,
+      jsonMetadataString,
     );
-    setShowNewCapabilityDialog(false);
+    setShowNewCapabilityWizard(false);
     setIsCreatingNewCapability(false);
     reloadUser();
-
-    alert("You asked to create a new capability");
-    setShowNewCapabilityDialog(false);
+    setShowNewCapabilityWizard(false);
   };
 
   const splash = (
@@ -52,17 +54,12 @@ export default function CapabilitiesPage() {
   return (
     <>
       <Page title="Capabilities">
-        {showNewCapabilityDialog && (
+        {showNewCapabilityWizard && (
           <NewCapabilityWizard
             inProgress={isCreatingNewCapability}
             onAddCapabilityClicked={handleAddCapability}
-            onCloseClicked={() => setShowNewCapabilityDialog(false)}
+            onCloseClicked={() => setShowNewCapabilityWizard(false)}
           />
-          //   <NewCapabilityDialog
-          //   inProgress={isCreatingNewCapability}
-          //   onAddCapabilityClicked={handleAddCapability}
-          //   onCloseClicked={() => setShowNewCapabilityDialog(false)}
-          // />
         )}
 
         <Card
@@ -94,7 +91,7 @@ export default function CapabilitiesPage() {
           <CardActions>
             <Button
               size="small"
-              onClick={() => setShowNewCapabilityDialog(true)}
+              onClick={() => setShowNewCapabilityWizard(true)}
             >
               Add
             </Button>

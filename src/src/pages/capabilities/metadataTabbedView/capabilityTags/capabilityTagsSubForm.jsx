@@ -7,7 +7,7 @@
  * This component uses the react-jsonschema-form library to render the form.
  * The schema is fetched from the backend and filtered to only show required fields.
  */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text } from "@dfds-ui/react-components";
 import styles from "./capabilityTags.module.css";
 import Form from "@rjsf/core";

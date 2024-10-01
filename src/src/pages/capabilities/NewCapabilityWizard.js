@@ -1,8 +1,7 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
-import { Button } from "@dfds-ui/react-components";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
-import { Wizard, useWizard } from "react-use-wizard";
+import { useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";
 import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
@@ -47,8 +46,6 @@ export default function NewCapabilityWizard({
   ];
 
   const handleAddCapabilityClicked = async (formData) => {
-    console.log(formData);
-    const jsonMetadataString = JSON.stringify(formData, null, 1);
     onAddCapabilityClicked({
       ...formData,
     });
@@ -71,6 +68,7 @@ export default function NewCapabilityWizard({
         steps={steps}
         title="New Capability Wizard"
         emptyFormValues={emptyFormValues}
+        completeInProgress={inProgress}
         completeName={"Add Capability"}
       />
     </JsonSchemaProvider>
@@ -203,7 +201,13 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <Text>FLUTTERSHY: Insert guide on tagging here</Text>
+      <a
+        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Text>See Tagging Policy</Text>
+      </a>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"
@@ -243,7 +247,13 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <Text>RAINBOWDASH: Insert guide on tagging here</Text>
+      <a
+        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Text>See Tagging Policy</Text>
+      </a>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"
@@ -289,18 +299,6 @@ const SummaryStep = ({ formValues }) => {
     <>
       <h1>Summary</h1>
       <pre>{JSON.stringify(formValues, null, 2)}</pre>
-    </>
-  );
-};
-
-const WizardStep = ({ steps }) => {
-  const { activeStep, stepCount } = useWizard();
-
-  return (
-    <>
-      <h1>
-        Step {activeStep + 1} of {stepCount}
-      </h1>
     </>
   );
 };

@@ -1,6 +1,5 @@
-import React, { useState, useContext, createRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@dfds-ui/react-components";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import { Modal } from "@dfds-ui/modal";
@@ -18,6 +17,7 @@ export default function CreationWizard({
   title,
   jsonSchemaString,
   emptyFormValues,
+  completeInProgress,
   completeName,
   sizes = {
     s: "75%",
@@ -50,6 +50,7 @@ export default function CreationWizard({
             steps={steps}
             canContinue={canContinue}
             formValues={formValues}
+            completeInProgress={completeInProgress}
             completeName={completeName}
           />
         }
