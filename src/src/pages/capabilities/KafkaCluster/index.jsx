@@ -127,7 +127,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
           xxl: "50%",
         }}
       >
-        <Text>
+        <div>
           <Text styledAs={"smallHeadline"}>
             In order to connect to the Kafka cluster{" "}
             <TextBlock>
@@ -135,7 +135,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
             </TextBlock>
             , please use the following configuration:
           </Text>
-        </Text>
+        </div>
         <Table>
           <TableHead>
             <TableRow>
