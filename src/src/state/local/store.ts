@@ -12,9 +12,14 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActionPaths: ["payload.msalInstance"],
+        ignoredActionPaths: [
+          "payload.msalInstance",
+          "payload.redirectResponse",
+        ],
       },
     }),
 });
 
 export default store;
+
+export { store };

@@ -23,8 +23,7 @@ function Footer() {
 function Layout() {
   return (
     <>
-      <AuthTemplate />
-      {/* <AuthenticatedTemplate>
+      <AuthTemplate>
         <SiteLayout.Grid>
           <SiteLayout.Header>
             <GlobalMenu />
@@ -34,11 +33,7 @@ function Layout() {
             <Footer />
           </SiteLayout.Main>
         </SiteLayout.Grid>
-      </AuthenticatedTemplate> */}
-
-      {/* <UnauthenticatedTemplate>
-      nooooooo
-    </UnauthenticatedTemplate> */}
+      </AuthTemplate>
     </>
   );
 }

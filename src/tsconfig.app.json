@@ -20,7 +20,7 @@
     "moduleResolution": "Bundler",
     "paths": {
       "@/*": [
-        "./src/**"
+        "./src/*"
       ]
     }
   }

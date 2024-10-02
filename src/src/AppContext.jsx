@@ -8,6 +8,7 @@ import { MetricsWrapper } from "./MetricsWrapper";
 import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
 import PreAppContext from "preAppContext";
+import { useSelector } from "react-redux";
 
 const AppContext = React.createContext(null);
 
@@ -44,6 +45,7 @@ function truncateString(str, maxLength) {
 
 function AppProvider({ children }) {
   const user = useCurrentUser();
+  const validAuthSession = useSelector((s) => s.auth.isSessionActive);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
     user.isAuthenticated,
   );
@@ -155,9 +157,11 @@ function AppProvider({ children }) {
   }
 
   useEffect(() => {
-    updateMetrics();
-    updateResourcesCount();
-  }, [myCapabilities]);
+    if (validAuthSession) {
+      updateMetrics();
+      updateResourcesCount();
+    }
+  }, [myCapabilities, validAuthSession]);
 
   useEffect(() => {
     const metricsInterval = setInterval(() => {

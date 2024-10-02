@@ -69,7 +69,7 @@ export async function getGraphAccessToken() {
 }
 
 export function useCurrentUser() {
-  useMsalAuthentication(InteractionType.Redirect, { scopes: graphScopes });
+  // useMsalAuthentication(InteractionType.Redirect, { scopes: graphScopes });
 
   const { accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
