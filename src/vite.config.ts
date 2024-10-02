@@ -33,6 +33,11 @@ export default defineConfig(({ mode }) => {
     build: {
       commonjsOptions: { transformMixedEsModules: true },
     },
+    esbuild: {
+      supported: {
+        "top-level-await": true,
+      },
+    },
     define: {
       global: {},
     },
