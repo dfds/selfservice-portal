@@ -569,7 +569,7 @@ export function ResourceInfoBadges() {
         />
       )}
 
-      <p style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
         <Text>
           Please refer to the{" "}
@@ -581,7 +581,7 @@ export function ResourceInfoBadges() {
             Azure Capability Developer Guide
           </a>
         </Text>
-      </p>
+      </div>
 
       <div className={styles.azure}>
         <div className={styles.items}>
