@@ -10,6 +10,7 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import ECRPage from "./pages/ecr";
 import { AuthenticatedTemplate } from "@azure/msal-react";
+import AuthTemplate from "auth/AuthTemplate";
 
 function Footer() {
   return (
@@ -22,7 +23,8 @@ function Footer() {
 function Layout() {
   return (
     <>
-      <AuthenticatedTemplate>
+      <AuthTemplate />
+      {/* <AuthenticatedTemplate>
         <SiteLayout.Grid>
           <SiteLayout.Header>
             <GlobalMenu />
@@ -32,7 +34,7 @@ function Layout() {
             <Footer />
           </SiteLayout.Main>
         </SiteLayout.Grid>
-      </AuthenticatedTemplate>
+      </AuthenticatedTemplate> */}
 
       {/* <UnauthenticatedTemplate>
       nooooooo
