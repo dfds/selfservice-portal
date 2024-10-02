@@ -24,7 +24,6 @@ export function useECRRepositories() {
         payload: null,
       });
     }
-
   }, [addResponse, triggerReload, validAuthSession]);
 
   useEffect(() => {
