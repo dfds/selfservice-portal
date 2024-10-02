@@ -6,15 +6,15 @@ import { GlobalStyles } from "@dfds-ui/react-components";
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
-import { msalInstance } from "auth/context";
-import { ErrorProvider } from "ErrorContext";
-import { TrackingProvider } from "TrackingContext";
-import { PreAppProvider } from "preAppContext";
+import { msalInstance } from "./auth/context";
+import { ErrorProvider } from "./ErrorContext";
+import { TrackingProvider } from "./TrackingContext";
+import { PreAppProvider } from "./preAppContext";
 import { Provider } from "react-redux";
-import store from "state/local/store";
+import store from "./state/local/store";
 
-window.apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-window.env = process.env.NODE_ENV;
+(window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+(window as any).env = process.env.NODE_ENV;
 
 const container = document.getElementById("root");
 const root = createRoot(container);

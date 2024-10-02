@@ -11,6 +11,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import commonjs from "vite-plugin-commonjs";
 // https://vitejs.dev/config/
+// TODO: fix mode type
 export default defineConfig(({ mode }) => {
   setEnv(mode);
   return {
@@ -36,6 +37,7 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
+
 function setEnv(mode) {
   Object.assign(
     process.env,
