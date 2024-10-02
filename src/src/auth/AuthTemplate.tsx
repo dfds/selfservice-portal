@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useIsAuthenticated } from "@azure/msal-react";
+import React from "react";
 import { msalInstance, selfServiceApiScopes } from "./context";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshAuthState } from "@/state/local/auth";

@@ -1,4 +1,4 @@
-import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
+import { PublicClientApplication } from "@azure/msal-browser";
 
 const graphScopes = ["user.read"];
 const selfServiceApiScopes = [

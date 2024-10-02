@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   useMsal,
-  useMsalAuthentication,
   useIsAuthenticated,
 } from "@azure/msal-react";
-import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
 import { getUserProfile, getUserProfilePictureUrl } from "./GraphApiClient";
 import {
   msalInstance,
@@ -69,8 +67,6 @@ export async function getGraphAccessToken() {
 }
 
 export function useCurrentUser() {
-  // useMsalAuthentication(InteractionType.Redirect, { scopes: graphScopes });
-
   const { accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const [user, setUser] = useState({ isAuthenticated: false });
