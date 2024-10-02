@@ -5,6 +5,7 @@
     "node": ">=16.0.0"
   },
   "private": true,
+  "type": "module",
   "homepage": "",
   "dependencies": {
     "@dfds-ui/forms": "2.0.12",
