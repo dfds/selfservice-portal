@@ -10,6 +10,7 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import commonjs from "vite-plugin-commonjs";
+import { fileURLToPath, URL } from "node:url";
 // https://vitejs.dev/config/
 // TODO: fix mode type
 export default defineConfig(({ mode }) => {
@@ -34,6 +35,11 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       global: {},
+    },
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
     },
   };
 });

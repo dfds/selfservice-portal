@@ -1,6 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { Slice, createSlice } from "@reduxjs/toolkit";
 
-export const auth = createSlice({
+class AuthStruct {
+  isSignedIn: Boolean;
+  isSessionActive: Boolean;
+  throwaway: string;
+}
+
+export const auth: Slice<AuthStruct> = createSlice({
   name: "auth",
   initialState: {
     isSignedIn: false,
@@ -22,3 +28,4 @@ export const auth = createSlice({
 export default auth.reducer;
 
 export const { refreshAuthState } = auth.actions;
+export { AuthStruct };

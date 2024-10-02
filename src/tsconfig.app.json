@@ -13,9 +13,14 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "jsx": "react",
+    "allowJs": true,
+    // "module": "es2022",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": [
-        "./src/*"
+        "./src/**"
       ]
     }
   }
