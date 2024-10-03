@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
+import { useSelector } from "react-redux";
 
 export function useProfile(user) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedProfile, setIsLoadedProfile] = useState(false);
   const [profileInfo, setProfileInfo] = useState(null);
   const [triggerReload, setTriggerReload] = useState(false);
+  const validAuthSession = useSelector((s) => s.auth.isSessionActive);
 
   const reload = () => {
     setTriggerReload(!triggerReload);
   };
 
   useEffect(() => {
-    sendRequest({
-      urlSegments: ["me"],
-    });
-  }, [user, triggerReload]);
+    if (validAuthSession) {
+      sendRequest({
+        urlSegments: ["me"],
+      });
+    }
+  }, [user, triggerReload, validAuthSession]);
 
   useEffect(() => {
     if (responseData !== null) {
@@ -40,12 +44,15 @@ export function useStats(user) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedStats, setIsLoadedStats] = useState(false);
   const [statsInfo, setStatsInfo] = useState(null);
+  const validAuthSession = useSelector((s) => s.auth.isSessionActive);
 
   useEffect(() => {
-    sendRequest({
-      urlSegments: ["stats"],
-    });
-  }, [user]);
+    if (validAuthSession) {
+      sendRequest({
+        urlSegments: ["stats"],
+      });
+    }
+  }, [user, validAuthSession]);
 
   useEffect(() => {
     if (responseData !== null) {

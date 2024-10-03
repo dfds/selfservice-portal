@@ -1,31 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  useMsal,
-  useMsalAuthentication,
-  useIsAuthenticated,
-} from "@azure/msal-react";
-import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
+import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import { getUserProfile, getUserProfilePictureUrl } from "./GraphApiClient";
-
-const graphScopes = ["user.read"];
-const selfServiceApiScopes = [
-  "api://3007f683-c3c2-4bf9-b6bd-2af03fb94f6d/access_as_user",
-];
-
-const msalInstance = new PublicClientApplication({
-  auth: {
-    clientId: "3007f683-c3c2-4bf9-b6bd-2af03fb94f6d",
-    authority:
-      "https://login.microsoftonline.com/73a99466-ad05-4221-9f90-e7142aa2f6c1",
-    redirectUri: process.env.REACT_APP_AUTH_REDIRECT_URL,
-  },
-  cache: {
-    cacheLocation: "localStorage", // This configures where your cache will be stored
-    storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-  },
-});
-
-export { msalInstance as MsalInstance };
+import {
+  msalInstance,
+  selfServiceApiScopes,
+  graphScopes,
+} from "./auth/context";
 
 export function callApi(
   url,
@@ -84,8 +64,6 @@ export async function getGraphAccessToken() {
 }
 
 export function useCurrentUser() {
-  useMsalAuthentication(InteractionType.Redirect, { scopes: graphScopes });
-
   const { accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const [user, setUser] = useState({ isAuthenticated: false });

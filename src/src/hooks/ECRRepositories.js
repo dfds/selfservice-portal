@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
+import { useSelector } from "react-redux";
 
 export function useECRRepositories() {
   const { responseData: loadResponse, sendRequest: loadRepositories } =
@@ -9,18 +10,21 @@ export function useECRRepositories() {
   const [repositories, setRepositories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [triggerReload, setTriggerReload] = useState(false);
+  const validAuthSession = useSelector((s) => s.auth.isSessionActive);
 
   const reload = () => {
     setTriggerReload(true);
   };
 
   useEffect(() => {
-    loadRepositories({
-      urlSegments: ["ecr/repositories"],
-      method: "GET",
-      payload: null,
-    });
-  }, [addResponse, triggerReload]);
+    if (validAuthSession) {
+      loadRepositories({
+        urlSegments: ["ecr/repositories"],
+        method: "GET",
+        payload: null,
+      });
+    }
+  }, [addResponse, triggerReload, validAuthSession]);
 
   useEffect(() => {
     if (loadResponse != null) {
