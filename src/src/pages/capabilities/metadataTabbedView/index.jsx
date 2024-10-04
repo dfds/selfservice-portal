@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { TabbedPageSection } from "components/PageSection";
+import { TabbedPageSection } from "../../../components/PageSection";
 import JsonSchemaContext from "../../../JsonSchemaContext";
 import { Button, Text } from "@dfds-ui/react-components";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
@@ -74,7 +74,7 @@ export function MetadataTabbedView() {
       <CapabilityTagsSubForm
         setMetadata={setCurrentMetadataObject}
         setValidMetadata={setIsValid}
-        preexistingFormData={metadataObject}
+        preexistingFormData={currentMetadataObject}
         canEditJsonMetadata={canEditJsonMetadata}
       />
     ),
@@ -91,7 +91,7 @@ export function MetadataTabbedView() {
   return (
     hasJsonSchemaProperties && (
       <TabbedPageSection
-        headline={"Capability Tags & Metadata"}
+        headline="Capability Tags & Metadata"
         tabs={tabs}
         tabsContent={tabsContent}
         header={header}

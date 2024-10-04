@@ -93,9 +93,11 @@ function CapabilityDetailsPageContent() {
         <Members />
         <Summary />
 
-        <CapabilityAdoptionLevel
-          adoptionLevelInformation={adoptionLevelInformation}
-        />
+        {
+          <CapabilityAdoptionLevel
+            adoptionLevelInformation={adoptionLevelInformation}
+          />
+        }
 
         {showJsonMetadata && <MetadataTabbedView />}
 
