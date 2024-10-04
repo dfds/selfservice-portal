@@ -122,10 +122,6 @@ const Footer = ({
 }) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
 
-  useEffect(() => {
-    console.log("completeInProgress", completeInProgress);
-  }, [completeInProgress]);
-
   return (
     <div>
       {activeStep > 0 && (

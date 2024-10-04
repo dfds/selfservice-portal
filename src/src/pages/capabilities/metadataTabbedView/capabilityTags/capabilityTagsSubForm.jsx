@@ -154,7 +154,7 @@ export function CapabilityTagsSubForm({
     if (hasJsonSchemaProperties) {
       validateAndSet(formData);
     }
-  }, [formData]);
+  }, [formData, jsonSchemaString]);
 
   useEffect(() => {
     if (hasJsonSchemaProperties) {
