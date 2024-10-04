@@ -12,7 +12,7 @@ export function MetadataTabbedView() {
     SelectedCapabilityContext,
   );
 
-  const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
+  const { jsonSchema, hasJsonSchemaProperties } = useContext(JsonSchemaContext);
   const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
   const [metadataObject, setMetadataObject] = useState({});
   const [currentMetadataObject, setCurrentMetadataObject] = useState("");
@@ -76,6 +76,7 @@ export function MetadataTabbedView() {
         setValidMetadata={setIsValid}
         preexistingFormData={currentMetadataObject}
         canEditJsonMetadata={canEditJsonMetadata}
+        jsonSchema={jsonSchema}
       />
     ),
     json: (

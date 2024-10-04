@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@dfds-ui/react-components";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";

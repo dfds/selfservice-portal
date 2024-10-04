@@ -7,13 +7,14 @@
  * This component uses the react-jsonschema-form library to render the form.
  * The schema is fetched from the backend and filtered to only show required fields.
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text } from "@dfds-ui/react-components";
 import styles from "./capabilityTags.module.css";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import Select from "react-select";
 import JsonSchemaContext from "../../../../JsonSchemaContext";
+import { prettifyJsonString, shallowEqual } from "../../../../Utils";
 
 /*
  * Custom Widgets and Fields
@@ -126,10 +127,17 @@ export function CapabilityTagsSubForm({
   preexistingFormData,
   formRef,
   canEditJsonMetadata,
+  jsonSchema,
 }) {
-  const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
-    useContext(JsonSchemaContext);
+  const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
   const [formData, setFormData] = useState(preexistingFormData);
+  const [jsonSchemaString, setJsonString] = useState("{}");
+
+  useEffect(() => {
+    const objectAsString = JSON.stringify(jsonSchema);
+    const prettyMetadata = prettifyJsonString(objectAsString);
+    setJsonString(prettyMetadata);
+  }, [jsonSchema]);
 
   const [canEdit, setCanEdit] = useState(canEditJsonMetadata);
 
@@ -151,7 +159,6 @@ export function CapabilityTagsSubForm({
   useEffect(() => {
     if (hasJsonSchemaProperties) {
       validateAndSet(preexistingFormData);
-      setShowTagForm(true);
     } else {
       setValidMetadata(true);
     }

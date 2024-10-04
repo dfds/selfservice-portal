@@ -4,7 +4,7 @@ import styles from "./capabilities.module.css";
 import { useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";
 import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
-import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
+import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";
 import { Invitations } from "./invitations";
 
 export default function NewCapabilityWizard({
@@ -197,7 +197,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
     } else {
       setCanContinue(false);
     }
-  }, [formValid]);
+  }, [formValid, metadataFormData]);
 
   return (
     <>
