@@ -117,9 +117,14 @@ const Footer = ({
   steps,
   canContinue,
   formValues,
+  completeInProgress,
   completeName,
 }) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
+
+  useEffect(() => {
+    console.log("completeInProgress", completeInProgress);
+  }, [completeInProgress]);
 
   return (
     <div>
@@ -182,6 +187,7 @@ const Footer = ({
       */}
       {activeStep + 1 === stepCount && (
         <Button
+          disabled={completeInProgress}
           className={styles.nextButton}
           onClick={() => {
             onComplete(formValues);
