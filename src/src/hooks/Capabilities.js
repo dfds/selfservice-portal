@@ -326,7 +326,7 @@ export function useCapabilityMetadata(capabilityDefinition) {
       urlSegments: [link.metadata.href],
       method: "POST",
       payload: {
-        jsonMetadata: JSON.parse(jsonMetadata),
+        jsonMetadata: jsonMetadata,
       },
     });
     getMetaData();

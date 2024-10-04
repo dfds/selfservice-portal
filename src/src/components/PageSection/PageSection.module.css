@@ -1,3 +1,24 @@
 .sectionHeadline {
   margin: 20px 0 10px 0;
 }
+
+.tabContainer {
+  width: 100%;
+}
+
+.tab {
+  display: inline-block;
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: #eef0f1;
+  border: 1px solid #ced0d1;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: none;
+  text-align: center;
+}
+
+.activeTab {
+  border: 1px solid #ffffff;
+  background-color: #ffffff;
+}

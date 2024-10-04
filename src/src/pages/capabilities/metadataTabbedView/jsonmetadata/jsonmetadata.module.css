@@ -4,6 +4,7 @@
   align-items: stretch;
   justify-content: space-between;
   height: 400px;
+  margin-bottom: 20px;
 }
 
 .metadataView {
