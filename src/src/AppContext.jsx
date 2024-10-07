@@ -156,25 +156,25 @@ function AppProvider({ children }) {
     setAppStatus((prev) => ({ ...prev, ...{ hasLoadedResources: true } }));
   }
 
-  useEffect(() => {
-    if (validAuthSession) {
-      updateMetrics();
-      updateResourcesCount();
-    }
-  }, [myCapabilities, validAuthSession]);
+  // useEffect(() => {
+  //   if (validAuthSession) {
+  //     updateMetrics();
+  //     updateResourcesCount();
+  //   }
+  // }, [myCapabilities, validAuthSession]);
 
-  useEffect(() => {
-    const metricsInterval = setInterval(() => {
-      updateMetrics();
-    }, 1000 * 60);
-    const costsInterval = setInterval(() => {
-      updateResourcesCount();
-    }, 1000 * 60);
-    return () => {
-      clearInterval(metricsInterval);
-      clearInterval(costsInterval);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const metricsInterval = setInterval(() => {
+  //     updateMetrics();
+  //   }, 1000 * 60);
+  //   const costsInterval = setInterval(() => {
+  //     updateResourcesCount();
+  //   }, 1000 * 60);
+  //   return () => {
+  //     clearInterval(metricsInterval);
+  //     clearInterval(costsInterval);
+  //   };
+  // }, []);
 
   // ---------------------------------------------------------
 

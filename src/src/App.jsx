@@ -24,7 +24,8 @@ function Layout() {
   return (
     <>
       <AuthTemplate>
-        <SiteLayout.Grid>
+        <div>authenticated</div>
+        {/* <SiteLayout.Grid>
           <SiteLayout.Header>
             <GlobalMenu />
           </SiteLayout.Header>
@@ -32,7 +33,7 @@ function Layout() {
             <Outlet />
             <Footer />
           </SiteLayout.Main>
-        </SiteLayout.Grid>
+        </SiteLayout.Grid> */}
       </AuthTemplate>
     </>
   );

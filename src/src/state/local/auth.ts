@@ -1,3 +1,5 @@
+import { getGraphAccessToken, getSelfServiceAccessToken } from "@/AuthService";
+import { allTokensAvailable, tokenCache } from "@/auth/context";
 import {
   AuthenticationResult,
   PublicClientApplication,
@@ -29,22 +31,45 @@ export const auth: Slice<AuthStruct> = createSlice({
     refreshAuthState: (state, action) => {
       const { msalInstance, redirectResponse } =
         action.payload as RefreshAuthAction;
+
+      if (redirectResponse != null) {
+        if (redirectResponse.account != null) {
+          msalInstance.setActiveAccount(redirectResponse.account);
+          const decoded = jwtDecode(redirectResponse.accessToken);
+          if (decoded.aud === "00000003-0000-0000-c000-000000000000") {
+            tokenCache.put("msgraph", redirectResponse.accessToken);
+          } else {
+            tokenCache.put("selfservice-api", redirectResponse.accessToken);
+          }
+        }
+      }
+
       if (msalInstance.getAllAccounts().length > 0) {
         state.isSignedIn = true;
 
-        if (redirectResponse != null) {
-          if (redirectResponse.account != null) {
-            msalInstance.setActiveAccount(redirectResponse.account);
-            state.isSessionActive = true;
+        // let activeAccount = msalInstance.getActiveAccount();
+        // if (activeAccount != null) {
+        //   state.isSessionActive = isTokenExpired(activeAccount.idToken);
+        // }
+
+        if (allTokensAvailable()) {
+          state.isSessionActive = true;
+        } else {
+          console.log("Tokens missing, acquiring");
+          if (!tokenCache.hasTokenExpired("msgraph")) {
+            getSelfServiceAccessToken();
+          }
+
+          if (!tokenCache.hasTokenExpired("selfservice-api")) {
+            getGraphAccessToken();
           }
         }
 
-        let activeAccount = msalInstance.getActiveAccount();
-        if (activeAccount != null) {
-          state.isSessionActive = isTokenExpired(activeAccount.idToken);
-        }
+        console.log("refreshAuthState status");
+        console.log(state.isSessionActive);
       } else {
         state.isSignedIn = false;
+        state.isSessionActive = false;
       }
 
       state.initialLoadFinished = true;
