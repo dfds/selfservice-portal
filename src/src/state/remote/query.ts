@@ -1,11 +1,22 @@
-import { callApi, getSelfServiceAccessToken } from "@/AuthService";
+import {
+  callApi,
+  getGraphAccessToken,
+  getSelfServiceAccessToken,
+} from "@/AuthService";
 import { composeSegmentsUrl, isValidURL } from "@/Utils";
+import { useQuery } from "@tanstack/react-query";
 
 export class SsuRequestQuery {
   urlSegments: string[];
   method: string;
   payload: any;
   isCloudEngineerEnabled: boolean;
+}
+
+export class MsGraphRequestQuery {
+  url: string;
+  method: string;
+  payload: any;
 }
 
 export async function ssuRequest(rq: SsuRequestQuery) {
@@ -32,4 +43,33 @@ export async function ssuRequest(rq: SsuRequestQuery) {
   } else {
     return httpResponse;
   }
+}
+
+export async function msGraphRequest(rq: MsGraphRequestQuery) {
+  const accessToken = await getGraphAccessToken();
+  const httpResponse = await callApi(
+    rq.url,
+    accessToken,
+    rq.method,
+    rq.payload,
+  );
+  return httpResponse;
+}
+
+export function useSsuRequestLink(link: any) {
+  const href = link?.href;
+
+  const query = useQuery({
+    queryKey: ["ssu-request", href],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: [href],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: !!href,
+  });
+
+  return query;
 }
