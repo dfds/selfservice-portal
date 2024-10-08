@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useCapabilities() {
+  const queryClient = useQueryClient();
   const { responseData: addedCapability, sendRequest: addCapability } =
     useSelfServiceRequest();
 
@@ -12,7 +14,7 @@ export function useCapabilities() {
     invitations,
     jsonMetadataString,
   ) => {
-    addCapability({
+    return addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
       payload: {
@@ -23,12 +25,6 @@ export function useCapabilities() {
       },
     });
   };
-
-  useEffect(() => {
-    if (addedCapability) {
-      console.log("REPLACE reload after addedCapability");
-    }
-  }, [addedCapability]);
 
   return {
     addCapability: createCapability,
