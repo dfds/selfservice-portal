@@ -27,17 +27,17 @@ root.render(
       <MsalProvider instance={msalInstance}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <GlobalStyles />
-          <ErrorProvider>
-            <TrackingProvider>
-              <PreAppProvider>
-                <AppProvider>
-                  <QueryClientProvider client={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <ErrorProvider>
+              <TrackingProvider>
+                <PreAppProvider>
+                  <AppProvider>
                     <App />
-                  </QueryClientProvider>
-                </AppProvider>
-              </PreAppProvider>
-            </TrackingProvider>
-          </ErrorProvider>
+                  </AppProvider>
+                </PreAppProvider>
+              </TrackingProvider>
+            </ErrorProvider>
+          </QueryClientProvider>
         </BrowserRouter>
       </MsalProvider>
     </Provider>
