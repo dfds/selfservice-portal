@@ -9,19 +9,20 @@ import PageSection from "components/PageSection";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
-import { useCapabilities } from "hooks/Capabilities";
+// import { useCapabilities } from "hooks/Capabilities";
+import { useMe } from "@/state/remote/queries/me";
+import { useCapabilities } from "@/state/remote/queries/capabilities";
 
 export default function MyCapabilities() {
-  const { myCapabilities, /*metricsWrapper,*/ appStatus, truncateString } =
-    useContext(AppContext);
-  const { capabilities, isLoaded } = useCapabilities();
-
+  const { truncateString } = useContext(AppContext);
+  const { isFetched: isMeFetched, data: meData } = useMe();
+  const { isFetched, data: capabilities } = useCapabilities();
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    if (isLoaded && capabilities && myCapabilities) {
+    if (isFetched && capabilities && meData) {
       const filteredList = capabilities.filter((x) => {
-        const myCap = myCapabilities.find((y) => y.id === x.id);
+        const myCap = meData.capabilities.find((y) => y.id === x.id);
         if (myCap) {
           return true;
         } else {
@@ -30,9 +31,9 @@ export default function MyCapabilities() {
       });
       setItems(filteredList);
     }
-  }, [isLoaded, capabilities, myCapabilities]);
+  }, [isFetched, capabilities, meData]);
 
-  const isLoading = !appStatus.hasLoadedMyCapabilities;
+  const isLoading = !isMeFetched;
   const [fullTableData, setFullTableData] = useState([]);
 
   const navigate = useNavigate();

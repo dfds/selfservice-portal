@@ -21,7 +21,7 @@ import ProfilePicture from "./ProfilePicture";
 import AppContext from "AppContext";
 import { StatusSuccess } from "@dfds-ui/icons/system";
 import PreAppContext from "../../../preAppContext";
-import { useMembershipApplications } from "hooks/MembershipApplications";
+import { useMembershipApplications } from "@/state/remote/queries/membershipApplications";
 import styles from "./index.module.css";
 import { MaterialReactTable } from "material-react-table";
 
@@ -225,15 +225,16 @@ function sleep(duration) {
 }
 
 export function MembershipApplicationsUserCanApprove() {
-  const { membershipApplications, isLoaded, reload } =
-    useMembershipApplications();
+  // const { membershipApplications, isLoaded, reload } =
+  //   useMembershipApplications();
+  const { isFetched, data } = useMembershipApplications();
   const { truncateString, selfServiceApiClient } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
 
   useEffect(() => {
-    if (membershipApplications) {
-      const tableData = membershipApplications.map((item) => {
+    if (data) {
+      const tableData = data.map((item) => {
         const copy = { ...item };
 
         copy.submittedAt = format(new Date(copy.submittedAt), "MMMM do yyyy");
@@ -261,16 +262,19 @@ export function MembershipApplicationsUserCanApprove() {
 
       if (triggerUpdate) {
         sleep(1000).then(() => {
-          reload();
+          console.log(
+            "REPLACE reload functionality for membershipApplications",
+          );
         });
       }
     }
-  }, [membershipApplications]);
+  }, [data]);
 
   const addApplicationToRemovalTracker = (id) => {
     setRemovalTracker((prev) => {
       prev.add(id);
-      reload();
+      // reload();
+      console.log("REPLACE reload functionality for membershipApplications");
       return prev;
     });
   };
@@ -424,7 +428,7 @@ export function MembershipApplicationsUserCanApprove() {
 
   return (
     <>
-      {isLoaded && tableData.length > 0 ? (
+      {isFetched && tableData.length > 0 ? (
         <PageSection headline="Pending approval">
           <div className={styles.membershipApplicationsContainer}>
             <MaterialReactTable

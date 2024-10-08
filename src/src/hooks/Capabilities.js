@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
-import { useSelector } from "react-redux";
 
 export function useCapabilities() {
-  const { responseData: getAllResponse, sendRequest } = useSelfServiceRequest();
   const { responseData: addedCapability, sendRequest: addCapability } =
     useSelfServiceRequest();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [capabilities, setCapabilities] = useState([]);
-  const validAuthSession = useSelector((s) => s.auth.isSessionActive);
-
-  const sortByName = (list) => {
-    list.sort((a, b) => a.name.localeCompare(b.name));
-  };
 
   async function createCapability(
     name,
@@ -35,35 +26,10 @@ export function useCapabilities() {
 
   useEffect(() => {
     if (addedCapability) {
-      setCapabilities((prev) => {
-        const list = [...prev, addedCapability];
-        sortByName(list);
-        return list;
-      });
     }
   }, [addedCapability]);
 
-  useEffect(() => {
-    if (validAuthSession) {
-      sendRequest({
-        urlSegments: ["capabilities"],
-        method: "GET",
-        payload: null,
-      });
-    }
-  }, [validAuthSession]);
-
-  useEffect(() => {
-    const list = getAllResponse?.items || [];
-    sortByName(list);
-
-    setCapabilities(list);
-    setIsLoaded(true);
-  }, [getAllResponse]);
-
   return {
-    isLoaded,
-    capabilities,
     addCapability: createCapability,
   };
 }

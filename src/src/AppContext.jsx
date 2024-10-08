@@ -5,7 +5,6 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilities } from "hooks/Capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useProfile, useStats } from "hooks/Profile";
 import { useECRRepositories } from "hooks/ECRRepositories";
 import PreAppContext from "preAppContext";
 import { useSelector } from "react-redux";
@@ -63,7 +62,7 @@ function AppProvider({ children }) {
   const news = useLatestNews();
 
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(false);
-  const [myProfile, setMyProfile] = useState(null);
+  // const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
     () =>
@@ -76,10 +75,11 @@ function AppProvider({ children }) {
   );
 
   const { addCapability } = useCapabilities();
-  const { createRepository, reload, repositories, isLoading } =
-    useECRRepositories();
-  const { profileInfo, isLoadedProfile, reload: reloadUser } = useProfile(user);
-  const { statsInfo, isLoadedStats } = useStats(user);
+  const { createRepository } = useECRRepositories();
+  // const { profileInfo, isLoadedProfile, reload: reloadUser } = useProfile(user);
+  const reloadUser = () => {
+    console.log("REPLACE reloadUser");
+  };
 
   async function addNewCapability(
     name,
@@ -87,34 +87,32 @@ function AppProvider({ children }) {
     invitations,
     jsonMetadataString,
   ) {
-    await addCapability(name, description, invitations, jsonMetadataString);
-    await sleep(2000);
-    await loadMyProfile();
+    addCapability(name, description, invitations, jsonMetadataString);
+    await sleep(3000);
+    // await loadMyProfile();
   }
 
   async function addNewRepository(name, description) {
     await createRepository(name, description);
-    reload();
+    console.log("REPLACE reload of addNewRepository");
+    // reload();
   }
 
-  async function loadMyProfile() {
-    if (isLoadedProfile && isLoadedStats) {
-      const profile = profileInfo;
-      const { capabilities, autoReloadTopics } = profile;
+  // async function loadMyProfile() {
+  //   if (isLoadedProfile) {
+  //     const profile = profileInfo;
+  //     const { capabilities, autoReloadTopics } = profile;
 
-      const stats = statsInfo;
+  //     setMyCapabilities(capabilities);
+  //     setAppStatus((prev) => ({
+  //       ...prev,
+  //       ...{ hasLoadedMyCapabilities: true },
+  //     }));
+  //     setShouldAutoReloadTopics(autoReloadTopics);
 
-      setMyCapabilities(capabilities);
-      setStats(stats);
-      setAppStatus((prev) => ({
-        ...prev,
-        ...{ hasLoadedMyCapabilities: true },
-      }));
-      setShouldAutoReloadTopics(autoReloadTopics);
-
-      setMyProfile(profile);
-    }
-  }
+  //     setMyProfile(profile);
+  //   }
+  // }
 
   function checkIfCloudEngineer(roles) {
     const regex = /^\s*cloud\.engineer\s*$/i;
@@ -122,21 +120,23 @@ function AppProvider({ children }) {
     return match;
   }
 
-  useEffect(() => {
-    if (isAuthenticatedUser !== user.isAuthenticated) {
-      setIsAuthenticatedUser(user.isAuthenticated);
-    }
-    if (user && user.isAuthenticated) {
-      loadMyProfile();
-    }
-  }, [user, profileInfo, statsInfo]);
+  // useEffect(() => {
+  //   if (isAuthenticatedUser !== user.isAuthenticated) {
+  //     setIsAuthenticatedUser(user.isAuthenticated);
+  //   }
+  //   if (user && user.isAuthenticated) {
+  //     loadMyProfile();
+  //   }
+  // }, [user, profileInfo]);
 
   useEffect(() => {
-    if (user && user.isAuthenticated && myProfile) {
-      selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
-      selfServiceApiClient.registerMyVisit(myProfile);
+    if (user && user.isAuthenticated) {
+      console.log("REPLACE updateMyPersonalInformation");
+      console.log("REPLACE registerMyVisit");
+      // selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
+      // selfServiceApiClient.registerMyVisit(myProfile);
     }
-  }, [myProfile, user]);
+  }, [user]);
 
   function updateMetrics() {
     metricsWrapper.tryUpdateMetrics().then(() => {
@@ -180,7 +180,6 @@ function AppProvider({ children }) {
 
   const state = {
     user,
-    myProfile,
     myCapabilities,
     appStatus,
     topics,
@@ -196,9 +195,6 @@ function AppProvider({ children }) {
     truncateString,
     reloadUser,
     addNewRepository,
-    reload,
-    repositories,
-    isLoading,
     isAllWithValues,
     getValidationError,
     checkIfCloudEngineer,

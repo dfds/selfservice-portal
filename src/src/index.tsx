@@ -12,6 +12,8 @@ import { TrackingProvider } from "./TrackingContext";
 import { PreAppProvider } from "./preAppContext";
 import { Provider } from "react-redux";
 import store from "./state/local/store";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./state/remote/client";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -29,7 +31,9 @@ root.render(
             <TrackingProvider>
               <PreAppProvider>
                 <AppProvider>
-                  <App />
+                  <QueryClientProvider client={queryClient}>
+                    <App />
+                  </QueryClientProvider>
                 </AppProvider>
               </PreAppProvider>
             </TrackingProvider>

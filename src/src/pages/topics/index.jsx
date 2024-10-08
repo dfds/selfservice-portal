@@ -15,7 +15,7 @@ import PageSection from "components/PageSection";
 import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
-import { useTopics } from "hooks/Topics";
+import { usePublicTopics } from "@/state/remote/queries/topics";
 import { MaterialReactTable } from "material-react-table";
 import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
@@ -24,7 +24,7 @@ import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
 
 function Topics() {
   const { selfServiceApiClient } = useContext(AppContext);
-  const { topicsList, isLoaded } = useTopics();
+  const { isFetched, data } = usePublicTopics();
 
   const [filteredData, setfilteredData] = useState([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
@@ -51,9 +51,9 @@ function Topics() {
   };
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isFetched) {
       fetchKafkaclusters().then((c) => {
-        const finalTopics = topicsList.map((topic) => {
+        const finalTopics = data.map((topic) => {
           const copy = { ...topic };
           const color = c.find((cluster) => cluster.id === copy.kafkaClusterId);
           if (color != null) {
@@ -66,7 +66,7 @@ function Topics() {
         setIsLoadingTopics(false);
       });
     }
-  }, [isLoaded, topicsList]);
+  }, [isFetched, data]);
 
   const columns = useMemo(() => [
     {
