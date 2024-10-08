@@ -64,62 +64,6 @@ export function useCapabilityById(id) {
   };
 }
 
-export function useCapabilityMembers(capabilityDefinition) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  const [isLoadedMembers, setIsLoadedMembers] = useState(false);
-  const [membersList, setMembersList] = useState([]);
-
-  const membersLink = capabilityDefinition?._links?.members;
-
-  useEffect(() => {
-    if (membersLink) {
-      sendRequest({
-        urlSegments: [membersLink.href],
-      });
-    }
-  }, [membersLink]);
-
-  useEffect(() => {
-    const updateMembers = async (members) => {
-      if (members.length !== 0) {
-        const updatedList = await Promise.all(
-          members.map(async (member) => {
-            const profilePictureUrl = await getAnotherUserProfilePictureUrl(
-              member.email,
-            );
-            const updatedMember = { ...member, pictureUrl: profilePictureUrl };
-            return updatedMember;
-          }),
-        );
-        setMembersList(updatedList);
-      }
-    };
-
-    if (responseData?.items.length !== 0) {
-      setMembersList((prev) => {
-        if (prev.length === 0) {
-          return responseData?.items || [];
-        } else {
-          return prev;
-        }
-      });
-
-      updateMembers(responseData?.items || []);
-    }
-  }, [responseData]);
-
-  useEffect(() => {
-    if (membersList.length !== 0) {
-      setIsLoadedMembers(true);
-    }
-  }, [membersList]);
-
-  return {
-    isLoadedMembers,
-    membersList,
-  };
-}
-
 export function useKafkaClustersAccessList(capabilityDefinition) {
   const { responseData, sendRequest } = useSelfServiceRequest();
   const [isLoadedClusters, setIsLoadedClusters] = useState(false);

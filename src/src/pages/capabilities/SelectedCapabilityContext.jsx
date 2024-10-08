@@ -7,19 +7,21 @@ import React, {
   useState,
 } from "react";
 import {
-  useGetUrlData,
-  useCapabilityById,
   useCapabilityInvitees,
-  useCapabilityMembers,
-  useCapabilityMembersApplications,
   useCapabilityMetadata,
-  useKafkaClustersAccessList,
-  useCapabilityAzureResources,
 } from "hooks/Capabilities";
 
-import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
+import {
+  useCapability,
+  useCapabilityMembersDetailed,
+  useCapabilityMembersApplications,
+} from "@/state/remote/queries/capabilities";
+import { useKafkaClustersAccessList } from "@/state/remote/queries/kafka";
+import { useSsuRequestLink } from "@/state/remote/query";
+import { useMe } from "@/state/remote/queries/me";
+import { useCapabilityAzureResources } from "@/state/remote/queries/azure";
 
 const SelectedCapabilityContext = createContext();
 
@@ -35,9 +37,10 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
+  const { shouldAutoReloadTopics, selfServiceApiClient } =
     useContext(AppContext);
 
+  const { data: meData } = useMe();
   const { updateTopic } = useUpdateTopic();
   const { deleteTopic } = useDeleteTopic();
 
@@ -49,24 +52,26 @@ function SelectedCapabilityProvider({ children }) {
   const [membershipApplications, setMembershipApplications] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null);
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { capability, isLoaded, setReloadRequired } =
-    useCapabilityById(capabilityId);
-  const { membersList, isLoadedMembers } = useCapabilityMembers(details);
+  const { isFetched, data: capability } = useCapability(capabilityId); // NEW
+  const { isFetched: capabilityMembersFetched, data: membersList } =
+    useCapabilityMembersDetailed(details); // NEW
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
-  const { clustersList } = useKafkaClustersAccessList(details);
-  const { data: awsAccountDetails, isLoaded: isLoadedAccount } = useGetUrlData(
-    details?._links?.awsAccount,
-  );
-  const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
-    useGetUrlData(details?._links?.awsAccountInformation);
-  const { isLoadedMembersApplications, membersApplicationsList } =
-    useCapabilityMembersApplications(details);
+  const { isFetched: isClustersListFetched, data: clustersList } =
+    useKafkaClustersAccessList(details); // NEW
+  const { data: awsAccountDetails, isFetched: isLoadedAccount } =
+    useSsuRequestLink(details?._links?.awsAccount); // NEW
+  const { data: awsAccountInformation, isFetched: isLoadedAccountInformation } =
+    useSsuRequestLink(details?._links?.awsAccountInformation); // NEW
+  const {
+    isFetched: isLoadedMembersApplications,
+    data: membersApplicationsList,
+  } = useCapabilityMembersApplications(details); // NEW
   const { addInvitees } = useCapabilityInvitees(details);
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  const { azureResources, isLoadedAzure, requestAzure } =
-    useCapabilityAzureResources(details);
+  const { data: azureResources, isFetched: isLoadedAzure } =
+    useCapabilityAzureResources(details); // NEW
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
@@ -141,32 +146,10 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   useEffect(() => {
-    kafkaClusterTopicList();
-  }, [clustersList]);
-
-  // load membership applications
-  const loadMembershipApplications = useCallback(async () => {
-    const result =
-      await selfServiceApiClient.getCapabilityMembershipApplications(details);
-    setMembershipApplications(result);
-
-    result.forEach(async (application) => {
-      const profilePictureUrl = await getAnotherUserProfilePictureUrl(
-        application.applicant,
-      );
-
-      setMembershipApplications((prev) => {
-        const copy = prev ? [...prev] : [];
-
-        const found = copy.find((x) => x.id === application.id);
-        if (found) {
-          found.applicantProfilePictureUrl = profilePictureUrl;
-        }
-
-        return copy;
-      });
-    });
-  }, [details]);
+    if (isClustersListFetched) {
+      kafkaClusterTopicList();
+    }
+  }, [clustersList, isClustersListFetched]);
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -304,7 +287,8 @@ function SelectedCapabilityProvider({ children }) {
     }
 
     await selfServiceApiClient.deleteMembershipApplicationApproval(found);
-    await loadMembershipApplications();
+
+    console.log("FIX reload for delete membershipapplication");
   };
 
   const approveMembershipApplication = async (membershipApplicationId) => {
@@ -318,17 +302,17 @@ function SelectedCapabilityProvider({ children }) {
     }
 
     await selfServiceApiClient.submitMembershipApplicationApproval(found);
-    await loadMembershipApplications();
+    console.log("FIX reload for approve membershipapplication");
   };
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
-    setReloadRequired(true);
+    console.log("FIX reload for submit membershipapplication");
   }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
-    setReloadRequired(true);
+    console.log("FIX reload for leave Capability");
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
@@ -420,7 +404,7 @@ function SelectedCapabilityProvider({ children }) {
     } catch (error) {
       console.log(error);
     }
-    setReloadRequired(true);
+    console.log("FIX reload fafter bypassing membershipApproval");
   };
 
   const updateDeletionStatus = (value) => {
@@ -428,48 +412,38 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   const addNewAzure = (environment) => {
-    requestAzure(environment);
+    console.log("FIX: Add requestAzure");
   };
 
   //--------------------------------------------------------------------
 
   useEffect(() => {
-    if (myCapabilities) {
+    if (meData) {
       let capabilityJoined =
-        myCapabilities.find((x) => x.id === capabilityId) !== undefined;
+        meData.capabilities.find((x) => x.id === capabilityId) !== undefined;
       setShowCosts(capabilityJoined);
     }
-  }, [details, myCapabilities]);
+  }, [details, meData]);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isFetched) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
       setIsDeleted(capability.status === "Deleted");
     }
-  }, [isLoaded, capability]);
+  }, [isFetched, capability]);
 
   useEffect(() => {
-    if (isLoadedMembers) {
+    if (capabilityMembersFetched) {
       setMembers(membersList);
     }
-  }, [isLoadedMembers, membersList]);
+  }, [capabilityMembersFetched, membersList]);
 
   useEffect(() => {
     if (isLoadedAzure) {
       setAzureResourcesList(azureResources.items);
     }
   }, [isLoadedAzure, azureResources]);
-
-  useEffect(() => {
-    if (details) {
-      loadMembershipApplications();
-    } else {
-      setMembers([]);
-      setMembershipApplications([]);
-      setKafkaClusters([]);
-    }
-  }, [isLoadedMembersApplications, membersApplicationsList]);
 
   useEffect(() => {
     if (isLoadedMembersApplications) {
@@ -500,7 +474,7 @@ function SelectedCapabilityProvider({ children }) {
   //--------------------------------------------------------------------
 
   const state = {
-    isLoading: !isLoaded,
+    isLoading: !isFetched,
     isFound: details != null,
     id: capabilityId,
     name: details?.name,
