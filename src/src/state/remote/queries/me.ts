@@ -11,6 +11,7 @@ export function useMe() {
         payload: null,
         isCloudEngineerEnabled: true,
       }),
+    staleTime: 30000,
   });
 
   return query;

@@ -21,6 +21,7 @@ export function useCapabilities() {
       sortByName(list);
       return list;
     },
+    staleTime: 30000,
   });
 
   return query;
@@ -36,6 +37,7 @@ export function useCapability(id: string) {
         payload: null,
         isCloudEngineerEnabled: true,
       }),
+    staleTime: 30000,
   });
 
   return query;
