@@ -93,8 +93,10 @@ function AppProvider({ children }) {
     invitations,
     jsonMetadataString,
   ) {
-    addCapability(name, description, invitations, jsonMetadataString);
-    await sleep(3000);
+    await addCapability(name, description, invitations, jsonMetadataString);
+    await sleep(2000);
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
     // await loadMyProfile();
   }
 

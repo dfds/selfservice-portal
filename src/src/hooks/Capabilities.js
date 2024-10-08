@@ -1,37 +1,19 @@
 import { useEffect, useState } from "react";
 import { useSelfServiceRequest } from "./SelfServiceApi";
 import { getAnotherUserProfilePictureUrl } from "../GraphApiClient";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useCapabilities() {
+  const queryClient = useQueryClient();
   const { responseData: addedCapability, sendRequest: addCapability } =
     useSelfServiceRequest();
-
-  async function createCapability(
-    name,
-    description,
-    invitations,
-    jsonMetadataString,
-  ) {
-    await addCapability({
-      urlSegments: ["capabilities"],
-      method: "POST",
-      payload: {
-        name: name,
-        description: description,
-        invitees: invitations,
-        jsonMetadata: jsonMetadataString,
-      },
-    });
-  }
 
   useEffect(() => {
     if (addedCapability) {
     }
   }, [addedCapability]);
 
-  return {
-    addCapability: createCapability,
-  };
+  return {};
 }
 
 export function useCapabilityById(id) {

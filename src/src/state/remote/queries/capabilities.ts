@@ -8,7 +8,7 @@ const sortByName = (list) => {
 
 export function useCapabilities() {
   const query = useQuery({
-    queryKey: ["capabilities"],
+    queryKey: ["capabilities", "list"],
     queryFn: async () =>
       ssuRequest({
         method: "GET",

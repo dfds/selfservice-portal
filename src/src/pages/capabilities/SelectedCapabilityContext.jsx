@@ -126,6 +126,7 @@ function SelectedCapabilityProvider({ children }) {
     addInvitees([invitations]);
     await sleep(3000);
     setIsInviteesCreated(false);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }
 
   const {
@@ -225,6 +226,7 @@ function SelectedCapabilityProvider({ children }) {
       }
       return copy;
     });
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "kafka"] });
   };
 
   const validateContract = async (kafkaTopicId, messageType, schema) => {
@@ -340,7 +342,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const requestAccessToCluster = async (cluster) => {
     await selfServiceApiClient.requestAccessToCluster(cluster);
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "kafka"] });
   };
 
   const updateKafkaTopic = async (topicId, topicDescriptor) => {
@@ -408,10 +410,14 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitDeleteCapability(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   }, [details]);
 
   const submitCancelDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   }, [details]);
 
   const bypassMembershipApproval = async () => {
@@ -421,9 +427,6 @@ function SelectedCapabilityProvider({ children }) {
       console.log(error);
     }
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-    queryClient.invalidateQueries({
-      queryKey: ["capability-members-detailed"],
-    });
   };
 
   const updateDeletionStatus = (value) => {
