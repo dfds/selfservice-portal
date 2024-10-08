@@ -24,7 +24,6 @@ function Layout() {
   return (
     <>
       <AuthTemplate>
-        {/* <div>authenticated</div> */}
         <SiteLayout.Grid>
           <SiteLayout.Header>
             <GlobalMenu />

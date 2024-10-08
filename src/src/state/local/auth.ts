@@ -64,9 +64,6 @@ export const auth: Slice<AuthStruct> = createSlice({
             getGraphAccessToken();
           }
         }
-
-        console.log("refreshAuthState status");
-        console.log(state.isSessionActive);
       } else {
         state.isSignedIn = false;
         state.isSessionActive = false;
