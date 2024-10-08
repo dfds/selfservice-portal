@@ -22,6 +22,7 @@ import { useKafkaClustersAccessList } from "@/state/remote/queries/kafka";
 import { useSsuRequestLink } from "@/state/remote/query";
 import { useMe } from "@/state/remote/queries/me";
 import { useCapabilityAzureResources } from "@/state/remote/queries/azure";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SelectedCapabilityContext = createContext();
 
@@ -37,6 +38,7 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
+  const queryClient = useQueryClient();
   const { shouldAutoReloadTopics, selfServiceApiClient } =
     useContext(AppContext);
 
@@ -301,6 +303,10 @@ function SelectedCapabilityProvider({ children }) {
     await selfServiceApiClient.deleteMembershipApplicationApproval(found);
 
     console.log("FIX reload for delete membershipapplication");
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capability-members-detailed"],
+    });
   };
 
   const approveMembershipApplication = async (membershipApplicationId) => {
@@ -315,16 +321,28 @@ function SelectedCapabilityProvider({ children }) {
 
     await selfServiceApiClient.submitMembershipApplicationApproval(found);
     console.log("FIX reload for approve membershipapplication");
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capability-members-detailed"],
+    });
   };
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
     console.log("FIX reload for submit membershipapplication");
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capability-members-detailed"],
+    });
   }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
     console.log("FIX reload for leave Capability");
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capability-members-detailed"],
+    });
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
@@ -416,7 +434,10 @@ function SelectedCapabilityProvider({ children }) {
     } catch (error) {
       console.log(error);
     }
-    console.log("FIX reload fafter bypassing membershipApproval");
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capability-members-detailed"],
+    });
   };
 
   const updateDeletionStatus = (value) => {
