@@ -74,7 +74,7 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
 
       return resps;
     },
-    enabled: !!link,
+    enabled: link != null,
   });
 
   return query;

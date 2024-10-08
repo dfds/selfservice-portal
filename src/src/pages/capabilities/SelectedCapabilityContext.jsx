@@ -122,7 +122,7 @@ function SelectedCapabilityProvider({ children }) {
   } = useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
-    if (clustersList.length !== 0) {
+    if (clustersList != null && clustersList.length !== 0) {
       const promises = [];
       for (const cluster of clustersList) {
         let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
@@ -146,10 +146,10 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   useEffect(() => {
-    if (isClustersListFetched) {
+    if (clustersList != null) {
       kafkaClusterTopicList();
     }
-  }, [clustersList, isClustersListFetched]);
+  }, [isClustersListFetched]);
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -426,7 +426,7 @@ function SelectedCapabilityProvider({ children }) {
   }, [details, meData]);
 
   useEffect(() => {
-    if (isFetched) {
+    if (isFetched && capability != null) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
       setIsDeleted(capability.status === "Deleted");
@@ -470,6 +470,10 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   }, [awsAccountRequested]);
+
+  // useEffect(() => {
+  //   console.log(capabilityId);
+  // }, [capabilityId]);
 
   //--------------------------------------------------------------------
 
