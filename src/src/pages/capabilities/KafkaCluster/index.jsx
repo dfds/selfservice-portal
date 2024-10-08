@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
+import SchemaList from "./SchemaList";
 import styles from "./index.module.css";
 
 export default function KafkaCluster({ cluster, capabilityId }) {
@@ -25,8 +26,10 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const {
     id,
     selectedKafkaTopic,
+    selectedKafkaSchema,
     addTopicToCluster,
     toggleSelectedKafkaTopic,
+    toggleSelectedKafkaSchema,
     getAccessToCluster,
     requestAccessToCluster,
   } = useContext(SelectedCapabilityContext);
@@ -42,6 +45,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   });
 
   const topics = cluster.topics;
+  const schemas = cluster.schemas;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
   const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
   const clusterDescription = (cluster.description || "")
@@ -87,6 +91,10 @@ export default function KafkaCluster({ cluster, capabilityId }) {
     toggleSelectedKafkaTopic(clusterId, topicId);
   };
 
+  const handleSchemaClicked = (clusterId, schemaId) => {
+    toggleSelectedKafkaSchema(clusterId, schemaId);
+  };
+
   const canRequestAccess = (
     cluster._links?.requestAccess?.allow || []
   ).includes("POST");
@@ -96,7 +104,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline="Kafka Topics"
+      headline="Kafka"
       headlineChildren={
         <div className={styles.headlineContainer}>
           <span>({cluster.name.toLocaleLowerCase()})</span>
@@ -297,7 +305,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       <br />
 
       <TopicList
-        name="Public"
+        name="Public Topics"
         topics={publicTopics}
         clusterId={cluster.id}
         selectedTopic={selectedKafkaTopic}
@@ -308,7 +316,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       {hasWriteAccess && (
         <>
           <TopicList
-            name="Private"
+            name="Private Topics"
             topics={privateTopcis}
             clusterId={cluster.id}
             selectedTopic={selectedKafkaTopic}
@@ -317,6 +325,15 @@ export default function KafkaCluster({ cluster, capabilityId }) {
           <br />
         </>
       )}
+
+      <SchemaList
+        name="Schemas"
+        schemas={schemas}
+        clusterId={cluster.id}
+        selectedTopic={selectedKafkaSchema}
+        onSchemaClicked={handleSchemaClicked}
+      />
+      <br />
 
       {canRequestAccess && (
         <ButtonStack align="right">
