@@ -18,7 +18,6 @@ build
 .env.test.local
 .env.production.local
 .env
-.envrc
 
 npm-debug.log*
 yarn-debug.log*
