@@ -5,7 +5,12 @@ export function useCapabilityAzureResources(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.azureResources;
 
   const query = useQuery({
-    queryKey: ["capability-azure-resources", capabilityDefinition?.id],
+    queryKey: [
+      "capabilities",
+      "azure",
+      "azure-resources",
+      capabilityDefinition?.id,
+    ],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
