@@ -70,16 +70,6 @@ export async function getGraphAccessToken() {
     return null;
   }
 
-  // if (!tokenCache.hasTokenExpired("msgraph")) {
-  //   return tokenCache.get("msgraph");
-  // }
-
-  // const { accessToken } = await msalInstance.acquireTokenSilent({
-  //   scopes: graphScopes,
-  //   account: account,
-  // });
-  // return accessToken;
-
   try {
     const { accessToken } = await msalInstance.acquireTokenSilent({
       scopes: graphScopes,
@@ -107,12 +97,8 @@ export function useCurrentUser() {
     const currentAccount = accounts && accounts.length > 0 ? accounts[0] : null;
 
     if (isAuthenticated && currentAccount) {
-      // msalInstance.setActiveAccount(currentAccount);
-      // setUser(prev => ({...prev, ...{isAuthenticated: true}}));
-
       async function getUserInfo() {
         const profile = await getUserProfile();
-        //setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
 
         const profilePictureUrl = await getUserProfilePictureUrl();
         setUser((prev) => ({

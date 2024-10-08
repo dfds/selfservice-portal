@@ -47,11 +47,6 @@ export const auth: Slice<AuthStruct> = createSlice({
       if (msalInstance.getAllAccounts().length > 0) {
         state.isSignedIn = true;
 
-        // let activeAccount = msalInstance.getActiveAccount();
-        // if (activeAccount != null) {
-        //   state.isSessionActive = isTokenExpired(activeAccount.idToken);
-        // }
-
         if (allTokensAvailable()) {
           state.isSessionActive = true;
         } else {
