@@ -1,7 +1,7 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Page from "components/Page";
-import { useCapabilities } from "hooks/Capabilities";
+import { useCapabilities } from "@/state/remote/queries/capabilities";
 import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
 import {
@@ -55,29 +55,37 @@ function calculateCriticalityLevel(
 }
 
 export default function CapabilitiesCriticalityPage() {
-  const { capabilities, isLoaded } = useCapabilities();
+  // const { capabilities, isLoaded } = useCapabilities();
+  const { isFetched, data } = useCapabilities();
   const { truncateString } = useContext(AppContext);
+  const [enrichedCapabilities, setEnrichedCapabilities] = useState([]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
-  const enrichedCapabilities = capabilities.map((capability) => {
-    const enrichedCapability = { ...capability };
-    const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
-    enrichedCapability.availability =
-      jsonMetadata["dfds.service.availability"] || "unknown";
-    enrichedCapability.criticality =
-      jsonMetadata["dfds.service.criticality"] || "unknown";
-    enrichedCapability.classification =
-      jsonMetadata["dfds.data.classification"] || "unknown";
-    enrichedCapability.criticalityLevel = calculateCriticalityLevel(
-      jsonMetadata["dfds.service.availability"],
-      jsonMetadata["dfds.service.criticality"],
-      jsonMetadata["dfds.data.classification"],
-      enrichedCapability.status,
-    );
-    return enrichedCapability;
-  });
+  useEffect(() => {
+    if (isFetched) {
+      const mapped = data.map((capability) => {
+        const enrichedCapability = { ...capability };
+        const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
+        enrichedCapability.availability =
+          jsonMetadata["dfds.service.availability"] || "unknown";
+        enrichedCapability.criticality =
+          jsonMetadata["dfds.service.criticality"] || "unknown";
+        enrichedCapability.classification =
+          jsonMetadata["dfds.data.classification"] || "unknown";
+        enrichedCapability.criticalityLevel = calculateCriticalityLevel(
+          jsonMetadata["dfds.service.availability"],
+          jsonMetadata["dfds.service.criticality"],
+          jsonMetadata["dfds.data.classification"],
+          enrichedCapability.status,
+        );
+        return enrichedCapability;
+      });
+
+      setEnrichedCapabilities(mapped);
+    }
+  }, [isFetched]);
 
   const columns = useMemo(
     () => [
@@ -221,9 +229,9 @@ export default function CapabilitiesCriticalityPage() {
         </Card>
 
         <PageSection headline="Criticality">
-          {!isLoaded && <Spinner />}
+          {!isFetched && <Spinner />}
 
-          {isLoaded && (
+          {isFetched && (
             <MaterialReactTable
               columns={columns}
               data={enrichedCapabilities}

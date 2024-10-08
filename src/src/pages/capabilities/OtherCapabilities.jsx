@@ -5,39 +5,43 @@ import { ChevronRight } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { useCapabilities } from "hooks/Capabilities";
+// import { useCapabilities } from "hooks/Capabilities";
+import { useMe } from "@/state/remote/queries/me";
+import { useCapabilities } from "@/state/remote/queries/capabilities";
+
 import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
-  const { myCapabilities, appStatus, truncateString } = useContext(AppContext);
-  const { capabilities, isLoaded } = useCapabilities();
+  const { truncateString } = useContext(AppContext);
+  // const { capabilities, isLoaded } = useCapabilities();
+  const { isFetched: isMeFetched, data: meData } = useMe();
+  const { isFetched, data: capabilities } = useCapabilities();
+
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 
   const [searchResult, setSearchResult] = useState([]);
 
   useEffect(() => {
-    if (!appStatus.hasLoadedMyCapabilities) {
-      return;
+    if (isFetched) {
+      const filteredList = capabilities.filter((x) => {
+        const myCap = meData.capabilities.find((y) => y.id === x.id);
+        if (myCap) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+      setOtherCapabilities(filteredList);
     }
-
-    const filteredList = capabilities.filter((x) => {
-      const myCap = myCapabilities.find((y) => y.id === x.id);
-      if (myCap) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    setOtherCapabilities(filteredList);
-  }, [capabilities, myCapabilities, appStatus]);
+  }, [capabilities, meData, isFetched]);
 
   useEffect(() => {
     setSearchResult(otherCapabilities);
   }, [otherCapabilities]);
 
   const items = searchResult;
-  const isLoading = !isLoaded;
+  const isLoading = !isFetched;
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
