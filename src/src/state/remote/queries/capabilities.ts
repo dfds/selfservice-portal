@@ -28,7 +28,7 @@ export function useCapabilities() {
 
 export function useCapability(id: string) {
   const query = useQuery({
-    queryKey: ["capabilities", id],
+    queryKey: ["capabilities", "details", id],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
@@ -45,7 +45,7 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
 
   const query = useQuery({
-    queryKey: ["capability-members-detailed", capabilityDefinition?.id],
+    queryKey: ["capabilities", "members", "detailed", capabilityDefinition?.id],
     queryFn: async () => {
       const membersResp = await ssuRequest({
         method: "GET",
@@ -84,7 +84,12 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
 
   const query = useQuery({
-    queryKey: ["capability-membership-applications", capabilityDefinition?.id],
+    queryKey: [
+      "capabilities",
+      "members",
+      "membership-applications",
+      capabilityDefinition?.id,
+    ],
     queryFn: async () => {
       const membersResp = await ssuRequest({
         method: "GET",
@@ -126,7 +131,7 @@ export function useCapabilityMembers(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
 
   const query = useQuery({
-    queryKey: ["capability-members", capabilityDefinition?.id],
+    queryKey: ["capabilities", "members", capabilityDefinition?.id],
     queryFn: async () =>
       ssuRequest({
         method: "GET",

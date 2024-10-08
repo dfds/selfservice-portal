@@ -301,12 +301,7 @@ function SelectedCapabilityProvider({ children }) {
     }
 
     await selfServiceApiClient.deleteMembershipApplicationApproval(found);
-
-    console.log("FIX reload for delete membershipapplication");
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-    queryClient.invalidateQueries({
-      queryKey: ["capability-members-detailed"],
-    });
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
   };
 
   const approveMembershipApplication = async (membershipApplicationId) => {
@@ -320,33 +315,23 @@ function SelectedCapabilityProvider({ children }) {
     }
 
     await selfServiceApiClient.submitMembershipApplicationApproval(found);
-    console.log("FIX reload for approve membershipapplication");
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-    queryClient.invalidateQueries({
-      queryKey: ["capability-members-detailed"],
-    });
+    await sleep(2000);
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
   };
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
-    console.log("FIX reload for submit membershipapplication");
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-    queryClient.invalidateQueries({
-      queryKey: ["capability-members-detailed"],
-    });
   }, [details]);
 
   const submitLeaveCapability = useCallback(async () => {
     await selfServiceApiClient.submitLeaveCapability(details);
-    console.log("FIX reload for leave Capability");
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-    queryClient.invalidateQueries({
-      queryKey: ["capability-members-detailed"],
-    });
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
     await selfServiceApiClient.requestAwsAccount(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }, [details]);
 
   const getAccessToCluster = async (cluster) => {
@@ -355,6 +340,7 @@ function SelectedCapabilityProvider({ children }) {
 
   const requestAccessToCluster = async (cluster) => {
     await selfServiceApiClient.requestAccessToCluster(cluster);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   };
 
   const updateKafkaTopic = async (topicId, topicDescriptor) => {

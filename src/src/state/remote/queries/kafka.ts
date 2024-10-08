@@ -5,7 +5,12 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   const link = capabilityDefinition?._links?.clusters;
 
   const query = useQuery({
-    queryKey: ["kafka-clusters-list", capabilityDefinition?.id],
+    queryKey: [
+      "capabilities",
+      "kafka",
+      "clusters-list",
+      capabilityDefinition?.id,
+    ],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
