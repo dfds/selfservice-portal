@@ -56,7 +56,6 @@ export async function getSelfServiceAccessToken() {
 
     return accessToken;
   } catch (e) {
-    console.log("Shiii");
     console.log(e);
     await msalInstance.acquireTokenRedirect({
       scopes: selfServiceApiScopes,
@@ -91,7 +90,6 @@ export async function getGraphAccessToken() {
 
     return accessToken;
   } catch (e) {
-    console.log("Shiii");
     console.log(e);
     await msalInstance.acquireTokenRedirect({
       scopes: graphScopes,
