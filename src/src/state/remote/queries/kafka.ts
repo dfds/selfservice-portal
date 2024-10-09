@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
 
 export function useKafkaClustersAccessList(capabilityDefinition) {
@@ -23,4 +23,60 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   });
 
   return query;
+}
+
+export function usePublicTopics() {
+  const query = useQuery({
+    queryKey: ["public-kafkatopics"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["kafkatopics"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    select: (data: any) => {
+      const finalTopics = (data.items || []).map((topic) => {
+        const copy = { ...topic };
+        const found = (data._embedded?.kafkaClusters?.items || []).find(
+          (cluster) => cluster.id === topic.kafkaClusterId,
+        );
+        copy.kafkaClusterName = found?.name || "";
+        return copy;
+      });
+
+      return finalTopics;
+    },
+  });
+
+  return query;
+}
+
+
+export function useUpdateKafkaTopic() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: data.topicDefinition?._links?.updateDescription.method,
+        urlSegments: [data.topicDefinition?._links?.updateDescription.href],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useDeleteKafkaTopic() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "DELETE",
+        urlSegments: [data.topicDefinition?._links?.self?.href],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
 }

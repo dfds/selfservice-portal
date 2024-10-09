@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { useCapabilityMetadata } from "hooks/Capabilities";
 
-import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
 import {
   useCapability,
@@ -16,7 +15,11 @@ import {
   useCapabilityMembersApplications,
   useCapabilityInvitees,
 } from "@/state/remote/queries/capabilities";
-import { useKafkaClustersAccessList } from "@/state/remote/queries/kafka";
+import {
+  useDeleteKafkaTopic,
+  useKafkaClustersAccessList,
+  useUpdateKafkaTopic,
+} from "@/state/remote/queries/kafka";
 import { useSsuRequestLink } from "@/state/remote/query";
 import { useMe } from "@/state/remote/queries/me";
 import {
@@ -44,8 +47,8 @@ function SelectedCapabilityProvider({ children }) {
     useContext(AppContext);
 
   const { data: meData } = useMe();
-  const { updateTopic } = useUpdateTopic();
-  const { deleteTopic } = useDeleteTopic();
+  const updateTopic = useUpdateKafkaTopic();
+  const deleteTopic = useDeleteKafkaTopic();
 
   const [capabilityId, setCapabilityId] = useState(null);
   const [details, setDetails] = useState(null);
@@ -355,7 +358,10 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    updateTopic(found, topicDescriptor);
+    updateTopic.mutate({
+      topicDefinition: found,
+      payload: { ...topicDescriptor },
+    });
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -385,7 +391,10 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    deleteTopic(found);
+    console.log(found);
+    deleteTopic.mutate({
+      topicDefinition: found,
+    });
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
