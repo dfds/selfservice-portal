@@ -5,15 +5,15 @@ import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { CapabilityTagsSubForm } from "./capabilityTagsSubForm";
 import JsonSchemaContext from "../../../JsonSchemaContext";
+import { useUpdateRequiredCapabilityMetadata } from "@/state/remote/queries/capabilities";
 
 export function CapabilityTagViewer() {
   // does set update the backend? How is this done in the metadata view?
-  const {
-    metadata,
-    setRequiredCapabilityJsonMetadata,
-    links,
-    inProgressMetadata,
-  } = useContext(SelectedCapabilityContext);
+  const { metadata, links, details, inProgressMetadata } = useContext(
+    SelectedCapabilityContext,
+  );
+  const updateRequiredCapabilityMetadata =
+    useUpdateRequiredCapabilityMetadata();
   const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
   const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
 
@@ -47,7 +47,12 @@ export function CapabilityTagViewer() {
       mergedMetaData[key] = formdata[key];
     });
 
-    setRequiredCapabilityJsonMetadata(JSON.stringify(mergedMetaData));
+    updateRequiredCapabilityMetadata.mutate({
+      capabilityDefinition: details,
+      payload: {
+        jsonMetadata: mergedMetaData,
+      },
+    });
     setIsDirty(false);
   };
 
