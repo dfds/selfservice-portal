@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useCapabilityMetadata } from "hooks/Capabilities";
 
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
 import {
@@ -14,6 +13,7 @@ import {
   useCapabilityMembersDetailed,
   useCapabilityMembersApplications,
   useCapabilityInvitees,
+  useCapabilityMetadata,
 } from "@/state/remote/queries/capabilities";
 import {
   useDeleteKafkaTopic,
@@ -129,12 +129,8 @@ function SelectedCapabilityProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }
 
-  const {
-    metadata,
-    setCapabilityJsonMetadata,
-    setRequiredCapabilityJsonMetadata,
-    inProgressMetadata,
-  } = useCapabilityMetadata(details);
+  const { isFetched: metadataFetched, data: metadata } =
+    useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
     if (clustersList != null && clustersList.length !== 0) {
@@ -528,6 +524,7 @@ function SelectedCapabilityProvider({ children }) {
     createdBy: details?.createdBy,
     description: details?.description,
     links: details?._links,
+    details,
     members,
     membershipApplications,
     kafkaClusters,
@@ -557,12 +554,13 @@ function SelectedCapabilityProvider({ children }) {
     bypassMembershipApproval,
     addNewInvitees,
     isInviteesCreated,
-    setCapabilityJsonMetadata,
-    setRequiredCapabilityJsonMetadata,
+    // setCapabilityJsonMetadata,
+    // setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
     configurationLevelInformation,
-    inProgressMetadata,
+    inProgressMetadata: metadataFetched,
+    metadataFetched,
     azureResourcesList,
     addNewAzure,
     deleteMembershipApplication,

@@ -6,11 +6,11 @@ import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { shallowEqual } from "Utils";
+import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
 
 export function MetadataTabbedView() {
-  const { metadata, setCapabilityJsonMetadata, links } = useContext(
-    SelectedCapabilityContext,
-  );
+  const { metadata, links, details } = useContext(SelectedCapabilityContext);
+  const updateCapabilityMetadata = useUpdateCapabilityMetadata();
 
   const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
   const [canEditJsonMetadata, setCanEditJsonMetadata] = useState(false);
@@ -33,7 +33,12 @@ export function MetadataTabbedView() {
   }, [metadata]);
 
   const submitJsonMetadata = () => {
-    setCapabilityJsonMetadata(currentMetadataObject);
+    updateCapabilityMetadata.mutate({
+      capabilityDefinition: details,
+      payload: {
+        jsonMetadata: currentMetadataObject,
+      },
+    });
     setIsDirty(false);
   };
 

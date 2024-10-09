@@ -57,6 +57,54 @@ export function useCapabilityAdd() {
   return mutation;
 }
 
+export function useCapabilityMetadata(capabilityDefinition: any) {
+  const link = capabilityDefinition?._links;
+
+  const query = useQuery({
+    queryKey: ["capabilities", "metadata", capabilityDefinition?.id],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: [link.metadata.href],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: link != null,
+  });
+
+  return query;
+}
+
+export function useUpdateCapabilityMetadata() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.capabilityDefinition?._links.metadata.href],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useUpdateRequiredCapabilityMetadata() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [
+          data.capabilityDefinition?._links.setRequiredMetadata.href,
+        ],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
 export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
 
