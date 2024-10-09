@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
 import { useEffect, useState } from "react";
 
@@ -41,6 +41,20 @@ export function useCapability(id: string) {
   });
 
   return query;
+}
+
+export function useCapabilityAdd() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["capabilities"],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
 }
 
 export function useCapabilityMembersDetailed(capabilityDefinition: any) {
@@ -172,4 +186,22 @@ export function useUserProfilePicture(upn: string) {
   }, [query.isFetched]);
 
   return { ...query, profilePicture };
+}
+
+export function useCapabilityInvitees() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [
+          "capabilities",
+          data.capabilityDefinition.id,
+          "invitations",
+        ],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
 }

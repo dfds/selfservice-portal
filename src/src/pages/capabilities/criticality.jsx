@@ -55,7 +55,6 @@ function calculateCriticalityLevel(
 }
 
 export default function CapabilitiesCriticalityPage() {
-  // const { capabilities, isLoaded } = useCapabilities();
   const { isFetched, data } = useCapabilities();
   const { truncateString } = useContext(AppContext);
   const [enrichedCapabilities, setEnrichedCapabilities] = useState([]);
