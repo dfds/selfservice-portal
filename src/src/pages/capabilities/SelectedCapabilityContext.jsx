@@ -6,10 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {
-  useCapabilityInvitees,
-  useCapabilityMetadata,
-} from "hooks/Capabilities";
+import { useCapabilityMetadata } from "hooks/Capabilities";
 
 import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
@@ -17,11 +14,15 @@ import {
   useCapability,
   useCapabilityMembersDetailed,
   useCapabilityMembersApplications,
+  useCapabilityInvitees,
 } from "@/state/remote/queries/capabilities";
 import { useKafkaClustersAccessList } from "@/state/remote/queries/kafka";
 import { useSsuRequestLink } from "@/state/remote/query";
 import { useMe } from "@/state/remote/queries/me";
-import { useCapabilityAzureResources } from "@/state/remote/queries/azure";
+import {
+  useCapabilityAzureResources,
+  useCapabilityAzureResourceRequest,
+} from "@/state/remote/queries/azure";
 import { useQueryClient } from "@tanstack/react-query";
 
 const SelectedCapabilityContext = createContext();
@@ -70,10 +71,11 @@ function SelectedCapabilityProvider({ children }) {
     isFetched: isLoadedMembersApplications,
     data: membersApplicationsList,
   } = useCapabilityMembersApplications(details); // NEW
-  const { addInvitees } = useCapabilityInvitees(details);
+
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
   const { data: azureResources, isFetched: isLoadedAzure } =
     useCapabilityAzureResources(details); // NEW
+  const capabilityAzureResourceRequest = useCapabilityAzureResourceRequest();
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
@@ -109,9 +111,16 @@ function SelectedCapabilityProvider({ children }) {
     });
   }
 
+  const capabilityInvitees = useCapabilityInvitees();
+
   async function addNewInvitees(invitations) {
     setIsInviteesCreated(true);
-    addInvitees([invitations]);
+    capabilityInvitees.mutate({
+      capabilityDefinition: details,
+      payload: {
+        invitees: invitations,
+      },
+    });
     await sleep(3000);
     setIsInviteesCreated(false);
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
@@ -422,7 +431,21 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   const addNewAzure = (environment) => {
-    console.log("FIX: Add requestAzure");
+    capabilityAzureResourceRequest.mutate(
+      {
+        capabilityDefinition: details,
+        payload: {
+          environment: environment,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "azure"],
+          });
+        },
+      },
+    );
   };
 
   //--------------------------------------------------------------------

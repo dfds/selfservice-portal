@@ -3,9 +3,8 @@ import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
-import { useCapabilities } from "hooks/Capabilities";
+import { useCapabilityAdd } from "@/state/remote/queries/capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useECRRepositories } from "hooks/ECRRepositories";
 import PreAppContext from "preAppContext";
 import { useSelector } from "react-redux";
 import {
@@ -14,6 +13,7 @@ import {
   useRegisterMyVisit,
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCreateEcrRepository } from "./state/remote/queries/ecr";
 
 const AppContext = React.createContext(null);
 
@@ -81,8 +81,8 @@ function AppProvider({ children }) {
     [selfServiceApiClient],
   );
 
-  const { addCapability } = useCapabilities();
-  const { createRepository } = useECRRepositories();
+  const capabilityAdd = useCapabilityAdd();
+  const createEcrRepository = useCreateEcrRepository();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -93,17 +93,33 @@ function AppProvider({ children }) {
     invitations,
     jsonMetadataString,
   ) {
-    await addCapability(name, description, invitations, jsonMetadataString);
+    capabilityAdd.mutate({
+      payload: {
+        name: name,
+        description: description,
+        invitees: invitations,
+        jsonMetadata: jsonMetadataString,
+      },
+    });
     await sleep(2000);
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
     queryClient.invalidateQueries({ queryKey: ["me"] });
-    // await loadMyProfile();
   }
 
-  async function addNewRepository(name, description) {
-    await createRepository(name, description);
-    console.log("REPLACE reload of addNewRepository");
-    // reload();
+  async function addNewRepository(data) {
+    createEcrRepository.mutate(
+      {
+        payload: {
+          name: data.name,
+          description: data.description,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+        },
+      },
+    );
   }
 
   function checkIfCloudEngineer(roles) {
@@ -178,7 +194,6 @@ function AppProvider({ children }) {
     setShouldAutoReloadTopics,
     selfServiceApiClient,
     metricsWrapper,
-    addCapability,
     addNewCapability,
     truncateString,
     reloadUser,

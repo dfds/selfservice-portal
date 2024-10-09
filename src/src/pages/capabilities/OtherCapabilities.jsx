@@ -5,7 +5,6 @@ import { ChevronRight } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-// import { useCapabilities } from "hooks/Capabilities";
 import { useMe } from "@/state/remote/queries/me";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 
@@ -13,7 +12,6 @@ import { MaterialReactTable } from "material-react-table";
 
 export default function OtherCapabilities() {
   const { truncateString } = useContext(AppContext);
-  // const { capabilities, isLoaded } = useCapabilities();
   const { isFetched: isMeFetched, data: meData } = useMe();
   const { isFetched, data: capabilities } = useCapabilities();
 

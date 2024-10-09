@@ -9,7 +9,6 @@ import PageSection from "components/PageSection";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
-// import { useCapabilities } from "hooks/Capabilities";
 import { useMe } from "@/state/remote/queries/me";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 
