@@ -75,9 +75,8 @@ export function CapabilityAdoptionLevel() {
 
   useEffect(() => {
     if (configurationLevelInformation) {
-      const [recommendations, selfAssessments] = parseConfigurationLevelInformation(
-        configurationLevelInformation,
-      );
+      const [recommendations, selfAssessments] =
+        parseConfigurationLevelInformation(configurationLevelInformation);
       setRecommendations(recommendations);
       setSelfAssessments(selfAssessments);
     }

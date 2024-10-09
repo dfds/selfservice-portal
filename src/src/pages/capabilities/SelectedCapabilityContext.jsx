@@ -74,7 +74,10 @@ function SelectedCapabilityProvider({ children }) {
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
 
-  const [reloadConfigurationLevelInformation, setReloadConfigurationLevelInformation] = useState(true);
+  const [
+    reloadConfigurationLevelInformation,
+    setReloadConfigurationLevelInformation,
+  ] = useState(true);
   const {
     responseData: configurationLevelInformation,
     sendRequest: getConfiguraitionLevelInformation,

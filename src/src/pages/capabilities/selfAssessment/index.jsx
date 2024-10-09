@@ -5,7 +5,6 @@ import { Card, CardContent } from "@dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
-import { delay } from "Utils";
 
 const ToggleSwitch = ({ initialState, switchedOff, switchedOn }) => {
   const [isOn, setIsOn] = useState(initialState);
@@ -20,7 +19,10 @@ const ToggleSwitch = ({ initialState, switchedOff, switchedOn }) => {
   };
 
   return (
-    <div className={`${styles.switch} ${isOn ? styles.on : 'off'}`} onClick={handleToggle}>
+    <div
+      className={`${styles.switch} ${isOn ? styles.on : "off"}`}
+      onClick={handleToggle}
+    >
       <div className={styles.slider}></div>
     </div>
   );
@@ -33,7 +35,9 @@ export default function SelfAssessments() {
   const [assessments, setAssessments] = useState([]);
   const [reloadAssessments, setReloadAssessments] = useState(true);
   const [showAssessmentsSection, setShowAssessmentsSection] = useState(false);
-  const { links, setReloadConfigurationLevelInformation } = useContext(SelectedCapabilityContext);
+  const { links, setReloadConfigurationLevelInformation } = useContext(
+    SelectedCapabilityContext,
+  );
 
   useEffect(() => {
     if (assessmentInProgress === false) {
@@ -42,13 +46,19 @@ export default function SelfAssessments() {
   }, [assessmentInProgress]);
 
   useEffect(() => {
-    if (responseData?.selfAssessments && responseData?.selfAssessments.length >= 0) {
+    if (
+      responseData?.selfAssessments &&
+      responseData?.selfAssessments.length >= 0
+    ) {
       setAssessments(responseData?.selfAssessments || []);
     }
   }, [responseData]);
 
   useEffect(() => {
-    if (links?.selfAssessments && (links?.selfAssessments.allow || []).includes("GET")) {
+    if (
+      links?.selfAssessments &&
+      (links?.selfAssessments.allow || []).includes("GET")
+    ) {
       sendRequest({
         urlSegments: [links.selfAssessments.href],
       });
@@ -77,7 +87,7 @@ export default function SelfAssessments() {
       }, 2000);
     }
   };
-  
+
   const handleToggleOn = (link) => {
     handleToggle(link, "POST");
   };
@@ -94,24 +104,34 @@ export default function SelfAssessments() {
             <CardContent>
               <p>
                 Self Assessments are a way to simply indicate if a capability is
-                following a specific guideline or not. This is a way to keep track of
-                -- and monitor -- the adoption of guidelines in DFDS across all capabilities.
+                following a specific guideline or not. This is a way to keep
+                track of -- and monitor -- the adoption of guidelines in DFDS
+                across all capabilities.
               </p>
 
               <p>
-                The following self assessments are available for this capability. You can
-                toggle them on or off to indicate if the capability is following the guideline
-                or not.
+                The following self assessments are available for this
+                capability. You can toggle them on or off to indicate if the
+                capability is following the guideline or not.
               </p>
 
               {(assessments || []).map((assessment) => (
-                <div className={styles.assessmentRow} key={assessment.selfAssessmentType}>
+                <div
+                  className={styles.assessmentRow}
+                  key={assessment.selfAssessmentType}
+                >
                   <ToggleSwitch
                     initialState={assessment._links.addSelfAssessment === null}
-                    switchedOn={() => handleToggleOn(assessment._links.addSelfAssessment)}
-                    switchedOff={() => handleToggleOff(assessment._links.removeSelfAssessment)}
+                    switchedOn={() =>
+                      handleToggleOn(assessment._links.addSelfAssessment)
+                    }
+                    switchedOff={() =>
+                      handleToggleOff(assessment._links.removeSelfAssessment)
+                    }
                   />
-                  <div className={styles.assessmentDescriptionWrapper}>{assessment.description}</div>
+                  <div className={styles.assessmentDescriptionWrapper}>
+                    {assessment.description}
+                  </div>
                 </div>
               ))}
             </CardContent>
