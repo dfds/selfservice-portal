@@ -15,13 +15,13 @@ export function useCapabilities() {
     list.sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const createCapability = (
+  async function createCapability(
     name,
     description,
     invitations,
     jsonMetadataString,
-  ) => {
-    addCapability({
+  ) {
+    await addCapability({
       urlSegments: ["capabilities"],
       method: "POST",
       payload: {
@@ -31,12 +31,12 @@ export function useCapabilities() {
         jsonMetadata: jsonMetadataString,
       },
     });
-  };
+  }
 
   useEffect(() => {
     if (addedCapability) {
       setCapabilities((prev) => {
-        const list = [...prev, addCapability];
+        const list = [...prev, addedCapability];
         sortByName(list);
         return list;
       });
