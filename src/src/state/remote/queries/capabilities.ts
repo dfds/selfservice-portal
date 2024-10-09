@@ -253,3 +253,35 @@ export function useCapabilityInvitees() {
 
   return mutation;
 }
+
+export function useCapabilityClaims(capabilityDefinition: any) {
+  const link = capabilityDefinition?._links.claims.href;
+
+  const query = useQuery({
+    queryKey: ["capabilities", "claims", capabilityDefinition?.id],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: [link],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: link != null,
+  });
+
+  return query;
+}
+
+export function useAddCapabilityClaim() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.link.href],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
