@@ -15,7 +15,7 @@ import PageSection from "components/PageSection";
 import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
-import { usePublicTopics } from "@/state/remote/queries/topics";
+import { usePublicTopics } from "@/state/remote/queries/kafka";
 import { MaterialReactTable } from "material-react-table";
 import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
