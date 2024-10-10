@@ -25,6 +25,22 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
   return query;
 }
 
+export function useKafkaClusters() {
+  const query = useQuery({
+    queryKey: ["kafka", "clusters"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["kafkaclusters"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    select: (data: any) => data.items,
+  });
+
+  return query;
+}
+
 export function usePublicTopics() {
   const query = useQuery({
     queryKey: ["public-kafkatopics"],
