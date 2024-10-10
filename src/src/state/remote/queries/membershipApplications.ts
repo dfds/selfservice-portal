@@ -46,9 +46,7 @@ export function useBypassMembershipApproval() {
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: [
-          data.capabilityDefinition?._links?.joinCapability.href,
-        ],
+        urlSegments: [data.capabilityDefinition?._links?.joinCapability.href],
         payload: null,
         isCloudEngineerEnabled: true,
       }),

@@ -21,7 +21,6 @@ function Repositories() {
   // const { repositories, isLoading } = useContext(AppContext);
   const { isFetched, data } = useEcrRepositories();
 
-
   const columns = useMemo(
     () => [
       {
