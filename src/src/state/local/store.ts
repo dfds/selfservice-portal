@@ -5,6 +5,7 @@ export class StoreReducers {
   auth: AuthStruct;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const store = configureStore({
   reducer: {
     auth: authReducer,

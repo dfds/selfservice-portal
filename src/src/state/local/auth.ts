@@ -69,6 +69,7 @@ export const auth: Slice<AuthStruct> = createSlice({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isTokenExpired(token: string): boolean {
   const decoded = jwtDecode(token);
   const currentTime = Math.floor(Date.now() / 1000);
