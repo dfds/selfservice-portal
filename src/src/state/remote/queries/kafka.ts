@@ -52,7 +52,6 @@ export function usePublicTopics() {
   return query;
 }
 
-
 export function useUpdateKafkaTopic() {
   const mutation = useMutation({
     mutationFn: async (data: any) =>
@@ -73,6 +72,34 @@ export function useDeleteKafkaTopic() {
       ssuRequest({
         method: "DELETE",
         urlSegments: [data.topicDefinition?._links?.self?.href],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useAddKafkaTopic() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.clusterDefinition?._links?.createTopic.href],
+        payload: data.payload,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useRequestAccessToCluster() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.clusterDefinition?._links?.requestAccess.href],
         payload: null,
         isCloudEngineerEnabled: true,
       }),

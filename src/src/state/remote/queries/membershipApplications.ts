@@ -47,7 +47,7 @@ export function useSubmitMembershipApplicationApproval() {
       ssuRequest({
         method: "POST",
         urlSegments: [
-          data.membershipApplicationDefinition?.approvals?._links?.self,
+          data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
         isCloudEngineerEnabled: true,
@@ -63,7 +63,7 @@ export function useDeleteMembershipApplicationApproval() {
       ssuRequest({
         method: "DELETE",
         urlSegments: [
-          data.membershipApplicationDefinition?.approvals?._links?.self,
+          data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
         isCloudEngineerEnabled: true,

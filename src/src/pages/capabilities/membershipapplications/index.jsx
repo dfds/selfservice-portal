@@ -21,9 +21,14 @@ import ProfilePicture from "./ProfilePicture";
 import AppContext from "AppContext";
 import { StatusSuccess } from "@dfds-ui/icons/system";
 import PreAppContext from "../../../preAppContext";
-import { useMembershipApplications } from "@/state/remote/queries/membershipApplications";
+import {
+  useDeleteMembershipApplicationApproval,
+  useMembershipApplications,
+  useSubmitMembershipApplicationApproval,
+} from "@/state/remote/queries/membershipApplications";
 import styles from "./index.module.css";
 import { MaterialReactTable } from "material-react-table";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -225,12 +230,15 @@ function sleep(duration) {
 }
 
 export function MembershipApplicationsUserCanApprove() {
-  // const { membershipApplications, isLoaded, reload } =
-  //   useMembershipApplications();
-  const { isFetched, data } = useMembershipApplications();
-  const { truncateString, selfServiceApiClient } = useContext(AppContext);
+  const queryClient = useQueryClient();
+  const { isFetched, isRefetching, data } = useMembershipApplications();
+  const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
+  const submitMembershipApplicationApproval =
+    useSubmitMembershipApplicationApproval();
+  const deleteMembershipApplicationApproval =
+    useDeleteMembershipApplicationApproval();
 
   useEffect(() => {
     if (data) {
@@ -261,20 +269,21 @@ export function MembershipApplicationsUserCanApprove() {
       });
 
       if (triggerUpdate) {
-        sleep(1000).then(() => {
-          console.log(
-            "REPLACE reload functionality for membershipApplications",
-          );
+        sleep(1400).then(() => {
+          queryClient.invalidateQueries({
+            queryKey: ["membershipapplications/eligible-for-approval"],
+          });
         });
       }
     }
-  }, [data]);
+  }, [data, isRefetching]);
 
   const addApplicationToRemovalTracker = (id) => {
     setRemovalTracker((prev) => {
       prev.add(id);
-      // reload();
-      console.log("REPLACE reload functionality for membershipApplications");
+      queryClient.invalidateQueries({
+        queryKey: ["membershipapplications/eligible-for-approval"],
+      });
       return prev;
     });
   };
@@ -294,14 +303,36 @@ export function MembershipApplicationsUserCanApprove() {
 
   const handleApproveClicked = async (def) => {
     setActiveCrudOpOnTableDataItem(def);
-    await selfServiceApiClient.submitMembershipApplicationApproval(def);
-    addApplicationToRemovalTracker(def.id);
+    submitMembershipApplicationApproval.mutate(
+      {
+        membershipApplicationDefinition: def,
+      },
+      {
+        onSuccess: () => {
+          console.log("Updating removal tracker");
+          addApplicationToRemovalTracker(def.id);
+        },
+      },
+    );
+    // await selfServiceApiClient.submitMembershipApplicationApproval(def);
+    // addApplicationToRemovalTracker(def.id);
   };
 
   const handleRejectClicked = async (def) => {
     setActiveCrudOpOnTableDataItem(def);
-    await selfServiceApiClient.deleteMembershipApplicationApproval(def);
-    addApplicationToRemovalTracker(def.id);
+    deleteMembershipApplicationApproval.mutate(
+      {
+        membershipApplicationDefinition: def,
+      },
+      {
+        onSuccess: () => {
+          console.log("Updating removal tracker");
+          addApplicationToRemovalTracker(def.id);
+        },
+      },
+    );
+    // await selfServiceApiClient.deleteMembershipApplicationApproval(def);
+    // addApplicationToRemovalTracker(def.id);
   };
 
   const columns = useMemo(
