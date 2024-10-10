@@ -1,4 +1,3 @@
-import store from "@/state/local/store";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { jwtDecode } from "jwt-decode";
 
