@@ -62,6 +62,7 @@ function AppProvider({ children }) {
   });
 
   const [topics, setTopics] = useState([]);
+  const [myProfile, setMyProfile] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const { data: me, isFetched: isMeFetched } = useMe();
   const { isEnabledCloudEngineer } = useContext(PreAppContext);
@@ -86,6 +87,12 @@ function AppProvider({ children }) {
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
+
+  useEffect(() => {
+    if (me != null) {
+      setMyProfile(me);
+    }
+  }, [isMeFetched]);
 
   async function addNewCapability(
     name,
@@ -184,6 +191,7 @@ function AppProvider({ children }) {
 
   const state = {
     user,
+    myProfile,
     myCapabilities,
     appStatus,
     topics,
