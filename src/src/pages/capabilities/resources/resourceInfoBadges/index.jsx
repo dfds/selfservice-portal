@@ -346,6 +346,7 @@ export function ResourceInfoBadges() {
     azureResourcesList,
     isLoadedAzure,
     metadata,
+    metadataFetched,
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -381,7 +382,7 @@ export function ResourceInfoBadges() {
   };
 
   useEffect(() => {
-    if (metadata !== null && requiredTags.length > 0) {
+    if (metadataFetched && metadata != null && requiredTags.length > 0) {
       const meta = JSON.parse(metadata);
       const missing = requiredTags.filter((tag) => !meta.hasOwnProperty(tag));
 
@@ -398,7 +399,7 @@ export function ResourceInfoBadges() {
     } else {
       setMissingTags([]); // Reset to empty array if metadata is null or requiredTags is empty
     }
-  }, [metadata, requiredTags]);
+  }, [metadataFetched]);
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
@@ -422,7 +423,7 @@ export function ResourceInfoBadges() {
     <>
       <hr className={styles.divider} />
 
-      {awsAccount !== null ? (
+      {awsAccount != null ? (
         <>
           {awsAccount.status === "Completed" && (
             <>

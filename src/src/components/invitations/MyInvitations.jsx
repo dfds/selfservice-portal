@@ -2,34 +2,28 @@ import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
-import { useSelfServiceRequest } from "../../hooks/SelfServiceApi";
 import { MaterialReactTable } from "material-react-table";
-import AppContext from "AppContext";
+import {
+  useCapabilitiesAcceptInvitation,
+  useCapabilitiesMyInvitations,
+  useCapabilitiesDeclineInvitation,
+} from "@/state/remote/queries/capabilities";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function MyInvitations({ invitationsLink }) {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  const { responseData: acceptResponse, sendRequest: acceptRequest } =
-    useSelfServiceRequest();
-  const { responseData: declineResponse, sendRequest: declineRequest } =
-    useSelfServiceRequest();
+  const queryClient = useQueryClient();
+  const { isFetched, data: responseData } =
+    useCapabilitiesMyInvitations(invitationsLink);
+  const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
+  const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { reloadUser } = useContext(AppContext);
-
-  const loadInvitations = () => {
-    sendRequest({ urlSegments: [invitationsLink] });
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-    loadInvitations();
-  }, [acceptResponse, declineResponse]);
 
   useEffect(() => {
     const invitations = responseData?.items || [];
     setInvitations(invitations);
     setIsLoading(false);
-  }, [responseData]);
+  }, [isFetched, responseData]);
 
   const columns = useMemo(
     () => [
@@ -71,10 +65,18 @@ export default function MyInvitations({ invitationsLink }) {
             <>
               <Button
                 onClick={() => {
-                  declineRequest({
-                    urlSegments: [cell.getValue().decline.href],
-                    method: "POST",
-                  });
+                  capabilitiesDeclineInvitation.mutate(
+                    {
+                      link: cell.getValue().decline.href,
+                    },
+                    {
+                      onSuccess: () => {
+                        queryClient.invalidateQueries({
+                          queryKey: ["capabilities", "invitations"],
+                        });
+                      },
+                    },
+                  );
                 }}
                 size="small"
                 variation="danger"
@@ -84,12 +86,21 @@ export default function MyInvitations({ invitationsLink }) {
               <span style={{ marginLeft: "10px", marginRight: "10px" }} />
               <Button
                 onClick={() => {
-                  acceptRequest({
-                    urlSegments: [cell.getValue().accept.href],
-                    method: "POST",
-                  }).then(() => {
-                    reloadUser();
-                  });
+                  capabilitiesAcceptInvitation.mutate(
+                    {
+                      link: cell.getValue().accept.href,
+                    },
+                    {
+                      onSuccess: async () => {
+                        queryClient.invalidateQueries({
+                          queryKey: ["capabilities"],
+                        });
+                        queryClient.invalidateQueries({
+                          queryKey: ["me"],
+                        });
+                      },
+                    },
+                  );
                 }}
                 size="small"
                 variation="primary"

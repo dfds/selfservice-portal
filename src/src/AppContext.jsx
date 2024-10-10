@@ -3,12 +3,17 @@ import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
 import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
-import { useCapabilities } from "hooks/Capabilities";
+import { useCapabilityAdd } from "@/state/remote/queries/capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import { useProfile, useStats } from "hooks/Profile";
-import { useECRRepositories } from "hooks/ECRRepositories";
 import PreAppContext from "preAppContext";
 import { useSelector } from "react-redux";
+import {
+  useUpdateMyPersonalInformation,
+  useMe,
+  useRegisterMyVisit,
+} from "./state/remote/queries/me";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCreateEcrRepository } from "./state/remote/queries/ecr";
 
 const AppContext = React.createContext(null);
 
@@ -44,6 +49,7 @@ function truncateString(str, maxLength) {
 }
 
 function AppProvider({ children }) {
+  const queryClient = useQueryClient();
   const user = useCurrentUser();
   const validAuthSession = useSelector((s) => s.auth.isSessionActive);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
@@ -56,14 +62,15 @@ function AppProvider({ children }) {
   });
 
   const [topics, setTopics] = useState([]);
+  const [myProfile, setMyProfile] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
+  const { data: me, isFetched: isMeFetched } = useMe();
   const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
 
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(false);
-  const [myProfile, setMyProfile] = useState(null);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
     () =>
@@ -75,11 +82,17 @@ function AppProvider({ children }) {
     [selfServiceApiClient],
   );
 
-  const { addCapability } = useCapabilities();
-  const { createRepository, reload, repositories, isLoading } =
-    useECRRepositories();
-  const { profileInfo, isLoadedProfile, reload: reloadUser } = useProfile(user);
-  const { statsInfo, isLoadedStats } = useStats(user);
+  const capabilityAdd = useCapabilityAdd();
+  const createEcrRepository = useCreateEcrRepository();
+  const reloadUser = () => {
+    queryClient.invalidateQueries({ queryKey: ["me"] });
+  };
+
+  useEffect(() => {
+    if (me != null) {
+      setMyProfile(me);
+    }
+  }, [isMeFetched]);
 
   async function addNewCapability(
     name,
@@ -87,33 +100,33 @@ function AppProvider({ children }) {
     invitations,
     jsonMetadataString,
   ) {
-    await addCapability(name, description, invitations, jsonMetadataString);
+    capabilityAdd.mutate({
+      payload: {
+        name: name,
+        description: description,
+        invitees: invitations,
+        jsonMetadata: jsonMetadataString,
+      },
+    });
     await sleep(2000);
-    await loadMyProfile();
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   }
 
-  async function addNewRepository(name, description) {
-    await createRepository(name, description);
-    reload();
-  }
-
-  async function loadMyProfile() {
-    if (isLoadedProfile && isLoadedStats) {
-      const profile = profileInfo;
-      const { capabilities, autoReloadTopics } = profile;
-
-      const stats = statsInfo;
-
-      setMyCapabilities(capabilities);
-      setStats(stats);
-      setAppStatus((prev) => ({
-        ...prev,
-        ...{ hasLoadedMyCapabilities: true },
-      }));
-      setShouldAutoReloadTopics(autoReloadTopics);
-
-      setMyProfile(profile);
-    }
+  async function addNewRepository(data) {
+    createEcrRepository.mutate(
+      {
+        payload: {
+          name: data.name,
+          description: data.description,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+        },
+      },
+    );
   }
 
   function checkIfCloudEngineer(roles) {
@@ -122,21 +135,19 @@ function AppProvider({ children }) {
     return match;
   }
 
+  const updateMyPersonalInformation = useUpdateMyPersonalInformation();
+  const registerMyVisit = useRegisterMyVisit();
   useEffect(() => {
-    if (isAuthenticatedUser !== user.isAuthenticated) {
-      setIsAuthenticatedUser(user.isAuthenticated);
-    }
     if (user && user.isAuthenticated) {
-      loadMyProfile();
+      updateMyPersonalInformation.mutate({
+        user: user,
+        profileDefinition: me,
+      });
+      registerMyVisit.mutate({
+        profileDefinition: me,
+      });
     }
-  }, [user, profileInfo, statsInfo]);
-
-  useEffect(() => {
-    if (user && user.isAuthenticated && myProfile) {
-      selfServiceApiClient.updateMyPersonalInformation(myProfile, user);
-      selfServiceApiClient.registerMyVisit(myProfile);
-    }
-  }, [myProfile, user]);
+  }, [user]);
 
   function updateMetrics() {
     metricsWrapper.tryUpdateMetrics().then(() => {
@@ -191,14 +202,10 @@ function AppProvider({ children }) {
     setShouldAutoReloadTopics,
     selfServiceApiClient,
     metricsWrapper,
-    addCapability,
     addNewCapability,
     truncateString,
     reloadUser,
     addNewRepository,
-    reload,
-    repositories,
-    isLoading,
     isAllWithValues,
     getValidationError,
     checkIfCloudEngineer,

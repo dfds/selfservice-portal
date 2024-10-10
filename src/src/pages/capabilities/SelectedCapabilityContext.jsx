@@ -6,20 +6,35 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {
-  useGetUrlData,
-  useCapabilityById,
-  useCapabilityInvitees,
-  useCapabilityMembers,
-  useCapabilityMembersApplications,
-  useCapabilityMetadata,
-  useKafkaClustersAccessList,
-  useCapabilityAzureResources,
-} from "hooks/Capabilities";
 
-import { getAnotherUserProfilePictureUrl } from "../../GraphApiClient";
-import { useDeleteTopic, useUpdateTopic } from "../../hooks/Topics";
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
+import {
+  useCapability,
+  useCapabilityMembersDetailed,
+  useCapabilityMembersApplications,
+  useCapabilityInvitees,
+  useCapabilityMetadata,
+  useLeaveCapability,
+} from "@/state/remote/queries/capabilities";
+import {
+  useAddKafkaTopic,
+  useDeleteKafkaTopic,
+  useKafkaClustersAccessList,
+  useRequestAccessToCluster,
+  useUpdateKafkaTopic,
+} from "@/state/remote/queries/kafka";
+import { useSsuRequestLink } from "@/state/remote/query";
+import { useMe } from "@/state/remote/queries/me";
+import {
+  useCapabilityAzureResources,
+  useCapabilityAzureResourceRequest,
+} from "@/state/remote/queries/azure";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useBypassMembershipApproval,
+  useDeleteMembershipApplicationApproval,
+  useSubmitMembershipApplicationApproval,
+} from "@/state/remote/queries/membershipApplications";
 
 const SelectedCapabilityContext = createContext();
 
@@ -35,11 +50,13 @@ function adjustRetention(kafkaTopic) {
 
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
-  const { shouldAutoReloadTopics, selfServiceApiClient, myCapabilities } =
+  const queryClient = useQueryClient();
+  const { shouldAutoReloadTopics, selfServiceApiClient } =
     useContext(AppContext);
 
-  const { updateTopic } = useUpdateTopic();
-  const { deleteTopic } = useDeleteTopic();
+  const { data: meData } = useMe();
+  const updateTopic = useUpdateKafkaTopic();
+  const deleteTopic = useDeleteKafkaTopic();
 
   const [capabilityId, setCapabilityId] = useState(null);
   const [details, setDetails] = useState(null);
@@ -49,24 +66,27 @@ function SelectedCapabilityProvider({ children }) {
   const [membershipApplications, setMembershipApplications] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null);
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { capability, isLoaded, setReloadRequired } =
-    useCapabilityById(capabilityId);
-  const { membersList, isLoadedMembers } = useCapabilityMembers(details);
+  const { isFetched, data: capability } = useCapability(capabilityId); // NEW
+  const { isFetched: capabilityMembersFetched, data: membersList } =
+    useCapabilityMembersDetailed(details); // NEW
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
-  const { clustersList } = useKafkaClustersAccessList(details);
-  const { data: awsAccountDetails, isLoaded: isLoadedAccount } = useGetUrlData(
-    details?._links?.awsAccount,
-  );
-  const { data: awsAccountInformation, isLoaded: isLoadedAccountInformation } =
-    useGetUrlData(details?._links?.awsAccountInformation);
-  const { isLoadedMembersApplications, membersApplicationsList } =
-    useCapabilityMembersApplications(details);
-  const { addInvitees } = useCapabilityInvitees(details);
+  const { isFetched: isClustersListFetched, data: clustersList } =
+    useKafkaClustersAccessList(details); // NEW
+  const { data: awsAccountDetails, isFetched: isLoadedAccount } =
+    useSsuRequestLink(details?._links?.awsAccount); // NEW
+  const { data: awsAccountInformation, isFetched: isLoadedAccountInformation } =
+    useSsuRequestLink(details?._links?.awsAccountInformation); // NEW
+  const {
+    isFetched: isLoadedMembersApplications,
+    data: membersApplicationsList,
+  } = useCapabilityMembersApplications(details); // NEW
+
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
-  const { azureResources, isLoadedAzure, requestAzure } =
-    useCapabilityAzureResources(details);
+  const { data: azureResources, isFetched: isLoadedAzure } =
+    useCapabilityAzureResources(details); // NEW
+  const capabilityAzureResourceRequest = useCapabilityAzureResourceRequest();
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
   const configurationLevelLink = details?._links?.configurationLevel?.href;
@@ -114,22 +134,26 @@ function SelectedCapabilityProvider({ children }) {
     });
   }
 
+  const capabilityInvitees = useCapabilityInvitees();
+
   async function addNewInvitees(invitations) {
     setIsInviteesCreated(true);
-    addInvitees([invitations]);
+    capabilityInvitees.mutate({
+      capabilityDefinition: details,
+      payload: {
+        invitees: invitations,
+      },
+    });
     await sleep(3000);
     setIsInviteesCreated(false);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }
 
-  const {
-    metadata,
-    setCapabilityJsonMetadata,
-    setRequiredCapabilityJsonMetadata,
-    inProgressMetadata,
-  } = useCapabilityMetadata(details);
+  const { isFetched: metadataFetched, data: metadata } =
+    useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
-    if (clustersList.length !== 0) {
+    if (clustersList != null && clustersList.length !== 0) {
       const promises = [];
       for (const cluster of clustersList) {
         let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
@@ -153,32 +177,10 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   useEffect(() => {
-    kafkaClusterTopicList();
-  }, [clustersList]);
-
-  // load membership applications
-  const loadMembershipApplications = useCallback(async () => {
-    const result =
-      await selfServiceApiClient.getCapabilityMembershipApplications(details);
-    setMembershipApplications(result);
-
-    result.forEach(async (application) => {
-      const profilePictureUrl = await getAnotherUserProfilePictureUrl(
-        application.applicant,
-      );
-
-      setMembershipApplications((prev) => {
-        const copy = prev ? [...prev] : [];
-
-        const found = copy.find((x) => x.id === application.id);
-        if (found) {
-          found.applicantProfilePictureUrl = profilePictureUrl;
-        }
-
-        return copy;
-      });
-    });
-  }, [details]);
+    if (clustersList != null) {
+      kafkaClusterTopicList();
+    }
+  }, [isClustersListFetched]);
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -216,30 +218,49 @@ function SelectedCapabilityProvider({ children }) {
     });
   };
 
+  const addKafkaTopic = useAddKafkaTopic();
+
   const addTopicToCluster = async (kafkaCluster, kafkaTopicDescriptor) => {
-    const newTopic = await selfServiceApiClient.addTopicToCapability(
-      kafkaCluster,
-      kafkaTopicDescriptor,
+    addKafkaTopic.mutate(
+      {
+        clusterDefinition: kafkaCluster,
+        payload: {
+          kafkaClusterId: kafkaCluster.id,
+          name: kafkaTopicDescriptor.name,
+          description: kafkaTopicDescriptor.description,
+          partitions: kafkaTopicDescriptor.partitions,
+          retention: kafkaTopicDescriptor.retention,
+        },
+      },
+      {
+        onSuccess: (data) => {
+          const newTopic = data;
+          adjustRetention(newTopic);
+          setKafkaClusters((prev) => {
+            const copy = [...prev];
+            const cluster = copy.find(
+              (cluster) => cluster.id === kafkaCluster.id,
+            );
+            if (cluster) {
+              if (!cluster.topics) {
+                cluster.topics = [];
+              }
+
+              const foundTopic = cluster.topics.find(
+                (x) => x.id === newTopic.id,
+              );
+              if (!foundTopic) {
+                cluster.topics.push(newTopic);
+              }
+            }
+            return copy;
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "kafka"],
+          });
+        },
+      },
     );
-    // NOTE: [jandr] handle errors from call above ^^
-
-    adjustRetention(newTopic);
-
-    setKafkaClusters((prev) => {
-      const copy = [...prev];
-      const cluster = copy.find((cluster) => cluster.id === kafkaCluster.id);
-      if (cluster) {
-        if (!cluster.topics) {
-          cluster.topics = [];
-        }
-
-        const foundTopic = cluster.topics.find((x) => x.id === newTopic.id);
-        if (!foundTopic) {
-          cluster.topics.push(newTopic);
-        }
-      }
-      return copy;
-    });
   };
 
   const validateContract = async (kafkaTopicId, messageType, schema) => {
@@ -305,6 +326,11 @@ function SelectedCapabilityProvider({ children }) {
     });
   };
 
+  const submitMembershipApplicationApproval =
+    useSubmitMembershipApplicationApproval();
+  const deleteMembershipApplicationApproval =
+    useDeleteMembershipApplicationApproval();
+
   const deleteMembershipApplication = async (membershipApplicationId) => {
     const found = membershipApplications.find(
       (x) => x.id === membershipApplicationId,
@@ -315,8 +341,21 @@ function SelectedCapabilityProvider({ children }) {
       );
     }
 
-    await selfServiceApiClient.deleteMembershipApplicationApproval(found);
-    await loadMembershipApplications();
+    deleteMembershipApplicationApproval.mutate(
+      {
+        membershipApplicationDefinition: found,
+      },
+      {
+        onSuccess: async () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "members"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["membershipapplications/eligible-for-approval"],
+          });
+        },
+      },
+    );
   };
 
   const approveMembershipApplication = async (membershipApplicationId) => {
@@ -329,30 +368,67 @@ function SelectedCapabilityProvider({ children }) {
       );
     }
 
-    await selfServiceApiClient.submitMembershipApplicationApproval(found);
-    await loadMembershipApplications();
+    submitMembershipApplicationApproval.mutate(
+      {
+        membershipApplicationDefinition: found,
+      },
+      {
+        onSuccess: async () => {
+          await sleep(2000);
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "members"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["membershipapplications/eligible-for-approval"],
+          });
+        },
+      },
+    );
   };
 
   const submitMembershipApplication = useCallback(async () => {
     await selfServiceApiClient.submitMembershipApplication(details);
-    setReloadRequired(true);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }, [details]);
 
+  const leaveCapability = useLeaveCapability();
   const submitLeaveCapability = useCallback(async () => {
-    await selfServiceApiClient.submitLeaveCapability(details);
-    setReloadRequired(true);
+    leaveCapability.mutate(
+      {
+        capabilityDefinition: details,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        },
+      },
+    );
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
     await selfServiceApiClient.requestAwsAccount(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }, [details]);
 
   const getAccessToCluster = async (cluster) => {
     return await selfServiceApiClient.getAccessToCluster(cluster);
   };
 
+  const requestAccessToClusterF = useRequestAccessToCluster();
+
   const requestAccessToCluster = async (cluster) => {
-    await selfServiceApiClient.requestAccessToCluster(cluster);
+    requestAccessToClusterF.mutate(
+      {
+        clusterDefinition: cluster,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "kafka"],
+          });
+        },
+      },
+    );
   };
 
   const updateKafkaTopic = async (topicId, topicDescriptor) => {
@@ -368,7 +444,10 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    updateTopic(found, topicDescriptor);
+    updateTopic.mutate({
+      topicDefinition: found,
+      payload: { ...topicDescriptor },
+    });
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -398,7 +477,10 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    deleteTopic(found);
+    console.log(found);
+    deleteTopic.mutate({
+      topicDefinition: found,
+    });
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -420,19 +502,35 @@ function SelectedCapabilityProvider({ children }) {
 
   const submitDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitDeleteCapability(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   }, [details]);
 
   const submitCancelDeleteCapability = useCallback(async () => {
     await selfServiceApiClient.submitCancelDeleteCapability(details);
+    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   }, [details]);
 
+  const bypassMembershipApprovalF = useBypassMembershipApproval();
+
   const bypassMembershipApproval = async () => {
-    try {
-      await selfServiceApiClient.bypassMembershipApproval(details);
-    } catch (error) {
-      console.log(error);
-    }
-    setReloadRequired(true);
+    bypassMembershipApprovalF.mutate(
+      {
+        capabilityDefinition: details,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        },
+      },
+    );
+    // try {
+    //   await selfServiceApiClient.bypassMembershipApproval(details);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   };
 
   const updateDeletionStatus = (value) => {
@@ -440,48 +538,52 @@ function SelectedCapabilityProvider({ children }) {
   };
 
   const addNewAzure = (environment) => {
-    requestAzure(environment);
+    capabilityAzureResourceRequest.mutate(
+      {
+        capabilityDefinition: details,
+        payload: {
+          environment: environment,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "azure"],
+          });
+        },
+      },
+    );
   };
 
   //--------------------------------------------------------------------
 
   useEffect(() => {
-    if (myCapabilities) {
+    if (meData) {
       let capabilityJoined =
-        myCapabilities.find((x) => x.id === capabilityId) !== undefined;
+        meData.capabilities.find((x) => x.id === capabilityId) !== undefined;
       setShowCosts(capabilityJoined);
     }
-  }, [details, myCapabilities]);
+  }, [details, meData]);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isFetched && capability != null) {
       setDetails(capability);
       setPendingDeletion(capability.status === "Pending Deletion");
       setIsDeleted(capability.status === "Deleted");
     }
-  }, [isLoaded, capability]);
+  }, [isFetched, capability]);
 
   useEffect(() => {
-    if (isLoadedMembers) {
+    if (capabilityMembersFetched) {
       setMembers(membersList);
     }
-  }, [isLoadedMembers, membersList]);
+  }, [capabilityMembersFetched, membersList]);
 
   useEffect(() => {
     if (isLoadedAzure) {
       setAzureResourcesList(azureResources.items);
     }
   }, [isLoadedAzure, azureResources]);
-
-  useEffect(() => {
-    if (details) {
-      loadMembershipApplications();
-    } else {
-      setMembers([]);
-      setMembershipApplications([]);
-      setKafkaClusters([]);
-    }
-  }, [isLoadedMembersApplications, membersApplicationsList]);
 
   useEffect(() => {
     if (isLoadedMembersApplications) {
@@ -509,10 +611,14 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [awsAccountRequested]);
 
+  // useEffect(() => {
+  //   console.log(capabilityId);
+  // }, [capabilityId]);
+
   //--------------------------------------------------------------------
 
   const state = {
-    isLoading: !isLoaded,
+    isLoading: !isFetched,
     isFound: details != null,
     id: capabilityId,
     name: details?.name,
@@ -520,6 +626,7 @@ function SelectedCapabilityProvider({ children }) {
     createdBy: details?.createdBy,
     description: details?.description,
     links: details?._links,
+    details,
     members,
     membershipApplications,
     kafkaClusters,
@@ -549,12 +656,13 @@ function SelectedCapabilityProvider({ children }) {
     bypassMembershipApproval,
     addNewInvitees,
     isInviteesCreated,
-    setCapabilityJsonMetadata,
-    setRequiredCapabilityJsonMetadata,
+    // setCapabilityJsonMetadata,
+    // setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
     configurationLevelInformation,
-    inProgressMetadata,
+    inProgressMetadata: metadataFetched,
+    metadataFetched,
     azureResourcesList,
     addNewAzure,
     deleteMembershipApplication,
