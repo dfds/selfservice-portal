@@ -285,3 +285,47 @@ export function useAddCapabilityClaim() {
 
   return mutation;
 }
+
+export function useCapabilitiesMyInvitations(link: string) {
+  const query = useQuery({
+    queryKey: ["capabilities", "invitations", "my"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: [link],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: link != null,
+  });
+
+  return query;
+}
+
+export function useCapabilitiesDeclineInvitation(link: string) {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.link],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useCapabilitiesAcceptInvitation(link: string) {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [data.link],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
