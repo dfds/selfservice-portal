@@ -10,26 +10,7 @@ We recommend using the provided **Makefile** targets, though if you're an npm ni
 
 This react app depends on having an API running behind it. The UI will in theory run fine without one, but you'll see error banners and errors in your console if you do so. This will make it generally less pleasant to use, expecially if you want to debug changes you're working on.<br>
 
-### Method 1: the fake api (Deprecated-ish)
-
-This project comes with a "fake" api (also a react app) which produces responses based on spoofing the content of a databse with the data specified in `fake_dependencies/selfservice-api/src/data.ts`.
-To sping this fake dependency up, simply run
-
-```bash
-docker compose up --build
-```
-
-Then to start the react app run
-
-```bash
-make dev
-```
-
-:warning: **The fake api is no longer maintained, and does not match the behavior of the one in production**
-
-we are in the process of fixing this.
-
-### Method 2: local instance of the real api
+### Local instance of the real api
 
 This is the method we prefer. Start a local instance of the [self-service api](https://github.com/dfds/selfservice-api/tree/develop). The default port it starts on is `8080`.<br>
 In the file `src/.env`, add/change the following line
