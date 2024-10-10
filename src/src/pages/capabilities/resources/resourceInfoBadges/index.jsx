@@ -423,7 +423,7 @@ export function ResourceInfoBadges() {
     <>
       <hr className={styles.divider} />
 
-      {awsAccount !== null ? (
+      {awsAccount != null ? (
         <>
           {awsAccount.status === "Completed" && (
             <>

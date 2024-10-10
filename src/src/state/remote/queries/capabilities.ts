@@ -110,9 +110,7 @@ export function useLeaveCapability() {
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: [
-          data.capabilityDefinition?._links?.leaveCapability.href,
-        ],
+        urlSegments: [data.capabilityDefinition?._links?.leaveCapability.href],
         payload: null,
         isCloudEngineerEnabled: true,
       }),

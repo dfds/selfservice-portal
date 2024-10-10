@@ -41,7 +41,9 @@ export async function ssuRequest(rq: SsuRequestQuery) {
       return resp;
     }
   } else {
-    return httpResponse;
+    const err = new Error("Unexpected response");
+    (err as any).data = httpResponse;
+    throw err;
   }
 }
 
