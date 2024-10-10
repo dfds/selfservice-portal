@@ -41,6 +41,22 @@ export function useSubmitMembershipApplication() {
   return mutation;
 }
 
+export function useBypassMembershipApproval() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [
+          data.capabilityDefinition?._links?.joinCapability.href,
+        ],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
 export function useSubmitMembershipApplicationApproval() {
   const mutation = useMutation({
     mutationFn: async (data: any) =>

@@ -310,36 +310,6 @@ export class SelfServiceApiClient {
     return items || [];
   }
 
-  async submitLeaveCapability(capabilityDefinition) {
-    const capabilityId = capabilityDefinition?.details?.id;
-
-    const link = capabilityDefinition?._links?.leaveCapability;
-    if (!link) {
-      throw Error(
-        "Error! No leave capability link found on capability " + capabilityId,
-      );
-    }
-    if (!(link.allow || []).includes("POST")) {
-      throw Error("Error! Not possible to leave capability " + capabilityId);
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(
-      link.href,
-      accessToken,
-      "POST",
-      {},
-      this.isEnabledCloudEngineer,
-    );
-
-    if (!response.ok) {
-      console.log("response was: ", await response.text());
-      throw Error(
-        `Error! Response from server: (${response.status}) ${response.statusText}`,
-      );
-    }
-  }
-
   async getKafkaClusters() {
     const accessToken = await getSelfServiceAccessToken();
 
@@ -421,35 +391,6 @@ export class SelfServiceApiClient {
     return response.json();
   }
 
-  async requestAccessToCluster(cluster) {
-    const link = cluster._links?.requestAccess;
-    if (!link) {
-      throw Error("Error! No request cluster access link found");
-    }
-
-    if (!(link.allow || []).includes("POST")) {
-      throw Error(
-        "Error! Not authorized to request access to cluster " + cluster.id,
-      );
-    }
-
-    const accessToken = await getSelfServiceAccessToken();
-    const response = await callApi(
-      link.href,
-      accessToken,
-      "POST",
-      null,
-      this.isEnabledCloudEngineer,
-    );
-
-    if (!response.ok) {
-      console.log("response was: ", await response.text());
-      throw Error(
-        `Error! Response from server: (${response.status}) ${response.statusText}`,
-      );
-    }
-  }
-
   async submitDeleteCapability(capabilityDefinition) {
     const capabilityId = capabilityDefinition?.details?.id;
 
@@ -524,37 +465,6 @@ export class SelfServiceApiClient {
 
     let obj = await response.json();
     return obj.schema.toString() || "";
-  }
-
-  checkCanbypassMembershipApproval(capabilityDefinition) {
-    const link = capabilityDefinition?._links?.joinCapability;
-    if (!link) {
-      throw Error(
-        "Error! No join link found for capability " +
-          capabilityDefinition.capabilityId,
-      );
-    }
-    if (!link.allow.includes("POST")) {
-      throw Error(
-        "Error! user not allowed to join capability " +
-          capabilityDefinition.capabilityId +
-          " directly",
-      );
-    }
-    return link;
-  }
-
-  async bypassMembershipApproval(capabilityDefinition) {
-    const link = this.checkCanbypassMembershipApproval(capabilityDefinition);
-    const response = await this.requestWithToken(link.href, "POST");
-    if (!response.ok) {
-      console.log(
-        `response was: ", ${await response.text()} for url ${link.href}`,
-      );
-      throw Error(
-        `Error! Response from server: (${response.status}) ${response.statusText}`,
-      );
-    }
   }
 }
 

@@ -105,6 +105,22 @@ export function useUpdateRequiredCapabilityMetadata() {
   return mutation;
 }
 
+export function useLeaveCapability() {
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [
+          data.capabilityDefinition?._links?.leaveCapability.href,
+        ],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+
+  return mutation;
+}
+
 export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
 

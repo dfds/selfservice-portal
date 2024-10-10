@@ -14,6 +14,7 @@ import {
   useCapabilityMembersApplications,
   useCapabilityInvitees,
   useCapabilityMetadata,
+  useLeaveCapability,
 } from "@/state/remote/queries/capabilities";
 import {
   useAddKafkaTopic,
@@ -30,6 +31,7 @@ import {
 } from "@/state/remote/queries/azure";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  useBypassMembershipApproval,
   useDeleteMembershipApplicationApproval,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
@@ -389,9 +391,18 @@ function SelectedCapabilityProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }, [details]);
 
+  const leaveCapability = useLeaveCapability();
   const submitLeaveCapability = useCallback(async () => {
-    await selfServiceApiClient.submitLeaveCapability(details);
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    leaveCapability.mutate(
+      {
+        capabilityDefinition: details,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        },
+      },
+    );
   }, [details]);
 
   const requestAwsAccount = useCallback(async () => {
@@ -418,7 +429,6 @@ function SelectedCapabilityProvider({ children }) {
         },
       },
     );
-    // await selfServiceApiClient.requestAccessToCluster(cluster);
   };
 
   const updateKafkaTopic = async (topicId, topicDescriptor) => {
@@ -502,13 +512,25 @@ function SelectedCapabilityProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   }, [details]);
 
+  const bypassMembershipApprovalF = useBypassMembershipApproval();
+
   const bypassMembershipApproval = async () => {
-    try {
-      await selfServiceApiClient.bypassMembershipApproval(details);
-    } catch (error) {
-      console.log(error);
-    }
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    bypassMembershipApprovalF.mutate(
+      {
+        capabilityDefinition: details,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        },
+      },
+    );
+    // try {
+    //   await selfServiceApiClient.bypassMembershipApproval(details);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   };
 
   const updateDeletionStatus = (value) => {
