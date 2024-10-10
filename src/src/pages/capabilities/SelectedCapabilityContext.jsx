@@ -74,6 +74,10 @@ function SelectedCapabilityProvider({ children }) {
     details?._links?.configurationLevel?.allow || []
   ).includes("GET");
 
+  const [
+    reloadConfigurationLevelInformation,
+    setReloadConfigurationLevelInformation,
+  ] = useState(true);
   const {
     responseData: configurationLevelInformation,
     sendRequest: getConfiguraitionLevelInformation,
@@ -86,6 +90,14 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   };
+
+  useEffect(() => {
+    if (reloadConfigurationLevelInformation) {
+      loadConfigurationLevelInformation();
+      setReloadConfigurationLevelInformation(false);
+    }
+  }, [reloadConfigurationLevelInformation]);
+
   useEffect(() => {
     if (
       !configurationLevelInformation &&
@@ -547,6 +559,7 @@ function SelectedCapabilityProvider({ children }) {
     addNewAzure,
     deleteMembershipApplication,
     isLoadedAzure,
+    setReloadConfigurationLevelInformation,
   };
 
   return (
