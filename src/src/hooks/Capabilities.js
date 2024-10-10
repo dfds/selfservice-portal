@@ -44,7 +44,6 @@ export function useCapabilities() {
   }, [addedCapability]);
 
   useEffect(() => {
-    console.log(`Valid auth session ${validAuthSession}`);
     if (validAuthSession) {
       sendRequest({
         urlSegments: ["capabilities"],
