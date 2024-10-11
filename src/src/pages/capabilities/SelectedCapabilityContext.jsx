@@ -580,7 +580,7 @@ function SelectedCapabilityProvider({ children }) {
   }, [capabilityMembersFetched, membersList]);
 
   useEffect(() => {
-    if (isLoadedAzure) {
+    if (isLoadedAzure && azureResources.items) {
       setAzureResourcesList(azureResources.items);
     }
   }, [isLoadedAzure, azureResources]);
