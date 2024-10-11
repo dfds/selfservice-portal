@@ -15,7 +15,7 @@ import { useCapabilities } from "@/state/remote/queries/capabilities";
 export default function MyCapabilities() {
   const { truncateString } = useContext(AppContext);
   const { isLoading, data: meData } = useMe();
-  const [myCapabilities, setMyCapabilities] = useState([]);
+  const [myCapabilities, setMyCapabilities] = useState(null);
 
   useEffect(() => {
     if (meData && meData.capabilities) {
@@ -165,19 +165,21 @@ export default function MyCapabilities() {
     <>
       <PageSection
         headline={`My Capabilities ${
-          isLoading ? "" : `(${myCapabilities.length})`
+          isLoading || myCapabilities === null
+            ? ""
+            : `(${myCapabilities?.length})`
         }`}
       >
         {isLoading && <Spinner />}
 
-        {!isLoading && myCapabilities.length === 0 && (
+        {!isLoading && myCapabilities && myCapabilities.length === 0 && (
           <Text>
             Oh no! You have not joined a capability...yet! Knock yourself out
             with the ones below...
           </Text>
         )}
 
-        {!isLoading && myCapabilities.length > 0 && (
+        {!isLoading && myCapabilities && myCapabilities.length > 0 && (
           <>
             <MaterialReactTable
               columns={columns}
