@@ -9,6 +9,11 @@ export function delay(duration) {
   });
 }
 
+export function isValidURL(urlString) {
+  const urlRegex = /^(?:https?:\/\/)/;
+  return urlRegex.test(urlString);
+}
+
 export function composeUrl(...args) {
   let url = window.apiBaseUrl;
   (args || []).forEach((x) => {

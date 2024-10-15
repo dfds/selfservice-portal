@@ -6,6 +6,11 @@ import { Card, CardContent, Button } from "@dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
+import {
+  useAddCapabilityClaim,
+  useCapabilityClaims,
+} from "@/state/remote/queries/capabilities";
+import { useQueryClient } from "@tanstack/react-query";
 
 function ClaimRow({ description, link, claimedAt, claimFunction }) {
   return (
@@ -29,43 +34,34 @@ function ClaimRow({ description, link, claimedAt, claimFunction }) {
 }
 
 export default function CapabilityClaims() {
-  const { responseData, sendRequest } = useSelfServiceRequest();
-  const { inProgress: claimInProgress, sendRequest: addClaim } =
-    useSelfServiceRequest();
+  const queryClient = useQueryClient();
+  const { data: responseData } = useCapabilityClaims();
+  const addCapabilityClaim = useAddCapabilityClaim();
   const [claims, setClaims] = useState([]);
-  const [reloadClaims, setReloadClaims] = useState(true);
   const [showClaimsSection, setShowClaimsSection] = useState(false);
-  const { links } = useContext(SelectedCapabilityContext);
 
   const sendClaimRequest = (link) => {
     if (link?.href) {
-      addClaim({
-        urlSegments: [link.href],
-        method: "POST",
-      });
+      addCapabilityClaim.mutate(
+        {
+          link: link,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "claims"],
+            });
+          },
+        },
+      );
     }
   };
-
-  useEffect(() => {
-    if (claimInProgress === false) {
-      setReloadClaims(true);
-    }
-  }, [claimInProgress]);
 
   useEffect(() => {
     if (responseData?.claims && responseData?.claims.length >= 0) {
       setClaims(responseData?.claims || []);
     }
   }, [responseData]);
-
-  useEffect(() => {
-    if (links?.claims && (links?.claims.allow || []).includes("GET")) {
-      sendRequest({
-        urlSegments: [links.claims.href],
-      });
-      setReloadClaims(false);
-    }
-  }, [reloadClaims]);
 
   useEffect(() => {
     if (claims.length > 0) {

@@ -7,7 +7,7 @@ export function useTracking(opts) {
   let track = (...opts) => {
     if (trackingIsEnabled) {
       // eslint-disable-next-line no-undef
-      _paq.push(["trackEvent", ...opts]);
+      // _paq.push(["trackEvent", ...opts]);
     }
   };
 

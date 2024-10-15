@@ -10,6 +10,8 @@ function JsonSchemaProvider({ children }) {
   const [fetchJsonSchema, setFetchJsonSchema] = useState(true);
   const [jsonSchema, setJsonSchema] = useState({});
   const [jsonSchemaString, setJsonSchemaString] = useState("{}");
+  const [mandatoryJsonSchema, setMandatoryJsonSchema] = useState({});
+  const [optionalJsonSchema, setOptionalJsonSchema] = useState({});
   const [hasJsonSchemaProperties, setHasJsonSchemaProperties] = useState(false);
 
   useEffect(() => {
@@ -25,6 +27,51 @@ function JsonSchemaProvider({ children }) {
       if (!shallowEqual(schemaObject.properties, {})) {
         setHasJsonSchemaProperties(true);
       }
+
+      const splitSchema = (schema) => {
+        const requiredFields = schema.required || [];
+        const properties = schema.properties || {};
+
+        // Mandatory schema
+        const mandatoryProperties = Object.keys(properties).reduce(
+          (acc, key) => {
+            if (requiredFields.includes(key)) {
+              acc[key] = properties[key];
+            }
+            return acc;
+          },
+          {},
+        );
+
+        const mandatorySchema = {
+          $schema: schema.$schema,
+          type: schema.type,
+          properties: mandatoryProperties,
+          required: requiredFields,
+        };
+
+        // Optional schema
+        const optionalProperties = Object.keys(properties).reduce(
+          (acc, key) => {
+            if (!requiredFields.includes(key)) {
+              acc[key] = properties[key];
+            }
+            return acc;
+          },
+          {},
+        );
+
+        const optionalSchema = {
+          $schema: schema.$schema,
+          type: schema.type,
+          properties: optionalProperties,
+        };
+
+        setMandatoryJsonSchema(mandatorySchema);
+        setOptionalJsonSchema(optionalSchema);
+      };
+
+      splitSchema(schemaObject);
     }
 
     if (fetchJsonSchema) {
@@ -37,6 +84,8 @@ function JsonSchemaProvider({ children }) {
       value={{
         jsonSchema,
         jsonSchemaString,
+        mandatoryJsonSchema,
+        optionalJsonSchema,
         hasJsonSchemaProperties,
       }}
     >

@@ -1,10 +1,10 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
-import { Tooltip, TextField } from "@dfds-ui/react-components";
+import { Tooltip, TextField, Text } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
-import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
+import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import AppContext from "../../AppContext";
 
@@ -165,6 +165,15 @@ export default function NewCapabilityDialog({
           />
 
           <JsonSchemaProvider>
+            <a
+              href={
+                "https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Text>See Tagging Policy</Text>
+            </a>
             <CapabilityTagsSubForm
               label="Capability Tags"
               setMetadata={setMetadataFormData}

@@ -34,7 +34,7 @@ function AuthTemplate({ children }) {
     <>
       {authState.initialLoadFinished ? (
         <div>
-          {authState.isSignedIn ? (
+          {authState.isSessionActive ? (
             <div>
               <React.Fragment>
                 {getChildrenOrFunction(children, null)}

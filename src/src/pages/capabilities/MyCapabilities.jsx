@@ -9,45 +9,22 @@ import PageSection from "components/PageSection";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
-import { useCapabilities } from "hooks/Capabilities";
+import { useMe } from "@/state/remote/queries/me";
+import { useCapabilities } from "@/state/remote/queries/capabilities";
 
 export default function MyCapabilities() {
-  const { myCapabilities, /*metricsWrapper,*/ appStatus, truncateString } =
-    useContext(AppContext);
-  const { capabilities, isLoaded } = useCapabilities();
-
-  const [items, setItems] = useState([]);
+  const { truncateString } = useContext(AppContext);
+  const { isLoading, data: meData } = useMe();
+  const [myCapabilities, setMyCapabilities] = useState(null);
 
   useEffect(() => {
-    if (isLoaded && capabilities && myCapabilities) {
-      const filteredList = capabilities.filter((x) => {
-        const myCap = myCapabilities.find((y) => y.id === x.id);
-        if (myCap) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      setItems(filteredList);
+    if (meData && meData.capabilities) {
+      setMyCapabilities(meData.capabilities);
     }
-  }, [isLoaded, capabilities, myCapabilities]);
-
-  const isLoading = !appStatus.hasLoadedMyCapabilities;
-  const [fullTableData, setFullTableData] = useState([]);
+  }, [meData]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
-
-  useEffect(() => {
-    if (items) {
-      const tableData = items.map((item) => {
-        const copy = { ...item };
-
-        return copy;
-      });
-      setFullTableData(tableData);
-    }
-  }, [items]);
 
   const columns = useMemo(
     () => [
@@ -187,22 +164,26 @@ export default function MyCapabilities() {
   return (
     <>
       <PageSection
-        headline={`My Capabilities ${isLoading ? "" : `(${items.length})`}`}
+        headline={`My Capabilities ${
+          isLoading || myCapabilities === null
+            ? ""
+            : `(${myCapabilities?.length})`
+        }`}
       >
         {isLoading && <Spinner />}
 
-        {!isLoading && items.length === 0 && (
+        {!isLoading && myCapabilities && myCapabilities.length === 0 && (
           <Text>
             Oh no! You have not joined a capability...yet! Knock yourself out
             with the ones below...
           </Text>
         )}
 
-        {!isLoading && items.length > 0 && (
+        {!isLoading && myCapabilities && myCapabilities.length > 0 && (
           <>
             <MaterialReactTable
               columns={columns}
-              data={fullTableData}
+              data={myCapabilities}
               initialState={{
                 pagination: { pageSize: 25 },
                 showGlobalFilter: true,

@@ -5,7 +5,10 @@ import {
   msalInstance,
   selfServiceApiScopes,
   graphScopes,
+  tokenCache,
 } from "./auth/context";
+import store from "./state/local/store";
+import { refreshAuthState } from "./state/local/auth";
 
 export function callApi(
   url,
@@ -43,11 +46,22 @@ export async function getSelfServiceAccessToken() {
     return null;
   }
 
-  const { accessToken } = await msalInstance.acquireTokenSilent({
-    scopes: selfServiceApiScopes,
-    account: account,
-  });
-  return accessToken;
+  try {
+    const { accessToken } = await msalInstance.acquireTokenSilent({
+      scopes: selfServiceApiScopes,
+      account: account,
+    });
+    tokenCache.put("selfservice-api", accessToken);
+    store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
+
+    return accessToken;
+  } catch (e) {
+    console.log(e);
+    await msalInstance.acquireTokenRedirect({
+      scopes: selfServiceApiScopes,
+      account: account,
+    });
+  }
 }
 
 export async function getGraphAccessToken() {
@@ -56,11 +70,22 @@ export async function getGraphAccessToken() {
     return null;
   }
 
-  const { accessToken } = await msalInstance.acquireTokenSilent({
-    scopes: graphScopes,
-    account: account,
-  });
-  return accessToken;
+  try {
+    const { accessToken } = await msalInstance.acquireTokenSilent({
+      scopes: graphScopes,
+      account: account,
+    });
+    tokenCache.put("msgraph", accessToken);
+    store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
+
+    return accessToken;
+  } catch (e) {
+    console.log(e);
+    await msalInstance.acquireTokenRedirect({
+      scopes: graphScopes,
+      account: account,
+    });
+  }
 }
 
 export function useCurrentUser() {
@@ -72,12 +97,8 @@ export function useCurrentUser() {
     const currentAccount = accounts && accounts.length > 0 ? accounts[0] : null;
 
     if (isAuthenticated && currentAccount) {
-      msalInstance.setActiveAccount(currentAccount);
-      // setUser(prev => ({...prev, ...{isAuthenticated: true}}));
-
       async function getUserInfo() {
         const profile = await getUserProfile();
-        //setUser(prev => ({...prev, ...profile, ...{isAuthenticated: true}}));
 
         const profilePictureUrl = await getUserProfilePictureUrl();
         setUser((prev) => ({

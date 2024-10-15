@@ -21,6 +21,7 @@ import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
+import { useStats } from "@/state/remote/queries/stats";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -39,16 +40,20 @@ function Hero() {
 }
 
 function FunStats() {
-  const { stats } = useContext(AppContext);
+  const { data, isFetched } = useStats();
 
-  if (stats.length === 0) {
+  if (!isFetched) {
+    return <></>;
+  }
+
+  if (data.length === 0) {
     return <></>;
   }
 
   return (
     <PageSection>
       <div className={styles.statscontainer}>
-        {stats.map((x, i) => (
+        {data.map((x, i) => (
           <StatsCounter key={i} count={x.value} title={x.title} />
         ))}
       </div>

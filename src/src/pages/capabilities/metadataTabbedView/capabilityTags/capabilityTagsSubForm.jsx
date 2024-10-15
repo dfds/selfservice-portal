@@ -7,13 +7,14 @@
  * This component uses the react-jsonschema-form library to render the form.
  * The schema is fetched from the backend and filtered to only show required fields.
  */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text } from "@dfds-ui/react-components";
 import styles from "./capabilityTags.module.css";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import Select from "react-select";
-import JsonSchemaContext from "../../../JsonSchemaContext";
+import JsonSchemaContext from "../../../../JsonSchemaContext";
+import { prettifyJsonString, shallowEqual } from "../../../../Utils";
 
 /*
  * Custom Widgets and Fields
@@ -125,11 +126,20 @@ export function CapabilityTagsSubForm({
   setValidMetadata,
   preexistingFormData,
   formRef,
+  canEditJsonMetadata,
+  jsonSchema,
 }) {
-  const { jsonSchema, jsonSchemaString, hasJsonSchemaProperties } =
-    useContext(JsonSchemaContext);
-  const [showTagForm, setShowTagForm] = useState(false);
-  const [formData, setFormData] = useState({});
+  const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
+  const [formData, setFormData] = useState(preexistingFormData);
+  const [jsonSchemaString, setJsonString] = useState("{}");
+
+  useEffect(() => {
+    const objectAsString = JSON.stringify(jsonSchema);
+    const prettyMetadata = prettifyJsonString(objectAsString);
+    setJsonString(prettyMetadata);
+  }, [jsonSchema]);
+
+  const [canEdit, setCanEdit] = useState(canEditJsonMetadata);
 
   const validateAndSet = (formData) => {
     if (checkIfFollowsJsonSchema(formData, jsonSchemaString)) {
@@ -144,12 +154,11 @@ export function CapabilityTagsSubForm({
     if (hasJsonSchemaProperties) {
       validateAndSet(formData);
     }
-  }, [formData]);
+  }, [formData, jsonSchemaString]);
 
   useEffect(() => {
     if (hasJsonSchemaProperties) {
-      setValidMetadata(false);
-      setShowTagForm(true);
+      validateAndSet(preexistingFormData);
     } else {
       setValidMetadata(true);
     }
@@ -166,33 +175,21 @@ export function CapabilityTagsSubForm({
 
   return (
     <>
-      {showTagForm && (
-        <>
-          {label !== "" && <Text className={styles.label}>{label}</Text>}
-          <a
-            href={
-              "https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Text>See Tagging Policy</Text>
-          </a>
-          <Form
-            className={styles.tagsform}
-            schema={jsonSchema}
-            validator={validator}
-            onChange={(type) => setFormData(type.formData)}
-            widgets={widgets}
-            templates={{ FieldTemplate: CustomFieldTemplate }}
-            formData={preexistingFormData}
-            children={true} // hide submit button
-            ref={formRef}
-            showErrorList={false}
-            onError={errorHandler}
-          />
-        </>
-      )}
+      {label !== "" && <Text className={styles.label}>{label}</Text>}
+      <Form
+        className={styles.tagsform}
+        schema={jsonSchema}
+        validator={validator}
+        onChange={(type) => setFormData(type.formData)}
+        widgets={widgets}
+        templates={{ FieldTemplate: CustomFieldTemplate }}
+        formData={preexistingFormData}
+        children={true} // hide submit button
+        ref={formRef}
+        showErrorList={false}
+        onError={errorHandler}
+        disabled={canEdit}
+      />
     </>
   );
 }

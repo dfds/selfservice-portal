@@ -85,3 +85,36 @@
   top: -16px;
   flex-wrap: wrap;
 }
+
+.nextButton {
+  margin-top: 20px;
+  float: right;
+}
+
+.skipButton {
+  margin-top: 20px;
+  margin-right: 20px;
+  float: right;
+}
+
+.backButton {
+  margin-top: 20px;
+  float: left;
+}
+
+.stepiconcompleted {
+  color: #4caf50;
+}
+
+.stepiconunresolved {
+  color: #7e8386;
+}
+
+.stepiconactive {
+  color: #ed8800;
+}
+
+.stepiconskipped {
+  color: #153b53;
+  size: 0.5em;
+}

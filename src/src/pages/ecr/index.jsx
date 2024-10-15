@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Card,
@@ -15,10 +15,11 @@ import PageSection from "components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
-import AppContext from "AppContext";
+import { useEcrRepositories } from "@/state/remote/queries/ecr";
 
 function Repositories() {
-  const { repositories, isLoading } = useContext(AppContext);
+  // const { repositories, isLoading } = useContext(AppContext);
+  const { isFetched, data } = useEcrRepositories();
 
   const columns = useMemo(
     () => [
@@ -53,11 +54,11 @@ function Repositories() {
   return (
     <>
       <PageSection headline={`Repositories`}>
-        {isLoading && <Spinner />}
-        {!isLoading && (
+        {!isFetched && <Spinner />}
+        {isFetched && (
           <MaterialReactTable
             columns={columns}
-            data={repositories}
+            data={data}
             initialState={{
               pagination: { pageSize: 50 },
               showGlobalFilter: true,

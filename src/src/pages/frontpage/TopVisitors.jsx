@@ -4,11 +4,13 @@ import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useTopVisitors } from "hooks/Profile";
+// import { useTopVisitors } from "hooks/Profile";
+import { useTopVisitors } from "@/state/remote/queries/stats";
 
 import Confetti from "react-confetti";
 
 import styles from "./TopVisitors.module.css";
+import { useMe } from "@/state/remote/queries/me";
 
 function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
@@ -53,11 +55,12 @@ function Visitor({ rank, name, pictureUrl, onClicked }) {
 }
 
 export default function TopVisitors() {
-  const { myProfile } = useContext(AppContext);
+  // const { myProfile } = useContext(AppContext);
+  const { data: myProfile } = useMe();
   const [visitors, setVisitors] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
-  const { isLoadedVisitors, visitorsInfo } = useTopVisitors(myProfile);
+  const { isFetched, data } = useTopVisitors(myProfile);
 
   const handleVisitorClicked = (rank) => {
     if (rank === 1 && !showConfetti) {
@@ -78,7 +81,7 @@ export default function TopVisitors() {
   }, [showConfetti]);
 
   function loadVisitors() {
-    const items = visitorsInfo;
+    const items = data.items;
 
     items.sort((a, b) => a.rank - b.rank);
 
@@ -106,10 +109,10 @@ export default function TopVisitors() {
   }
 
   useEffect(() => {
-    if (isLoadedVisitors) {
+    if (isFetched) {
       loadVisitors();
     }
-  }, [myProfile, visitorsInfo, isLoadedVisitors]);
+  }, [myProfile, data, isFetched]);
 
   return (
     <div>
