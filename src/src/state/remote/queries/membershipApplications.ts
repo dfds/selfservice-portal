@@ -31,9 +31,9 @@ export function useSubmitMembershipApplication() {
       ssuRequest({
         method: "POST",
         urlSegments: [
-          data.capabilityDefinition?._links?.membershipApplications,
+          data.capabilityDefinition?._links?.membershipApplications?.href,
         ],
-        payload: data.payload,
+        payload: null,
         isCloudEngineerEnabled: true,
       }),
   });
