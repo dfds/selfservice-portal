@@ -33,6 +33,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   useBypassMembershipApproval,
   useDeleteMembershipApplicationApproval,
+  useSubmitMembershipApplication,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
 
@@ -386,9 +387,20 @@ function SelectedCapabilityProvider({ children }) {
     );
   };
 
+  const submitMembershipApplicationF = useSubmitMembershipApplication();
+
   const submitMembershipApplication = useCallback(async () => {
-    await selfServiceApiClient.submitMembershipApplication(details);
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+    submitMembershipApplicationF.mutate(
+      {
+        capabilityDefinition: details,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        },
+      },
+    );
+    // await selfServiceApiClient.submitMembershipApplication(details);
   }, [details]);
 
   const leaveCapability = useLeaveCapability();
