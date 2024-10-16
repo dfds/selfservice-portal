@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+
+  .logo {
+    flex: 1;
+    display: flex;
+    margin-left: 30px;
+    // justify-content: center;
+    // align-items: center;
+  }
+
+  .nav {
+    flex: 3;
+  }
+
+  .profile {
+    flex: 1;
+  }
+}

@@ -11,6 +11,7 @@ import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import ECRPage from "./pages/ecr";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
+import Header from "./components/Header";
 
 function Footer() {
   return (
@@ -26,6 +27,7 @@ function Layout() {
       <AuthTemplate>
         <SiteLayout.Grid>
           <SiteLayout.Header>
+            <Header />
             <GlobalMenu />
           </SiteLayout.Header>
           <SiteLayout.Main>
