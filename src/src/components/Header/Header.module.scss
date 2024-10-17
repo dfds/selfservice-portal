@@ -22,12 +22,12 @@ $maxWidth1060px: "all and (max-width: 1060px)";
   }
 
   .nav {
-    flex: 4;
+    flex: 5;
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    flex-grow: 3;
+    flex-grow: 6;
 
     a {
       text-decoration: none;
