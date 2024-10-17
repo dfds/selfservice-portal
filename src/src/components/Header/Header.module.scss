@@ -41,5 +41,20 @@
 
   .profile {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    align-items: flex-end;
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .profilepicture {
+      width: 55px;
+      font-size: 2px;
+    }
   }
 }

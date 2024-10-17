@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import AppContext from "@/AppContext";
+
 import styles from "./Header.module.scss";
 import { Link } from "react-router-dom";
+import { SmallProfilePicture as ProfilePicture } from "@/components/ProfilePicture";
 
 export default function Header() {
+  const { user } = useContext(AppContext);
+
   const navLinks = [
     {
       title: "Capabilities",
@@ -71,7 +76,20 @@ export default function Header() {
             <NavButton key={link.url} link={link} />
           ))}
         </div>
-        <div className={styles.profile}>hi</div>
+        <div className={styles.profile}>
+          <div className={styles.content}>
+            <div className={styles.profilepicture}>
+              <ProfilePicture
+                clickable
+                title="Profile"
+                pictureUrl={user.profilePictureUrl ?? ""}
+                placement="bottom-end"
+              />
+            </div>
+            <div className={styles.name}>Emil H. Clausen</div>
+          </div>
+          {/* <div className={styles.content}>Cloud Developer</div> */}
+        </div>
       </div>
     </>
   );
