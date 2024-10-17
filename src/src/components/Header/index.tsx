@@ -86,7 +86,7 @@ export default function Header() {
                 placement="bottom-end"
               />
             </div>
-            <div className={styles.name}>Emil H. Clausen</div>
+            <div className={styles.name}>Emil H. Clausen woaiodfjads cool woaiodfjads cool Emil H. Clausen</div>
           </div>
           {/* <div className={styles.content}>Cloud Developer</div> */}
         </div>

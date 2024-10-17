@@ -1,21 +1,33 @@
+$maxWidth600px: "all and (max-width: 650px)";
+$maxWidth1060px: "all and (max-width: 1060px)";
+
 .header {
   display: flex;
-  // padding-top: 10px;
-  justify-content: center;
   align-items: center;
+
+  @media #{$maxWidth600px} {
+    margin-top: 6px;
+    margin-bottom: 4px;
+  }
+
+  @media #{$maxWidth600px} {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 
   .logo {
     flex: 1;
     display: flex;
     margin-left: 25px;
-    // justify-content: center;
-    // align-items: center;
   }
 
   .nav {
     flex: 4;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-grow: 3;
 
     a {
       text-decoration: none;
@@ -28,9 +40,21 @@
       font-size: 14px;
       color: #002b45;
       user-select: none;
+      flex: 1 0 11%;
 
       .label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         padding: 20px 15px 20px 15px;
+        height: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        @media #{$maxWidth1060px} {
+          padding: 15px 10px 15px 10px;
+        }
 
         &:hover {
           background-color: #f1f7fd;
@@ -47,14 +71,35 @@
     align-items: flex-end;
 
     .content {
+      flex: 1;
       display: flex;
       flex-direction: row;
       align-items: center;
     }
 
+    .name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 10em;
+
+      @media #{$maxWidth1060px} {
+        display: none;
+      }
+    }
+
     .profilepicture {
       width: 55px;
       font-size: 2px;
+      flex-shrink: 0;
+
+      @media #{$maxWidth600px} {
+        display: none;
+      }
+
+      @media #{$maxWidth1060px} {
+        width: 45px;
+      }
     }
   }
 }
