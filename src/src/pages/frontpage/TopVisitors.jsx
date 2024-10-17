@@ -118,11 +118,11 @@ export default function TopVisitors() {
     <div>
       {showConfetti && <Confetti width={width} height={height} />}
       {(visitors || []).map((x, i) => (
-        <Visitor
-          key={i}
-          {...x}
-          onClicked={() => handleVisitorClicked(x.rank)}
-        />
+          <Visitor
+            key={i}
+            {...x}
+            onClicked={() => handleVisitorClicked(x.rank)}
+          />
       ))}
 
       {(visitors || []).length === 0 && (
