@@ -28,7 +28,7 @@ function Layout() {
         <SiteLayout.Grid>
           <SiteLayout.Header>
             <Header />
-            <GlobalMenu />
+            {/* <GlobalMenu /> */}
           </SiteLayout.Header>
           <SiteLayout.Main>
             <Outlet />
