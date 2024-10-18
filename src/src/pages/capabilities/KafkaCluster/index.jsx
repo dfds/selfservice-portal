@@ -47,7 +47,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const topics = cluster.topics;
   const schemas = cluster.schemas;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
-  const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
+  const privateTopics = topics.filter((x) => !x.name.startsWith("pub."));
   const clusterDescription = (cluster.description || "")
     .split("\n")
     .map((x, i) => <Text key={i}>{x}</Text>);
@@ -304,6 +304,15 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       <br />
 
+      <SchemaList
+        name="Schemas"
+        schemas={schemas}
+        clusterId={cluster.id}
+        selectedTopic={selectedKafkaSchema}
+        onSchemaClicked={handleSchemaClicked}
+      />
+      <br />
+
       <TopicList
         name="Public Topics"
         topics={publicTopics}
@@ -317,7 +326,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
         <>
           <TopicList
             name="Private Topics"
-            topics={privateTopcis}
+            topics={privateTopics}
             clusterId={cluster.id}
             selectedTopic={selectedKafkaTopic}
             onTopicClicked={handleTopicClicked}
@@ -325,15 +334,6 @@ export default function KafkaCluster({ cluster, capabilityId }) {
           <br />
         </>
       )}
-
-      <SchemaList
-        name="Schemas"
-        schemas={schemas}
-        clusterId={cluster.id}
-        selectedTopic={selectedKafkaSchema}
-        onSchemaClicked={handleSchemaClicked}
-      />
-      <br />
 
       {canRequestAccess && (
         <ButtonStack align="right">

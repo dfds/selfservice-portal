@@ -62,6 +62,7 @@ function AppProvider({ children }) {
   });
 
   const [topics, setTopics] = useState([]);
+  const [schemas, setSchemas] = useState([]);
   const [myProfile, setMyProfile] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const { data: me, isFetched: isMeFetched } = useMe();
@@ -196,6 +197,8 @@ function AppProvider({ children }) {
     appStatus,
     topics,
     setTopics,
+    schemas,
+    setSchemas,
     stats,
     news,
     shouldAutoReloadTopics,
