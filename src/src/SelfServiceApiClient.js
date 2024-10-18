@@ -93,6 +93,31 @@ export class SelfServiceApiClient {
     return items;
   }
 
+  async getSchemas(clusterAccessDefinition) {
+    const schemasLink = clusterAccessDefinition?._links?.schemas;
+    if (!schemasLink) {
+      console.log(
+        "Warning! No schemas link found on kafka cluster access definition:",
+        clusterAccessDefinition,
+      );
+      return [];
+    }
+
+    const accessToken = await getSelfServiceAccessToken();
+
+    const url = schemasLink.href;
+    const response = await callApi(
+      url,
+      accessToken,
+      "GET",
+      null,
+      this.isEnabledCloudEngineer,
+    );
+    const items = await response.json();
+
+    return items;
+  }
+
   async getMessageContracts(topicDefinition) {
     const messageContractsLink = topicDefinition?._links?.messageContracts;
 
