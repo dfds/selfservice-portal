@@ -9,8 +9,8 @@ export default function SchemaList({
   selectedSchema,
   onSchemaClicked,
 }) {
+  console.log("SchemaList");
   let sorted = [...schemas];
-  sorted.sort((a, b) => a.name.localeCompare(b.name));
 
   const handleSchemaClicked = (schemaId) => {
     if (onSchemaClicked) {
@@ -31,15 +31,7 @@ export default function SchemaList({
       )}
 
       {sorted.map((schema) => (
-        <Schema
-          key={`${clusterId}-${topic.id}`}
-          topic={topic}
-          isSelected={
-            clusterId === selectedSchema?.kafkaClusterId &&
-            schema.id === selectedSchema?.id
-          }
-          onHeaderClicked={handleSchemaClicked}
-        />
+        <Text>{schema.subject}</Text>
       ))}
     </>
   );
