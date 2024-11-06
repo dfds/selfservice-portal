@@ -7,10 +7,7 @@ import React from "react";
 import { Divider } from "@dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import {
-  ChevronDown,
-  ChevronUp,
-} from "@dfds-ui/icons/system";
+import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
 import { prettifyJsonString } from "../../../Utils";
 
 function JsonViewer({ json }) {
@@ -33,25 +30,16 @@ function JsonViewer({ json }) {
   );
 }
 
-function MessageHeader({
-  schema,
-  isOpen,
-}) {
+function MessageHeader({ schema, isOpen }) {
   return (
     <div
       className={`${styles.header} ${isOpen ? styles.headerselected : null}`}
     >
-      <Text
-        styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}
-      >
+      <Text styledAs={isOpen ? "bodyInterfaceBold" : "bodyInterface"}>
         {schema.subject} (version {schema.version})
       </Text>
-      {!isOpen && (
-        <ChevronDown className={styles.chevronSize} />
-      )}
-      {isOpen && (
-        <ChevronUp className={styles.chevronSize} />
-      )}
+      {!isOpen && <ChevronDown className={styles.chevronSize} />}
+      {isOpen && <ChevronUp className={styles.chevronSize} />}
     </div>
   );
 }
@@ -69,10 +57,7 @@ export default function MessageContracts({
 
   const getHeader = () => (
     <>
-      <MessageHeader
-        schema={schema}
-        isOpen={isSelected}
-      />
+      <MessageHeader schema={schema} isOpen={isSelected} />
       <Divider />
     </>
   );
@@ -84,15 +69,13 @@ export default function MessageContracts({
         isOpen={isSelected}
         onHeaderClicked={headerClickHandler}
       >
-          <div className={styles.jsoncontainer}>
-            <br />
-            <div>
-              <Text styledAs="label">Schema ({schema.schemaType})</Text>
-              <JsonViewer
-                json={schema.schema}
-              />
-            </div>
+        <div className={styles.jsoncontainer}>
+          <br />
+          <div>
+            <Text styledAs="label">Schema ({schema.schemaType})</Text>
+            <JsonViewer json={schema.schema} />
           </div>
+        </div>
       </Expandable>
     </div>
   );

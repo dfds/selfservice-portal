@@ -100,21 +100,21 @@ function TopicHeader({
 }
 
 export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
-  const { updateKafkaTopic, deleteKafkaTopic } =
-    useContext(SelectedCapabilityContext);
+  const { updateKafkaTopic, deleteKafkaTopic } = useContext(
+    SelectedCapabilityContext,
+  );
   const [filteredSchemas, setFilteredSchemas] = useState({});
-  
+
   const [schemasCount, setSchemasCount] = useState(0);
 
-  const [selectedSchemaId, setSelectedSchemaId] =
-    useState(null);
-  
+  const [selectedSchemaId, setSelectedSchemaId] = useState(null);
+
   const [showEditTopicDialog, setShowEditTopicDialog] = useState(false);
   const [showDeleteTopicDialog, setShowDeleteTopicDialog] = useState(false);
   const [isEditInProgress, setIsEditInProgress] = useState(false);
 
   const { id, name, description, partitions, retention, status } = topic;
-  
+
   const allowedToUpdate = !!topic._links?.updateDescription;
   const allowedToDelete = (topic._links?.self?.allow || []).includes("DELETE");
 
@@ -142,7 +142,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
       return id;
     });
   };
-
 
   const fetchSchemasAndSetState = async (topicName, schemas) => {
     var filteredSchemas = schemas.filter((schema) => {
@@ -238,28 +237,21 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
               <br />
 
               <div className={styles.messagecontractsheader}>
-                <Text styledAs="actionBold">
-                  Schemas ({schemasCount})
-                </Text>
-
+                <Text styledAs="actionBold">Schemas ({schemasCount})</Text>
               </div>
-                  {schemasCount === 0 &&
-                    <div>No schemas are defined for this topic</div>
-                  }
+              {schemasCount === 0 && (
+                <div>No schemas are defined for this topic</div>
+              )}
 
-                  {Object.entries(filteredSchemas).map(
-                    ([elem, schema]) => (
-                      <MessageContracts
-                        key={schema.id}
-                        schema={schema}
-                        isSelected={schema.id === selectedSchemaId}
-                        onHeaderClicked={(type) =>
-                          handleMessageHeaderClicked(type)
-                        }
-                      />
-                    ),
-                  )}
-              
+              {Object.entries(filteredSchemas).map(([elem, schema]) => (
+                <MessageContracts
+                  key={schema.id}
+                  schema={schema}
+                  isSelected={schema.id === selectedSchemaId}
+                  onHeaderClicked={(type) => handleMessageHeaderClicked(type)}
+                />
+              ))}
+
               <br />
             </>
           }
