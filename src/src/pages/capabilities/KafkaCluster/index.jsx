@@ -18,7 +18,6 @@ import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
-import SchemaList from "./SchemaList";
 import styles from "./index.module.css";
 
 export default function KafkaCluster({ cluster, capabilityId }) {
@@ -26,10 +25,8 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   const {
     id,
     selectedKafkaTopic,
-    selectedKafkaSchema,
     addTopicToCluster,
     toggleSelectedKafkaTopic,
-    toggleSelectedKafkaSchema,
     getAccessToCluster,
     requestAccessToCluster,
   } = useContext(SelectedCapabilityContext);
@@ -89,10 +86,6 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   const handleTopicClicked = (clusterId, topicId) => {
     toggleSelectedKafkaTopic(clusterId, topicId);
-  };
-
-  const handleSchemaClicked = (clusterId, schemaId) => {
-    toggleSelectedKafkaSchema(clusterId, schemaId);
   };
 
   const canRequestAccess = (
@@ -304,21 +297,13 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       <br />
 
-      <SchemaList
-        name="Schemas"
-        schemas={schemas}
-        clusterId={cluster.id}
-        selectedTopic={selectedKafkaSchema}
-        onSchemaClicked={handleSchemaClicked}
-      />
-      <br />
-
       <TopicList
         name="Public Topics"
         topics={publicTopics}
         clusterId={cluster.id}
         selectedTopic={selectedKafkaTopic}
         onTopicClicked={handleTopicClicked}
+        schemas={schemas}
       />
       <br />
 
@@ -330,6 +315,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
             clusterId={cluster.id}
             selectedTopic={selectedKafkaTopic}
             onTopicClicked={handleTopicClicked}
+            schemas={schemas}
           />
           <br />
         </>

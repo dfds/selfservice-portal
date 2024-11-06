@@ -154,7 +154,6 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMetadata(details);
 
   const kafkaClusterTopicList = () => {
-    console.log("kafkaClusterTopicList");
     if (clustersList != null && clustersList.length !== 0) {
       const promises = clustersList.map((cluster) => {
         return Promise.all([
@@ -186,11 +185,6 @@ function SelectedCapabilityProvider({ children }) {
       kafkaClusterTopicList();
     }
   }, [isClustersListFetched]);
-
-  useEffect(() => {
-    console.log("kafkaClusters");
-    console.log(kafkaClusters);
-  }, [kafkaClusters]);
 
   useEffect(() => {
     if (isLoadedAccount) {
@@ -498,7 +492,6 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    console.log(found);
     deleteTopic.mutate({
       topicDefinition: found,
     });
@@ -631,10 +624,6 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   }, [awsAccountRequested]);
-
-  // useEffect(() => {
-  //   console.log(capabilityId);
-  // }, [capabilityId]);
 
   //--------------------------------------------------------------------
 
