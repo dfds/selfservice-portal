@@ -42,8 +42,9 @@ export default function KafkaCluster({ cluster, capabilityId }) {
   });
 
   const topics = cluster.topics;
+  const schemas = cluster.schemas;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
-  const privateTopcis = topics.filter((x) => !x.name.startsWith("pub."));
+  const privateTopics = topics.filter((x) => !x.name.startsWith("pub."));
   const clusterDescription = (cluster.description || "")
     .split("\n")
     .map((x, i) => <Text key={i}>{x}</Text>);
@@ -96,7 +97,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
-      headline="Kafka Topics"
+      headline="Kafka"
       headlineChildren={
         <div className={styles.headlineContainer}>
           <span>({cluster.name.toLocaleLowerCase()})</span>
@@ -297,22 +298,24 @@ export default function KafkaCluster({ cluster, capabilityId }) {
       <br />
 
       <TopicList
-        name="Public"
+        name="Public Topics"
         topics={publicTopics}
         clusterId={cluster.id}
         selectedTopic={selectedKafkaTopic}
         onTopicClicked={handleTopicClicked}
+        schemas={schemas}
       />
       <br />
 
       {hasWriteAccess && (
         <>
           <TopicList
-            name="Private"
-            topics={privateTopcis}
+            name="Private Topics"
+            topics={privateTopics}
             clusterId={cluster.id}
             selectedTopic={selectedKafkaTopic}
             onTopicClicked={handleTopicClicked}
+            schemas={schemas}
           />
           <br />
         </>

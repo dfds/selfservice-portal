@@ -155,21 +155,24 @@ function SelectedCapabilityProvider({ children }) {
 
   const kafkaClusterTopicList = () => {
     if (clustersList != null && clustersList.length !== 0) {
-      const promises = [];
-      for (const cluster of clustersList) {
-        let promise = selfServiceApiClient.getTopics(cluster).then((topics) => {
-          topics.forEach((kafkaTopic) => {
-            adjustRetention(kafkaTopic);
-            kafkaTopic.messageContracts = (
-              kafkaTopic.messageContracts || []
-            ).sort((a, b) => a.messageType.localeCompare(b.messageType));
-          });
-
-          cluster.topics = topics;
+      const promises = clustersList.map((cluster) => {
+        return Promise.all([
+          selfServiceApiClient.getTopics(cluster).then((topics) => {
+            topics.forEach((kafkaTopic) => {
+              adjustRetention(kafkaTopic);
+              kafkaTopic.messageContracts = (
+                kafkaTopic.messageContracts || []
+              ).sort((a, b) => a.messageType.localeCompare(b.messageType));
+            });
+            cluster.topics = topics;
+          }),
+          selfServiceApiClient.getSchemas(cluster).then((schemas) => {
+            cluster.schemas = schemas;
+          }),
+        ]).then(() => {
           return cluster;
         });
-        promises.push(promise);
-      }
+      });
 
       Promise.all(promises).then((clusters) => {
         setKafkaClusters(clusters);
@@ -489,7 +492,6 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    console.log(found);
     deleteTopic.mutate({
       topicDefinition: found,
     });
@@ -622,10 +624,6 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   }, [awsAccountRequested]);
-
-  // useEffect(() => {
-  //   console.log(capabilityId);
-  // }, [capabilityId]);
 
   //--------------------------------------------------------------------
 
