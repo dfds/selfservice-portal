@@ -9,6 +9,7 @@ export default function TopicList({
   clusterId,
   selectedTopic,
   onTopicClicked,
+  schemas,
 }) {
   let sorted = [...topics];
   sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -40,6 +41,7 @@ export default function TopicList({
             topic.id === selectedTopic?.id
           }
           onHeaderClicked={handleTopicClicked}
+          schemas={schemas}
         />
       ))}
     </>

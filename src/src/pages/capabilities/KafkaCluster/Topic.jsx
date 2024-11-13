@@ -99,84 +99,33 @@ function TopicHeader({
   );
 }
 
-export default function Topic({ topic, isSelected, onHeaderClicked }) {
-  const { addMessageContractToTopic, updateKafkaTopic, deleteKafkaTopic } =
-    useContext(SelectedCapabilityContext);
-  const { triggerErrorWithTitleAndDetails } = useError();
-  const { selfServiceApiClient } = useContext(AppContext);
-  const [contracts, setContracts] = useState({});
-  const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
+  const { updateKafkaTopic, deleteKafkaTopic } = useContext(
+    SelectedCapabilityContext,
+  );
+  const [filteredSchemas, setFilteredSchemas] = useState({});
 
-  const [consumers, setConsumers] = useState([]);
-  const [isLoadingConsumers, setIsLoadingConsumers] = useState(false);
+  const [schemasCount, setSchemasCount] = useState(0);
 
-  const [contractCount, setContractCount] = useState(0);
-
-  const [selectedMessageContractType, setSelectedMessageContractType] =
-    useState(null);
-  const [showMessageContractDialog, setShowMessageContractDialog] =
-    useState(false);
+  const [selectedSchemaId, setSelectedSchemaId] = useState(null);
 
   const [showEditTopicDialog, setShowEditTopicDialog] = useState(false);
   const [showDeleteTopicDialog, setShowDeleteTopicDialog] = useState(false);
   const [isEditInProgress, setIsEditInProgress] = useState(false);
 
   const { id, name, description, partitions, retention, status } = topic;
-  const isPublic = name.startsWith("pub.");
 
-  const canAddMessageContracts = (
-    topic._links?.messageContracts?.allow || []
-  ).includes("POST");
   const allowedToUpdate = !!topic._links?.updateDescription;
   const allowedToDelete = (topic._links?.self?.allow || []).includes("DELETE");
 
-  function sleep(duration) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), duration);
-    });
-  }
-
   useEffect(() => {
-    let isMounted = true;
-
     if (!isSelected) {
-      setContracts({});
+      setFilteredSchemas({});
       return;
     }
 
-    async function fetchConsumers(topic) {
-      const consumers = await selfServiceApiClient.getConsumers(topic);
-      if (isMounted) {
-        setConsumers(consumers);
-        setIsLoadingConsumers(false);
-      }
-    }
-
-    async function fetchMessageContracts(topic) {
-      await fetchContractsAndSetState(topic, isMounted);
-    }
-
-    if (isPublic) {
-      // TODO: Add localized error handling or at least use error context for these errors
-      try {
-        void fetchConsumers(topic);
-      } catch (e) {
-        triggerErrorWithTitleAndDetails("Error", e.message);
-      }
-      try {
-        void fetchMessageContracts(topic);
-      } catch (e) {
-        triggerErrorWithTitleAndDetails("Error", e.message);
-      }
-    }
-
-    return () => (isMounted = false);
+    fetchSchemasAndSetState(name, schemas);
   }, [topic, isSelected]);
-
-  useEffect(() => {
-    setIsLoadingContracts(isSelected);
-    setIsLoadingConsumers(isSelected);
-  }, [isSelected]);
 
   const handleHeaderClicked = () => {
     if (onHeaderClicked) {
@@ -184,63 +133,22 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
     }
   };
 
-  const handleAddMessageContractClicked = () => {
-    setShowMessageContractDialog((prev) => !prev);
-  };
-
-  const handleMessageHeaderClicked = (messageType) => {
-    setSelectedMessageContractType((prev) => {
-      if (messageType === prev) {
+  const handleMessageHeaderClicked = (id) => {
+    setSelectedSchemaId((prev) => {
+      if (id === prev) {
         return null; // deselect already selected (toggling)
       }
 
-      return messageType;
+      return id;
     });
   };
-  const handleRetryClicked = async (messageContract) => {
-    try {
-      await selfServiceApiClient.retryAddMessageContractToTopic(
-        messageContract,
-      );
-    } catch (e) {
-      triggerErrorWithTitleAndDetails("Error", e.message);
-    }
-  };
 
-  const fetchContractsAndSetState = async (topic, isMounted = true) => {
-    const result = await selfServiceApiClient.getMessageContracts(topic);
-    result.sort((a, b) => a.messageType.localeCompare(b.messageType));
-
-    if (isMounted) {
-      let count = 0;
-      let contractsWithVersion = {};
-      result.forEach((contract) => {
-        if (!contractsWithVersion[contract.messageType]) {
-          count += 1;
-          contractsWithVersion[contract.messageType] = [];
-        }
-        contractsWithVersion[contract.messageType].push(contract);
-      });
-      Object.entries(contractsWithVersion).forEach(([key, value]) => {
-        value.sort(
-          (a, b) => parseInt(a.schemaVersion) - parseInt(b.schemaVersion),
-        );
-      });
-
-      setContractCount(count);
-      setContracts(contractsWithVersion);
-      setIsLoadingContracts(false);
-    }
-  };
-
-  const handleAddMessageContract = async (formValues) => {
-    await addMessageContractToTopic(topic.kafkaClusterId, topic.id, formValues);
-    setShowMessageContractDialog(false);
-    setIsLoadingContracts(true);
-    // UX sleep, nicer to have it busy spin and then show updated list of contracts
-    await sleep(1000);
-    await fetchContractsAndSetState(topic);
-    setSelectedMessageContractType("");
+  const fetchSchemasAndSetState = async (topicName, schemas) => {
+    var filteredSchemas = schemas.filter((schema) => {
+      return schema.subject.includes(topicName);
+    });
+    setFilteredSchemas(filteredSchemas);
+    setSchemasCount(filteredSchemas.length);
   };
 
   const handleUpdateTopic = useCallback(
@@ -256,10 +164,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
   const handleDeleteTopic = useCallback(async () => {
     setIsEditInProgress(true);
     await deleteKafkaTopic(topic.id);
-
-    // console.log("hiding edit dialog...");
-    // setShowEditTopicDialog(false);
-    // setIsEditInProgress(false);
   }, [topic]);
 
   const header = (
@@ -328,108 +232,29 @@ export default function Topic({ topic, isSelected, onHeaderClicked }) {
 
           <Text>{description}</Text>
 
-          {/* Consumers currently only fetchable for public topics due to constraints on the API */}
-          {isPublic && (
-            <>
-              <br />
-              <Text styledAs="actionBold">Consumers</Text>
-
-              {isLoadingConsumers ? (
-                <Spinner instant />
-              ) : (
-                <>
-                  <br />
-                  {!(topic._links.consumers.allow || []).includes("GET") && (
-                    <div>
-                      Only members of capabilities can see public topic
-                      consumers.
-                    </div>
-                  )}
-
-                  {(consumers || []).length === 0 &&
-                    (topic._links.consumers.allow || []).includes("GET") && (
-                      <div>No one has consumed this topic recently.</div>
-                    )}
-
-                  {(consumers || []).map((consumer) => (
-                    <Consumer name={consumer} />
-                  ))}
-                </>
-              )}
-            </>
-          )}
-
-          <br />
-
-          {isPublic && (
+          {
             <>
               <br />
 
               <div className={styles.messagecontractsheader}>
-                {showMessageContractDialog && (
-                  <MessageContractDialog
-                    topicName={name}
-                    onCloseClicked={() => setShowMessageContractDialog(false)}
-                    onAddClicked={(formValues) =>
-                      handleAddMessageContract(formValues)
-                    }
-                    targetVersion={1}
-                  />
-                )}
-                <Text styledAs="actionBold">
-                  Message Contracts ({contractCount})
-                </Text>
-
-                {canAddMessageContracts && (
-                  <Button
-                    size="small"
-                    variation="primary"
-                    onClick={handleAddMessageContractClicked}
-                  >
-                    Add
-                  </Button>
-                )}
-                <span>
-                  We have temporarily disabled the creation of message contracts
-                  in the self-service portal. You can still create topic schemas
-                  directly against the Confluent Cloud API using your
-                  credentials. Please reach out if you have any questions.
-                </span>
+                <Text styledAs="actionBold">Schemas ({schemasCount})</Text>
               </div>
-
-              {isLoadingContracts ? (
-                <Spinner instant />
-              ) : (
-                <>
-                  {contractCount === 0 && (
-                    <div>No message contracts defined...yet!</div>
-                  )}
-
-                  {Object.entries(contracts).map(
-                    ([messageType, messageContracts]) => (
-                      <MessageContracts
-                        key={messageType}
-                        messageType={messageType}
-                        contracts={messageContracts}
-                        isSelected={messageType === selectedMessageContractType}
-                        onHeaderClicked={(messageType) =>
-                          handleMessageHeaderClicked(messageType)
-                        }
-                        onRetryClicked={() =>
-                          handleRetryClicked(messageContracts[0])
-                        }
-                        onAddClicked={(formValues) =>
-                          handleAddMessageContract(formValues)
-                        }
-                      />
-                    ),
-                  )}
-                </>
+              {schemasCount === 0 && (
+                <div>No schemas are defined for this topic</div>
               )}
+
+              {Object.entries(filteredSchemas).map(([elem, schema]) => (
+                <MessageContracts
+                  key={schema.id}
+                  schema={schema}
+                  isSelected={schema.id === selectedSchemaId}
+                  onHeaderClicked={(type) => handleMessageHeaderClicked(type)}
+                />
+              ))}
 
               <br />
             </>
-          )}
+          }
         </CardContent>
       </Card>
     </Accordion>
