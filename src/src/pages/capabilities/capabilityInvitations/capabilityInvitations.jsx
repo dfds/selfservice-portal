@@ -1,13 +1,17 @@
 import PageSection from "components/PageSection";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import { Invitations } from "../invitations";
+import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
-export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
+export function CapabilityInvitations() {
   const [invitees, setInvitees] = useState([]);
   const [isInvited, setIsInvited] = useState(false);
   const [showSuccessLabel, setShowSuccessLabel] = useState(false);
   const [disableSendButton, setDisableSendButton] = useState(true);
+  const { addNewInvitees, isInviteesCreated, members } = useContext(
+    SelectedCapabilityContext,
+  );
 
   const handleAddInvitationClicked = async () => {
     if (invitees.length === 0) {
@@ -50,7 +54,7 @@ export function CapabilityInvitations({ addNewInvitees, inProgress, members }) {
             size="small"
             variation="primary"
             onClick={handleAddInvitationClicked}
-            submitting={inProgress}
+            submitting={isInviteesCreated}
             style={{
               position: "right",
               backgroundColor: showSuccessLabel ? "#4caf50" : "#ED8800",

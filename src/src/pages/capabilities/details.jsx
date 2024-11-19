@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
-import Members from "./members";
+import { TabbedMembersView } from "./members";
 import Summary from "./summary";
 import Costs from "./costs";
 import Resources from "./resources";
@@ -9,13 +9,10 @@ import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import PageSection from "components/PageSection";
 import { Text } from "@dfds-ui/typography";
-import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import SelfAssessments from "./selfAssessment";
-import { CapabilityInvitations } from "./capabilityInvitations/capabilityInvitations";
-import { CapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
+import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { MetadataTabbedView } from "./metadataTabbedView";
 
@@ -45,9 +42,6 @@ function CapabilityDetailsPageContent() {
     isDeleted,
     updateDeletionStatus,
     awsAccount,
-    addNewInvitees,
-    isInviteesCreated,
-    members,
     metadata,
     adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
@@ -92,29 +86,15 @@ function CapabilityDetailsPageContent() {
         updateDeletionState={updateDeletionStatus}
       />
       <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
-        <Members />
         <Summary />
 
-        {
-          <CapabilityAdoptionLevel
-            adoptionLevelInformation={adoptionLevelInformation}
-          />
-        }
+        <TabbedMembersView showInvitations={showInvitations} />
+
+        <TabbedCapabilityAdoptionLevel />
 
         {showJsonMetadata && <MetadataTabbedView />}
 
         <Resources capabilityId={id} />
-
-        {showInvitations && (
-          <CapabilityInvitations
-            addNewInvitees={addNewInvitees}
-            inProgress={isInviteesCreated}
-            invitees={[]}
-            members={members}
-          />
-        )}
-
-        <MembershipApplications />
 
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
@@ -140,8 +120,6 @@ function CapabilityDetailsPageContent() {
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
         )}
-
-        <SelfAssessments />
 
         {!isDeleted && (
           <CapabilityManagement

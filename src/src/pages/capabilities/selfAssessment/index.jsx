@@ -109,31 +109,43 @@ export default function SelfAssessments() {
                 across all capabilities.
               </p>
 
-              <p>
-                The following self assessments are available for this
-                capability. You can toggle them on or off to indicate if the
-                capability is following the guideline or not.
-              </p>
-
-              {(assessments || []).map((assessment) => (
-                <div
-                  className={styles.assessmentRow}
-                  key={assessment.selfAssessmentType}
-                >
-                  <ToggleSwitch
-                    initialState={assessment._links.addSelfAssessment === null}
-                    switchedOn={() =>
-                      handleToggleOn(assessment._links.addSelfAssessment)
-                    }
-                    switchedOff={() =>
-                      handleToggleOff(assessment._links.removeSelfAssessment)
-                    }
-                  />
-                  <div className={styles.assessmentDescriptionWrapper}>
-                    {assessment.description}
-                  </div>
-                </div>
-              ))}
+              {(assessments || []).length > 0 ? (
+                <>
+                  <p>
+                    The following self assessments are available for this
+                    capability. You can toggle them on or off to indicate if the
+                    capability is following the guideline or not.
+                  </p>
+                  {(assessments || []).map((assessment) => (
+                    <div
+                      className={styles.assessmentRow}
+                      key={assessment.selfAssessmentType}
+                    >
+                      <ToggleSwitch
+                        initialState={
+                          assessment._links.addSelfAssessment === null
+                        }
+                        switchedOn={() =>
+                          handleToggleOn(assessment._links.addSelfAssessment)
+                        }
+                        switchedOff={() =>
+                          handleToggleOff(
+                            assessment._links.removeSelfAssessment,
+                          )
+                        }
+                      />
+                      <div className={styles.assessmentDescriptionWrapper}>
+                        {assessment.description}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p>
+                  No Self Assessments are available in the system at the moment.
+                  You do not have to do anything. Huzzah!
+                </p>
+              )}
             </CardContent>
           </Card>
         </PageSection>

@@ -9,6 +9,8 @@ import {
   Help,
 } from "@dfds-ui/icons/system";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import SelfAssessments from "../selfAssessment";
+import { TabbedPageSection } from "../../../components/PageSection";
 
 function parseConfigurationLevelInformation(configurationLevelInformation) {
   const recommendations = configurationLevelInformation.breakdown.filter(
@@ -85,11 +87,11 @@ export function CapabilityAdoptionLevel() {
   return (
     <>
       {configurationLevelInformation && (
-        <PageSection headline="Capability Health">
+        <PageSection headline="Adoption Level">
           <p>
-            Capability Health is based on a continuously growing list of
-            recommendations. This overview is an indication of the current state
-            of the capability. For an in depth description you can read our{" "}
+            Adoption Level is an overview of the current state of the capability
+            based on a continuously growing list of recommendations. For an
+            in-depth description you can read our{" "}
             <a
               target="_blank"
               rel="noreferrer"
@@ -131,5 +133,30 @@ export function CapabilityAdoptionLevel() {
         </PageSection>
       )}
     </>
+  );
+}
+
+export function TabbedCapabilityAdoptionLevel() {
+  const header = <></>;
+  const footer = <></>;
+
+  const tabs = {
+    adoption: "Adoption Level",
+    assessments: "Self Assessments",
+  };
+
+  const tabsContent = {
+    adoption: <CapabilityAdoptionLevel />,
+    assessments: <SelfAssessments />,
+  };
+
+  return (
+    <TabbedPageSection
+      headline="Capability Health"
+      tabs={tabs}
+      tabsContent={tabsContent}
+      header={header}
+      footer={footer}
+    />
   );
 }
