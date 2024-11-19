@@ -19,7 +19,15 @@
 
 .field {
   margin-bottom: 1rem;
+}
+
+.fieldContent > * {
   width: 100%;
+  padding: 5px;
+  border-style: solid;
+  border-color: lightgrey;
+  border-radius: 5px;
+  border-width: thin;
 }
 
 .checkBox {

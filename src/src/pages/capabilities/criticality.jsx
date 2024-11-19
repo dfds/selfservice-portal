@@ -13,16 +13,7 @@ import {
 import { MaterialReactTable } from "material-react-table";
 import PageSection from "components/PageSection";
 
-function calculateCriticalityLevel(
-  availability,
-  criticality,
-  classification,
-  status,
-) {
-  if (status === "Deleted") {
-    return 1;
-  }
-
+function calculateCriticalityLevel(availability, criticality, classification) {
   if (
     availability === undefined &&
     criticality === undefined &&
@@ -64,7 +55,10 @@ export default function CapabilitiesCriticalityPage() {
 
   useEffect(() => {
     if (isFetched) {
-      const mapped = data.map((capability) => {
+      const filtered = data.filter(
+        (capability) => capability.status !== "Deleted",
+      );
+      const mapped = filtered.map((capability) => {
         const enrichedCapability = { ...capability };
         const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
         enrichedCapability.availability =
@@ -77,7 +71,6 @@ export default function CapabilitiesCriticalityPage() {
           jsonMetadata["dfds.service.availability"],
           jsonMetadata["dfds.service.criticality"],
           jsonMetadata["dfds.data.classification"],
-          enrichedCapability.status,
         );
         return enrichedCapability;
       });
@@ -168,24 +161,6 @@ export default function CapabilitiesCriticalityPage() {
           return <div>{cell.getValue()}</div>;
         },
       },
-      {
-        accessorFn: (row) => row.status,
-        header: "Deleted",
-        size: 25,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          if (cell.getValue() === "Deleted") {
-            return <div>Deleted</div>;
-          }
-          return <div></div>;
-        },
-      },
     ],
     [],
   );
@@ -221,9 +196,6 @@ export default function CapabilitiesCriticalityPage() {
                 classification is Public
               </li>
             </ul>
-            <p>
-              Note: Deleted capabilities are automatically granted a score of 1.
-            </p>
           </CardContent>
         </Card>
 
@@ -263,15 +235,11 @@ export default function CapabilitiesCriticalityPage() {
                   },
                   sx: {
                     cursor: "pointer",
-                    background: row.original.status === "Deleted" ? "#d88" : "",
                     padding: 0,
                     margin: 0,
                     minHeight: 0,
                     "&:hover td": {
-                      backgroundColor:
-                        row.original.status === "Deleted"
-                          ? "rgba(187, 221, 243, 0.1)"
-                          : "rgba(187, 221, 243, 0.4)",
+                      backgroundColor: "rgba(187, 221, 243, 0.4)",
                     },
                   },
                 };
