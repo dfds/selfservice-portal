@@ -45,7 +45,12 @@ function CustomFieldTemplate(props) {
           }}
         />
       ) : null}
-      <div className={`${styles.fieldContent} ${rawErrors ? styles.fieldError : null}`} key={id}>
+      <div
+        className={`${styles.fieldContent} ${
+          rawErrors ? styles.fieldError : null
+        }`}
+        key={id}
+      >
         {children}
       </div>
       <div className={styles.errorMessage}>{rawErrors}</div>
