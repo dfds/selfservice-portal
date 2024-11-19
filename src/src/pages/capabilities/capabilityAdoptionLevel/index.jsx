@@ -112,6 +112,12 @@ export function CapabilityAdoptionLevel() {
             </div>
             <div className={styles.column}>
               <Text styledAs={"smallHeadline"}>Self Assessments</Text>
+              {(selfAssessments || []).length == 0 && (
+                <Text>
+                  No Self Assessments are available in the system at the moment.
+                  You do not have to do anything. Huzzah!
+                </Text>
+              )}
               {(selfAssessments || []).map((metric) => (
                 <MetricRow
                   key={metric.identifier}
