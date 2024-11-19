@@ -7,6 +7,8 @@ import Costs from "./costs";
 import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
+import PageSection from "components/PageSection";
+import { Text } from "@dfds-ui/typography";
 import MembershipApplications from "./membershipapplications";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
@@ -117,9 +119,23 @@ function CapabilityDetailsPageContent() {
         {/* <Logs /> */}
         {/* <CommunicationChannels /> */}
 
-        {(kafkaClusters || []).map((cluster) => (
-          <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
-        ))}
+        {!awsAccount && (
+          <PageSection headline="Kafka Clusters">
+            <Text>
+              No AWS account is linked to this capability. Please link an AWS
+              account to view Kafka clusters.
+            </Text>
+          </PageSection>
+        )}
+        {awsAccount !== undefined &&
+          awsAccount &&
+          (kafkaClusters || []).map((cluster) => (
+            <KafkaCluster
+              key={cluster.id}
+              cluster={cluster}
+              capabilityId={id}
+            />
+          ))}
 
         {showCosts && awsAccount !== undefined && (
           <Costs costCentre={costCentre} />
