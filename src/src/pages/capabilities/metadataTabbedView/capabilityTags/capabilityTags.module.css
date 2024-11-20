@@ -26,7 +26,7 @@
   padding: 5px;
   border-style: solid;
   border-color: lightgrey;
-  border-radius: 5px;
+  border-radius: 5px !important;
   border-width: thin;
 }
 
