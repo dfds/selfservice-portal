@@ -157,8 +157,8 @@ export default function MembershipApplications() {
               <TableHeaderCell>Applicant</TableHeaderCell>
               <TableHeaderCell>Application date</TableHeaderCell>
               <TableHeaderCell>Expires</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell></TableHeaderCell>
+              <TableHeaderCell>&nbsp;</TableHeaderCell>
+              <TableHeaderCell>&nbsp;</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -177,7 +177,6 @@ export default function MembershipApplications() {
                 <TableDataCell>
                   <ExpirationDate date={x.expiresOn} />
                 </TableDataCell>
-                <TableDataCell>{x.status}</TableDataCell>
                 <TableDataCell align="right">
                   {x.showApprove && (
                     <Button
@@ -199,20 +198,14 @@ export default function MembershipApplications() {
                   <TableDataCell style={{ minWidth: "6rem" }}>
                     <Button
                       variation="danger"
-                      disabled={!x.canApprove}
-                      submitting={x.isApproving}
-                      title={
-                        x.canApprove
-                          ? "Submit your approval of this membership"
-                          : "You have already submitted your approval for this membership. Waiting for other members to approve."
-                      }
+                      title="Deny this application for membership"
                       onClick={() => handleDeleteClicked(x.id)}
                     >
                       Delete
                     </Button>
                   </TableDataCell>
                 ) : (
-                  <></>
+                  <TableDataCell>&nbsp;</TableDataCell>
                 )}
               </TableRow>
             ))}
