@@ -1,32 +1,17 @@
 import React, { useContext, useEffect } from "react";
 import PageSection from "components/PageSection";
 import styles from "./selfAssessment.module.css";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Card, CardContent, Button } from "@dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
+import {
+  StatusSuccess,
+  StatusAlert,
+  Information,
+  Help,
+} from "@dfds-ui/icons/system";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
-
-const ToggleSwitch = ({ initialState, switchedOff, switchedOn }) => {
-  const [isOn, setIsOn] = useState(initialState);
-
-  const handleToggle = () => {
-    if (isOn) {
-      switchedOff();
-    } else {
-      switchedOn();
-    }
-    setIsOn(!isOn);
-  };
-
-  return (
-    <div
-      className={`${styles.switch} ${isOn ? styles.on : "off"}`}
-      onClick={handleToggle}
-    >
-      <div className={styles.slider}></div>
-    </div>
-  );
-};
+import { set } from "date-fns";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -38,7 +23,7 @@ export default function SelfAssessments() {
   const { links, setReloadConfigurationLevelInformation } = useContext(
     SelectedCapabilityContext,
   );
-
+  
   useEffect(() => {
     if (assessmentInProgress === false) {
       setReloadAssessments(true);
@@ -72,11 +57,17 @@ export default function SelfAssessments() {
     }
   }, [assessments]);
 
-  const handleToggle = (link, method) => {
-    if (link?.href) {
+  const handleToggle = (assessment, desiredStatus) => {
+    let link = assessment._links?.updateSelfAssessment?.href;
+    if (link) {
+      console.log("Toggling assessment", assessment, desiredStatus);
       modifyAssessment({
-        urlSegments: [link.href],
-        method: method,
+        urlSegments: [link],
+        method: "POST",
+        payload: {
+          SelfAssessmentOptionId: assessment.id,
+          SelfAssessmentStatus: desiredStatus,
+        },
       });
       // The following is a hack to reload configuration level information
       // a while after the assessment has been toggled.
@@ -84,17 +75,70 @@ export default function SelfAssessments() {
       // without bothering with cancelling requests
       setTimeout(() => {
         setReloadConfigurationLevelInformation(true);
+        setReloadAssessments(true);
       }, 2000);
+    } else {
+      console.error("No link found for assessment", assessment);
     }
   };
 
-  const handleToggleOn = (link) => {
-    handleToggle(link, "POST");
+  const SelfAssessmentLevel = {
+    VIOLATED: "VIOLATED",
+    NOT_APPLICABLE: "NOT_APPLICABLE",
+    SATISFIED: "SATISFIED",
   };
 
-  const handleToggleOff = (link) => {
-    handleToggle(link, "DELETE");
+  const handleAssessmentButtonPressed = (link, optionString) => {
+    handleToggle(link, optionString);
   };
+    
+  function StatusIcon({ status }) {
+    var statusIcon = <Help className={styles.levelIndicatorIcon} />;
+    if (status != undefined) {
+    switch (status.toUpperCase()) {
+      case SelfAssessmentLevel.VIOLATED:
+        statusIcon = (
+          <StatusAlert
+            className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
+          />
+        );
+        break;
+      case SelfAssessmentLevel.NOT_APPLICABLE:
+        statusIcon = (
+          <Information
+            className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
+          />
+        );
+        break;
+      case SelfAssessmentLevel.SATISFIED:
+        statusIcon = (
+          <StatusSuccess
+            className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
+          />
+        );
+        break;
+      default:
+        break;
+    }
+    }
+  
+    return (
+      <div className={styles.levelIndicator}>{statusIcon}</div>
+    );
+  }
+  
+  function buttonText(statusOption) {
+    switch (statusOption.toUpperCase()) {
+      case SelfAssessmentLevel.SATISFIED:
+        return "Yes";
+      case SelfAssessmentLevel.VIOLATED:
+        return "No";
+      case SelfAssessmentLevel.NOT_APPLICABLE:
+        return "N/A";
+      default:
+        return "Unknown";
+    }
+  }
 
   return (
     <>
@@ -121,22 +165,21 @@ export default function SelfAssessments() {
                       className={styles.assessmentRow}
                       key={assessment.selfAssessmentType}
                     >
-                      <ToggleSwitch
-                        initialState={
-                          assessment._links.addSelfAssessment === null
-                        }
-                        switchedOn={() =>
-                          handleToggleOn(assessment._links.addSelfAssessment)
-                        }
-                        switchedOff={() =>
-                          handleToggleOff(
-                            assessment._links.removeSelfAssessment,
-                          )
-                        }
-                      />
+                      <StatusIcon status={assessment.status}/>
                       <div className={styles.assessmentDescriptionWrapper}>
                         {assessment.description}
                       </div>
+                      {/* Insert one button for each status option */}
+                      {/* Indicate pressed on the one matching current status */}
+                      {(assessment.statusOptions || []).map((statusOption) => (
+                        <Button
+                        className={styles.assessmentButton}
+                        onClick={() => handleAssessmentButtonPressed(assessment, statusOption)}
+                        variation={(assessment.status && assessment.status.toUpperCase() === statusOption.toUpperCase())
+                          ? "primary"
+                          : "outlined"}
+                      > {buttonText(statusOption)}
+                      </Button>))}
                     </div>
                   ))}
                 </>
