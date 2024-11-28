@@ -23,7 +23,7 @@ export default function SelfAssessments() {
   const { links, setReloadConfigurationLevelInformation } = useContext(
     SelectedCapabilityContext,
   );
-  
+
   useEffect(() => {
     if (assessmentInProgress === false) {
       setReloadAssessments(true);
@@ -91,42 +91,40 @@ export default function SelfAssessments() {
   const handleAssessmentButtonPressed = (link, optionString) => {
     handleToggle(link, optionString);
   };
-    
+
   function StatusIcon({ status }) {
     var statusIcon = <Help className={styles.levelIndicatorIcon} />;
     if (status != undefined) {
-    switch (status.toUpperCase()) {
-      case SelfAssessmentLevel.VIOLATED:
-        statusIcon = (
-          <StatusAlert
-            className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
-          />
-        );
-        break;
-      case SelfAssessmentLevel.NOT_APPLICABLE:
-        statusIcon = (
-          <Information
-            className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
-          />
-        );
-        break;
-      case SelfAssessmentLevel.SATISFIED:
-        statusIcon = (
-          <StatusSuccess
-            className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
-          />
-        );
-        break;
-      default:
-        break;
+      switch (status.toUpperCase()) {
+        case SelfAssessmentLevel.VIOLATED:
+          statusIcon = (
+            <StatusAlert
+              className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
+            />
+          );
+          break;
+        case SelfAssessmentLevel.NOT_APPLICABLE:
+          statusIcon = (
+            <Information
+              className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
+            />
+          );
+          break;
+        case SelfAssessmentLevel.SATISFIED:
+          statusIcon = (
+            <StatusSuccess
+              className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
+            />
+          );
+          break;
+        default:
+          break;
+      }
     }
-    }
-  
-    return (
-      <div className={styles.levelIndicator}>{statusIcon}</div>
-    );
+
+    return <div className={styles.levelIndicator}>{statusIcon}</div>;
   }
-  
+
   function buttonText(statusOption) {
     switch (statusOption.toUpperCase()) {
       case SelfAssessmentLevel.SATISFIED:
@@ -165,7 +163,7 @@ export default function SelfAssessments() {
                       className={styles.assessmentRow}
                       key={assessment.selfAssessmentType}
                     >
-                      <StatusIcon status={assessment.status}/>
+                      <StatusIcon status={assessment.status} />
                       <div className={styles.assessmentDescriptionWrapper}>
                         {assessment.description}
                       </div>
@@ -173,13 +171,25 @@ export default function SelfAssessments() {
                       {/* Indicate pressed on the one matching current status */}
                       {(assessment.statusOptions || []).map((statusOption) => (
                         <Button
-                        className={styles.assessmentButton}
-                        onClick={() => handleAssessmentButtonPressed(assessment, statusOption)}
-                        variation={(assessment.status && assessment.status.toUpperCase() === statusOption.toUpperCase())
-                          ? "primary"
-                          : "outlined"}
-                      > {buttonText(statusOption)}
-                      </Button>))}
+                          className={styles.assessmentButton}
+                          onClick={() =>
+                            handleAssessmentButtonPressed(
+                              assessment,
+                              statusOption,
+                            )
+                          }
+                          variation={
+                            assessment.status &&
+                            assessment.status.toUpperCase() ===
+                              statusOption.toUpperCase()
+                              ? "primary"
+                              : "outlined"
+                          }
+                        >
+                          {" "}
+                          {buttonText(statusOption)}
+                        </Button>
+                      ))}
                     </div>
                   ))}
                 </>
