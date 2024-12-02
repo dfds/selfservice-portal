@@ -160,7 +160,8 @@ export default function FrontPage() {
                   <form onSubmit={onChatAsked}>
                     <div className={styles.aichatcontainer}>
                       <Text>
-                        Need help? Trained on our internal documentation our friendly chat bot is ready to assist you...
+                        Need help? Trained on our internal documentation our
+                        friendly chat bot is ready to assist you...
                       </Text>
                       <IconButton
                         icon={ExternalLink}

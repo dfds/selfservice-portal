@@ -33,7 +33,7 @@ export default function QuickLinks() {
         url="https://ui-components-three.vercel.app"
       />
       <Link title={"Swagger API Documentation"} url={swaggerUrl} />
-      <Link title={"Chat Bot assistance"} url={chatUrl}/>
+      <Link title={"Chat Bot assistance"} url={chatUrl} />
     </div>
   );
 }
