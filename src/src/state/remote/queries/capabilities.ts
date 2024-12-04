@@ -292,7 +292,7 @@ export function useAddCapabilityClaim() {
       ssuRequest({
         method: "POST",
         urlSegments: [data.link.href],
-        payload: null,
+        payload: data.payload,
         isCloudEngineerEnabled: true,
       }),
   });
