@@ -7,6 +7,7 @@ import {
   Hero as DfdsHero,
   IconButton,
   LinkButton,
+  Text,
 } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 import { TextField } from "@dfds-ui/forms";
@@ -158,14 +159,10 @@ export default function FrontPage() {
                 <SectionContent title="Get help from our GPT-powered Chat Bot">
                   <form onSubmit={onChatAsked}>
                     <div className={styles.aichatcontainer}>
-                      <TextField
-                        name="basic"
-                        placeholder="Ask your question"
-                        size="small"
-                        value={chatInput}
-                        onChange={(e) => setChatInput(e.target.value)}
-                        className={styles.chatinput}
-                      />
+                      <Text>
+                        Need help? Trained on our internal documentation our
+                        friendly chat bot is ready to assist you...
+                      </Text>
                       <IconButton
                         icon={ExternalLink}
                         disableTooltip
