@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Card,
@@ -7,9 +7,10 @@ import {
   CardActions,
   CardMedia,
   Button,
-  Text,
   Spinner,
 } from "@dfds-ui/react-components";
+import { Text } from "@dfds-ui/typography";
+import { Modal, ModalAction } from "@dfds-ui/modal";
 import Page from "components/Page";
 import PageSection from "components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";
@@ -17,15 +18,93 @@ import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
 
+const asDate = (dateString) => {
+  let millis = Date.parse(dateString);
+  let date = new Date(millis);
+  return date.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 function Repositories() {
-  // const { repositories, isLoading } = useContext(AppContext);
   const { isFetched, data } = useEcrRepositories();
+  const [showRepositoryDetails, setShowRepositoryDetails] = useState(false);
+  const [selectedRepository, setSelectedRepository] = useState(null);
+
+  const clickHandler = (data) => {
+    setSelectedRepository(data);
+    setShowRepositoryDetails(true);
+  };
+
+  function RepositoryDetails({ onCloseRequested }) {
+    const actions = (
+      <>
+        {/*ModalActions does not support danger/warning variations currently*/}
+        <ModalAction
+          style={{ marginRight: "1rem" }}
+          actionVariation="secondary"
+          onClick={onCloseRequested}
+        >
+          Close
+        </ModalAction>
+      </>
+    );
+
+    return (
+      <>
+        <Modal
+          heading={`ECR Repository details`}
+          isOpen={true}
+          shouldCloseOnOverlayClick={true}
+          shouldCloseOnEsc={true}
+          onRequestClose={onCloseRequested}
+          actions={actions}
+        >
+          <div className={styles.container}>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>Description</Text>{" "}
+              <span className={styles.breakwords}>
+                {selectedRepository.description}
+              </span>
+            </div>
+          </div>
+          <div className={styles.container}>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>Name</Text>{" "}
+              <span className={styles.breakwords}>
+                {selectedRepository.name}
+              </span>
+            </div>
+          </div>
+          <div className={styles.container}>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>URI</Text>{" "}
+              <span className={styles.breakwords}>
+                {selectedRepository.uri}
+              </span>
+            </div>
+          </div>
+          <div className={styles.container}>
+            <div className={styles.column}>
+              <Text styledAs={"smallHeadline"}>Creation</Text>{" "}
+              <span className={styles.breakwords}>
+                {asDate(selectedRepository.requestedAt)}, by{" "}
+                {selectedRepository.createdBy}
+              </span>
+            </div>
+          </div>
+        </Modal>
+      </>
+    );
+  }
 
   const columns = useMemo(
     () => [
       {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: "description",
+        header: "Description",
         size: 250,
         Cell: ({ renderedCellValue }) => {
           return (
@@ -36,8 +115,8 @@ function Repositories() {
         },
       },
       {
-        accessorKey: "description",
-        header: "Description",
+        accessorKey: "name",
+        header: "Name",
         size: 250,
         Cell: ({ renderedCellValue }) => {
           return (
@@ -53,6 +132,14 @@ function Repositories() {
 
   return (
     <>
+      {showRepositoryDetails && (
+        <RepositoryDetails
+          onCloseRequested={() => {
+            setShowRepositoryDetails(false);
+          }}
+          repository={selectedRepository}
+        />
+      )}
       <PageSection headline={`Repositories`}>
         {!isFetched && <Spinner />}
         {isFetched && (
@@ -77,7 +164,7 @@ function Repositories() {
                 fontSize: "16px",
                 fontFamily: "DFDS",
                 color: "#4d4e4c",
-                padding: "5px",
+                padding: "15px",
               },
             }}
             muiTablePaperProps={{
@@ -99,7 +186,7 @@ function Repositories() {
             enableGlobalFilterModes={true}
             positionGlobalFilter="left"
             muiSearchTextFieldProps={{
-              placeholder: `Find a capability...`,
+              placeholder: `Find a repository...`,
               sx: {
                 minWidth: "1120px",
                 fontWeight: "400",
@@ -119,6 +206,22 @@ function Repositories() {
             enableTopToolbar={true}
             enableBottomToolbar={true}
             enableColumnActions={false}
+            muiTableBodyRowProps={({ row }) => {
+              return {
+                onClick: () => {
+                  clickHandler(row.original);
+                },
+                sx: {
+                  cursor: "pointer",
+                  padding: 0,
+                  margin: 0,
+                  minHeight: 0,
+                  "&:hover td": {
+                    backgroundColor: "rgba(187, 221, 243, 0.4)",
+                  },
+                },
+              };
+            }}
           />
         )}
       </PageSection>
@@ -164,6 +267,13 @@ export default function ECRPage() {
               conventions. Normally the repository name should consist of the
               team name and the application name. For example:{" "}
               <b>cloudengineering/selfservice-portal</b>.
+            </p>
+            <p>
+              For more information on how to use the ECR repositories, please
+              refer to the{" "}
+              <a href="https://wiki.dfds.cloud/playbooks/supporting-services/ecr/push_image_to_an_ecr_repository">
+                documentation
+              </a>
             </p>
           </CardContent>
           <CardActions>
