@@ -10,7 +10,6 @@
 .assessmentDescriptionWrapper {
   height: 100%;
   width: 80%;
-  line-height: 25px;
   display: inline-block;
   vertical-align: middle;
   font-size: 1.1em;
@@ -58,4 +57,25 @@
 
 .switch.on .slider {
   left: 26px;
+}
+
+.levelIndicator {
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.levelIndicatorIcon {
+  width: 25px;
+  height: 25px;
+  color: grey;
+}
+
+.completeAdoption {
+  color: #4cb443;
+}
+.partialAdoption {
+  color: orange;
+}
+.noAdoption {
+  color: brown;
 }

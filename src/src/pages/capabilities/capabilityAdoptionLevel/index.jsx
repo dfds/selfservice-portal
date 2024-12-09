@@ -23,6 +23,7 @@ function parseConfigurationLevelInformation(configurationLevelInformation) {
 }
 
 const ConfigurationLevel = {
+  UNKNOWN: "UNKNOWN",
   NONE: "NONE",
   PARTIAL: "PARTIAL",
   COMPLETE: "COMPLETE",
