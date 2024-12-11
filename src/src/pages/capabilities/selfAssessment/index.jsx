@@ -139,67 +139,54 @@ export default function SelfAssessments() {
 
   return (
     <>
-        <PageSection headline="Capability Self Assessments">
-          <Card>
-            <CardContent>
-              <p>
-                Self Assessments are a way to simply indicate if a capability is
-                following a specific guideline or not. This is a way to keep
-                track of -- and monitor -- the adoption of guidelines in DFDS
-                across all capabilities.
-              </p>
+      <PageSection headline="Capability Self Assessments">
+        <Card>
+          <CardContent>
+            <p>
+              Self Assessments are a way to simply indicate if a capability is
+              following a specific guideline or not. This is a way to keep track
+              of -- and monitor -- the adoption of guidelines in DFDS across all
+              capabilities.
+            </p>
 
-              {(assessments || []).length > 0 ? (
-                <>
-                  <p>
-                    The following self assessments are available for this
-                    capability. You can toggle them on or off to indicate if the
-                    capability is following the guideline or not.
-                  </p>
-                  {(assessments || []).map((assessment) => (
-                    <div
-                      className={styles.assessmentRow}
-                      key={assessment.selfAssessmentType}
-                    >
-                      <StatusIcon status={assessment.status} />
-                      <div className={styles.assessmentDescriptionWrapper}>
-                        {assessment.description}
-                      </div>
-                      {/* Insert one button for each status option */}
-                      {/* Indicate pressed on the one matching current status */}
-                      {(assessment.statusOptions || []).map((statusOption) => (
-                        <Button
-                          className={styles.assessmentButton}
-                          onClick={() =>
-                            handleAssessmentButtonPressed(
-                              assessment,
-                              statusOption,
-                            )
-                          }
-                          variation={
-                            assessment.status &&
-                            assessment.status.toUpperCase() ===
-                              statusOption.toUpperCase()
-                              ? "primary"
-                              : "outlined"
-                          }
-                        >
-                          {" "}
-                          {buttonText(statusOption)}
-                        </Button>
-                      ))}
-                    </div>
-                  ))}
-                </>
-              ) : (
+            {(assessments || []).length > 0 ? (
+              <>
                 <p>
-                  No Self Assessments are available in the system at the moment.
-                  You do not have to do anything. Huzzah!
+                  The following self assessments are available for this
+                  capability. You can toggle them on or off to indicate if the
+                  capability is following the guideline or not.
                 </p>
-              )}
-            </CardContent>
-          </Card>
-        </PageSection>
+                {(assessments || []).map((assessment) => (
+                  <div
+                    className={styles.assessmentRow}
+                    key={assessment.selfAssessmentType}
+                  >
+                    <ToggleSwitch
+                      initialState={
+                        assessment._links.addSelfAssessment === null
+                      }
+                      switchedOn={() =>
+                        handleToggleOn(assessment._links.addSelfAssessment)
+                      }
+                      switchedOff={() =>
+                        handleToggleOff(assessment._links.removeSelfAssessment)
+                      }
+                    />
+                    <div className={styles.assessmentDescriptionWrapper}>
+                      {assessment.description}
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <p>
+                No Self Assessments are available in the system at the moment.
+                You do not have to do anything. Huzzah!
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </PageSection>
     </>
   );
 }
