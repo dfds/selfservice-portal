@@ -6,3 +6,15 @@
 .cardMedia {
   position: unset !important;
 }
+
+.container {
+  display: flex;
+}
+
+.column {
+  width: 100%;
+}
+
+.breakwords {
+  overflow-wrap: break-word;
+}
