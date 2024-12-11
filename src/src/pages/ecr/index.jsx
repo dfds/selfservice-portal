@@ -28,6 +28,17 @@ const asDate = (dateString) => {
   });
 };
 
+const documentationUrl =
+  "https://wiki.dfds.cloud/playbooks/supporting-services/ecr/push_image_to_an_ecr_repository";
+const NoUri = () => {
+  return (
+    <Text>
+      Error producing URI. Please refer to the{" "}
+      <a href={documentationUrl}>documentation</a>
+    </Text>
+  );
+};
+
 function Repositories() {
   const { isFetched, data } = useEcrRepositories();
   const [showRepositoryDetails, setShowRepositoryDetails] = useState(false);
@@ -82,7 +93,7 @@ function Repositories() {
             <div className={styles.column}>
               <Text styledAs={"smallHeadline"}>URI</Text>{" "}
               <span className={styles.breakwords}>
-                {selectedRepository.uri}
+                {selectedRepository.uri ? selectedRepository.uri : <NoUri />}
               </span>
             </div>
           </div>
@@ -270,10 +281,7 @@ export default function ECRPage() {
             </p>
             <p>
               For more information on how to use the ECR repositories, please
-              refer to the{" "}
-              <a href="https://wiki.dfds.cloud/playbooks/supporting-services/ecr/push_image_to_an_ecr_repository">
-                documentation
-              </a>
+              refer to the <a href={documentationUrl}>documentation</a>
             </p>
           </CardContent>
           <CardActions>
