@@ -19,7 +19,6 @@ export default function SelfAssessments() {
     useSelfServiceRequest();
   const [assessments, setAssessments] = useState([]);
   const [reloadAssessments, setReloadAssessments] = useState(true);
-  const [showAssessmentsSection, setShowAssessmentsSection] = useState(false);
   const { links, setReloadConfigurationLevelInformation } = useContext(
     SelectedCapabilityContext,
   );
@@ -140,7 +139,6 @@ export default function SelfAssessments() {
 
   return (
     <>
-      {showAssessmentsSection && (
         <PageSection headline="Capability Self Assessments">
           <Card>
             <CardContent>
@@ -202,7 +200,6 @@ export default function SelfAssessments() {
             </CardContent>
           </Card>
         </PageSection>
-      )}
     </>
   );
 }
