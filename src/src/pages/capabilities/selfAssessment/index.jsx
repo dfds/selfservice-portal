@@ -11,7 +11,7 @@ import {
   Help,
 } from "@dfds-ui/icons/system";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
-import { set } from "date-fns";
+import { useTracking } from "../../../hooks/Tracking";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -22,6 +22,7 @@ export default function SelfAssessments() {
   const { links, setReloadConfigurationLevelInformation } = useContext(
     SelectedCapabilityContext,
   );
+  const { track } = useTracking();
 
   useEffect(() => {
     if (assessmentInProgress === false) {
@@ -59,7 +60,7 @@ export default function SelfAssessments() {
   const handleToggle = (assessment, desiredStatus) => {
     let link = assessment._links?.updateSelfAssessment?.href;
     if (link) {
-      console.log("Toggling assessment", assessment, desiredStatus);
+      track("selfservice", "SelfAssessmentToggle", assessment, desiredStatus);
       modifyAssessment({
         urlSegments: [link],
         method: "POST",
