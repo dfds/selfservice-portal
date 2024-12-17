@@ -10,8 +10,8 @@ import {
   Information,
   Help,
 } from "@dfds-ui/icons/system";
-import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 import { useTracking } from "../../../hooks/Tracking";
+import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -50,12 +50,6 @@ export default function SelfAssessments() {
       setReloadAssessments(false);
     }
   }, [reloadAssessments]);
-
-  useEffect(() => {
-    if (assessments.length > 0) {
-      setShowAssessmentsSection(true);
-    }
-  }, [assessments]);
 
   const handleToggle = (assessment, desiredStatus) => {
     let link = assessment._links?.updateSelfAssessment?.href;
@@ -162,20 +156,33 @@ export default function SelfAssessments() {
                     className={styles.assessmentRow}
                     key={assessment.selfAssessmentType}
                   >
-                    <ToggleSwitch
-                      initialState={
-                        assessment._links.addSelfAssessment === null
-                      }
-                      switchedOn={() =>
-                        handleToggleOn(assessment._links.addSelfAssessment)
-                      }
-                      switchedOff={() =>
-                        handleToggleOff(assessment._links.removeSelfAssessment)
-                      }
-                    />
+                    <StatusIcon status={assessment.status} />
                     <div className={styles.assessmentDescriptionWrapper}>
                       {assessment.description}
                     </div>
+                    {/* Insert one button for each status option */}
+                    {/* Indicate pressed on the one matching current status */}
+                    {(assessment.statusOptions || []).map((statusOption) => (
+                      <Button
+                        className={styles.assessmentButton}
+                        onClick={() =>
+                          handleAssessmentButtonPressed(
+                            assessment,
+                            statusOption,
+                          )
+                        }
+                        variation={
+                          assessment.status &&
+                          assessment.status.toUpperCase() ===
+                            statusOption.toUpperCase()
+                            ? "primary"
+                            : "outlined"
+                        }
+                      >
+                        {" "}
+                        {buttonText(statusOption)}
+                      </Button>
+                    ))}
                   </div>
                 ))}
               </>
