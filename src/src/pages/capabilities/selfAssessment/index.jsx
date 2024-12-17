@@ -51,12 +51,6 @@ export default function SelfAssessments() {
     }
   }, [reloadAssessments]);
 
-  useEffect(() => {
-    if (assessments.length > 0) {
-      setShowAssessmentsSection(true);
-    }
-  }, [assessments]);
-
   const handleToggle = (assessment, desiredStatus) => {
     let link = assessment._links?.updateSelfAssessment?.href;
     if (link) {
