@@ -1,0 +1,48 @@
+
+.cardMediaImage {
+  position: unset !important;
+  float: right;
+  }
+  
+.cardMedia {
+  position: unset !important;
+}
+
+.switch {
+  width: 50px;
+  height: 25px;
+  background-color: #ccc;
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  margin-right: 1rem;
+  float: left;
+}
+
+.switch.on {
+  background-color: #4caf50;
+}
+
+.slider {
+  width: 23px;
+  height: 23px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: 0.2s;
+}
+
+.switch.on .slider {
+  left: 26px;
+}
+
+.dimmed {
+  color: grey;
+}
+
+.inlinecenter {
+  vertical-align: middle;
+  display: inline-block
+}

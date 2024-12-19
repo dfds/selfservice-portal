@@ -89,6 +89,11 @@ function AppProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
 
+  const reloadSelfAssessments = (input) => {
+    console.log("invalidate queries: ", input);
+    queryClient.invalidateQueries({ queryKey: ["selfassessments", "list"] });
+  };
+
   useEffect(() => {
     if (me != null) {
       setMyProfile(me);
@@ -208,6 +213,7 @@ function AppProvider({ children }) {
     addNewCapability,
     truncateString,
     reloadUser,
+    reloadSelfAssessments,
     addNewRepository,
     isAllWithValues,
     getValidationError,

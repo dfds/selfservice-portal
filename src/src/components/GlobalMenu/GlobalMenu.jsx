@@ -66,6 +66,11 @@ export default function GlobalMenu() {
       title: "Criticality",
       url: "/capabilities/criticality",
     });
+
+    navLinks.push({
+      title: "Assessments",
+      url: "/capabilities/selfassessments",
+    });
   }
 
   const toggleCloudEngineer = () => {
