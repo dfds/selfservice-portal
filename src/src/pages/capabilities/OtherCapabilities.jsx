@@ -32,7 +32,7 @@ export default function OtherCapabilities() {
 
       setOtherCapabilities(filteredList);
       */
-     setOtherCapabilities(capabilities);
+      setOtherCapabilities(capabilities);
     }
   }, [capabilities, meData, isFetched]);
 
