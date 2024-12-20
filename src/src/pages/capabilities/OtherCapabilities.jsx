@@ -21,7 +21,7 @@ export default function OtherCapabilities() {
 
   useEffect(() => {
     if (isFetched) {
-      const filteredList = capabilities.filter((x) => {
+      /*const filteredList = capabilities.filter((x) => {
         const myCap = meData.capabilities.find((y) => y.id === x.id);
         if (myCap) {
           return false;
@@ -31,6 +31,8 @@ export default function OtherCapabilities() {
       });
 
       setOtherCapabilities(filteredList);
+      */
+     setOtherCapabilities(capabilities);
     }
   }, [capabilities, meData, isFetched]);
 
@@ -123,7 +125,7 @@ export default function OtherCapabilities() {
   return (
     <>
       <PageSection
-        headline={`Other Capabilities ${isLoading ? "" : `(${items.length})`}`}
+        headline={`All Capabilities ${isLoading ? "" : `(${items.length})`}`}
       >
         {isLoading && <Spinner />}
 
