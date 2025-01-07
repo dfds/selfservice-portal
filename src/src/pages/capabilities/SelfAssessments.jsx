@@ -93,19 +93,11 @@ export default function CapabilitiesSelfAssessmentsPage() {
     reloadSelfAssessments("addNewSelfAssessment");
   }
 
-  
   useEffect(() => {
-    if (isFetched) {
-      console.log("update selfAssessments; ", data);
+    if (isFetched && data) {
       setSelfAssessments(data);
     }
   }, [isFetched, data]);
-
-  useEffect(() => {
-    console.log("selfAssessments; ", selfAssessments);
-  }, [selfAssessments]);
-  
-
 
   const handleAddSelfAssessment = async (formData) => {
     setIsCreatingNewSelfAssessment(true);
@@ -159,7 +151,8 @@ export default function CapabilitiesSelfAssessmentsPage() {
 
         <PageSection headline="Self Assessments">
           {(!isFetched) && <Spinner />}
-          {selfAssessments.map((selfAssessment) => (
+          {isFetched && selfAssessments.length === 0 && <p>No self assessments found</p>}
+          {isFetched && (selfAssessments || []).map((selfAssessment) => (
             <Card key={selfAssessment.id}>
               <CardContent>
                 <SelfAssessmentRow
