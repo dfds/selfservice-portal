@@ -31,7 +31,12 @@ export function useSelfAssessmentActivate() {
     mutationFn: async (id: string) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["capabilities", "self-assessment-options", id, "activate"],
+        urlSegments: [
+          "capabilities",
+          "self-assessment-options",
+          id,
+          "activate",
+        ],
         payload: null,
         isCloudEngineerEnabled: true,
       }),
@@ -45,10 +50,16 @@ export function useSelfAssessmentDeactivate() {
     mutationFn: async (id: string) => {
       ssuRequest({
         method: "POST",
-        urlSegments: ["capabilities", "self-assessment-options", id, "deactivate"],
+        urlSegments: [
+          "capabilities",
+          "self-assessment-options",
+          id,
+          "deactivate",
+        ],
         payload: null,
         isCloudEngineerEnabled: true,
-      })},
+      });
+    },
   });
 
   return mutation;
@@ -67,4 +78,3 @@ export function useSelfAssessmentAdd() {
 
   return mutation;
 }
-

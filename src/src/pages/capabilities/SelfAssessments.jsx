@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import Page from "components/Page";
 import AppContext from "AppContext";
-import { useSelfAssessments, useSelfAssessmentAdd, useSelfAssessmentActivate, useSelfAssessmentDeactivate } from "@/state/remote/queries/selfassessments";
+import {
+  useSelfAssessments,
+  useSelfAssessmentAdd,
+  useSelfAssessmentActivate,
+  useSelfAssessmentDeactivate,
+} from "@/state/remote/queries/selfassessments";
 import NewSelfAssessmentWizard from "./NewSelfAssessmentWizard";
 import {
   Card,
@@ -44,38 +49,46 @@ const ToggleSwitch = ({ initialState, switchedOff, switchedOn }) => {
   );
 };
 
-const SelfAssessmentRow = ({id, shortName, description, state, deactivateFunction, activateFunction}) => {
+const SelfAssessmentRow = ({
+  id,
+  shortName,
+  description,
+  state,
+  deactivateFunction,
+  activateFunction,
+}) => {
   return (
     <div>
       <div className={styles.inlinecenter}>
-      <span className={styles.inlinecenter}>{description}</span>
-      <ToggleSwitch
-        initialState={state}
-        switchedOn={() => {
-          activateFunction(id)
-        }}
-        switchedOff={() => {
-          deactivateFunction(id)
-        }}                        
-      />
+        <span className={styles.inlinecenter}>{description}</span>
+        <ToggleSwitch
+          initialState={state}
+          switchedOn={() => {
+            activateFunction(id);
+          }}
+          switchedOff={() => {
+            deactivateFunction(id);
+          }}
+        />
       </div>
       <br />
       <span className={styles.dimmed}>[name: {shortName}]</span>
     </div>
-  )
-
-}
+  );
+};
 
 export default function CapabilitiesSelfAssessmentsPage() {
   const { reloadSelfAssessments } = useContext(AppContext);
   const { isFetched, data } = useSelfAssessments();
   const selfAssessmentAdd = useSelfAssessmentAdd();
-  const selfAssessmentDeactivate = useSelfAssessmentDeactivate()
-  const selfAssessmentActivate = useSelfAssessmentActivate()
-  
-  const [ selfAssessments, setSelfAssessments ] = useState([]);
-  const [ showNewSelfAssessmentWizard, setShowNewSelfAssessmentWizard ] = useState(false);
-  const [ isCreatingNewSelfAssessment, setIsCreatingNewSelfAssessment ] = useState(false);
+  const selfAssessmentDeactivate = useSelfAssessmentDeactivate();
+  const selfAssessmentActivate = useSelfAssessmentActivate();
+
+  const [selfAssessments, setSelfAssessments] = useState([]);
+  const [showNewSelfAssessmentWizard, setShowNewSelfAssessmentWizard] =
+    useState(false);
+  const [isCreatingNewSelfAssessment, setIsCreatingNewSelfAssessment] =
+    useState(false);
 
   async function addNewSelfAssessment(
     shortName,
@@ -86,7 +99,7 @@ export default function CapabilitiesSelfAssessmentsPage() {
       payload: {
         shortName: shortName,
         description: description,
-        documentationUrl: documentationUrl
+        documentationUrl: documentationUrl,
       },
     });
     await sleep(1000);
@@ -104,7 +117,7 @@ export default function CapabilitiesSelfAssessmentsPage() {
     await addNewSelfAssessment(
       formData.shortName,
       formData.description,
-      formData.documentationUrl
+      formData.documentationUrl,
     );
     setShowNewSelfAssessmentWizard(false);
     setIsCreatingNewSelfAssessment(false);
@@ -131,42 +144,57 @@ export default function CapabilitiesSelfAssessmentsPage() {
           />
         )}
 
-        <Card variant="fill" surface="main" size="xl" reverse={true} media={splash}>
+        <Card
+          variant="fill"
+          surface="main"
+          size="xl"
+          reverse={true}
+          media={splash}
+        >
           <CardTitle largeTitle>Information</CardTitle>
           <CardContent>
             <p>
-              Self assessments allows capability owners to evaluate the current state of a capability.
-              Self assessments can be disabled but never deleted, thus preserving historical data and meaning.
+              Self assessments allows capability owners to evaluate the current
+              state of a capability. Self assessments can be disabled but never
+              deleted, thus preserving historical data and meaning.
             </p>
             <CardActions>
-            <Button
-              size="small"
-              onClick={() => setShowNewSelfAssessmentWizard(true)}
-            >
-              Add
-            </Button>
-          </CardActions>
+              <Button
+                size="small"
+                onClick={() => setShowNewSelfAssessmentWizard(true)}
+              >
+                Add
+              </Button>
+            </CardActions>
           </CardContent>
         </Card>
 
         <PageSection headline="Self Assessments">
-          {(!isFetched) && <Spinner />}
-          {isFetched && selfAssessments.length === 0 && <p>No self assessments found</p>}
-          {isFetched && (selfAssessments || []).map((selfAssessment) => (
-            <Card key={selfAssessment.id}>
-              <CardContent>
-                <SelfAssessmentRow
-                  id={selfAssessment.id}
-                  shortName={selfAssessment.shortName}
-                  description={selfAssessment.description}
-                  state={selfAssessment.isActive}
-                  activateFunction={(id) => {selfAssessmentActivate.mutate(id), reloadSelfAssessments("Activate")}}
-                  deactivateFunction={(id) => {selfAssessmentDeactivate.mutate(id), reloadSelfAssessments("Deactivate")}}
-                />
-              </CardContent>
-            </Card>
-          ))}
-          
+          {!isFetched && <Spinner />}
+          {isFetched && selfAssessments.length === 0 && (
+            <p>No self assessments found</p>
+          )}
+          {isFetched &&
+            (selfAssessments || []).map((selfAssessment) => (
+              <Card key={selfAssessment.id}>
+                <CardContent>
+                  <SelfAssessmentRow
+                    id={selfAssessment.id}
+                    shortName={selfAssessment.shortName}
+                    description={selfAssessment.description}
+                    state={selfAssessment.isActive}
+                    activateFunction={(id) => {
+                      selfAssessmentActivate.mutate(id),
+                        reloadSelfAssessments("Activate");
+                    }}
+                    deactivateFunction={(id) => {
+                      selfAssessmentDeactivate.mutate(id),
+                        reloadSelfAssessments("Deactivate");
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            ))}
         </PageSection>
       </Page>
     </>

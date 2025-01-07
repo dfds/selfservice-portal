@@ -1,9 +1,8 @@
-
 .cardMediaImage {
   position: unset !important;
   float: right;
-  }
-  
+}
+
 .cardMedia {
   position: unset !important;
 }
@@ -44,5 +43,5 @@
 
 .inlinecenter {
   vertical-align: middle;
-  display: inline-block
+  display: inline-block;
 }

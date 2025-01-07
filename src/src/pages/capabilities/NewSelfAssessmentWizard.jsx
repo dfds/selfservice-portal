@@ -36,16 +36,16 @@ export default function NewSelfAssessmentWizard({
   };
 
   return (
-      <CreationWizard
-        isOpen={true}
-        onClose={onCloseClicked}
-        onComplete={handleAddSelfAssessmentClicked}
-        steps={steps}
-        title="New Self Assessment Wizard"
-        emptyFormValues={emptyFormValues}
-        completeInProgress={inProgress}
-        completeName={"Add Self Assessment"}
-      />
+    <CreationWizard
+      isOpen={true}
+      onClose={onCloseClicked}
+      onComplete={handleAddSelfAssessmentClicked}
+      steps={steps}
+      title="New Self Assessment Wizard"
+      emptyFormValues={emptyFormValues}
+      completeInProgress={inProgress}
+      completeName={"Add Self Assessment"}
+    />
   );
 }
 
@@ -63,7 +63,10 @@ const BasicInformationStep = ({
     e.preventDefault();
     let newName = e?.target?.value || "";
     newName = newName.replace(/\s+/g, "-");
-    setFormData((prev) => ({ ...prev, ...{ shortName: newName.toLowerCase() } }));
+    setFormData((prev) => ({
+      ...prev,
+      ...{ shortName: newName.toLowerCase() },
+    }));
     validateName(newName);
   };
 
@@ -105,13 +108,14 @@ const BasicInformationStep = ({
 
   const validateDescription = (description) => {
     if (description.length == 0) {
-      setDescriptionError("Please write a description; This is all other users will see.");
+      setDescriptionError(
+        "Please write a description; This is all other users will see.",
+      );
       return false;
     }
     setDescriptionError("");
     return true;
   };
-
 
   useEffect(() => {
     if (formValid) {
@@ -154,18 +158,17 @@ const BasicInformationStep = ({
   );
 };
 
-const DocumentationStep = ({
-  formValues,
-  setFormValues,
-  setCanContinue,
-}) => {
+const DocumentationStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [formData, setFormData] = useState(formValues);
   const [formValid, setFormValid] = useState(true);
 
   const changeDocumentationURL = (e) => {
     e.preventDefault();
     const newDocumentationUrl = e?.target?.value || "";
-    setFormData((prev) => ({ ...prev, ...{ documentationURL: newDocumentationUrl } }));
+    setFormData((prev) => ({
+      ...prev,
+      ...{ documentationURL: newDocumentationUrl },
+    }));
     return true;
   };
 
@@ -184,10 +187,9 @@ const DocumentationStep = ({
   return (
     <>
       <Text>
-        Note: Currently this information is not used in the frontend.
-        
-        In the future, we will link capability users to whichever documentation you see fit for this assessment.
-        Consider adding this information already now.
+        Note: Currently this information is not used in the frontend. In the
+        future, we will link capability users to whichever documentation you see
+        fit for this assessment. Consider adding this information already now.
       </Text>
       <TextField
         label="Documentation URL"
