@@ -143,8 +143,8 @@ export default function CapabilitiesSelfAssessmentsPage() {
           <CardTitle largeTitle>Information</CardTitle>
           <CardContent>
             <p>
-              Some text of explanation.
-              Really important to understand
+              Self assessments allows capability owners to evaluate the current state of a capability.
+              Self assessments can be disabled but never deleted, thus preserving historical data and meaning.
             </p>
             <CardActions>
             <Button
