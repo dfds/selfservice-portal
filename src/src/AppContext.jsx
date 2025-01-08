@@ -90,7 +90,6 @@ function AppProvider({ children }) {
   };
 
   const reloadSelfAssessments = (input) => {
-    console.log("invalidate queries: ", input);
     queryClient.invalidateQueries({ queryKey: ["selfassessments", "list"] });
   };
 
