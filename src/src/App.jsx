@@ -8,6 +8,7 @@ import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
 import CapabilityDetailsPage from "./pages/capabilities/details";
 import CapabilityCriticalityPage from "./pages/capabilities/criticality";
+import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
@@ -50,6 +51,10 @@ export default function App() {
           <Route
             path="capabilities/criticality"
             element={<CapabilityCriticalityPage />}
+          />
+          <Route
+            path="capabilities/selfassessments"
+            element={<CapabilitySelfAssessmentsPage />}
           />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
         </Route>
