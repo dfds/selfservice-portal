@@ -6,6 +6,7 @@ import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useMe } from "@/state/remote/queries/me";
+import PreAppContext from "../../preAppContext";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 
 import { MaterialReactTable } from "material-react-table";
@@ -13,7 +14,10 @@ import { MaterialReactTable } from "material-react-table";
 export default function OtherCapabilities() {
   const { truncateString } = useContext(AppContext);
   const { isFetched: isMeFetched, data: meData } = useMe();
-  const { isFetched, data: capabilities } = useCapabilities();
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isFetched, data: capabilities } = useCapabilities(
+    isEnabledCloudEngineer,
+  );
 
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 

@@ -12,6 +12,7 @@ import {
 } from "@dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
 import PageSection from "components/PageSection";
+import PreAppContext from "../../preAppContext";
 
 function calculateCriticalityLevel(availability, criticality, classification) {
   if (
@@ -46,7 +47,8 @@ function calculateCriticalityLevel(availability, criticality, classification) {
 }
 
 export default function CapabilitiesCriticalityPage() {
-  const { isFetched, data } = useCapabilities();
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isFetched, data } = useCapabilities(isEnabledCloudEngineer);
   const { truncateString } = useContext(AppContext);
   const [enrichedCapabilities, setEnrichedCapabilities] = useState([]);
 

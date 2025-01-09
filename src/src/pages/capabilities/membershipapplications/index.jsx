@@ -224,7 +224,10 @@ function sleep(duration) {
 
 export function MembershipApplicationsUserCanApprove() {
   const queryClient = useQueryClient();
-  const { isFetched, isRefetching, data } = useMembershipApplications();
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isFetched, isRefetching, data } = useMembershipApplications(
+    isEnabledCloudEngineer,
+  );
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());

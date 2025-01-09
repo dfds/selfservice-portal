@@ -21,10 +21,12 @@ import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
 import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import PreAppContext from "@/preAppContext";
 
 function Topics() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const { selfServiceApiClient } = useContext(AppContext);
-  const { isFetched, data } = usePublicTopics();
+  const { isFetched, data } = usePublicTopics(isEnabledCloudEngineer);
 
   const [filteredData, setfilteredData] = useState([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);

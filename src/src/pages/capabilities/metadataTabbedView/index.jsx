@@ -7,8 +7,10 @@ import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { shallowEqual } from "Utils";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
+import PreAppContext from "@/preAppContext";
 
 export function MetadataTabbedView() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
 
@@ -38,6 +40,7 @@ export function MetadataTabbedView() {
       payload: {
         jsonMetadata: currentMetadataObject,
       },
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
     setIsDirty(false);
   };

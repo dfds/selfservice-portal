@@ -20,6 +20,7 @@ import {
 import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
+import PreAppContext from "@/preAppContext";
 
 function sleep(duration) {
   return new Promise((resolve) => {
@@ -78,8 +79,9 @@ const SelfAssessmentRow = ({
 };
 
 export default function CapabilitiesSelfAssessmentsPage() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const { reloadSelfAssessments } = useContext(AppContext);
-  const { isFetched, data } = useSelfAssessments();
+  const { isFetched, data } = useSelfAssessments(isEnabledCloudEngineer);
   const selfAssessmentAdd = useSelfAssessmentAdd();
   const selfAssessmentDeactivate = useSelfAssessmentDeactivate();
   const selfAssessmentActivate = useSelfAssessmentActivate();
@@ -101,6 +103,7 @@ export default function CapabilitiesSelfAssessmentsPage() {
         description: description,
         documentationUrl: documentationUrl,
       },
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
     await sleep(1000);
     reloadSelfAssessments("addNewSelfAssessment");
@@ -184,11 +187,17 @@ export default function CapabilitiesSelfAssessmentsPage() {
                     description={selfAssessment.description}
                     state={selfAssessment.isActive}
                     activateFunction={(id) => {
-                      selfAssessmentActivate.mutate(id),
+                      selfAssessmentActivate.mutate({
+                        id: id,
+                        isEnabledCloudEngineer: isEnabledCloudEngineer,
+                      }),
                         reloadSelfAssessments("Activate");
                     }}
                     deactivateFunction={(id) => {
-                      selfAssessmentDeactivate.mutate(id),
+                      selfAssessmentDeactivate.mutate({
+                        id: id,
+                        isEnabledCloudEngineer: isEnabledCloudEngineer,
+                      }),
                         reloadSelfAssessments("Deactivate");
                     }}
                   />

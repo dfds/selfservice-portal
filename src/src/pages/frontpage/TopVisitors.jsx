@@ -12,6 +12,8 @@ import Confetti from "react-confetti";
 import styles from "./TopVisitors.module.css";
 import { useMe } from "@/state/remote/queries/me";
 
+import PreAppContext from "@/preAppContext";
+
 function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
   // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
@@ -56,11 +58,12 @@ function Visitor({ rank, name, pictureUrl, onClicked }) {
 
 export default function TopVisitors() {
   // const { myProfile } = useContext(AppContext);
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const { data: myProfile } = useMe();
   const [visitors, setVisitors] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const { width, height } = useWindowSize();
-  const { isFetched, data } = useTopVisitors(myProfile);
+  const { isFetched, data } = useTopVisitors(myProfile, isEnabledCloudEngineer);
 
   const handleVisitorClicked = (rank) => {
     if (rank === 1 && !showConfetti) {

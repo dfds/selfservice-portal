@@ -9,11 +9,15 @@ import {
   useCapabilitiesDeclineInvitation,
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
+import PreAppContext from "@/preAppContext";
 
 export default function MyInvitations({ invitationsLink }) {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const queryClient = useQueryClient();
-  const { isFetched, data: responseData } =
-    useCapabilitiesMyInvitations(invitationsLink);
+  const { isFetched, data: responseData } = useCapabilitiesMyInvitations(
+    invitationsLink,
+    isEnabledCloudEngineer,
+  );
   const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
   const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
   const [invitations, setInvitations] = useState([]);
@@ -68,6 +72,7 @@ export default function MyInvitations({ invitationsLink }) {
                   capabilitiesDeclineInvitation.mutate(
                     {
                       link: cell.getValue().decline.href,
+                      isEnabledCloudEngineer: isEnabledCloudEngineer,
                     },
                     {
                       onSuccess: () => {
@@ -89,6 +94,7 @@ export default function MyInvitations({ invitationsLink }) {
                   capabilitiesAcceptInvitation.mutate(
                     {
                       link: cell.getValue().accept.href,
+                      isEnabledCloudEngineer: isEnabledCloudEngineer,
                     },
                     {
                       onSuccess: async () => {

@@ -5,7 +5,7 @@ const sortByName = (list) => {
   list.sort((a, b) => a.shortName.localeCompare(b.shortName));
 };
 
-export function useSelfAssessments() {
+export function useSelfAssessments(isEnabledCloudEngineer: boolean) {
   const query = useQuery({
     queryKey: ["selfassessments", "list"],
     queryFn: async () =>
@@ -13,7 +13,7 @@ export function useSelfAssessments() {
         method: "GET",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
     select: (data: any) => {
       let list = data || [];
@@ -28,17 +28,17 @@ export function useSelfAssessments() {
 
 export function useSelfAssessmentActivate() {
   const mutation = useMutation({
-    mutationFn: async (id: string) =>
+    mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [
           "capabilities",
           "self-assessment-options",
-          id,
+          data.id,
           "activate",
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 
@@ -47,17 +47,17 @@ export function useSelfAssessmentActivate() {
 
 export function useSelfAssessmentDeactivate() {
   const mutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (data: any) => {
       ssuRequest({
         method: "POST",
         urlSegments: [
           "capabilities",
           "self-assessment-options",
-          id,
+          data.id,
           "deactivate",
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       });
     },
   });
@@ -72,7 +72,7 @@ export function useSelfAssessmentAdd() {
         method: "POST",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 

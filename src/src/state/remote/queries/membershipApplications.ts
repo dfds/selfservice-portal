@@ -5,7 +5,7 @@ const sortByCapabilityId = (list) => {
   list.sort((a, b) => a.capabilityId.localeCompare(b.capabilityId));
 };
 
-export function useMembershipApplications() {
+export function useMembershipApplications(isEnabledCloudEngineer: boolean) {
   const query = useQuery({
     queryKey: ["membershipapplications/eligible-for-approval"],
     queryFn: async () =>
@@ -13,7 +13,7 @@ export function useMembershipApplications() {
         method: "GET",
         urlSegments: ["membershipapplications/eligible-for-approval"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
     select: (data: any) => {
       let list = data.items || [];
@@ -34,7 +34,7 @@ export function useSubmitMembershipApplication() {
           data.capabilityDefinition?._links?.membershipApplications?.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 
@@ -48,7 +48,7 @@ export function useBypassMembershipApproval() {
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links?.joinCapability.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 
@@ -64,7 +64,7 @@ export function useSubmitMembershipApplicationApproval() {
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 
@@ -80,7 +80,7 @@ export function useDeleteMembershipApplicationApproval() {
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 

@@ -76,12 +76,18 @@ function AppProvider({ children }) {
   const selfServiceApiClient = useMemo(
     () =>
       new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
-    [handleError],
+    [handleError, isEnabledCloudEngineer],
   );
   const metricsWrapper = useMemo(
     () => new MetricsWrapper(selfServiceApiClient),
     [selfServiceApiClient],
   );
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["me"] });
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["selfassessments", "list"] });
+  }, [selfServiceApiClient]);
 
   const capabilityAdd = useCapabilityAdd();
   const createEcrRepository = useCreateEcrRepository();
@@ -112,6 +118,7 @@ function AppProvider({ children }) {
         invitees: invitations,
         jsonMetadata: jsonMetadataString,
       },
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
     await sleep(2000);
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
@@ -125,6 +132,7 @@ function AppProvider({ children }) {
           name: data.name,
           description: data.description,
         },
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {
@@ -147,9 +155,11 @@ function AppProvider({ children }) {
       updateMyPersonalInformation.mutate({
         user: user,
         profileDefinition: me,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       });
       registerMyVisit.mutate({
         profileDefinition: me,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       });
     }
   }, [user]);

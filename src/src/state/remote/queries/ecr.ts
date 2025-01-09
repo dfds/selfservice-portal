@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
 
-export function useEcrRepositories() {
+export function useEcrRepositories(isEnabledCloudEngineer: boolean) {
   const query = useQuery({
     queryKey: ["ecr", "repositories"],
     queryFn: async () =>
@@ -9,7 +9,7 @@ export function useEcrRepositories() {
         method: "GET",
         urlSegments: ["ecr/repositories"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -23,7 +23,7 @@ export function useCreateEcrRepository() {
         method: "POST",
         urlSegments: ["ecr/repositories"],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
       }),
   });
 

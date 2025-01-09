@@ -37,6 +37,8 @@ import {
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
 
+import PreAppContext from "@/preAppContext";
+
 const SelectedCapabilityContext = createContext();
 
 function adjustRetention(kafkaTopic) {
@@ -67,22 +69,28 @@ function SelectedCapabilityProvider({ children }) {
   const [membershipApplications, setMembershipApplications] = useState([]);
   const [awsAccount, setAwsAccount] = useState(null);
   const [awsAccountRequested, setAwsAccountRequested] = useState(false);
-  const { isFetched, data: capability } = useCapability(capabilityId); // NEW
+  const { isFetched, data: capability } = useCapability(
+    capabilityId,
+    isEnabledCloudEngineer,
+  ); // NEW
   const { isFetched: capabilityMembersFetched, data: membersList } =
-    useCapabilityMembersDetailed(details); // NEW
+    useCapabilityMembersDetailed(details, isEnabledCloudEngineer); // NEW
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
   const [showCosts, setShowCosts] = useState(false);
   const { isFetched: isClustersListFetched, data: clustersList } =
-    useKafkaClustersAccessList(details); // NEW
+    useKafkaClustersAccessList(details, isEnabledCloudEngineer); // NEW
   const { data: awsAccountDetails, isFetched: isLoadedAccount } =
-    useSsuRequestLink(details?._links?.awsAccount); // NEW
+    useSsuRequestLink(details?._links?.awsAccount, isEnabledCloudEngineer); // NEW
   const { data: awsAccountInformation, isFetched: isLoadedAccountInformation } =
-    useSsuRequestLink(details?._links?.awsAccountInformation); // NEW
+    useSsuRequestLink(
+      details?._links?.awsAccountInformation,
+      isEnabledCloudEngineer,
+    ); // NEW
   const {
     isFetched: isLoadedMembersApplications,
     data: membersApplicationsList,
-  } = useCapabilityMembersApplications(details); // NEW
+  } = useCapabilityMembersApplications(details, isEnabledCloudEngineer); // NEW
 
   const [isInviteesCreated, setIsInviteesCreated] = useState(false);
   const { data: azureResources, isFetched: isLoadedAzure } =
@@ -111,6 +119,8 @@ function SelectedCapabilityProvider({ children }) {
       });
     }
   };
+
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   useEffect(() => {
     if (reloadConfigurationLevelInformation) {
@@ -144,14 +154,17 @@ function SelectedCapabilityProvider({ children }) {
       payload: {
         invitees: invitations,
       },
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
     await sleep(3000);
     setIsInviteesCreated(false);
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }
 
-  const { isFetched: metadataFetched, data: metadata } =
-    useCapabilityMetadata(details);
+  const { isFetched: metadataFetched, data: metadata } = useCapabilityMetadata(
+    details,
+    isEnabledCloudEngineer,
+  );
 
   const kafkaClusterTopicList = () => {
     if (clustersList != null && clustersList.length !== 0) {
@@ -235,6 +248,7 @@ function SelectedCapabilityProvider({ children }) {
           partitions: kafkaTopicDescriptor.partitions,
           retention: kafkaTopicDescriptor.retention,
         },
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: (data) => {
@@ -348,6 +362,7 @@ function SelectedCapabilityProvider({ children }) {
     deleteMembershipApplicationApproval.mutate(
       {
         membershipApplicationDefinition: found,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: async () => {
@@ -375,6 +390,7 @@ function SelectedCapabilityProvider({ children }) {
     submitMembershipApplicationApproval.mutate(
       {
         membershipApplicationDefinition: found,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: async () => {
@@ -396,6 +412,7 @@ function SelectedCapabilityProvider({ children }) {
     submitMembershipApplicationF.mutate(
       {
         capabilityDefinition: details,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {
@@ -411,6 +428,7 @@ function SelectedCapabilityProvider({ children }) {
     leaveCapability.mutate(
       {
         capabilityDefinition: details,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {
@@ -435,6 +453,7 @@ function SelectedCapabilityProvider({ children }) {
     requestAccessToClusterF.mutate(
       {
         clusterDefinition: cluster,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {
@@ -462,6 +481,7 @@ function SelectedCapabilityProvider({ children }) {
     updateTopic.mutate({
       topicDefinition: found,
       payload: { ...topicDescriptor },
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
 
     setKafkaClusters((prev) => {
@@ -494,6 +514,7 @@ function SelectedCapabilityProvider({ children }) {
 
     deleteTopic.mutate({
       topicDefinition: found,
+      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
 
     setKafkaClusters((prev) => {
@@ -532,6 +553,7 @@ function SelectedCapabilityProvider({ children }) {
     bypassMembershipApprovalF.mutate(
       {
         capabilityDefinition: details,
+        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {

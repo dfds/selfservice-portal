@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import { MaterialReactTable } from "material-react-table";
 import {
   Card,
@@ -17,6 +17,7 @@ import NewRepositoryDialog from "./NewRepositoryDialog";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
+import PreAppContext from "@/preAppContext";
 
 const asDate = (dateString) => {
   let millis = Date.parse(dateString);
@@ -40,7 +41,8 @@ const NoUri = () => {
 };
 
 function Repositories() {
-  const { isFetched, data } = useEcrRepositories();
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isFetched, data } = useEcrRepositories(isEnabledCloudEngineer);
   const [showRepositoryDetails, setShowRepositoryDetails] = useState(false);
   const [selectedRepository, setSelectedRepository] = useState(null);
 

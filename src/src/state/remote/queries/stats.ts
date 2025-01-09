@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
 
-export function useStats() {
+export function useStats(isEnabledCloudEngineer: boolean) {
   const query = useQuery({
     queryKey: ["stats"],
     queryFn: async () =>
@@ -9,14 +9,17 @@ export function useStats() {
         method: "GET",
         urlSegments: ["stats"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
   return query;
 }
 
-export function useTopVisitors(profileDefinition: any) {
+export function useTopVisitors(
+  profileDefinition: any,
+  isEnabledCloudEngineer: boolean,
+) {
   const visitorsLink = profileDefinition?._links?.topVisitors;
 
   const query = useQuery({
@@ -26,7 +29,7 @@ export function useTopVisitors(profileDefinition: any) {
         method: "GET",
         urlSegments: [visitorsLink.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 

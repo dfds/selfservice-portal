@@ -10,7 +10,6 @@ import {
   Text,
 } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
-import { TextField } from "@dfds-ui/forms";
 
 import PageSection, { SectionContent } from "components/PageSection";
 import Page from "components/Page";
@@ -23,6 +22,7 @@ import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
+import PreAppContext from "@/preAppContext";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -41,7 +41,8 @@ function Hero() {
 }
 
 function FunStats() {
-  const { data, isFetched } = useStats();
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { data, isFetched } = useStats(isEnabledCloudEngineer);
 
   if (!isFetched) {
     return <></>;
