@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 
 const sortByName = (list) => {
   list.sort((a, b) => a.name.localeCompare(b.name));
