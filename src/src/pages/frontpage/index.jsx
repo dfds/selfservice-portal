@@ -22,7 +22,6 @@ import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
-import PreAppContext from "@/preAppContext";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -41,8 +40,7 @@ function Hero() {
 }
 
 function FunStats() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
-  const { data, isFetched } = useStats(isEnabledCloudEngineer);
+  const { data, isFetched } = useStats();
 
   if (!isFetched) {
     return <></>;

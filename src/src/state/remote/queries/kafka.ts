@@ -1,12 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
 
-export function useKafkaClustersAccessList(
-  capabilityDefinition,
-  isEnabledCloudEngineer,
-) {
+export function useKafkaClustersAccessList(capabilityDefinition) {
   const link = capabilityDefinition?._links?.clusters;
-
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: [
       "capabilities",
@@ -19,7 +18,7 @@ export function useKafkaClustersAccessList(
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => data.items,
     enabled: link != null,
@@ -28,7 +27,8 @@ export function useKafkaClustersAccessList(
   return query;
 }
 
-export function useKafkaClusters(isEnabledCloudEngineer: boolean) {
+export function useKafkaClusters() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["kafka", "clusters"],
     queryFn: async () =>
@@ -36,7 +36,7 @@ export function useKafkaClusters(isEnabledCloudEngineer: boolean) {
         method: "GET",
         urlSegments: ["kafkaclusters"],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => data.items,
   });
@@ -44,7 +44,8 @@ export function useKafkaClusters(isEnabledCloudEngineer: boolean) {
   return query;
 }
 
-export function usePublicTopics(isEnabledCloudEngineer: boolean) {
+export function usePublicTopics() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["public-kafkatopics"],
     queryFn: async () =>
@@ -72,13 +73,14 @@ export function usePublicTopics(isEnabledCloudEngineer: boolean) {
 }
 
 export function useUpdateKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: data.topicDefinition?._links?.updateDescription.method,
         urlSegments: [data.topicDefinition?._links?.updateDescription.href],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -86,13 +88,14 @@ export function useUpdateKafkaTopic() {
 }
 
 export function useDeleteKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "DELETE",
         urlSegments: [data.topicDefinition?._links?.self?.href],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -100,13 +103,14 @@ export function useDeleteKafkaTopic() {
 }
 
 export function useAddKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.clusterDefinition?._links?.createTopic.href],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -114,13 +118,14 @@ export function useAddKafkaTopic() {
 }
 
 export function useRequestAccessToCluster() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.clusterDefinition?._links?.requestAccess.href],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 

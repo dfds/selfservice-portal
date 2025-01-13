@@ -14,10 +14,7 @@ import { MaterialReactTable } from "material-react-table";
 export default function OtherCapabilities() {
   const { truncateString } = useContext(AppContext);
   const { isFetched: isMeFetched, data: meData } = useMe();
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
-  const { isFetched, data: capabilities } = useCapabilities(
-    isEnabledCloudEngineer,
-  );
+  const { isFetched, data: capabilities } = useCapabilities();
 
   const [otherCapabilities, setOtherCapabilities] = useState([]);
 

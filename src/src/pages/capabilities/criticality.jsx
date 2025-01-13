@@ -47,8 +47,7 @@ function calculateCriticalityLevel(availability, criticality, classification) {
 }
 
 export default function CapabilitiesCriticalityPage() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
-  const { isFetched, data } = useCapabilities(isEnabledCloudEngineer);
+  const { isFetched, data } = useCapabilities();
   const { truncateString } = useContext(AppContext);
   const [enrichedCapabilities, setEnrichedCapabilities] = useState([]);
 

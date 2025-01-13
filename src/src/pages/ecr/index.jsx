@@ -17,7 +17,6 @@ import NewRepositoryDialog from "./NewRepositoryDialog";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
-import PreAppContext from "@/preAppContext";
 
 const asDate = (dateString) => {
   let millis = Date.parse(dateString);
@@ -41,8 +40,7 @@ const NoUri = () => {
 };
 
 function Repositories() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
-  const { isFetched, data } = useEcrRepositories(isEnabledCloudEngineer);
+  const { isFetched, data } = useEcrRepositories();
   const [showRepositoryDetails, setShowRepositoryDetails] = useState(false);
   const [selectedRepository, setSelectedRepository] = useState(null);
 

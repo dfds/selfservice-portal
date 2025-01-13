@@ -1,11 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import { useContext } from "react";
+import PreAppContext from "@/preAppContext";
 
 const sortByName = (list) => {
   list.sort((a, b) => a.shortName.localeCompare(b.shortName));
 };
 
-export function useSelfAssessments(isEnabledCloudEngineer: boolean) {
+export function useSelfAssessments() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["selfassessments", "list"],
     queryFn: async () =>
@@ -27,6 +30,7 @@ export function useSelfAssessments(isEnabledCloudEngineer: boolean) {
 }
 
 export function useSelfAssessmentActivate() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -38,7 +42,7 @@ export function useSelfAssessmentActivate() {
           "activate",
         ],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -46,6 +50,7 @@ export function useSelfAssessmentActivate() {
 }
 
 export function useSelfAssessmentDeactivate() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       ssuRequest({
@@ -57,7 +62,7 @@ export function useSelfAssessmentDeactivate() {
           "deactivate",
         ],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       });
     },
   });
@@ -66,13 +71,14 @@ export function useSelfAssessmentDeactivate() {
 }
 
 export function useSelfAssessmentAdd() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 

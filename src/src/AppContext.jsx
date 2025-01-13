@@ -118,7 +118,6 @@ function AppProvider({ children }) {
         invitees: invitations,
         jsonMetadata: jsonMetadataString,
       },
-      isEnabledCloudEngineer: isEnabledCloudEngineer,
     });
     await sleep(2000);
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
@@ -132,7 +131,6 @@ function AppProvider({ children }) {
           name: data.name,
           description: data.description,
         },
-        isEnabledCloudEngineer: isEnabledCloudEngineer,
       },
       {
         onSuccess: () => {
@@ -155,11 +153,9 @@ function AppProvider({ children }) {
       updateMyPersonalInformation.mutate({
         user: user,
         profileDefinition: me,
-        isEnabledCloudEngineer: isEnabledCloudEngineer,
       });
       registerMyVisit.mutate({
         profileDefinition: me,
-        isEnabledCloudEngineer: isEnabledCloudEngineer,
       });
     }
   }, [user]);

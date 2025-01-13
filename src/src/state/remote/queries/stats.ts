@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
 
-export function useStats(isEnabledCloudEngineer: boolean) {
+export function useStats() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["stats"],
     queryFn: async () =>
@@ -16,11 +19,9 @@ export function useStats(isEnabledCloudEngineer: boolean) {
   return query;
 }
 
-export function useTopVisitors(
-  profileDefinition: any,
-  isEnabledCloudEngineer: boolean,
-) {
+export function useTopVisitors(profileDefinition: any) {
   const visitorsLink = profileDefinition?._links?.topVisitors;
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["topVisitors"],

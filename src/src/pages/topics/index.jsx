@@ -24,9 +24,8 @@ import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
 import PreAppContext from "@/preAppContext";
 
 function Topics() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const { selfServiceApiClient } = useContext(AppContext);
-  const { isFetched, data } = usePublicTopics(isEnabledCloudEngineer);
+  const { isFetched, data } = usePublicTopics();
 
   const [filteredData, setfilteredData] = useState([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);

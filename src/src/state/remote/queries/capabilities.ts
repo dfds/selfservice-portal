@@ -1,12 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import PreAppContext from "@/preAppContext";
 
 const sortByName = (list) => {
   list.sort((a, b) => a.name.localeCompare(b.name));
 };
 
-export function useCapabilities(isEnabledCloudEngineer: boolean) {
+export function useCapabilities() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "list"],
     queryFn: async () =>
@@ -14,7 +16,7 @@ export function useCapabilities(isEnabledCloudEngineer: boolean) {
         method: "GET",
         urlSegments: ["capabilities"],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => {
       let list = data.items || [];
@@ -27,7 +29,8 @@ export function useCapabilities(isEnabledCloudEngineer: boolean) {
   return query;
 }
 
-export function useCapability(id: string, isEnabledCloudEngineer: boolean) {
+export function useCapability(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "details", id],
     queryFn: async () =>
@@ -35,7 +38,7 @@ export function useCapability(id: string, isEnabledCloudEngineer: boolean) {
         method: "GET",
         urlSegments: ["capabilities", id],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     staleTime: 30000,
   });
@@ -44,24 +47,23 @@ export function useCapability(id: string, isEnabledCloudEngineer: boolean) {
 }
 
 export function useCapabilityAdd() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities"],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
   return mutation;
 }
 
-export function useCapabilityMetadata(
-  capabilityDefinition: any,
-  isEnabledCloudEngineer: boolean,
-) {
+export function useCapabilityMetadata(capabilityDefinition: any) {
   const link = capabilityDefinition?._links;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["capabilities", "metadata", capabilityDefinition?.id],
@@ -70,7 +72,7 @@ export function useCapabilityMetadata(
         method: "GET",
         urlSegments: [link.metadata.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: link != null,
   });
@@ -79,13 +81,14 @@ export function useCapabilityMetadata(
 }
 
 export function useUpdateCapabilityMetadata() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links.metadata.href],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -93,6 +96,7 @@ export function useUpdateCapabilityMetadata() {
 }
 
 export function useUpdateRequiredCapabilityMetadata() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -101,7 +105,7 @@ export function useUpdateRequiredCapabilityMetadata() {
           data.capabilityDefinition?._links.setRequiredMetadata.href,
         ],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -109,24 +113,23 @@ export function useUpdateRequiredCapabilityMetadata() {
 }
 
 export function useLeaveCapability() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links?.leaveCapability.href],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
   return mutation;
 }
 
-export function useCapabilityMembersDetailed(
-  capabilityDefinition: any,
-  isEnabledCloudEngineer: boolean,
-) {
+export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["capabilities", "members", "detailed", capabilityDefinition?.id],
@@ -135,7 +138,7 @@ export function useCapabilityMembersDetailed(
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       });
 
       let resps = await Promise.all(
@@ -164,11 +167,9 @@ export function useCapabilityMembersDetailed(
   return query;
 }
 
-export function useCapabilityMembersApplications(
-  capabilityDefinition: any,
-  isEnabledCloudEngineer: boolean,
-) {
+export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: [
@@ -182,7 +183,7 @@ export function useCapabilityMembersApplications(
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       });
 
       let resps = await Promise.all(
@@ -242,6 +243,7 @@ export function useUserProfilePicture(upn: string) {
 }
 
 export function useCapabilityInvitees() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -252,17 +254,15 @@ export function useCapabilityInvitees() {
           "invitations",
         ],
         payload: data.payload,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
   return mutation;
 }
 
-export function useCapabilitiesMyInvitations(
-  link: string,
-  isEnabledCloudEngineer: boolean,
-) {
+export function useCapabilitiesMyInvitations(link: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "invitations", "my"],
     queryFn: async () =>
@@ -270,7 +270,7 @@ export function useCapabilitiesMyInvitations(
         method: "GET",
         urlSegments: [link],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: link != null,
   });
@@ -279,13 +279,14 @@ export function useCapabilitiesMyInvitations(
 }
 
 export function useCapabilitiesDeclineInvitation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.link],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -293,13 +294,14 @@ export function useCapabilitiesDeclineInvitation() {
 }
 
 export function useCapabilitiesAcceptInvitation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.link],
         payload: null,
-        isCloudEngineerEnabled: data.isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
