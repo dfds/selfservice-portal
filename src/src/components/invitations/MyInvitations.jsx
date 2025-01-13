@@ -9,6 +9,7 @@ import {
   useCapabilitiesDeclineInvitation,
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
+import PreAppContext from "@/preAppContext";
 
 export default function MyInvitations({ invitationsLink }) {
   const queryClient = useQueryClient();

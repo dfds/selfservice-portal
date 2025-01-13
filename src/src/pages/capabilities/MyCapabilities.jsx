@@ -10,7 +10,6 @@ import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import { useMe } from "@/state/remote/queries/me";
-import { useCapabilities } from "@/state/remote/queries/capabilities";
 
 export default function MyCapabilities() {
   const { truncateString } = useContext(AppContext);

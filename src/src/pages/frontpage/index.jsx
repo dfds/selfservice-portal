@@ -10,7 +10,6 @@ import {
   Text,
 } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
-import { TextField } from "@dfds-ui/forms";
 
 import PageSection, { SectionContent } from "components/PageSection";
 import Page from "components/Page";

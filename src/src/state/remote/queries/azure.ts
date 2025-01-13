@@ -1,8 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
 
 export function useCapabilityAzureResources(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.azureResources;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: [
@@ -16,7 +19,7 @@ export function useCapabilityAzureResources(capabilityDefinition: any) {
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: !!link,
   });
@@ -25,6 +28,7 @@ export function useCapabilityAzureResources(capabilityDefinition: any) {
 }
 
 export function useCapabilityAzureResourceRequest() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -35,7 +39,7 @@ export function useCapabilityAzureResourceRequest() {
           "azureresources",
         ],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 

@@ -6,6 +6,7 @@ import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useMe } from "@/state/remote/queries/me";
+import PreAppContext from "../../preAppContext";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 
 import { MaterialReactTable } from "material-react-table";

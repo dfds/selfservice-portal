@@ -1,12 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import PreAppContext from "@/preAppContext";
 
 const sortByName = (list) => {
   list.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export function useCapabilities() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "list"],
     queryFn: async () =>
@@ -14,7 +16,7 @@ export function useCapabilities() {
         method: "GET",
         urlSegments: ["capabilities"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => {
       let list = data.items || [];
@@ -28,6 +30,7 @@ export function useCapabilities() {
 }
 
 export function useCapability(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "details", id],
     queryFn: async () =>
@@ -35,7 +38,7 @@ export function useCapability(id: string) {
         method: "GET",
         urlSegments: ["capabilities", id],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     staleTime: 30000,
   });
@@ -44,13 +47,14 @@ export function useCapability(id: string) {
 }
 
 export function useCapabilityAdd() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities"],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -59,6 +63,7 @@ export function useCapabilityAdd() {
 
 export function useCapabilityMetadata(capabilityDefinition: any) {
   const link = capabilityDefinition?._links;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["capabilities", "metadata", capabilityDefinition?.id],
@@ -67,7 +72,7 @@ export function useCapabilityMetadata(capabilityDefinition: any) {
         method: "GET",
         urlSegments: [link.metadata.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: link != null,
   });
@@ -76,13 +81,14 @@ export function useCapabilityMetadata(capabilityDefinition: any) {
 }
 
 export function useUpdateCapabilityMetadata() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links.metadata.href],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -90,6 +96,7 @@ export function useUpdateCapabilityMetadata() {
 }
 
 export function useUpdateRequiredCapabilityMetadata() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -98,7 +105,7 @@ export function useUpdateRequiredCapabilityMetadata() {
           data.capabilityDefinition?._links.setRequiredMetadata.href,
         ],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -106,13 +113,14 @@ export function useUpdateRequiredCapabilityMetadata() {
 }
 
 export function useLeaveCapability() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links?.leaveCapability.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -121,6 +129,7 @@ export function useLeaveCapability() {
 
 export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["capabilities", "members", "detailed", capabilityDefinition?.id],
@@ -129,7 +138,7 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       });
 
       let resps = await Promise.all(
@@ -160,6 +169,7 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
 
 export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: [
@@ -173,7 +183,7 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       });
 
       let resps = await Promise.all(
@@ -199,24 +209,6 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
 
       return resps;
     },
-    enabled: !!link,
-  });
-
-  return query;
-}
-
-export function useCapabilityMembers(capabilityDefinition: any) {
-  const link = capabilityDefinition?._links?.members;
-
-  const query = useQuery({
-    queryKey: ["capabilities", "members", capabilityDefinition?.id],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: [link.href],
-        payload: null,
-        isCloudEngineerEnabled: true,
-      }),
     enabled: !!link,
   });
 
@@ -251,6 +243,7 @@ export function useUserProfilePicture(upn: string) {
 }
 
 export function useCapabilityInvitees() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -261,39 +254,7 @@ export function useCapabilityInvitees() {
           "invitations",
         ],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useCapabilityClaims(capabilityDefinition: any) {
-  const link = capabilityDefinition?._links.claims.href;
-
-  const query = useQuery({
-    queryKey: ["capabilities", "claims", capabilityDefinition?.id],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: [link],
-        payload: null,
-        isCloudEngineerEnabled: true,
-      }),
-    enabled: link != null,
-  });
-
-  return query;
-}
-
-export function useAddCapabilityClaim() {
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.link.href],
-        payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -301,6 +262,7 @@ export function useAddCapabilityClaim() {
 }
 
 export function useCapabilitiesMyInvitations(link: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["capabilities", "invitations", "my"],
     queryFn: async () =>
@@ -308,7 +270,7 @@ export function useCapabilitiesMyInvitations(link: string) {
         method: "GET",
         urlSegments: [link],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: link != null,
   });
@@ -316,28 +278,30 @@ export function useCapabilitiesMyInvitations(link: string) {
   return query;
 }
 
-export function useCapabilitiesDeclineInvitation(link: string) {
+export function useCapabilitiesDeclineInvitation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.link],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
   return mutation;
 }
 
-export function useCapabilitiesAcceptInvitation(link: string) {
+export function useCapabilitiesAcceptInvitation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.link],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
