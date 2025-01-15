@@ -57,7 +57,9 @@ export async function getUsers(filterString) {
       filterString,
     )}') and mail ge '!' or startswith(mail, '${encodeURIComponent(
       filterString,
-    )}') and mail ge '!'`,
+    )}') and mail ge '!' or startswith(displayName, '${encodeURIComponent(
+      filterString,
+    )}') and userPrincipalName ge '!'`,
     accessToken,
   );
   const users = await adUsers.json();

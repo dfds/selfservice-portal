@@ -13,9 +13,9 @@ export default function DropDownInvitationsMenu({
             <div
               key={item.id}
               className={style.item}
-              onClick={() => addInviteeFromDropDown(item.mail)}
+              onClick={() => addInviteeFromDropDown(item.mail ? item.mail : item.userPrincipalName)}
             >
-              {item.displayName} {item.mail}
+              {item.displayName} {item.mail ? item.mail : item.userPrincipalName }
             </div>
           ))}
         </div>
