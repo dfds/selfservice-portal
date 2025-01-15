@@ -63,18 +63,6 @@ export default function GlobalMenu() {
     },
   ];
 
-  if (isCloudEngineer) {
-    navLinks.push({
-      title: "Criticality",
-      url: "/capabilities/criticality",
-    });
-
-    navLinks.push({
-      title: "Assessments",
-      url: "/capabilities/selfassessments",
-    });
-  }
-
   const toggleCloudEngineer = () => {
     setIsEnabledCloudEngineer((prev) => !prev);
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
@@ -119,13 +107,33 @@ export default function GlobalMenu() {
                           />
                         </AppBarListItem>
                         {isCloudEngineer ? (
-                          <Switch
-                            style={{ marginLeft: "1rem" }}
-                            checked={isEnabledCloudEngineer}
-                            onChange={toggleCloudEngineer}
-                          >
-                            Cloud Engineer
-                          </Switch>
+                          <>
+                            <Switch
+                              style={{ marginLeft: "1rem" }}
+                              checked={isEnabledCloudEngineer}
+                              onChange={toggleCloudEngineer}
+                            >
+                              Cloud Engineer
+                            </Switch>
+                            <Link
+                              to="capabilities/criticality"
+                              style={{ textDecoration: "none" }}
+                              key="self-assessment-criticality"
+                            >
+                              <AppBarListItem clickable>
+                                <ListText>Criticality Overview</ListText>
+                              </AppBarListItem>
+                            </Link>
+                            <Link
+                              to="capabilities/selfassessments"
+                              style={{ textDecoration: "none" }}
+                              key="self-assessment-management"
+                            >
+                              <AppBarListItem clickable>
+                                <ListText>Self Assessment Management</ListText>
+                              </AppBarListItem>
+                            </Link>
+                          </>
                         ) : (
                           <></>
                         )}
