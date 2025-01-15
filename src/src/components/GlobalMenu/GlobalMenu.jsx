@@ -15,6 +15,7 @@ import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 import { Switch } from "@dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 function checkIfCloudEngineer(roles) {
   const regex = /^\s*cloud\.engineer\s*$/i;
@@ -23,6 +24,7 @@ function checkIfCloudEngineer(roles) {
 }
 
 export default function GlobalMenu() {
+  const queryClient = useQueryClient();
   const { user } = useContext(AppContext);
   const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
     useContext(PreAppContext);
@@ -75,6 +77,9 @@ export default function GlobalMenu() {
 
   const toggleCloudEngineer = () => {
     setIsEnabledCloudEngineer((prev) => !prev);
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   };
 
   return (

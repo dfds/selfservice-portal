@@ -1,11 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import { useContext } from "react";
+import PreAppContext from "@/preAppContext";
 
 const sortByName = (list) => {
   list.sort((a, b) => a.shortName.localeCompare(b.shortName));
 };
 
 export function useSelfAssessments() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["selfassessments", "list"],
     queryFn: async () =>
@@ -13,7 +16,7 @@ export function useSelfAssessments() {
         method: "GET",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
     select: (data: any) => {
       let list = data || [];
@@ -27,18 +30,19 @@ export function useSelfAssessments() {
 }
 
 export function useSelfAssessmentActivate() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
-    mutationFn: async (id: string) =>
+    mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [
           "capabilities",
           "self-assessment-options",
-          id,
+          data.id,
           "activate",
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -46,18 +50,19 @@ export function useSelfAssessmentActivate() {
 }
 
 export function useSelfAssessmentDeactivate() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (data: any) => {
       ssuRequest({
         method: "POST",
         urlSegments: [
           "capabilities",
           "self-assessment-options",
-          id,
+          data.id,
           "deactivate",
         ],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       });
     },
   });
@@ -66,13 +71,14 @@ export function useSelfAssessmentDeactivate() {
 }
 
 export function useSelfAssessmentAdd() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 

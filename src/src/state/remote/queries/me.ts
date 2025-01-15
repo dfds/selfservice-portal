@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
 
 export function useMe() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["me"],
     queryFn: async () =>
@@ -9,7 +12,7 @@ export function useMe() {
         method: "GET",
         urlSegments: ["me"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     staleTime: 30000,
   });
@@ -18,6 +21,7 @@ export function useMe() {
 }
 
 export function useUpdateMyPersonalInformation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -27,7 +31,7 @@ export function useUpdateMyPersonalInformation() {
           name: data.user.name,
           email: data.user.email,
         },
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -35,13 +39,14 @@ export function useUpdateMyPersonalInformation() {
 }
 
 export function useRegisterMyVisit() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.profileDefinition?._links?.portalVisits.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
