@@ -107,14 +107,18 @@ export default function GlobalMenu() {
                           />
                         </AppBarListItem>
                         {isCloudEngineer ? (
+                          <Switch
+                            style={{ marginLeft: "1rem" }}
+                            checked={isEnabledCloudEngineer}
+                            onChange={toggleCloudEngineer}
+                          >
+                            Cloud Engineer
+                          </Switch>
+                        ) : (
+                          <></>
+                        )}
+                        {isEnabledCloudEngineer ? (
                           <>
-                            <Switch
-                              style={{ marginLeft: "1rem" }}
-                              checked={isEnabledCloudEngineer}
-                              onChange={toggleCloudEngineer}
-                            >
-                              Cloud Engineer
-                            </Switch>
                             <Link
                               to="capabilities/criticality"
                               style={{ textDecoration: "none" }}
