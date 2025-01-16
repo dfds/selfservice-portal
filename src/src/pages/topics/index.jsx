@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
 import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import PreAppContext from "@/preAppContext";
 
 function Topics() {
   const { selfServiceApiClient } = useContext(AppContext);

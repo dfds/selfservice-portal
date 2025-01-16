@@ -15,6 +15,7 @@ import AppContext from "AppContext";
 import styles from "./GlobalMenu.module.css";
 import { Switch } from "@dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 function checkIfCloudEngineer(roles) {
   const regex = /^\s*cloud\.engineer\s*$/i;
@@ -23,6 +24,7 @@ function checkIfCloudEngineer(roles) {
 }
 
 export default function GlobalMenu() {
+  const queryClient = useQueryClient();
   const { user } = useContext(AppContext);
   const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
     useContext(PreAppContext);
@@ -61,20 +63,11 @@ export default function GlobalMenu() {
     },
   ];
 
-  if (isCloudEngineer) {
-    navLinks.push({
-      title: "Criticality",
-      url: "/capabilities/criticality",
-    });
-
-    navLinks.push({
-      title: "Assessments",
-      url: "/capabilities/selfassessments",
-    });
-  }
-
   const toggleCloudEngineer = () => {
     setIsEnabledCloudEngineer((prev) => !prev);
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+    queryClient.invalidateQueries({ queryKey: ["me"] });
   };
 
   return (
@@ -121,6 +114,30 @@ export default function GlobalMenu() {
                           >
                             Cloud Engineer
                           </Switch>
+                        ) : (
+                          <></>
+                        )}
+                        {isEnabledCloudEngineer ? (
+                          <>
+                            <Link
+                              to="capabilities/criticality"
+                              style={{ textDecoration: "none" }}
+                              key="self-assessment-criticality"
+                            >
+                              <AppBarListItem clickable>
+                                <ListText>Criticality Overview</ListText>
+                              </AppBarListItem>
+                            </Link>
+                            <Link
+                              to="capabilities/selfassessments"
+                              style={{ textDecoration: "none" }}
+                              key="self-assessment-management"
+                            >
+                              <AppBarListItem clickable>
+                                <ListText>Self Assessment Management</ListText>
+                              </AppBarListItem>
+                            </Link>
+                          </>
                         ) : (
                           <></>
                         )}

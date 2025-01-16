@@ -1,9 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
 
 export function useKafkaClustersAccessList(capabilityDefinition) {
   const link = capabilityDefinition?._links?.clusters;
-
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: [
       "capabilities",
@@ -16,7 +18,7 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
         method: "GET",
         urlSegments: [link.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => data.items,
     enabled: link != null,
@@ -26,6 +28,7 @@ export function useKafkaClustersAccessList(capabilityDefinition) {
 }
 
 export function useKafkaClusters() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["kafka", "clusters"],
     queryFn: async () =>
@@ -33,7 +36,7 @@ export function useKafkaClusters() {
         method: "GET",
         urlSegments: ["kafkaclusters"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => data.items,
   });
@@ -42,6 +45,7 @@ export function useKafkaClusters() {
 }
 
 export function usePublicTopics() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["public-kafkatopics"],
     queryFn: async () =>
@@ -49,7 +53,7 @@ export function usePublicTopics() {
         method: "GET",
         urlSegments: ["kafkatopics"],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
     select: (data: any) => {
       const finalTopics = (data.items || []).map((topic) => {
@@ -69,13 +73,14 @@ export function usePublicTopics() {
 }
 
 export function useUpdateKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: data.topicDefinition?._links?.updateDescription.method,
         urlSegments: [data.topicDefinition?._links?.updateDescription.href],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -83,13 +88,14 @@ export function useUpdateKafkaTopic() {
 }
 
 export function useDeleteKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "DELETE",
         urlSegments: [data.topicDefinition?._links?.self?.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -97,13 +103,14 @@ export function useDeleteKafkaTopic() {
 }
 
 export function useAddKafkaTopic() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.clusterDefinition?._links?.createTopic.href],
         payload: data.payload,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 
@@ -111,13 +118,14 @@ export function useAddKafkaTopic() {
 }
 
 export function useRequestAccessToCluster() {
+  const { isEnabledCloudEngineer } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.clusterDefinition?._links?.requestAccess.href],
         payload: null,
-        isCloudEngineerEnabled: true,
+        isCloudEngineerEnabled: isEnabledCloudEngineer,
       }),
   });
 

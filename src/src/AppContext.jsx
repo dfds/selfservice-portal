@@ -76,12 +76,18 @@ function AppProvider({ children }) {
   const selfServiceApiClient = useMemo(
     () =>
       new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
-    [handleError],
+    [handleError, isEnabledCloudEngineer],
   );
   const metricsWrapper = useMemo(
     () => new MetricsWrapper(selfServiceApiClient),
     [selfServiceApiClient],
   );
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["me"] });
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["selfassessments", "list"] });
+  }, [selfServiceApiClient]);
 
   const capabilityAdd = useCapabilityAdd();
   const createEcrRepository = useCreateEcrRepository();
