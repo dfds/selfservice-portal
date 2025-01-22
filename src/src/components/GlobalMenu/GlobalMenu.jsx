@@ -11,7 +11,7 @@ import {
 } from "@dfds-ui/react-components";
 import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import styles from "./GlobalMenu.module.css";
 import { Switch } from "@dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
@@ -26,10 +26,16 @@ function checkIfCloudEngineer(roles) {
 export default function GlobalMenu() {
   const queryClient = useQueryClient();
   const { user } = useContext(AppContext);
-  const { isEnabledCloudEngineer, setIsEnabledCloudEngineer } =
+  const { isCloudEngineerEnabled, setIsCloudEngineerEnabled } =
     useContext(PreAppContext);
-
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
+
+  useEffect(() => {
+    if (user && user.isAuthenticated && isCloudEngineer) {
+      setIsCloudEngineerEnabled(true);
+    }
+  }, [isCloudEngineer]);
+
   useEffect(() => {
     if (user && user.isAuthenticated) {
       setIsCloudEngineer(checkIfCloudEngineer(user.roles));
@@ -64,7 +70,7 @@ export default function GlobalMenu() {
   ];
 
   const toggleCloudEngineer = () => {
-    setIsEnabledCloudEngineer((prev) => !prev);
+    setIsCloudEngineerEnabled((prev) => !prev);
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
     queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
     queryClient.invalidateQueries({ queryKey: ["me"] });
@@ -109,7 +115,7 @@ export default function GlobalMenu() {
                         {isCloudEngineer ? (
                           <Switch
                             style={{ marginLeft: "1rem" }}
-                            checked={isEnabledCloudEngineer}
+                            checked={isCloudEngineerEnabled}
                             onChange={toggleCloudEngineer}
                           >
                             Cloud Engineer
@@ -117,7 +123,7 @@ export default function GlobalMenu() {
                         ) : (
                           <></>
                         )}
-                        {isEnabledCloudEngineer ? (
+                        {isCloudEngineerEnabled ? (
                           <>
                             <Link
                               to="capabilities/criticality"

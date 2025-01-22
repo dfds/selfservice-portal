@@ -78,7 +78,7 @@ export default function MembershipApplications() {
   const { myProfile, checkIfCloudEngineer, user } = useContext(AppContext);
   const [applications, setApplications] = useState([]);
   const [isCloudEngineer, setIsCloudEngineer] = useState(false);
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   useEffect(() => {
     if (user && user.isAuthenticated) {
@@ -194,7 +194,7 @@ export default function MembershipApplications() {
                     </Button>
                   )}
                 </TableDataCell>
-                {isCloudEngineer && isEnabledCloudEngineer ? (
+                {isCloudEngineer && isCloudEngineerEnabled ? (
                   <TableDataCell style={{ minWidth: "6rem" }}>
                     <Button
                       variation="danger"

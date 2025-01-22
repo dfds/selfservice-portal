@@ -1,13 +1,13 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 const PreAppContext = createContext();
 
 function PreAppProvider({ children }) {
-  const [isEnabledCloudEngineer, setIsEnabledCloudEngineer] = useState(true);
+  const [isCloudEngineerEnabled, setIsCloudEngineerEnabled] = useState(false);
 
   return (
     <PreAppContext.Provider
-      value={{ isEnabledCloudEngineer, setIsEnabledCloudEngineer }}
+      value={{ isCloudEngineerEnabled, setIsCloudEngineerEnabled }}
     >
       {children}
     </PreAppContext.Provider>

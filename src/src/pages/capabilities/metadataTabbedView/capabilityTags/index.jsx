@@ -13,7 +13,7 @@ export function CapabilityTagViewer() {
   const { metadata, links, details, inProgressMetadata } = useContext(
     SelectedCapabilityContext,
   );
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const updateRequiredCapabilityMetadata =
     useUpdateRequiredCapabilityMetadata();
   const { hasJsonSchemaProperties } = useContext(JsonSchemaContext);
@@ -54,7 +54,7 @@ export function CapabilityTagViewer() {
       payload: {
         jsonMetadata: mergedMetaData,
       },
-      isEnabledCloudEngineer: isEnabledCloudEngineer,
+      isCloudEngineerEnabled: isCloudEngineerEnabled,
     });
     setIsDirty(false);
   };

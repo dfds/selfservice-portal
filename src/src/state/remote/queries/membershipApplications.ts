@@ -8,7 +8,7 @@ const sortByCapabilityId = (list) => {
 };
 
 export function useMembershipApplications() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["membershipapplications/eligible-for-approval"],
     queryFn: async () =>
@@ -16,7 +16,7 @@ export function useMembershipApplications() {
         method: "GET",
         urlSegments: ["membershipapplications/eligible-for-approval"],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => {
       let list = data.items || [];
@@ -29,7 +29,7 @@ export function useMembershipApplications() {
 }
 
 export function useSubmitMembershipApplication() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -38,7 +38,7 @@ export function useSubmitMembershipApplication() {
           data.capabilityDefinition?._links?.membershipApplications?.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -46,14 +46,14 @@ export function useSubmitMembershipApplication() {
 }
 
 export function useBypassMembershipApproval() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: [data.capabilityDefinition?._links?.joinCapability.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -61,7 +61,7 @@ export function useBypassMembershipApproval() {
 }
 
 export function useSubmitMembershipApplicationApproval() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -70,7 +70,7 @@ export function useSubmitMembershipApplicationApproval() {
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -78,7 +78,7 @@ export function useSubmitMembershipApplicationApproval() {
 }
 
 export function useDeleteMembershipApplicationApproval() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -87,7 +87,7 @@ export function useDeleteMembershipApplicationApproval() {
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 

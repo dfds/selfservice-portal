@@ -5,7 +5,7 @@ import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilityAdd } from "@/state/remote/queries/capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
-import PreAppContext from "preAppContext";
+import PreAppContext from "./preAppContext";
 import { useSelector } from "react-redux";
 import {
   useUpdateMyPersonalInformation,
@@ -66,7 +66,7 @@ function AppProvider({ children }) {
   const [myProfile, setMyProfile] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const { data: me, isFetched: isMeFetched } = useMe();
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -75,8 +75,8 @@ function AppProvider({ children }) {
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
     () =>
-      new ApiClient.SelfServiceApiClient(handleError, isEnabledCloudEngineer),
-    [handleError, isEnabledCloudEngineer],
+      new ApiClient.SelfServiceApiClient(handleError, isCloudEngineerEnabled),
+    [handleError, isCloudEngineerEnabled],
   );
   const metricsWrapper = useMemo(
     () => new MetricsWrapper(selfServiceApiClient),
