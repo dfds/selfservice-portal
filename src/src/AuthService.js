@@ -15,14 +15,14 @@ export function callApi(
   accessToken,
   method = "GET",
   payload = null,
-  isEnabledCloudEngineer = false,
+  isCloudEngineerEnabled = false,
 ) {
   const headers = new Headers();
 
   const bearer = `Bearer ${accessToken}`;
   headers.append("Authorization", bearer);
 
-  if (!isEnabledCloudEngineer) {
+  if (!isCloudEngineerEnabled) {
     headers.append("x-selfservice-permissions", "1");
   }
 

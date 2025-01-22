@@ -10,7 +10,7 @@ import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities
 import PreAppContext from "@/preAppContext";
 
 export function MetadataTabbedView() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
 
@@ -40,7 +40,7 @@ export function MetadataTabbedView() {
       payload: {
         jsonMetadata: currentMetadataObject,
       },
-      isEnabledCloudEngineer: isEnabledCloudEngineer,
+      isCloudEngineerEnabled: isCloudEngineerEnabled,
     });
     setIsDirty(false);
   };

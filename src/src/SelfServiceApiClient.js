@@ -1,8 +1,8 @@
 import { callApi, getSelfServiceAccessToken } from "./AuthService";
 
 export class SelfServiceApiClient {
-  constructor(handleError, isEnabledCloudEngineer) {
-    this.isEnabledCloudEngineer = isEnabledCloudEngineer;
+  constructor(handleError, isCloudEngineerEnabled) {
+    this.isCloudEngineerEnabled = isCloudEngineerEnabled;
   }
 
   logResponseErrorNotOk = (requestType, url, response) => {
@@ -86,7 +86,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
     const { items } = await response.json();
 
@@ -111,7 +111,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
     const items = await response.json();
 
@@ -129,7 +129,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -168,7 +168,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -210,7 +210,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       payload,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -249,7 +249,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -266,7 +266,7 @@ export class SelfServiceApiClient {
       accessToken,
       method,
       payload,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -324,7 +324,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -344,7 +344,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
     const { items } = await response.json();
 
@@ -374,7 +374,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -403,7 +403,7 @@ export class SelfServiceApiClient {
       accessToken,
       "GET",
       null,
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -435,7 +435,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
@@ -469,7 +469,7 @@ export class SelfServiceApiClient {
       accessToken,
       "POST",
       {},
-      this.isEnabledCloudEngineer,
+      this.isCloudEngineerEnabled,
     );
 
     if (!response.ok) {
