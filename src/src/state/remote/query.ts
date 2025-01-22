@@ -58,7 +58,7 @@ export async function msGraphRequest(rq: MsGraphRequestQuery) {
   return httpResponse;
 }
 
-export function useSsuRequestLink(link: any, isEnabledCloudEngineer: boolean) {
+export function useSsuRequestLink(link: any, isCloudEngineerEnabled: boolean) {
   const href = link?.href;
 
   const query = useQuery({
@@ -68,7 +68,7 @@ export function useSsuRequestLink(link: any, isEnabledCloudEngineer: boolean) {
         method: "GET",
         urlSegments: [href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     enabled: !!href,
   });

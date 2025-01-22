@@ -8,7 +8,7 @@ const sortByName = (list) => {
 };
 
 export function useSelfAssessments() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["selfassessments", "list"],
     queryFn: async () =>
@@ -16,7 +16,7 @@ export function useSelfAssessments() {
         method: "GET",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
     select: (data: any) => {
       let list = data || [];
@@ -30,7 +30,7 @@ export function useSelfAssessments() {
 }
 
 export function useSelfAssessmentActivate() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
@@ -42,7 +42,7 @@ export function useSelfAssessmentActivate() {
           "activate",
         ],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -50,7 +50,7 @@ export function useSelfAssessmentActivate() {
 }
 
 export function useSelfAssessmentDeactivate() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) => {
       ssuRequest({
@@ -62,7 +62,7 @@ export function useSelfAssessmentDeactivate() {
           "deactivate",
         ],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       });
     },
   });
@@ -71,14 +71,14 @@ export function useSelfAssessmentDeactivate() {
 }
 
 export function useSelfAssessmentAdd() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities", "self-assessment-options"],
         payload: data.payload,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 

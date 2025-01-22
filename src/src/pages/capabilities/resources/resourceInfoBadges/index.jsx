@@ -306,7 +306,7 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://wiki.dfds.cloud/en/architecture/adrs/which-cloud"
+              href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
             >
               the DFDS Cloud Usage Guidelines
             </a>

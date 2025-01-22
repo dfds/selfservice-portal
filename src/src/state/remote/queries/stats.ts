@@ -4,7 +4,7 @@ import PreAppContext from "@/preAppContext";
 import { useContext } from "react";
 
 export function useStats() {
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const query = useQuery({
     queryKey: ["stats"],
     queryFn: async () =>
@@ -12,7 +12,7 @@ export function useStats() {
         method: "GET",
         urlSegments: ["stats"],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
@@ -21,7 +21,7 @@ export function useStats() {
 
 export function useTopVisitors(profileDefinition: any) {
   const visitorsLink = profileDefinition?._links?.topVisitors;
-  const { isEnabledCloudEngineer } = useContext(PreAppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
     queryKey: ["topVisitors"],
@@ -30,7 +30,7 @@ export function useTopVisitors(profileDefinition: any) {
         method: "GET",
         urlSegments: [visitorsLink.href],
         payload: null,
-        isCloudEngineerEnabled: isEnabledCloudEngineer,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
 
