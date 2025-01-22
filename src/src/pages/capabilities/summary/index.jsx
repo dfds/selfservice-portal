@@ -10,6 +10,7 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
+import PreAppContext from "@/preAppContext";
 
 function JoinDialog({
   name,
@@ -19,6 +20,7 @@ function JoinDialog({
   canBypassMembershipApplications,
   onBypassClicked,
 }) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const actions = (
     <>
       <ModalAction
@@ -63,7 +65,7 @@ function JoinDialog({
             been approved by existing members.
           </i>
         </Text>
-        {canBypassMembershipApplications && (
+        {canBypassMembershipApplications && isCloudEngineerEnabled && (
           <Button
             variation="danger"
             style={{ position: "absolute", bottom: "1rem" }}
