@@ -16,6 +16,7 @@ import styles from "./GlobalMenu.module.css";
 import { Switch } from "@dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
 import { useQueryClient } from "@tanstack/react-query";
+import SelectedCapabilityContext from "@/pages/capabilities/SelectedCapabilityContext";
 
 function checkIfCloudEngineer(roles) {
   const regex = /^\s*cloud\.engineer\s*$/i;
@@ -69,12 +70,25 @@ export default function GlobalMenu() {
     },
   ];
 
-  const toggleCloudEngineer = () => {
+  function sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), duration);
+    });
+  }
+  function toggleCloudEngineer() {
     setIsCloudEngineerEnabled((prev) => !prev);
-    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
-    queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
-    queryClient.invalidateQueries({ queryKey: ["me"] });
-  };
+  }
+
+  useEffect(() => {
+    async function updateData() {
+      await sleep(202);
+      queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+      queryClient.invalidateQueries({ queryKey: ["capabilities", "details"] });
+      queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    }
+    updateData();
+  }, [isCloudEngineerEnabled]);
 
   return (
     <>
