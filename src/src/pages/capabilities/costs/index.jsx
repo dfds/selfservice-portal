@@ -8,25 +8,17 @@ import { Spinner } from "@dfds-ui/react-components";
 import styles from "./costs.module.css";
 import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
 import { Button } from "@dfds-ui/react-components";
+import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 
 export default function Costs({ costCentre }) {
-  const { appStatus, metricsWrapper } = useContext(AppContext);
-
+  const { query, getCostsForCapability } = useCapabilitiesCost();
   const { id } = useParams();
   const [showCostsSpinner, setShowCostsSpinner] = useState(true);
-  const isLoading = !appStatus.hasLoadedMyCapabilitiesCosts;
   const dayWindows = [7, 14, 30];
 
   useEffect(() => {
-    // Simulate fetching data from an API
-    setTimeout(() => {
-      setShowCostsSpinner(false);
-    }, 3000);
-  }, []);
-
-  useEffect(() => {
-    setShowCostsSpinner(isLoading);
-  }, [isLoading]);
+    setShowCostsSpinner(!query.isFetched);
+  }, [query.isFetched]);
 
   return (
     <PageSection headline="Costs">
@@ -59,14 +51,14 @@ export default function Costs({ costCentre }) {
 
       <div className={styles.container}>
         {dayWindows.map((days, index) => {
-          const dataValue = metricsWrapper.getCostsForCapability(id, days);
+          const dataValue = getCostsForCapability(id, days);
 
           return (
             <div key={index} className={styles.column} align="center">
               <Text styledAs={"smallHeadline"}>{days} Days</Text>
               {showCostsSpinner ? (
                 <Spinner instant />
-              ) : isLoading ? (
+              ) : !query.isFetched ? (
                 <Text styledAs="caption" as={"div"}>
                   No data available
                 </Text>
