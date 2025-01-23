@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
@@ -10,7 +10,6 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
-import PreAppContext from "@/preAppContext";
 
 function JoinDialog({
   name,
@@ -20,7 +19,6 @@ function JoinDialog({
   canBypassMembershipApplications,
   onBypassClicked,
 }) {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const actions = (
     <>
       <ModalAction
@@ -65,7 +63,7 @@ function JoinDialog({
             been approved by existing members.
           </i>
         </Text>
-        {canBypassMembershipApplications && isCloudEngineerEnabled && (
+        {canBypassMembershipApplications && (
           <Button
             variation="danger"
             style={{ position: "absolute", bottom: "1rem" }}
@@ -139,10 +137,16 @@ export default function Summary() {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
-  const canJoin = (links?.membershipApplications?.allow || []).includes("POST");
-  const canLeave = (links?.leaveCapability?.allow || []).includes("POST");
-  const canBypass = (links?.joinCapability?.allow || []).includes("POST");
+  var canJoin = (links?.membershipApplications?.allow || []).includes("POST");
+  var canLeave = (links?.leaveCapability?.allow || []).includes("POST");
+  var canBypass = (links?.joinCapability?.allow || []).includes("POST");
   const { reloadUser } = useContext(AppContext);
+
+  useEffect(() => {
+    canJoin = (links?.membershipApplications?.allow || []).includes("POST");
+    canLeave = (links?.leaveCapability?.allow || []).includes("POST");
+    canBypass = (links?.joinCapability?.allow || []).includes("POST");
+  }, [links])
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
