@@ -56,3 +56,83 @@ export function useCapabilitiesCost() {
     getCostsForCapability: getCostsForCapability,
   };
 }
+
+export function useCapabilitiesAwsResources() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const query = useQuery({
+    queryKey: ["capabilities", "metrics", "aws-resources", "list"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["metrics", "my-capabilities-resources"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+    select: (data: any) => {
+      let mapped = new Map();
+      for (let val of data.capabilityAwsResourceCounts) {
+        mapped.set(val.capabilityId, val.awsResourceCounts);
+      }
+      return mapped;
+    },
+    staleTime: 60000,
+  });
+
+  var getAwsResourcesTotalCountForCapability = (capabilityId) => {
+    if (!query.isFetched) {
+      return 0;
+    }
+    const counts = query.data.get(capabilityId);
+    if (counts === undefined) {
+      return 0;
+    }
+    let total = 0;
+    // eslint-disable-next-line no-unused-vars
+    for (let resource of counts) {
+      total += resource.resourceCount;
+    }
+    return total;
+  };
+
+  var getAwsResourceCountsForCapability = (capabilityId) => {
+    if (!query.isFetched) {
+      return new Map();
+    }
+    const counts = query.data.get(capabilityId);
+    if (counts === undefined) {
+      return new Map();
+    }
+
+    return counts;
+  };
+
+  var getAwsResourceCountsForCapabilityAndType = (
+    capabilityId,
+    resourceType,
+  ) => {
+    if (!query.isFetched) {
+      return 0;
+    }
+    const counts = query.data.get(capabilityId);
+    if (counts === undefined) {
+      return 0;
+    }
+    let total = 0;
+    // eslint-disable-next-line no-unused-vars
+    for (let resource of counts) {
+      if (resource.resourceId.includes(resourceType))
+        total += resource.resourceCount;
+    }
+    return total;
+  };
+
+  return {
+    query: query,
+    getAwsResourcesTotalCountForCapability:
+      getAwsResourcesTotalCountForCapability,
+    getAwsResourceCountsForCapability: getAwsResourceCountsForCapability,
+    getAwsResourceCountsForCapabilityAndType:
+      getAwsResourceCountsForCapabilityAndType,
+  };
+}
