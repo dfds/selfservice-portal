@@ -6,6 +6,7 @@ import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useState } from "react";
 import { Text } from "@dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
+import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdataapi";
 
 export function InlineAwsCountSummary({ data }) {
   return (
@@ -21,8 +22,12 @@ export function InlineAwsCountSummary({ data }) {
 export function DetailedAwsCountSummary({ capabilityId }) {
   const { metricsWrapper } = useContext(AppContext);
   const [showResourcesWindow, setShowResourcesWindow] = useState(false);
-  const count =
-    metricsWrapper.getAwsResourcesTotalCountForCapability(capabilityId);
+  const {
+    query,
+    getAwsResourcesTotalCountForCapability,
+    getAwsResourceCountsForCapabilityAndType,
+  } = useCapabilitiesAwsResources();
+  const count = getAwsResourcesTotalCountForCapability(capabilityId);
 
   const interests = [
     ["RDS", "Databases", "aws_rds_db_total"],
@@ -38,7 +43,7 @@ export function DetailedAwsCountSummary({ capabilityId }) {
   let noteworthySubtitles = new Map();
 
   for (let [title, subtitle, resourceName] of interests) {
-    var interestCount = metricsWrapper.getAwsResourceCountsForCapabilityAndType(
+    var interestCount = getAwsResourceCountsForCapabilityAndType(
       capabilityId,
       resourceName,
     );
@@ -102,10 +107,13 @@ function AwsCountCard({ title, subtitle, count }) {
 }
 
 function ResourcesWindow({ onCloseRequested, capabilityId }) {
-  const { metricsWrapper } = useContext(AppContext);
-  const counts = metricsWrapper.getAwsResourceCountsForCapability(capabilityId);
+  const { getAwsResourceCountsForCapability } = useCapabilitiesAwsResources();
+  const counts = getAwsResourceCountsForCapability(capabilityId);
 
-  const countsArray = [...counts].map(([name, count]) => ({ name, count }));
+  const countsArray = [...counts].map((val) => ({
+    name: val.resourceId,
+    count: val.resourceCount,
+  }));
   const actions = (
     <>
       <ModalAction
