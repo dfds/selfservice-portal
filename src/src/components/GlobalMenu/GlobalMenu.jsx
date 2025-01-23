@@ -70,15 +70,14 @@ export default function GlobalMenu() {
     },
   ];
 
-
   function sleep(duration) {
     return new Promise((resolve) => {
       setTimeout(() => resolve(), duration);
     });
   }
   function toggleCloudEngineer() {
-    setIsCloudEngineerEnabled((prev) => !prev);  
-  };
+    setIsCloudEngineerEnabled((prev) => !prev);
+  }
 
   useEffect(() => {
     async function updateData() {
@@ -89,7 +88,6 @@ export default function GlobalMenu() {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     }
     updateData();
-    
   }, [isCloudEngineerEnabled]);
 
   return (

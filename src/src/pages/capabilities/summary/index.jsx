@@ -146,7 +146,7 @@ export default function Summary() {
     canJoin = (links?.membershipApplications?.allow || []).includes("POST");
     canLeave = (links?.leaveCapability?.allow || []).includes("POST");
     canBypass = (links?.joinCapability?.allow || []).includes("POST");
-  }, [links])
+  }, [links]);
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
