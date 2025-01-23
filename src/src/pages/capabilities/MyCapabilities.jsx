@@ -5,22 +5,34 @@ import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-//import CapabilityCostSummary from "components/BasicCapabilityCost";
+import CapabilityCostSummary from "components/BasicCapabilityCost";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import { useMe } from "@/state/remote/queries/me";
+import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 
 export default function MyCapabilities() {
   const { truncateString } = useContext(AppContext);
   const { isLoading, data: meData } = useMe();
   const [myCapabilities, setMyCapabilities] = useState(null);
+  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
 
   useEffect(() => {
     if (meData && meData.capabilities) {
-      setMyCapabilities(meData.capabilities);
+      if (costsQuery.isFetched) {
+        const caps = meData.capabilities.map((cap) => {
+          return {
+            ...cap,
+            costs: getCostsForCapability(cap.id, 7),
+          };
+        });
+        setMyCapabilities(caps);
+      } else {
+        setMyCapabilities(meData.capabilities);
+      }
     }
-  }, [meData]);
+  }, [meData, costsQuery.isFetched]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
@@ -103,8 +115,10 @@ export default function MyCapabilities() {
           );
         },
       },
+      */
+
       {
-        accessorFn: (row) => row.id,
+        accessorFn: (row) => row.costs,
         header: "Costs",
         size: 150,
         enableColumnFilterModes: false,
@@ -115,19 +129,14 @@ export default function MyCapabilities() {
           align: "right",
         },
         Cell: ({ cell }) => {
+          let data = cell.getValue() != null ? cell.getValue() : [];
           return (
             <div className={styles.costs}>
-              <CapabilityCostSummary
-                data={metricsWrapper.getCostsForCapability(
-                  cell.getValue().toLocaleString(),
-                  7,
-                )}
-              />
+              <CapabilityCostSummary data={data} />
             </div>
           );
         },
       },
-      */
       {
         accessorFn: (row) => row.awsAccountId,
         header: "AwsAccountId",
