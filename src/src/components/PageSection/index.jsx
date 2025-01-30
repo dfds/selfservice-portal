@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { Card, CardTitle, CardContent } from "@dfds-ui/react-components";
 import styles from "./PageSection.module.css";
 

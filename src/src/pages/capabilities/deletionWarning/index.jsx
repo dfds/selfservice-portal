@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { CardContent, ButtonStack } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { css } from "@emotion/react";

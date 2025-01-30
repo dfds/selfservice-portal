@@ -1,5 +1,5 @@
 import { H1 } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { Container, Column, DfdsLoader } from "@dfds-ui/react-components";
 import NotFound from "./NotFound";
 import styles from "./page.module.css";

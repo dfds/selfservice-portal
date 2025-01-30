@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import styles from "./Topics.module.css";
 import AppContext from "AppContext";
 import {

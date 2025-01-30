@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";

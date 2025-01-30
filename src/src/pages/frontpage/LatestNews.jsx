@@ -1,5 +1,5 @@
 import { ButtonStack, Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import AppContext from "AppContext";
 import { useContext } from "react";
 import styles from "./LatestNews.module.css";

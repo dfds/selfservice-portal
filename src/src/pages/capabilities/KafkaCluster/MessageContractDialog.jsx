@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import {
   Button,
   ButtonStack,

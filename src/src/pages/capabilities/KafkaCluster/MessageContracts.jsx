@@ -1,7 +1,7 @@
 import styles from "./MessageContract.module.css";
 import Expandable from "../../../components/Expandable";
 import Poles from "../../../components/Poles";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { SelectField } from "@dfds-ui/react-components";
 import React from "react";
 import { Divider } from "@dfds-ui/react-components/divider";

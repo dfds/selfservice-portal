@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@dfds-ui/react-components";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
-import { Modal } from "@dfds-ui/modal";
+import { Modal } from "@/components/dfds-ui/modal";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";

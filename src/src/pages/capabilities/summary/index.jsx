@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Text } from "@/components/dfds-ui/typography";
+import { Modal, ModalAction } from "@/components/dfds-ui/modal";
 import { Button, ButtonStack } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

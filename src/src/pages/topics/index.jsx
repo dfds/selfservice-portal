@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardContent,
 } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import styles from "./topic.module.css";
 import { Spinner } from "@dfds-ui/react-components";
 import { H1 } from "@dfds-ui/react-components";

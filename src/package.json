@@ -9,7 +9,6 @@
   "homepage": "",
   "dependencies": {
     "@dfds-ui/forms": "2.0.12",
-    "@dfds-ui/modal": "2.0.12",
     "@dfds-ui/react-components": "2.0.12",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -26,6 +25,7 @@
     "global": "^4.4.0",
     "jwt-decode": "^4.0.0",
     "material-react-table": "^1.14.0",
+    "npm-check-updates": "^17.1.14",
     "react": "18.2.0",
     "react-confetti": "^6.1.0",
     "react-countup": "^6.4.2",

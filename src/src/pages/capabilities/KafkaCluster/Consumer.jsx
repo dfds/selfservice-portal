@@ -1,4 +1,4 @@
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 
 export default function Consumer({ name }) {
   return (

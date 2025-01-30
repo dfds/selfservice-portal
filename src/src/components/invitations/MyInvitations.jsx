@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useContext } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { Button, Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import { MaterialReactTable } from "material-react-table";

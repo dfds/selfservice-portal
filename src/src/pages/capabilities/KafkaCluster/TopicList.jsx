@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import Topic from "./Topic";
 import { Divider } from "@dfds-ui/react-components/divider";
 

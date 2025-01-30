@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { Card, CardContent } from "@dfds-ui/react-components";
 
 export default function CommunicationChannels() {

@@ -12,7 +12,7 @@ import {
   BannerParagraph,
   Spinner,
 } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
