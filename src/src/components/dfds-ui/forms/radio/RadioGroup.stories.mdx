@@ -1,0 +1,100 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { RadioGroup } from './RadioGroup'
+import { Radio } from './Radio'
+
+<Meta title="Hydro UI/Forms/Radio/RadioGroup" lab />
+
+# RadioGroup
+
+You can group a list of `Radio` components using the `RadioGroup` component.
+
+```jsx
+import { Radio, RadioGroup } from '@/components/dfds-ui/forms'
+```
+
+<Props of={RadioGroup} />
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story name="Sizes">
+    <form>
+      <RadioGroup label="Small" visualSize="small">
+        <Radio name="smallRadio" label="Radio" />
+        <Radio name="smallRadio" label="Radio" />
+      </RadioGroup>
+      <RadioGroup label="Medium by default" required>
+        <Radio name="mediumRadio" label="Radio" />
+        <Radio name="mediumRadio" label="Radio" />
+      </RadioGroup>
+    </form>
+  </Story>
+</Preview>
+
+## Direction
+
+Use the `column` prop to specify the direction variant.
+Default is `true`. Set it to false if you want your radios in a row.
+
+<Preview width="320px" gray>
+  <Story name="Directions">
+    <form>
+      <RadioGroup label="Column by default">
+        <Radio name="columnRadio" label="Radio" />
+        <Radio name="columnRadio" label="Radio" />
+        <Radio name="columnRadio" label="Radio" />
+      </RadioGroup>
+      <RadioGroup label="Row" column={false}>
+        <Radio name="rowRadio" label="Radio" />
+        <Radio name="rowRadio" label="Radio" />
+        <Radio name="rowRadio" label="Radio" />
+      </RadioGroup>
+    </form>
+  </Story>
+</Preview>
+
+## Error state and message
+
+Use the `errorMessage` prop to indicate an error and display the message under the input element.
+
+<Preview width="320px" gray>
+  <Story name="Error message">
+    <form>
+      <RadioGroup label="Group label" errorMessage="Value required">
+        <Radio name="errorRadio" label="Radio" />
+        <Radio name="errorRadio" label="Radio" />
+      </RadioGroup>
+    </form>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview width="320px" gray>
+  <Story name="Disabled">
+    <form>
+      <RadioGroup disabled label="Group label">
+        <Radio name="disabledRadio" label="Radio" disabled={true} />
+        <Radio name="disabledRadio" label="Radio" disabled={true} checked={true} />
+      </RadioGroup>
+    </form>
+  </Story>
+</Preview>
+
+## Help
+
+<Preview width="320px" gray>
+  <Story name="Help">
+    <form>
+      <RadioGroup help="Some help text." label="Group label">
+        <Radio name="helpRadio" label="Radio" />
+        <Radio name="helpRadio" label="Radio" checked={true} />
+      </RadioGroup>
+    </form>
+  </Story>
+</Preview>

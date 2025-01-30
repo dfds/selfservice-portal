@@ -7,7 +7,7 @@ import {
   SideSheetContent,
 } from "@dfds-ui/react-components";
 import styles from "./MessageContractDialog.module.css";
-import { Switch, TextareaField, TextField } from "@dfds-ui/forms";
+import { Switch, TextareaField, TextField } from "@/components/dfds-ui/forms";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

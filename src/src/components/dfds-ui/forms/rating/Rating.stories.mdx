@@ -1,0 +1,53 @@
+import { RatingField } from './Rating'
+import { Usage, Basic, Controlled, CustomScaleLabels, CumulativeIcons } from './Rating.stories'
+import { Meta, DocsContainer, Story, ArgsTable, Preview, Description, withWidth } from '@dfds-ui/storybook-design'
+
+<Meta title="Hydro UI/Forms/Rating" component={RatingField} />
+
+# RatingField
+
+<Description of={RatingField} />
+
+## Usage
+
+```jsx
+import { RatingField } from '@/components/dfds-ui/forms'
+```
+
+<Preview gray>
+  <Story name="Usage" story={Usage} />
+</Preview>
+
+<ArgsTable story="Usage" />
+
+## Props
+
+<ArgsTable of={RatingField} />
+
+## Basic example
+
+<Preview gray>
+  <Story story={Basic} />
+</Preview>
+
+## Controlled
+
+<Preview gray>
+  <Story story={Controlled} />
+</Preview>
+
+## Custom scale labels
+
+<Preview gray>
+  <Story story={CustomScaleLabels} />
+</Preview>
+
+## Custom icons and cumulative behaviour
+
+The selectors may have icons specified.
+
+One can combine this with the `cumulative` property, that allows for styling as selected the selectors before the one selected.
+
+<Preview gray>
+  <Story story={CumulativeIcons} />
+</Preview>

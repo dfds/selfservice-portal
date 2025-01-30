@@ -1,0 +1,273 @@
+import { Meta, DocsContainer, Story, ArgsTable, Preview, withWidth } from '@dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import { Button, ButtonStack } from '@dfds-ui/react-components'
+import { CheckboxGroup } from './CheckboxGroup'
+import { Checkbox } from './Checkbox'
+
+<Meta title="Hydro UI/Forms/Checkbox/CheckboxGroup" lab />
+
+# CheckboxGroup
+
+You can group a list of `Checkbox` components using the `CheckboxGroup` component.
+
+```jsx
+import { CheckboxGroup, Checkbox } from '@/components/dfds-ui/forms'
+```
+
+<ArgsTable of={CheckboxGroup} />
+
+<Preview width="320px" gray>
+  <Story name="Default">
+    {() => {
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(false)
+      return (
+        <form>
+          <CheckboxGroup label="Group label" assistiveText="Pick some">
+            <Checkbox name="checkboxField" checked={checked1} onChange={() => setChecked1((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+            <Checkbox name="checkboxField" checked={checked2} onChange={() => setChecked2((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story name="Sizes">
+    {() => {
+      const [smallChecked1, setSmallChecked1] = React.useState(false)
+      const [smallChecked2, setSmallChecked2] = React.useState(false)
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(false)
+      return (
+        <form>
+          <CheckboxGroup label="Small" visualSize="small">
+            <Checkbox
+              name="checkboxField"
+              checked={smallChecked1}
+              onChange={() => setSmallChecked1((prevState) => !prevState)}
+            >
+              Small checkbox
+            </Checkbox>
+            <Checkbox
+              name="checkboxField"
+              checked={smallChecked2}
+              onChange={() => setSmallChecked2((prevState) => !prevState)}
+            >
+              Small checkbox
+            </Checkbox>
+          </CheckboxGroup>
+          <CheckboxGroup label="Medium by default">
+            <Checkbox name="checkboxField" checked={checked1} onChange={() => setChecked1((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+            <Checkbox name="checkboxField" checked={checked2} onChange={() => setChecked2((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Direction
+
+Use the `column` prop to specify the direction variant.
+
+<Preview width="320px" gray>
+  <Story name="Directions">
+    {() => {
+      const [columnChecked1, setColumnChecked1] = React.useState(false)
+      const [columnChecked2, setColumnChecked2] = React.useState(false)
+      const [rowChecked1, setRowChecked1] = React.useState(false)
+      const [rowChecked2, setRowChecked2] = React.useState(false)
+      return (
+        <form>
+          <CheckboxGroup label="Column by default">
+            <Checkbox
+              name="checkboxField"
+              checked={columnChecked1}
+              onChange={() => setColumnChecked1((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+            <Checkbox
+              name="checkboxField"
+              checked={columnChecked2}
+              onChange={() => setColumnChecked2((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+          <CheckboxGroup label="Row" column={false}>
+            <Checkbox
+              name="checkboxField"
+              checked={rowChecked1}
+              onChange={() => setRowChecked1((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+            <Checkbox
+              name="checkboxField"
+              checked={rowChecked2}
+              onChange={() => setRowChecked2((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Error state and message
+
+Use the `errorMessage` prop to indicate an error and display the message under the input elements.
+
+It is good practice to keep the error message short (one line).
+
+<Preview>
+  <Story name="Error message">
+    {() => {
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(false)
+      const [errorMessage, setErrorMessage] = React.useState('')
+      const [error, setError] = React.useState(false)
+      return (
+        <form>
+          <CheckboxGroup label="Group label" assistiveText="Pick some" errorMessage={errorMessage} error={error}>
+            <Checkbox name="checkboxField" checked={checked1} onChange={() => setChecked1((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+            <Checkbox name="checkboxField" checked={checked2} onChange={() => setChecked2((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+          <hr />
+          <ButtonStack>
+            <Button
+              type="button"
+              onClick={() => {
+                setError(error ? false : true)
+              }}
+            >
+              Toggle error
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setErrorMessage(errorMessage ? undefined : 'Value required')
+              }}
+            >
+              Toggle errorMessage
+            </Button>
+          </ButtonStack>
+          error: {error ? 'true' : 'false'}
+          <br />
+          errorMessage: {errorMessage}
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Indeterminate
+
+<Preview width="320px" gray>
+  <Story name="Indeterminate">
+    {() => {
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(false)
+      return (
+        <form>
+          <CheckboxGroup label="Group label">
+            <Checkbox
+              name="checkboxField"
+              checked={checked1}
+              indeterminate={true}
+              onChange={() => setChecked1((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+            <Checkbox
+              name="checkboxField"
+              checked={checked2}
+              indeterminate={true}
+              onChange={() => setChecked2((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview width="320px" gray>
+  <Story name="Disabled">
+    {() => {
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(true)
+      return (
+        <form>
+          <CheckboxGroup assistiveText="Assistive text" disabled label="Group label">
+            <Checkbox
+              name="checkboxField"
+              checked={checked1}
+              disabled={true}
+              onChange={() => setChecked1((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+            <Checkbox
+              name="checkboxField"
+              checked={checked2}
+              disabled={true}
+              onChange={() => setChecked2((prevState) => !prevState)}
+            >
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Help
+
+<Preview width="320px" gray>
+  <Story name="Help">
+    {() => {
+      const [checked1, setChecked1] = React.useState(false)
+      const [checked2, setChecked2] = React.useState(true)
+      return (
+        <form>
+          <CheckboxGroup help="Some help text." label="Group label">
+            <Checkbox name="checkboxField" checked={checked1} onChange={() => setChecked1((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+            <Checkbox name="checkboxField" checked={checked2} onChange={() => setChecked2((prevState) => !prevState)}>
+              Checkbox
+            </Checkbox>
+          </CheckboxGroup>
+        </form>
+      )
+    }}
+  </Story>
+</Preview>

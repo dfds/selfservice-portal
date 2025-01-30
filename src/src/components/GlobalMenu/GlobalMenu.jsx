@@ -13,7 +13,7 @@ import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "@/AppContext";
 import styles from "./GlobalMenu.module.css";
-import { Switch } from "@dfds-ui/forms";
+import { Switch } from "@/components/dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
 import { useQueryClient } from "@tanstack/react-query";
 import SelectedCapabilityContext from "@/pages/capabilities/SelectedCapabilityContext";
