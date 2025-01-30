@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { SelectField } from './SelectField'
 import { useForm, Controller } from 'react-hook-form'
-import { Button } from '@dfds-ui/react-components'
+import { Button } from '@/components/dfds-ui/react-components'
 
 // eslint-disable-next-line no-console
 const noWarnLog = (...args: any[]) => console.log(...args)

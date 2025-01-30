@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@dfds-ui/react-components";
+import { Button } from "@/components/dfds-ui/react-components";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import { Modal } from "@/components/dfds-ui/modal";

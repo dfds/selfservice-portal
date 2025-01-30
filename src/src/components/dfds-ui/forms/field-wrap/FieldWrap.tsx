@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { css } from '@emotion/react'
 import { Label } from '../label/Label'
 import { BaseFieldProps, Size } from '../types'

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { SmallHeadline } from '@dfds-ui/react-components'
+import { SmallHeadline } from '@/components/dfds-ui/react-components'
 import { css } from '@emotion/react'
 import { theme } from '@/components/dfds-ui/theme'
 

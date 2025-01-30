@@ -1,0 +1,48 @@
+import MobileStepper from './MobileStepper'
+import { MobileStepperDots, MobileStepperText, MobileStepperTextWithFeedback } from './MobileStepper.stories'
+import { Meta, Props, DocsContainer, Story, ArgsTable, Preview, Description } from '@dfds-ui/storybook-design'
+
+<Meta title="Hydro UI/Stepper/MobileStepper" component={MobileStepper} />
+
+# Mobile stepper
+
+Mobile steppers are designed for small screens and is ideal for mobiles. It has less features compared to `Stepper`.
+`MobileStepper` will not assist in controlling steps for sequential flow whereas `Stepper` does. `MobileStepper` only displays progress with the ability to go back and fo forth.
+
+`MobileStepper` has two variants to display progress through the available steps: text and dots.
+
+## Usage
+
+```jsx
+import { MobileStepper } from '@/components/dfds-ui/react-components'
+```
+
+## Props
+
+<ArgsTable of={MobileStepper} />
+
+## Text
+
+Uses text to display the current step and total number of steps.
+
+Recommended to use when the number of steps is big.
+
+<Preview gray>
+  <Story story={MobileStepperText} />
+</Preview>
+
+## Dots
+
+Uses dots to display the current step and total number of steps.
+
+Recommended to use when the number of steps is small.
+
+<Preview gray>
+  <Story story={MobileStepperDots} />
+</Preview>
+
+## MobileStepper with feedback messages
+
+<Preview gray>
+  <Story story={MobileStepperTextWithFeedback} />
+</Preview>

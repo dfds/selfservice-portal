@@ -1,0 +1,88 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import ButtonStack from './ButtonStack'
+import Button from '../button/Button'
+
+<Meta title="Hydro UI/Buttons/Button stack" component={ButtonStack} />
+
+# Button stack
+
+Button stack is a container allowing to display multiple adjacent buttons in a container.
+
+## Props
+
+| Name         |  Values                  |  Description                          | Required |
+| ------------ | ------------------------ | ------------------------------------- | -------- | --- |
+| align        | left \| right \| center  | Align items to the right of the stack |          |
+|  orientation | vertical \| horizontal   | Determine orientation of items        |          |
+| reverse      | boolean                  | Reverses order of the items           |          |     |
+
+## Usage
+
+```jsx
+import { ButtonStack } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Alignment
+
+## Left aligned
+
+<Preview>
+  <Story name="Left">
+    <ButtonStack>
+      <Button variation="primary">One</Button>
+      <Button variation="secondary">Two</Button>
+      <Button variation="text">Three</Button>
+    </ButtonStack>
+  </Story>
+</Preview>
+
+## Center
+
+<Preview>
+  <Story name="Center">
+    <ButtonStack align="center">
+      <Button variation="primary">One</Button>
+      <Button variation="secondary">Two</Button>
+      <Button variation="text">Three</Button>
+    </ButtonStack>
+  </Story>
+</Preview>
+
+## Right
+
+<Preview>
+  <Story name="Right">
+    <ButtonStack align="right">
+      <Button variation="primary">One</Button>
+      <Button variation="secondary">Two</Button>
+      <Button variation="text">Three</Button>
+    </ButtonStack>
+  </Story>
+</Preview>
+
+## Vertical
+
+<Preview>
+  <Story name="Vertical">
+    <ButtonStack orientation="vertical">
+      <Button variation="primary">One</Button>
+      <Button variation="secondary">Two</Button>
+      <Button variation="text">Three</Button>
+    </ButtonStack>
+  </Story>
+</Preview>
+
+## Reversed
+
+<Preview>
+  <Story name="Reversed">
+    <ButtonStack reverse>
+      <Button variation="primary">One</Button>
+      <Button variation="secondary">Two</Button>
+      <Button variation="text">Three</Button>
+    </ButtonStack>
+  </Story>
+</Preview>

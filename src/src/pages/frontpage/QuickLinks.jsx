@@ -1,4 +1,4 @@
-import { ListItem, ListText, ListIcon } from "@dfds-ui/react-components";
+import { ListItem, ListText, ListIcon } from "@/components/dfds-ui/react-components";
 import { ArrowForward } from "@dfds-ui/icons/system";
 
 function Link({ title, url }) {

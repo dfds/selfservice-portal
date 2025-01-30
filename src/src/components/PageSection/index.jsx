@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Text } from "@/components/dfds-ui/typography";
-import { Card, CardTitle, CardContent } from "@dfds-ui/react-components";
+import { Card, CardTitle, CardContent } from "@/components/dfds-ui/react-components";
 import styles from "./PageSection.module.css";
 
 export function SectionContent({ title, children }) {

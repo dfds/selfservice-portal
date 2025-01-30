@@ -2,13 +2,13 @@ import React, { forwardRef } from 'react'
 import { css } from '@emotion/react'
 import { BaseFieldProps, Size } from '../types'
 import { theme } from '@/components/dfds-ui/theme'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import {
   InputComposition,
   InputControl,
   InputAddon,
   InputIcon,
-} from '@dfds-ui/react-components/forms/input/InputComposition'
+} from '@/components/dfds-ui/react-components/forms/input/InputComposition'
 import { HelpIcon } from '../help-icon/HelpIcon'
 import { FieldWrap } from '../field-wrap/FieldWrap'
 

@@ -1,0 +1,183 @@
+import { Fragment } from 'react'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+import { InputComposition, InputControl, InputIcon, InputAddon } from './InputComposition'
+import { FlexBox } from '../../flexbox'
+import { Search } from '@dfds-ui/icons/system'
+import { css } from '@emotion/react'
+
+<Meta
+  title="Legacy/Input Fields/InputComposition"
+  components={{ InputComposition, InputControl, InputAddon, InputIcon }}
+/>
+
+# Input composition
+
+`InputComposition`, `InputControl`, `InputIcon` and `InputAddon` are low level components used internally to
+build higher level components like `TextField` etc.
+
+## Usage
+
+```jsx
+import { InputComposition, InputControl, InputIcon, InputAddon } from '@/components/dfds-ui/react-components'
+```
+
+## Props
+
+<Props components={{ InputComposition, InputControl, InputAddon, InputIcon }} />
+
+## Examples
+
+### Basic
+
+<Preview width="300px" gray>
+  <Story name="Basic">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Prefix addon
+
+<Preview width="300px" gray>
+  <Story name="Prefix addon">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputAddon>Prefix</InputAddon>
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputAddon>Prefix</InputAddon>
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputAddon>Prefix</InputAddon>
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Suffix addon
+
+<Preview width="300px" gray>
+  <Story name="Suffix addon">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputControl placeholder="Hint text" />
+        <InputAddon>Suffix</InputAddon>
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputControl placeholder="Hint text" />
+        <InputAddon>Suffix</InputAddon>
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputControl placeholder="Hint text" />
+        <InputAddon>Suffix</InputAddon>
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Left icon
+
+<Preview width="300px" gray>
+  <Story name="Left icon">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputIcon icon={Search} />
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputIcon icon={Search} />
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputIcon icon={Search} />
+        <InputControl placeholder="Hint text" />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Right icon
+
+<Preview width="300px" gray>
+  <Story name="Right icon">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputControl placeholder="Hint text" />
+        <InputIcon icon={Search} />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputControl placeholder="Hint text" />
+        <InputIcon icon={Search} />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputControl placeholder="Hint text" />
+        <InputIcon icon={Search} />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Error state
+
+<Preview width="300px" gray>
+  <Story name="Error state">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputControl placeholder="Hint text" error />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputControl placeholder="Hint text" error />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputControl placeholder="Hint text" error />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>
+
+### Disabled state
+
+<Preview width="300px" gray>
+  <Story name="Disabled state">
+    <Fragment>
+      <InputComposition visualSize="small">
+        <InputControl placeholder="Hint text" disabled />
+        <InputIcon icon={Search} />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="medium">
+        <InputControl placeholder="Hint text" disabled />
+        <InputIcon icon={Search} />
+      </InputComposition>
+      <br />
+      <InputComposition visualSize="large">
+        <InputControl placeholder="Hint text" disabled />
+        <InputIcon icon={Search} />
+      </InputComposition>
+    </Fragment>
+  </Story>
+</Preview>

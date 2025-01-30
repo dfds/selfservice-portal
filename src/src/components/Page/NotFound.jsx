@@ -1,4 +1,4 @@
-import { Container, Column } from "@dfds-ui/react-components";
+import { Container, Column } from "@/components/dfds-ui/react-components";
 import styles from "./NotFound.module.css";
 import { Text } from "@/components/dfds-ui/typography";
 import image from "./404.gif";

@@ -8,7 +8,7 @@ import {
   AppBarListItem,
   MenuPopOverContext,
   ListText,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { Account } from "@dfds-ui/icons/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "@/AppContext";

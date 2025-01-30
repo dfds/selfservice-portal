@@ -4,7 +4,7 @@ import {
   BannerParagraph,
   Button,
   TextField,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { Modal } from "@/components/dfds-ui/modal";
 import { StatusWarning as WarningIcon } from "@dfds-ui/icons/system";
 import styles from "./DeleteTopicDialog.module.css";

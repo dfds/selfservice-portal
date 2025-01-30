@@ -12,7 +12,7 @@ import {
   SelectField,
   Tooltip,
   BannerParagraph,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { Information } from "@dfds-ui/icons/system";
 
 export default function NewTopicDialog({

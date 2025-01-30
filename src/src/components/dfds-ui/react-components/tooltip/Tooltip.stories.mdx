@@ -1,0 +1,67 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth, StoryLink } from '@dfds-ui/storybook-design'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { ExampleContainer } from '@dfds-ui/storybook-design'
+import { Surface } from '../surface/Surface'
+import Tooltip from './Tooltip'
+import { Button } from '../button'
+
+<Meta title="Hydro UI/Tooltip" component={Tooltip} />
+
+# Tooltip
+
+Based on npm package tippyjs/react
+
+Tooltip allows
+
+## Props
+
+<Props of={Tooltip} />
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Tooltip } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Hover
+
+Tooltip is shown when button (child) is hovered
+
+<Preview>
+  <Story name="Default behaviour">
+    <Tooltip content="This is tooltip text" tabIndex={-1} placement="left">
+      <Button onClick={() => setShow(!show)}>Click me</Button>
+    </Tooltip>
+  </Story>
+</Preview>
+
+## Show tooltip when child is clicked
+
+Tooltip is shown when button (child) is clicked and not shown when button is clicked again or when clicked outside tooltip
+
+<Preview>
+  <Story name="Click behavior">
+    {() => {
+      const ToolTipExample = () => {
+        const [show, setShow] = React.useState(false)
+        return (
+          <Tooltip
+            content="This is tooltip text"
+            tabIndex={-1}
+            placement="left"
+            visible={show}
+            onClickOutside={() => setShow(false)}
+          >
+            <Button onClick={() => setShow(!show)}>Click me</Button>
+          </Tooltip>
+        )
+      }
+      return <ToolTipExample />
+    }}
+  </Story>
+</Preview>

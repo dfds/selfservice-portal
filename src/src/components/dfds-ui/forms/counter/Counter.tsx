@@ -1,5 +1,5 @@
 import React, { useState, ReactNode, forwardRef, useRef, useEffect } from 'react'
-import { IconButton } from '@dfds-ui/react-components'
+import { IconButton } from '@/components/dfds-ui/react-components'
 import { NumberDown, NumberUp } from '@dfds-ui/icons/system'
 import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'

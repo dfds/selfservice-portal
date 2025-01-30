@@ -1,7 +1,7 @@
 import React from 'react'
 import { FieldWrap, FieldWrapProps } from './FieldWrap'
 import { Story } from '@storybook/react'
-import { Skeleton } from '@dfds-ui/react-components'
+import { Skeleton } from '@/components/dfds-ui/react-components'
 import { css } from '@emotion/react'
 
 const ArgsTemplate: Story<FieldWrapProps> = (args) => (

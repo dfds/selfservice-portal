@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
-import { TextField } from "@dfds-ui/react-components";
+import { Button, ButtonStack } from "@/components/dfds-ui/react-components";
+import { SideSheet, SideSheetContent } from "@/components/dfds-ui/react-components";
+import { TextField } from "@/components/dfds-ui/react-components";
 import AppContext from "AppContext";
 
 export default function NewRepositoryDialog({ onClose }) {

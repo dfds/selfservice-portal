@@ -4,7 +4,7 @@ import { css } from '@emotion/react'
 import { SwitchProps } from './Switch'
 import { Label } from '../label/Label'
 import { SwitchContextProvider } from './SwitchContext'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import ErrorText from '../error-text/ErrorText'
 
 export type SwitchGroupProps = Pick<BaseFieldProps, 'label' | 'errorMessage' | 'hideAsterisk' | 'required'> & {

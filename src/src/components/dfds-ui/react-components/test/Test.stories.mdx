@@ -1,0 +1,25 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { Test } from './Test'
+
+<Meta title="UI/Test" Component={Test} />
+
+# Input Composition
+
+Compose custom `Input` components by composing `InputBase`, `InputElement`, `InputIcon` and `InputAddon`.
+These are used internally to build the `Input` component.
+
+## Usage
+
+```jsx
+import { InputComposition, InputElement, InputIcon, InputAddon } from '@/components/dfds-ui/react-components'
+```
+
+## Basic
+
+<Preview>
+  <Story name="Basic">
+    <Test />
+  </Story>
+</Preview>
+
+<Props of={Test} />

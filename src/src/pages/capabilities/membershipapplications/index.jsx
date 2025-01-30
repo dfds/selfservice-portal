@@ -11,7 +11,7 @@ import {
   BannerHeadline,
   BannerParagraph,
   Spinner,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { Text } from "@/components/dfds-ui/typography";
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import PageSection from "components/PageSection";

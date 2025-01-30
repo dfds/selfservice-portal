@@ -1,7 +1,7 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
-import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
-import { Tooltip, TextField, Text } from "@dfds-ui/react-components";
+import { Button, ButtonStack } from "@/components/dfds-ui/react-components";
+import { SideSheet, SideSheetContent } from "@/components/dfds-ui/react-components";
+import { Tooltip, TextField, Text } from "@/components/dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { Invitations } from "./invitations";
 import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";

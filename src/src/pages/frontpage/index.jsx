@@ -8,7 +8,7 @@ import {
   IconButton,
   LinkButton,
   Text,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { Link } from "react-router-dom";
 
 import PageSection, { SectionContent } from "components/PageSection";

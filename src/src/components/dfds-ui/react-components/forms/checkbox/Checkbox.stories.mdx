@@ -1,0 +1,103 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { Radio } from '@/components/dfds-ui/react-components'
+import { action } from '@storybook/addon-actions'
+import { css } from '@emotion/react'
+import ExampleControlComponent from './ExampleControlComponent'
+
+<Meta title="Legacy/Selection Controls/Checkbox" component={ExampleControlComponent} />
+
+# Checkbox
+
+Checkbox allows user to select one or more options of a limited number of choices.
+
+## Props
+
+| Name          |  Values                             |  Description                                                     | Required |
+| ------------- | ----------------------------------- | ---------------------------------------------------------------- | -------- |
+| name          | string                              | Text value to be displayed as label for checkbox.                |          |
+| value         | string                              | The value of the component.                                      |          |
+| className     | string                              | Allows adding a custom css class.                                |          |
+| indeterminate | boolean                             | Specifies what happens if one or two sub-options are checked.    |          |
+| checked       | boolean                             | Specifies what happens when checkbox is selected, if selectable. |          |
+| leadingLabel  | boolean                             | Sets label at leading position.                                  |          |
+| error         | boolean                             | Specifies what happens if there is an error with selection.      |          |
+| disabled      | boolean                             | Disabled visual appearance and interaction disabled.             |          |
+| size          | string                              | Sets the size of checkbox component: 'small' or 'medium'.        |          |
+| htmlSize      | number                              | Specifies the number of visible options.                         |          |
+| onChange      | (event: InteractionEvent ) => void; | Specifies what happens when the value of checkbox is changed.    |          |
+
+## Usage
+
+```jsx
+import { Checkbox } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Unchecked
+
+<Preview>
+  <Story name="Unchecked">
+    <ExampleControlComponent>Unchecked checkbox</ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Leading label
+
+<Preview>
+  <Story name="Leading label">
+    <ExampleControlComponent leadingLabel>Leading label checkbox</ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Checked
+
+<Preview>
+  <Story name="Checked">
+    <ExampleControlComponent checked>Checked checkbox</ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Indeterminate
+
+<Preview>
+  <Story name="Indeterminate">
+    <ExampleControlComponent indeterminate checked>
+      Indeterminate checkbox
+    </ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Error
+
+<Preview>
+  <Story name="Error">
+    <ExampleControlComponent error>Checkbox error</ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <ExampleControlComponent disabled>Checkbox disabled</ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Disabled and checked
+
+<Preview>
+  <Story name="Disabled and checked">
+    <ExampleControlComponent disabled checked>
+      Checkbox disabled and checked
+    </ExampleControlComponent>
+  </Story>
+</Preview>
+
+## Small
+
+<Preview>
+  <Story name="Small">
+    <ExampleControlComponent size="small">Small checkbox</ExampleControlComponent>
+  </Story>
+</Preview>

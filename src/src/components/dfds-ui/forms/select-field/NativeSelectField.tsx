@@ -4,7 +4,7 @@ import { BaseFieldProps, Size } from '../types'
 import { ChevronDown } from '@dfds-ui/icons/system/'
 import { theme } from '@/components/dfds-ui/theme'
 import { FieldWrap } from '../field-wrap/FieldWrap'
-import { inputTypography } from '@dfds-ui/react-components/forms/input/InputComposition'
+import { inputTypography } from '@/components/dfds-ui/react-components/forms/input/InputComposition'
 
 export type NativeSelectFieldProps = BaseFieldProps &
   React.ComponentPropsWithRef<'select'> & {

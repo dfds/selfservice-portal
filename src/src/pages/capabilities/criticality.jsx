@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardContent,
   Spinner,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
 import PageSection from "components/PageSection";
 import PreAppContext from "../../preAppContext";

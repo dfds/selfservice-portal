@@ -1,0 +1,73 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth, StoryLink } from '@dfds-ui/storybook-design'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { ExampleContainer } from '@dfds-ui/storybook-design'
+import { Surface } from '../surface/Surface'
+import Divider from './Divider'
+
+<Meta title="Hydro UI/Dividers/Divider" component={Divider} />
+
+# Divider
+
+Divider allows users to separate content.
+
+## Props
+
+<Props of={Divider} />
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Divider } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Full width
+
+Display a full width divider.
+
+<Preview>
+  <Story name="Full width">
+    <Divider />
+  </Story>
+</Preview>
+
+## Indent
+
+Display a divider with indent (left margin).
+
+<Preview>
+  <Story name="Indent">
+    <Divider indent />
+  </Story>
+</Preview>
+
+## Margins
+
+Display a divider with margins.
+
+<Preview>
+  <Story name="Margins">
+    <Divider margins />
+  </Story>
+</Preview>
+
+## Light
+
+Display a light divider for use on a dark surface.
+
+<Preview>
+  <Story name="Light">
+    <Surface
+      surface="inverted"
+      css={css`
+        padding: 20px 0;
+      `}
+    >
+      <Divider light />
+    </Surface>
+  </Story>
+</Preview>

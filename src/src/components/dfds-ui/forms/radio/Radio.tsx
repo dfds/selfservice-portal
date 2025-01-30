@@ -3,9 +3,9 @@ import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 import { Label } from '../label/Label'
 import { Text } from '@/components/dfds-ui/typography'
-import { visuallyHidden } from '@dfds-ui/react-components'
+import { visuallyHidden } from '@/components/dfds-ui/react-components'
 import useRadioContext from './RadioContext'
-import { onlyIE } from '@dfds-ui/react-components/common/utils'
+import { onlyIE } from '@/components/dfds-ui/react-components/common/utils'
 
 type RadioSize = 'medium' | 'small'
 

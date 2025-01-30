@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField } from "@dfds-ui/react-components";
+import { TextField } from "@/components/dfds-ui/react-components";
 import { Search } from "@dfds-ui/icons/system";
 import DropDownInvitationsMenu from "components/DropDownMenu";
 import { getUsers } from "GraphApiClient";

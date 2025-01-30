@@ -1,0 +1,112 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { css } from '@emotion/react'
+import Badge from './Badge'
+
+<Meta title="Hydro UI/Badges/Badge" component={Badge} />
+
+# Badge
+
+Component displaying a badge
+
+## Usage
+
+```jsx
+import { Badge } from '@/components/dfds-ui/react-components'
+```
+
+## Props
+
+<Props of={Badge} />
+
+## Default
+
+<Preview>
+  <Story name="Default">
+    <Badge>Default</Badge>
+  </Story>
+</Preview>
+
+## Critical
+
+<Preview>
+  <Story name="Critical">
+    <Badge intent="critical">Critical</Badge>
+  </Story>
+</Preview>
+
+## Warning
+
+<Preview>
+  <Story name="Warning">
+    <Badge intent="warning">Warning</Badge>
+  </Story>
+</Preview>
+
+## Info
+
+<Preview>
+  <Story name="Info">
+    <Badge intent="info">Info</Badge>
+  </Story>
+</Preview>
+
+## Success
+
+<Preview>
+  <Story name="Success">
+    <Badge intent="success">Success</Badge>
+  </Story>
+</Preview>
+
+## Long text
+
+<Preview>
+  <Story name="Long text">
+    <Badge>
+      Sint adipisicing mollit nulla exercitation culpa. Amet nulla aute pariatur ut ullamco adipisicing labore eu ex et
+      ullamco culpa sunt. Ut tempor duis minim deserunt occaecat duis.
+    </Badge>
+  </Story>
+</Preview>
+
+## Custom color
+
+<Preview>
+  <Story name="Custom color">
+    <Badge
+      css={css`
+        color: peachpuff;
+        background-color: saddlebrown;
+      `}
+    >
+      Custom color
+    </Badge>
+  </Story>
+</Preview>
+
+## Display as `flex` instead of `inline-flex`
+
+It can be useful (eg. in tables) to display the `Badge` as a non-inline element.
+Set `inline` to `false` for this behavior.
+
+<Preview>
+  <Story name="Inside table">
+    <table
+      css={css`
+        td {
+          border: 1px solid #aaa;
+          padding: 10px;
+        }
+      `}
+    >
+      <tbody>
+        <tr>
+          <td>
+            <Badge flexBoxProps={{ inline: false }}>Custom color</Badge>
+          </td>
+          <td>Some more content in this next cell</td>
+        </tr>
+      </tbody>
+    </table>
+  </Story>
+</Preview>

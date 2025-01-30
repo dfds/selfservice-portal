@@ -1,0 +1,163 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { css } from '@emotion/react'
+import Button from './Button'
+import { variations } from './BaseButton'
+import { ExampleContainer } from '@dfds-ui/storybook-design'
+import { ArrowBack, ArrowForward } from '@dfds-ui/icons/system'
+
+<Meta title="Hydro UI/Buttons/Buttons" component={Button} />
+
+# Button
+
+Buttons allow users to take actions, and make choices, with a single tap.
+
+## Props
+
+| Name         |  Values            |  Description                                                   | Required |
+| ------------ | ------------------ | -------------------------------------------------------------- | -------- | --- |
+| variation    | string             | Sets the variation of button.                                  |          |
+| size         | string             | Sets the size of the button component 'small' or 'medium'.     |          |
+| disabled     | boolean            | Disabled visual appearance and interaction disabled.           |          |
+| icon         | component          | Allows adding a Icon component.                                |          |
+| iconAlign    | string             | Specifies the alignment of the icon 'left' or 'right'          |          |
+|  iconSpacing |  string            | Allows defining custom spacing betwene the text and the icon   |          |
+|  as          |  React.ElementType | Sets tag of the component                                      |          |
+| href         | string             | Url the button navigates to, when rendered as "a"              |          |
+| submitting   | boolean            | Shows spinner, has disabled appearance and is not interactable |          |     |
+
+## Usage
+
+```jsx
+import { Button } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Primary
+
+<Preview>
+  <Story name="Primary">
+    <Button variation="primary">Primary</Button>
+  </Story>
+</Preview>
+
+## Secondary
+
+<Preview>
+  <Story name="Secondary">
+    <Button variation="secondary">Secondary</Button>
+  </Story>
+</Preview>
+
+## Outlined
+
+<Preview>
+  <Story name="Outlined">
+    <Button variation="outlined">Outlined</Button>
+  </Story>
+</Preview>
+
+## Text
+
+<Preview>
+  <Story name="Text">
+    <Button variation="text">Text</Button>
+  </Story>
+</Preview>
+
+## Danger
+
+<Preview>
+  <Story name="Danger">
+    <Button variation="danger">Danger</Button>
+  </Story>
+</Preview>
+
+## Link
+
+<Preview>
+  <Story name="Link">
+    <Button variation="link" as="a" href="/?path=/docs/buttons-button--link">
+      Link
+    </Button>
+  </Story>
+</Preview>
+
+## Loading
+
+<Preview>
+  <Story name="Loading">
+    <Button variation="primary" submitting>
+      Loading
+    </Button>
+  </Story>
+</Preview>
+
+## Small
+
+The `size` defaults to `medium` and accepts the following values: `medium`, `small`
+
+<Preview>
+  <Story name="Small">
+    <Button variation="primary" size="small">
+      Primary
+    </Button>
+  </Story>
+</Preview>
+
+## Left icon
+
+The `icon` prop can be used to add an icon. Alignment is controlled with the `iconAlign` prop.
+
+<Preview>
+  <Story name="Left icon">
+    <Button variation="primary" icon={<ArrowBack />} iconAlign="left">
+      Go back
+    </Button>
+  </Story>
+</Preview>
+
+## Right icon
+
+The `icon` prop can be used to add an icon. Alignment is controlled with the `iconAlign` prop.
+
+<Preview>
+  <Story name="Right icon">
+    <Button variation="primary" icon={<ArrowForward />} iconAlign="right">
+      Read more
+    </Button>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <Button variation="primary" disabled>
+      Primary
+    </Button>
+  </Story>
+</Preview>
+
+## Custom button
+
+It is possible to customize the styles
+
+<Preview>
+  <Story name="Custom button">
+    <Button
+      css={css`
+        height: auto;
+        padding: 10px 20px;
+        width: 240px;
+        white-space: normal;
+        text-align: left;
+        line-height: 1.2;
+      `}
+      variation="primary"
+    >
+      Primary
+    </Button>
+  </Story>
+</Preview>

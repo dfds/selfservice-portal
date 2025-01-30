@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { css } from '@emotion/react'
-import { legacyMedia as media } from '@dfds-ui/react-components'
+import { legacyMedia as media } from '@/components/dfds-ui/react-components'
 
 export type ModalFooterProps = {
   className?: string

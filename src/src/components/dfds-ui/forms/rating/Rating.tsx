@@ -1,5 +1,5 @@
 import React, { ReactNode, useMemo, useState } from 'react'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { css } from '@emotion/react'
 import { Radio, RadioStyleState } from '../radio'
 import { Text } from '@/components/dfds-ui/typography'

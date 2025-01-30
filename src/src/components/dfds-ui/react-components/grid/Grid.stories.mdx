@@ -1,0 +1,196 @@
+import { Meta, Story, Props, DeprecatedBanner, StoryLink } from '@dfds-ui/storybook-design'
+import { Preview } from '@dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import Container from './Container'
+import Column from './Column'
+import { theme } from '@dfds-ui/theme'
+import { css } from '@emotion/react'
+
+<Meta title="Legacy/Grid" component={Container} />
+
+<DeprecatedBanner headline="Warning: New grid in the works">
+  <p>
+    We are working on a new Grid component. Once it's done this implementation will be deprecated and eventually
+    removed!
+  </p>
+  <StoryLink kind="Lab/Grid" name="Basic" mode="docs">
+    Take me to the new grid
+  </StoryLink>
+</DeprecatedBanner>
+
+# Container
+
+The `Container` centers the content horizontally.
+
+## Component props
+
+<Props components={{ Container, Column }} />
+
+## Usage
+
+```jsx
+import { Container, Column } from '@/components/dfds-ui/react-components'
+```
+
+export const Box = (props) => {
+  return (
+    <div
+      css={css`
+        height: 100px;
+        background-color: lightgrey;
+        display: flex;
+        font-size: 16px;
+        font-family: 'DFDS';
+        align-items: center;
+        justify-content: center;
+      `}
+      {...props}
+    />
+  )
+}
+
+## `Container`
+
+<Preview>
+  <Story name="Container">
+    <Container fluid surface="dark">
+      <Column>
+        <Box css={{ backgroundColor: theme.colors.surface.main }}>1 column</Box>
+      </Column>
+      <Column>
+        <Box css={{ backgroundColor: theme.colors.surface.main }}>2 column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## `Container xx-large, x-large and large`
+
+The `Container` component on xx-large, x-large and large viewport supports up to 12 column on each row.
+
+Size above 1360px for xx-large. Content remains at max-width 1200px, side margins grow.
+
+Size between 1280px - 1359px for x-large. Content remains at max width 1200px, side margins grow.
+
+Size between 1025px - 1279px for large. Content starts to shrink below 1200px with fixed side margins.
+
+<Preview>
+  <Story name="Container xx-large, x-large and large">
+    <Container>
+      <Column>
+        <Box>1 Column</Box>
+      </Column>
+      <Column>
+        <Box>2 Column</Box>
+      </Column>
+      <Column>
+        <Box>3 Column</Box>
+      </Column>
+      <Column>
+        <Box>4 Column</Box>
+      </Column>
+      <Column>
+        <Box>5 Column</Box>
+      </Column>
+      <Column>
+        <Box>6 Column</Box>
+      </Column>
+      <Column>
+        <Box>7 Column</Box>
+      </Column>
+      <Column>
+        <Box>8 Column</Box>
+      </Column>
+      <Column>
+        <Box>9 Column</Box>
+      </Column>
+      <Column>
+        <Box>10 Column</Box>
+      </Column>
+      <Column>
+        <Box>11 Column</Box>
+      </Column>
+      <Column>
+        <Box>12 Column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## `Container medium`
+
+The `Container` component on a medium viewport only supports up to 2 columns per row.
+
+Size down to 768px - 1024px to see medium viewport.
+
+<Preview>
+  <Story name="Container medium">
+    <Container>
+      <Column>
+        <Box>1 Column</Box>
+      </Column>
+      <Column>
+        <Box>2 Column</Box>
+      </Column>
+      <Column>
+        <Box>3 Column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## `Container small`
+
+In small viewports, columns inside `Container` will stak on top of each other.
+
+Size down to 0px - 767px to see mobile viewport.
+
+<Preview>
+  <Story name="Container small">
+    <Container>
+      <Column m={6}>
+        <Box>1 Column</Box>
+      </Column>
+      <Column m={6}>
+        <Box>2 Column</Box>
+      </Column>
+      <Column m={12}>
+        <Box>3 Column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## `Column`
+
+The `Column` component supports sizing props to adjust the sizing of each column.
+
+<Preview>
+  <Story name="Column">
+    <Container>
+      <Column m={6} l={4} xl={8} xxl={12}>
+        <Box>1 column</Box>
+      </Column>
+      <Column m={6} l={4} xl={8} xxl={12}>
+        <Box>2 column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## `Column without sizing props`
+
+Columns without sizing will automatically take up the remaining size of the grid.
+
+<Preview>
+  <Story name="Column without sizing props">
+    <Container>
+      <Column xxl={8}>
+        <Box>1 column</Box>
+      </Column>
+      <Column>
+        <Box>2 column</Box>
+      </Column>
+    </Container>
+  </Story>
+</Preview>

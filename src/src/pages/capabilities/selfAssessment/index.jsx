@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import PageSection from "components/PageSection";
 import styles from "./selfAssessment.module.css";
-import { Card, CardContent, Button } from "@dfds-ui/react-components";
+import { Card, CardContent, Button } from "@/components/dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import {

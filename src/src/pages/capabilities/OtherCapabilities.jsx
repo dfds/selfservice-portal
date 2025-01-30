@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@/components/dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "@dfds-ui/icons/system";
-import { Spinner } from "@dfds-ui/react-components";
+import { Spinner } from "@/components/dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useMe } from "@/state/remote/queries/me";

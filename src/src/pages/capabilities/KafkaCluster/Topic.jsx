@@ -5,8 +5,8 @@ import {
   Card,
   CardContent,
   IconButton,
-} from "@dfds-ui/react-components";
-import { Accordion, Spinner } from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
+import { Accordion, Spinner } from "@/components/dfds-ui/react-components";
 import {
   ChevronDown,
   ChevronUp,

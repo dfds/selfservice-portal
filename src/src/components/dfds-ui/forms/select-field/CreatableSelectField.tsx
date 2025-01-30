@@ -17,9 +17,9 @@ import { Label } from '../label/Label'
 import AssistiveText from '../assistive-text/AssistiveText'
 import ErrorText from '../error-text/ErrorText'
 import { BaseFieldProps } from '../types'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import HelpIcon from '../help-icon/HelpIcon'
-import { InputAddon } from '@dfds-ui/react-components/forms/input/InputComposition'
+import { InputAddon } from '@/components/dfds-ui/react-components/forms/input/InputComposition'
 
 type Size = 'small' | 'medium' | 'large'
 

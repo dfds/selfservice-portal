@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from '@emotion/react'
 import { Help } from '@dfds-ui/icons/system'
 import { theme } from '@/components/dfds-ui/theme'
-import { UnstableWithTooltip } from '@dfds-ui/react-components/tooltip'
+import { UnstableWithTooltip } from '@/components/dfds-ui/react-components/tooltip'
 
 export type HelpIconProps = {
   content: string

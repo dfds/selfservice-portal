@@ -1,4 +1,4 @@
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { Switch } from './Switch'
 import React from 'react'
 

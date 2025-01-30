@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Text } from "@/components/dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
-import { Spinner } from "@dfds-ui/react-components";
+import { Spinner } from "@/components/dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import CapabilityCostSummary from "components/BasicCapabilityCost";

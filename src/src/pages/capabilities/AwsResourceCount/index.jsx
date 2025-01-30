@@ -4,7 +4,7 @@ import AppContext from "AppContext";
 import styles from "./AwsCount.module.css";
 import { Modal, ModalAction } from "@/components/dfds-ui/modal";
 import { useState } from "react";
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/components/dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
 import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdataapi";
 

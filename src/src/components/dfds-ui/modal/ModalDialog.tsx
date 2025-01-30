@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactModal from 'react-modal'
 import { css } from '@emotion/react'
-import { elevation, LockBodyScroll, LockBodyScrollResult } from '@dfds-ui/react-components'
+import { elevation, LockBodyScroll, LockBodyScrollResult } from '@/components/dfds-ui/react-components'
 import { ReactModalWrapper } from './ReactModalWrapper'
 import { theme, media } from '@/components/dfds-ui/theme'
 

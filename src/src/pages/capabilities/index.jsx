@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { Button } from "@dfds-ui/react-components";
+import { Button } from "@/components/dfds-ui/react-components";
 import {
   Card,
   CardTitle,
   CardContent,
   CardMedia,
   CardActions,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";

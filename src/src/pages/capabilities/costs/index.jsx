@@ -4,10 +4,10 @@ import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
 import { Text } from "@/components/dfds-ui/typography";
 import { LargeCapabilityCostSummary } from "../../../components/BasicCapabilityCost";
-import { Spinner } from "@dfds-ui/react-components";
+import { Spinner } from "@/components/dfds-ui/react-components";
 import styles from "./costs.module.css";
 import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
-import { Button } from "@dfds-ui/react-components";
+import { Button } from "@/components/dfds-ui/react-components";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 
 export default function Costs({ costCentre }) {

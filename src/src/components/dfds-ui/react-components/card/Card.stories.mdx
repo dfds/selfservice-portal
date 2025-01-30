@@ -1,0 +1,1016 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import Card from './Card'
+import CardMedia from './CardMedia'
+import CardContent from './CardContent'
+import CardActions from './CardActions'
+import CardTitle from './CardTitle'
+import CardPriceTag from './CardPriceTag'
+import { LinkButton } from '../button'
+import { Text } from '@dfds-ui/typography'
+import { Container, Column } from '../grid'
+import { css } from '@emotion/react'
+import { theme } from '@dfds-ui/theme'
+import { colorPalette } from '@dfds-ui/colors'
+import { ChevronRight } from '@dfds-ui/icons/system'
+
+<Meta title="Hydro UI/Cards/Card" component={Card} />
+
+# Card
+
+The `Card` component can be used to present information to the users. A card can be built using some standard components, that are described in this documentation.
+Every component inside a card can be placed in any order, with the exception of the `CardMedia` component.
+
+## Props
+
+<Props of={Card} />
+
+# CardMedia
+
+`CardMedia` component can be used inside a card to present an image or some other media.
+
+## Props
+
+<Props of={CardMedia} />
+
+# CardPriceTag
+
+`CardPriceTag` component can be used inside the `CardMedia` component to display a price tag inside the card.
+This `CardPriceTag` is optional, and can be replaced by any other component.
+
+## Props
+
+<Props of={CardPriceTag} />
+
+# CardTitle
+
+The `CardTitle` component can be used inside a card to set a header/title.
+
+## Props
+
+<Props of={CardTitle} />
+
+# CardContent
+
+The `CardContent` component can be used inside a card display content such as body text.
+
+## Props
+
+<Props of={CardContent} />
+
+# CardActions
+
+`CardActions` component can be used inside a card to display any actions (Links, Buttons) that the user can click on.
+
+# Container surface
+
+The `Container` component has a `surface` property that changes the background color.
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Card, CardMedia, CardTitle, CardContent, CardActions, CardPriceTag } from '@/components/dfds-ui/react-components'
+```
+
+Use the component:
+
+## Cards outline
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards outline">
+    <Container>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="m"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="m"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="outline"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="outline"
+          reverse={true}
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Cards fill
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards fill">
+    <Container>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          surface="dark"
+          size="m"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          surface="inverted"
+          size="m"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="l"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="l"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="fill"
+          background={theme.colors.secondary.light}
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="fill"
+          background={theme.colors.secondary.light}
+          reverse={true}
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Cards surface
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards surface">
+    <Container>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="l"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={6}>
+        <Card
+          size="l"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="surface"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column m={6} l={12}>
+        <Card
+          size="xl"
+          variant="surface"
+          reverse={true}
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Cards fill ratio 3:2
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards ratio 3:2">
+    <Container>
+      <Column l={4}>
+        <Card
+          size="m"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          background={theme.colors.secondary.light}
+          variant="fill"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            />
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Cards with price tag
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards with price tag">
+    <Container>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            >
+              <CardPriceTag price={48} topText="From" bottomText="Ferry + Hotel" currency="£"></CardPriceTag>
+            </CardMedia>
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            >
+              <CardPriceTag price={48} topText="From" bottomText="Ferry + Hotel" currency="£"></CardPriceTag>
+            </CardMedia>
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+      <Column l={4}>
+        <Card
+          size="m"
+          variant="surface"
+          media={
+            <CardMedia
+              aspectRatio="3:2"
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            >
+              <CardPriceTag price={48} topText="From" bottomText="Ferry + Hotel" currency="£"></CardPriceTag>
+            </CardMedia>
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Cards with ratio
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Cards with ratio">
+    <Container>
+      <Column l={12}>
+        <Card
+          ratio={[1, 3]}
+          size="xl"
+          variant="fill"
+          media={
+            <CardMedia
+              media={
+                <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+              }
+            >
+              <CardPriceTag price={48} topText="From" bottomText="Ferry + Hotel" currency="£"></CardPriceTag>
+            </CardMedia>
+          }
+        >
+          <CardTitle>Lorem ipsum</CardTitle>
+          <CardContent>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam.
+          </CardContent>
+          <CardActions>
+            <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+              See offer
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Column>
+    </Container>
+  </Story>
+</Preview>
+
+## Container surface
+
+<Preview style={{ backgroundColor: '#fcfcfd' }}>
+  <Story name="Container surface">
+    <Fragment>
+      <Container surface="inverted">
+        <Column l={4} m={12}>
+          <Card
+            size="m"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>1. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+        <Column l={4} m={6}>
+          <Card
+            size="m"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>2. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+        <Column l={4} m={6}>
+          <Card
+            size="m"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>3. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+      </Container>
+      <Container surface="dark">
+        <Column l={6}>
+          <Card
+            size="l"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>4. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+        <Column l={6}>
+          <Card
+            size="l"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>5. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+      </Container>
+      <Container surface="inverted">
+        <Column m={6} l={12}>
+          <Card
+            size="xl"
+            variant="surface"
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>6. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+        <Column m={6} l={12}>
+          <Card
+            size="xl"
+            variant="surface"
+            reverse={true}
+            media={
+              <CardMedia
+                media={
+                  <img src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000" />
+                }
+              />
+            }
+          >
+            <CardTitle>7. Lorem ipsum</CardTitle>
+            <CardContent>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam.
+            </CardContent>
+            <CardActions>
+              <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+                See offer
+              </LinkButton>
+            </CardActions>
+          </Card>
+        </Column>
+      </Container>
+    </Fragment>
+  </Story>
+</Preview>

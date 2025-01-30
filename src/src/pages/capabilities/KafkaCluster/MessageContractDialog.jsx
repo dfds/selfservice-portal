@@ -5,7 +5,7 @@ import {
   ButtonStack,
   SideSheet,
   SideSheetContent,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import styles from "./MessageContractDialog.module.css";
 import { Switch, TextareaField, TextField } from "@/components/dfds-ui/forms";
 import SyntaxHighlighter from "react-syntax-highlighter";

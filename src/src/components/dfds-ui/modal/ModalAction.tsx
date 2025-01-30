@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from '@emotion/react'
 import { theme } from "@/components/dfds-ui/theme";
 import { typography } from '../typography'
-import { Button, ButtonProps } from '@dfds-ui/react-components'
+import { Button, ButtonProps } from '@/components/dfds-ui/react-components'
 
 export type ModalActionVariation = 'primary' | 'secondary'
 

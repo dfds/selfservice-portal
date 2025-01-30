@@ -1,8 +1,8 @@
 import React, { ReactNode, Fragment } from 'react'
 import { css } from '@emotion/react'
 import { theme } from '@/components/dfds-ui/theme'
-import { legacyMedia as media } from '@dfds-ui/react-components'
-import { Divider } from '@dfds-ui/react-components/divider'
+import { legacyMedia as media } from '@/components/dfds-ui/react-components'
+import { Divider } from '@/components/dfds-ui/react-components/divider'
 
 export type ModalHeaderProps = {
   className?: string

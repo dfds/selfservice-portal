@@ -1,0 +1,42 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+
+<Meta title="Lab/Layout" lab />
+
+# Layout
+
+## Example
+
+<Preview gray>
+  <Story name="Example" inline height="10" parameters={{ layout: 'fullscreen' }}>
+    <div className="layout">
+      <header
+        className="layout-header"
+        css={css`
+          background-color: #bbddf3;
+          height: 50px;
+        `}
+      >
+        Header
+      </header>
+      <main
+        className="layout-main"
+        css={css`
+          background-color: white;
+        `}
+      >
+        Main
+      </main>
+      <footer
+        className="layout-footer"
+        css={css`
+          background-color: #bbddf3;
+          height: 50px;
+        `}
+      >
+        Footer
+      </footer>
+    </div>
+  </Story>
+</Preview>

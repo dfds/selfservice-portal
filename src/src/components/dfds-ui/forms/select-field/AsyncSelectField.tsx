@@ -7,7 +7,7 @@ import AssistiveText from '../assistive-text/AssistiveText'
 import ErrorText from '../error-text/ErrorText'
 import HelpIcon from '../help-icon/HelpIcon'
 import { Label } from '../label/Label'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { css } from '@emotion/react'
 
 import { BaseFieldProps } from '../types'

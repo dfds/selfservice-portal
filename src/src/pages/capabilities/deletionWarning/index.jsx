@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CardContent, ButtonStack } from "@dfds-ui/react-components";
+import { CardContent, ButtonStack } from "@/components/dfds-ui/react-components";
 import { Text } from "@/components/dfds-ui/typography";
 import { useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

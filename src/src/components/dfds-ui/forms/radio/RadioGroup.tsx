@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { css } from '@emotion/react'
 import { Label } from '../label/Label'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import ErrorText from '../error-text/ErrorText'
 import { BaseFieldProps } from '../types'
 import { RadioContextProvider } from './RadioContext'

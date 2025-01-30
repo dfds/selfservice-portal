@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react'
 import { css } from '@emotion/react'
 import { useForwardedRef } from '@/components/dfds-ui/hooks'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { theme } from '@/components/dfds-ui/theme'
-import { InputComposition, InputIcon, InputControl } from '@dfds-ui/react-components/forms/input/InputComposition'
+import { InputComposition, InputIcon, InputControl } from '@/components/dfds-ui/react-components/forms/input/InputComposition'
 import { typography } from '@/components/dfds-ui/typography'
 
 type ReactInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>

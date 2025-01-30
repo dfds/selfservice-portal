@@ -1,7 +1,7 @@
 import { Search } from '@dfds-ui/icons/system'
 import React, { Fragment } from 'react'
 import TextField from './TextField'
-import { Button } from '@dfds-ui/react-components'
+import { Button } from '@/components/dfds-ui/react-components'
 import { css } from '@emotion/react'
 
 export const BasicTextField = () => {

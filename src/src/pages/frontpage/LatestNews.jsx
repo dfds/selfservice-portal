@@ -1,4 +1,4 @@
-import { ButtonStack, Spinner } from "@dfds-ui/react-components";
+import { ButtonStack, Spinner } from "@/components/dfds-ui/react-components";
 import { Text } from "@/components/dfds-ui/typography";
 import AppContext from "AppContext";
 import { useContext } from "react";

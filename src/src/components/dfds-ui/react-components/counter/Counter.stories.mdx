@@ -1,0 +1,78 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import Counter from './Counter'
+
+<Meta title="Legacy/Selection Controls/Counter" component={Counter} />
+
+# Counter
+
+The `Counter` component can be used to control a number that has a minimum and a maximum with minus and plus buttons.
+
+## Props
+
+<Props of={Counter} />
+
+## Usage
+
+```jsx
+import { Counter } from '@/components/dfds-ui/react-components'
+```
+
+## Info
+
+Use the component:
+
+## Initial value
+
+<Preview>
+  <Story name="Initial value">
+    <Counter minVal={0} maxVal={99} initialVal={10} />
+  </Story>
+</Preview>
+
+## Custom selected value
+
+<Preview>
+  <Story name="Custom selected value">
+    <Counter currentVal={5} minVal={0} maxVal={10} />
+  </Story>
+</Preview>
+
+## Minus button disabled when min is reached
+
+<Preview>
+  <Story name="Minus button disabled when min is reached">
+    <Counter currentVal={0} minVal={0} maxVal={10} />
+  </Story>
+</Preview>
+
+## Plus button disabled when max is reached
+
+<Preview>
+  <Story name="Plus button disabled when max is reached">
+    <Counter currentVal={10} minVal={0} maxVal={10} />
+  </Story>
+</Preview>
+
+## Disable minus button from outside of component
+
+<Preview>
+  <Story name="Disable minus button from outside of component">
+    <Counter currentVal={5} minVal={0} maxVal={10} disableMin={2 + 2 === 4} />
+  </Story>
+</Preview>
+
+## Disable plus button from outside of component
+
+<Preview>
+  <Story name="Disable plus button from outside of component">
+    <Counter currentVal={5} minVal={0} maxVal={10} disableMax={'foo' + 'bar' === 'foobar'} />
+  </Story>
+</Preview>
+
+## Use a custom label
+
+<Preview>
+  <Story name="Use a custom label">
+    <Counter currentVal={33} minVal={0} maxVal={99} label="Custom label" />
+  </Story>
+</Preview>

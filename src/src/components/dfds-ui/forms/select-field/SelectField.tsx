@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { media, theme } from '@/components/dfds-ui/theme'
-import { Drawer } from '@dfds-ui/react-components'
+import { Drawer } from '@/components/dfds-ui/react-components'
 import Select, {
   ActionMeta,
   components as reactSelectComponents,
@@ -17,9 +17,9 @@ import { Label } from '../label/Label'
 import AssistiveText from '../assistive-text/AssistiveText'
 import ErrorText from '../error-text/ErrorText'
 import { BaseFieldProps } from '../types'
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import HelpIcon from '../help-icon/HelpIcon'
-import { InputAddon } from '@dfds-ui/react-components/forms/input/InputComposition'
+import { InputAddon } from '@/components/dfds-ui/react-components/forms/input/InputComposition'
 
 export type BaseReactSelectProps = Omit<React.PropsWithRef<Select>, 'size' | 'css'>
 

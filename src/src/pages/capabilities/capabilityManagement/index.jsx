@@ -7,7 +7,7 @@ import {
   CardContent,
   Button,
   ButtonStack,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { css } from "@emotion/react";

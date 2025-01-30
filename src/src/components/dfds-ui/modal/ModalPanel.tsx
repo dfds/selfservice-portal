@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { css } from '@emotion/react'
 import { ReactModalWrapper } from './ReactModalWrapper'
-import { LockBodyScroll } from '@dfds-ui/react-components'
+import { LockBodyScroll } from '@/components/dfds-ui/react-components'
 import { theme } from '@/components/dfds-ui/theme'
 
 export type ModalPanelProps = {

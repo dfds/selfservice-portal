@@ -1,4 +1,4 @@
-import { FlexBox } from '@dfds-ui/react-components/flexbox'
+import { FlexBox } from '@/components/dfds-ui/react-components/flexbox'
 import { Story } from '@storybook/react'
 import React, { useState } from 'react'
 import { TextareaField, TextareaFieldProps } from './TextareaField'
