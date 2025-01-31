@@ -1,13 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import PageSection from "../../../components/PageSection";
 import styles from "./capabilityAdoptionLevel.module.css";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import {
   StatusSuccess,
   StatusAlert,
   Information,
   Help,
-} from "@dfds-ui/icons/system";
+} from "@/components/dfds-ui/icons/system";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import SelfAssessments from "../selfAssessment";
 import { TabbedPageSection } from "../../../components/PageSection";

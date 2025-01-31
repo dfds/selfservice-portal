@@ -1,0 +1,21 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+import { Usage } from './FieldWrap.stories'
+import { FieldWrap } from './FieldWrap'
+
+<Meta title="Hydro UI/Forms/FieldWrap" component={FieldWrap} />
+
+# FieldWrap
+
+```jsx
+import { FieldWrap } from '@/components/dfds-ui/forms'
+```
+
+Low level component for wrapping an arbitrary component. Deals with showing labels, assistive and error messages, help button and similar behaviour.
+
+It's used by the other `*Field` components
+
+<Preview gray>
+  <Story name="Usage" story={Usage} />
+</Preview>
+
+<Props story="Usage" />

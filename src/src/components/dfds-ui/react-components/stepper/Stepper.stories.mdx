@@ -1,0 +1,110 @@
+import Stepper from './Stepper'
+import {
+  Basic,
+  HorizontalStepper,
+  VerticalStepper,
+  SequentialStepper,
+  NonSequentialStepper,
+  VerticalStepperWithFeedback,
+  HorizontalStepperWithFeedback,
+  StepStates,
+} from './Stepper.stories'
+import {
+  Meta,
+  Props,
+  DocsContainer,
+  Story,
+  ArgsTable,
+  Preview,
+  Description,
+  withWidth,
+} from '@dfds-ui/storybook-design'
+
+<Meta title="Hydro UI/Stepper/Stepper" component={Stepper} />
+
+# Stepper
+
+The Stepper component enables the user to navigate a sequesnce of logical steps that visualizes progress. `Stepper` may display a transitory feedback message after a step is completed.
+
+Types of Steppers: Horizontal, Vertical, Sequential, None-Sequential
+
+<Description of={Stepper} />
+
+## Usage
+
+```jsx
+import { Stepper } from '@/components/dfds-ui/react-components'
+```
+
+## Props
+
+<ArgsTable of={Stepper} />
+
+## Types of Steppers
+
+### Horizontal stepper
+
+The step name and numbers on horizontal bar, which can be fixed to the top page when scrolling down.
+Step names should be as short as possible to save space.
+
+<Preview gray>
+  <Story story={HorizontalStepper} />
+</Preview>
+
+### Vertical stepper
+
+The vertical stepper works the same way as a horizontal stepper, only it cant take child components wrapped in `<StepContent/>` components.
+
+<Preview gray>
+  <Story story={VerticalStepper} />
+</Preview>
+
+### Sequential stepper
+
+Sequential steppers require users to complete one step in order to move on to the next step.
+
+It's still possible to ad optional steps to a sequential stepper. By passing passing the prop `optionalLabel:string` the step will be marked as optional, as seen below.
+
+<Preview gray>
+  <Story story={SequentialStepper} />
+</Preview>
+
+### None-sequential stepper
+
+When a stepper is not sequential a user can navigate the steps freely or enter at any point the flow.
+
+The user can also navigate by clicking directly at step button.
+
+<Preview gray>
+  <Story story={NonSequentialStepper} />
+</Preview>
+
+### Stepper with feedback messages
+
+A feedback message can be passed to display a transitory feedback message as the step label.
+
+Stepper feedback should only be used if there is a long latency between steps.
+
+#### Horizontal Stepper with feedback messages
+
+In a horizontal stepper, the feedback message will be displayed replacing all steps.
+
+<Preview gray>
+  <Story story={HorizontalStepperWithFeedback} />
+</Preview>
+
+#### Vertical Stepper with feedback messages
+
+In a vertical stepper, the feedback message will be displayed replacing the active step label and button.
+
+<Preview gray>
+  <Story story={VerticalStepperWithFeedback} />
+</Preview>
+
+### Step states
+
+Steps can have different states. Each step state can be controlled by passing the appropriate prop, as shown below.
+
+<Preview gray>
+  <Story story={StepStates} />
+</Preview>

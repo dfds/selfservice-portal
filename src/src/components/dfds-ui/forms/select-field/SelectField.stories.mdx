@@ -1,0 +1,145 @@
+import {
+  BasicSelectField,
+  MultiSelectField,
+  LabelSelectField,
+  SizesSelectField,
+  AssistiveTextSelectField,
+  ErrorMessageSelectField,
+  HelpSelectField,
+  ClearableSelectField,
+  PrefixSuffixSelectField,
+  DefaultValueSelectField,
+  ReactHookFormSelectField,
+  DisableSearchSelectField,
+  MatchFromStartSelectField,
+  MatchFromAnySelectField,
+  CustomOptionSelectField,
+  DisabledSelectField,
+} from './SelectField.stories'
+import { SelectField } from './SelectField'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+
+<Meta title="Hydro UI/Forms/SelectField" component={{ SelectField }} />
+
+# SelectField
+
+```jsx
+import { SelectField } from '@/components/dfds-ui/forms'
+```
+
+<Preview width="320px" gray>
+  <Story story={BasicSelectField} />
+</Preview>
+
+## Multi SelectField
+
+<Preview width="320px" gray>
+  <Story story={MultiSelectField} />
+</Preview>
+
+## Component props
+
+<Props of={SelectField} />
+
+## Label
+
+Use the `label` prop to specify the label. Please notice, the label size is based on visualSize prop.
+
+<Preview width="320px" gray>
+  <Story story={LabelSelectField} />
+</Preview>
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story story={SizesSelectField} />
+</Preview>
+
+## AssistiveText
+
+Use the `AssistiveText` prop to specify text.
+
+<Preview width="320px" gray>
+  <Story story={AssistiveTextSelectField} />
+</Preview>
+
+## Error Message
+
+Use the `ErrorMessage` prop to specify an error message.
+
+<Preview width="320px" gray>
+  <Story story={ErrorMessageSelectField} />
+</Preview>
+
+## Help Message
+
+Use the `help` prop to specify a help message.
+
+<Preview width="320px" gray>
+  <Story story={HelpSelectField} />
+</Preview>
+
+## Using `isClearable`
+
+Use the `isClearable` prop if you want the user to be able to clear the selection.
+
+<Preview width="320px" gray>
+  <Story story={ClearableSelectField} />
+</Preview>
+
+## Using prefix and suffix
+
+Use the `prefix` and `suffix` props if you want to add a prefix or a suffix.
+
+<Preview width="320px" gray>
+  <Story story={PrefixSuffixSelectField} />
+</Preview>
+
+# Disabled SelectField
+
+<Preview width="320px" gray>
+  <Story story={DisabledSelectField} />
+</Preview>
+
+# Example using default value
+
+<Preview width="320px" gray>
+  <Story story={DefaultValueSelectField} />
+</Preview>
+
+# Example using `react-hook-form`
+
+<Preview width="320px" gray>
+  <Story story={ReactHookFormSelectField} />
+</Preview>
+
+# Disable searchable
+
+<Preview width="320px" gray>
+  <Story story={DisableSearchSelectField} />
+</Preview>
+
+# Filter Config
+
+Set the `filterConfig` prop to change how the items are filtered.<br/>
+Check out [Custom filter logic](https://react-select.com/advanced#custom-filter-logic) for reference
+
+## matchFrom start
+
+<Preview width="320px" gray>
+  <Story story={MatchFromStartSelectField} />
+</Preview>
+
+## matchFrom any
+
+<Preview width="320px" gray>
+  <Story story={MatchFromAnySelectField} />
+</Preview>
+
+## Custom option
+
+<Preview width="320px" gray>
+  <Story story={CustomOptionSelectField} />
+</Preview>

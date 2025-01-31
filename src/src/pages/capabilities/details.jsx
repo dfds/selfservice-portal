@@ -8,7 +8,7 @@ import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
 import Page from "components/Page";
 import PageSection from "components/PageSection";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";

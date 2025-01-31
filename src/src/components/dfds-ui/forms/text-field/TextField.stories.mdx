@@ -1,0 +1,68 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@dfds-ui/storybook-design'
+import TextField from './TextField'
+import {
+  BasicTextField,
+  ExamplesTextField,
+  SizesTextField,
+  ErrorMessageTextField,
+  AdornmentTextField,
+  InputTypeTextField,
+} from './TextField.stories'
+
+<Meta title="Hydro UI/Forms/TextField" component={{ TextField }} lab />
+
+# TextField
+
+Component for text input.
+
+```jsx
+import { TextField } from '@/components/dfds-ui/forms'
+```
+
+<Preview width="320px" gray>
+  <Story name="Basic" story={BasicTextField} />
+</Preview>
+
+## Component props
+
+<Props of={TextField} />
+
+## Examples
+
+<Preview width="320px" gray>
+  <Story name="Examples" story={ExamplesTextField} />
+</Preview>
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story name="Sizes" story={SizesTextField} />
+</Preview>
+
+## Error state and message
+
+Use the `errorMessage` prop to indicate an error and display the message under the input element.
+Displaying the error message will replace any `assistiveText`.
+
+<Preview width="320px" gray>
+  <Story name="Error message" story={ErrorMessageTextField} />
+</Preview>
+
+## Using `adornment` prop
+
+Use the `adornment` prop to append additional content aligned with the input element.
+For example to display a button next to the input element.
+
+<Preview width="320px" gray>
+  <Story name="Adornment" story={AdornmentTextField} />
+</Preview>
+
+## Using `inputType` prop
+
+Use `inputType` to change the `type` attribute on the input html element.
+
+<Preview width="320px" gray>
+  <Story name="Using inputType" story={InputTypeTextField} />
+</Preview>

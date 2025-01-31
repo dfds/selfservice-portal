@@ -16,7 +16,7 @@ import {
   CardActions,
   Button,
   Spinner,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";

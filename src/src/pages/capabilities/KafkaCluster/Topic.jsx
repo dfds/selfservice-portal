@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import {
   Button,
   Card,
   CardContent,
   IconButton,
-} from "@dfds-ui/react-components";
-import { Accordion, Spinner } from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
+import { Accordion, Spinner } from "@/components/dfds-ui/react-components";
 import {
   ChevronDown,
   ChevronUp,
   StatusAlert,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from "@dfds-ui/icons/system";
+} from "@/components/dfds-ui/icons/system";
 
 import Consumer from "./Consumer";
 import styles from "./Topics.module.css";

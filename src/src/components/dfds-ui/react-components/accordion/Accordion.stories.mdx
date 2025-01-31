@@ -1,0 +1,252 @@
+import { Meta, Story, Props } from '@dfds-ui/storybook-design'
+import { Preview } from '@dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import Accordion from './Accordion'
+import AccordionSmall from './AccordionSmall'
+import { Button } from '../button'
+import { useState, Fragment } from 'react'
+import { css } from '@emotion/react'
+import { theme } from '../styles'
+
+<Meta title="Hydro UI/Accordions/Accordion" component={Accordion} />
+
+# Accordion
+
+Accordions display a list of high-level options that can expand/collapse to reveal more detailed information.
+
+## Component Props
+
+<Props components={{ Accordion, AccordionSmall }} />
+
+## Usage
+
+```jsx
+import { Accordion, AccordionSmall } from '@/components/dfds-ui/react-components'
+```
+
+export const Content = () => (
+  <React.Fragment>
+    Accordions display a list of high-level options that can expand/collapse to reveal more detailed information.
+  </React.Fragment>
+)
+
+## Default
+
+<Preview gray>
+  <Story name="Default">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(true)
+      const [isOpen2, setIsOpen2] = useState(false)
+      const [isOpen3, setIsOpen3] = useState(false)
+      const [isOpen4, setIsOpen4] = useState(false)
+      const [isOpen5, setIsOpen5] = useState(false)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      const onToggle2 = () => setIsOpen2((s) => !s)
+      const onToggle3 = () => setIsOpen3((s) => !s)
+      const onToggle4 = () => setIsOpen4((s) => !s)
+      const onToggle5 = () => setIsOpen5((s) => !s)
+      return (
+        <React.Fragment>
+          <Accordion onToggle={onToggle1} isOpen={isOpen1} heading="Heading 1">
+            <Content />
+          </Accordion>
+          <Accordion onToggle={onToggle2} isOpen={isOpen2} heading="Heading 2">
+            <Content />
+          </Accordion>
+          <Accordion onToggle={onToggle3} isOpen={isOpen3} heading="Heading 3">
+            <Content />
+          </Accordion>
+          <Accordion onToggle={onToggle4} isOpen={isOpen4} heading="Heading 4">
+            <Content />
+          </Accordion>
+          <Accordion onToggle={onToggle5} isOpen={isOpen5} heading="Heading 5">
+            <Content />
+          </Accordion>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Secondary heading
+
+<Preview gray>
+  <Story name="Secondary heading">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(false)
+      const [isOpen2, setIsOpen2] = useState(false)
+      const [isOpen3, setIsOpen3] = useState(false)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      const onToggle2 = () => setIsOpen2((s) => !s)
+      const onToggle3 = () => setIsOpen3((s) => !s)
+      return (
+        <React.Fragment>
+          <Accordion onToggle={onToggle1} isOpen={isOpen1} heading="Heading 1" secondaryHeading="Secondary heading">
+            <Content />
+          </Accordion>
+          <Accordion
+            onToggle={onToggle2}
+            isOpen={isOpen2}
+            heading="Heading 2"
+            secondaryHeading="This secondary heading disappears when expanded"
+            noSecondaryHeadingWhenOpen
+          >
+            <Content />
+          </Accordion>
+          <Accordion
+            onToggle={onToggle3}
+            isOpen={isOpen3}
+            heading="Heading 3"
+            secondaryHeading={
+              <Fragment>
+                This secondary heading has a{' '}
+                <a
+                  href="https://github.com/typescript-cheatsheets/react#useful-react-prop-type-examples"
+                  target="_blank"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                  }}
+                >
+                  ReactNode
+                </a>
+              </Fragment>
+            }
+          >
+            <Content />
+          </Accordion>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Small
+
+<Preview gray>
+  <Story name="Small">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(true)
+      const [isOpen2, setIsOpen2] = useState(false)
+      const [isOpen3, setIsOpen3] = useState(false)
+      const [isOpen4, setIsOpen4] = useState(false)
+      const [isOpen5, setIsOpen5] = useState(false)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      const onToggle2 = () => setIsOpen2((s) => !s)
+      const onToggle3 = () => setIsOpen3((s) => !s)
+      const onToggle4 = () => setIsOpen4((s) => !s)
+      const onToggle5 = () => setIsOpen5((s) => !s)
+      return (
+        <React.Fragment>
+          <AccordionSmall onToggle={onToggle1} isOpen={isOpen1} heading="Heading 1">
+            <Content />
+          </AccordionSmall>
+          <AccordionSmall onToggle={onToggle2} isOpen={isOpen2} heading="Heading 2">
+            <Content />
+          </AccordionSmall>
+          <AccordionSmall onToggle={onToggle3} isOpen={isOpen3} heading="Heading 3">
+            <Content />
+          </AccordionSmall>
+          <AccordionSmall onToggle={onToggle4} isOpen={isOpen4} heading="Heading 4">
+            <Content />
+          </AccordionSmall>
+          <AccordionSmall onToggle={onToggle5} isOpen={isOpen5} heading="Heading 5">
+            <Content />
+          </AccordionSmall>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Nested
+
+<Preview gray>
+  <Story name="Nested">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(false)
+      const [isSmallOpen1, setIsSmallOpen1] = useState(false)
+      const [isSmallOpen2, setIsSmallOpen2] = useState(false)
+      const [isSmallOpen3, setIsSmallOpen3] = useState(false)
+      const [isSmallOpen4, setIsSmallOpen4] = useState(false)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      const onSmallToggle1 = () => setIsSmallOpen1((s) => !s)
+      const onSmallToggle2 = () => setIsSmallOpen2((s) => !s)
+      const onSmallToggle3 = () => setIsSmallOpen3((s) => !s)
+      const onSmallToggle4 = () => setIsSmallOpen4((s) => !s)
+      return (
+        <React.Fragment>
+          <Accordion onToggle={onToggle1} isOpen={isOpen1} heading="Heading 1">
+            <AccordionSmall onToggle={onSmallToggle1} isOpen={isSmallOpen1} heading="Nested 1">
+              <Content />
+            </AccordionSmall>
+            <AccordionSmall onToggle={onSmallToggle2} isOpen={isSmallOpen2} heading="Nested 2">
+              <Content />
+            </AccordionSmall>
+            <AccordionSmall onToggle={onSmallToggle3} isOpen={isSmallOpen3} heading="Nested 3">
+              <Content />
+            </AccordionSmall>
+            <AccordionSmall onToggle={onSmallToggle4} isOpen={isSmallOpen4} heading="Nested 4">
+              <Content />
+            </AccordionSmall>
+          </Accordion>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Custom header
+
+<Preview gray>
+  <Story name="Custom header">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(false)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      return (
+        <Accordion
+          css={{ marginBottom: '1rem' }}
+          onToggle={onToggle1}
+          isOpen={isOpen1}
+          header={
+            <div
+              css={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                padding: '1rem',
+              }}
+            >
+              <div css={{ flex: '1' }}>Header content with shared button</div>
+              <div>
+                <Button type="button" onClick={onToggle1}>
+                  Toggle
+                </Button>
+              </div>
+            </div>
+          }
+        >
+          <div css={{ backgroundColor: 'white', padding: '1rem' }}>
+            <Content />
+          </div>
+        </Accordion>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview gray>
+  <Story name="Disabled">
+    {() => {
+      const [isOpen1, setIsOpen1] = useState(true)
+      const onToggle1 = () => setIsOpen1((s) => !s)
+      return (
+        <Accordion onToggle={onToggle1} isOpen={isOpen1} heading="Disabled" disabled>
+          <Content />
+        </Accordion>
+      )
+    }}
+  </Story>
+</Preview>
