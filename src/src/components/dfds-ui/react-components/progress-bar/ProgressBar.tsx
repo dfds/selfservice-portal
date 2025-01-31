@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type ProgressBarProps = { light?: boolean; indeterminate?: boolean; progress?: number }
 

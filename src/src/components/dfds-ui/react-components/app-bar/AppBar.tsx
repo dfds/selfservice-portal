@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme, useBreakpoint, media } from '@dfds-ui/theme'
+import { theme, useBreakpoint, media } from '@/components/dfds-ui/theme'
 import { FlexBox } from './../flexbox'
 import { Logo as DfdsLogo } from './../logo'
-import { Menu, Close } from '@dfds-ui/icons/system'
+import { Menu, Close } from '@/components/dfds-ui/icons/system'
 import AppBarIconButton from './AppBarIconButton'
 import { Divider } from '../divider'
 
 import { useAppBarContext } from './'
-import { useDimensions } from '@dfds-ui/hooks'
+import { useDimensions } from '@/components/dfds-ui/hooks'
 
 type Breakpoint = 's' | 'm' | 'l'
 

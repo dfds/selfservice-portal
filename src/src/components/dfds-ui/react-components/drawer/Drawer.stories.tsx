@@ -5,7 +5,7 @@ import { Drawer } from './'
 import { StoryPage, Md, ExampleContainer, Paper } from '@dfds-ui/storybook-design'
 import { css } from '@emotion/react'
 import { ListText, ListItem } from '../lists'
-import { MoreHorizontal } from '@dfds-ui/icons/system'
+import { MoreHorizontal } from '@/components/dfds-ui/icons/system'
 
 const stories = storiesOf('Hydro UI/Surfaces/Drawer', module)
 

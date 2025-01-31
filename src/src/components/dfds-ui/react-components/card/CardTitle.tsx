@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react'
-import { Text } from '@dfds-ui/typography'
-import { theme, useBreakpoint } from '@dfds-ui/theme'
+import { Text } from '@/components/dfds-ui/typography'
+import { theme, useBreakpoint } from '@/components/dfds-ui/theme'
 import { CardContext } from './Card'
 import { css } from '@emotion/react'
 

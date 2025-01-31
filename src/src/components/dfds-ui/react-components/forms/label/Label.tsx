@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import Asterisk from '../asterisk/Asterisk'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type LabelProps = {
   required?: boolean

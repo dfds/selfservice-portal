@@ -1,6 +1,6 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { Help } from '@dfds-ui/icons/system'
+import { Help } from '@/components/dfds-ui/icons/system'
 import { theme } from '@/components/dfds-ui/theme'
 import { UnstableWithTooltip } from '@/components/dfds-ui/react-components/tooltip'
 

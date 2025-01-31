@@ -1,8 +1,8 @@
 import React from 'react'
 import { css, keyframes } from '@emotion/react'
-import { Ship, Waves } from '@dfds-ui/icons'
-import { Text } from '@dfds-ui/typography'
-import { media, theme } from '@dfds-ui/theme'
+import { Ship, Waves } from '@/components/dfds-ui/icons'
+import { Text } from '@/components/dfds-ui/typography'
+import { media, theme } from '@/components/dfds-ui/theme'
 import { FlexBox } from '../flexbox'
 import LockBodyScroll from '../common/LockBodyScroll'
 

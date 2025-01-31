@@ -1,4 +1,4 @@
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type Intent = 'info' | 'critical' | 'success' | 'warning' | 'none'
 

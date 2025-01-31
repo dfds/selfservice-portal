@@ -1,10 +1,10 @@
 import React from 'react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 import { render } from '@testing-library/react'
 import MobileStepper from '../MobileStepper'
 import { Button } from '../../button'
-import { ChevronRight, ChevronLeft } from '@dfds-ui/icons/system'
+import { ChevronRight, ChevronLeft } from '@/components/dfds-ui/icons/system'
 
 describe('<Stepper />', () => {
   const defaultProps = {

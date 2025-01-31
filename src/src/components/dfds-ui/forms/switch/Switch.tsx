@@ -1,7 +1,7 @@
 import React, { forwardRef, ChangeEvent } from 'react'
 import { css, SerializedStyles } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Yes } from '@dfds-ui/icons/system'
+import { Yes } from '@/components/dfds-ui/icons/system'
 import elevation from '@/components/dfds-ui/react-components/elevation'
 import { visuallyHidden } from '@/components/dfds-ui/react-components/styles'
 import { theme } from '@/components/dfds-ui/theme'

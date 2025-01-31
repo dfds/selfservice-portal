@@ -1,5 +1,5 @@
 import styles from "./toast.module.css";
-import { Close } from "@dfds-ui/icons/system";
+import { Close } from "@/components/dfds-ui/icons/system";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/dfds-ui/react-components";
 import { Modal, ModalAction } from "@/components/dfds-ui/modal";

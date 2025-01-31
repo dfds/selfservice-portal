@@ -1,7 +1,7 @@
 import React from 'react'
-import { Close } from '@dfds-ui/icons/system'
+import { Close } from '@/components/dfds-ui/icons/system'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import IconButton, { IconButtonSize } from '../button/IconButton'
 
 export type SideSheetCloseButtonProps = {

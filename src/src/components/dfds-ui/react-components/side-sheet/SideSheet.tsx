@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { css } from '@emotion/react'
-import { media, theme } from '@dfds-ui/theme'
+import { media, theme } from '@/components/dfds-ui/theme'
 import { FlexBox } from '../flexbox'
 import SideSheetCloseButton from './SideSheetCloseButton'
 import SideSheetHeader from './SideSheetHeader'

@@ -2,7 +2,7 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { FeatureList } from '.'
-import { Yes } from '@dfds-ui/icons/system'
+import { Yes } from '@/components/dfds-ui/icons/system'
 import notes from './FeatureList.md'
 
 const stories = storiesOf('UI/FeatureList', module)

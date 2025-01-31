@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 type RenderAs = {
   as?: React.ElementType

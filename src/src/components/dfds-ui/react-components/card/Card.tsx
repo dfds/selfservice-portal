@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { FunctionComponent, ReactNode, useState } from 'react'
 import styled from '@emotion/styled'
-import { theme, media } from '@dfds-ui/theme'
+import { theme, media } from '@/components/dfds-ui/theme'
 import { FlexBoxProps } from './../flexbox/FlexBox'
-import { useDimensions } from '@dfds-ui/hooks'
+import { useDimensions } from '@/components/dfds-ui/hooks'
 import cx from 'classnames'
 import { css } from '@emotion/react'
 import { useSurfaceContext, SurfaceType, MaybeSurfaceProvider } from '../surface'

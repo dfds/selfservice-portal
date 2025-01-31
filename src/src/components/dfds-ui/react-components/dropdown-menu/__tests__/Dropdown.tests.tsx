@@ -1,8 +1,8 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { Dropdown, MenuItem, MenuTitle, MenuCheckbox } from '..'
-import { Yes, Edit } from '@dfds-ui/icons/system/'
-import { FlagGb } from '@dfds-ui/icons/flags/'
+import { Yes, Edit } from '@/components/dfds-ui/icons/system/'
+import { FlagGb } from '@/components/dfds-ui/icons/flags/'
 
 const fakeReferenceObject = {
   clientWidth: 0,

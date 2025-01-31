@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from '@emotion/react'
 import { FlexBoxProps, flexBoxStyles } from '../flexbox/FlexBox'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type ListTextGroupProps = {
   /**

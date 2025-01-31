@@ -1,6 +1,6 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import ListIcon from './ListIcon'
 
 export type ListAddonProps = {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { MoreHorizontal } from '@dfds-ui/icons/system'
+import { MoreHorizontal } from '@/components/dfds-ui/icons/system'
 import { Button } from '../button'
 
 type Props = {

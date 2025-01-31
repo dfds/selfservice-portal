@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { useResizeObserver } from '@dfds-ui/hooks'
+import { useResizeObserver } from '@/components/dfds-ui/hooks'
 import { IconButton } from '../button'
 import useTabsContext from './TabsContext'
-import { theme } from '@dfds-ui/theme'
-import { ChevronLeft, ChevronRight } from '@dfds-ui/icons/system'
+import { theme } from '@/components/dfds-ui/theme'
+import { ChevronLeft, ChevronRight } from '@/components/dfds-ui/icons/system'
 
 const CHEVRON_SCROLL_STEP = 300
 

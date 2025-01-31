@@ -1,6 +1,6 @@
 import React from 'react'
-import { useBreakpoint } from '@dfds-ui/theme'
-import { Text } from '@dfds-ui/typography'
+import { useBreakpoint } from '@/components/dfds-ui/theme'
+import { Text } from '@/components/dfds-ui/typography'
 import ReactSelect from '../forms/reactselect/ReactSelect'
 import {
   PageLimitStyles,

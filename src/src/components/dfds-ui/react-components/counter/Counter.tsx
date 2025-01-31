@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, forwardRef } from 'react'
 import styled from '@emotion/styled'
-import { NumberDown, NumberUp } from '@dfds-ui/icons/system'
+import { NumberDown, NumberUp } from '@/components/dfds-ui/icons/system'
 import { css } from '@emotion/react'
 
 export type CounterProps = {

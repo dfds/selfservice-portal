@@ -1,6 +1,6 @@
 import React, { ReactNode, Fragment } from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type SideSheetFooterProps = {
   className?: string

@@ -6,7 +6,7 @@ import CardTitle from '../CardTitle'
 import CardContent from '../CardContent'
 import CardActions from '../CardActions'
 import { LinkButton } from '../../button'
-import { ChevronRight } from '@dfds-ui/icons/system'
+import { ChevronRight } from '@/components/dfds-ui/icons/system'
 
 // useDimensions uses window.requestAnimationFrame which will raise warnings when running multiple tests here
 // in jest setup we set:

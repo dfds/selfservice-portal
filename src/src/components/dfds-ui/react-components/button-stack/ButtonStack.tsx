@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from '@emotion/react'
 import emotionCloneElement from '../common/emotionCloneElement'
-import { media } from '@dfds-ui/theme'
+import { media } from '@/components/dfds-ui/theme'
 
 type Orientation = 'horizontal' | 'vertical'
 type Alignment = 'left' | 'right' | 'center'

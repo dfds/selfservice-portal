@@ -13,7 +13,7 @@ import {
   Tooltip,
   BannerParagraph,
 } from "@/components/dfds-ui/react-components";
-import { Information } from "@dfds-ui/icons/system";
+import { Information } from "@/components/dfds-ui/icons/system";
 
 export default function NewTopicDialog({
   capabilityId,

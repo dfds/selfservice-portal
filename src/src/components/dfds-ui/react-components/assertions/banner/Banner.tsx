@@ -1,12 +1,12 @@
 import React, { createContext, ElementType, FunctionComponent, ReactNode, useContext, useRef, useState } from 'react'
 import { css } from '@emotion/react'
-import { useResizeObserver } from '@dfds-ui/hooks'
+import { useResizeObserver } from '@/components/dfds-ui/hooks'
 import { Intent, getIntentColor } from '../../common/intent'
-import { Information, StatusAlert, StatusSuccess, StatusWarning, Close } from '@dfds-ui/icons/system'
+import { Information, StatusAlert, StatusSuccess, StatusWarning, Close } from '@/components/dfds-ui/icons/system'
 import { IconButton, IconButtonProps } from '../../button'
 import { Divider } from '../../divider'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
 
 export type BannerVariant = 'lowEmphasis' | 'mediumEmphasis' | 'highEmphasis' | 'default' | 'inverted'
 

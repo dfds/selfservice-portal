@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { Popper } from '@mui/material'
-import { Text } from '@dfds-ui/typography'
+import { Text } from '@/components/dfds-ui/typography'
 import { ClickAwayListener } from '@mui/base'
-import { ChevronDown } from '@dfds-ui/icons/system'
+import { ChevronDown } from '@/components/dfds-ui/icons/system'
 import { PopperProps } from '@mui/material'
 
 export type AppBarItemProps = {

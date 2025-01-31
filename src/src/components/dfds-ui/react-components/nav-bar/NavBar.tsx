@@ -6,7 +6,7 @@ import { legacyMedia as media } from '../styles/media'
 import { rem } from '../styles/rem'
 import useOnClickOutside from '../common/useOnClickOutside'
 import arrow from '../common/arrow'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 type ItemAlignment = 'left' | 'right'
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { keyframes, css } from '@emotion/react'
-import { SvgAnimatedSpinner } from '@dfds-ui/icons'
-import { theme } from '@dfds-ui/theme'
+import { SvgAnimatedSpinner } from '@/components/dfds-ui/icons'
+import { theme } from '@/components/dfds-ui/theme'
 import { PolymorphicComponentProps } from '../common/polymorphic'
 
 type Color = 'dark' | 'secondary' | 'light'

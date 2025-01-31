@@ -1,6 +1,6 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { ie11MinHeightFix } from '../common/utils'
 import { FlexBoxProps, flexBoxStyles } from '../flexbox/FlexBox'
 import { dividerBorder } from '../divider'

@@ -1,9 +1,9 @@
 import React, { ReactNode, useState } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
-import { Clear } from '@dfds-ui/icons/system'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
+import { Clear } from '@/components/dfds-ui/icons/system'
 
 type InteractionEvent = React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
 

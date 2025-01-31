@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 const AssistiveText = styled.div<{ inverted?: boolean }>`
   font-size: 12px;

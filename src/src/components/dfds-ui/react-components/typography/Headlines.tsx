@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { legacyMedia as media } from './../styles'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 type HeadlineProps = React.PropsWithoutRef<JSX.IntrinsicElements['h1']> & {
   as?: React.ElementType

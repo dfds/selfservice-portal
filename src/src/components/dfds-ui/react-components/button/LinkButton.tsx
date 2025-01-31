@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Button, { ButtonProps } from './Button'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 export type LinkButtonProps = React.PropsWithoutRef<JSX.IntrinsicElements['a']> &

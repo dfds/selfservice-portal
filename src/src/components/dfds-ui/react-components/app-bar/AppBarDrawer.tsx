@@ -1,4 +1,4 @@
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import styled from '@emotion/styled'
 import { Drawer } from '@mui/material'
 import * as React from 'react'

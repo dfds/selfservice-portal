@@ -4,7 +4,7 @@ import radii from './radii'
 import elevation from './elevation'
 import { Colors, hydro2, legacyColorPalette } from '@/components/dfds-ui/colors';
 import { LegacyColorsFlat } from '@/components/dfds-ui/colors/legacy';
-import { spacing } from '@dfds-ui/spacing'
+import { spacing } from '@/components/dfds-ui/spacing'
 import states from './states'
 import breakpoints from './breakpoints'
 import zIndex from './z-index'

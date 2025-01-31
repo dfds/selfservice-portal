@@ -1,7 +1,7 @@
 import React from 'react'
 import { Popper as MaterialPopper, PopperProps, PopperPlacementType } from '@mui/material'
 import { ClickAwayListener } from '@mui/base'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 export type PopperBaseProps = {

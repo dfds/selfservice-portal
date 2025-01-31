@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 const ErrorText = styled.div<{ small?: boolean }>`
   color: ${theme.colors.status.alert};

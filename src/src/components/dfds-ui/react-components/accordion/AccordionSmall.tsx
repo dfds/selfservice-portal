@@ -1,12 +1,12 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import Collapse from '@kunukn/react-collapse'
-import { ChevronDown } from '@dfds-ui/icons/system'
+import Collapse from 'react-collapse'
+import { ChevronDown } from '@/components/dfds-ui/icons/system'
 import cx from 'classnames'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import AccordionContent from './AccordionContent'
 import { Divider } from '../divider'
-import { Text } from '@dfds-ui/typography'
+import { Text } from '@/components/dfds-ui/typography'
 
 export type AccordionSmallHeaderProps = {
   /**

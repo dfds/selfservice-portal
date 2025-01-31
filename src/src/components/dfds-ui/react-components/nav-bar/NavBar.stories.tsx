@@ -3,8 +3,8 @@ import { storiesOf } from '@storybook/react'
 import NavBar, { NavBarItem, NavBarIcon } from './NavBar'
 import Menu from '../menu/Menu'
 import styled from '@emotion/styled'
-import { FlagInt } from '@dfds-ui/icons/flags'
-import { Account, Menu as BurgerMenu } from '@dfds-ui/icons/system'
+import { FlagInt } from '@/components/dfds-ui/icons/flags'
+import { Account, Menu as BurgerMenu } from '@/components/dfds-ui/icons/system'
 
 const stories = storiesOf('UI/NavBar', module)
 

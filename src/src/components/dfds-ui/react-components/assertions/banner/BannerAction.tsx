@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
 import { Button } from '../../button'
 import { BannerVariant, useBannerContext } from './Banner'
 

@@ -12,7 +12,7 @@ import {
   OptionsOrGroups,
   SingleValue,
 } from 'react-select'
-import { ChevronDown } from '@dfds-ui/icons/system'
+import { ChevronDown } from '@/components/dfds-ui/icons/system'
 import { Label } from '../label/Label'
 import AssistiveText from '../assistive-text/AssistiveText'
 import ErrorText from '../error-text/ErrorText'

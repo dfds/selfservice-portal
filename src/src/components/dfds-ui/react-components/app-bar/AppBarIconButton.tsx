@@ -1,6 +1,6 @@
 import React from 'react'
 import { IconButton } from '../button'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 type AppBarIconButtonProps = {

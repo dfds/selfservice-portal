@@ -1,4 +1,4 @@
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { keyframes } from '@emotion/react'
 import { css } from '@emotion/react'
 

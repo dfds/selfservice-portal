@@ -7,7 +7,7 @@ import React from "react";
 import { Divider } from "@/components/dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import { ChevronDown, ChevronUp } from "@/components/dfds-ui/icons/system";
 import { prettifyJsonString } from "../../../Utils";
 
 function JsonViewer({ json }) {

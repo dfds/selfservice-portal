@@ -2,7 +2,7 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import Input from './Input'
-import Lock from '@dfds-ui/icons/core/Lock'
+import Lock from '@/components/dfds-ui/icons/core/Lock'
 import { StoryPage, Md, ExampleContainer } from '@dfds-ui/storybook-design'
 
 const stories = storiesOf('Legacy/Input Fields/Base', module)
@@ -66,7 +66,7 @@ import { Input } from '@/components/dfds-ui/react-components';
         {Md`
 ~~~jsx
 import { Input } from '@/components/dfds-ui/react-components';
-import { Lock } from '@dfds-ui/icons';
+import { Lock } from '@/components/dfds-ui/icons';
 
 <Input name="input" placeholder="Hint text" icon={<Lock />} />
 ~~~

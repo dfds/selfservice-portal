@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import IconButton from '../IconButton'
-import { Settings } from '@dfds-ui/icons/system'
+import { Settings } from '@/components/dfds-ui/icons/system'
 
 describe('<IconButton />', () => {
   it('should render without errors', () => {

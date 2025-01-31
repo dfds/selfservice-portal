@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
 import useTabsContext from './TabsContext'
 
 type Size = 's' | 'm'

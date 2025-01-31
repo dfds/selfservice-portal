@@ -1,7 +1,7 @@
 import React, { ElementType, ComponentPropsWithRef, forwardRef } from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { OverlayOptions } from '@dfds-ui/theme/states'
+import { theme } from '@/components/dfds-ui/theme'
+import { OverlayOptions } from '@/components/dfds-ui/theme/states'
 import { PolymorphicComponentProps } from '../common/polymorphic'
 import { UnstableWithTooltip } from '../tooltip/Tooltip'
 

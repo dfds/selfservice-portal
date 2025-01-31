@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react'
 import { css } from '@emotion/react'
 import { theme } from '@/components/dfds-ui/theme'
-import { Show, Hide } from '@dfds-ui/icons/system'
+import { Show, Hide } from '@/components/dfds-ui/icons/system'
 import { TextFieldProps } from '../text-field/TextField'
 import TextField from '../text-field/TextField'
 

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import ListItem from '../lists/ListItem'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 const AppBarListItem = styled(ListItem)`
   &:active {

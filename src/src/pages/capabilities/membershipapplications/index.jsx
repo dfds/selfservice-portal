@@ -19,7 +19,7 @@ import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from "./ProfilePicture";
 import AppContext from "AppContext";
-import { StatusSuccess } from "@dfds-ui/icons/system";
+import { StatusSuccess } from "@/components/dfds-ui/icons/system";
 import PreAppContext from "../../../preAppContext";
 import {
   useDeleteMembershipApplicationApproval,

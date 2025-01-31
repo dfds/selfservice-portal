@@ -1,4 +1,4 @@
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 // space between label and stepButton

@@ -1,8 +1,8 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
-import { Text } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
+import { Text } from '@/components/dfds-ui/typography'
 
 type FontFamily = keyof typeof theme.fontFamilies
 

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 export type SurfaceType = keyof typeof theme.colors.surface

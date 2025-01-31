@@ -1,3 +1,3 @@
-import { media } from '@dfds-ui/theme'
+import { media } from '@/components/dfds-ui/theme'
 
 export default media

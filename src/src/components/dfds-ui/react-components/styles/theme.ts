@@ -1,5 +1,5 @@
-import { colors } from '@dfds-ui/colors'
-import { spacing } from '@dfds-ui/spacing'
+import { colors } from '@/components/dfds-ui/colors'
+import { spacing } from '@/components/dfds-ui/spacing'
 
 export const theme = {
   colors,

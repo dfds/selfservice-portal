@@ -1,4 +1,4 @@
-import { theme, media } from '@dfds-ui/theme'
+import { theme, media } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 
 export const paginationItemStyles = css`

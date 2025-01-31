@@ -12,7 +12,7 @@ const bold = 'https://unpkg.com/@dfds-ui/fonts@0.0.42/fonts/DFDS-Bold.woff2'
 const light = 'https://unpkg.com/@dfds-ui/fonts@0.0.42/fonts/DFDS-Light.woff2'
 
 import { sanitize } from './sanitize'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 type FontDefinition = {
   fontFamily: string

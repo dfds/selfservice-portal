@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { ListItem, ListText, ListTitle, ListTextGroup, ListIcon, ListAddon } from '..'
-import { ChevronRight } from '@dfds-ui/icons/system'
+import { ChevronRight } from '@/components/dfds-ui/icons/system'
 
 describe('<ListItem />', () => {
   it('should render without errors', () => {

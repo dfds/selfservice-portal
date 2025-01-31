@@ -1,6 +1,6 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { ListItem, ListText, ListIcon } from '../lists'
 import useDropdownContext from './DropdownContext'
 import { DropdownSize } from './Dropdown'

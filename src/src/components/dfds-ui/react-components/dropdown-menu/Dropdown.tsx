@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { Drawer } from '../drawer'
 import { DropdownContextProvider } from './DropdownContext'
 import { Popper, PopperProps, PopperPlacementType } from '@mui/material'

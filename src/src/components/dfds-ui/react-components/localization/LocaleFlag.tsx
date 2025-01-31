@@ -1,6 +1,6 @@
 import React, { ComponentPropsWithoutRef } from 'react'
 import { css } from '@emotion/react'
-import * as flags from '@dfds-ui/icons/flags'
+import * as flags from '@/components/dfds-ui/icons/flags'
 import { Locale, LocaleInfo, fallbackLocale, localeData } from './locales'
 
 export type LocaleFlagProps = {

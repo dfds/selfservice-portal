@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import { css } from '@emotion/react'
 import StepContext from './StepContext'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 type StepLableTypes = {
   children: ReactNode

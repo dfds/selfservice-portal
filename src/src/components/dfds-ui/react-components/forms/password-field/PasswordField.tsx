@@ -1,6 +1,6 @@
 /* eslint-disable deprecation/deprecation */
 import React, { useState } from 'react'
-import { Hidden, Shown } from '@dfds-ui/icons'
+import { Hidden, Shown } from '@/components/dfds-ui/icons'
 import TextField, { TextFieldProps } from '../text-field/TextField'
 import styled from '@emotion/styled'
 

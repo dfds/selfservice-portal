@@ -1,7 +1,7 @@
 import React from 'react'
 import { DividerProps, Divider } from '../divider'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type ListDividerProps = Pick<DividerProps, 'as' | 'indent' | 'margins'>
 

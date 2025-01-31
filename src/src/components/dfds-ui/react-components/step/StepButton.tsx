@@ -1,9 +1,9 @@
 import React from 'react'
 import { css } from '@emotion/react'
 import { IconButton } from '../button'
-import { Yes, MoreHorizontal, StatusAlert } from '@dfds-ui/icons/system'
+import { Yes, MoreHorizontal, StatusAlert } from '@/components/dfds-ui/icons/system'
 import { Button } from '../button'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import StepContext from './StepContext'
 
 type StepButtonProps = | React.ButtonHTMLAttributes<HTMLButtonElement> 

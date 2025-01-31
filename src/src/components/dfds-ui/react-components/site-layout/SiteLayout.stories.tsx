@@ -4,8 +4,8 @@ import { SiteLayout } from './'
 import { NavBar, NavBarItem, NavBarIcon } from '../nav-bar'
 import { Footer } from '../footer'
 import { StoryPage, Md } from '@dfds-ui/storybook-design'
-import { FlagInt } from '@dfds-ui/icons/flags'
-import { Account, Menu as BurgerMenu } from '@dfds-ui/icons/system'
+import { FlagInt } from '@/components/dfds-ui/icons/flags'
+import { Account, Menu as BurgerMenu } from '@/components/dfds-ui/icons/system'
 
 const stories = storiesOf('UI/SiteLayout', module)
 

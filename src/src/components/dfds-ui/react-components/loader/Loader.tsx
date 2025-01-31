@@ -1,8 +1,8 @@
 import React from 'react'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Ship, Waves } from '@dfds-ui/icons'
-import { theme } from '@dfds-ui/theme'
+import { Ship, Waves } from '@/components/dfds-ui/icons'
+import { theme } from '@/components/dfds-ui/theme'
 
 type Props = {
   label?: string

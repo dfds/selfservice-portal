@@ -1,11 +1,11 @@
 /* eslint-disable deprecation/deprecation */
 import React from 'react'
 import { ReactSelectWrapper, Icon, ClearIndicator } from '../reactselect/ReactSelect'
-import { Down } from '@dfds-ui/icons'
+import { Down } from '@/components/dfds-ui/icons'
 import AsyncSelect from 'react-select/async'
 import ErrorText from '../error-text/ErrorText'
 import AssistiveText from '../assistive-text/AssistiveText'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type SearchableSelectProps = Omit<React.PropsWithRef<AsyncSelect>, 'size' | 'css'>
 

@@ -3,7 +3,7 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import SelectField from './SelectField'
 import { StoryPage, Md, ExampleContainer } from '@dfds-ui/storybook-design'
-import { Lock } from '@dfds-ui/icons'
+import { Lock } from '@/components/dfds-ui/icons'
 import { css } from '@emotion/react'
 import { Dropdown, MenuItem } from '../../dropdown-menu'
 

@@ -3,8 +3,8 @@ import { css } from '@emotion/react'
 import MobileStepper from './MobileStepper'
 import { Button } from '../button'
 import { Divider } from '../divider'
-import { ChevronRight, ChevronLeft } from '@dfds-ui/icons/system'
-import { theme } from '@dfds-ui/theme'
+import { ChevronRight, ChevronLeft } from '@/components/dfds-ui/icons/system'
+import { theme } from '@/components/dfds-ui/theme'
 import { StepperFeedbackMessage } from '../stepper-feedback-message'
 export const MobileStepperDots = () => {
   const [activeStep, setActiveStep] = React.useState(0)

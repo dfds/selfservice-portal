@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 import { FlexBox } from '../flexbox'
 import { FlexBoxProps } from '../flexbox/FlexBox'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 const ActionContainer = styled(FlexBox)`
   flex-wrap: wrap;

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 import FlexBox from '../flexbox/FlexBox'
-import { Blog, Facebook, Instagram, LinkedIn, MailShare, Twitter, Youtube } from '@dfds-ui/icons'
+import { Blog, Facebook, Instagram, LinkedIn, MailShare, Twitter, Youtube } from '@/components/dfds-ui/icons'
 
 export type SocialMediaLinkListProps = {
   instagramLink?: string

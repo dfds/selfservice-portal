@@ -1,7 +1,7 @@
 import React, { ComponentPropsWithRef, forwardRef, ReactNode } from 'react'
 import { css } from '@emotion/react'
-import { typography } from '@dfds-ui/typography'
-import { theme } from '@dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type Alignment = 'left' | 'center' | 'right' | 'justify' | 'char'
 

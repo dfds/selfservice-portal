@@ -2,7 +2,7 @@
 import React, { FunctionComponent, useReducer } from 'react'
 import { css } from '@emotion/react'
 import { Checkbox } from '../forms/checkbox'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type DataTableProps = {
   onChange?: (model: object[]) => object[]

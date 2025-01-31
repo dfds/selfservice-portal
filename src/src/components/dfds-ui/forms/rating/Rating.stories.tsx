@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { RatingField, RatingFieldProps } from './Rating'
 import { Story } from '@storybook/react'
 import { Text } from '@/components/dfds-ui/typography'
-import { Star } from '@dfds-ui/icons/system'
+import { Star } from '@/components/dfds-ui/icons/system'
 
 const ArgsTemplate: Story<RatingFieldProps> = (args) => <RatingField {...args} />
 export const Usage = ArgsTemplate.bind({})

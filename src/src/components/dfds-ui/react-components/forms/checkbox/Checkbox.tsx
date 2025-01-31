@@ -1,10 +1,10 @@
 import React from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Yes } from '@dfds-ui/icons/system'
-import { Minus } from '@dfds-ui/icons/system'
-import { theme } from '@dfds-ui/theme'
-import { Text } from '@dfds-ui/typography'
+import { Yes } from '@/components/dfds-ui/icons/system'
+import { Minus } from '@/components/dfds-ui/icons/system'
+import { theme } from '@/components/dfds-ui/theme'
+import { Text } from '@/components/dfds-ui/typography'
 import { visuallyHidden } from '../../styles'
 
 const checkboxSizes = {

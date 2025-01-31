@@ -1,4 +1,4 @@
-import { hydro2 } from '@dfds-ui/colors'
+import { hydro2 } from '@/components/dfds-ui/colors'
 import { css } from '@emotion/react'
 import theme from './theme'
 

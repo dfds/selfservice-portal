@@ -13,7 +13,7 @@ import {
   StatusAlert,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from "@dfds-ui/icons/system";
+} from "@/components/dfds-ui/icons/system";
 
 import Consumer from "./Consumer";
 import styles from "./Topics.module.css";

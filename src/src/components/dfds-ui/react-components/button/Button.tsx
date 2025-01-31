@@ -10,8 +10,8 @@ import {
 } from './button-style'
 import { BaseButton, BaseButtonProps, ButtonVariation, ButtonVariationProps } from './BaseButton'
 import { CenteredSpinner } from '../spinner/Spinner'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
 import { css } from '@emotion/react'
 
 type ButtonSize = 'medium' | 'small'

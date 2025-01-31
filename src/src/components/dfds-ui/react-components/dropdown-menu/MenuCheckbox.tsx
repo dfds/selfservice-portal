@@ -1,5 +1,5 @@
 import React from 'react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { css } from '@emotion/react'
 import { ListItem, ListText } from '../lists'
 import { Checkbox } from '../forms/checkbox'

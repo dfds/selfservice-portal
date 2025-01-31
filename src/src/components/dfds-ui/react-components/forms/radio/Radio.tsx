@@ -1,5 +1,5 @@
 import React from 'react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { visuallyHidden } from '../../styles'

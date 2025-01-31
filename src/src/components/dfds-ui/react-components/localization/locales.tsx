@@ -1,4 +1,4 @@
-import * as flags from '@dfds-ui/icons/flags'
+import * as flags from '@/components/dfds-ui/icons/flags'
 
 export const locales = [
   'en',

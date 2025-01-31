@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { baseButtonStyle, primaryButtonStyles, secondaryButtonStyles, outlinedButtonStyles } from './button-style'
 import styled from '@emotion/styled'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export const variations = ['primary', 'secondary', 'outlined', 'text', 'danger', 'link'] as const
 

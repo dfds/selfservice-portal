@@ -5,8 +5,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { Down, Close } from '@dfds-ui/icons'
+import { theme } from '@/components/dfds-ui/theme'
+import { Down, Close } from '@/components/dfds-ui/icons'
 import { Drawer } from '../../drawer'
 import Select, { components } from 'react-select'
 export type BaseReactSelectProps = Omit<React.PropsWithRef<Select>, 'size' | 'css'>

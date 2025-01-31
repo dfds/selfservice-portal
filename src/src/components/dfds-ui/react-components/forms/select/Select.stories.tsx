@@ -2,7 +2,7 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import Select from '../select/Select'
-import Lock from '@dfds-ui/icons/core/Lock'
+import Lock from '@/components/dfds-ui/icons/core/Lock'
 import { StoryPage, Md, ExampleContainer } from '@dfds-ui/storybook-design'
 
 const stories = storiesOf('Legacy/Input Fields/SelectField', module)

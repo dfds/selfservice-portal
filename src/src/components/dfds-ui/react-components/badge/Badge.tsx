@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { Text } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { Text } from '@/components/dfds-ui/typography'
 import { Intent, getIntentColor, getIntentTextColor } from '../common/intent'
 import FlexBox, { FlexBoxProps } from '../flexbox/FlexBox'
 

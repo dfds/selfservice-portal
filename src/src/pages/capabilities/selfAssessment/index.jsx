@@ -9,7 +9,7 @@ import {
   StatusAlert,
   Information,
   Help,
-} from "@dfds-ui/icons/system";
+} from "@/components/dfds-ui/icons/system";
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 

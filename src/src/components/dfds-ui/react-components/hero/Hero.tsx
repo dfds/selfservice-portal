@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { theme, media } from '@dfds-ui/theme'
-import { Text } from '@dfds-ui/typography'
+import { theme, media } from '@/components/dfds-ui/theme'
+import { Text } from '@/components/dfds-ui/typography'
 import Stripes from './stripes'
 
 const Container = styled.div`

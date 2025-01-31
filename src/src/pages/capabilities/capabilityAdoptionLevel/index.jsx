@@ -7,7 +7,7 @@ import {
   StatusAlert,
   Information,
   Help,
-} from "@dfds-ui/icons/system";
+} from "@/components/dfds-ui/icons/system";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import SelfAssessments from "../selfAssessment";
 import { TabbedPageSection } from "../../../components/PageSection";

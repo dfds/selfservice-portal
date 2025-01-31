@@ -1,11 +1,11 @@
 import React from 'react'
 import { css, SerializedStyles } from '@emotion/react'
 import styled from '@emotion/styled'
-import { YesTick } from '@dfds-ui/icons'
+import { YesTick } from '@/components/dfds-ui/icons'
 import elevation from '../../elevation'
 import { visuallyHidden } from '../../styles'
-import { theme } from '@dfds-ui/theme'
-import { typography } from '@dfds-ui/typography'
+import { theme } from '@/components/dfds-ui/theme'
+import { typography } from '@/components/dfds-ui/typography'
 
 type Size = 'small' | 'medium'
 

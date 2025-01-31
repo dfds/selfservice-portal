@@ -2,8 +2,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
-import { Down } from '@dfds-ui/icons'
+import { theme } from '@/components/dfds-ui/theme'
+import { Down } from '@/components/dfds-ui/icons'
 
 export type BaseSelectProps = Omit<JSX.IntrinsicElements['select'], 'size' | 'css'>
 

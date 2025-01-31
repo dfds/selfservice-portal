@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SvgDfdsLogo } from '@dfds-ui/icons'
+import { SvgDfdsLogo } from '@/components/dfds-ui/icons'
 import styled from '@emotion/styled'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 
 export type LogoProps = {
   className?: string

@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@/components/dfds-ui/react-components";
 import { Modal } from "@/components/dfds-ui/modal";
-import { StatusWarning as WarningIcon } from "@dfds-ui/icons/system";
+import { StatusWarning as WarningIcon } from "@/components/dfds-ui/icons/system";
 import styles from "./DeleteTopicDialog.module.css";
 
 export default function DeleteTopicDialog({

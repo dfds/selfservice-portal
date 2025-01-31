@@ -3,7 +3,7 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import ReactSelect from '../reactselect/ReactSelect'
 import { components } from 'react-select'
-import Lock from '@dfds-ui/icons/core/Lock'
+import Lock from '@/components/dfds-ui/icons/core/Lock'
 import { StoryPage, Md, ExampleContainer } from '@dfds-ui/storybook-design'
 import { css } from '@emotion/react'
 

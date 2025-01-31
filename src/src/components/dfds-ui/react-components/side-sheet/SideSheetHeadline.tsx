@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { css } from '@emotion/react'
-import { theme } from '@dfds-ui/theme'
+import { theme } from '@/components/dfds-ui/theme'
 import { SmallHeadline } from '../typography/Headlines'
 
 export type SideSheetHeadlineProps = {
