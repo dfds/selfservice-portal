@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>
+    Modal
+  </title>
+  <g fill="#000" fill-rule="evenodd">
+    <path d="M24 32H0V8h6v3.5999999L3.598 11.598V28.4H20.4V26H24v6z"/>
+    <path d="M8 24V0h24v3.5999999L31.998 3.598 32 20.4V24H8zm20.4-3.6V3.598H11.598V20.4H28.4z"/>
+  </g>
+</svg>

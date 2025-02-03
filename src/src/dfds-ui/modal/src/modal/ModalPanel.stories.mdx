@@ -1,0 +1,76 @@
+import { Fragment } from 'react'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth, StoryLink } from '@/dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { hrefTo } from '@storybook/addon-links'
+import { css } from '@emotion/react'
+import { SmallHeadline } from '@/dfds-ui/react-components/src'
+import { theme } from '@/dfds-ui/theme/src'
+import { ModalPanel, ModalPanelHeader, ModalPanelContent, ModalPanelFooter, ModalHeader, ModalCloseButton } from './'
+import ModalDemo from './Modal.demo'
+
+<Meta title="Hydro UI/Modals/ModalPanel" component={ModalPanel} />
+
+# Modal Panel
+
+Component to normally display a panel in full screen on mobile devices.
+
+Support a fixed header and footer with a scrollable content area in the middle.
+
+## Props
+
+<Props of={ModalPanel} />
+
+## Usage
+
+Install with npm:
+
+```jsx
+npm install --save @/dfds-ui/modal/src
+```
+
+Install with yarn:
+
+```jsx
+yarn add @/dfds-ui/modal/src
+```
+
+## Example
+
+<Preview>
+  <Story name="Example">
+    <ModalDemo name="Standard modal">
+      {({ open, setOpen }) => (
+        <ModalPanel
+          isOpen={open}
+          onRequestClose={() => {
+            setOpen(false)
+          }}
+          shouldCloseOnEsc={true}
+        >
+          <ModalPanelHeader>
+            <ModalHeader>
+              <SmallHeadline
+                css={css`
+                  color: ${theme.colors.text.primary.primary};
+                `}
+                noMargin
+              >
+                Panel headline
+              </SmallHeadline>
+              <ModalCloseButton
+                onRequestClose={() => {
+                  setOpen(false)
+                }}
+                tabIndex={-1}
+              />
+            </ModalHeader>
+          </ModalPanelHeader>
+          <ModalPanelContent>
+            <p>This is a modal panel</p>
+          </ModalPanelContent>
+          <ModalPanelFooter>Footer</ModalPanelFooter>
+        </ModalPanel>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>

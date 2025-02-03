@@ -1,0 +1,143 @@
+import { useEffect, useState } from 'react'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+
+import DynamicTable from '../DynamicTable'
+import { Header, Row } from '../DynamicTable.types'
+import headerRow from './headerRow.tsx'
+import headerRowSortable from './headerRowSortable.tsx'
+import tableRows from './tableRows.tsx'
+
+<Meta title="Lab/DynamicTable" component={DynamicTable} />
+
+# Dynamic Table
+
+Table component that renders a table with any content.
+
+## Install
+
+`yarn add @/dfds-ui/experiences`
+
+## Usage
+
+`import { DynamicTable } from '@/dfds-ui/experiences'`
+
+## Plain
+
+Pass content to the component with `headerRow` and `rows`.
+
+`headerRow` is an array of `Header` objects. You can align columns with `textAlign`.
+It is also possible to specify the width of a column with `width`.
+`displayName` is the string or element that is displayed in the table head.
+
+<Preview>
+  <Story name="Plain">
+    <DynamicTable headerRow={headerRow} rows={tableRows} />
+  </Story>
+</Preview>
+
+## Row actions
+
+`activeRow` hightlights the specified row.
+Use `onClickRow` to pass a callback function with the row id.
+
+<Preview>
+  <Story name="Row actions">
+    {() => {
+      const [activeRow, setActiveRow] = useState('1003')
+      return (
+        <DynamicTable
+          activeRow={activeRow}
+          headerRow={headerRow}
+          onClickRow={(id) => {
+            setActiveRow(id)
+          }}
+          rows={tableRows}
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Select
+
+`selectedRows` passes an array of row ids.
+Use `onSelectRow` to pass a callback function with an array of row ids.
+
+<Preview>
+  <Story name="Select">
+    {() => {
+      const [selectedRows, setSelectedRows] = useState(['1003', '1005', '1006'])
+      return (
+        <DynamicTable
+          headerRow={headerRow}
+          onSelectRow={setSelectedRows}
+          rows={tableRows}
+          selectedRows={selectedRows}
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Sorting
+
+To make a column sortable, add the `sortable` in the `headerRow`. You can specify `sortKey` if you wish, otherwise it will default to `key`.
+Pass the order with `descending`.
+Use `onSort` to pass a callback function.
+Pass the sortKey with `sortingBy`.
+
+<Preview>
+  <Story name="Sorting">
+    {() => {
+      const [sortDescending, setSortDescending] = useState(false)
+      const [sortKey, setSortKey] = useState('from')
+      const [sortedRows, setSortedRows] = useState(tableRows)
+      const sortRows = (key, sortDescending) => {
+        setSortKey(key)
+        setSortDescending(sortDescending)
+      }
+      useEffect(() => {
+        const newSortedRows = [...tableRows].sort((a, b) => {
+          const keyA = a[sortKey]?.toUpperCase()
+          const keyB = b[sortKey]?.toUpperCase()
+          let result = 0
+          if (keyA < keyB) result = -1
+          if (keyA > keyB) result = 1
+          if (sortDescending) return result * -1
+          return result
+        })
+        setSortedRows(newSortedRows)
+      }, [sortDescending, sortKey])
+      return (
+        <DynamicTable
+          descending={sortDescending}
+          headerRow={headerRowSortable}
+          onSort={sortRows}
+          rows={sortedRows}
+          sortingBy={sortKey}
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Loading
+
+Control loading state with `isLoading`.
+
+<Preview>
+  <Story name="Loading">
+    <DynamicTable headerRow={headerRow} isLoading={true} rows={tableRows} />
+  </Story>
+</Preview>
+
+## Sticky
+
+Make header row sticky with `stickyHeader`. You can also specify a height with `height`.
+
+<Preview>
+  <Story name="Sticky">
+    <DynamicTable headerRow={headerRow} height="200px" rows={tableRows} stickyHeader />
+  </Story>
+</Preview>

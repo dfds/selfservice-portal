@@ -1,0 +1,84 @@
+import { Banner } from './Banner'
+import { BannerAction } from './BannerAction'
+import {
+  Usage,
+  Typography,
+  ClosingABanner,
+  StickyTopBanner,
+  StickyBottomBanner,
+  NarrowBanner,
+  NarrowStickyBanner,
+} from './Banner.stories'
+import { css } from '@emotion/react'
+
+<Meta title="Hydro UI/Banners/Banner" component={Banner} />
+
+# Banner
+
+Gives information or feedback to the user.
+Supports adding two action buttons the user can interact with inside the Banner.
+
+## Usage
+
+```jsx
+import { Banner, BannerAction, BannerHeadline, BannerParagraph } from '@/dfds-ui/react-components/src'
+```
+
+<Preview gray>
+  <Story name="Usage" story={Usage} />
+</Preview>
+
+<ArgsTable story="Usage" />
+
+## Typography
+
+Use the `BannerHeadline` and `BannerParagraph` components for richer content.
+
+<Preview gray>
+  <Story story={Typography} />
+</Preview>
+
+## Closing a Banner
+
+The `Banner` component does not hold any internal state about being shown or not. The user would have to implement that
+logic themselves.
+
+<Preview gray>
+  <Story story={ClosingABanner} />
+</Preview>
+
+## Sticky top banner
+
+The `Banner` component can be set to sticky at top.
+
+<Preview gray>
+  <Story story={StickyTopBanner} />
+</Preview>
+
+## Sticky bottom banner
+
+The `Banner` component can be set to sticky at bottom.
+
+<Preview gray>
+  <Story story={StickyBottomBanner} />
+</Preview>
+
+## `BannerAction` props
+
+<ArgsTable of={BannerAction} />
+
+## Narrow banner with custom icon
+
+The `Banner` component can be narrow.
+
+<Preview gray>
+  <Story story={NarrowBanner} />
+</Preview>
+
+## Narrow sticky banner with custom icon
+
+The `Banner` component can be narrow and sticky at the bottom right.
+
+<Preview gray>
+  <Story story={NarrowStickyBanner} />
+</Preview>

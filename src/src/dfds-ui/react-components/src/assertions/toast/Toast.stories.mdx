@@ -1,0 +1,148 @@
+import { Meta, Story, Props, Preview, StoryLink } from '@/dfds-ui/storybook-design'
+import Toast from './Toast'
+import Toaster from './Toaster'
+import DemoToaster from './Toaster.demo'
+import { action } from '@storybook/addon-actions'
+import { Button } from '@/dfds-ui/react-components/src'
+
+<Meta title="Hydro UI/Toast" component={Toast} />
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Toast } from '@/dfds-ui/react-components/src'
+```
+
+Use the component:
+
+## Default
+
+<Preview>
+  <Story name="Default">
+    <Toast intent="info">Information message</Toast>
+  </Story>
+</Preview>
+
+## Default Toaster
+
+Import the Toaster component and useToaster hook:
+
+```jsx
+import { Toaster } from '@/dfds-ui/react-components/src'
+```
+
+Use Toaster Provider component to apply the context to your app:
+
+```jsx
+<Toaster>
+  <App />
+</Toaster>
+```
+
+Import useToaster hook to get the context:
+
+```jsx
+import { useToaster } from '@/dfds-ui/react-components/src'
+
+const App = () => {
+  // get addToast and Toaster state from useToaster hook
+  const { addToast, state } = useToaster()
+  // invoke addToast function by passing ToastProps to open the Toaster
+  return <div onClick={() => addToast({ children: 'Some kind of message' })}>Trigger Me!</div>
+}
+```
+
+<Preview>
+  <Story name="Default Animation">
+    <div>
+      <Toaster>
+        <DemoToaster message="Some kind of message." />
+      </Toaster>
+    </div>
+  </Story>
+</Preview>
+
+## Dismiss
+
+<Preview>
+  <Story name="Dismiss">
+    <Toast intent="info" onRequestClose={action('Dismissing toast')}>
+      Dismissable toast
+    </Toast>
+  </Story>
+</Preview>
+
+## Call to action
+
+<Preview>
+  <Story name="Call to action">
+    <Toast onRequestAction={action('Invoking toast action')} intent="info">
+      Message with an action
+    </Toast>
+  </Story>
+</Preview>
+
+## Call to action - custom label
+
+<Preview>
+  <Story name="Call to action - custom label">
+    <Toast actionLabel="Click me" onRequestAction={action('Invoking toast action')} intent="info">
+      Custom button label
+    </Toast>
+  </Story>
+</Preview>
+
+## Info
+
+<Preview>
+  <Story name="Info">
+    <Toast intent="info">Information message</Toast>
+  </Story>
+</Preview>
+
+## Success
+
+<Preview>
+  <Story name="Success">
+    <Toast intent="success">Success message</Toast>
+  </Story>
+</Preview>
+
+## Warning
+
+<Preview>
+  <Story name="Warning">
+    <Toast intent="warning">Warning message</Toast>
+  </Story>
+</Preview>
+
+## Alert
+
+<Preview>
+  <Story name="Alert">
+    <Toast intent="critical">Alert message</Toast>
+  </Story>
+</Preview>
+
+## Long text
+
+While it is possible to display long form text in the Toast, it is not encouraged.
+Ideally, toast should have maximum two lines of text:
+
+<Preview>
+  <Story name="Long text">
+    <Toast>
+      Please do not do this! If text has to be this long, it is probably better to use the Banner component.
+    </Toast>
+  </Story>
+</Preview>
+
+## Using the `Toast` as loading indication
+
+You can also use the `Toast` component as a loading indicator. This in demonstrated in the following example.
+
+<StoryLink kind="Hydro UI/Loading Indicators" name="Section reload" mode="docs">
+  Show example
+</StoryLink>

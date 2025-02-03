@@ -1,0 +1,103 @@
+import { Meta, Story, Props, Preview, ArgsTable, Description, Source } from '@/dfds-ui/storybook-design'
+import { useState } from 'react'
+import { storiesOf } from '@storybook/react'
+import LocaleSelector from './LocaleSelector'
+
+<Meta title="Lab/LocaleSelector" component={LocaleSelector} />
+
+# LocaleSelector
+
+<Description of={LocaleSelector} />
+
+```ts
+import { LocaleSelector } from '@/dfds-ui/experiences'
+```
+
+<Preview>
+  <Story name="Default">
+    {() => {
+      const [locale, setLocale] = useState('tr-TR')
+      return <LocaleSelector currentLocale={locale} onChange={(locale) => setLocale(locale)} />
+    }}
+  </Story>
+</Preview>
+
+## Props
+
+<ArgsTable of={LocaleSelector} />
+
+## Limited locales
+
+You can limit the number of locales you want to show in the `LocaleSelector`.
+
+<Preview>
+  <Story name="Limited locales">
+    {() => {
+      const [locale, setLocale] = useState('tr-TR')
+      return (
+        <LocaleSelector currentLocale={locale} locales={['tr-TR', 'en-GB']} onChange={(locale) => setLocale(locale)} />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Disabled LocaleSelector
+
+`LocaleSelector` can also be disabled.
+
+<Preview>
+  <Story name="Disabled LocaleSelector">
+    {() => {
+      const [locale, setLocale] = useState('tr-TR')
+      return (
+        <LocaleSelector
+          currentLocale={locale}
+          locales={['tr-TR', 'en-GB']}
+          onChange={(locale) => setLocale(locale)}
+          disabled
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Limited locales (DOTCOM)
+
+At the time of writing these are the locales used at dfds.com
+
+<Preview>
+  <Story name="Dotcom locales and sorting">
+    {() => {
+      const [locale, setLocale] = useState('en')
+      const validLocales = [
+        'fr-BE',
+        'nl-BE',
+        'bg-BG',
+        'pt-BR',
+        'zh-CN',
+        'cs-CZ',
+        'de-DE',
+        'da-DK',
+        'et-EE',
+        'es-ES',
+        'fi-FI',
+        'fr-FR',
+        'it-IT',
+        'ja-JP',
+        'ko-KR',
+        'lt-LT',
+        'lv-LV',
+        'nl-NL',
+        'nb-NO',
+        'pl-PL',
+        'ro-RO',
+        'ru-RU',
+        'sv-SE',
+        'sk-SK',
+        'en-GB',
+        'en',
+      ]
+      return <LocaleSelector currentLocale={locale} locales={validLocales} onChange={(locale) => setLocale(locale)} />
+    }}
+  </Story>
+</Preview>

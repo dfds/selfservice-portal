@@ -1,0 +1,28 @@
+import { Meta, Story, ArgsTable, Preview } from '@/dfds-ui/storybook-design'
+import { Switch } from './Switch'
+import { SwitchStates, SwitchSizes } from './Switch.stories'
+import { action } from '@storybook/addon-actions'
+
+<Meta title="Hydro UI/Forms/Switch/Switch" component={Switch} />
+
+# Switch
+
+Switches toggle a state of a property between on and off. The impact of change should be immediate without needing an extra action (such as submitting a form).
+
+## Component Props
+
+<ArgsTable of={Switch} />
+
+## States
+
+<Preview width="320px">
+  <Story name="States" story={SwitchStates} />
+</Preview>
+
+## Sizes
+
+Need a smaller switch? Use the `size` property.
+
+<Preview>
+  <Story name="Sizes" story={SwitchSizes} />
+</Preview>

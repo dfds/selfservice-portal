@@ -1,0 +1,55 @@
+import { useState } from 'react'
+import { Meta, Story, ArgsTable, Preview, Props } from '@/dfds-ui/storybook-design'
+import { Counter } from './Counter'
+import { CustomTextCounter, SimpleCounter, CounterWithLabelsStory } from './Counter.stories'
+import { css } from '@emotion/react'
+
+<Meta
+  title="Hydro UI/Forms/Counter"
+  component={Counter}
+  argTypes={{
+    size: {
+      control: {
+        type: 'radio',
+        options: ['s', 'm'],
+      },
+    },
+    text: {
+      control: {
+        type: 'text',
+      },
+    },
+  }}
+/>
+
+# Counter
+
+The `Counter` component can be used to control a number that has a minimum and a maximum with minus and plus buttons.
+
+## Usage
+
+```jsx
+import { Counter } from '@/dfds-ui/forms/src'
+```
+
+## Basic usage
+
+<Preview>
+  <Story name="Basic usage" story={SimpleCounter} />
+</Preview>
+
+<Props story="Basic usage" />
+
+Although `minValue` and `maxValue` disable the button appropiately, you can further override this behaviour with `disableMin` and `disableMax`.
+
+## Custom text displayed
+
+<Preview>
+  <Story name="Custom text" story={CustomTextCounter} />
+</Preview>
+
+## Usage with labels
+
+<Preview>
+  <Story name="Usage with labels" story={CounterWithLabelsStory} />
+</Preview>

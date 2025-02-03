@@ -1,0 +1,63 @@
+import { Meta, Preview, Story, Props } from '@/dfds-ui/storybook-design'
+import { TextareaField } from './TextareaField'
+import {
+  AssistiveErrorTextareaField,
+  SimpleTextareaField,
+  ControlledTextareaField,
+  SizesTextareaField,
+  UnlimitedSizeTextareaField,
+  TextareaUsage,
+  DifferentHeight,
+} from './TextareaField.stories'
+
+<Meta title="Hydro UI/Forms/TextareaField" component={TextareaField} />
+
+# TextareaField
+
+```jsx
+import { TextareaField } from '@/dfds-ui/forms/src'
+```
+
+<Preview>
+  <Story name="Usage" story={TextareaUsage} />
+</Preview>
+
+<Props story="Usage" />
+
+# Different states
+
+<Preview>
+  <Story name="States" story={SimpleTextareaField} />
+</Preview>
+
+# Without size limit
+
+<Preview>
+  <Story name="Unlimited size" story={UnlimitedSizeTextareaField} />
+</Preview>
+
+# As a controlled component
+
+<Preview>
+  <Story name="Controlled" story={ControlledTextareaField} />
+</Preview>
+
+# Sizes
+
+<Preview>
+  <Story name="Sizes" story={SizesTextareaField} />
+</Preview>
+
+# Assistive and error messages
+
+<Preview>
+  <Story name="Assistive and error messages" story={AssistiveErrorTextareaField} />
+</Preview>
+
+# Different heights
+
+You can specify the number of rows to display if you need to change the height.
+
+<Preview>
+  <Story name="Different heights" story={DifferentHeight} />
+</Preview>

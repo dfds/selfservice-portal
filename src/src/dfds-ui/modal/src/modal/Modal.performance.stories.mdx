@@ -1,0 +1,47 @@
+import { Fragment } from 'react'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth, StoryLink } from '@/dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { hrefTo } from '@storybook/addon-links'
+import { css } from '@emotion/react'
+import { Modal, ModalAction } from './'
+import { SmallHeadline } from '@/dfds-ui/react-components/src'
+import ModalDemo from './Modal.demo'
+
+<Meta title="Hydro UI/Modals/Modal/HiddenStories" />
+
+## Performance and `renderWhenClosed`
+
+When setting `renderWhenClosed` to `true` the modal component will render the `ReactModal` even if `isOpen` is `false`.
+This might have performance implications as shown in the following example.
+
+<Preview>
+  <Story name="Performance">
+    {() => {
+      const RenderModals = ({ renderWhenClosed }) => {
+        const [inp, setInp] = React.useState('')
+        const amount = 100
+        return (
+          <React.Fragment>
+            <div>{`Rendering ${amount} modals with a controlled input and renderWhenClosed set to ${
+              renderWhenClosed || false
+            }. Typing in the input will be ${renderWhenClosed ? 'slow' : 'fast'}.`}</div>
+            <input type="text" value={inp} onChange={(e) => setInp(e.target.value)} />
+            {[...Array(amount).keys()].map((i) => {
+              return (
+                <Modal key={i} heading="Some modal" renderWhenClosed={renderWhenClosed}>
+                  <p>Modal message</p>
+                </Modal>
+              )
+            })}
+          </React.Fragment>
+        )
+      }
+      return (
+        <div>
+          <RenderModals />
+          <RenderModals renderWhenClosed />
+        </div>
+      )
+    }}
+  </Story>
+</Preview>

@@ -1,0 +1,79 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Switch from './Switch'
+import { action } from '@storybook/addon-actions'
+
+<Meta title="Legacy/Selection Controls/Switch" component={Switch} />
+
+# Switch
+
+Switches toggle a state of a property between on and off. The impact of change should be immediate without needing an extra action (such as submitting a form).
+
+## Props
+
+| Name      |  Values           |  Description                                                                                                  | Required |
+| --------- | ----------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
+| name      | string            | Name of the input element.                                                                                    |          |
+| checked   |  boolean          | State of the switch                                                                                           |          |
+|  onChange |  () => void       |  Callback to fire when the state of the input changes                                                         |          |
+|  disabled |  boolean          |  Controls whether the input is disabled                                                                       |          |
+|  right    |  boolean          |  Controls whether input label should be displayed on the right of the input, displayed on the left by default |          |
+|  size     |  small \|  medium |  Visual size of the switch                                                                                    |          |
+|  children |  string           |  Label of the input                                                                                           |          |
+
+## Resting
+
+<Preview>
+  <Story name="Enabled">
+    <Switch name="name1">Switch label</Switch>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <Switch disabled name="name2">
+      Switch label
+    </Switch>
+  </Story>
+</Preview>
+
+## On
+
+<Preview>
+  <Story name="On">
+    <Switch checked name="name3">
+      Switch label
+    </Switch>
+  </Story>
+</Preview>
+
+## Error
+
+<Preview>
+  <Story name="Error">
+    <Switch checked error name="name4">
+      Switch label
+    </Switch>
+  </Story>
+</Preview>
+
+## Leading label
+
+<Preview>
+  <Story name="Leading label">
+    <Switch right name="name5">
+      Leading switch label
+    </Switch>
+  </Story>
+</Preview>
+
+## Small
+
+<Preview>
+  <Story name="Small">
+    <Switch name="name6" size="small">
+      Small
+    </Switch>
+  </Story>
+</Preview>

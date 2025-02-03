@@ -1,0 +1,61 @@
+import { Meta, Preview, Props, Story } from '@/dfds-ui/storybook-design'
+import { Grid } from './Grid'
+import { GridItem } from './GridItem'
+import { css } from '@emotion/react'
+
+<Meta title="Hydro UI/Grid" component={Grid} />
+
+# Grid
+
+Introduction of component
+
+<Preview>
+  <Story name="Basic">
+    <Grid gap="s">
+      <GridItem small={3}>
+        <div
+          css={css`
+            background-color: red;
+          `}
+        >
+          Some full width content
+        </div>
+      </GridItem>
+      <GridItem small={3}>
+        <div
+          css={css`
+            background-color: blue;
+          `}
+        >
+          Some full width content
+        </div>
+      </GridItem>
+      <GridItem small={3}>
+        <div
+          css={css`
+            background-color: green;
+          `}
+        >
+          Some full width content
+        </div>
+      </GridItem>
+      <GridItem small={3}>
+        <div
+          css={css`
+            background-color: purple;
+          `}
+        >
+          Some full width content
+        </div>
+      </GridItem>
+    </Grid>
+  </Story>
+</Preview>
+
+# Grid Props
+
+<Props of={Grid} />
+
+# GridItem Props
+
+<Props of={GridItem} />

@@ -1,0 +1,702 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@/dfds-ui/storybook-design'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { FlexBox } from '../flexbox'
+import { theme, media } from '@/dfds-ui/theme/src'
+import {
+  Account,
+  ArrowForward,
+  StatusAlert,
+  ChevronRight,
+  Bookmark,
+  Locked,
+  Mail,
+  Notification,
+  Payment,
+  Settings,
+  StatusSuccess,
+  Yes,
+} from '@/dfds-ui/icons/src/system/'
+import { OneWay } from '@/dfds-ui/react-components/src/pax/'
+import { FlagInt, FlagGb, FlagSe, FlagEe } from '@/dfds-ui/icons/src/flags/'
+import { Placeholder } from '@/dfds-ui/storybook-design'
+import { Text } from '@/dfds-ui/typography/src'
+import { ListItem, ListTitle, ListText, ListTextGroup, ListIcon, ListAddon, ListDivider } from './'
+
+<Meta
+  title="Hydro UI/Lists/Lists"
+  component={{ ListItem, ListText }}
+  parameters={{ zeplin: 'https://zpl.io/VQ71K95' }}
+  lab
+/>
+
+# Lists
+
+Create lists using the `ListItem` component.
+
+```jsx
+import { ListItem, ListText, ListTextGroup, ListIcon, ListDivider } from '@/dfds-ui/react-components/src'
+```
+
+## `ListItem`
+
+`ListItem` is a single item in a list and a container of `ListText`, `ListTextGroup` and `ListIcon` components.
+
+Set `multiline` if the item contains more than a single line of text.
+
+Use `clickable` to apply interactive styles (eg. hover and tab navigation). To handle an interaction either use the
+`onClick` callback or provide your own component through the `as` prop.
+
+Setting `divider` will display a border underneath the item.
+
+<Preview width="320px" gray>
+  <Story name="ListItem">
+    {() => {
+      const EmptyLink = (props) => {
+        return <a target="_self" href="#" {...props} />
+      }
+      return (
+        <React.Fragment>
+          <ListTitle divider>
+            <ListText styledAs="smallHeadline">Title - Small headline</ListText>
+          </ListTitle>
+          <ListItem as={EmptyLink} clickable>
+            <ListText styledAs="label">Single - Label</ListText>
+            <ListIcon icon={ArrowForward} />
+          </ListItem>
+          <ListItem multiline as={EmptyLink} clickable>
+            <ListTextGroup>
+              <ListText styledAs="label">Multiline - Label</ListText>
+              <ListText styledAs="body">Body Regular</ListText>
+            </ListTextGroup>
+            <ListIcon icon={ArrowForward} />
+          </ListItem>
+          <ListItem>
+            <ListIcon icon={StatusAlert} size="medium" />
+            <ListText styledAs="caption">Single - caption</ListText>
+          </ListItem>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListTitle`
+
+Basically the same as `ListItem` but with different styling.
+
+<Preview width="320px" gray>
+  <Story name="ListTitle">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListTitle divider>
+            <ListText styledAs="sectionHeadline">Section Headline</ListText>
+          </ListTitle>
+          <ListTitle divider>
+            <ListText styledAs="subHeadline">Sub Headline</ListText>
+          </ListTitle>
+          <ListTitle>
+            <ListText styledAs="smallHeadline">Small headline</ListText>
+          </ListTitle>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListText`
+
+`ListText` is used inside a `ListItem` or `ListTextGroup` component and defines a line of text.
+
+<Preview width="320px" gray>
+  <Story name="ListText">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListItem divider>
+            <ListIcon icon={StatusSuccess} />
+            <ListText styledAs="label">Label</ListText>
+          </ListItem>
+          <ListItem divider>
+            <ListIcon icon={StatusSuccess} />
+            <ListText styledAs="body">Body</ListText>
+          </ListItem>
+          <ListItem>
+            <ListIcon icon={StatusSuccess} />
+            <ListText styledAs="action">Action</ListText>
+          </ListItem>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListTextGroup`
+
+Use `ListTextGroup` to wrap `ListText` components to create list items with multiple lines of text. Make sure to set
+`multiline` on the parent `ListItem`.
+
+<Preview width="320px" gray>
+  <Story name="ListTextGroup">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListItem multiline divider>
+            <ListTextGroup>
+              <ListText styledAs="labelBold">Label</ListText>
+              <ListText styledAs="body">Body Regular</ListText>
+            </ListTextGroup>
+          </ListItem>
+          <ListItem multiline>
+            <ListTextGroup>
+              <ListText styledAs="labelSmall">Labelsmall</ListText>
+              <ListText styledAs="body">Body Regular</ListText>
+            </ListTextGroup>
+          </ListItem>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListIcon`
+
+Use the `ListIcon` component to display icons inside list items.
+
+<Preview width="320px" gray>
+  <Story name="ListIcon">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListItem divider>
+            <ListIcon icon={OneWay} />
+            <ListText styledAs="labelBold">Label</ListText>
+          </ListItem>
+          <ListItem multiline divider>
+            <ListIcon icon={OneWay} />
+            <ListTextGroup>
+              <ListText styledAs="labelBold">Label</ListText>
+              <ListText styledAs="body">Body Regular</ListText>
+            </ListTextGroup>
+          </ListItem>
+          <ListItem multiline>
+            <ListTextGroup>
+              <ListText styledAs="labelSmall">Label small</ListText>
+              <ListText styledAs="body">Body Regular</ListText>
+            </ListTextGroup>
+            <ListIcon icon={OneWay} />
+          </ListItem>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListAddon`
+
+Wrap a component (eg. image) inside a `ListAddon` component.
+
+<Preview width="320px" gray>
+  <Story name="ListAddon">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListItem divider>
+            <ListAddon>
+              <Placeholder width={45} height={30}>
+                3:2
+              </Placeholder>
+            </ListAddon>
+            <ListText styledAs="body">Body regular</ListText>
+          </ListItem>
+          <ListItem divider>
+            <ListAddon>
+              <Placeholder width={40} height={40}>
+                1:1
+              </Placeholder>
+            </ListAddon>
+            <ListText styledAs="body">Body regular</ListText>
+          </ListItem>
+          <ListItem multiline divider>
+            <ListAddon>
+              <Placeholder width={40} height={40}>
+                1:1
+              </Placeholder>
+            </ListAddon>
+            <ListTextGroup>
+              <ListText styledAs="label">Label</ListText>
+              <ListText styledAs="caption">Caption</ListText>
+            </ListTextGroup>
+          </ListItem>
+          <ListItem multiline divider>
+            <ListAddon>
+              <Placeholder width={84} height={56}>
+                3:2
+              </Placeholder>
+            </ListAddon>
+            <ListTextGroup>
+              <ListText styledAs="label">Label</ListText>
+              <ListText styledAs="caption">Caption</ListText>
+            </ListTextGroup>
+          </ListItem>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `ListDivider`
+
+Use `ListDivider` if you want "indent" or "margins" styled dividers between items. Setting the `divider` prop on
+`ListItem` will only render the default full length border.
+
+<Preview width="320px" gray>
+  <Story name="ListDivider">
+    {() => {
+      return (
+        <React.Fragment>
+          <ListItem clickable as="a" href="#">
+            <ListText styledAs="label">Default styling</ListText>
+          </ListItem>
+          <ListDivider />
+          <ListItem clickable as="a" href="#">
+            <ListText styledAs="label">Margins</ListText>
+          </ListItem>
+          <ListDivider margins />
+          <ListItem clickable as="a" href="#">
+            <ListText styledAs="label">Indent</ListText>
+          </ListItem>
+          <ListDivider indent />
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Component Props
+
+<Props components={{ ListItem, ListTitle, ListText, ListTextGroup, ListIcon, ListAddon, ListDivider }} />
+
+## Example: One line
+
+<Preview width="320px" gray>
+  <Story name="Example: One line">
+    <React.Fragment>
+      <ListItem clickable divider onClick={() => alert('onClick callback provided')} as="button">
+        <ListIcon icon={Account} />
+        <ListText styledAs="caption">email@email.com or name if available</ListText>
+      </ListItem>
+      <ListItem clickable divider onClick={() => alert('onClick callback provided')} as="div">
+        <ListText>Body</ListText>
+      </ListItem>
+      <ListItem clickable divider onClick={() => alert('onClick callback provided')}>
+        <FlexBox directionRow flex={1} itemsCenter>
+          <ListText>Body</ListText>
+          <ListIcon icon={ArrowForward} />
+          <FlexBox flex={1.5} justifyFlexEnd>
+            <FlexBox>
+              <ListText>Body</ListText>
+            </FlexBox>
+          </FlexBox>
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Body</ListText>
+        <ListIcon icon={ArrowForward} />
+      </ListItem>
+      <ListItem clickable divider selected>
+        <ListText>Body</ListText>
+        <ListIcon icon={OneWay} size="xl" />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Body</ListText>
+        <ListText
+          css={css`
+            flex-grow: 0;
+          `}
+        >
+          Body
+        </ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Body</ListText>
+        <ListIcon icon={FlagGb} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListIcon icon={StatusAlert} />
+        <ListText>Body</ListText>
+        <ListIcon icon={ArrowForward} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListIcon icon={ChevronRight} />
+        <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+          Label
+        </ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListAddon>
+          <Placeholder width={45} height={30}>
+            3:2
+          </Placeholder>
+        </ListAddon>
+        <ListText>Body regular</ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListAddon>
+          <Placeholder width={40} height={40}>
+            1:1
+          </Placeholder>
+        </ListAddon>
+        <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+          Label
+        </ListText>
+        <ListIcon icon={ArrowForward} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+          Label
+        </ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+          Label
+        </ListText>
+        <ListIcon icon={ArrowForward} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+          Label
+        </ListText>
+        <FlexBox itemsFlexEnd>
+          <ListText
+            fontFamily="display"
+            size={theme.fontSizes.label.medium}
+            color={theme.colors.text.primary.secondary}
+          >
+            Label
+          </ListText>
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListIcon icon={ChevronRight} color={theme.colors.secondary.main} />
+        <ListText size={theme.fontSizes.body.medium} color={theme.colors.secondary.main}>
+          Link text
+        </ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <FlexBox flex={1} justifyFlexEnd itemsCenter>
+          <FlexBox>
+            <ListText
+              fontFamily="display"
+              fontWeight={theme.fontWeights.body.bold}
+              size={theme.fontSizes.action}
+              color={theme.colors.secondary.main}
+            >
+              Link text
+            </ListText>
+          </FlexBox>
+          <ListIcon icon={ChevronRight} color={theme.colors.secondary.main} />
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListIcon icon={FlagGb} />
+        <ListText>Body</ListText>
+      </ListItem>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## Example: Multiline
+
+Uses the `multiline` prop.
+
+<Preview width="320px" gray>
+  <Story name="Example: Multiline">
+    <React.Fragment>
+      <ListItem clickable divider multiline>
+        <FlexBox directionColumn>
+          <ListText>Body</ListText>
+          <ListText size={theme.fontSizes.body.small}>Body small</ListText>
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider multiline>
+        <FlexBox directionColumn>
+          <ListText fontFamily="display" size={theme.fontSizes.label.small}>
+            Label small
+          </ListText>
+          <ListText>Body regular</ListText>
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider multiline selected>
+        <ListIcon icon={StatusAlert} />
+        <FlexBox directionColumn>
+          <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+            Label small
+          </ListText>
+          <ListText>Body regular</ListText>
+        </FlexBox>
+        <FlexBox flex={1} justifyFlexEnd>
+          <ListIcon icon={ArrowForward} />
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider multiline>
+        <ListAddon>
+          <Placeholder width={40} height={40}>
+            1:1
+          </Placeholder>
+        </ListAddon>
+        <ListTextGroup>
+          <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+            Label
+          </ListText>
+          <ListText>Body regular</ListText>
+        </ListTextGroup>
+        <ListIcon icon={ArrowForward} />
+      </ListItem>
+      <ListItem clickable divider multiline>
+        <ListAddon>
+          <Placeholder width={45} height={30}>
+            3:2
+          </Placeholder>
+        </ListAddon>
+        <ListTextGroup>
+          <ListText fontFamily="display" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+            Label
+          </ListText>
+          <ListText>Body regular</ListText>
+        </ListTextGroup>
+      </ListItem>
+      <ListItem clickable divider multiline>
+        <FlexBox directionColumn>
+          <ListText fontFamily="DFDS" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+            Label
+          </ListText>
+          <ListText>Body regular</ListText>
+        </FlexBox>
+      </ListItem>
+      <ListItem clickable divider multiline>
+        <FlexBox directionColumn>
+          <ListText fontFamily="DFDS" size={theme.fontSizes.label.medium} color={theme.colors.primary.main}>
+            Label
+          </ListText>
+          <ListText>Body regular</ListText>
+        </FlexBox>
+        <FlexBox flex={1} justifyFlexEnd>
+          <ListIcon icon={ArrowForward} />
+        </FlexBox>
+      </ListItem>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## Example: Quote list
+
+<Preview gray width="400px">
+  <Story name="Example: Quotes list">
+    <React.Fragment>
+      <ListTitle divider>
+        <ListText styledAs="smallHeadline">Vælg tilbud</ListText>
+      </ListTitle>
+      <ListItem multiline clickable divider as="a" href="#">
+        <ListTextGroup>
+          <ListText styledAs="labelBold">MiniCruise i indvendig standardkahyt</ListText>
+          <ListText styledAs="body">Udvalgte søndage - onsdage</ListText>
+          <ListText
+            styledAs="smallHeadline"
+            css={css`
+              color: currentColor;
+            `}
+          >
+            Spar 70%
+          </ListText>
+        </ListTextGroup>
+        <ListIcon size="xl" icon={ChevronRight} />
+      </ListItem>
+      <ListItem multiline clickable divider as="a" href="#">
+        <ListTextGroup>
+          <ListText styledAs="labelBold">MiniCruise i standardkahyt med havudsigt</ListText>
+          <ListText styledAs="body">Udvalgte søndage - onsdage</ListText>
+          <ListText
+            styledAs="smallHeadline"
+            css={css`
+              color: currentColor;
+            `}
+          >
+            Spar 40%
+          </ListText>
+        </ListTextGroup>
+        <ListIcon size="xl" icon={ChevronRight} />
+      </ListItem>
+      <ListItem multiline clickable as="a" href="#">
+        <ListTextGroup>
+          <ListText styledAs="labelBold">Cruise i Commodore Class kahyt inkl. morgenmad</ListText>
+          <ListText styledAs="body">Udvalgte søndage - onsdage</ListText>
+          <ListText
+            styledAs="smallHeadline"
+            css={css`
+              color: currentColor;
+            `}
+          >
+            Spar <strike>20%</strike> 40%
+          </ListText>
+        </ListTextGroup>
+        <ListIcon size="xl" icon={ChevronRight} />
+      </ListItem>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## Example: Country selector
+
+<Preview gray width="500px">
+  <Story name="Example: Country selector">
+    {() => {
+      const EmptyLink = (props) => {
+        return <a target="_self" href="#" {...props} />
+      }
+      const CountryList = ({ children, ...rest }) => {
+        return (
+          <div
+            css={css`
+              display: flex;
+              flex-wrap: wrap;
+              background-color: white;
+              max-width: 500px;
+            `}
+            {...rest}
+          >
+            <ListTitle divider>
+              <ListText styledAs="subHeadline">Select country</ListText>
+            </ListTitle>
+            {children}
+          </div>
+        )
+      }
+      const CountryItem = (props) => {
+        return (
+          <ListItem
+            as={EmptyLink}
+            clickable
+            flexBoxProps={{ itemsCenter: true, flex: 1 }}
+            css={css`
+              min-width: 200px;
+            `}
+            {...props}
+          />
+        )
+      }
+      return (
+        <React.Fragment>
+          <CountryList>
+            <CountryItem>
+              <ListIcon icon={FlagInt} />
+              <ListText styledAs="label">International</ListText>
+            </CountryItem>
+            <CountryItem>
+              <ListIcon icon={FlagGb} />
+              <ListText styledAs="label">UK - English</ListText>
+            </CountryItem>
+            <CountryItem>
+              <ListIcon icon={FlagSe} />
+              <ListText styledAs="label">Sverige</ListText>
+            </CountryItem>
+            <CountryItem>
+              <ListIcon icon={FlagEe} />
+              <ListText styledAs="label">Eesti</ListText>
+            </CountryItem>
+          </CountryList>
+        </React.Fragment>
+      )
+    }}
+  </Story>
+</Preview>
+
+## Example: Account settings
+
+<Preview width="320px" gray>
+  <Story name="Example: Account settings">
+    <React.Fragment>
+      <ListItem clickable>
+        <ListIcon icon={Account} />
+        <ListText size={theme.fontSizes.caption}>email@email.com or name if available</ListText>
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Manage bookmarks</ListText>
+        <ListIcon icon={Bookmark} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Change password</ListText>
+        <ListIcon icon={Locked} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Email preferences</ListText>
+        <ListIcon icon={Mail} />
+      </ListItem>
+      <ListItem clickable divider selected>
+        <ListText>Notification settings</ListText>
+        <ListIcon icon={Notification} />
+      </ListItem>
+      <ListItem clickable divider>
+        <ListText>Payment details</ListText>
+        <ListIcon icon={Payment} />
+      </ListItem>
+      <ListItem clickable>
+        <ListText>General settings</ListText>
+        <ListIcon icon={Settings} />
+      </ListItem>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## Example: Feature list
+
+<Preview width="320px">
+  <Story name="Example: Feature list">
+    {() => {
+      const FeatureList = (props) => {
+        return (
+          <ul
+            css={css`
+              margin: 0;
+              padding: 0;
+              background: white;
+            `}
+            {...props}
+          />
+        )
+      }
+      const FeatureItem = ({ children, ...rest }) => {
+        return (
+          <ListItem
+            css={css`
+              margin: 8px 0;
+            `}
+            as="li"
+            condensed
+            flexBoxProps={{ itemsFlexStart: true }}
+            {...rest}
+          >
+            <ListIcon icon={Yes} />
+            <ListText
+              css={css`
+                padding: 2px;
+              `}
+            >
+              {children}
+            </ListText>
+          </ListItem>
+        )
+      }
+      return (
+        <FeatureList>
+          <FeatureItem>Bathroom and toilet with soapdispenser</FeatureItem>
+          <FeatureItem>Bedsheets and towels</FeatureItem>
+          <FeatureItem>A chair</FeatureItem>
+          <FeatureItem>Electricity plug (European standard)</FeatureItem>
+          <FeatureItem>Standard cabins are located from deck 5 and further up the ship</FeatureItem>
+        </FeatureList>
+      )
+    }}
+  </Story>
+</Preview>

@@ -1,0 +1,108 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Skeleton from './Skeleton'
+import { css } from '@emotion/react'
+
+<Meta title="Hydro UI/Skeleton" component={Skeleton} />
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Skeleton } from '@/dfds-ui/react-components/src'
+```
+
+## Props
+
+<Props of={Skeleton} />
+
+Use the component:
+
+## Text skeleton
+
+#### Fixed width
+
+<Preview>
+  <Story name="Text skeleton fixed width">
+    <Skeleton
+      variant="text"
+      css={css`
+        height: 30px;
+        width: 150px;
+      `}
+    />
+  </Story>
+</Preview>
+
+#### Without animation
+
+<Preview>
+  <Story name="Skeleton without animation">
+    <Skeleton
+      disableAnimation={true}
+      variant="text"
+      css={css`
+        height: 30px;
+        width: 150px;
+      `}
+    />
+  </Story>
+</Preview>
+
+#### Percentage width
+
+<Preview>
+  <Story name="Text skeleton percentage width">
+    <Skeleton
+      variant="text"
+      css={css`
+        height: 30px;
+        width: 100%;
+      `}
+    />
+  </Story>
+</Preview>
+
+## Reactangle skeleton
+
+#### Fixed width
+
+<Preview>
+  <Story name="Reactangle skeleton fixed width">
+    <Skeleton
+      variant="rect"
+      css={css`
+        height: 80px;
+        width: 300px;
+      `}
+    />
+  </Story>
+</Preview>
+
+#### Percentage width
+
+<Preview>
+  <Story name="Reactangle skeleton percentage width">
+    <Skeleton
+      variant="rect"
+      css={css`
+        height: 40px;
+        width: 50%;
+      `}
+    />
+  </Story>
+</Preview>
+
+## Circle skeleton
+
+<Preview>
+  <Story name="Circle skeleton">
+    <Skeleton
+      variant="circle"
+      css={css`
+        height: 60px;
+        width: 60px;
+      `}
+    />
+  </Story>
+</Preview>

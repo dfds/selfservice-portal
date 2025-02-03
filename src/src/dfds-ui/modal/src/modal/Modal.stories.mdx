@@ -1,0 +1,445 @@
+import { Fragment } from 'react'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth, StoryLink } from '@/dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { hrefTo } from '@storybook/addon-links'
+import { css } from '@emotion/react'
+import { Modal, ModalAction } from './'
+import { SmallHeadline } from '@/dfds-ui/react-components/src'
+import ModalDemo from './Modal.demo'
+
+<Meta title="Hydro UI/Modals/Modal" component={Modal} />
+
+# Modal
+
+Display content in a modal window.
+Supports adding two action buttons inside the Modal for the user to interract with.
+
+## Props
+
+<Props of={Modal} />
+
+## Usage
+
+Install with npm:
+
+```jsx
+npm install --save @/dfds-ui/modal/src
+```
+
+Install with yarn:
+
+```jsx
+yarn add @/dfds-ui/modal/src
+```
+
+## Standard Modal
+
+<Preview>
+  <Story name="Standard Modal">
+    <ModalDemo name="Standard modal">
+      {({ open, setOpen }) => (
+        <Modal heading="Standard Modal" isOpen={open} shouldCloseOnEsc={true} onRequestClose={() => setOpen(false)}>
+          <p>Modal message</p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## Long headline
+
+<Preview>
+  <Story name="Long headline">
+    <ModalDemo name="Long headline">
+      {({ open, setOpen }) => (
+        <Modal
+          heading="Volvo Trucks present an autonomous transport solution between a DFDS logistics centre and port"
+          isOpen={open}
+          shouldCloseOnEsc={true}
+          onRequestClose={() => setOpen(false)}
+        >
+          <p>Modal message</p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## Long Content Modal
+
+<Preview>
+  <Story name="Long Content Modal">
+    <ModalDemo name="Long Content Modal">
+      {({ open, setOpen }) => (
+        <Modal heading="Long Content Modal" isOpen={open} shouldCloseOnEsc={true} onRequestClose={() => setOpen(false)}>
+          <p>
+            Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces,
+            it’s best to make your targets big so that they’re easy for users to tap. But exactly how big should you
+            make them to give the best ease of use to the majority of your users? Many mobile developers have wondered
+            this, and most have turned to the user interface guidelines provided by the platform developer for the
+            answer.
+          </p>
+          <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+          <p>
+            Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+            Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a
+            minimum touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no
+            smaller than 1cm x 1cm square or 28 x 28 pixels.
+          </p>
+          <p>
+            While these guidelines give a general measurement for touch targets, they’re not consistent with each other,
+            nor are they consistent with the actual size of the human finger. In fact, their suggested sizes are much
+            smaller than the average finger, which can lead to touch target problems for users on mobile devices.
+          </p>
+          <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+          <p>
+            An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the
+            average width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57
+            pixels, which is wider than what most mobile guidelines suggest.
+          </p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## Backdrop
+
+You can specify the backdrop emphasis with the `backdrop` prop.
+
+<Preview>
+  <Story name="Backdrop">
+    <React.Fragment>
+      <ModalDemo name="Low Emphasis">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="lowEmphasis"
+            heading="Backdrop with low emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+      <br />
+      <ModalDemo name="Medium Emphasis">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="mediumEmphasis"
+            heading="Backdrop with medium emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+      <br />
+      <ModalDemo name="High Emphasis">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="highEmphasis"
+            heading="Backdrop with high emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## BackdropVariant
+
+You can specify the backdrop variant to either `solid` or `transparent`(default) with the `backdropVariant` prop.
+
+The following shows the the backdrop using the `solid` variant.
+
+<Preview>
+  <Story name="Backdrop variant">
+    <React.Fragment>
+      <ModalDemo name="Low Emphasis Solid">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="lowEmphasis"
+            backdropVariant="solid"
+            heading="Backdrop with solid low emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+      <br />
+      <ModalDemo name="Medium Emphasis Solid">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="mediumEmphasis"
+            backdropVariant="solid"
+            heading="Backdrop with solid medium emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+      <br />
+      <ModalDemo name="High Emphasis Solid">
+        {({ open, setOpen }) => (
+          <Modal
+            backdrop="highEmphasis"
+            backdropVariant="solid"
+            heading="Backdrop with solid high emphasis"
+            isOpen={open}
+            shouldCloseOnEsc={true}
+            onRequestClose={() => setOpen(false)}
+          >
+            <p>Modal message</p>
+          </Modal>
+        )}
+      </ModalDemo>
+    </React.Fragment>
+  </Story>
+</Preview>
+
+## Custom Sizes
+
+You can define custom sizes using the `sizes` prop.
+
+<Preview>
+  <Story name="Custom sizes">
+    <ModalDemo name="Custom sizes">
+      {({ open, setOpen }) => (
+        <Modal
+          heading="Custom sizes"
+          isOpen={open}
+          shouldCloseOnEsc={true}
+          onRequestClose={() => setOpen(false)}
+          sizes={{ s: '95%', m: '80%', l: '80%', xl: '80%', xxl: '80%' }}
+        >
+          <p>
+            Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces,
+            it’s best to make your targets big so that they’re easy for users to tap. But exactly how big should you
+            make them to give the best ease of use to the majority of your users? Many mobile developers have wondered
+            this, and most have turned to the user interface guidelines provided by the platform developer for the
+            answer.
+          </p>
+          <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+          <p>
+            Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+            Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a
+            minimum touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no
+            smaller than 1cm x 1cm square or 28 x 28 pixels.
+          </p>
+          <p>
+            While these guidelines give a general measurement for touch targets, they’re not consistent with each other,
+            nor are they consistent with the actual size of the human finger. In fact, their suggested sizes are much
+            smaller than the average finger, which can lead to touch target problems for users on mobile devices.
+          </p>
+          <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+          <p>
+            An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the
+            average width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57
+            pixels, which is wider than what most mobile guidelines suggest.
+          </p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## Fullscreen
+
+You can define `sizes` prop with `fullscreen` as a value
+
+In the following example `fullscreen` is used to the sizes `s` and `m`
+
+<Preview>
+  <Story name="Fullscreen">
+    <ModalDemo name="Fullscreen">
+      {({ open, setOpen }) => (
+        <Modal
+          heading="Fullscreen for s and m"
+          isOpen={open}
+          shouldCloseOnEsc={true}
+          onRequestClose={() => setOpen(false)}
+          sizes={{ s: 'fullscreen', m: 'fullscreen', l: '80%', xl: '80%', xxl: '80%' }}
+        >
+          <p>
+            Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces,
+            it’s best to make your targets big so that they’re easy for users to tap. But exactly how big should you
+            make them to give the best ease of use to the majority of your users? Many mobile developers have wondered
+            this, and most have turned to the user interface guidelines provided by the platform developer for the
+            answer.
+          </p>
+          <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+          <p>
+            Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+            Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a
+            minimum touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no
+            smaller than 1cm x 1cm square or 28 x 28 pixels.
+          </p>
+          <p>
+            While these guidelines give a general measurement for touch targets, they’re not consistent with each other,
+            nor are they consistent with the actual size of the human finger. In fact, their suggested sizes are much
+            smaller than the average finger, which can lead to touch target problems for users on mobile devices.
+          </p>
+          <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+          <p>
+            An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the
+            average width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57
+            pixels, which is wider than what most mobile guidelines suggest.
+          </p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## Modal Actions
+
+Action button can be optionally added using the `actions` prop with `<ModalAction>` components inside.
+
+## Props
+
+<Props of={ModalAction} />
+
+<Preview>
+  <Story name="Modal with actions">
+    <ModalDemo name="Modal with actions">
+      {({ open, setOpen }) => (
+        <Modal
+          heading="Modal with actions"
+          isOpen={open}
+          shouldCloseOnEsc={true}
+          onRequestClose={() => setOpen(false)}
+          actions={
+            <Fragment>
+              <ModalAction actionVariation="secondary" onClick={() => alert('Action two button clicked')}>
+                Action two
+              </ModalAction>
+              <ModalAction actionVariation="primary" onClick={() => alert('Action one button clicked')}>
+                Action one
+              </ModalAction>
+            </Fragment>
+          }
+        >
+          <p>Modal message</p>
+        </Modal>
+      )}
+    </ModalDemo>
+  </Story>
+</Preview>
+
+## setGlobalAppElement
+
+In order for the modal to set `aria-hidden` on the rest of the app when the
+modal is shown it needs to know which `html` element represents the app root.
+You can set this once in your application.
+
+```jsx
+import { setGlobalAppElement } from '@/dfds-ui/modal/src'
+
+//set the app element to the element with id 'root'
+setGlobalAppElement('#root')
+```
+
+<Story name="Modal on long page" parameters={{ docs: { disable: true } }}>
+  <React.Fragment>
+    <p>
+      Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces, it’s
+      best to make your targets big so that they’re easy for users to tap. But exactly how big should you make them to
+      give the best ease of use to the majority of your users? Many mobile developers have wondered this, and most have
+      turned to the user interface guidelines provided by the platform developer for the answer.
+    </p>
+    <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+    <p>
+      Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+      Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a minimum
+      touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no smaller than 1cm
+      x 1cm square or 28 x 28 pixels.
+    </p>
+    <p>
+      While these guidelines give a general measurement for touch targets, they’re not consistent with each other, nor
+      are they consistent with the actual size of the human finger. In fact, their suggested sizes are much smaller than
+      the average finger, which can lead to touch target problems for users on mobile devices.
+    </p>
+    <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+    <p>
+      An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the average
+      width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57 pixels, which is
+      wider than what most mobile guidelines suggest.
+    </p>
+    <p>
+      Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces, it’s
+      best to make your targets big so that they’re easy for users to tap. But exactly how big should you make them to
+      give the best ease of use to the majority of your users? Many mobile developers have wondered this, and most have
+      turned to the user interface guidelines provided by the platform developer for the answer.
+    </p>
+    <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+    <p>
+      Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+      Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a minimum
+      touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no smaller than 1cm
+      x 1cm square or 28 x 28 pixels.
+    </p>
+    <p>
+      While these guidelines give a general measurement for touch targets, they’re not consistent with each other, nor
+      are they consistent with the actual size of the human finger. In fact, their suggested sizes are much smaller than
+      the average finger, which can lead to touch target problems for users on mobile devices.
+    </p>
+    <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+    <p>
+      An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the average
+      width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57 pixels, which is
+      wider than what most mobile guidelines suggest.
+    </p>
+    <ModalDemo name="Standard modal">
+      {({ open, setOpen }) => (
+        <Modal heading="Standard Modal" isOpen={open} shouldCloseOnEsc={true} onRequestClose={() => setOpen(false)}>
+          <p>Modal message</p>
+        </Modal>
+      )}
+    </ModalDemo>
+    <p>
+      Smaller touch targets are harder for users to hit than larger ones. When you’re designing mobile interfaces, it’s
+      best to make your targets big so that they’re easy for users to tap. But exactly how big should you make them to
+      give the best ease of use to the majority of your users? Many mobile developers have wondered this, and most have
+      turned to the user interface guidelines provided by the platform developer for the answer.
+    </p>
+    <SmallHeadline>What The Mobile Platform Guidelines Say</SmallHeadline>
+    <p>
+      Apple’s iPhone Human Interface Guidelines recommends a minimum target size of 44 pixels wide 44 pixels tall.
+      Microsoft’s Windows Phone UI Design and Interaction Guide suggests a touch target size of 34px with a minimum
+      touch target size of 26px. Nokia’s developer guidelines suggest that the target size should be no smaller than 1cm
+      x 1cm square or 28 x 28 pixels.
+    </p>
+    <p>
+      While these guidelines give a general measurement for touch targets, they’re not consistent with each other, nor
+      are they consistent with the actual size of the human finger. In fact, their suggested sizes are much smaller than
+      the average finger, which can lead to touch target problems for users on mobile devices.
+    </p>
+    <SmallHeadline>Pixel Width Of The Average Index Finger</SmallHeadline>
+    <p>
+      An MIT Touch Lab study of Human Fingertips to investigate the Mechanics of Tactile Sense found that the average
+      width of the index finger is 1.6 to 2 cm (16 - 20 mm) for most adults. This converts to 45 - 57 pixels, which is
+      wider than what most mobile guidelines suggest.
+    </p>
+  </React.Fragment>
+</Story>
+
+## Using `renderWhenClosed`
+
+<StoryLink kind="Hydro UI/Modals/Modal/HiddenStories" name="Performance" mode="docs">
+  Show example
+</StoryLink>

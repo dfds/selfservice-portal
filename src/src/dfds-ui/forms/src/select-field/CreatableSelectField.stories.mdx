@@ -1,0 +1,27 @@
+import { BasicCreatableSelectField, CustomLabelCreatableSelectField } from './CreatableSelectField.stories'
+import { CreatableSelectField } from './CreatableSelectField'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@/dfds-ui/storybook-design'
+
+<Meta title="Hydro UI/Forms/CreatableSelectField" component={{ CreatableSelectField }} />
+
+# CreatableSelectField
+
+```jsx
+import { SelectField } from '@/dfds-ui/forms/src'
+```
+
+## Basic Field
+
+<Preview width="320px" gray>
+  <Story story={BasicCreatableSelectField} />
+</Preview>
+
+## Custom create label field
+
+Use the `formatCreateLabel` prop to specify create label.
+
+Use the `onCreateOption` prop to specify creation handler.
+
+<Preview width="320px" gray>
+  <Story story={CustomLabelCreatableSelectField} />
+</Preview>

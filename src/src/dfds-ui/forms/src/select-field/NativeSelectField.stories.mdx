@@ -1,0 +1,29 @@
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@/dfds-ui/storybook-design'
+import { NativeSelectField } from '../select-field/NativeSelectField'
+import { BasicNativeSelectField, SizesNativeSelectField } from './NativeSelectField.stories'
+
+<Meta title="Hydro UI/Forms/NativeSelectField" component={{ NativeSelectField }} lab />
+
+# NativeSelectField
+
+Component for text input.
+
+```jsx
+import { NativeSelectField } from '@/dfds-ui/forms/src'
+```
+
+<Preview width="320px" gray>
+  <Story name="Basic" story={BasicNativeSelectField} />
+</Preview>
+
+## Component props
+
+<Props of={NativeSelectField} />
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story name="Sizes" story={SizesNativeSelectField} />
+</Preview>

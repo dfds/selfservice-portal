@@ -1,0 +1,109 @@
+import { Fragment } from 'react'
+import { Meta, Story, Props } from '@/dfds-ui/storybook-design'
+import { Preview, Placeholder } from '@/dfds-ui/storybook-design'
+import { ChevronRight } from '@/dfds-ui/icons/src/system'
+import { Swiper, SwiperCard } from './'
+import { Card, CardMedia, CardTitle, CardContent, LinkButton } from '@/dfds-ui/react-components/src'
+import { css } from '@emotion/react'
+import { theme, media } from '@/dfds-ui/theme/src'
+
+<Meta title="Lab/Swiper" component={Swiper} />
+
+# Swiper
+
+The `Swiper` component is a container of `SwiperCard`s used in displaying info that the users can select.
+
+## Props
+
+<Props of={Swiper} />
+
+# SwiperCard
+
+The `SwiperCard` component is a wrapper used in displaying info.
+
+<Props of={SwiperCard} />
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Swiper, SwiperCard } from '@/dfds-ui/experiences'
+```
+
+Use the component:
+
+## Simple Swiper with SwiperCards
+
+export const CardWithMedia = () => {
+  return (
+    <Card
+      size="m"
+      variant="fill"
+      surface="inverted"
+      media={
+        <CardMedia
+          media={
+            <img
+              src="https://images.ctfassets.net/mivicpf5zews/685PmmGKZZmgswLpc581k2/263747f71fb717d345dbe3f5ee2a466e/STREETS-IN-COPENHAGEN_1200x600px_VISITCOPENHAGEN_PHOTO_MARTIN-HEIBERG_01.jpg?w=1000"
+              alt="Visit Copenhagen"
+            />
+          }
+        />
+      }
+    >
+      <CardTitle
+        css={css`
+          div {
+            color: white;
+          }
+        `}
+      >
+        Lorem ipsum
+      </CardTitle>
+      <CardContent>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam.
+      </CardContent>
+      <CardActions>
+        <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+          See offer
+        </LinkButton>
+      </CardActions>
+    </Card>
+  )
+}
+
+<Preview>
+  <Story name="Simple Swiper with SwiperCards">
+    {() => {
+      const swiperStyle = css`
+        gap: ${theme.spacing.s};
+      `
+      const swiperCardStyle = css`
+        ${media.greaterThan('m')`
+            min-width: 30%;
+          `}
+      `
+      return (
+        <Swiper css={swiperStyle}>
+          <SwiperCard css={swiperCardStyle}>
+            <CardWithMedia />
+          </SwiperCard>
+          <SwiperCard css={swiperCardStyle}>
+            <CardWithMedia />
+          </SwiperCard>
+          <SwiperCard css={swiperCardStyle}>
+            <CardWithMedia />
+          </SwiperCard>
+          <SwiperCard css={swiperCardStyle}>
+            <CardWithMedia />
+          </SwiperCard>
+          <SwiperCard css={swiperCardStyle}>
+            <CardWithMedia />
+          </SwiperCard>
+        </Swiper>
+      )
+    }}
+  </Story>
+</Preview>

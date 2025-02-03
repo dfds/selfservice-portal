@@ -1,0 +1,90 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { css } from '@emotion/react'
+import LinkButton from './LinkButton'
+import { ChevronLeft, ChevronRight } from '@/dfds-ui/icons/src/system'
+
+<Meta title="Hydro UI/Buttons/LinkButton" component={LinkButton} />
+
+# Link button
+
+Link buttons allow users to navigate from one page to another.
+
+## Props
+
+| Name   |  Values |  Description                               | Required |
+| ------ | ------- | ------------------------------------------ | -------- |
+| href   | string  | Sets the URL of the page the link goes to. |          |
+| target | string  | Specifies where to open linked page.       |          |
+
+## Usage
+
+```jsx
+import { LinkButton } from '@/dfds-ui/react-components/src'
+```
+
+Use the component:
+
+## Link
+
+<Preview>
+  <Story name="Primary">
+    <LinkButton>Link</LinkButton>
+  </Story>
+</Preview>
+
+## Small
+
+<Preview>
+  <Story name="Small">
+    <LinkButton size="small">Link</LinkButton>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <LinkButton disabled>Link</LinkButton>
+  </Story>
+</Preview>
+
+## Left icon
+
+<Preview>
+  <Story name="Left icon">
+    <LinkButton icon={<ChevronLeft />} iconAlign="left">
+      Icon left
+    </LinkButton>
+  </Story>
+</Preview>
+
+## Right icon
+
+<Preview>
+  <Story name="Right icon">
+    <LinkButton icon={<ChevronRight />} iconAlign="right">
+      Icon right
+    </LinkButton>
+  </Story>
+</Preview>
+
+## Small with left icon
+
+<Preview>
+  <Story name="Small with left icon">
+    <LinkButton size="small" icon={<ChevronLeft />} iconAlign="left">
+      Link
+    </LinkButton>
+  </Story>
+</Preview>
+
+## Small with right icon
+
+<Preview>
+  <Story name="Small with right icon">
+    <LinkButton size="small" icon={<ChevronRight />} iconAlign="right">
+      Link
+    </LinkButton>
+  </Story>
+</Preview>

@@ -1,0 +1,200 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import { useState } from 'react'
+import { action } from '@storybook/addon-actions'
+import Tabs from './Tabs'
+import TabPanel from './TabPanel'
+import Tab from './Tab'
+import { TabsContextProvider } from './TabsContext'
+
+<Meta title="Hydro UI/Tabs/Tab" component={Tab} />
+
+`TabPanel` component is provided for convenience because it already consumes `TabsContext` internally to display the content that corresponds the selected tab.
+
+## TabsContext
+
+`TabsContext` provides a way to communicate which tab is active and what should happen when a tab is selected.
+
+### Props
+
+|  Name        |  Type                           |  Default |  Description                                             |  Required |
+| ------------ | ------------------------------- | -------- | -------------------------------------------------------- | --------- |
+| onChange     |  () => void                     | -        | Determines what happens when a different tab is selected |  X        |
+|  transparent |  boolean                        | false    | Tabs have background if true, otherwise transparent      |           |
+| size         |  s \| m                         | m        | Sets size variant of the tabs                            |           |
+|  activeTab   | string \| number \| undefined   | -        | Holds identifier value of the active tab                 |           |
+
+## Tabs
+
+`Tabs` component serves as a container for `Tab` components. It is scrollable, if it's content overflows.
+
+## Tab
+
+### Props
+
+|  Name |  Type             |  Default |  Description                                                                                 |  Required |
+| ----- | ----------------- | -------- | -------------------------------------------------------------------------------------------- | --------- |
+| index |  string \| number | -        | Unique identifier of the tab, must be the same as the index for the corresponding `TabPanel` | X         |
+
+## TabPanel
+
+### Props
+
+|  Name    |  Type             |  Default |  Description                                                                            |  Required |
+| -------- | ----------------- | -------- | --------------------------------------------------------------------------------------- | --------- |
+| index    |  string \| number | -        | Unique identifier of the tab, must be the same as the index for the corresponding `Tab` | X         |
+|  onClick |  event => void    |  -       | Attaches extra logic when Tab is clicked                                                |           |
+
+<Preview>
+  <Story name="Basic">
+    {() => {
+      const [activeTab, setActiveTab] = useState(0)
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab }}>
+          <Tabs>
+            <Tab index={0}>Tab one</Tab>
+            <Tab index={1}>Tab two</Tab>
+            <Tab index={2}>Tab three</Tab>
+          </Tabs>
+          <TabPanel index={0}>
+            <Container>Tab one</Container>
+          </TabPanel>
+          <TabPanel index={1}>
+            <Container>Tab two</Container>
+          </TabPanel>
+          <TabPanel index={2}>
+            <Container>Tab three</Container>
+          </TabPanel>
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="Transparent">
+    {() => {
+      const [activeTab, setActiveTab] = useState(0)
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab, transparent: true }}>
+          <Tabs>
+            <Tab index={0}>Tab one</Tab>
+            <Tab index={1}>Tab two</Tab>
+            <Tab index={2}>Tab three</Tab>
+          </Tabs>
+          <TabPanel index={0}>
+            <Container>Tab one</Container>
+          </TabPanel>
+          <TabPanel index={1}>
+            <Container>Tab two</Container>
+          </TabPanel>
+          <TabPanel index={2}>
+            <Container>Tab three</Container>
+          </TabPanel>
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="Small">
+    {() => {
+      const [activeTab, setActiveTab] = useState(0)
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab, size: 's' }}>
+          <Tabs>
+            <Tab index={0}>Tab one</Tab>
+            <Tab index={1}>Tab two</Tab>
+            <Tab index={2}>Tab three</Tab>
+          </Tabs>
+          <TabPanel index={0}>
+            <Container>Tab one</Container>
+          </TabPanel>
+          <TabPanel index={1}>
+            <Container>Tab two</Container>
+          </TabPanel>
+          <TabPanel index={2}>
+            <Container>Tab three</Container>
+          </TabPanel>
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="Disabled">
+    {() => {
+      const [activeTab, setActiveTab] = useState(1)
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab, size: 's' }}>
+          <Tabs>
+            <Tab disabled index={0}>
+              Tab one
+            </Tab>
+            <Tab index={1}>Tab two</Tab>
+            <Tab index={2}>Tab three</Tab>
+          </Tabs>
+          <TabPanel index={0}>
+            <Container>Tab one</Container>
+          </TabPanel>
+          <TabPanel index={1}>
+            <Container>Tab two</Container>
+          </TabPanel>
+          <TabPanel index={2}>
+            <Container>Tab three</Container>
+          </TabPanel>
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="Long title">
+    {() => {
+      const [activeTab, setActiveTab] = useState(1)
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab, size: 'm' }}>
+          <Tabs>
+            <Tab index={0}>This tab has a super long title</Tab>
+            <Tab index={1}>Tab two</Tab>
+            <Tab index={2}>Tab three</Tab>
+          </Tabs>
+          <TabPanel index={0}>
+            <Container>Tab with a super long title</Container>
+          </TabPanel>
+          <TabPanel index={1}>
+            <Container>Tab two</Container>
+          </TabPanel>
+          <TabPanel index={2}>
+            <Container>Tab three</Container>
+          </TabPanel>
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="Many tabs">
+    {() => {
+      const [activeTab, setActiveTab] = useState(0)
+      const tabs = [...Array(20).keys()]
+      return (
+        <TabsContextProvider value={{ onChange: (index) => setActiveTab(index), activeTab }}>
+          <Tabs>
+            {tabs.map((tab, index) => (
+              <Tab index={index}>Tab {tab}</Tab>
+            ))}
+          </Tabs>
+          {tabs.map((tab, index) => (
+            <TabPanel index={index}>
+              <Container>Tab {tab}</Container>
+            </TabPanel>
+          ))}
+        </TabsContextProvider>
+      )
+    }}
+  </Story>
+</Preview>

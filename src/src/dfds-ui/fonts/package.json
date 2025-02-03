@@ -1,0 +1,13 @@
+{
+  "name": "@/dfds-ui/fonts",
+  "description": "DFDS fonts",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.0-PLACEHOLDER",
+  "files": [
+    "fonts"
+  ]
+}

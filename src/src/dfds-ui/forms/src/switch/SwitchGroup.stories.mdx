@@ -1,0 +1,53 @@
+import { Meta, Story, ArgsTable, Preview } from '@/dfds-ui/storybook-design'
+import { SwitchGroup } from './SwitchGroup'
+import { Switch } from './Switch'
+
+<Meta title="Hydro UI/Forms/Switch/SwitchGroup" component={SwitchGroup} />
+
+# Switch Group
+
+A switch group wraps controls into a list with a label and error message.
+
+```jsx
+import { Switch, SwitchGroup } from '@/dfds-ui/forms/src'
+```
+
+<ArgsTable of={SwitchGroup} />
+
+## Sizes
+
+Sizes of all elements of the group can be specified with the `size` property.
+
+<Preview width="320px" gray>
+  <Story name="Sizes">
+    <form>
+      <SwitchGroup label="Small" size="small">
+        <Switch name="sm-1">switch</Switch>
+        <Switch name="sm-2">switch</Switch>
+      </SwitchGroup>
+      <SwitchGroup label="Medium (default)" required>
+        <Switch name="m-1">switch</Switch>
+        <Switch name="m-2">switch</Switch>
+      </SwitchGroup>
+    </form>
+  </Story>
+</Preview>
+
+## Error state and message
+
+The prop `errorMessage` displays an error message in the bottom, and sets the state of the different `Switch` components to their `error` state.
+
+<Preview width="320px" gray>
+  <Story name="Error and message">
+    <form>
+      <SwitchGroup label="Errored group" errorMessage={'Switch group has some error.'}>
+        <Switch checked name="m-1">
+          switch
+        </Switch>
+        <Switch checked={false} name="m-2">
+          switch
+        </Switch>
+      </SwitchGroup>
+    </form>
+  </Story>
+</Preview>

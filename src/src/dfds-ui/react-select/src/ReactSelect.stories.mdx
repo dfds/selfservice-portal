@@ -1,0 +1,288 @@
+import { useState } from 'react'
+import { Meta, DocsContainer, Story, Props, Preview, withWidth } from '@/dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { Button } from '@/dfds-ui/react-components/src'
+import { FlexBox } from '@/dfds-ui/react-components/src/flexbox'
+import { theme, media } from '@/dfds-ui/theme/src'
+import { useForm, Controller } from 'react-hook-form'
+import { Search } from '@/dfds-ui/icons/src/system/'
+import ReactSelect from './ReactSelect'
+
+<Meta title="Lab/Forms/ReactSelect" component={{ ReactSelect }} lab />
+
+# ReactSelect
+
+Component for react select.
+
+```jsx
+import { ReactSelect } from '@/dfds-ui/react-select'
+```
+
+<Preview width="320px" gray>
+  <Story name="Basic">
+    <ReactSelect
+      name="select"
+      label="Basic field"
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+      onChange={(e) => console.log('Change', e)}
+      onBlur={(e) => console.log('Blur', e)}
+    />
+  </Story>
+</Preview>
+
+## Component props
+
+<Props of={ReactSelect} />
+
+## Label
+
+Use the `label` prop to specify the label. Please notice, the label size is based on visualSize prop.
+
+<Preview width="320px" gray>
+  <Story name="Label">
+    <ReactSelect
+      name="select"
+      label="Select field"
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+    />
+    <ReactSelect
+      name="select"
+      label="Select field"
+      visualSize="medium"
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+    />
+    <ReactSelect
+      name="select"
+      label="Select field"
+      visualSize="medium"
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+    />
+  </Story>
+</Preview>
+
+## Sizes
+
+Use the `visualSize` prop to specify the size variant.
+
+<Preview width="320px" gray>
+  <Story name="Sizes">
+    <Fragment>
+      <ReactSelect
+        name="select"
+        label="Small"
+        visualSize="small"
+        options={[
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+          { value: '3', label: 'Three' },
+        ]}
+      />
+      <ReactSelect
+        name="select"
+        label="Medium"
+        visualSize="medium"
+        options={[
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+          { value: '3', label: 'Three' },
+        ]}
+      />
+      <ReactSelect
+        name="select"
+        label="Large"
+        visualSize="large"
+        options={[
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+          { value: '3', label: 'Three' },
+        ]}
+      />
+    </Fragment>
+  </Story>
+</Preview>
+
+## AssistiveText
+
+Use the `AssistiveText` prop to specify text.
+
+<Preview width="320px" gray>
+  <Story name="AssistiveText">
+    <Fragment>
+      <ReactSelect
+        name="select"
+        label="Label"
+        visualSize="medium"
+        assistiveText="Some text"
+        options={[
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+          { value: '3', label: 'Three' },
+        ]}
+      />
+    </Fragment>
+  </Story>
+</Preview>
+
+## Error Message
+
+Use the `ErrorMessage` prop to specify an error message.
+
+<Preview width="320px" gray>
+  <Story name="ErrorMessage">
+    <Fragment>
+      <ReactSelect
+        name="select"
+        label="Label"
+        visualSize="medium"
+        errorMessage="Some text"
+        options={[
+          { value: '1', label: 'One' },
+          { value: '2', label: 'Two' },
+          { value: '3', label: 'Three' },
+        ]}
+      />
+    </Fragment>
+  </Story>
+</Preview>
+
+# Example using default value
+
+<Preview width="320px" gray>
+  <Story name="DefaultValue">
+    <ReactSelect
+      name="select"
+      defaultValue={{ value: '2', label: 'Two' }}
+      label="Basic field"
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+      onChange={(e) => console.log('Change', e)}
+      onBlur={(e) => console.log('Blur', e)}
+    />
+  </Story>
+</Preview>
+
+# Example using `react-hook-form`
+
+<Preview gray>
+  <Story name="Example: react-hook-form">
+    {() => {
+      const { control, setValue } = useForm({ mode: 'onChange' })
+      const addValue = () => {
+        setValue('gender', { value: '0', label: 'Female' })
+      }
+      return (
+        <div>
+          <Button onClick={addValue}>Set value</Button>
+          <Controller
+            name="gender"
+            control={control}
+            render={(props) => {
+              return (
+                <ReactSelect
+                  label="Gender"
+                  options={[
+                    { value: '0', label: 'Female' },
+                    { value: '1', label: 'Male' },
+                  ]}
+                  name="gender"
+                  {...props}
+                />
+              )
+            }}
+          />
+        </div>
+      )
+    }}
+  </Story>
+</Preview>
+
+# Disable searchable
+
+<Preview width="320px" gray>
+  <Story name="Disable search">
+    <ReactSelect
+      name="select"
+      label="Basic field"
+      isSearchable={false}
+      options={[
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+        { value: '3', label: 'Three' },
+      ]}
+      onChange={(e) => console.log('Change', e)}
+      onBlur={(e) => console.log('Blur', e)}
+    />
+  </Story>
+</Preview>
+
+# Filter Config
+
+Set the \`filterConfig\` prop to change how the items are filtered.<br/>
+Check out [Custom filter logic](https://react-select.com/advanced#custom-filter-logic) for reference
+
+## matchFrom start
+
+<Preview width="320px" gray>
+  <Story name="matchFrom start">
+    <ReactSelect
+      name="select"
+      label="matchFrom start, accent sensitive"
+      filterConfig={{
+        ignoreAccents: false,
+        matchFrom: 'start',
+      }}
+      options={[
+        { value: 'denmark', label: 'Denmark' },
+        { value: 'equador', label: 'Equador' },
+        { value: 'moldovia', label: 'Moldovia' },
+        { value: 'são tomé and príncipe', label: 'São Tomé and Príncipe' },
+        { value: 'south africa', label: 'South Africa' },
+        { value: 'sweden', label: 'Sweden' },
+      ]}
+    />
+  </Story>
+</Preview>
+
+## matchFrom any
+
+<Preview width="320px" gray>
+  <Story name="matchFrom any">
+    <ReactSelect
+      name="select"
+      label="matchFrom any, ignore accents"
+      filterConfig={{
+        ignoreAccents: true,
+        matchFrom: 'any',
+      }}
+      options={[
+        { value: 'denmark', label: 'Denmark' },
+        { value: 'equador', label: 'Equador' },
+        { value: 'moldovia', label: 'Moldovia' },
+        { value: 'são tomé and príncipe', label: 'São Tomé and Príncipe' },
+        { value: 'south africa', label: 'South Africa' },
+        { value: 'sweden', label: 'Sweden' },
+      ]}
+    />
+  </Story>
+</Preview>

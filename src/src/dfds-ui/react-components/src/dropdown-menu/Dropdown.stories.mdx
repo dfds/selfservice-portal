@@ -1,0 +1,519 @@
+import { Preview, Meta, Story, Props } from '@/dfds-ui/storybook-design'
+import { useState } from 'react'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { Dropdown, MenuItem, MenuTitle, MenuCheckbox } from './'
+import DropdownDemo from './Dropdown.demo'
+import { ListItem, ListText, ListIcon } from '../lists'
+import { Yes, Edit } from '@/dfds-ui/icons/src/system/'
+import { FlagGb } from '@/dfds-ui/icons/src/flags/'
+import { Button } from '../button'
+import { SelectField } from '@/dfds-ui/react-components/src'
+
+<Meta title="Lab/Menu/Dropdown" component={Dropdown} lab />
+
+# Dropdown
+
+A dropdown menu is a compact way of displaying multiple choices by activating when the user interacts with an element like an icon, button or select field.
+
+## Component Props
+
+<Props components={{ Dropdown, MenuItem, MenuTitle, MenuCheckbox }} />
+
+## Usage
+
+```jsx
+import { Dropdown, MenuItem, MenuTitle, MenuCheckbox } from '@/dfds-ui/react-components/src'
+```
+
+## `Medium`
+
+<Preview>
+  <Story name="Medium">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          const id = open ? 'simple-popper' : undefined
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              id={id}
+              onClickAway={handleClose}
+              shouldCloseOnEsc
+            >
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option one
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option three
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option five
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>
+
+## `Small`
+
+<Preview>
+  <Story name="Small">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              onClickAway={handleClose}
+              size="small"
+              placement="left"
+              shouldCloseOnEsc
+            >
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option one
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option three
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option five
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>
+
+## `Medium with sections`
+
+<Preview>
+  <Story name="Medium with sections">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              onClickAway={handleClose}
+              shouldCloseOnEsc
+            >
+              <MenuTitle>Section one</MenuTitle>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option one
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option three
+              </MenuItem>
+              <MenuTitle>Section two</MenuTitle>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option five
+              </MenuItem>
+              <MenuTitle>Section three</MenuTitle>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option six
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option seven
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option eight
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option nine
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>
+
+## `Medium with multiselect`
+
+<Preview>
+  <Story name="Medium with multiselect">
+    {() => {
+      const [selected1, setSelected1] = useState(false)
+      const [selected2, setSelected2] = useState(true)
+      const [selected3, setSelected3] = useState(false)
+      const [selected4, setSelected4] = useState(false)
+      const [selected5, setSelected5] = useState(true)
+      const [selected6, setSelected6] = useState(false)
+      const [selected7, setSelected7] = useState(true)
+      const [selected8, setSelected8] = useState(false)
+      return (
+        <div
+          css={css`
+            display: flex;
+            width: 100%;
+            min-height: 50vh;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
+          <DropdownDemo name="Trigger">
+            {({ open, setOpen }, ref) => {
+              const handleClose = () => {
+                ref.current = null
+                setOpen(false)
+              }
+              return (
+                <Dropdown
+                  isOpen={open}
+                  setIsOpen={setOpen}
+                  multiselect
+                  anchorEl={ref.current}
+                  onClickAway={handleClose}
+                  placement="right-end"
+                  shouldCloseOnEsc
+                >
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected1((selected1) => !selected1)}
+                    selected={selected1}
+                    iconRight={Yes}
+                  >
+                    Option one
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected2((selected2) => !selected2)}
+                    selected={selected2}
+                    iconRight={Yes}
+                  >
+                    Option two
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected3((selected3) => !selected3)}
+                    selected={selected3}
+                    iconRight={Yes}
+                  >
+                    Option three
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected4((selected4) => !selected4)}
+                    selected={selected4}
+                    iconRight={Yes}
+                  >
+                    Option four
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected5((selected5) => !selected5)}
+                    selected={selected5}
+                    iconRight={Yes}
+                  >
+                    Option five
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected6((selected6) => !selected6)}
+                    selected={selected6}
+                    iconRight={Yes}
+                  >
+                    Option six
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected7((selected7) => !selected7)}
+                    selected={selected7}
+                    iconRight={Yes}
+                  >
+                    Option seven
+                  </MenuItem>
+                  <MenuItem
+                    clickable
+                    onClick={() => setSelected8((selected8) => !selected8)}
+                    selected={selected8}
+                    iconRight={Yes}
+                  >
+                    Option eight
+                  </MenuItem>
+                </Dropdown>
+              )
+            }}
+          </DropdownDemo>
+        </div>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `Medium with checkbox`
+
+<Preview>
+  <Story name="Medium with checkbox">
+    {() => {
+      const [selectCheck1, setSelectCheck1] = useState(false)
+      const [selectCheck2, setSelectCheck2] = useState(true)
+      const [selectCheck3, setSelectCheck3] = useState(false)
+      const [selectCheck4, setSelectCheck4] = useState(true)
+      return (
+        <div
+          css={css`
+            display: flex;
+            width: 100%;
+            min-height: 50vh;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
+          <DropdownDemo name="Trigger">
+            {({ open, setOpen }, ref) => {
+              const handleClose = () => {
+                ref.current = null
+                setOpen(false)
+              }
+              return (
+                <Dropdown
+                  isOpen={open}
+                  setIsOpen={setOpen}
+                  multiselect
+                  anchorEl={ref.current}
+                  onClickAway={handleClose}
+                  placement="left-end"
+                  shouldCloseOnEsc
+                >
+                  <MenuCheckbox clickable onClick={() => setSelectCheck1((state) => !state)} selected={selectCheck1}>
+                    Checkbox
+                  </MenuCheckbox>
+                  <MenuCheckbox clickable onClick={() => setSelectCheck2((state) => !state)} selected={selectCheck2}>
+                    Checkbox
+                  </MenuCheckbox>
+                  <MenuCheckbox clickable onClick={() => setSelectCheck3((state) => !state)} selected={selectCheck3}>
+                    Checkbox
+                  </MenuCheckbox>
+                  <MenuCheckbox clickable onClick={() => setSelectCheck4((state) => !state)} selected={selectCheck4}>
+                    Checkbox
+                  </MenuCheckbox>
+                </Dropdown>
+              )
+            }}
+          </DropdownDemo>
+        </div>
+      )
+    }}
+  </Story>
+</Preview>
+
+## `Medium with iconLeft`
+
+<Preview>
+  <Story name="Medium with iconLeft">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              onClickAway={handleClose}
+              placement="left"
+              shouldCloseOnEsc
+            >
+              <MenuItem clickable onClick={() => alert('clicked')} iconLeft={FlagGb}>
+                Option one
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconLeft={FlagGb}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconLeft={FlagGb}>
+                Option three
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconLeft={FlagGb}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconLeft={FlagGb}>
+                Option five
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>
+
+## `Medium with iconRight`
+
+<Preview>
+  <Story name="Medium with iconRight">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              onClickAway={handleClose}
+              placement="left"
+              shouldCloseOnEsc
+            >
+              <MenuItem clickable onClick={() => alert('clicked')} iconRight={Edit}>
+                Option one
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconRight={Edit}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconRight={Edit}>
+                Option three
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconRight={Edit}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')} iconRight={Edit}>
+                Option five
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>
+
+## `Medium disabled`
+
+<Preview>
+  <Story name="Medium disabled">
+    <div
+      css={css`
+        display: flex;
+        width: 100%;
+        min-height: 50vh;
+        align-items: center;
+        justify-content: center;
+      `}
+    >
+      <DropdownDemo name="Trigger">
+        {({ open, setOpen }, ref) => {
+          const handleClose = () => {
+            ref.current = null
+            setOpen(false)
+          }
+          return (
+            <Dropdown
+              isOpen={open}
+              setIsOpen={setOpen}
+              anchorEl={ref.current}
+              onClickAway={handleClose}
+              placement="left"
+              shouldCloseOnEsc
+            >
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option one
+              </MenuItem>
+              <MenuItem disabled clickable onClick={() => alert('clicked')}>
+                Option two
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option three
+              </MenuItem>
+              <MenuItem disabled clickable onClick={() => alert('clicked')}>
+                Option four
+              </MenuItem>
+              <MenuItem clickable onClick={() => alert('clicked')}>
+                Option five
+              </MenuItem>
+            </Dropdown>
+          )
+        }}
+      </DropdownDemo>
+    </div>
+  </Story>
+</Preview>

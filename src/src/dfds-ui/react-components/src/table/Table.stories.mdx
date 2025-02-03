@@ -1,0 +1,103 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Table from './Table'
+import TableHead from './TableHead'
+import TableBody from './TableBody'
+import TableRow from './TableRow'
+import TableHeaderCell from './TableHeaderCell'
+import TableDataCell from './TableDataCell'
+import ExampleData from './data.demo'
+import { Badge } from '../badge'
+
+<Meta title="Hydro UI/Table" component={{ Table }} />
+
+# Table
+
+## Default
+
+```jsx
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell } from '@/dfds-ui/react-components/src'
+```
+
+<Preview gray>
+  <Story name="Default">
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableHeaderCell>Status</TableHeaderCell>
+          <TableHeaderCell>Route</TableHeaderCell>
+          <TableHeaderCell>Departure</TableHeaderCell>
+          <TableHeaderCell>Arrival</TableHeaderCell>
+          <TableHeaderCell align="right">Remarks</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {ExampleData.map((booking) => (
+          <TableRow key={booking.id}>
+            <TableDataCell>
+              <Badge intent="success">{booking.status}</Badge>
+            </TableDataCell>
+            <TableDataCell>{booking.route}</TableDataCell>
+            <TableDataCell>{booking.departsAt}</TableDataCell>
+            <TableDataCell>{booking.arrivesAt}</TableDataCell>
+            <TableDataCell>{booking.remarks}</TableDataCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Story>
+</Preview>
+
+## Interactive
+
+<Preview gray>
+  <Story name="Interactive">
+    <Table isInteractive>
+      <TableHead>
+        <TableRow>
+          <TableHeaderCell>Status</TableHeaderCell>
+          <TableHeaderCell>Route</TableHeaderCell>
+          <TableHeaderCell>Departure</TableHeaderCell>
+          <TableHeaderCell>Arrival</TableHeaderCell>
+          <TableHeaderCell align="right">Remarks</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {ExampleData.map((booking) => (
+          <TableRow key={booking.id}>
+            <TableDataCell>
+              <Badge intent="success">{booking.status}</Badge>
+            </TableDataCell>
+            <TableDataCell>{booking.route}</TableDataCell>
+            <TableDataCell>{booking.departsAt}</TableDataCell>
+            <TableDataCell>{booking.arrivesAt}</TableDataCell>
+            <TableDataCell>{booking.remarks}</TableDataCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Story>
+</Preview>
+
+## Table API
+
+<Props of={Table} />
+
+## TableHead API
+
+<Props of={TableHead} />
+
+## TableBody API
+
+<Props of={TableBody} />
+
+## TableRow API
+
+<Props of={TableRow} />
+
+## TableHeaderCell API
+
+<Props of={TableHeaderCell} />
+
+## TableDataCell API
+
+<Props of={TableDataCell} />

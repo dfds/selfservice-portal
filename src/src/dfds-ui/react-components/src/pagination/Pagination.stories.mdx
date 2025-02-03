@@ -1,0 +1,79 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Pagination from './Pagination'
+
+<Meta title="Lab/Pagination" component={{ Pagination }} />
+
+# Pagination
+
+Pagination component
+
+<Props of={Pagination} />
+
+```jsx
+import { Pagination } from '@/dfds-ui/react-components/src'
+```
+
+## Basic example
+
+<Preview gray>
+  <Story name="Basic">
+    {() => {
+      const [offset, setOffset] = React.useState(0)
+      const [pageLimit, setPageLimit] = React.useState(15)
+      const handlePageChange = (_event, page) => {
+        setOffset(page * pageLimit - pageLimit)
+      }
+      const handlePageLimitChange = ({ value }) => {
+        setPageLimit(value)
+      }
+      return (
+        <Pagination
+          offset={offset}
+          onPageChange={handlePageChange}
+          onChangePageLimit={handlePageLimitChange}
+          options={[
+            { label: '15 per page', value: 15 },
+            { label: '30 per page', value: 30 },
+            { label: '50 per page', value: 50 },
+          ]}
+          pageLimit={pageLimit}
+          totalRecords={0}
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Localization
+
+Use the `label` property on the `options` prop and the `renderOverview` prop for localization.
+
+<Preview gray>
+  <Story name="Localized">
+    {() => {
+      const [offset, setOffset] = React.useState(0)
+      const [pageLimit, setPageLimit] = React.useState(15)
+      const handlePageChange = (_event, page) => {
+        setOffset(page * pageLimit - pageLimit)
+      }
+      const handlePageLimitChange = ({ value }) => {
+        setPageLimit(value)
+      }
+      return (
+        <Pagination
+          offset={offset}
+          onPageChange={handlePageChange}
+          onChangePageLimit={handlePageLimitChange}
+          options={[
+            { label: '15 pr. side', value: 15 },
+            { label: '30 pr. side', value: 30 },
+            { label: '50 pr. side', value: 50 },
+          ]}
+          pageLimit={pageLimit}
+          totalRecords={0}
+          renderOverview={(overview, total) => `Viser ${overview} af ${total}`}
+        />
+      )
+    }}
+  </Story>
+</Preview>

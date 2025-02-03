@@ -1,0 +1,220 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import { Fragment, useState } from 'react'
+import { Footer, FooterMetaLink, FooterColumn, FooterColumnItem } from './'
+import { css } from '@emotion/react'
+import { ExternalLink, ChevronRight } from '@/dfds-ui/icons/src/system'
+import { SocialMediaLinkList } from '@/dfds-ui/react-components/src/social-media-link-list'
+import { Text } from '@/dfds-ui/typography/src'
+import { theme } from '@/dfds-ui/theme/src'
+import { FlexBox } from '@/dfds-ui/react-components/src/flexbox'
+import { LocaleSelector } from '../'
+
+<Meta title="Lab/Footer" component={Footer} />
+
+## Props
+
+<Props of={Footer} />
+<Props of={FooterColumn} />
+
+## Default
+
+<Preview>
+  <Story name="Default">
+    <Footer />
+  </Story>
+</Preview>
+
+## Meta links
+
+<Preview>
+  <Story name="Meta links">
+    <Footer
+      metaLinks={
+        <Fragment>
+          <FooterMetaLink size="small">
+            <span>External link</span>
+            <ExternalLink
+              css={css`
+                margin-left: 0.5rem;
+              `}
+            />
+          </FooterMetaLink>
+          <FooterMetaLink size="small">Legal link</FooterMetaLink>
+        </Fragment>
+      }
+    />
+  </Story>
+</Preview>
+
+## Columns
+
+<Preview>
+  <Story name="Columns">
+    <Footer
+      metaLinks={
+        <Fragment>
+          <FooterMetaLink size="small">
+            <span>External link</span>
+            <ExternalLink
+              css={css`
+                margin-left: 0.5rem;
+              `}
+            />
+          </FooterMetaLink>
+          <FooterMetaLink size="small">Legal link</FooterMetaLink>
+        </Fragment>
+      }
+    >
+      <FooterColumn title={`Column 1`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 2`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 3`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 4`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+    </Footer>
+  </Story>
+</Preview>
+
+## Features
+
+<Preview>
+  <Story name="Features">
+    {() => {
+      const [locale, setLocale] = useState('tr-TR')
+      return (
+        <Footer
+          features={
+            <FlexBox
+              justifySpaceBetween
+              itemsCenter
+              css={css`
+                width: 100%;
+              `}
+            >
+              <FlexBox itemsCenter>
+                <Text
+                  styledAs="labelBold"
+                  css={css`
+                    color: ${theme.colors.text.primary.primary};
+                    white-space: nowrap;
+                  `}
+                >
+                  Follow us
+                </Text>
+                <SocialMediaLinkList
+                  iconSize={'1.125rem'}
+                  facebookLink="https://www.facebook.com/dfdsd"
+                  instagramLink="https://www.instagram.com/dfdsd"
+                  linkedinLink="https://www.linkedin.com/dfdsd"
+                  twitterLink="https://www.twitter.com/dfdsd"
+                  youtubeLink="https://www.youtube.com/dfdsdk/"
+                />
+              </FlexBox>
+              <LocaleSelector currentLocale={locale} onChange={(locale) => setLocale(locale)} />
+            </FlexBox>
+          }
+          metaLinks={
+            <Fragment>
+              <FooterMetaLink size="small">
+                <span>External link</span>
+                <ExternalLink
+                  css={css`
+                    margin-left: 0.5rem;
+                  `}
+                />
+              </FooterMetaLink>
+              <FooterMetaLink size="small">Legal link</FooterMetaLink>
+            </Fragment>
+          }
+        />
+      )
+    }}
+  </Story>
+</Preview>
+
+## Bread crumbs
+
+<Preview>
+  <Story name="Bread crumbs">
+    <Footer
+      topElement={
+        <div
+          css={css`
+            display: flex;
+            flex-direction: row;
+          `}
+        >
+          <a>First</a>
+          <ChevronRight />
+          <a>First</a>
+          <ChevronRight />
+          <a>First</a>
+        </div>
+      }
+      metaLinks={
+        <Fragment>
+          <FooterMetaLink size="small">
+            <span>External link</span>
+            <ExternalLink
+              css={css`
+                margin-left: 0.5rem;
+              `}
+            />
+          </FooterMetaLink>
+          <FooterMetaLink size="small">Legal link</FooterMetaLink>
+        </Fragment>
+      }
+    >
+      <FooterColumn title={`Column 1`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 2`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 3`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+      <FooterColumn title={`Column 4`}>
+        <FooterColumnItem>Item 1</FooterColumnItem>
+        <FooterColumnItem>Item 2</FooterColumnItem>
+        <FooterColumnItem>Item 3</FooterColumnItem>
+        <FooterColumnItem>Item 4</FooterColumnItem>
+        <FooterColumnItem>Item 5</FooterColumnItem>
+      </FooterColumn>
+    </Footer>
+  </Story>
+</Preview>

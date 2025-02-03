@@ -1,0 +1,30 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Toast from './Toast'
+import { action } from '@storybook/addon-actions'
+
+<Meta title="Hydro UI/Loading Indicators/Toast" component={Toast} />
+
+# Section reload
+
+Uses the `Toast` component, ideal to use when the user triggers a refresh of data in nested component within the main UI.
+E.g when refreshing results in a data table. It should only appear if there is a delay of longer than 0.5 seconds and should disappear once the loading is complete.
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Toast } from '@/dfds-ui/react-components/src'
+```
+
+Use the component:
+
+## Loading
+
+<Preview>
+  <Story name="Section reload">
+    <Toast loading intent="info">
+      Loading results...
+    </Toast>
+  </Story>
+</Preview>

@@ -1,0 +1,109 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Chip, { ChipContainer } from './Chip'
+import { action } from '@storybook/addon-actions'
+
+<Meta title="Hydro UI/Chips/Chip" component={Chip} />
+
+# Chip
+
+Chips allow users to enter information, make selections, filter content, or trigger actions. For example, chips can be used under a search input to display temporary filters the user has selected from search results.
+
+## Props
+
+| Name        |  Values                            |  Description                                                             | Required |
+| ----------- | ---------------------------------- | ------------------------------------------------------------------------ | -------- |
+| children    | string                             | Text value to be displayed in the chip.                                  | X        |
+| dismissable | boolean                            | Control whether chip can be dismissed. onDismiss prop required, if used. |          |
+| onDismiss   | (event: InteractionEvent) => void; | Specifies what happens when "dismiss" icon is pressed, if dismissable    |          |
+| disabled    | boolean                            | Disabled visual appearance and interaction disabled.                     |          |
+| seleactable | boolean                            | Control whether chip is selectable. onToggle prop required, if used.     |          |
+| onToggle    | (event: InteractionEvent) => void; | Specifies what happens when chip is toggled, if selectable.              |          |
+| className   | string                             | Allows adding a custom css class.                                        |          |
+
+## Usage
+
+Import the component:
+
+```jsx
+import { Chip, ChipContainer } from '@/dfds-ui/react-components/src'
+```
+
+Use the component:
+
+export const Template = ({ text, ...args }) => <Chip {...args}>{text}</Chip>
+
+## Simple
+
+<Preview>
+  <Story name="Simple" args={{ text: 'DFDS chip' }}>
+    {Template.bind({})}
+  </Story>
+</Preview>
+
+## Input
+
+<Preview>
+  <Story name="Input" args={{ text: 'DFDS chip', dismissable: true, onDismiss: action('Dismissed') }}>
+    {Template.bind({})}
+  </Story>
+</Preview>
+
+## Choice
+
+<Preview>
+  <Story name="Choice" args={{ text: 'DFDS chip', selectable: true }}>
+    {Template.bind({})}
+  </Story>
+</Preview>
+
+## Very long text
+
+<Preview>
+  <Story
+    name="Very long text"
+    args={{
+      text: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id unde inventore repudiandae sed natus excepturi cupiditate officiis non rerum, dolorum porro! Voluptates ad soluta iure sunt, quas repellendus nulla perspiciatis!',
+      selectable: true,
+      onDismiss: action('Dismissed'),
+    }}
+  >
+    {Template.bind({})}
+  </Story>
+</Preview>
+
+## Container
+
+In most cases, there will be a need to display multiple `Chip` alongside one another. `ChipContainer` can be used for this purpose as follows:
+
+<Preview>
+  <Story name="Container">
+    <ChipContainer>
+      <Chip selected selectable>
+        DFDS
+      </Chip>
+      <Chip selectable>Long DFDS</Chip>
+      <Chip selected selectable>
+        Even longer
+      </Chip>
+    </ChipContainer>
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <ChipContainer>
+      <Chip disabled>Disabled</Chip>
+      <Chip dismissable disabled onDismiss={action('Dismissed')}>
+        DFDS chip
+      </Chip>
+      <Chip disabled selectable>
+        Disabled
+      </Chip>
+      <Chip disabled selectable selected>
+        Disabled
+      </Chip>
+    </ChipContainer>
+  </Story>
+</Preview>

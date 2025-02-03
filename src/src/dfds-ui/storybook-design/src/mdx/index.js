@@ -1,0 +1,1 @@
+exports.mdxLoaderRenderer = require('./mdxLoaderRenderer')

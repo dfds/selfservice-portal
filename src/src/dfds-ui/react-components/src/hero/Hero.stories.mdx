@@ -1,0 +1,60 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import Hero from './Hero'
+import heroImage from './hero-placeholder.png'
+import { theme } from '@/dfds-ui/theme/src'
+
+<Meta title="Hydro UI/Hero Banners/Hero Banner" component={Hero} />
+
+# Hero
+
+The hero component can be used to present prominent information about the website or any page.
+It is responsive in accordance with the Hydro theme.
+
+## Props
+
+| Name       |  Values |  Description                                    | Required |
+| ---------- | ------- | ----------------------------------------------- | -------- |
+| title      | string  | Title of the hero.                              | X        |
+| headline   | string  | Headline describing the hero.                   | X        |
+| headlineAs | type    | If true, headline will be H1, else div.         |          |
+| imageSrc   | string  | Path to the image shown in the hero.            | X        |
+| color      | string  | Set the color of the background and the stripes |          |
+
+## Usage
+
+Import the component:
+
+```jsx
+import Hero from '@/dfds-ui/react-components/src'
+```
+
+Use the component:
+
+## Default
+
+<Preview>
+  <Story name="Default">
+    <Hero title={'DFDS'} headline={'We move for all to grow, yo!'} imageSrc={heroImage} />
+  </Story>
+</Preview>
+
+## Change color
+
+<Preview>
+  <Story name="Change color">
+    <Hero
+      title={'DFDS'}
+      headline={'We move for all to grow, yo!'}
+      imageSrc={heroImage}
+      color={theme.colors.status.success}
+    />
+  </Story>
+</Preview>
+
+## With H1 headline
+
+<Preview>
+  <Story name="With headline h1">
+    <Hero title={'DFDS'} headlineAs="h1" headline={'We move for all to grow, yo!'} imageSrc={heroImage} />
+  </Story>
+</Preview>

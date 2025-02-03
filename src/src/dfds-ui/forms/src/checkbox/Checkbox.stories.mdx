@@ -1,0 +1,48 @@
+import { Meta, DocsContainer, Story, ArgsTable, Preview } from '@/dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { Checkbox } from './Checkbox'
+import { Examples, Help, InputVerticalAlignment, HandlingOnClickEvent } from './Checkbox.stories'
+
+<Meta title="Hydro UI/Forms/Checkbox/Checkbox" lab />
+
+# Checkbox
+
+Use `Checkbox` to display a checkbox.
+
+```jsx
+import { Checkbox } from '@/dfds-ui/forms/src'
+```
+
+## `Checkbox`
+
+<ArgsTable of={Checkbox} />
+
+<Preview width="500px" gray>
+  <Story story={Examples} />
+</Preview>
+
+## Help
+
+<Preview width="500px" gray>
+  <Story story={Help} />
+</Preview>
+
+## Vertical alignment of checkbox
+
+Sometimes when the label has a long text we might want to control the alignment of the checkbox.
+
+Use the `inputVerticalAlignment` to control this.
+
+<Preview width="500px" gray>
+  <Story story={InputVerticalAlignment} />
+</Preview>
+
+## Handling `onClick` event using `onLabelClick`
+
+If you need to call `stopPropagation` to prevent a `click` event from bubbling, you can use the `onLabelClick` callback.
+
+<Preview width="500px" gray>
+  <Story story={HandlingOnClickEvent} />
+</Preview>

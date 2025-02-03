@@ -1,0 +1,135 @@
+import { Meta, DocsContainer, Story, ArgsTable, Preview, withWidth } from '@/dfds-ui/storybook-design'
+import { Source } from '@storybook/addon-docs'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import { action } from '@storybook/addon-actions'
+import { FlexBox } from '@/dfds-ui/react-components/src/flexbox'
+import { theme, media } from '@/dfds-ui/theme/src'
+import { LocaleFlag } from './LocaleFlag'
+
+<Meta title="Lab/Localization/LocaleFlag" component={{ LocaleFlag }} lab />
+
+# LocaleFlag
+
+```jsx
+import { LocaleFlag } from '@/dfds-ui/react-components/src'
+```
+
+## Props
+
+<ArgsTable of={LocaleFlag} />
+
+## Medium (default)
+
+<Preview gray>
+  <Story name="Medium">
+    <FlexBox
+      css={css`
+        gap: 10px;
+      `}
+    >
+      <LocaleFlag locale="en" />
+      <LocaleFlag locale="en-GB" />
+      <LocaleFlag locale="da-DK" />
+      <LocaleFlag locale="sk-SK" />
+      <LocaleFlag locale="lv-LV" />
+    </FlexBox>
+  </Story>
+</Preview>
+
+## Small
+
+<Preview gray>
+  <Story name="Small">
+    <FlexBox
+      css={css`
+        gap: 10px;
+      `}
+    >
+      <LocaleFlag locale="en" size="s" />
+      <LocaleFlag locale="en-GB" size="s" />
+      <LocaleFlag locale="da-DK" size="s" />
+      <LocaleFlag locale="sk-SK" size="s" />
+      <LocaleFlag locale="lv-LV" size="s" />
+    </FlexBox>
+  </Story>
+</Preview>
+
+## Large
+
+<Preview gray>
+  <Story name="Large">
+    <FlexBox
+      css={css`
+        gap: 10px;
+      `}
+    >
+      <LocaleFlag locale="en" size="l" />
+      <LocaleFlag locale="en-GB" size="l" />
+      <LocaleFlag locale="da-DK" size="l" />
+      <LocaleFlag locale="sk-SK" size="l" />
+      <LocaleFlag locale="lv-LV" size="l" />
+    </FlexBox>
+  </Story>
+</Preview>
+
+## Extra large
+
+<Preview gray>
+  <Story name="Extra large">
+    <FlexBox
+      css={css`
+        gap: 10px;
+      `}
+    >
+      <LocaleFlag locale="en" size="xl" />
+      <LocaleFlag locale="en-GB" size="xl" />
+      <LocaleFlag locale="da-DK" size="xl" />
+      <LocaleFlag locale="sk-SK" size="xl" />
+      <LocaleFlag locale="lv-LV" size="xl" />
+    </FlexBox>
+  </Story>
+</Preview>
+
+## Custom styling
+
+<Preview gray>
+  <Story name="Custom styling">
+    <FlexBox
+      css={css`
+        gap: 10px;
+      `}
+    >
+      <LocaleFlag
+        locale="en"
+        css={css`
+          font-size: 100px;
+        `}
+      />
+      <LocaleFlag
+        locale="en-GB"
+        css={css`
+          font-size: 100px;
+        `}
+      />
+      <LocaleFlag
+        locale="da-DK"
+        css={css`
+          font-size: 100px;
+        `}
+      />
+      <LocaleFlag
+        locale="sk-SK"
+        css={css`
+          font-size: 100px;
+        `}
+      />
+      <LocaleFlag
+        locale="lv-LV"
+        css={css`
+          font-size: 100px;
+        `}
+      />
+    </FlexBox>
+  </Story>
+</Preview>

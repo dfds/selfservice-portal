@@ -1,0 +1,28 @@
+{
+  "name": "@/dfds-ui/spacing/src",
+  "description": "Defines spacing",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "version": "0.0.0-PLACEHOLDER",
+  "sideEffects": false,
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm-run-all --parallel build:*",
+    "build:esm": "dfds-script babel ./src --env-name esm --out-dir ./dist --only-lib-files",
+    "build:cjs": "dfds-script babel ./src --env-name cjs --out-dir ./dist/cjs --only-lib-files",
+    "build:types": "tsc --project ./tsconfig.build.json && cpx \"./dist/**/*.d.ts\" \"./dist/cjs\" --clean",
+    "build:prepare-package": "dfds-script prepare-package && prettier --write --loglevel silent ./dist/package.json",
+    "clean": "rimraf dist",
+    "tsc": "tsc --noEmit",
+    "prepublishOnly": "yarn run build:prepare-package"
+  }
+}

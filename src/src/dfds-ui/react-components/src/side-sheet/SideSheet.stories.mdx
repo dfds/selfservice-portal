@@ -1,0 +1,865 @@
+import { Meta, Story, Props } from '@/dfds-ui/storybook-design'
+import { Preview } from '@/dfds-ui/storybook-design'
+import { action } from '@storybook/addon-actions'
+import { SideSheet, SideSheetFooter, SideSheetContent } from '../side-sheet'
+import { Button } from '../button'
+import { ButtonStack } from '../button-stack'
+import { css } from '@emotion/react'
+import { SiteLayout } from '../site-layout'
+import { NavBar, NavBarItem, NavBarIcon } from '../nav-bar'
+import { BurgerMenu, FlagInt, Account } from '@/dfds-ui/react-components/src'
+import { Footer } from '../footer'
+
+<Meta title="Lab/SideSheet" component={SideSheet} />
+
+# SideSheet
+
+A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's used to provide additional actions and information that's related to the page.
+
+## Props
+
+<Props of={SideSheet} />
+
+## Usage
+
+```jsx
+import { SideSheet } from '@/dfds-ui/react-components/src'
+```
+
+Used on desktop only, nested side sheets exist alongside the primary UI and the user can interact with both surfaces simoultaneously.
+
+export const padding = {
+  padding: '15px',
+}
+export const margin = {
+  margin: '15px',
+}
+
+export const Navigation = () => (
+  <React.Fragment>
+    <NavBar href="/">
+      <NavBarItem href="#">DFDS Platform</NavBarItem>
+      <NavBarItem href="#">Rest of DFDS</NavBarItem>
+      <NavBarIcon href="#" alignment="right">
+        <BurgerMenu />
+      </NavBarIcon>
+      <NavBarIcon href="#">
+        <Account />
+      </NavBarIcon>
+      <NavBarIcon href="#">
+        <FlagInt />
+      </NavBarIcon>
+    </NavBar>
+  </React.Fragment>
+)
+
+## Basic
+
+<Preview gray>
+  <Story name="Basic">
+    {() => {
+      const SideSheetExample = () => {
+        const [open, setOpen] = React.useState(false)
+        const handleClick = (event) => {
+          setOpen(true)
+        }
+        const handleClose = () => {
+          setOpen(false)
+        }
+        return (
+          <SiteLayout.Grid fullWidth>
+            <SideSheet
+              header="Title"
+              isOpen={open}
+              onRequestClose={() => handleClose()}
+              alignSideSheet="right"
+              variant="elevated"
+              backdrop
+            >
+              <SideSheetContent>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+                <div
+                  css={css`
+                    margin-bottom: 16px;
+                  `}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                  software like Aldus PageMaker including versions of Lorem Ipsum
+                </div>
+              </SideSheetContent>
+            </SideSheet>
+            <SiteLayout.Header>
+              <Navigation />
+            </SiteLayout.Header>
+            <SiteLayout.Main>
+              <ButtonStack orientation="vertical">
+                <Button onClick={handleClick} variation="secondary">
+                  Show sidesheet
+                </Button>
+              </ButtonStack>
+            </SiteLayout.Main>
+            <SiteLayout.Footer>
+              <Footer />
+            </SiteLayout.Footer>
+          </SiteLayout.Grid>
+        )
+      }
+      return <SideSheetExample />
+    }}
+  </Story>
+</Preview>
+
+<Story name="Basic with footer" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet
+            header="Title"
+            isOpen={open}
+            onRequestClose={() => handleClose()}
+            alignSideSheet="right"
+            variant="elevated"
+            backdrop
+          >
+            <SideSheetContent>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+            </SideSheetContent>
+            <SideSheetFooter>
+              <div
+                css={css`
+                  margin-left: auto;
+                `}
+              >
+                <Button onClick={() => handleClose()} variation="secondary">
+                  Close
+                </Button>
+              </div>
+            </SideSheetFooter>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+<Story name="Fullscreen on small mobile" parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet
+            header="Title"
+            smallMobileFullScreen={true}
+            largeMobileFullScreen={true}
+            isOpen={open}
+            onRequestClose={() => handleClose()}
+            alignSideSheet="right"
+            variant="elevated"
+            backdrop
+          >
+            <SideSheetContent>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+              <div
+                css={css`
+                  margin-bottom: 16px;
+                `}
+              >
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                software like Aldus PageMaker including versions of Lorem Ipsum
+              </div>
+            </SideSheetContent>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+<Story name="Nested left" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <div
+          css={css`
+            display: flex;
+          `}
+        >
+          <SideSheet isOpen={open} width="20rem" variant="nested" alignSideSheet="left">
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Nested sidesheet left aligned</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Grid
+            css={css`
+              width: 100%;
+            `}
+          >
+            <SiteLayout.Header>
+              <Navigation />
+            </SiteLayout.Header>
+            <SiteLayout.Main>
+              <ButtonStack orientation="vertical">
+                <Button onClick={handleClick} variation="secondary">
+                  Show sidesheet
+                </Button>
+              </ButtonStack>
+            </SiteLayout.Main>
+            <SiteLayout.Footer>
+              <Footer />
+            </SiteLayout.Footer>
+          </SiteLayout.Grid>
+        </div>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+<Story name="Nested right" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <div
+          css={css`
+            display: flex;
+          `}
+        >
+          <SiteLayout.Grid
+            css={css`
+              width: 100%;
+            `}
+          >
+            <SiteLayout.Header>
+              <Navigation />
+            </SiteLayout.Header>
+            <SiteLayout.Main>
+              <ButtonStack orientation="vertical">
+                <Button onClick={handleClick} variation="secondary">
+                  Show sidesheet
+                </Button>
+              </ButtonStack>
+            </SiteLayout.Main>
+            <SiteLayout.Footer>
+              <Footer />
+            </SiteLayout.Footer>
+          </SiteLayout.Grid>
+          <SideSheet isOpen={open} width="20rem" variant="nested" alignSideSheet="right">
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Nested sidesheet right aligned</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+        </div>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated
+
+Elevated side sheets contain supplementary content that reveals on top of the primary UI. It should only be used on full width interfaces and pinned to the left/right edges.d
+
+<Story name="Elevated left" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet isOpen={open} width="20rem" variant="elevated">
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet left aligned.</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated and right aligned
+
+<Story name="Elevated right" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet isOpen={open} width="20rem" variant="elevated" alignSideSheet="right">
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet right aligned</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated and left aligned with high backdropEmphasis
+
+<Story name="Elevated left with high backdropEmphasis" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet isOpen={open} width="20rem" variant="elevated" backdrop>
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet with backdrop high backdropEmphasis</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated and left aligned with low backdropEmphasis
+
+<Story name="Elevated left with low backdropEmphasis" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet isOpen={open} width="20rem" variant="elevated" backdrop backdropEmphasis="low">
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet left aligned with low backdropEmphasis</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated and right aligned with high backdropEmphasis
+
+<Story name="Elevated right with high backdropEmphasis" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet isOpen={open} width="20rem" variant="elevated" alignSideSheet="right" backdrop>
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet right aligned with high backdropEmphasis</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>
+
+## Elevated and right aligned with low backdropEmphasis
+
+<Story name="Elevated right with low backdropEmphasis" inline={false} parameters={{ docs: { disable: true } }}>
+  {() => {
+    const SideSheetExample = () => {
+      const [open, setOpen] = React.useState(false)
+      const handleClick = (event) => {
+        setOpen(true)
+      }
+      const handleClose = () => {
+        setOpen(false)
+      }
+      return (
+        <SiteLayout.Grid fullWidth>
+          <SideSheet
+            isOpen={open}
+            width="20rem"
+            variant="elevated"
+            alignSideSheet="right"
+            backdrop
+            backdropEmphasis="low"
+          >
+            <Button onClick={handleClose} variation="secondary" style={margin}>
+              Close sidesheet
+            </Button>
+            <h2 style={padding}>Elevated sidesheet right aligned with low backdropEmphasis</h2>
+            <p style={padding}>
+              A sheet is a large container that is triggered by the user and enters from the edge of the screen. It's
+              used to provide additional actions and information that's related to the page.
+            </p>
+          </SideSheet>
+          <SiteLayout.Header>
+            <Navigation />
+          </SiteLayout.Header>
+          <SiteLayout.Main>
+            <ButtonStack orientation="vertical">
+              <Button onClick={handleClick} variation="secondary">
+                Show sidesheet
+              </Button>
+            </ButtonStack>
+          </SiteLayout.Main>
+          <SiteLayout.Footer>
+            <Footer />
+          </SiteLayout.Footer>
+        </SiteLayout.Grid>
+      )
+    }
+    return <SideSheetExample />
+  }}
+</Story>

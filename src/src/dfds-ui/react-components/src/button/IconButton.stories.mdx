@@ -1,0 +1,161 @@
+import { Meta, Story, Props, Preview } from '@/dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { css } from '@emotion/react'
+import IconButton from './IconButton'
+import BadgeIcon from './BadgeIcon'
+import { action } from '@storybook/addon-actions'
+import { Account } from '@/dfds-ui/icons/src/system'
+import { theme } from '@/dfds-ui/theme/src'
+
+<Meta title="Hydro UI/Buttons/Icon button" component={IconButton} />
+
+# IconButton
+
+Display a button with only an icon.
+
+For accessibility it requires the consumer to provide a value for the \`ariaLabel\` prop.
+
+## Usage
+
+Import the component and an icon you wish to use:
+
+```jsx
+import { IconButton } from '@/dfds-ui/react-components/src'
+import { Account } from '@/dfds-ui/icons/src/system'
+```
+
+## Props
+
+<Props of={IconButton} />
+
+## Medium
+
+<Preview>
+  <Story name="Medium">
+    <IconButton icon={Account} ariaLabel="Account" />
+  </Story>
+</Preview>
+
+## Small
+
+<Preview>
+  <Story name="Small">
+    <IconButton icon={Account} size="small" ariaLabel="Account" />
+  </Story>
+</Preview>
+
+## Large
+
+<Preview>
+  <Story name="Large">
+    <IconButton icon={Account} size="large" ariaLabel="Account" />
+  </Story>
+</Preview>
+
+## Custom base color
+
+<Preview>
+  <Story name="Custom base color">
+    <IconButton icon={Account} ariaLabel="Account" color="red" />
+  </Story>
+</Preview>
+
+## Custom colors
+
+<Preview>
+  <Story name="All custom colors">
+    <IconButton icon={Account} ariaLabel="Account" color="red" hoverColor="green" activeColor="blue" />
+  </Story>
+</Preview>
+
+## Custom overlay options
+
+You can override the `OverlayOptions` with this prop. In this example even with black icon the overlay color will be the
+`lightBlueOverlayOptions` variant.
+
+<Preview>
+  <Story name="Custom overlay options">
+    <IconButton
+      icon={Account}
+      ariaLabel="Account"
+      color="black"
+      overlayOptions={theme.states.overlayOptions.lightBlueOverlayOptions}
+    />
+  </Story>
+</Preview>
+
+## Disabled
+
+<Preview>
+  <Story name="Disabled">
+    <IconButton icon={Account} ariaLabel="Account" disabled />
+  </Story>
+</Preview>
+
+## Disabled tooltip
+
+<Preview>
+  <Story name="Disabled tooltip">
+    <IconButton icon={Account} ariaLabel="Account" disableTooltip />
+  </Story>
+</Preview>
+
+## Disabled overlay
+
+<Preview>
+  <Story name="Disabled overlay">
+    <IconButton icon={Account} ariaLabel="Account" disableOverlay />
+  </Story>
+</Preview>
+
+## Target area size
+
+Modify width and height properties of the `IconButton` in order to adjust the size of the target area.
+
+<Preview>
+  <Story name="Target area size">
+    <IconButton icon={Account} ariaLabel="Account" style={{ width: '5rem', height: '5rem' }} />
+  </Story>
+</Preview>
+
+## Custom icon size
+
+<Preview>
+  <Story name="Custom icon size">
+    <IconButton icon={Account} ariaLabel="Account" style={{ fontSize: '5rem' }} />
+  </Story>
+</Preview>
+
+## Custom content
+
+The `icon` prop takes a `React.ElementType` so you can provide custom content to be displayed.
+
+In the following example the `BadgeIcon` component is used as custom content.
+
+```jsx
+import { BadgeIcon } from '@/dfds-ui/react-components/src'
+```
+
+<Preview>
+  <Story name="Custom content">
+    {() => {
+      return (
+        <Fragment>
+          <IconButton icon={() => <BadgeIcon letter="J" />} tooltip="John Doe" />
+          <IconButton
+            size="large"
+            css={css`
+              color: red;
+              & text {
+                fill: yellow;
+                font-weight: bold;
+              }
+            `}
+            icon={() => <BadgeIcon letter="S" />}
+            tooltip="Superman"
+          />
+        </Fragment>
+      )
+    }}
+  </Story>
+</Preview>

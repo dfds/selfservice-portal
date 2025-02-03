@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["@emotion/react/types/css-prop"],
+    "paths": {
+      "@/dfds-ui/react-components/src": ["packages/icons/src"],
+      "@/dfds-ui/react-components/src/*": ["packages/icons/src/*"]
+    },
+    "outDir": "./dist"
+  }
+}
