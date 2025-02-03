@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { TabbedPageSection } from "../../../components/PageSection";
 import JsonSchemaContext from "../../../JsonSchemaContext";
-import { Button, Text } from "@dfds-ui/react-components";
+import { Button, Text } from "@/dfds-ui/react-components/src";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

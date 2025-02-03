@@ -1,6 +1,6 @@
-import { Container, Column, Card } from "@dfds-ui/react-components";
+import { Container, Column, Card } from "@/dfds-ui/react-components/src";
 import styles from "./NotFound.module.css";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 
 export default function NotFound() {
   // TODO: currently not being used because of the new error/notFound banner

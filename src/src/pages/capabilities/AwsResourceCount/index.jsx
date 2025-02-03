@@ -2,9 +2,9 @@ import React, { useContext, useMemo } from "react";
 import awsLogo from "./aws-logo.svg";
 import AppContext from "AppContext";
 import styles from "./AwsCount.module.css";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Modal, ModalAction } from "@/dfds-ui/modal/src";
 import { useState } from "react";
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/dfds-ui/react-components/src";
 import { MaterialReactTable } from "material-react-table";
 import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdataapi";
 

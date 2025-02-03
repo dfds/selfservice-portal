@@ -8,12 +8,12 @@ import {
   AppBarListItem,
   MenuPopOverContext,
   ListText,
-} from "@dfds-ui/react-components";
-import { Account } from "@dfds-ui/icons/system";
+} from "@/dfds-ui/react-components/src";
+import { Account } from "@/dfds-ui/icons/src/system";
 import { SmallProfilePicture as ProfilePicture } from "components/ProfilePicture";
 import AppContext from "@/AppContext";
 import styles from "./GlobalMenu.module.css";
-import { Switch } from "@dfds-ui/forms";
+import { Switch } from "@/dfds-ui/forms/src";
 import PreAppContext from "../../preAppContext";
 import { useQueryClient } from "@tanstack/react-query";
 import SelectedCapabilityContext from "@/pages/capabilities/SelectedCapabilityContext";

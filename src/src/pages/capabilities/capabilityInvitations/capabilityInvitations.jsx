@@ -1,6 +1,6 @@
 import PageSection from "components/PageSection";
 import { useState, useEffect, useContext } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { Button, ButtonStack } from "@/dfds-ui/react-components/src";
 import { Invitations } from "../invitations";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 

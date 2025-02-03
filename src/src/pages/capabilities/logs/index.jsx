@@ -1,6 +1,6 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Text } from "@/dfds-ui/typography/src";
+import { Card, CardContent } from "@/dfds-ui/react-components/src";
 
 export default function Logs() {
   return (

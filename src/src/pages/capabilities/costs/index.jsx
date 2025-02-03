@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../../../AppContext";
 import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import { LargeCapabilityCostSummary } from "../../../components/BasicCapabilityCost";
-import { Spinner } from "@dfds-ui/react-components";
+import { Spinner } from "@/dfds-ui/react-components/src";
 import styles from "./costs.module.css";
 import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
-import { Button } from "@dfds-ui/react-components";
+import { Button } from "@/dfds-ui/react-components/src";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 
 export default function Costs({ costCentre }) {

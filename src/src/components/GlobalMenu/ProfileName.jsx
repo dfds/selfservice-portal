@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import AppContext from "AppContext";
 import styles from "./ProfileName.module.css";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 
 export default function ProfileName() {
   const { user } = useContext(AppContext);

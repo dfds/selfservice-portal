@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "@dfds-ui/icons/system";
-import { Spinner } from "@dfds-ui/react-components";
+import { ChevronRight } from "@/dfds-ui/icons/src/system";
+import { Spinner } from "@/dfds-ui/react-components/src";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { useMe } from "@/state/remote/queries/me";

@@ -1,7 +1,7 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import Topic from "./Topic";
-import { Divider } from "@dfds-ui/react-components/divider";
+import { Divider } from "@/dfds-ui/react-components/src/divider";
 
 export default function TopicList({
   name,

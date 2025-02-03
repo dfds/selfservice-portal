@@ -4,9 +4,9 @@ import {
   BannerParagraph,
   Button,
   TextField,
-} from "@dfds-ui/react-components";
-import { Modal } from "@dfds-ui/modal";
-import { StatusWarning as WarningIcon } from "@dfds-ui/icons/system";
+} from "@/dfds-ui/react-components/src";
+import { Modal } from "@/dfds-ui/modal/src";
+import { StatusWarning as WarningIcon } from "@/dfds-ui/icons/src/system";
 import styles from "./DeleteTopicDialog.module.css";
 
 export default function DeleteTopicDialog({

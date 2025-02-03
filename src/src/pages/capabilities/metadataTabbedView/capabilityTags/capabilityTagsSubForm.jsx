@@ -8,7 +8,7 @@
  * The schema is fetched from the backend and filtered to only show required fields.
  */
 import React, { useEffect, useState, useContext } from "react";
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/dfds-ui/react-components/src";
 import styles from "./capabilityTags.module.css";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";

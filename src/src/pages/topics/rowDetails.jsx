@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import AppContext from "../../AppContext";
-import { Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Spinner } from "@/dfds-ui/react-components/src";
+import { Text } from "@/dfds-ui/typography/src";
+import { Card, CardContent } from "@/dfds-ui/react-components/src";
 import { Link } from "react-router-dom";
 import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
 import { useError } from "../../hooks/Error";

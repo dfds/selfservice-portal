@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@dfds-ui/react-components";
+import { Button } from "@/dfds-ui/react-components/src";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
-import { Modal } from "@dfds-ui/modal";
+import { Modal } from "@/dfds-ui/modal/src";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";

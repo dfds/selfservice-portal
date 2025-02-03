@@ -1,9 +1,9 @@
-import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Badge, ButtonStack, Button, Spinner } from "@/dfds-ui/react-components/src";
+import { Text } from "@/dfds-ui/typography/src";
 import { TextBlock } from "components/Text";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Modal, ModalAction } from "@/dfds-ui/modal/src";
 import { useContext, useState, useEffect } from "react";
-import { theme } from "@dfds-ui/theme";
+import { theme } from "@/dfds-ui/theme/src";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
 import styles from "./resourceInfoBadges.module.css";

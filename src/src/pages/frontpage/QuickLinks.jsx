@@ -1,5 +1,5 @@
-import { ListItem, ListText, ListIcon } from "@dfds-ui/react-components";
-import { ArrowForward } from "@dfds-ui/icons/system";
+import { ListItem, ListText, ListIcon } from "@/dfds-ui/react-components/src";
+import { ArrowForward } from "@/dfds-ui/icons/src/system";
 
 function Link({ title, url }) {
   const Anchor = (props) => {

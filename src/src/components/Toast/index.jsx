@@ -1,8 +1,8 @@
 import styles from "./toast.module.css";
-import { Close } from "@dfds-ui/icons/system";
+import { Close } from "@/dfds-ui/icons/src/system";
 import { useEffect, useState, useRef } from "react";
-import { Button } from "@dfds-ui/react-components";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Button } from "@/dfds-ui/react-components/src";
+import { Modal, ModalAction } from "@/dfds-ui/modal/src";
 
 /*
  * This hook is used to get the previous value of a prop or state.

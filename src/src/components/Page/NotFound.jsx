@@ -1,6 +1,6 @@
-import { Container, Column } from "@dfds-ui/react-components";
+import { Container, Column } from "@/dfds-ui/react-components/src";
 import styles from "./NotFound.module.css";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import image from "./404.gif";
 
 export default function NotFound() {

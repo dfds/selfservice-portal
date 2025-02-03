@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import PageSection from "components/PageSection";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Text } from "@/dfds-ui/typography/src";
+import { Modal, ModalAction } from "@/dfds-ui/modal/src";
 import {
   Card,
   CardContent,
   Button,
   ButtonStack,
-} from "@dfds-ui/react-components";
+} from "@/dfds-ui/react-components/src";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { css } from "@emotion/react";

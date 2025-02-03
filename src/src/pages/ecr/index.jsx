@@ -8,9 +8,9 @@ import {
   CardMedia,
   Button,
   Spinner,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+} from "@/dfds-ui/react-components/src";
+import { Text } from "@/dfds-ui/typography/src";
+import { Modal, ModalAction } from "@/dfds-ui/modal/src";
 import Page from "components/Page";
 import PageSection from "components/PageSection";
 import NewRepositoryDialog from "./NewRepositoryDialog";

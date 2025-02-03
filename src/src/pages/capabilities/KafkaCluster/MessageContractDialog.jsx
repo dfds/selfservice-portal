@@ -1,13 +1,13 @@
 import { useEffect, useState, useContext } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import {
   Button,
   ButtonStack,
   SideSheet,
   SideSheetContent,
-} from "@dfds-ui/react-components";
+} from "@/dfds-ui/react-components/src";
 import styles from "./MessageContractDialog.module.css";
-import { Switch, TextareaField, TextField } from "@dfds-ui/forms";
+import { Switch, TextareaField, TextField } from "@/dfds-ui/forms/src";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { nnfxDark as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

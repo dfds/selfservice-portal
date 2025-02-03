@@ -11,15 +11,15 @@ import {
   BannerHeadline,
   BannerParagraph,
   Spinner,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+} from "@/dfds-ui/react-components/src";
+import { Text } from "@/dfds-ui/typography/src";
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { format, intlFormatDistance, differenceInCalendarDays } from "date-fns";
 import ProfilePicture from "./ProfilePicture";
 import AppContext from "AppContext";
-import { StatusSuccess } from "@dfds-ui/icons/system";
+import { StatusSuccess } from "@/dfds-ui/icons/src/system";
 import PreAppContext from "../../../preAppContext";
 import {
   useDeleteMembershipApplicationApproval,

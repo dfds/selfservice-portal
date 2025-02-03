@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
-import { SiteLayout } from "@dfds-ui/react-components";
+import { SiteLayout } from "@/dfds-ui/react-components/src";
 
 import GlobalMenu from "./components/GlobalMenu/GlobalMenu";
 import FrontPage from "./pages/frontpage";
@@ -10,7 +10,6 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
-import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
 
 function Footer() {

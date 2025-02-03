@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import PageSection from "components/PageSection";
 import styles from "./selfAssessment.module.css";
-import { Card, CardContent, Button } from "@dfds-ui/react-components";
+import { Card, CardContent, Button } from "@/dfds-ui/react-components/src";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import {
@@ -9,7 +9,7 @@ import {
   StatusAlert,
   Information,
   Help,
-} from "@dfds-ui/icons/system";
+} from "@/dfds-ui/icons/src/system";
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 

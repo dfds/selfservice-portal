@@ -1,8 +1,8 @@
 import React from "react";
 import AppContext from "AppContext";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import { TextBlock } from "components/Text";
-import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
+import { Button, ButtonStack, Badge } from "@/dfds-ui/react-components/src";
 import {
   Table,
   TableHead,
@@ -10,8 +10,8 @@ import {
   TableRow,
   TableHeaderCell,
   TableDataCell,
-} from "@dfds-ui/react-components";
-import { Modal } from "@dfds-ui/modal";
+} from "@/dfds-ui/react-components/src";
+import { Modal } from "@/dfds-ui/modal/src";
 import PageSection from "components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";

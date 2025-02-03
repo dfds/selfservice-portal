@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import styles from "./members.module.css";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import ProfilePicture from "./profilepicture";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";

@@ -4,7 +4,7 @@ import {
   SideSheet,
   SideSheetContent,
   TextField,
-} from "@dfds-ui/react-components";
+} from "@/dfds-ui/react-components/src";
 
 export default function EditTopicDialog({
   originalTopic,

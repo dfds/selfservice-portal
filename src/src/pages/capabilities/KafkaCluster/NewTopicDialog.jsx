@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/dfds-ui/typography/src";
 import styles from "./Topics.module.css";
 import AppContext from "AppContext";
 import {
@@ -12,8 +12,8 @@ import {
   SelectField,
   Tooltip,
   BannerParagraph,
-} from "@dfds-ui/react-components";
-import { Information } from "@dfds-ui/icons/system";
+} from "@/dfds-ui/react-components/src";
+import { Information } from "@/dfds-ui/icons/src/system";
 
 export default function NewTopicDialog({
   capabilityId,

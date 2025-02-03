@@ -1,13 +1,13 @@
 import styles from "./MessageContract.module.css";
 import Expandable from "../../../components/Expandable";
 import Poles from "../../../components/Poles";
-import { Text } from "@dfds-ui/typography";
-import { SelectField } from "@dfds-ui/react-components";
+import { Text } from "@/dfds-ui/typography/src";
+import { SelectField } from "@/dfds-ui/react-components/src";
 import React from "react";
-import { Divider } from "@dfds-ui/react-components/divider";
+import { Divider } from "@/dfds-ui/react-components/src/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import { ChevronDown, ChevronUp } from "@/dfds-ui/icons/src/system";
 import { prettifyJsonString } from "../../../Utils";
 
 function JsonViewer({ json }) {

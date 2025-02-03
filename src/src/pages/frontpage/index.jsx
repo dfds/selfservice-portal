@@ -8,7 +8,7 @@ import {
   IconButton,
   LinkButton,
   Text,
-} from "@dfds-ui/react-components";
+} from "@/dfds-ui/react-components/src";
 import { Link } from "react-router-dom";
 
 import PageSection, { SectionContent } from "components/PageSection";
@@ -20,7 +20,7 @@ import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
-import { ExternalLink } from "@dfds-ui/icons/system";
+import { ExternalLink } from "@/dfds-ui/icons/src/system";
 import { useStats } from "@/state/remote/queries/stats";
 
 function Section({ children }) {
