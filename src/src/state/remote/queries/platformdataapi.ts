@@ -40,6 +40,10 @@ export function useCapabilitiesCost() {
       return [];
     }
 
+    if (query.data == null) {
+      return [];
+    }
+
     if (!query.data.has(capabilityId)) {
       return [];
     }
