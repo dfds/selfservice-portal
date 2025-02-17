@@ -51,11 +51,12 @@ export const auth: Slice<AuthStruct> = createSlice({
           state.isSessionActive = true;
         } else {
           console.log("Tokens missing, acquiring");
-          if (!tokenCache.hasTokenExpired("msgraph")) {
+
+          if (tokenCache.hasTokenExpired("selfservice-api")) {
             getSelfServiceAccessToken();
           }
 
-          if (!tokenCache.hasTokenExpired("selfservice-api")) {
+          if (tokenCache.hasTokenExpired("msgraph")) {
             getGraphAccessToken();
           }
         }
