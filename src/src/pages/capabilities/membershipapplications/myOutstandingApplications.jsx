@@ -100,7 +100,6 @@ export function MyOutstandingMembershipApplications() {
       },
       {
         onSuccess: () => {
-          console.log("Updating removal tracker");
           addApplicationToRemovalTracker(def.id);
         },
       },

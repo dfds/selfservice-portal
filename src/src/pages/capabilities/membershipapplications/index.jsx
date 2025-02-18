@@ -302,7 +302,6 @@ export function MembershipApplicationsUserCanApprove() {
       },
       {
         onSuccess: () => {
-          console.log("Updating removal tracker");
           addApplicationToRemovalTracker(def.id);
         },
       },
@@ -319,7 +318,6 @@ export function MembershipApplicationsUserCanApprove() {
       },
       {
         onSuccess: () => {
-          console.log("Updating removal tracker");
           addApplicationToRemovalTracker(def.id);
         },
       },
