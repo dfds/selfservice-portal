@@ -87,10 +87,16 @@ export function useCapabilitiesAwsResources() {
     if (!query.isFetched) {
       return 0;
     }
+
+    if (query.data == null) {
+      return 0;
+    }
+
     const counts = query.data.get(capabilityId);
     if (counts === undefined) {
       return 0;
     }
+
     let total = 0;
     // eslint-disable-next-line no-unused-vars
     for (let resource of counts) {
@@ -118,6 +124,11 @@ export function useCapabilitiesAwsResources() {
     if (!query.isFetched) {
       return 0;
     }
+
+    if (query.data == null) {
+      return 0;
+    }
+
     const counts = query.data.get(capabilityId);
     if (counts === undefined) {
       return 0;
