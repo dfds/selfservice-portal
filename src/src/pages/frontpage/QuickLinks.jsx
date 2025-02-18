@@ -34,6 +34,7 @@ export default function QuickLinks() {
       />
       <Link title={"Swagger API Documentation"} url={swaggerUrl} />
       <Link title={"Chat Bot assistance"} url={chatUrl} />
+      <Link title={"AI Deployment in Azure"} url="https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/getting-started" />
     </div>
   );
 }
