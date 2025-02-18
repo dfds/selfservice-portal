@@ -1,6 +1,6 @@
 import React from "react";
 import PageSection from "components/PageSection";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Card, CardContent } from "@/components/dfds-ui/react-components";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 
 export default function Resources({ capabilityId }) {

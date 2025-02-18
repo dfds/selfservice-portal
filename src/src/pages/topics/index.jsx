@@ -6,11 +6,11 @@ import {
   CardMedia,
   CardTitle,
   CardContent,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+} from "@/components/dfds-ui/react-components";
+import { Text } from "@/components/dfds-ui/typography";
 import styles from "./topic.module.css";
-import { Spinner } from "@dfds-ui/react-components";
-import { H1 } from "@dfds-ui/react-components";
+import { Spinner } from "@/components/dfds-ui/react-components";
+import { H1 } from "@/components/dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import topicImage from "./topicImage.jpeg";
 import { TopicsProvider } from "./TopicsContext";
@@ -19,8 +19,8 @@ import { usePublicTopics } from "@/state/remote/queries/kafka";
 import { MaterialReactTable } from "material-react-table";
 import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
-import { Badge } from "@dfds-ui/react-components";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import { Badge } from "@/components/dfds-ui/react-components";
+import { ChevronDown, ChevronUp } from "@/components/dfds-ui/icons/system";
 import PreAppContext from "@/preAppContext";
 
 function Topics() {

@@ -1,0 +1,72 @@
+import { Meta, DocsContainer, Story, ArgsTable, Preview, Description } from '@dfds-ui/storybook-design'
+import { SystemIcon } from './SystemIcon'
+import { css } from '@emotion/react'
+
+<Meta title="Lab/SystemIcon" component={SystemIcon} lab />
+
+# SystemIcon
+
+<Description of={SystemIcon} />
+
+## Usage
+
+```ts
+import { SystemIcon } from '@/components/dfds-ui/icons'
+```
+
+<Preview>
+  <Story name="Usage">
+    <SystemIcon icon="ArrowUp" />
+  </Story>
+</Preview>
+
+## Props
+
+<ArgsTable of={SystemIcon} />
+
+## Sizes
+
+Pre-defined sizes for the component. The default size is `m`.
+
+<Preview>
+  <Story name="Sizes">
+    <div
+      css={css`
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        align-items: center;
+      `}
+    >
+      <SystemIcon icon="ArrowUp" size="s" />
+      <br />
+      <SystemIcon icon="ArrowUp" size="m" />
+      <br />
+      <SystemIcon icon="ArrowUp" size="l" />
+      <br />
+      <SystemIcon icon="ArrowUp" size="xl" />
+    </div>
+  </Story>
+</Preview>
+
+## Inline icon in text
+
+When using the icons in the system set inlined inside a text it can be tricky to prevent the line height from changing
+while still having the icons match the size of the rest of the text. Using the `inline` prop to can help if the icons
+are used inside a text-block.
+
+<Preview>
+  <Story name="Inline">
+    <p>
+      Lorem Ipsum <SystemIcon icon="ArrowUp" inline /> is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+      galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also
+      the leap into electronic typesetting, remaining essentially unchanged.
+      <SystemIcon icon="BuFreightShipping" inline /> It was popularised in the 1960s with the release of Letraset sheets
+      <SystemIcon icon="SupportContact" inline />
+      containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+      versions of Lorem Ipsum.
+    </p>
+  </Story>
+</Preview>

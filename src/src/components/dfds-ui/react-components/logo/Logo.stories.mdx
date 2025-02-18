@@ -1,0 +1,74 @@
+import { Meta, Story, Props, Preview } from '@dfds-ui/storybook-design'
+import { Fragment } from 'react'
+import { Logo } from './Logo'
+import { css } from '@emotion/react'
+
+<Meta title="UI/Logo" Component={Logo} />
+
+# Logo
+
+Renders the glorious DFDS logo.
+
+## Usage
+
+```jsx
+import { Logo } from '@/components/dfds-ui/react-components'
+```
+
+## Props
+
+<Props of={Logo} />
+
+## Basic
+
+<Preview>
+  <Story name="Basic">
+    <Logo />
+  </Story>
+</Preview>
+
+## Size
+
+The `Logo` component support both `width` and `height` props to control the size of the logo.
+The values needs to be a `string` with the unit specified.
+
+<Preview>
+  <Story name="Size">
+    <Logo height="2rem" />
+  </Story>
+</Preview>
+
+## Title
+
+The `Logo` component has a `title` prop to control the title attribute within the logo SVG.
+
+<Preview>
+  <Story name="Title">
+    <Logo height="2rem" title="The glorious DFDS logo" />
+  </Story>
+</Preview>
+
+## Negative
+
+The `Logo` component can be styled to show the negative version.
+
+<Preview>
+  <Story name="Negative">
+    <div
+      css={css`
+        background-color: black;
+        padding: 16px;
+      `}
+    >
+      <Logo
+        height="2rem"
+        title="The glorious DFDS logo"
+        css={css`
+          path {
+            fill: white;
+          }
+        `}
+      />
+    </div>
+  </Story>
+</Preview>

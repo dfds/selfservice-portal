@@ -1,0 +1,105 @@
+import { Meta, DocsContainer, Story, ArgsTable, Preview, Description, withWidth } from '@dfds-ui/storybook-design'
+import { css } from '@emotion/react'
+import { Spinner } from './Spinner'
+
+<Meta title="Hydro UI/Loading Indicators/Spinner" component={Spinner} />
+
+# Spinner
+
+<Description of={Spinner} />
+
+## Usage
+
+```jsx
+import { Spinner, CenteredSpinner } from '@/components/dfds-ui/react-components'
+```
+
+<Preview gray>
+  <Story name="Usage">
+    <Spinner />
+  </Story>
+</Preview>
+
+## Props
+
+<ArgsTable of={Spinner} />
+
+## Instant spinner
+
+Spinner appears instantly rather then fading in, when instant prop is present.
+
+<Preview>
+  <Story name="Instant">
+    <Spinner instant />
+  </Story>
+</Preview>
+
+## Secondary color
+
+The Spinner supports different variation which can be specified using the `color` prop.
+
+<Preview>
+  <Story name="Secondary color">
+    <Spinner color="secondary" />
+  </Story>
+</Preview>
+
+## Light color
+
+The `light` color creates a white variation of the spinner is intended for situations where the spinner needs to be
+displayed over a dark surface.
+
+<Preview
+  css={css`
+    background-color: #002b45;
+  `}
+>
+  <Story name="Light color">
+    <Spinner color="light" />
+  </Story>
+</Preview>
+
+## Styling
+
+The Spinner has a `className` (and `css` if using `emotion`) prop which allows for custom styling.
+
+### Size
+
+In the following example the size of the Spinner is changed.
+
+<Preview>
+  <Story name="Size">
+    <Spinner
+      css={css`
+        font-size: 48px;
+      `}
+    />
+  </Story>
+</Preview>
+
+### Centered
+
+In this example the Spinner is styled so that it appears centered in a positioned container.
+
+<Preview>
+  <Story name="Centred">
+    <div
+      css={css`
+        position: relative;
+        width: 300px;
+        height: 300px;
+        border: 1px solid #aaa;
+      `}
+    >
+      <Spinner
+        css={css`
+          font-size: 64px;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        `}
+      />
+    </div>
+  </Story>
+</Preview>

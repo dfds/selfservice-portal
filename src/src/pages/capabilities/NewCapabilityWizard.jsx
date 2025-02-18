@@ -1,5 +1,5 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
-import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
+import { Tooltip, Text, TextField } from "@/components/dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import { useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";

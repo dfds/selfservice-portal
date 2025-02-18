@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./ProfilePicture.module.css";
-import { Account } from "@dfds-ui/icons/system";
+import { Account } from "@/components/dfds-ui/icons/system";
 
 export default function ProfilePicture({ name, pictureUrl }) {
   return (

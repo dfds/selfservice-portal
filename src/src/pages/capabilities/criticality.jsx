@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Page from "components/Page";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import AppContext from "AppContext";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/dfds-ui/typography";
 import {
   Card,
   CardTitle,
   CardContent,
   Spinner,
-} from "@dfds-ui/react-components";
+} from "@/components/dfds-ui/react-components";
 import { MaterialReactTable } from "material-react-table";
 import PageSection from "components/PageSection";
 import PreAppContext from "../../preAppContext";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
-import { SiteLayout } from "@dfds-ui/react-components";
+import { SiteLayout } from "@/components/dfds-ui/react-components";
 
 import GlobalMenu from "./components/GlobalMenu/GlobalMenu";
 import FrontPage from "./pages/frontpage";
