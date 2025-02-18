@@ -356,6 +356,7 @@ function SelectedCapabilityProvider({ children }) {
           });
           queryClient.invalidateQueries({
             queryKey: ["membershipapplications/eligible-for-approval"],
+            queryKey: ["membershipapplications/my-outstanding-applications"],
           });
         },
       },

@@ -28,6 +28,27 @@ export function useMembershipApplications() {
   return query;
 }
 
+export function useMyOutstandingMembershipApplications() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const query = useQuery({
+    queryKey: ["membershipapplications/my-outstanding-applications"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["membershipapplications/my-outstanding-applications"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+    select: (data: any) => {
+      let list = data.items || [];
+      sortByCapabilityId(list);
+      return list;
+    },
+  });
+
+  return query;
+}
+
 export function useSubmitMembershipApplication() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
