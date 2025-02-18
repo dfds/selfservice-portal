@@ -15,8 +15,8 @@ import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import {
   MembershipApplicationsUserCanApprove,
-  MyOutstandingMembershipApplications,
 } from "./membershipapplications/index";
+import MyOutstandingMembershipApplications from "./membershipapplications/MyOutstandingMembershipApplications";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 
