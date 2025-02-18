@@ -13,7 +13,10 @@ import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
-import { MembershipApplicationsUserCanApprove, MyOutstandingMembershipApplications } from "./membershipapplications/index";
+import {
+  MembershipApplicationsUserCanApprove,
+  MyOutstandingMembershipApplications,
+} from "./membershipapplications/index";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 

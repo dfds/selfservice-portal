@@ -552,7 +552,8 @@ export function MembershipApplicationsUserCanApprove() {
 
 export function MyOutstandingMembershipApplications() {
   const queryClient = useQueryClient();
-  const { isFetched, isRefetching, data } = useMyOutstandingMembershipApplications();
+  const { isFetched, isRefetching, data } =
+    useMyOutstandingMembershipApplications();
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
