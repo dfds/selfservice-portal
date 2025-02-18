@@ -8,6 +8,7 @@
   "type": "module",
   "homepage": "",
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.4",
     "@dfds-ui/forms": "2.0.12",
     "@dfds-ui/modal": "2.0.12",
     "@dfds-ui/react-components": "2.0.12",
@@ -19,6 +20,7 @@
     "@rjsf/utils": "^5.15.0",
     "@rjsf/validator-ajv8": "^5.15.0",
     "@tanstack/react-query": "^5.59.0",
+    "@xyflow/react": "^12.4.2",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "date-fns": "^2.29.3",

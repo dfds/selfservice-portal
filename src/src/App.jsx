@@ -12,6 +12,7 @@ import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments"
 import ECRPage from "./pages/ecr";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
+import TechMap, { TechMapWithProvider } from "./pages/capabilities/techmap";
 
 function Footer() {
   return (
@@ -56,6 +57,7 @@ export default function App() {
             path="capabilities/selfassessments"
             element={<CapabilitySelfAssessmentsPage />}
           />
+          <Route path="tech-map" element={<TechMapWithProvider />} />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
         </Route>
       </Routes>
