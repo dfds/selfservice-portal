@@ -1,220 +1,17 @@
 import {
   useDeleteMembershipApplicationApproval,
-  useMembershipApplications,
+  useMyOutstandingMembershipApplications,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
-import { StatusSuccess } from "@dfds-ui/icons/system";
-import {
-  Badge,
-  Banner,
-  BannerHeadline,
-  BannerParagraph,
-  Button,
-  Spinner,
-  Table,
-  TableBody,
-  TableDataCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-} from "@dfds-ui/react-components";
+import { Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
 import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
 import { MaterialReactTable } from "material-react-table";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import PreAppContext from "../../../preAppContext";
-import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 import styles from "./index.module.css";
-import ProfilePicture from "./ProfilePicture";
-
-export function MyMembershipApplication() {
-  const { membershipApplications } = useContext(SelectedCapabilityContext);
-  const { myProfile } = useContext(AppContext);
-
-  const application = (membershipApplications || []).find(
-    (x) => x.applicant === myProfile?.id,
-  );
-  if (!application) {
-    return null;
-  }
-
-  return (
-    <div>
-      <Banner variant={"lowEmphasis"} icon={StatusSuccess}>
-        <BannerHeadline>Membership Application Received</BannerHeadline>
-        <BannerParagraph>
-          Your request to join this capability has been received and it's
-          waiting approval from existing members.
-          <br />
-          <br />
-          <strong>Please note:</strong> that it expire{" "}
-          <ExpirationDate date={application.expiresOn} />!
-        </BannerParagraph>
-      </Banner>
-    </div>
-  );
-}
-
-function ExpirationDate({ date }) {
-  const daysUntil = differenceInCalendarDays(new Date(date), new Date());
-  const label = intlFormatDistance(new Date(date), new Date());
-
-  return daysUntil < 3 ? (
-    <Badge intent="critical">{label}</Badge>
-  ) : (
-    <span>{label}</span>
-  );
-}
-
-export default function MembershipApplications() {
-  const {
-    membershipApplications,
-    approveMembershipApplication,
-    deleteMembershipApplication,
-  } = useContext(SelectedCapabilityContext);
-  const { myProfile, checkIfCloudEngineer, user } = useContext(AppContext);
-  const [applications, setApplications] = useState([]);
-  const [isCloudEngineer, setIsCloudEngineer] = useState(false);
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-
-  useEffect(() => {
-    if (user && user.isAuthenticated) {
-      setIsCloudEngineer(checkIfCloudEngineer(user.roles));
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const list = (membershipApplications || [])
-      .filter((x) => x.applicant !== myProfile?.id)
-      .map((x) => {
-        const copy = { ...x };
-
-        copy.canApprove = false;
-        copy.showApprove = true;
-        copy.isApproving = false;
-
-        const approvalLink = copy?.approvals?._links?.self;
-        if (approvalLink) {
-          copy.canApprove = (approvalLink.allow || []).includes("POST");
-          copy.showApprove = (approvalLink.allow || []).includes("GET");
-        }
-
-        return copy;
-      });
-
-    setApplications(list);
-  }, [membershipApplications, myProfile]);
-
-  const handleApproveClicked = useCallback(
-    (membershipApplicationId) => {
-      setApplications((prev) => {
-        const copy = [...prev];
-        const found = copy.find((x) => x.id === membershipApplicationId);
-
-        if (found) {
-          found.isApproving = true;
-        }
-
-        return copy;
-      });
-      approveMembershipApplication(membershipApplicationId);
-    },
-    [membershipApplications],
-  );
-
-  const handleDeleteClicked = useCallback(
-    (membershipApplicationId) => {
-      setApplications((prev) => {
-        const copy = [...prev];
-        const found = copy.find((x) => x.id === membershipApplicationId);
-
-        if (found) {
-          found.isApproving = true;
-        }
-
-        return copy;
-      });
-      deleteMembershipApplication(membershipApplicationId);
-    },
-    [membershipApplications],
-  );
-
-  const hasPendingApplications = applications.length > 0;
-  if (!hasPendingApplications) {
-    return null;
-  }
-
-  return (
-    <>
-      <PageSection headline="Membership Applications">
-        <Table isInteractive width={"100%"}>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-              <TableHeaderCell>Applicant</TableHeaderCell>
-              <TableHeaderCell>Application date</TableHeaderCell>
-              <TableHeaderCell>Expires</TableHeaderCell>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {applications.map((x) => (
-              <TableRow key={x.applicant}>
-                <TableDataCell>
-                  <ProfilePicture
-                    name={x.applicant}
-                    pictureUrl={x.applicantProfilePictureUrl}
-                  />
-                </TableDataCell>
-                <TableDataCell>{x.applicant}</TableDataCell>
-                <TableDataCell>
-                  {format(new Date(x.submittedAt), "MMMM do yyyy")}
-                </TableDataCell>
-                <TableDataCell>
-                  <ExpirationDate date={x.expiresOn} />
-                </TableDataCell>
-                <TableDataCell align="right">
-                  {x.showApprove && (
-                    <Button
-                      size="small"
-                      disabled={!x.canApprove}
-                      submitting={x.isApproving}
-                      title={
-                        x.canApprove
-                          ? "Submit your approval of this membership"
-                          : "You have already submitted your approval for this membership. Waiting for other members to approve."
-                      }
-                      onClick={() => handleApproveClicked(x.id)}
-                    >
-                      Approve
-                    </Button>
-                  )}
-                </TableDataCell>
-                {isCloudEngineer && isCloudEngineerEnabled ? (
-                  <TableDataCell style={{ minWidth: "6rem" }}>
-                    <Button
-                      variation="danger"
-                      title="Deny this application for membership"
-                      onClick={() => handleDeleteClicked(x.id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableDataCell>
-                ) : (
-                  <TableDataCell>&nbsp;</TableDataCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </PageSection>
-    </>
-  );
-}
 
 function sleep(duration) {
   return new Promise((resolve) => {
@@ -222,9 +19,10 @@ function sleep(duration) {
   });
 }
 
-export function MembershipApplicationsUserCanApprove() {
+export function MyOutstandingMembershipApplications() {
   const queryClient = useQueryClient();
-  const { isFetched, isRefetching, data } = useMembershipApplications();
+  const { isFetched, isRefetching, data } =
+    useMyOutstandingMembershipApplications();
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
@@ -264,7 +62,7 @@ export function MembershipApplicationsUserCanApprove() {
       if (triggerUpdate) {
         sleep(1400).then(() => {
           queryClient.invalidateQueries({
-            queryKey: ["membershipapplications/eligible-for-approval"],
+            queryKey: ["membershipapplications/my-outstanding-applications"],
           });
         });
       }
@@ -275,7 +73,7 @@ export function MembershipApplicationsUserCanApprove() {
     setRemovalTracker((prev) => {
       prev.add(id);
       queryClient.invalidateQueries({
-        queryKey: ["membershipapplications/eligible-for-approval"],
+        queryKey: ["membershipapplications/my-outstanding-applications"],
       });
       return prev;
     });
@@ -294,23 +92,7 @@ export function MembershipApplicationsUserCanApprove() {
     });
   };
 
-  const handleApproveClicked = async (def) => {
-    setActiveCrudOpOnTableDataItem(def);
-    submitMembershipApplicationApproval.mutate(
-      {
-        membershipApplicationDefinition: def,
-      },
-      {
-        onSuccess: () => {
-          addApplicationToRemovalTracker(def.id);
-        },
-      },
-    );
-    // await selfServiceApiClient.submitMembershipApplicationApproval(def);
-    // addApplicationToRemovalTracker(def.id);
-  };
-
-  const handleRejectClicked = async (def) => {
+  const handleDeleteClicked = async (def) => {
     setActiveCrudOpOnTableDataItem(def);
     deleteMembershipApplicationApproval.mutate(
       {
@@ -421,21 +203,12 @@ export function MembershipApplicationsUserCanApprove() {
               ) : (
                 <div className={styles.buttons}>
                   <div
-                    className={styles.button}
-                    onClick={() => {
-                      handleApproveClicked(cell.getValue().data);
-                    }}
-                  >
-                    Approve
-                  </div>
-
-                  <div
                     className={`${styles.button} ${styles.reject}`}
                     onClick={() => {
-                      handleRejectClicked(cell.getValue().data);
+                      handleDeleteClicked(cell.getValue().data);
                     }}
                   >
-                    Reject
+                    Delete
                   </div>
                 </div>
               )}
@@ -451,7 +224,7 @@ export function MembershipApplicationsUserCanApprove() {
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-        <PageSection headline="Pending approval">
+        <PageSection headline="My Outstanding Membership Applications">
           <div className={styles.membershipApplicationsContainer}>
             <MaterialReactTable
               columns={columns}

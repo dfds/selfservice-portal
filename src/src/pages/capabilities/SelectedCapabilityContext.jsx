@@ -355,7 +355,10 @@ function SelectedCapabilityProvider({ children }) {
             queryKey: ["capabilities", "members"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["membershipapplications/eligible-for-approval"],
+            queryKey: [
+              "membershipapplications/eligible-for-approval",
+              "membershipapplications/my-outstanding-applications",
+            ],
           });
         },
       },
