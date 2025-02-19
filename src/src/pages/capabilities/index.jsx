@@ -11,6 +11,7 @@ import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
+import TrackingContext from "@/TrackingContext";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
@@ -18,6 +19,7 @@ import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {
+  const { trackButtonClick } = useContext(TrackingContext);
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
@@ -50,6 +52,11 @@ export default function CapabilitiesPage() {
       className={styles.cardMedia}
     />
   );
+
+  const startAddCapabilityWizard = () => {
+    trackButtonClick("BeginAddCapability");
+    setShowNewCapabilityWizard(true);
+  };
 
   return (
     <>
@@ -91,7 +98,7 @@ export default function CapabilitiesPage() {
           <CardActions>
             <Button
               size="small"
-              onClick={() => setShowNewCapabilityWizard(true)}
+              onClick={() => startAddCapabilityWizard()}
             >
               Add
             </Button>
