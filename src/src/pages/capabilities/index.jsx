@@ -96,10 +96,7 @@ export default function CapabilitiesPage() {
             <p>You can add a new capability by clicking the button below:</p>
           </CardContent>
           <CardActions>
-            <Button
-              size="small"
-              onClick={() => startAddCapabilityWizard()}
-            >
+            <Button size="small" onClick={() => startAddCapabilityWizard()}>
               Add
             </Button>
           </CardActions>

@@ -30,7 +30,7 @@ function TrackingProvider({ children }) {
         event: "trackEvent",
         category: "Button Clicks",
         action: "Clicked",
-        name
+        name,
       });
     }
   };
