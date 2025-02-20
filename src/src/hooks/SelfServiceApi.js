@@ -35,7 +35,7 @@ export function useSelfServiceRequest(errorParams) {
       url = urlSegments[0];
     }
 
-    track("selfservice", `${method}::${url}`, "1");
+    track("SelfService ApiCall", `${method}::${url}`);
 
     try {
       const httpResponse = await callApi(
