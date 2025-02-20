@@ -56,8 +56,7 @@ export default function CapabilitiesPage() {
   );
 
   const startAddCapabilityWizard = () => {
-    track({name: "BeginAddCapability", category: "Buttonclick"});
-    trackButtonClick("BeginAddCapability");
+    track("Button Click", "Begin Add Capability");
     setShowNewCapabilityWizard(true);
   };
 
