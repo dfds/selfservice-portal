@@ -23,21 +23,8 @@ function TrackingProvider({ children }) {
     }
   }, []);
 
-  // Function to track events
-  const trackButtonClick = ({ name }) => {
-    if (isEnabled && window._mtm) {
-      window._mtm.push({
-        event: "trackEvent",
-        category: "Button Clicks",
-        action: "Clicked",
-        name,
-      });
-    }
-  };
-
   const state = {
     trackingIsEnabled: isEnabled,
-    trackButtonClick,
   };
 
   return (
