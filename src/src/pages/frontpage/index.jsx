@@ -137,7 +137,10 @@ export default function FrontPage() {
                   <br />
                   <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance
                   and want to play with Kafka? If so, go check out{" "}
-                  <TrackedLink trackName="Dafda" href="https://tniconf.dfds.cloud/dafda/">
+                  <TrackedLink
+                    trackName="Dafda"
+                    href="https://tniconf.dfds.cloud/dafda/"
+                  >
                     <strong>dafda</strong>
                   </TrackedLink>{" "}
                   ...you're welcome!
@@ -145,7 +148,10 @@ export default function FrontPage() {
 
                 <SectionContent title="Kubernetes">
                   If this is your first visit, please go to{" "}
-                  <TrackedLink trackName="Wiki-KubernetesGettingStarted" href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey">
+                  <TrackedLink
+                    trackName="Wiki-KubernetesGettingStarted"
+                    href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
+                  >
                     Kubernetes Getting Started
                   </TrackedLink>
                   , for information about what to do to get started.

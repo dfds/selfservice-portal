@@ -49,7 +49,10 @@ function AzureTagsWarning({ onClose, missingTags }) {
       >
         <Text>
           Your capability are missing needed tags (see:{" "}
-          <TrackedLink trackName="Wiki-TaggingPolicy" href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy">
+          <TrackedLink
+            trackName="Wiki-TaggingPolicy"
+            href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+          >
             tagging guideline
           </TrackedLink>
           ) in its metadata in order to create an Azure Resource group. Please
@@ -470,7 +473,10 @@ export function ResourceInfoBadges() {
             <div className={styles.items}>
               <ButtonStack align="right">
                 {canRequest && (
-                  <TrackedButton trackName="RequestAWSAccountAndK8SNamespace" onClick={() => setShowDialog(true)}>
+                  <TrackedButton
+                    trackName="RequestAWSAccountAndK8SNamespace"
+                    onClick={() => setShowDialog(true)}
+                  >
                     Request AWS Account & Kubernetes Namespace
                   </TrackedButton>
                 )}

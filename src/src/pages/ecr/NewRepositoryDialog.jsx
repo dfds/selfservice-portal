@@ -147,7 +147,12 @@ export default function NewRepositoryDialog({ onClose }) {
             >
               Add
             </TrackedButton>
-            <TrackedButton trackName="ECRRepositoryCreate-Cancel" size="small" variation="outlined" onClick={handleClose}>
+            <TrackedButton
+              trackName="ECRRepositoryCreate-Cancel"
+              size="small"
+              variation="outlined"
+              onClick={handleClose}
+            >
               Cancel
             </TrackedButton>
           </ButtonStack>

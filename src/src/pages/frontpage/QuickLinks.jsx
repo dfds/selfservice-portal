@@ -5,7 +5,14 @@ import { TrackedLink } from "@/components/Tracking";
 function Link({ title, url }) {
   const Anchor = (props) => {
     // eslint-disable-next-line jsx-a11y/anchor-has-content, react/jsx-no-target-blank
-    return <TrackedLink trackName={`QuickLink-${title}`} target="_blank" href={url} {...props} />; // Looks like a link attribute is being mis-used, needs to be investigated further
+    return (
+      <TrackedLink
+        trackName={`QuickLink-${title}`}
+        target="_blank"
+        href={url}
+        {...props}
+      />
+    ); // Looks like a link attribute is being mis-used, needs to be investigated further
   };
 
   return (

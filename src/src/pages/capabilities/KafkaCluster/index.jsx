@@ -285,7 +285,11 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       {hasWriteAccess && (
         <ButtonStack align="left">
-          <TrackedButton trackName="TopicCreate-ShowDialog" size="small" onClick={handleAddTopicToClusterClicked}>
+          <TrackedButton
+            trackName="TopicCreate-ShowDialog"
+            size="small"
+            onClick={handleAddTopicToClusterClicked}
+          >
             Add topic
           </TrackedButton>
           <TrackedButton

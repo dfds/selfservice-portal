@@ -237,7 +237,12 @@ export default function Summary() {
           <MyMembershipApplication />
           <ButtonStack align="right">
             {canJoin && (
-              <TrackedButton trackName="CapabilityMembership-SendApplication" onClick={() => setShowJoinDialog(true)}>Join</TrackedButton>
+              <TrackedButton
+                trackName="CapabilityMembership-SendApplication"
+                onClick={() => setShowJoinDialog(true)}
+              >
+                Join
+              </TrackedButton>
             )}
 
             {canLeave && (

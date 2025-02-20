@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Text } from "@dfds-ui/typography";
-import {
-  Card,
-  CardContent,
-  IconButton,
-} from "@dfds-ui/react-components";
+import { Card, CardContent, IconButton } from "@dfds-ui/react-components";
 import { Accordion, Spinner } from "@dfds-ui/react-components";
 import {
   ChevronDown,

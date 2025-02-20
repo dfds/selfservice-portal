@@ -19,7 +19,12 @@ export const TrackedButton = ({ onClick, trackName, children, ...props }) => {
   );
 };
 
-export const TrackedLinkButton = ({ onClick, trackName, children, ...props }) => {
+export const TrackedLinkButton = ({
+  onClick,
+  trackName,
+  children,
+  ...props
+}) => {
   const { track } = useTracking();
 
   const handleClick = (...args) => {

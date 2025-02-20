@@ -308,7 +308,7 @@ export default function NewTopicDialog({
 
         <br />
         <TrackedButton
-        trackName="TopicCreate-Confirm"
+          trackName="TopicCreate-Confirm"
           size="small"
           type="button"
           submitting={inProgress}

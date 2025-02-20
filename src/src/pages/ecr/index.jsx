@@ -34,7 +34,9 @@ const NoUri = () => {
   return (
     <Text>
       Error producing URI. Please refer to the{" "}
-      <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>documentation</TrackedLink>
+      <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>
+        documentation
+      </TrackedLink>
     </Text>
   );
 };
@@ -281,7 +283,13 @@ export default function ECRPage() {
             </p>
             <p>
               For more information on how to use the ECR repositories, please
-              refer to the <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>documentation</TrackedLink>
+              refer to the{" "}
+              <TrackedLink
+                trackName="Wiki-ECRRepositoryPush"
+                href={documentationUrl}
+              >
+                documentation
+              </TrackedLink>
             </p>
           </CardContent>
           <CardActions>
