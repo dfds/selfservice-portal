@@ -54,7 +54,7 @@ export default function SelfAssessments() {
   const handleToggle = (assessment, desiredStatus) => {
     let link = assessment._links?.updateSelfAssessment?.href;
     if (link) {
-      track("selfservice", "SelfAssessmentToggle", assessment, desiredStatus);
+      track("InternalNavigation", "SelfAssessmentToggle", assessment, desiredStatus);
       modifyAssessment({
         urlSegments: [link],
         method: "POST",
