@@ -151,7 +151,7 @@ const Completed = function ({ accountId, namespace, id }) {
           <p>
             <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
           </p>
-          <div>AWS Acount ready:</div>
+          <div>AWS Account ready:</div>
           <Badge>
             <strong>{accountId} </strong>
           </Badge>
