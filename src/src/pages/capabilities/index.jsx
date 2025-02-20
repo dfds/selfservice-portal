@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { Button } from "@dfds-ui/react-components";
 import {
   Card,
   CardTitle,
@@ -11,18 +10,15 @@ import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
-import TrackingContext from "@/TrackingContext";
-import { useTracking } from "@/hooks/Tracking";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
 import { MyOutstandingMembershipApplications } from "./membershipapplications/myOutstandingApplications";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {
-  const { trackButtonClick } = useContext(TrackingContext);
-  const { track } = useTracking();
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
@@ -57,7 +53,6 @@ export default function CapabilitiesPage() {
   );
 
   const startAddCapabilityWizard = () => {
-    track("Button Click", "Begin Add Capability");
     setShowNewCapabilityWizard(true);
   };
 
@@ -85,23 +80,33 @@ export default function CapabilitiesPage() {
               Capabilities should be named uniquely after their (business)
               capability. Avoid using team or project names. For more
               information{" "}
-              <a href="https://wiki.dfds.cloud/playbooks">
+              <TrackedLink
+                trackName="CapabilityCard-Playbook"
+                href="https://wiki.dfds.cloud/playbooks"
+              >
                 head on over to the Playbooks.
-              </a>
+              </TrackedLink>
             </p>
             <p>
               <strong>Please note:</strong> Capability security is our
               collective responsibility.{" "}
-              <a href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents">
+              <TrackedLink
+                trackName="CapabilityCard-SecurityDocumentation"
+                href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents"
+              >
                 Please visit our security documentation.
-              </a>
+              </TrackedLink>
             </p>
             <p>You can add a new capability by clicking the button below:</p>
           </CardContent>
           <CardActions>
-            <Button size="small" onClick={() => startAddCapabilityWizard()}>
+            <TrackedButton
+              trackName="BeginAddCapabilityWizard"
+              size="small"
+              onClick={() => startAddCapabilityWizard()}
+            >
               Add
-            </Button>
+            </TrackedButton>
           </CardActions>
         </Card>
 
