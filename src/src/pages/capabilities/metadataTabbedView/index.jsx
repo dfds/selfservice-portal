@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { TabbedPageSection } from "../../../components/PageSection";
 import JsonSchemaContext from "../../../JsonSchemaContext";
-import { Button, Text } from "@dfds-ui/react-components";
+import { Text } from "@dfds-ui/react-components";
 import { CapabilityTagsSubForm } from "./capabilityTags/capabilityTagsSubForm";
 import { JsonMetadataWithSchemaViewer } from "./jsonmetadata";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { shallowEqual } from "Utils";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
 import PreAppContext from "@/preAppContext";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 export function MetadataTabbedView() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
@@ -52,24 +53,26 @@ export function MetadataTabbedView() {
   }, [currentMetadataObject, metadataObject]);
 
   const header = (
-    <a
+    <TrackedLink
+      trackName="TaggingPolicy"
       href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
       target="_blank"
       rel="noreferrer"
     >
       <Text>See Tagging Policy</Text>
-    </a>
+    </TrackedLink>
   );
 
   const footer = (
-    <Button
+    <TrackedButton
+      trackName="JsonMetaData-Submit"
       size="small"
       variation="outlined"
       onClick={submitJsonMetadata}
       disabled={!canEditJsonMetadata || !isDirty || !isValid}
     >
       Submit
-    </Button>
+    </TrackedButton>
   );
 
   const tabs = {

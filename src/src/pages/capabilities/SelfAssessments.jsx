@@ -159,12 +159,13 @@ export default function CapabilitiesSelfAssessmentsPage() {
               deleted, thus preserving historical data and meaning.
             </p>
             <CardActions>
-              <Button
+              <TrackedButton
+                trackName="SelfAssessmentWizard-Begin"
                 size="small"
                 onClick={() => setShowNewSelfAssessmentWizard(true)}
               >
                 Add
-              </Button>
+              </TrackedButton>
             </CardActions>
           </CardContent>
         </Card>

@@ -1,8 +1,8 @@
 import styles from "./toast.module.css";
 import { Close } from "@dfds-ui/icons/system";
 import { useEffect, useState, useRef } from "react";
-import { Button } from "@dfds-ui/react-components";
 import { Modal, ModalAction } from "@dfds-ui/modal";
+import { TrackedButton } from "@/components/Tracking";
 
 /*
  * This hook is used to get the previous value of a prop or state.
@@ -90,26 +90,28 @@ export default function ErrorToast({ message, title, details }) {
           style={{ opacity: opacity }}
         >
           <div className={styles.toast_close_bar}>
-            <Button
+            <TrackedButton
+              trackName="Toast-Close"
               size="small"
               variation="link"
               fillWidth="true"
               onClick={() => setOpacity(0)}
             >
               <Close className={styles.close_icon} />
-            </Button>
+            </TrackedButton>
           </div>
           <div className={styles.toast_message}>{message}</div>
           {details && (
             <div>
-              <Button
+              <TrackedButton
+                trackName="Toast-ShowDetails"
                 size="small"
                 variation="link"
                 fillWidth="true"
                 onClick={() => setShowDetails(true)}
               >
                 <span className={styles.toast_details_button}>Details</span>
-              </Button>
+              </TrackedButton>
             </div>
           )}
         </div>

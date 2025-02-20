@@ -1,8 +1,9 @@
 import PageSection from "components/PageSection";
 import { useState, useEffect, useContext } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { ButtonStack } from "@dfds-ui/react-components";
 import { Invitations } from "../invitations";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
+import { TrackedButton } from "@/components/Tracking";
 
 export function CapabilityInvitations() {
   const [invitees, setInvitees] = useState([]);
@@ -50,7 +51,8 @@ export function CapabilityInvitations() {
           members={members}
         />
         <ButtonStack align="right">
-          <Button
+          <TrackedButton
+            trackName="Memberships-Invite"
             size="small"
             variation="primary"
             onClick={handleAddInvitationClicked}
@@ -64,7 +66,7 @@ export function CapabilityInvitations() {
             }}
           >
             {showSuccessLabel ? "Success" : "Invite"}
-          </Button>
+          </TrackedButton>
         </ButtonStack>
       </PageSection>
     </>

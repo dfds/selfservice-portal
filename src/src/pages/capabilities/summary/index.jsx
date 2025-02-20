@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Modal, ModalAction } from "@dfds-ui/modal";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { ButtonStack } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 
@@ -10,6 +10,7 @@ import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
+import { TrackedButton } from "@/components/Tracking";
 
 function JoinDialog({
   name,
@@ -64,14 +65,15 @@ function JoinDialog({
           </i>
         </Text>
         {canBypassMembershipApplications && (
-          <Button
+          <TrackedButton
+            trackName="CapabilityMembership-ForceJoin"
             variation="danger"
             style={{ position: "absolute", bottom: "1rem" }}
             disabled={isSubmitting}
             onClick={onBypassClicked}
           >
             FORCE JOIN (CE)
-          </Button>
+          </TrackedButton>
         )}
       </Modal>
     </>
@@ -235,16 +237,22 @@ export default function Summary() {
           <MyMembershipApplication />
           <ButtonStack align="right">
             {canJoin && (
-              <Button onClick={() => setShowJoinDialog(true)}>Join</Button>
+              <TrackedButton
+                trackName="CapabilityMembership-SendApplication"
+                onClick={() => setShowJoinDialog(true)}
+              >
+                Join
+              </TrackedButton>
             )}
 
             {canLeave && (
-              <Button
+              <TrackedButton
+                trackName="CapabilityMembership-Leave"
                 variation="outlined"
                 onClick={() => setShowLeaveDialog(true)}
               >
                 Leave
-              </Button>
+              </TrackedButton>
             )}
           </ButtonStack>
         </div>

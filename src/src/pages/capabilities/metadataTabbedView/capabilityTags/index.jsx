@@ -1,12 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import { shallowEqual } from "Utils";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { ButtonStack } from "@dfds-ui/react-components";
 import PageSection from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { CapabilityTagsSubForm } from "./capabilityTagsSubForm";
 import JsonSchemaContext from "../../../JsonSchemaContext";
 import { useUpdateRequiredCapabilityMetadata } from "@/state/remote/queries/capabilities";
 import PreAppContext from "@/preAppContext";
+import { TrackedButton } from "@/components/Tracking";
 
 export function CapabilityTagViewer() {
   // does set update the backend? How is this done in the metadata view?
@@ -69,7 +70,8 @@ export function CapabilityTagViewer() {
             preexistingFormData={existingFormData}
           />
           <ButtonStack align={"right"}>
-            <Button
+            <TrackedButton
+              trackName="CapabilityTags-Submit"
               size="small"
               variation="outlined"
               submitting={inProgressMetadata}
@@ -77,7 +79,7 @@ export function CapabilityTagViewer() {
               disabled={!isValid || !isDirty || !canEditJsonMetadata}
             >
               Submit
-            </Button>
+            </TrackedButton>
           </ButtonStack>
         </PageSection>
       </>

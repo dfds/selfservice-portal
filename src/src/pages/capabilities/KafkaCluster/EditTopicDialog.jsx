@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   SideSheet,
   SideSheetContent,
   TextField,
 } from "@dfds-ui/react-components";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function EditTopicDialog({
   originalTopic,
@@ -67,7 +67,8 @@ export default function EditTopicDialog({
           onChange={changeDescription}
         />
 
-        <Button
+        <TrackedButton
+          trackName="TopicEdit-Confirm"
           variation="primary"
           type="button"
           disabled={!allowedToUpdate && !canUpdate}
@@ -75,7 +76,7 @@ export default function EditTopicDialog({
           onClick={handleUpdateClicked}
         >
           Update
-        </Button>
+        </TrackedButton>
       </SideSheetContent>
     </SideSheet>
   );

@@ -12,6 +12,7 @@ import {
 } from "@dfds-ui/icons/system";
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -163,7 +164,8 @@ export default function SelfAssessments() {
                     {/* Insert one button for each status option */}
                     {/* Indicate pressed on the one matching current status */}
                     {(assessment.statusOptions || []).map((statusOption) => (
-                      <Button
+                      <TrackedButton
+                        trackName="SelfAssessment-Assessed"
                         className={styles.assessmentButton}
                         onClick={() =>
                           handleAssessmentButtonPressed(
@@ -181,7 +183,7 @@ export default function SelfAssessments() {
                       >
                         {" "}
                         {buttonText(statusOption)}
-                      </Button>
+                      </TrackedButton>
                     ))}
                   </div>
                 ))}

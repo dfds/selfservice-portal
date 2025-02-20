@@ -1,11 +1,11 @@
 import React, { useState, useContext, createRef, useEffect } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
-import { useWizard } from "react-use-wizard";
 import CreationWizard from "../../CreationWizard";
 import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";
 import { Invitations } from "./invitations";
+import { TrackedLink } from "@/components/Tracking";
 
 export default function NewCapabilityWizard({
   inProgress,
@@ -201,13 +201,14 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <a
+      <TrackedLink
+        trackName="Wiki-TaggingPolicy"
         href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
         target="_blank"
         rel="noreferrer"
       >
         <Text>See Tagging Policy</Text>
-      </a>
+      </TrackedLink>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"
@@ -247,13 +248,14 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <a
+      <TrackedLink
+        trackName="Wiki-TaggingPolicy"
         href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
         target="_blank"
         rel="noreferrer"
       >
         <Text>See Tagging Policy</Text>
-      </a>
+      </TrackedLink>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
           label="Capability Tags"

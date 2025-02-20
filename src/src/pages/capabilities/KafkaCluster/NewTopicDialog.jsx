@@ -3,7 +3,6 @@ import { Text } from "@dfds-ui/typography";
 import styles from "./Topics.module.css";
 import AppContext from "AppContext";
 import {
-  Button,
   Banner,
   BannerHeadline,
   SideSheet,
@@ -14,6 +13,7 @@ import {
   BannerParagraph,
 } from "@dfds-ui/react-components";
 import { Information } from "@dfds-ui/icons/system";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function NewTopicDialog({
   capabilityId,
@@ -307,14 +307,15 @@ export default function NewTopicDialog({
         </div>
 
         <br />
-        <Button
+        <TrackedButton
+          trackName="TopicCreate-Confirm"
           size="small"
           type="button"
           submitting={inProgress}
           onClick={handleAddClicked}
         >
           Add
-        </Button>
+        </TrackedButton>
       </SideSheetContent>
     </SideSheet>
   );

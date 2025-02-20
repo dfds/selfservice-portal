@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Text } from "@dfds-ui/typography";
-import { Button, Spinner } from "@dfds-ui/react-components";
+import { Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import { MaterialReactTable } from "material-react-table";
 import {
@@ -9,7 +9,7 @@ import {
   useCapabilitiesDeclineInvitation,
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
-import PreAppContext from "@/preAppContext";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function MyInvitations({ invitationsLink }) {
   const queryClient = useQueryClient();
@@ -64,7 +64,8 @@ export default function MyInvitations({ invitationsLink }) {
         Cell: ({ cell }) => {
           return (
             <>
-              <Button
+              <TrackedButton
+                trackName="CapabilityInvitation-Decline"
                 onClick={() => {
                   capabilitiesDeclineInvitation.mutate(
                     {
@@ -83,9 +84,10 @@ export default function MyInvitations({ invitationsLink }) {
                 variation="danger"
               >
                 Decline
-              </Button>
+              </TrackedButton>
               <span style={{ marginLeft: "10px", marginRight: "10px" }} />
-              <Button
+              <TrackedButton
+                trackName="CapabilityInvitation-Accept"
                 onClick={() => {
                   capabilitiesAcceptInvitation.mutate(
                     {
@@ -107,7 +109,7 @@ export default function MyInvitations({ invitationsLink }) {
                 variation="primary"
               >
                 Accept
-              </Button>
+              </TrackedButton>
             </>
           );
         },

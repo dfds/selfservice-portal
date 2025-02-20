@@ -11,6 +11,7 @@ import {
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import SelfAssessments from "../selfAssessment";
 import { TabbedPageSection } from "../../../components/PageSection";
+import { TrackedLink } from "@/components/Tracking";
 
 function parseConfigurationLevelInformation(configurationLevelInformation) {
   const recommendations = configurationLevelInformation.breakdown.filter(
@@ -93,13 +94,14 @@ export function CapabilityAdoptionLevel() {
             Adoption Level is an overview of the current state of the capability
             based on a continuously growing list of recommendations. For an
             in-depth description you can read our{" "}
-            <a
+            <TrackedLink
+              trackName="Wiki-CapabilityRecommendations"
               target="_blank"
               rel="noreferrer"
               href="https://wiki.dfds.cloud/en/playbooks/standards/capability_recommendations"
             >
               Guide to Capability Recommendations
-            </a>
+            </TrackedLink>
           </p>
           <div className={styles.columnWrapper}>
             <div className={styles.column}>
