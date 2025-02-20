@@ -5,7 +5,6 @@ export const TrackedButton = ({ onClick, trackName, children, ...props }) => {
   const { track } = useTracking();
 
   const handleClick = (...args) => {
-    console.log("Button Clicked");
     track("Button Click", trackName);
 
     if (typeof onClick === "function") {
@@ -30,7 +29,6 @@ export const TrackedLink = ({
   const { track } = useTracking();
 
   const handleClick = (event) => {
-    console.log("Link Clicked");
     track("Link Click", trackName);
 
     if (typeof onClick === "function") {
