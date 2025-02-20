@@ -12,6 +12,7 @@ import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
 import TrackingContext from "@/TrackingContext";
+import { useTracking } from "@/hooks/Tracking";
 import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
@@ -21,6 +22,7 @@ import SplashImage from "./splash.jpg";
 
 export default function CapabilitiesPage() {
   const { trackButtonClick } = useContext(TrackingContext);
+  const { track } = useTracking();
   const { addNewCapability, myProfile } = useContext(AppContext);
   const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
@@ -55,6 +57,7 @@ export default function CapabilitiesPage() {
   );
 
   const startAddCapabilityWizard = () => {
+    track({name: "BeginAddCapability", category: "Buttonclick"});
     trackButtonClick("BeginAddCapability");
     setShowNewCapabilityWizard(true);
   };
