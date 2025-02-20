@@ -2,7 +2,7 @@ import React from "react";
 import AppContext from "AppContext";
 import { Text } from "@dfds-ui/typography";
 import { TextBlock } from "components/Text";
-import { Button, ButtonStack, Badge } from "@dfds-ui/react-components";
+import { ButtonStack, Badge } from "@dfds-ui/react-components";
 import {
   Table,
   TableHead,
@@ -19,6 +19,7 @@ import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
 import styles from "./index.module.css";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 export default function KafkaCluster({ cluster, capabilityId }) {
   const { setShouldAutoReloadTopics } = useContext(AppContext);
@@ -175,13 +176,14 @@ export default function KafkaCluster({ cluster, capabilityId }) {
               </TableDataCell>
               <TableDataCell>
                 See{" "}
-                <a
+                <TrackedLink
+                  trackName="AccessingPlatformCredentials"
                   href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Accessing platform credentials
-                </a>
+                </TrackedLink>
               </TableDataCell>
             </TableRow>
             <TableRow>
@@ -190,13 +192,14 @@ export default function KafkaCluster({ cluster, capabilityId }) {
               </TableDataCell>
               <TableDataCell>
                 See{" "}
-                <a
+                <TrackedLink
+                  trackName="AccessingPlatformCredentials"
                   href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Accessing platform credentials
-                </a>
+                </TrackedLink>
               </TableDataCell>
             </TableRow>
             <TableRow>
@@ -255,13 +258,14 @@ export default function KafkaCluster({ cluster, capabilityId }) {
               </TableDataCell>
               <TableDataCell>
                 <TextBlock>username:password</TextBlock> (See{" "}
-                <a
+                <TrackedLink
+                  trackName="AccessingPlatformCredentials"
                   href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Accessing platform credentials
-                </a>
+                </TrackedLink>
                 )
               </TableDataCell>
             </TableRow>
@@ -281,17 +285,18 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       {hasWriteAccess && (
         <ButtonStack align="left">
-          <Button size="small" onClick={handleAddTopicToClusterClicked}>
+          <TrackedButton trackName="TopicCreate-ShowDialog" size="small" onClick={handleAddTopicToClusterClicked}>
             Add topic
-          </Button>
-          <Button
+          </TrackedButton>
+          <TrackedButton
+            trackName="Topic-HowToConnect"
             size="small"
             variation="outlined"
             submitting={isLoadingCredentials}
             onClick={handleGetCredentials}
           >
             How to connect?
-          </Button>
+          </TrackedButton>
         </ButtonStack>
       )}
 
@@ -323,13 +328,14 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
       {canRequestAccess && (
         <ButtonStack align="right">
-          <Button
+          <TrackedButton
+            trackName="KafkaCluster-RequestClusterAccess"
             size="small"
             submitting={isRequestingAccess}
             onClick={handleRequestAccess}
           >
             Request Access
-          </Button>
+          </TrackedButton>
         </ButtonStack>
       )}
     </PageSection>

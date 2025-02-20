@@ -6,7 +6,6 @@ import {
   CardContent,
   CardActions,
   CardMedia,
-  Button,
   Spinner,
 } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
@@ -17,6 +16,7 @@ import NewRepositoryDialog from "./NewRepositoryDialog";
 import SplashImage from "./repository.jpg";
 import styles from "./ecr.module.css";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 const asDate = (dateString) => {
   let millis = Date.parse(dateString);
@@ -34,7 +34,7 @@ const NoUri = () => {
   return (
     <Text>
       Error producing URI. Please refer to the{" "}
-      <a href={documentationUrl}>documentation</a>
+      <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>documentation</TrackedLink>
     </Text>
   );
 };
@@ -281,16 +281,17 @@ export default function ECRPage() {
             </p>
             <p>
               For more information on how to use the ECR repositories, please
-              refer to the <a href={documentationUrl}>documentation</a>
+              refer to the <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>documentation</TrackedLink>
             </p>
           </CardContent>
           <CardActions>
-            <Button
+            <TrackedButton
+              trackName="ShowNewRepositoryDialog"
               size="small"
               onClick={() => setShowNewRepositoryDialog(true)}
             >
               New repository
-            </Button>
+            </TrackedButton>
           </CardActions>
         </Card>
         <Repositories />

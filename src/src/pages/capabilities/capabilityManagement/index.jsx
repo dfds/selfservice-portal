@@ -5,13 +5,13 @@ import { Modal, ModalAction } from "@dfds-ui/modal";
 import {
   Card,
   CardContent,
-  Button,
   ButtonStack,
 } from "@dfds-ui/react-components";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
 import { css } from "@emotion/react";
 import AppContext from "../../../AppContext";
+import { TrackedButton } from "@/components/Tracking";
 
 function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
   const actions = (
@@ -109,12 +109,13 @@ export default function CapabilityManagement() {
                 <div style={{ paddingTop: "2rem" }}>
                   <ButtonStack align="right">
                     {
-                      <Button
+                      <TrackedButton
+                        trackName="CapabilityDelete-ShowDialog"
                         variation="danger"
                         onClick={() => setShowDeleteDialog(true)}
                       >
                         Delete Capability
-                      </Button>
+                      </TrackedButton>
                     }
                   </ButtonStack>
                 </div>

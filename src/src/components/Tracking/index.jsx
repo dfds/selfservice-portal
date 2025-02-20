@@ -1,4 +1,4 @@
-import { Button } from "@dfds-ui/react-components";
+import { Button, LinkButton } from "@dfds-ui/react-components";
 import { useTracking } from "@/hooks/Tracking";
 
 export const TrackedButton = ({ onClick, trackName, children, ...props }) => {
@@ -16,6 +16,24 @@ export const TrackedButton = ({ onClick, trackName, children, ...props }) => {
     <Button onClick={handleClick} {...props}>
       {children}
     </Button>
+  );
+};
+
+export const TrackedLinkButton = ({ onClick, trackName, children, ...props }) => {
+  const { track } = useTracking();
+
+  const handleClick = (...args) => {
+    track("Link Button Click", trackName);
+
+    if (typeof onClick === "function") {
+      onClick(...args);
+    }
+  };
+
+  return (
+    <LinkButton onClick={handleClick} {...props}>
+      {children}
+    </LinkButton>
   );
 };
 
