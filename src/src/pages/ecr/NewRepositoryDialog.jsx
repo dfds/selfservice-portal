@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, ButtonStack } from "@dfds-ui/react-components";
+import { ButtonStack } from "@dfds-ui/react-components";
 import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
 import { TextField } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function NewRepositoryDialog({ onClose }) {
   const [isCreatingNewRepository, setIsCreatingNewRepository] = useState(false);
@@ -137,17 +138,23 @@ export default function NewRepositoryDialog({ onClose }) {
           />
 
           <ButtonStack>
-            <Button
+            <TrackedButton
+              trackName="ECRRepositoryCreate-Confirm"
               size="small"
               variation="primary"
               onClick={handleAddRepositoryClicked}
               submitting={isCreatingNewRepository}
             >
               Add
-            </Button>
-            <Button size="small" variation="outlined" onClick={handleClose}>
+            </TrackedButton>
+            <TrackedButton
+              trackName="ECRRepositoryCreate-Cancel"
+              size="small"
+              variation="outlined"
+              onClick={handleClose}
+            >
               Cancel
-            </Button>
+            </TrackedButton>
           </ButtonStack>
         </SideSheetContent>
       </SideSheet>

@@ -2,6 +2,7 @@ import React from "react";
 import PageSection from "components/PageSection";
 import { Card, CardContent } from "@dfds-ui/react-components";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
+import { TrackedLink } from "@/components/Tracking";
 
 export default function Resources({ capabilityId }) {
   return (
@@ -20,13 +21,14 @@ export default function Resources({ capabilityId }) {
               take a while before your resources are ready.
               <br />
               Please refer to the{" "}
-              <a
+              <TrackedLink
+                trackName="Wiki-CloudResourcesGuide"
                 target="_blank"
                 rel="noopener noreferrer"
                 href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
               >
                 the DFDS Cloud Usage Guidelines
-              </a>{" "}
+              </TrackedLink>{" "}
               for more information about when to use which provider.
             </p>
 

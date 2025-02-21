@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@dfds-ui/react-components";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import { Modal } from "@dfds-ui/modal";
@@ -8,6 +7,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Check from "@mui/icons-material/Check";
 import Circle from "@mui/icons-material/Circle";
+import { TrackedButton } from "@/components/Tracking";
 
 export default function CreationWizard({
   isOpen,
@@ -125,7 +125,8 @@ const Footer = ({
   return (
     <div>
       {activeStep > 0 && (
-        <Button
+        <TrackedButton
+          trackName="CapabilityWizard-Back"
           className={styles.backButton}
           onClick={() => {
             steps[activeStep - 1].skipped = false;
@@ -140,10 +141,11 @@ const Footer = ({
           size="small"
         >
           Back
-        </Button>
+        </TrackedButton>
       )}
       {activeStep + 1 < stepCount && (
-        <Button
+        <TrackedButton
+          trackName="CapabilityWizard-Next"
           className={styles.nextButton}
           disabled={!canContinue}
           onClick={() => {
@@ -159,30 +161,11 @@ const Footer = ({
           size="small"
         >
           Next
-        </Button>
+        </TrackedButton>
       )}
-      {/*
-      {activeStep + 1 < stepCount && steps[activeStep].optional && (
-        <Button
-          className={styles.skipButton}
-          onClick={() => {
-            steps[activeStep].skipped = true;
-            steps[activeStep].completed = true;
-            if (activeStep + 2 === stepCount) {
-              // next step is last step; activeStep is 0-based
-              steps[activeStep + 1].completed = true;
-            }
-            nextStep();
-          }}
-          variation="outlined"
-          size="small"
-        >
-          Skip
-        </Button>
-      )}
-      */}
       {activeStep + 1 === stepCount && (
-        <Button
+        <TrackedButton
+          trackName="CapabilityWizard-Complete"
           disabled={completeInProgress}
           className={styles.nextButton}
           onClick={() => {
@@ -192,7 +175,7 @@ const Footer = ({
           size="small"
         >
           {completeName}
-        </Button>
+        </TrackedButton>
       )}
     </div>
   );

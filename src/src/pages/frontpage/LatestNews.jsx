@@ -4,6 +4,7 @@ import AppContext from "AppContext";
 import { useContext } from "react";
 import styles from "./LatestNews.module.css";
 import { intlFormatDistance } from "date-fns";
+import { TrackedLink } from "@/components/Tracking";
 
 function NewsItem({ date, title, text, link }) {
   const temp = intlFormatDistance(date, new Date());
@@ -15,14 +16,15 @@ function NewsItem({ date, title, text, link }) {
       </Text>
       <ButtonStack align="right">
         <Text styledAs="labelSmall">
-          <a
+          <TrackedLink
+            trackName={`NewsItem-${title}`}
             href={link}
             target="_blank"
             rel="noreferrer"
             className={styles.newsitemlink}
           >
             Read More
-          </a>
+          </TrackedLink>
         </Text>
       </ButtonStack>
     </div>

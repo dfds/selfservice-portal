@@ -9,7 +9,6 @@ import {
   Banner,
   BannerHeadline,
   BannerParagraph,
-  Button,
   Spinner,
   Table,
   TableBody,
@@ -29,6 +28,7 @@ import PreAppContext from "../../../preAppContext";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import styles from "./index.module.css";
 import ProfilePicture from "./ProfilePicture";
+import { TrackedButton } from "@/components/Tracking";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -179,7 +179,8 @@ export default function MembershipApplications() {
                 </TableDataCell>
                 <TableDataCell align="right">
                   {x.showApprove && (
-                    <Button
+                    <TrackedButton
+                      trackName="MembershipApplication-Approve"
                       size="small"
                       disabled={!x.canApprove}
                       submitting={x.isApproving}
@@ -191,18 +192,19 @@ export default function MembershipApplications() {
                       onClick={() => handleApproveClicked(x.id)}
                     >
                       Approve
-                    </Button>
+                    </TrackedButton>
                   )}
                 </TableDataCell>
                 {isCloudEngineer && isCloudEngineerEnabled ? (
                   <TableDataCell style={{ minWidth: "6rem" }}>
-                    <Button
+                    <TrackedButton
+                      trackName="MembershipApplication-Decline"
                       variation="danger"
                       title="Deny this application for membership"
                       onClick={() => handleDeleteClicked(x.id)}
                     >
                       Delete
-                    </Button>
+                    </TrackedButton>
                   </TableDataCell>
                 ) : (
                   <TableDataCell>&nbsp;</TableDataCell>
