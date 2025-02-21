@@ -81,7 +81,7 @@ export default function CapabilitiesPage() {
               capability. Avoid using team or project names. For more
               information{" "}
               <TrackedLink
-                trackName="CapabilityCard-Playbook"
+                trackName="Wiki-Playbooks"
                 href="https://wiki.dfds.cloud/playbooks"
               >
                 head on over to the Playbooks.
@@ -91,7 +91,7 @@ export default function CapabilitiesPage() {
               <strong>Please note:</strong> Capability security is our
               collective responsibility.{" "}
               <TrackedLink
-                trackName="CapabilityCard-SecurityDocumentation"
+                trackName="Wiki-SecurityKnowledgeBase"
                 href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents"
               >
                 Please visit our security documentation.
@@ -101,7 +101,7 @@ export default function CapabilitiesPage() {
           </CardContent>
           <CardActions>
             <TrackedButton
-              trackName="BeginAddCapabilityWizard"
+              trackName="CapabilityWizard-Begin"
               size="small"
               onClick={() => startAddCapabilityWizard()}
             >

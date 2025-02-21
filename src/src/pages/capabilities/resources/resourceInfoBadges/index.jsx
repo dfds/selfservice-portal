@@ -10,6 +10,7 @@ import styles from "./resourceInfoBadges.module.css";
 import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 function VPCInformation(id, region, cidrBlock) {
   return (
@@ -48,9 +49,12 @@ function AzureTagsWarning({ onClose, missingTags }) {
       >
         <Text>
           Your capability are missing needed tags (see:{" "}
-          <a href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy">
+          <TrackedLink
+            trackName="Wiki-TaggingPolicy"
+            href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+          >
             tagging guideline
-          </a>
+          </TrackedLink>
           ) in its metadata in order to create an Azure Resource group. Please
           add the following tags:
         </Text>
@@ -177,12 +181,13 @@ const VPCPeerings = function ({ awsAccountInformation }) {
     <div className={styles.awsaccountinformationbox}>
       <span className={styles.subheader}>Peering VPCs</span>
       &emsp;
-      <a
+      <TrackedLink
+        trackName="Wiki-VPCPeering"
         href="https://wiki.dfds.cloud/en/documentation/aws/vpc-peering#using-the-vpc-peering-connection"
         className={styles.link}
       >
         (learn more)
-      </a>
+      </TrackedLink>
       {awsAccountInformation?.vpcs &&
       awsAccountInformation?.vpcs?.length > 0 ? (
         awsAccountInformation.vpcs.map((vpc, index) => (
@@ -303,13 +308,14 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
 
           <Text>
             Please confirm that you have read and understood{" "}
-            <a
+            <TrackedLink
+              trackName="Wiki-CloudUsageGuidelines"
               target="_blank"
               rel="noopener noreferrer"
               href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
             >
               the DFDS Cloud Usage Guidelines
-            </a>
+            </TrackedLink>
             . This document outlines what usecases are permitted for Azure, for
             Vercel, and for AWS.
           </Text>
@@ -467,9 +473,12 @@ export function ResourceInfoBadges() {
             <div className={styles.items}>
               <ButtonStack align="right">
                 {canRequest && (
-                  <Button onClick={() => setShowDialog(true)}>
+                  <TrackedButton
+                    trackName="RequestAWSAccountAndK8SNamespace"
+                    onClick={() => setShowDialog(true)}
+                  >
                     Request AWS Account & Kubernetes Namespace
-                  </Button>
+                  </TrackedButton>
                 )}
               </ButtonStack>
             </div>
@@ -484,13 +493,14 @@ export function ResourceInfoBadges() {
             align="center"
             style={{ margin: "auto", marginTop: "15px", width: "400px" }}
           >
-            <Button
+            <TrackedButton
+              trackName="ApplicationLogs-ShowDialog"
               size="small"
               variation="outlined"
               onClick={handleApplicationLogShow}
             >
               How to see application logs?
-            </Button>
+            </TrackedButton>
           </ButtonStack>
         </>
       )}
@@ -519,38 +529,41 @@ export function ResourceInfoBadges() {
         <Text>
           1. Sign into the <i>dfds-logs</i> account using the{" "}
           <i>CapabilityLog</i> role at{" "}
-          <a
+          <TrackedLink
+            trackName="AWSConsole-Start"
             target="_blank"
             rel="noreferrer"
             href="https://dfds.awsapps.com/start/"
           >
             https://dfds.awsapps.com/start/
-          </a>
+          </TrackedLink>
           <br />
           2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
           <br />
           3. Navigate to the CloudWatch service either using the navigation menu
           or{" "}
-          <a
+          <TrackedLink
+            trackName="AWSConsole-CloudWatch"
             target="_blank"
             rel="noreferrer"
             href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
           >
             this link
-          </a>
+          </TrackedLink>
           <br />
           4. Once there, select "Logs" in the menu on your left, and then "Logs
           Insights"
           <br />
           5. From this view, you can query logs in Kubernetes. For example
           queries, please check our wiki article at{" "}
-          <a
+          <TrackedButton
+            trackName="AWSConsole-CloudWatchLogging"
             target="_blank"
             rel="noreferrer"
             href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
           >
             https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
-          </a>
+          </TrackedButton>
         </Text>
       </Modal>
 
@@ -574,13 +587,14 @@ export function ResourceInfoBadges() {
         <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
         <Text>
           Please refer to the{" "}
-          <a
+          <TrackedLink
+            trackName="Wiki-AzureCapabilityDeveloperGuide"
             target="_blank"
             rel="noopener noreferrer"
             href="https://wiki.dfds.cloud/en/documentation/azure/azure-capability-developer"
           >
             Azure Capability Developer Guide
-          </a>
+          </TrackedLink>
         </Text>
       </div>
 
@@ -596,7 +610,8 @@ export function ResourceInfoBadges() {
               </Text>
               {azureResourcesList.map((resource) => (
                 <div key={resource.id} className={styles.environmentlist}>
-                  <a
+                  <TrackedLink
+                    trackName={`AzureResourceGroup-${resource.environment}`}
                     className={styles.environmentlink}
                     href={generateResourceGroupLink(resource.environment)}
                     rel="noopener noreferrer"
@@ -605,7 +620,7 @@ export function ResourceInfoBadges() {
                     <div className={styles.environmentbadge}>
                       {resource.environment}
                     </div>
-                  </a>
+                  </TrackedLink>
                 </div>
               ))}
             </>
@@ -624,12 +639,13 @@ export function ResourceInfoBadges() {
         <div className={styles.items}>
           <div className={styles.envsection}>
             <ButtonStack align="right">
-              <Button
+              <TrackedButton
+                trackName="AzureResourceGroup-ShowRequestDialog"
                 style={{ marginTop: "1rem" }}
                 onClick={() => handleNewAzureResource()}
               >
                 Request New Azure Resource Group
-              </Button>
+              </TrackedButton>
             </ButtonStack>
           </div>
         </div>

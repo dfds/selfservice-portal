@@ -22,6 +22,7 @@ import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
+import { TrackedLink, TrackedLinkButton } from "@/components/Tracking";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -102,14 +103,15 @@ export default function FrontPage() {
                   some of them yourself?
                   <br />
                   <br />
-                  <LinkButton
+                  <TrackedLinkButton
+                    trackName="SlackArchive-DevPeerSupport"
                     title="Click to head on over to Slack..."
                     size="small"
                     href="slack://dfds.slack.com/archives/C9948TVRC"
                     variation="outlined"
                   >
                     #dev-peer-support
-                  </LinkButton>
+                  </TrackedLinkButton>
                 </SectionContent>
               </PageSection>
             </Column>
@@ -135,17 +137,23 @@ export default function FrontPage() {
                   <br />
                   <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance
                   and want to play with Kafka? If so, go check out{" "}
-                  <a href="https://tniconf.dfds.cloud/dafda/">
+                  <TrackedLink
+                    trackName="Dafda"
+                    href="https://tniconf.dfds.cloud/dafda/"
+                  >
                     <strong>dafda</strong>
-                  </a>{" "}
+                  </TrackedLink>{" "}
                   ...you're welcome!
                 </SectionContent>
 
                 <SectionContent title="Kubernetes">
                   If this is your first visit, please go to{" "}
-                  <a href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey">
+                  <TrackedLink
+                    trackName="Wiki-KubernetesGettingStarted"
+                    href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
+                  >
                     Kubernetes Getting Started
-                  </a>
+                  </TrackedLink>
                   , for information about what to do to get started.
                   <br />
                   <br />
@@ -190,13 +198,14 @@ export default function FrontPage() {
                   <TextBlock>KubeCtl</TextBlock> ?
                   <br />
                   <br />
-                  <LinkButton
+                  <TrackedLinkButton
+                    trackName="DownloadKubeConfig"
                     size="small"
                     href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
                     variation="outlined"
                   >
                     Download
-                  </LinkButton>
+                  </TrackedLinkButton>
                 </SectionContent>
               </PageSection>
 

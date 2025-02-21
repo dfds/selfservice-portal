@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-import {
-  Banner,
-  BannerParagraph,
-  Button,
-  TextField,
-} from "@dfds-ui/react-components";
+import { Banner, BannerParagraph, TextField } from "@dfds-ui/react-components";
 import { Modal } from "@dfds-ui/modal";
 import { StatusWarning as WarningIcon } from "@dfds-ui/icons/system";
 import styles from "./DeleteTopicDialog.module.css";
+import { TrackedLink, TrackedButton } from "@/components/Tracking";
 
 export default function DeleteTopicDialog({
   topicName,
@@ -48,9 +44,12 @@ export default function DeleteTopicDialog({
             Deleting <strong>public topics</strong> is currently only available
             for cloud engineers in the Cloud Engineering department. You need to
             request the deletion by creating a ticket via email to{" "}
-            <a href="mailto:cloud.engineering@dfds.com">
+            <TrackedLink
+              trackName="TopDeskEmail"
+              href="mailto:cloud.engineering@dfds.com"
+            >
               cloud.engineering@dfds.com
-            </a>
+            </TrackedLink>
           </p>
         </>
       ) : (
@@ -82,7 +81,8 @@ export default function DeleteTopicDialog({
           </p>
 
           <div className={styles.confirmdialogbuttonscontainer}>
-            <Button
+            <TrackedButton
+              trackName="TopicDelete-Confirm"
               className={styles.dangerbutton}
               variation="danger"
               disabled={!canDelete}
@@ -90,14 +90,15 @@ export default function DeleteTopicDialog({
               onClick={onDeleteClicked}
             >
               Delete
-            </Button>
-            <Button
+            </TrackedButton>
+            <TrackedButton
+              trackName="TopicDelete-Cancel"
               variation="outlined"
               submitting={inProgress}
               onClick={onCancelClicked}
             >
               Cancel
-            </Button>
+            </TrackedButton>
           </div>
         </>
       )}

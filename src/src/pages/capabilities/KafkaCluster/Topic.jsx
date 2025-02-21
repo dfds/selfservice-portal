@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Text } from "@dfds-ui/typography";
-import {
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-} from "@dfds-ui/react-components";
+import { Card, CardContent, IconButton } from "@dfds-ui/react-components";
 import { Accordion, Spinner } from "@dfds-ui/react-components";
 import {
   ChevronDown,
@@ -15,16 +10,12 @@ import {
   Delete as DeleteIcon,
 } from "@dfds-ui/icons/system";
 
-import Consumer from "./Consumer";
 import styles from "./Topics.module.css";
-import MessageContractDialog from "./MessageContractDialog";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
-import AppContext from "../../../AppContext";
-import { useError } from "../../../hooks/Error";
 import MessageContracts from "./MessageContracts";
 
 function TopicHeader({
