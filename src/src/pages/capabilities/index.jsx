@@ -9,8 +9,7 @@ import {
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
-import MyCapabilities from "./MyCapabilities";
-import OtherCapabilities from "./OtherCapabilities";
+import CapabilitiesList from "./Capabilities";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
@@ -112,11 +111,7 @@ export default function CapabilitiesPage() {
 
         <br />
 
-        <MyCapabilities />
-
-        <br />
-
-        <OtherCapabilities />
+        <CapabilitiesList />
       </Page>
     </>
   );
