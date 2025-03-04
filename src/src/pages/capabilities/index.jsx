@@ -10,13 +10,14 @@ import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
-import MyInvitations from "../../components/invitations/MyInvitations";
+//import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
-import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
-import { MyOutstandingMembershipApplications } from "./membershipapplications/myOutstandingApplications";
+//import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
+//import { MyOutstandingMembershipApplications } from "./membershipapplications/myOutstandingApplications";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
+import { TabbedCapabilityMembershipManagement } from "./capabilityMembershipManagement";
 
 export default function CapabilitiesPage() {
   const { addNewCapability, myProfile } = useContext(AppContext);
@@ -110,6 +111,8 @@ export default function CapabilitiesPage() {
           </CardActions>
         </Card>
 
+
+        {/*
         <MyOutstandingMembershipApplications />
         <MembershipApplicationsUserCanApprove />
 
@@ -123,6 +126,9 @@ export default function CapabilitiesPage() {
             />
           </>
         )}
+        */}
+        <TabbedCapabilityMembershipManagement />
+
         <br />
 
         <MyCapabilities />
