@@ -16,11 +16,12 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 export default function CapabilitiesList() {
   const { truncateString } = useContext(AppContext);
   const { isFetched: isMeFetched, data: meData } = useMe();
-  const { isFetched: isCapabilityFetched, data: capabilitiesData } = useCapabilities();
+  const { isFetched: isCapabilityFetched, data: capabilitiesData } =
+    useCapabilities();
 
   const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(false);
 
-  const [ isLoading, setIsLoading ] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [capabilities, setCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
@@ -108,7 +109,7 @@ export default function CapabilitiesList() {
           return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
         },
       },
-            /*
+      /*
             {
               accessorFn: (row) => row.id,
               header: "Aws Resources",
@@ -133,28 +134,28 @@ export default function CapabilitiesList() {
               },
             },
             */
-      
-            {
-              accessorFn: (row) => row.costs,
-              header: "Costs",
-              size: 150,
-              enableColumnFilterModes: false,
-              muiTableHeadCellProps: {
-                align: "center",
-              },
-              muiTableBodyCellProps: {
-                align: "right",
-              },
-              Cell: ({ cell }) => {
-                let data = cell.getValue() != null ? cell.getValue() : [];
-                return (
-                  <div className={styles.costs}>
-                    <CapabilityCostSummary data={data} />
-                  </div>
-                );
-              },
-            },
-            
+
+      {
+        accessorFn: (row) => row.costs,
+        header: "Costs",
+        size: 150,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        Cell: ({ cell }) => {
+          let data = cell.getValue() != null ? cell.getValue() : [];
+          return (
+            <div className={styles.costs}>
+              <CapabilityCostSummary data={data} />
+            </div>
+          );
+        },
+      },
+
       {
         accessorFn: (row) => row.awsAccountId,
         header: "AwsAccountId",
@@ -189,13 +190,31 @@ export default function CapabilitiesList() {
 
   const toggleShowMyCapabilities = () => {
     setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
-  }
+  };
 
   return (
     <>
       <PageSection
-        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading ? "" : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length})`}`}
-        headlineChildren={isLoading ? null : <div className={styles.myCapabilitiesToggleBox}><span className={styles.myCapabilitiesToggleTitle}>Show just mine: </span><Switch checked={showOnlyMyCapabilities} onChange={toggleShowMyCapabilities} /></div>}
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
+          isLoading
+            ? ""
+            : `(${(filteredCapabilities || []).length} / ${
+                (capabilities || []).length
+              })`
+        }`}
+        headlineChildren={
+          isLoading ? null : (
+            <div className={styles.myCapabilitiesToggleBox}>
+              <span className={styles.myCapabilitiesToggleTitle}>
+                Show just mine:{" "}
+              </span>
+              <Switch
+                checked={showOnlyMyCapabilities}
+                onChange={toggleShowMyCapabilities}
+              />
+            </div>
+          )
+        }
       >
         {isLoading && <Spinner />}
 
