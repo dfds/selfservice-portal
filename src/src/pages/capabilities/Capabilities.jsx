@@ -19,7 +19,7 @@ export default function CapabilitiesList() {
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
 
-  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(false);
+  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
 
   const [isLoading, setIsLoading] = useState(true);
 
