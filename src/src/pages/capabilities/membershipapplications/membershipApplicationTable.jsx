@@ -8,7 +8,10 @@
 
   export function MembershipApplicationTable({
     tableData,
-    handleDeleteClicked,
+    handleApproveClicked,
+    approveButtonLabel,
+    handleRejectClicked,
+    rejectButtonLabel
   }) {
     const { truncateString } = useContext(AppContext);
   
@@ -98,27 +101,36 @@
             align: "right",
           },
           Cell: ({ cell }) => {
-            return (
-              <div>
-                {cell.getValue().data.activeCrudOperation ? (
-                  <div className={styles.buttons}>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <div className={styles.buttons}>
-                    <div
-                      className={`${styles.button} ${styles.reject}`}
-                      onClick={() => {
-                        handleDeleteClicked(cell.getValue().data);
-                      }}
-                    >
-                      Delete
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          },
+                    return (
+                      <div>
+                        {cell.getValue().data.activeCrudOperation ? (
+                          <div className={styles.buttons}>
+                            <Spinner />
+                          </div>
+                        ) : (
+                          <div className={styles.buttons}>
+                            {handleApproveClicked != null && <div
+                                className={styles.button}
+                                onClick={() => {
+                                  handleApproveClicked(cell.getValue().data);
+                                }}
+                              >
+                                {approveButtonLabel != null ? approveButtonLabel : "Approve"}
+                              </div>
+                            }
+                            <div
+                              className={`${styles.button} ${styles.reject}`}
+                              onClick={() => {
+                                handleRejectClicked(cell.getValue().data);
+                              }}
+                            >
+                              {rejectButtonLabel != null ? rejectButtonLabel : "Reject"}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  },
           Header: <div></div>,
         },
       ],

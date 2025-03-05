@@ -1,17 +1,11 @@
 import {
   useDeleteMembershipApplicationApproval,
   useMyOutstandingMembershipApplications,
-  useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
-import { Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
 import { useQueryClient } from "@tanstack/react-query";
-import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { MaterialReactTable } from "material-react-table";
-import { useContext, useEffect, useMemo, useState } from "react";
+import {  useEffect, useState } from "react";
 import { format } from "date-fns";
-import styles from "./index.module.css";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 
 function sleep(duration) {
@@ -116,9 +110,9 @@ export function MyOutstandingMembershipApplications() {
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-        <MembershipApplicationTable tableData={tableData} handleDeleteClicked={handleDeleteClicked} />
+        <MembershipApplicationTable tableData={tableData} handleDeleteClicked={handleDeleteClicked} rejectButtonLabel={"Cancel"}/>
       ) : (
-        <>No memberships</>
+        <>No membership applications</>
       )}
     </>
   );

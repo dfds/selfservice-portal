@@ -9,34 +9,14 @@ import {
   Banner,
   BannerHeadline,
   BannerParagraph,
-  Spinner,
-  Table,
-  TableBody,
-  TableDataCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
 } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
 import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
-import { MaterialReactTable } from "material-react-table";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import PreAppContext from "../../../preAppContext";
+import {  useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import styles from "./index.module.css";
-import ProfilePicture from "./ProfilePicture";
-import { TrackedButton } from "@/components/Tracking";
-
-export function MyMembershipApplicationPageSection() {
-  return (
-    <PageSection headline="My Membership Application">
-      <MyMembershipApplication />
-    </PageSection>
-  );
-}
+import { MembershipApplicationTable } from "./membershipApplicationTable";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -74,153 +54,6 @@ function ExpirationDate({ date }) {
     <Badge intent="critical">{label}</Badge>
   ) : (
     <span>{label}</span>
-  );
-}
-
-export default function MembershipApplications() {
-  const {
-    membershipApplications,
-    approveMembershipApplication,
-    deleteMembershipApplication,
-  } = useContext(SelectedCapabilityContext);
-  const { myProfile, checkIfCloudEngineer, user } = useContext(AppContext);
-  const [applications, setApplications] = useState([]);
-  const [isCloudEngineer, setIsCloudEngineer] = useState(false);
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-
-  useEffect(() => {
-    if (user && user.isAuthenticated) {
-      setIsCloudEngineer(checkIfCloudEngineer(user.roles));
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const list = (membershipApplications || [])
-      .filter((x) => x.applicant !== myProfile?.id)
-      .map((x) => {
-        const copy = { ...x };
-
-        copy.canApprove = false;
-        copy.showApprove = true;
-        copy.isApproving = false;
-
-        const approvalLink = copy?.approvals?._links?.self;
-        if (approvalLink) {
-          copy.canApprove = (approvalLink.allow || []).includes("POST");
-          copy.showApprove = (approvalLink.allow || []).includes("GET");
-        }
-
-        return copy;
-      });
-
-    setApplications(list);
-  }, [membershipApplications, myProfile]);
-
-  const handleApproveClicked = useCallback(
-    (membershipApplicationId) => {
-      setApplications((prev) => {
-        const copy = [...prev];
-        const found = copy.find((x) => x.id === membershipApplicationId);
-
-        if (found) {
-          found.isApproving = true;
-        }
-
-        return copy;
-      });
-      approveMembershipApplication(membershipApplicationId);
-    },
-    [membershipApplications],
-  );
-
-  const handleDeleteClicked = useCallback(
-    (membershipApplicationId) => {
-      setApplications((prev) => {
-        const copy = [...prev];
-        const found = copy.find((x) => x.id === membershipApplicationId);
-
-        if (found) {
-          found.isApproving = true;
-        }
-
-        return copy;
-      });
-      deleteMembershipApplication(membershipApplicationId);
-    },
-    [membershipApplications],
-  );
-
-  const hasPendingApplications = applications.length > 0;
-  if (!hasPendingApplications) {
-    return null;
-  }
-
-  return (
-    <>
-        <Table isInteractive width={"100%"}>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-              <TableHeaderCell>Applicant</TableHeaderCell>
-              <TableHeaderCell>Application date</TableHeaderCell>
-              <TableHeaderCell>Expires</TableHeaderCell>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-              <TableHeaderCell>&nbsp;</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {applications.map((x) => (
-              <TableRow key={x.applicant}>
-                <TableDataCell>
-                  <ProfilePicture
-                    name={x.applicant}
-                    pictureUrl={x.applicantProfilePictureUrl}
-                  />
-                </TableDataCell>
-                <TableDataCell>{x.applicant}</TableDataCell>
-                <TableDataCell>
-                  {format(new Date(x.submittedAt), "MMMM do yyyy")}
-                </TableDataCell>
-                <TableDataCell>
-                  <ExpirationDate date={x.expiresOn} />
-                </TableDataCell>
-                <TableDataCell align="right">
-                  {x.showApprove && (
-                    <TrackedButton
-                      trackName="MembershipApplication-Approve"
-                      size="small"
-                      disabled={!x.canApprove}
-                      submitting={x.isApproving}
-                      title={
-                        x.canApprove
-                          ? "Submit your approval of this membership"
-                          : "You have already submitted your approval for this membership. Waiting for other members to approve."
-                      }
-                      onClick={() => handleApproveClicked(x.id)}
-                    >
-                      Approve
-                    </TrackedButton>
-                  )}
-                </TableDataCell>
-                {isCloudEngineer && isCloudEngineerEnabled ? (
-                  <TableDataCell style={{ minWidth: "6rem" }}>
-                    <TrackedButton
-                      trackName="MembershipApplication-Decline"
-                      variation="danger"
-                      title="Deny this application for membership"
-                      onClick={() => handleDeleteClicked(x.id)}
-                    >
-                      Delete
-                    </TrackedButton>
-                  </TableDataCell>
-                ) : (
-                  <TableDataCell>&nbsp;</TableDataCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-    </>
   );
 }
 
@@ -322,8 +155,6 @@ export function MembershipApplicationsUserCanApprove() {
         },
       },
     );
-    // await selfServiceApiClient.submitMembershipApplicationApproval(def);
-    // addApplicationToRemovalTracker(def.id);
   };
 
   const handleRejectClicked = async (def) => {
@@ -338,224 +169,18 @@ export function MembershipApplicationsUserCanApprove() {
         },
       },
     );
-    // await selfServiceApiClient.deleteMembershipApplicationApproval(def);
-    // addApplicationToRemovalTracker(def.id);
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorFn: (row) => row.capabilityId,
-        header: "Capability",
-        size: 30,
-        enableColumnFilterModes: false,
-        enableClickToCopy: true,
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              <Text styledAs="action" style={{ marginLeft: "0px" }} as={"div"}>
-                {truncateString(cell.getValue(), 70)}
-              </Text>
-              {/* <div style={{marginTop: "20px"}}></div> */}
-            </div>
-          );
-        },
-      },
-      {
-        accessorFn: (row) => {
-          return {
-            applicant: row.applicant,
-          };
-        },
-        header: "Applicant",
-        size: 50,
-        enableColumnFilterModes: false,
-        enableClickToCopy: true,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue().applicant}</div>;
-        },
-      },
-      {
-        accessorFn: (row) => row.submittedAt,
-        header: "Submitted",
-        size: 50,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue()}</div>;
-        },
-      },
-      {
-        accessorFn: (row) => row.expiresOn,
-        header: "Expires",
-        size: 50,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue()}</div>;
-        },
-      },
-      {
-        accessorFn: (row) => {
-          return {
-            data: row,
-          };
-        },
-        header: "op",
-        size: 50,
-        enableColumnFilterModes: false,
-        enableSorting: false,
-        muiTableHeadCellProps: {
-          align: "right",
-        },
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              {cell.getValue().data.activeCrudOperation ? (
-                <div className={styles.buttons}>
-                  <Spinner />
-                </div>
-              ) : (
-                <div className={styles.buttons}>
-                  <div
-                    className={styles.button}
-                    onClick={() => {
-                      handleApproveClicked(cell.getValue().data);
-                    }}
-                  >
-                    Approve
-                  </div>
-
-                  <div
-                    className={`${styles.button} ${styles.reject}`}
-                    onClick={() => {
-                      handleRejectClicked(cell.getValue().data);
-                    }}
-                  >
-                    Reject
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        },
-        Header: <div></div>,
-      },
-    ],
-    [],
-  );
 
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-          <div className={styles.membershipApplicationsContainer}>
-            <MaterialReactTable
-              columns={columns}
-              data={tableData}
-              initialState={{
-                pagination: { pageSize: 5 },
-                showGlobalFilter: false,
-                initialState: { density: "compact" },
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  fontWeight: "700",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#002b45",
-                  padding: "0px 0px 0px 0px",
-                },
-              }}
-              muiTableBodyCellProps={{
-                sx: {
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#4d4e4c",
-                  padding: "15px 0px 15px 0px",
-                },
-              }}
-              muiTablePaperProps={{
-                elevation: 0,
-                sx: {
-                  borderRadius: "0",
-                },
-              }}
-              muiTopToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
-              enableGlobalFilterModes={true}
-              positionGlobalFilter="left"
-              muiSearchTextFieldProps={{
-                placeholder: `Find a capability...`,
-                sx: {
-                  minWidth: "1120px",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  padding: "5px",
-                },
-                size: "small",
-                variant: "outlined",
-              }}
-              enablePagination={true}
-              globalFilterFn="contains"
-              enableFilterMatchHighlighting={true}
-              enableDensityToggle={true}
-              enableHiding={false}
-              enableFilters={false}
-              enableGlobalFilter={false}
-              enableFullScreenToggle={false}
-              enableTopToolbar={false}
-              enableBottomToolbar={true}
-              enableColumnActions={false}
-              muiBottomToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => {
-                return {
-                  onClick: () => {},
-                  sx: {
-                    cursor: "pointer",
-                    background: "",
-                    padding: "0",
-                    margin: "0",
-                    minHeight: 0,
-                    "&:hover td": {
-                      backgroundColor:
-                        row.original.status === "Deleted"
-                          ? "rgba(187, 221, 243, 0.1)"
-                          : "rgba(187, 221, 243, 0.4)",
-                    },
-                  },
-                };
-              }}
-            />
-          </div>
+        <MembershipApplicationTable
+          tableData={tableData}
+          handleApproveClicked={handleApproveClicked}
+          handleRejectClicked={handleRejectClicked} />
       ) : (
-        <></>
+        <>No Membership applications</>
       )}
     </>
   );
