@@ -9,9 +9,8 @@ import {
 import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
-import MyCapabilities from "./MyCapabilities";
 import MyInvitations from "../../components/invitations/MyInvitations";
-import OtherCapabilities from "./OtherCapabilities";
+import CapabilitiesList from "./Capabilities";
 import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
 import { MyOutstandingMembershipApplications } from "./membershipapplications/myOutstandingApplications";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
@@ -125,11 +124,7 @@ export default function CapabilitiesPage() {
         )}
         <br />
 
-        <MyCapabilities />
-
-        <br />
-
-        <OtherCapabilities />
+        <CapabilitiesList />
       </Page>
     </>
   );

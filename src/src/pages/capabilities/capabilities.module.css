@@ -118,3 +118,16 @@
   color: #153b53;
   size: 0.5em;
 }
+
+.myCapabilitiesToggleBox {
+  display: inline-block;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 0 20px;
+  font-size: small;
+}
+
+.myCapabilitiesToggleTitle {
+  vertical-align: super;
+  margin: 0 5px 0 0;
+}
