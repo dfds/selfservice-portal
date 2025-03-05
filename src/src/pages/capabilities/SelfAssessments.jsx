@@ -20,6 +20,7 @@ import {
 import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
+import { TrackedButton } from "@/components/Tracking";
 
 function sleep(duration) {
   return new Promise((resolve) => {
