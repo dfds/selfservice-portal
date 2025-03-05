@@ -10,11 +10,21 @@ import {
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { TrackedButton } from "@/components/Tracking";
+import AppContext from "@/AppContext";
 
-export default function MyInvitations({ invitationsLink }) {
+export function MyInvitationsPageSection() {
+  return (
+    <PageSection headline="My Invitations">
+      <MyInvitations />
+    </PageSection>
+  );
+}
+
+export function MyInvitations() {
+  const { myProfile } = useContext(AppContext);
   const queryClient = useQueryClient();
   const { isFetched, data: responseData } =
-    useCapabilitiesMyInvitations(invitationsLink);
+    useCapabilitiesMyInvitations(myProfile?._links?.invitationsLinks?.capabilityInvitations?.href);
   const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
   const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
   const [invitations, setInvitations] = useState([]);
@@ -123,11 +133,6 @@ export default function MyInvitations({ invitationsLink }) {
       {isLoading && <Spinner />}
 
       {!isLoading && invitations.length > 0 && (
-        <PageSection
-          headline={`My Invitations ${
-            isLoading ? "" : `(${invitations.length})`
-          }`}
-        >
           <MaterialReactTable
             columns={columns}
             data={invitations}
@@ -176,7 +181,6 @@ export default function MyInvitations({ invitationsLink }) {
               },
             }}
           />
-        </PageSection>
       )}
     </>
   );

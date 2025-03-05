@@ -1,22 +1,22 @@
 import { TabbedPageSection } from "@/components/PageSection";
 import { MyOutstandingMembershipApplications } from "../membershipapplications/myOutstandingApplications";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
-//import { MyInvitations } from "@/components/invitations/MyInvitations";
+import { MyInvitations }  from "@/components/invitations/MyInvitations";
 
 export function TabbedCapabilityMembershipManagement() {
   const header = <></>;
   const footer = <></>;
 
   const tabs = {
-    adoption: "My outstanding applications",
-    assessments: "For approval",
-    //invitations: "Invitations",
+    forApproval: "For approval",
+    invitations: "Invitations",
+    myApplications: "My outstanding applications",
   };
 
   const tabsContent = {
-    myApplications: <MyOutstandingMembershipApplications />,
     forApproval: <MembershipApplicationsUserCanApprove />,
-    //invitations: <MyInvitations />,
+    invitations: <MyInvitations />,
+    myApplications: <MyOutstandingMembershipApplications/>,
   };
 
   return (

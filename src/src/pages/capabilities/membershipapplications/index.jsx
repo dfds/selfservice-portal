@@ -30,6 +30,14 @@ import styles from "./index.module.css";
 import ProfilePicture from "./ProfilePicture";
 import { TrackedButton } from "@/components/Tracking";
 
+export function MyMembershipApplicationPageSection() {
+  return (
+    <PageSection headline="My Membership Application">
+      <MyMembershipApplication />
+    </PageSection>
+  );
+}
+
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
   const { myProfile } = useContext(AppContext);
@@ -149,7 +157,6 @@ export default function MembershipApplications() {
 
   return (
     <>
-      <PageSection headline="Membership Applications">
         <Table isInteractive width={"100%"}>
           <TableHead>
             <TableRow>
@@ -213,7 +220,6 @@ export default function MembershipApplications() {
             ))}
           </TableBody>
         </Table>
-      </PageSection>
     </>
   );
 }
@@ -223,6 +229,14 @@ function sleep(duration) {
     setTimeout(() => resolve(), duration);
   });
 }
+
+export function MembershipApplicationsUserCanApprovePageSection() {
+  return (
+    <PageSection headline="Pending approval">
+      <MembershipApplicationsUserCanApprove />
+    </PageSection>
+  );
+} 
 
 export function MembershipApplicationsUserCanApprove() {
   const queryClient = useQueryClient();
@@ -453,7 +467,6 @@ export function MembershipApplicationsUserCanApprove() {
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-        <PageSection headline="Pending approval">
           <div className={styles.membershipApplicationsContainer}>
             <MaterialReactTable
               columns={columns}
@@ -541,7 +554,6 @@ export function MembershipApplicationsUserCanApprove() {
               }}
             />
           </div>
-        </PageSection>
       ) : (
         <></>
       )}

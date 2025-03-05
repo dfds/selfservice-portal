@@ -10,17 +10,14 @@ import styles from "./capabilities.module.css";
 import AppContext from "AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import MyCapabilities from "./MyCapabilities";
-//import MyInvitations from "../../components/invitations/MyInvitations";
 import OtherCapabilities from "./OtherCapabilities";
-//import { MembershipApplicationsUserCanApprove } from "./membershipapplications/index";
-//import { MyOutstandingMembershipApplications } from "./membershipapplications/myOutstandingApplications";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Page from "components/Page";
 import SplashImage from "./splash.jpg";
 import { TabbedCapabilityMembershipManagement } from "./capabilityMembershipManagement";
 
 export default function CapabilitiesPage() {
-  const { addNewCapability, myProfile } = useContext(AppContext);
+  const { addNewCapability } = useContext(AppContext);
   const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
   const { reloadUser } = useContext(AppContext);
@@ -111,22 +108,6 @@ export default function CapabilitiesPage() {
           </CardActions>
         </Card>
 
-
-        {/*
-        <MyOutstandingMembershipApplications />
-        <MembershipApplicationsUserCanApprove />
-
-        {myProfile?._links?.invitationsLinks?.capabilityInvitations?.href && (
-          <>
-            <br />
-            <MyInvitations
-              invitationsLink={
-                myProfile?._links?.invitationsLinks?.capabilityInvitations?.href
-              }
-            />
-          </>
-        )}
-        */}
         <TabbedCapabilityMembershipManagement />
 
         <br />
