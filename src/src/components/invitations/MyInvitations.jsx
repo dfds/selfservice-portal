@@ -132,7 +132,7 @@ export function MyInvitations() {
     <>
       {isLoading && <Spinner />}
 
-      {!isLoading && invitations.length > 0 && (
+      {!isLoading && invitations.length > 0 ? (
           <MaterialReactTable
             columns={columns}
             data={invitations}
@@ -181,6 +181,8 @@ export function MyInvitations() {
               },
             }}
           />
+      ):(
+        <>You have no outstanding invitations</>
       )}
     </>
   );

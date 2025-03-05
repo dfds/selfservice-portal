@@ -180,7 +180,7 @@ export function MembershipApplicationsUserCanApprove() {
           handleApproveClicked={handleApproveClicked}
           handleRejectClicked={handleRejectClicked} />
       ) : (
-        <>No Membership applications</>
+        <>You have no membership applications to consider</>
       )}
     </>
   );

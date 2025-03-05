@@ -110,9 +110,9 @@ export function MyOutstandingMembershipApplications() {
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-        <MembershipApplicationTable tableData={tableData} handleDeleteClicked={handleDeleteClicked} rejectButtonLabel={"Cancel"}/>
+        <MembershipApplicationTable tableData={tableData} handleRejectClicked={handleDeleteClicked} rejectButtonLabel={"Cancel"}/>
       ) : (
-        <>No membership applications</>
+        <>You have no outstanding membership applications</>
       )}
     </>
   );
