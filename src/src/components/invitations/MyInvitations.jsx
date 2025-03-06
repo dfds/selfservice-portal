@@ -18,9 +18,7 @@ export function MyInvitationsPageSection() {
   );
 }
 
-export function MyInvitations({
-  items, isFetched
-}) {
+export function MyInvitations({ items, isFetched }) {
   const queryClient = useQueryClient();
   const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
   const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
@@ -129,55 +127,55 @@ export function MyInvitations({
       {isLoading && <Spinner />}
 
       {!isLoading && invitations.length > 0 ? (
-          <MaterialReactTable
-            columns={columns}
-            data={invitations}
-            initialState={{
-              pagination: { pageSize: 5 },
-              showGlobalFilter: true,
-            }}
-            muiTableHeadCellProps={{
-              sx: {
-                fontWeight: "700",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#002b45",
-              },
-            }}
-            muiTableBodyCellProps={{
-              sx: {
-                fontWeight: "400",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#4d4e4c",
-                padding: "5px",
-              },
-            }}
-            muiTablePaperProps={{
-              elevation: 0, //change the mui box shadow
-              //customize paper styles
-              sx: {
-                borderRadius: "0",
-              },
-            }}
-            muiTopToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-            enableGlobalFilterModes={false}
-            enablePagination={true}
-            globalFilterFn="contains"
-            enableTopToolbar={false}
-            enableBottomToolbar={true}
-            enableColumnActions={false}
-            muiBottomToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-          />
-      ):(
+        <MaterialReactTable
+          columns={columns}
+          data={invitations}
+          initialState={{
+            pagination: { pageSize: 5 },
+            showGlobalFilter: true,
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              fontWeight: "700",
+              fontSize: "16px",
+              fontFamily: "DFDS",
+              color: "#002b45",
+            },
+          }}
+          muiTableBodyCellProps={{
+            sx: {
+              fontWeight: "400",
+              fontSize: "16px",
+              fontFamily: "DFDS",
+              color: "#4d4e4c",
+              padding: "5px",
+            },
+          }}
+          muiTablePaperProps={{
+            elevation: 0, //change the mui box shadow
+            //customize paper styles
+            sx: {
+              borderRadius: "0",
+            },
+          }}
+          muiTopToolbarProps={{
+            sx: {
+              background: "none",
+            },
+          }}
+          enableGlobalFilterModes={false}
+          enablePagination={true}
+          globalFilterFn="contains"
+          enableTopToolbar={false}
+          enableBottomToolbar={true}
+          enableColumnActions={false}
+          muiBottomToolbarProps={{
+            sx: {
+              background: "none",
+            },
+          }}
+        />
+      ) : (
         <>You have no outstanding invitations</>
       )}
     </>

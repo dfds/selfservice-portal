@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
 import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
-import {  useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 
@@ -69,7 +69,7 @@ export function MembershipApplicationsUserCanApprovePageSection() {
       <MembershipApplicationsUserCanApprove />
     </PageSection>
   );
-} 
+}
 
 export function MembershipApplicationsUserCanApprove({
   data,
@@ -174,14 +174,14 @@ export function MembershipApplicationsUserCanApprove({
     );
   };
 
-
   return (
     <>
       {isFetched && tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
           handleApproveClicked={handleApproveClicked}
-          handleRejectClicked={handleRejectClicked} />
+          handleRejectClicked={handleRejectClicked}
+        />
       ) : (
         <>You have no membership applications to consider</>
       )}

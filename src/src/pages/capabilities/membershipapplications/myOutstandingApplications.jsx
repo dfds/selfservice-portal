@@ -1,9 +1,7 @@
-import {
-  useDeleteMembershipApplicationApproval,
-} from "@/state/remote/queries/membershipApplications";
+import { useDeleteMembershipApplicationApproval } from "@/state/remote/queries/membershipApplications";
 import { useQueryClient } from "@tanstack/react-query";
 import PageSection from "components/PageSection";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 
@@ -18,10 +16,14 @@ export function MyOutstandingMembershipApplicationsPageSection() {
     <PageSection headline="My Outstanding Membership Applications">
       <MyOutstandingMembershipApplications />
     </PageSection>
-  )
+  );
 }
 
-export function MyOutstandingMembershipApplications({isFetched, isRefetching, data}) {
+export function MyOutstandingMembershipApplications({
+  isFetched,
+  isRefetching,
+  data,
+}) {
   const queryClient = useQueryClient();
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
@@ -103,15 +105,17 @@ export function MyOutstandingMembershipApplications({isFetched, isRefetching, da
     );
   };
 
-  
   return (
     <>
       {isFetched && tableData.length > 0 ? (
-        <MembershipApplicationTable tableData={tableData} handleRejectClicked={handleDeleteClicked} rejectButtonLabel={"Cancel"}/>
+        <MembershipApplicationTable
+          tableData={tableData}
+          handleRejectClicked={handleDeleteClicked}
+          rejectButtonLabel={"Cancel"}
+        />
       ) : (
         <>You have no outstanding membership applications</>
       )}
     </>
   );
 }
-
