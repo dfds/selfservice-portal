@@ -13,6 +13,19 @@ import { StatusAlert } from "@dfds-ui/icons/system";
 import styles from "./capabilityMembershipManagement.module.css";
 import AppContext from "@/AppContext";
 
+const HeaderWithWarning = ({ text, data }) => {
+  return (
+    <>
+      <Text styledAs="action" as={"div"}>
+        {(data || []).length > 0 && (
+          <StatusAlert className={styles.attentionIcon} />
+        )}
+        {text} {(data || []).length > 0 && `(${(data || []).length})`}
+      </Text>
+    </>
+  );
+};
+
 export function TabbedCapabilityMembershipManagement() {
   const { myProfile } = useContext(AppContext);
   const { isFetched: fetchedMyInvitations, data: myInvitationsData } =
@@ -35,38 +48,16 @@ export function TabbedCapabilityMembershipManagement() {
 
   const tabs = {
     forApproval: (
-      <>
-        <Text styledAs="action" as={"div"}>
-          {(otherApplicationsData || []).length > 0 && (
-            <StatusAlert className={styles.attentionIcon} />
-          )}
-          For approval{" "}
-          {(otherApplicationsData || []).length > 0 &&
-            `(${(otherApplicationsData || []).length})`}
-        </Text>
-      </>
+      <HeaderWithWarning text="For Approval" data={otherApplicationsData} />
     ),
     invitations: (
-      <>
-        <Text styledAs="action" as={"div"}>
-          {(myInvitationsData?.items || []).length > 0 && (
-            <StatusAlert className={styles.attentionIcon} />
-          )}
-          My invitations{" "}
-          {(myInvitationsData?.items || []).length > 0 &&
-            `(${(myInvitationsData?.items || []).length})`}
-        </Text>
-      </>
+      <HeaderWithWarning
+        text="My Invitations"
+        data={myInvitationsData?.items}
+      />
     ),
     myApplications: (
-      <>
-        <Text styledAs="action" as={"div"}>
-          {(myApplicationsData || []).length > 0 && (
-            <StatusAlert className={styles.attentionIcon} />
-          )}
-          My outstanding applications ({(myApplicationsData || []).length})
-        </Text>
-      </>
+      <HeaderWithWarning text="My Own Applications" data={myApplicationsData} />
     ),
   };
 
