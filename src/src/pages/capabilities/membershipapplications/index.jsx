@@ -71,9 +71,12 @@ export function MembershipApplicationsUserCanApprovePageSection() {
   );
 } 
 
-export function MembershipApplicationsUserCanApprove() {
+export function MembershipApplicationsUserCanApprove({
+  data,
+  isFetched,
+  isRefetching,
+}) {
   const queryClient = useQueryClient();
-  const { isFetched, isRefetching, data } = useMembershipApplications();
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());

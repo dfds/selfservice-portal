@@ -1,6 +1,5 @@
 import {
   useDeleteMembershipApplicationApproval,
-  useMyOutstandingMembershipApplications,
 } from "@/state/remote/queries/membershipApplications";
 import { useQueryClient } from "@tanstack/react-query";
 import PageSection from "components/PageSection";
@@ -22,10 +21,8 @@ export function MyOutstandingMembershipApplicationsPageSection() {
   )
 }
 
-export function MyOutstandingMembershipApplications() {
+export function MyOutstandingMembershipApplications({isFetched, isRefetching, data}) {
   const queryClient = useQueryClient();
-  const { isFetched, isRefetching, data } =
-    useMyOutstandingMembershipApplications();
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
   const deleteMembershipApplicationApproval =
