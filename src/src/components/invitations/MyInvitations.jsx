@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import { MaterialReactTable } from "material-react-table";
 import {
   useCapabilitiesAcceptInvitation,
-  useCapabilitiesMyInvitations,
   useCapabilitiesDeclineInvitation,
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { TrackedButton } from "@/components/Tracking";
-import AppContext from "@/AppContext";
 
 export function MyInvitationsPageSection() {
   return (
@@ -20,21 +18,19 @@ export function MyInvitationsPageSection() {
   );
 }
 
-export function MyInvitations() {
-  const { myProfile } = useContext(AppContext);
+export function MyInvitations({
+  items, isFetched
+}) {
   const queryClient = useQueryClient();
-  const { isFetched, data: responseData } =
-    useCapabilitiesMyInvitations(myProfile?._links?.invitationsLinks?.capabilityInvitations?.href);
   const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
   const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const invitations = responseData?.items || [];
-    setInvitations(invitations);
+    setInvitations(items);
     setIsLoading(false);
-  }, [isFetched, responseData]);
+  }, [isFetched, items]);
 
   const columns = useMemo(
     () => [

@@ -1,4 +1,5 @@
 import { TabbedPageSection } from "@/components/PageSection";
+import { useContext } from "react";
 import { MyOutstandingMembershipApplications } from "../membershipapplications/myOutstandingApplications";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
 import { MyInvitations }  from "@/components/invitations/MyInvitations";
@@ -7,10 +8,15 @@ import {
   useMyOutstandingMembershipApplications,
   useMembershipApplications,
 } from "@/state/remote/queries/membershipApplications";
+import { useCapabilitiesMyInvitations } from "@/state/remote/queries/capabilities";
 import { StatusAlert } from "@dfds-ui/icons/system";
 import styles from "./capabilityMembershipManagement.module.css";
+import AppContext from "@/AppContext";
 
 export function TabbedCapabilityMembershipManagement() {
+  const { myProfile } = useContext(AppContext);
+  const { isFetched: fetchedMyInvitations, data: myInvitationsData } =
+    useCapabilitiesMyInvitations(myProfile?._links?.invitationsLinks?.capabilityInvitations?.href);
   const { isFetched: fetchedMyApplications, isRefetching: refetchingMyApplications, data: myApplicationsData } = useMyOutstandingMembershipApplications();
   const { isFetched: fetchedOtherApplications, isRefetchting: refetchingOtherApplications, data: otherApplicationsData } = useMembershipApplications();
 
@@ -28,8 +34,8 @@ export function TabbedCapabilityMembershipManagement() {
     invitations:
       <>
         <Text styledAs="action" as={"div"}>
-          <StatusAlert className={styles.attentionIcon} />
-          My invitations
+          {(myInvitationsData?.items || []).length > 0 && <StatusAlert className={styles.attentionIcon} />}
+          My invitations {(myInvitationsData?.items || []).length > 0 && `(${(myInvitationsData?.items || []).length})`}
         </Text>
       </>,
     myApplications:
@@ -43,7 +49,7 @@ export function TabbedCapabilityMembershipManagement() {
 
   const tabsContent = {
     forApproval: <MembershipApplicationsUserCanApprove data={otherApplicationsData} isFetched={fetchedOtherApplications} isRefetching={refetchingOtherApplications} />,
-    invitations: <MyInvitations />,
+    invitations: <MyInvitations items={myInvitationsData?.items || []} isFetched={fetchedMyInvitations} />,
     myApplications: <MyOutstandingMembershipApplications data={myApplicationsData} isFetched={fetchedMyApplications} isRefetching={refetchingMyApplications} />,
   };
 
