@@ -16,7 +16,6 @@ import styles from "./GlobalMenu.module.css";
 import { Switch } from "@dfds-ui/forms";
 import PreAppContext from "../../preAppContext";
 import { useQueryClient } from "@tanstack/react-query";
-import SelectedCapabilityContext from "@/pages/capabilities/SelectedCapabilityContext";
 
 function checkIfCloudEngineer(roles) {
   const regex = /^\s*cloud\.engineer\s*$/i;
