@@ -13,95 +13,95 @@ import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
-function CapabilitiesTable({columns, filteredCapabilities, clickHandler}) {
+function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
   return (
     <MaterialReactTable
-              columns={columns}
-              data={filteredCapabilities}
-              initialState={{
-                pagination: { pageSize: 50 },
-                showGlobalFilter: true,
-                columnVisibility: { AwsAccountId: false },
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  fontWeight: "700",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#002b45",
-                },
-              }}
-              muiTableBodyCellProps={{
-                sx: {
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#4d4e4c",
-                  padding: "5px",
-                },
-              }}
-              muiTablePaperProps={{
-                elevation: 0, //change the mui box shadow
-                //customize paper styles
-                sx: {
-                  borderRadius: "0",
-                },
-              }}
-              enableGlobalFilterModes={true}
-              positionGlobalFilter="left"
-              muiSearchTextFieldProps={{
-                placeholder: `Find a capability...`,
-                sx: {
-                  minWidth: "1120px",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  padding: "5px",
-                },
-                size: "small",
-                variant: "outlined",
-              }}
-              enablePagination={true}
-              globalFilterFn="contains"
-              enableFilterMatchHighlighting={true}
-              enableDensityToggle={false}
-              enableHiding={false}
-              enableFilters={true}
-              enableGlobalFilter={true}
-              enableTopToolbar={true}
-              enableBottomToolbar={true}
-              enableColumnActions={false}
-              muiTopToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
-              muiBottomToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => {
-                return {
-                  onClick: () => {
-                    clickHandler(row.original.id);
-                  },
-                  sx: {
-                    cursor: "pointer",
-                    background: row.original.status === "Deleted" ? "#d88" : "",
-                    padding: 0,
-                    margin: 0,
-                    minHeight: 0,
-                    "&:hover td": {
-                      backgroundColor:
-                        row.original.status === "Deleted"
-                          ? "rgba(187, 221, 243, 0.1)"
-                          : "rgba(187, 221, 243, 0.4)",
-                    },
-                  },
-                };
-              }}
-            />
-  )
+      columns={columns}
+      data={filteredCapabilities}
+      initialState={{
+        pagination: { pageSize: 50 },
+        showGlobalFilter: true,
+        columnVisibility: { AwsAccountId: false },
+      }}
+      muiTableHeadCellProps={{
+        sx: {
+          fontWeight: "700",
+          fontSize: "16px",
+          fontFamily: "DFDS",
+          color: "#002b45",
+        },
+      }}
+      muiTableBodyCellProps={{
+        sx: {
+          fontWeight: "400",
+          fontSize: "16px",
+          fontFamily: "DFDS",
+          color: "#4d4e4c",
+          padding: "5px",
+        },
+      }}
+      muiTablePaperProps={{
+        elevation: 0, //change the mui box shadow
+        //customize paper styles
+        sx: {
+          borderRadius: "0",
+        },
+      }}
+      enableGlobalFilterModes={true}
+      positionGlobalFilter="left"
+      muiSearchTextFieldProps={{
+        placeholder: `Find a capability...`,
+        sx: {
+          minWidth: "1120px",
+          fontWeight: "400",
+          fontSize: "16px",
+          padding: "5px",
+        },
+        size: "small",
+        variant: "outlined",
+      }}
+      enablePagination={true}
+      globalFilterFn="contains"
+      enableFilterMatchHighlighting={true}
+      enableDensityToggle={false}
+      enableHiding={false}
+      enableFilters={true}
+      enableGlobalFilter={true}
+      enableTopToolbar={true}
+      enableBottomToolbar={true}
+      enableColumnActions={false}
+      muiTopToolbarProps={{
+        sx: {
+          background: "none",
+        },
+      }}
+      muiBottomToolbarProps={{
+        sx: {
+          background: "none",
+        },
+      }}
+      muiTableBodyRowProps={({ row }) => {
+        return {
+          onClick: () => {
+            clickHandler(row.original.id);
+          },
+          sx: {
+            cursor: "pointer",
+            background: row.original.status === "Deleted" ? "#d88" : "",
+            padding: 0,
+            margin: 0,
+            minHeight: 0,
+            "&:hover td": {
+              backgroundColor:
+                row.original.status === "Deleted"
+                  ? "rgba(187, 221, 243, 0.1)"
+                  : "rgba(187, 221, 243, 0.4)",
+            },
+          },
+        };
+      }}
+    />
+  );
 }
 
 export default function CapabilitiesList() {
