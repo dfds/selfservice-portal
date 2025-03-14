@@ -1,38 +1,52 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
+import { ChevronRight } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import CapabilityCostSummary from "components/BasicCapabilityCost";
+import { useMe } from "@/state/remote/queries/me";
+import { useCapabilities } from "@/state/remote/queries/capabilities";
+import { Switch } from "@dfds-ui/forms";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
+import CapabilityCostSummary from "components/BasicCapabilityCost";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
-import { useMe } from "@/state/remote/queries/me";
-import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 
-export default function MyCapabilities() {
+export default function CapabilitiesList() {
   const { truncateString } = useContext(AppContext);
-  const { isLoading, data: meData } = useMe();
-  const [myCapabilities, setMyCapabilities] = useState(null);
-  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
+  const { isFetched: isMeFetched, data: meData } = useMe();
+  const { isFetched: isCapabilityFetched, data: capabilitiesData } =
+    useCapabilities();
+
+  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [capabilities, setCapabilities] = useState([]);
+  const [filteredCapabilities, setFilteredCapabilities] = useState([]);
 
   useEffect(() => {
-    if (meData && meData.capabilities) {
-      if (costsQuery.isFetched) {
-        const caps = meData.capabilities.map((cap) => {
-          return {
-            ...cap,
-            costs: getCostsForCapability(cap.id, 7),
-          };
-        });
-        setMyCapabilities(caps);
+    if (isCapabilityFetched && capabilitiesData) {
+      setCapabilities(capabilitiesData);
+    }
+  }, [isCapabilityFetched, capabilitiesData]);
+
+  useEffect(() => {
+    if (capabilities) {
+      if (showOnlyMyCapabilities && meData && meData.capabilities) {
+        setFilteredCapabilities(meData.capabilities);
       } else {
-        setMyCapabilities(meData.capabilities);
+        setFilteredCapabilities(capabilities);
       }
     }
-  }, [meData, costsQuery.isFetched]);
+  }, [capabilities, showOnlyMyCapabilities]);
+
+  useEffect(() => {
+    if (isMeFetched && isCapabilityFetched) {
+      setIsLoading(false);
+    }
+  }, [isMeFetched, isCapabilityFetched]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
@@ -49,7 +63,11 @@ export default function MyCapabilities() {
         },
         header: "Name",
         size: 350,
-        enableColumnFilterModes: false,
+        enableColumnFilterModes: true,
+        disableFilters: false,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+
         Cell: ({ cell }) => {
           return (
             <div>
@@ -92,30 +110,30 @@ export default function MyCapabilities() {
         },
       },
       /*
-      {
-        accessorFn: (row) => row.id,
-        header: "Aws Resources",
-        size: 150,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              <InlineAwsCountSummary
-                data={metricsWrapper.getAwsResourcesTotalCountForCapability(
-                  cell.getValue(),
-                )}
-              />
-            </div>
-          );
-        },
-      },
-      */
+            {
+              accessorFn: (row) => row.id,
+              header: "Aws Resources",
+              size: 150,
+              enableColumnFilterModes: false,
+              muiTableHeadCellProps: {
+                align: "center",
+              },
+              muiTableBodyCellProps: {
+                align: "center",
+              },
+              Cell: ({ cell }) => {
+                return (
+                  <div>
+                    <InlineAwsCountSummary
+                      data={metricsWrapper.getAwsResourcesTotalCountForCapability(
+                        cell.getValue(),
+                      )}Q
+                    />
+                  </div>
+                );
+              },
+            },
+            */
 
       {
         accessorFn: (row) => row.costs,
@@ -137,6 +155,7 @@ export default function MyCapabilities() {
           );
         },
       },
+
       {
         accessorFn: (row) => row.awsAccountId,
         header: "AwsAccountId",
@@ -155,45 +174,57 @@ export default function MyCapabilities() {
       {
         accessorFn: (row) => row.id,
         header: "arrow",
-        id: "details",
         size: 1,
+        enableColumnFilterModes: false,
         muiTableBodyCellProps: {
           align: "right",
         },
-        Cell: () => {
+        Cell: ({ cell }) => {
           return <ChevronRight />;
         },
-        Header: <div></div>, //force no column title
+        Header: <div></div>, //enable empty header
       },
     ],
     [],
   );
 
+  const toggleShowMyCapabilities = () => {
+    setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
+  };
+
   return (
     <>
       <PageSection
-        headline={`My Capabilities ${
-          isLoading || myCapabilities === null
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
+          isLoading
             ? ""
-            : `(${myCapabilities?.length})`
+            : `(${(filteredCapabilities || []).length} / ${
+                (capabilities || []).length
+              })`
         }`}
+        headlineChildren={
+          isLoading ? null : (
+            <div className={styles.myCapabilitiesToggleBox}>
+              <span className={styles.myCapabilitiesToggleTitle}>
+                Show just mine:{" "}
+              </span>
+              <Switch
+                checked={showOnlyMyCapabilities}
+                onChange={toggleShowMyCapabilities}
+              />
+            </div>
+          )
+        }
       >
         {isLoading && <Spinner />}
 
-        {!isLoading && myCapabilities && myCapabilities.length === 0 && (
-          <Text>
-            Oh no! You have not joined a capability...yet! Knock yourself out
-            with the ones below...
-          </Text>
-        )}
-
-        {!isLoading && myCapabilities && myCapabilities.length > 0 && (
+        {!isLoading && (
           <>
             <MaterialReactTable
               columns={columns}
-              data={myCapabilities}
+              data={filteredCapabilities}
               initialState={{
-                pagination: { pageSize: 25 },
+                pagination: { pageSize: 50 },
                 showGlobalFilter: true,
                 columnVisibility: { AwsAccountId: false },
               }}
@@ -221,11 +252,6 @@ export default function MyCapabilities() {
                   borderRadius: "0",
                 },
               }}
-              muiTopToolbarProps={{
-                sx: {
-                  background: "none",
-                },
-              }}
               enableGlobalFilterModes={true}
               positionGlobalFilter="left"
               muiSearchTextFieldProps={{
@@ -249,6 +275,11 @@ export default function MyCapabilities() {
               enableTopToolbar={true}
               enableBottomToolbar={true}
               enableColumnActions={false}
+              muiTopToolbarProps={{
+                sx: {
+                  background: "none",
+                },
+              }}
               muiBottomToolbarProps={{
                 sx: {
                   background: "none",

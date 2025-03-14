@@ -4,7 +4,7 @@ import { Text } from "@dfds-ui/typography";
 import ProfilePicture from "./profilepicture";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import MembershipApplications from "../membershipapplications";
+import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
 import { CapabilityInvitations } from "../capabilityInvitations/capabilityInvitations";
 
 export default function Members() {
@@ -47,7 +47,7 @@ export function TabbedMembersView({ showInvitations }) {
         )}
       </>
     ),
-    applications: <MembershipApplications />,
+    applications: <MembershipApplicationsUserCanApprove />,
   };
 
   return (

@@ -1,30 +1,34 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text } from "@dfds-ui/typography";
 import { Spinner } from "@dfds-ui/react-components";
 import PageSection from "components/PageSection";
 import { MaterialReactTable } from "material-react-table";
 import {
   useCapabilitiesAcceptInvitation,
-  useCapabilitiesMyInvitations,
   useCapabilitiesDeclineInvitation,
 } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { TrackedButton } from "@/components/Tracking";
 
-export default function MyInvitations({ invitationsLink }) {
+export function MyInvitationsPageSection() {
+  return (
+    <PageSection headline="My Invitations">
+      <MyInvitations />
+    </PageSection>
+  );
+}
+
+export function MyInvitations({ items, isFetched }) {
   const queryClient = useQueryClient();
-  const { isFetched, data: responseData } =
-    useCapabilitiesMyInvitations(invitationsLink);
   const capabilitiesAcceptInvitation = useCapabilitiesAcceptInvitation();
   const capabilitiesDeclineInvitation = useCapabilitiesDeclineInvitation();
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const invitations = responseData?.items || [];
-    setInvitations(invitations);
+    setInvitations(items);
     setIsLoading(false);
-  }, [isFetched, responseData]);
+  }, [isFetched, items]);
 
   const columns = useMemo(
     () => [
@@ -122,61 +126,57 @@ export default function MyInvitations({ invitationsLink }) {
     <>
       {isLoading && <Spinner />}
 
-      {!isLoading && invitations.length > 0 && (
-        <PageSection
-          headline={`My Invitations ${
-            isLoading ? "" : `(${invitations.length})`
-          }`}
-        >
-          <MaterialReactTable
-            columns={columns}
-            data={invitations}
-            initialState={{
-              pagination: { pageSize: 5 },
-              showGlobalFilter: true,
-            }}
-            muiTableHeadCellProps={{
-              sx: {
-                fontWeight: "700",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#002b45",
-              },
-            }}
-            muiTableBodyCellProps={{
-              sx: {
-                fontWeight: "400",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#4d4e4c",
-                padding: "5px",
-              },
-            }}
-            muiTablePaperProps={{
-              elevation: 0, //change the mui box shadow
-              //customize paper styles
-              sx: {
-                borderRadius: "0",
-              },
-            }}
-            muiTopToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-            enableGlobalFilterModes={false}
-            enablePagination={true}
-            globalFilterFn="contains"
-            enableTopToolbar={false}
-            enableBottomToolbar={true}
-            enableColumnActions={false}
-            muiBottomToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-          />
-        </PageSection>
+      {!isLoading && invitations.length > 0 ? (
+        <MaterialReactTable
+          columns={columns}
+          data={invitations}
+          initialState={{
+            pagination: { pageSize: 5 },
+            showGlobalFilter: true,
+          }}
+          muiTableHeadCellProps={{
+            sx: {
+              fontWeight: "700",
+              fontSize: "16px",
+              fontFamily: "DFDS",
+              color: "#002b45",
+            },
+          }}
+          muiTableBodyCellProps={{
+            sx: {
+              fontWeight: "400",
+              fontSize: "16px",
+              fontFamily: "DFDS",
+              color: "#4d4e4c",
+              padding: "5px",
+            },
+          }}
+          muiTablePaperProps={{
+            elevation: 0, //change the mui box shadow
+            //customize paper styles
+            sx: {
+              borderRadius: "0",
+            },
+          }}
+          muiTopToolbarProps={{
+            sx: {
+              background: "none",
+            },
+          }}
+          enableGlobalFilterModes={false}
+          enablePagination={true}
+          globalFilterFn="contains"
+          enableTopToolbar={false}
+          enableBottomToolbar={true}
+          enableColumnActions={false}
+          muiBottomToolbarProps={{
+            sx: {
+              background: "none",
+            },
+          }}
+        />
+      ) : (
+        <>You have no outstanding invitations</>
       )}
     </>
   );
