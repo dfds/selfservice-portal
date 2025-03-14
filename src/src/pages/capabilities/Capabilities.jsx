@@ -236,13 +236,6 @@ export default function CapabilitiesList() {
                   color: "#002b45",
                 },
               }}
-              filterFns={{
-                customFilterFn: (row, id, filterValue) => {
-                  console.log(row.getValue(id));
-                  console.log(row);
-                  return true;
-                },
-              }}
               muiTableBodyCellProps={{
                 sx: {
                   fontWeight: "400",
