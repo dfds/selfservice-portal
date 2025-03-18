@@ -106,7 +106,8 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
           <TrackedLink
             trackName="Wiki-TaggingPolicy"
             href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-          >DFDS tagging policy
+          >
+            DFDS tagging policy
           </TrackedLink>{" "}
           as you are responsible for tagging your cloud resources correctly.
         </Text>
@@ -293,7 +294,8 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
             <TrackedLink
               trackName="Wiki-TaggingPolicy"
               href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-            >DFDS tagging policy
+            >
+              DFDS tagging policy
             </TrackedLink>{" "}
             as you are responsible for tagging your cloud resources correctly.
           </Text>
