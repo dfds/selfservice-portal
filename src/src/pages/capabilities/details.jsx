@@ -12,7 +12,7 @@ import { Text } from "@dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
+//import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { MetadataTabbedView } from "./metadataTabbedView";
 
@@ -90,7 +90,7 @@ function CapabilityDetailsPageContent() {
 
         <TabbedMembersView showInvitations={showInvitations} />
 
-        <TabbedCapabilityAdoptionLevel />
+        {/*<TabbedCapabilityAdoptionLevel />*/}
 
         {showJsonMetadata && <MetadataTabbedView />}
 
