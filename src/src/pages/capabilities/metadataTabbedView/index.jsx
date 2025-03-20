@@ -53,14 +53,24 @@ export function MetadataTabbedView() {
   }, [currentMetadataObject, metadataObject]);
 
   const header = (
-    <TrackedLink
-      trackName="TaggingPolicy"
-      href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <Text>See Tagging Policy</Text>
-    </TrackedLink>
+    <>
+      <Text>
+        Tagging your capability correctly helps all of us with oversight and
+        incident management.
+      </Text>
+      <Text>
+        However, tagging capabilities is only the first step; Please remember to
+        tag your cloud resources as well.
+        <TrackedLink
+          trackName="TaggingPolicy"
+          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Text>see DFDS Tagging Policy.</Text>
+        </TrackedLink>
+      </Text>
+    </>
   );
 
   const footer = (
