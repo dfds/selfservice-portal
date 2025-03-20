@@ -26,7 +26,7 @@ export default function NewCapabilityWizard({
       skipped: false,
     },
     {
-      title: "Other Tags",
+      title: "Recommended Tags",
       content: (props) => <OptionalTagsStep {...props} />,
       optional: true,
       skipped: false,
@@ -201,17 +201,20 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <TrackedLink
-        trackName="Wiki-TaggingPolicy"
-        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Text>See Tagging Policy</Text>
-      </TrackedLink>
+      <Text>
+        If you are unsure about what tags are, please confer the{" "}
+        <TrackedLink
+          trackName="TaggingPolicy"
+          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          DFDS Tagging Policy.
+        </TrackedLink>
+      </Text>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
-          label="Capability Tags"
+          label="Mandatory Capability Tags"
           setMetadata={setMetadataFormData}
           setHasSchema={() => {}}
           setValidMetadata={setFormValid}
@@ -248,17 +251,20 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <TrackedLink
-        trackName="Wiki-TaggingPolicy"
-        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Text>See Tagging Policy</Text>
-      </TrackedLink>
+      <Text>
+        If you are unsure about what tags are, please confer the{" "}
+        <TrackedLink
+          trackName="TaggingPolicy"
+          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          DFDS Tagging Policy.
+        </TrackedLink>
+      </Text>
       {hasJsonSchemaProperties ? (
         <CapabilityTagsSubForm
-          label="Capability Tags"
+          label="Recommended Capability Tags"
           setMetadata={setMetadataFormData}
           setHasSchema={() => {}}
           setValidMetadata={setFormValid}
@@ -267,7 +273,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           jsonSchema={optionalJsonSchema}
         />
       ) : (
-        <Text>There are no optional tags to set</Text>
+        <Text>There are no recommended tags to set</Text>
       )}
     </>
   );
