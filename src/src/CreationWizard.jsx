@@ -101,7 +101,7 @@ const Header = ({ steps }) => {
               {step.optional && (
                 <>
                   <br />
-                  <span>(optional)</span>
+                  <span>(optional step)</span>
                 </>
               )}
             </StepLabel>
