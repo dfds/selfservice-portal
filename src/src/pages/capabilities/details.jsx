@@ -15,6 +15,7 @@ import CapabilityManagement from "./capabilityManagement";
 import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { MetadataTabbedView } from "./metadataTabbedView";
+import { CapabilityTagsPageSection } from "./capabilityTags";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -91,6 +92,8 @@ function CapabilityDetailsPageContent() {
         <TabbedMembersView showInvitations={showInvitations} />
 
         <TabbedCapabilityAdoptionLevel />
+
+        {showJsonMetadata && <CapabilityTagsPageSection />}
 
         {showJsonMetadata && <MetadataTabbedView />}
 
