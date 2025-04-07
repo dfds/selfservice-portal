@@ -6,6 +6,16 @@ import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";
 import { Invitations } from "./invitations";
 import { TrackedLink } from "@/components/Tracking";
+import {
+  ENUM_COSTCENTER_OPTIONS,
+  ENUM_AVAILABILITY_OPTIONS,
+  ENUM_CLASSIFICATION_OPTIONS,
+  ENUM_CRITICALITY_OPTIONS
+} from "@/constants/tagConstants"
+import { useForm, Controller } from "react-hook-form";
+import AppContext from "@/AppContext";
+import Select from "react-select";
+
 
 export default function NewCapabilityWizard({
   inProgress,
@@ -180,24 +190,35 @@ const BasicInformationStep = ({
 };
 
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
-  const [formValid, setFormValid] = useState(false);
-  const formRef = createRef();
-  const [metadataFormData, setMetadataFormData] = useState(
-    formValues.mandatoryTags,
-  );
-  const { mandatoryJsonSchema, hasJsonSchemaProperties } =
-    useContext(JsonSchemaContext);
+  const [costCentre, setCostCentre] = useState("")
+  const { user } = useContext(AppContext);
+
+    const {
+        clearErrors,
+        setError,
+        formState: { errors },
+    } = useForm({
+        mode: "onChange",
+    });
 
   useEffect(() => {
-    if (formValid) {
+    clearErrors();
+    if (costCentre && costCentre.length > 0) {
       setFormValues((prev) => {
-        return { ...prev, mandatoryTags: metadataFormData };
+        return { ...prev, mandatoryTags: {
+          "dfds.owner": user.email,
+          "dfds.cost.centre": costCentre
+        } };
       });
       setCanContinue(true);
     } else {
+      setError("costCenterInput", {
+        type: "manual",
+        message: "Capabilities must have a cost centre"
+      })
       setCanContinue(false);
     }
-  }, [formValid, metadataFormData]);
+  }, [costCentre]);
 
   return (
     <>
@@ -209,42 +230,108 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       >
         <Text>See Tagging Policy</Text>
       </TrackedLink>
-      {hasJsonSchemaProperties ? (
-        <CapabilityTagsSubForm
-          label="Capability Tags"
-          setMetadata={setMetadataFormData}
-          setHasSchema={() => {}}
-          setValidMetadata={setFormValid}
-          preexistingFormData={formValues.mandatoryTags}
-          formRef={formRef}
-          jsonSchema={mandatoryJsonSchema}
-        />
-      ) : (
-        <Text>There are no mandatory tags to set</Text>
+
+      { errors != undefined && Object.keys(errors).length > 0 && (
+        <Text className={`${styles.error} ${styles.center}`}>
+          Some tags are not compliant. Please correct them and resubmit.
+        </Text>
       )}
+      <form onSubmit={() => {}}>
+        
+      {/* Owner */}
+      <div>
+        <label className={styles.label}>Owner:</label>
+        <span>As the creator you will be the responsible owner for this capability. You can change this after creation.</span>
+        <input
+          type="email"
+          value={user.email}
+          disabled={true}
+          className={`${styles.input} ${styles.inputBorder}`}
+        />
+      </div>
+
+        <div className={styles.errorContainer}>
+          {errors.ownerInput && <span className={styles.error}>{errors.ownerInput.message}</span>}
+        </div>
+        
+        {/* Cost Center */}
+        <div>
+            <label className={styles.label}>Cost Center:</label>
+            <span>Internal analysis and cost aggregation tools such as FinOut requires this to be present.</span>
+            <Select options={ENUM_COSTCENTER_OPTIONS} className={styles.input} onChange={(selection) => setCostCentre(selection.value)}></Select>
+            <div className={styles.errorContainer}>
+                {errors.costCenterInput && <span className={styles.error}>{errors.costCenterInput.message}</span>}
+            </div>
+      </div>
+      </form>
     </>
   );
 };
 
 const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
-  const [formValid, setFormValid] = useState(false);
-  const formRef = createRef();
-  const [metadataFormData, setMetadataFormData] = useState(
-    formValues.optionalTags,
-  );
-  const { optionalJsonSchema, hasJsonSchemaProperties } =
-    useContext(JsonSchemaContext);
+  const [sunsetDate, setSunsetDate] = useState(undefined)
+  const [sunsetError, setSunsetError] = useState(undefined)
+  const [classification, setClassification] = useState(undefined)
+  const [criticality, setCriticality] = useState(undefined)
+  const [availability, setAvailability] = useState(undefined)
 
   useEffect(() => {
-    if (formValid) {
-      setFormValues((prev) => {
-        return { ...prev, optionalTags: metadataFormData };
-      });
-      setCanContinue(true);
-    } else {
+    if (sunsetError) {
       setCanContinue(false);
+    } else {
+      setCanContinue(true);
     }
-  }, [formValid, metadataFormData]); // formValid will not change value between modifying optional tags
+  }, [sunsetError])
+  
+  const isInFuture = (dateString) => {
+    const inputDate = new Date(dateString);
+    return inputDate > new Date();
+  }
+
+  useEffect(() => {
+    //check if sunset date is set and if so is in the future:
+    if (sunsetDate === undefined || isInFuture(sunsetDate)) {
+      setSunsetError(undefined)
+      setFormValues((prev) => {
+        return { ...prev, optionalTags: {
+          ...prev.optionalTags,
+          "dfds.sunset_date": sunsetDate
+        } };
+      });
+    } else {
+      setSunsetError("If sunset date is set then it must be in the future");
+    }
+  }, [sunsetDate])
+  
+
+  useEffect(() => {
+    setFormValues((prev) => {
+      return { ...prev, optionalTags: {
+        ...prev.optionalTags,
+        "dfds.service.availability": availability
+      } };
+    });
+    
+  }, [availability])
+
+  useEffect(() => {
+    setFormValues((prev) => {
+      return { ...prev, optionalTags: {
+        ...prev.optionalTags,
+        "dfds.service.criticality": criticality
+      } };
+    });
+  }, [criticality])
+  
+  useEffect(() => {
+    setFormValues((prev) => {
+      return { ...prev, optionalTags: {
+        ...prev.optionalTags,
+        "dfds.data.classification": classification
+      } };
+    });
+  }, [classification])
+
 
   return (
     <>
@@ -256,19 +343,38 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       >
         <Text>See Tagging Policy</Text>
       </TrackedLink>
-      {hasJsonSchemaProperties ? (
-        <CapabilityTagsSubForm
-          label="Capability Tags"
-          setMetadata={setMetadataFormData}
-          setHasSchema={() => {}}
-          setValidMetadata={setFormValid}
-          preexistingFormData={formValues.optionalTags}
-          formRef={formRef}
-          jsonSchema={optionalJsonSchema}
-        />
-      ) : (
-        <Text>There are no optional tags to set</Text>
-      )}
+      
+              {/* Sunset Data */}
+              <div>
+                  <label className={styles.label}>Sunset Date:</label>
+                  <span>The date when the capability is planned to not be relevant anymore. This is required for requesting Azure Resource Groups.</span>
+                  <input
+                      type="date"
+                      className={`${styles.input} ${styles.inputBorder}`}
+                      onChange={(e) => setSunsetDate(e.target.value)}
+                  />
+                  <div className={styles.errorContainer}>
+                      {sunsetError && <span className={styles.error}>{sunsetError}</span>}
+                  </div>
+              </div>
+        {/* Data Classification */}
+        <div>
+            <label className={styles.label}>Data Classification:</label>
+            <span>Guidance: <a href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-Data-Confidentiality" target="_blank" rel="noreferrer">Understand Classification</a></span>
+            <Select options={ENUM_CLASSIFICATION_OPTIONS} className={styles.input} onChange={(selection) => setClassification(selection.value)}></Select>
+        </div>
+        {/* Service Criticality */}
+        <div>
+            <label className={styles.label}>Service Criticality:</label>
+            <span>Guidance: <a href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Criticality" target="_blank" rel="noreferrer">Understand Criticality</a></span>
+            <Select options={ENUM_CRITICALITY_OPTIONS} className={styles.input} onChange={(selection) => setCriticality(selection.value)}></Select>
+        </div>
+        {/* Service Availability */}
+        <div>
+            <label className={styles.label}>Service Availability:</label>
+            <span>Guidance: <a href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Availability" target="_blank" rel="noreferrer">Understand Availability</a></span>
+            <Select options={ENUM_AVAILABILITY_OPTIONS} className={styles.input} onChange={(selection) => setAvailability(selection.value)}></Select>
+        </div>
     </>
   );
 };
