@@ -190,18 +190,29 @@ const BasicInformationStep = ({
 
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [costCentre, setCostCentre] = useState("");
+  const [selectedCostCentreOption, setSelectedCostCentreOption] =
+    useState(undefined);
+  const [costCentreError, setCostCentreError] = useState(undefined);
   const { user } = useContext(AppContext);
 
-  const {
-    clearErrors,
-    setError,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-  });
+  useEffect(() => {
+    const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
+    if (costCentre) {
+      const selectedOption = ENUM_COSTCENTER_OPTIONS.find(
+        (opt) => opt.value === costCentre,
+      );
+      setSelectedCostCentreOption(selectedOption);
+    }
+  }, [formValues]);
 
   useEffect(() => {
-    clearErrors();
+    if (selectedCostCentreOption) {
+      setCostCentre(selectedCostCentreOption.value);
+    }
+  }, [selectedCostCentreOption]);
+
+  useEffect(() => {
+    setCostCentreError(undefined);
     if (costCentre && costCentre.length > 0) {
       setFormValues((prev) => {
         return {
@@ -214,10 +225,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       });
       setCanContinue(true);
     } else {
-      setError("costCenterInput", {
-        type: "manual",
-        message: "Capabilities must have a cost centre",
-      });
+      setCostCentreError("Capabilities must have a cost centre");
       setCanContinue(false);
     }
   }, [costCentre]);
@@ -233,54 +241,46 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         <Text>See Tagging Policy</Text>
       </TrackedLink>
 
-      {errors != undefined && Object.keys(errors).length > 0 && (
+      {costCentreError && (
         <Text className={`${styles.error} ${styles.center}`}>
           Some tags are not compliant. Please correct them and resubmit.
         </Text>
       )}
-      <form onSubmit={() => {}}>
-        {/* Owner */}
-        <div>
-          <label className={styles.label}>Owner:</label>
-          <span>
-            As the creator you will be the responsible owner for this
-            capability. You can change this after creation.
-          </span>
-          <input
-            type="email"
-            value={user.email}
-            disabled={true}
-            className={`${styles.input} ${styles.inputBorder}`}
-          />
-        </div>
+      {/* Owner */}
+      <div>
+        <label className={styles.label}>Owner:</label>
+        <span>
+          As the creator you will be the responsible owner for this capability.
+          You can change this after creation.
+        </span>
+        <input
+          type="email"
+          value={user.email}
+          disabled={true}
+          className={`${styles.input} ${styles.inputBorder}`}
+        />
+      </div>
+      <div className={styles.errorContainer}></div>
 
+      {/* Cost Center */}
+      <div>
+        <label className={styles.label}>Cost Center:</label>
+        <span>
+          Internal analysis and cost aggregation tools such as FinOut requires
+          this to be present.
+        </span>
+        <Select
+          options={ENUM_COSTCENTER_OPTIONS}
+          className={styles.input}
+          value={selectedCostCentreOption}
+          onChange={(selection) => setSelectedCostCentreOption(selection)}
+        ></Select>
         <div className={styles.errorContainer}>
-          {errors.ownerInput && (
-            <span className={styles.error}>{errors.ownerInput.message}</span>
+          {costCentreError && (
+            <span className={styles.error}>{costCentreError}</span>
           )}
         </div>
-
-        {/* Cost Center */}
-        <div>
-          <label className={styles.label}>Cost Center:</label>
-          <span>
-            Internal analysis and cost aggregation tools such as FinOut requires
-            this to be present.
-          </span>
-          <Select
-            options={ENUM_COSTCENTER_OPTIONS}
-            className={styles.input}
-            onChange={(selection) => setCostCentre(selection.value)}
-          ></Select>
-          <div className={styles.errorContainer}>
-            {errors.costCenterInput && (
-              <span className={styles.error}>
-                {errors.costCenterInput.message}
-              </span>
-            )}
-          </div>
-        </div>
-      </form>
+      </div>
     </>
   );
 };
@@ -289,8 +289,14 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [sunsetDate, setSunsetDate] = useState(undefined);
   const [sunsetError, setSunsetError] = useState(undefined);
   const [classification, setClassification] = useState(undefined);
+  const [selectedClassificationOption, setSelectedClassificationOption] =
+    useState(undefined);
   const [criticality, setCriticality] = useState(undefined);
+  const [selectedCriticalityOption, setSelectedCriticalityOption] =
+    useState(undefined);
   const [availability, setAvailability] = useState(undefined);
+  const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
+    useState(undefined);
 
   useEffect(() => {
     if (sunsetError) {
@@ -299,6 +305,55 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       setCanContinue(true);
     }
   }, [sunsetError]);
+
+  useEffect(() => {
+    if (selectedAvailabilityOption) {
+      setAvailability(selectedAvailabilityOption.value);
+    }
+  }, [selectedAvailabilityOption]);
+
+  useEffect(() => {
+    if (selectedCriticalityOption) {
+      setCriticality(selectedCriticalityOption.value);
+    }
+  }, [selectedCriticalityOption]);
+
+  useEffect(() => {
+    if (selectedClassificationOption) {
+      setClassification(selectedClassificationOption.value);
+    }
+  }, [selectedClassificationOption]);
+
+  useEffect(() => {
+    const sunsetDate = formValues?.optionalTags["dfds.planned_sunset"];
+    if (sunsetDate) {
+      setSunsetDate(sunsetDate);
+    }
+
+    const classification = formValues?.optionalTags["dfds.data.classification"];
+    if (classification) {
+      const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
+        (opt) => opt.value === classification,
+      );
+      setSelectedClassificationOption(selectedOption);
+    }
+
+    const criticality = formValues?.optionalTags["dfds.service.criticality"];
+    if (criticality) {
+      const selectedOption = ENUM_CRITICALITY_OPTIONS.find(
+        (opt) => opt.value === criticality,
+      );
+      setSelectedCriticalityOption(selectedOption);
+    }
+
+    const availability = formValues?.optionalTags["dfds.service.availability"];
+    if (availability) {
+      const selectedOption = ENUM_AVAILABILITY_OPTIONS.find(
+        (opt) => opt.value === availability,
+      );
+      setSelectedAvailabilityOption(selectedOption);
+    }
+  }, [formValues]);
 
   const isInFuture = (dateString) => {
     const inputDate = new Date(dateString);
@@ -379,6 +434,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </span>
         <input
           type="date"
+          value={sunsetDate}
           className={`${styles.input} ${styles.inputBorder}`}
           onChange={(e) => setSunsetDate(e.target.value)}
         />
@@ -401,10 +457,12 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </span>
         <Select
           options={ENUM_CLASSIFICATION_OPTIONS}
+          value={selectedClassificationOption}
           className={styles.input}
-          onChange={(selection) => setClassification(selection.value)}
+          onChange={(selection) => setSelectedClassificationOption(selection)}
         ></Select>
       </div>
+      <div className={styles.errorContainer}></div>
       {/* Service Criticality */}
       <div>
         <label className={styles.label}>Service Criticality:</label>
@@ -420,10 +478,12 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </span>
         <Select
           options={ENUM_CRITICALITY_OPTIONS}
+          value={selectedCriticalityOption}
           className={styles.input}
-          onChange={(selection) => setCriticality(selection.value)}
+          onChange={(selection) => setSelectedCriticalityOption(selection)}
         ></Select>
       </div>
+      <div className={styles.errorContainer}></div>
       {/* Service Availability */}
       <div>
         <label className={styles.label}>Service Availability:</label>
@@ -439,10 +499,12 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </span>
         <Select
           options={ENUM_AVAILABILITY_OPTIONS}
+          value={selectedAvailabilityOption}
           className={styles.input}
-          onChange={(selection) => setAvailability(selection.value)}
+          onChange={(selection) => setSelectedAvailabilityOption(selection)}
         ></Select>
       </div>
+      <div className={styles.errorContainer}></div>
     </>
   );
 };
