@@ -295,7 +295,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       setFormValues((prev) => {
         return { ...prev, optionalTags: {
           ...prev.optionalTags,
-          "dfds.sunset_date": sunsetDate
+          "dfds.planned_sunset": sunsetDate
         } };
       });
     } else {

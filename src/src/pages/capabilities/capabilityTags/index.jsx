@@ -101,8 +101,11 @@ function TagsForm({
     useEffect(() => {
         if (defaultValues) {
             const data = translateFromTags(defaultValues);
+            console.log("translated into data: ", data);
+            console.log("planned_sunset data: ", data["costCenterInput"])
             // Set form values
             Object.entries(data).forEach(([key, value]) => setValue(key, value));
+
 
             if (data?.costCenterInput) {
                 const selectedOption = ENUM_COSTCENTER_OPTIONS.find(opt => opt.value === data.costCenterInput);
@@ -130,7 +133,7 @@ function TagsForm({
         return {
           "dfds.owner": data.ownerInput,
           "dfds.cost.centre": data.costCenterInput?.value,
-          "dfds.planned_sunest": data.sunsetDateInput,
+          "dfds.planned_sunset": data.sunsetDateInput,
           "dfds.data.classification": data.dataClassificationInput?.value,
           "dfds.service.criticality": data.serviceCriticalityInput?.value,
           "dfds.service.availability": data.serviceAvailabilityInput?.value,
@@ -138,6 +141,8 @@ function TagsForm({
     };
 
     const translateFromTags = (tags) => {
+        console.log("Received tags: ", tags);
+        console.log("Received sunset tag: ", tags["dfds.planned_sunset"]);
         const data = {
             ownerInput: tags["dfds.owner"],
             costCenterInput: tags["dfds.cost.centre"],
