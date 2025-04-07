@@ -3,7 +3,6 @@ import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
 import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
-import { CapabilityTagsSubForm } from "./metadataTabbedView/capabilityTags/capabilityTagsSubForm";
 import { Invitations } from "./invitations";
 import { TrackedLink } from "@/components/Tracking";
 import {
@@ -12,7 +11,6 @@ import {
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
 } from "@/constants/tagConstants";
-import { useForm, Controller } from "react-hook-form";
 import AppContext from "@/AppContext";
 import Select from "react-select";
 
@@ -201,7 +199,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       const selectedOption = ENUM_COSTCENTER_OPTIONS.find(
         (opt) => opt.value === costCentre,
       );
-      setSelectedCostCentreOption(selectedOption);
+      setSelectedCostCentreOption(selectedOption || undefined);
     }
   }, [formValues]);
 
@@ -335,7 +333,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
         (opt) => opt.value === classification,
       );
-      setSelectedClassificationOption(selectedOption);
+      setSelectedClassificationOption(selectedOption || undefined);
     }
 
     const criticality = formValues?.optionalTags["dfds.service.criticality"];
@@ -343,7 +341,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       const selectedOption = ENUM_CRITICALITY_OPTIONS.find(
         (opt) => opt.value === criticality,
       );
-      setSelectedCriticalityOption(selectedOption);
+      setSelectedCriticalityOption(selectedOption || undefined);
     }
 
     const availability = formValues?.optionalTags["dfds.service.availability"];
@@ -351,7 +349,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       const selectedOption = ENUM_AVAILABILITY_OPTIONS.find(
         (opt) => opt.value === availability,
       );
-      setSelectedAvailabilityOption(selectedOption);
+      setSelectedAvailabilityOption(selectedOption || undefined);
     }
   }, [formValues]);
 
