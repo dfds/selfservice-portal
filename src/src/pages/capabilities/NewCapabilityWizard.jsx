@@ -418,15 +418,16 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   return (
     <>
       <Text>
-        Tagging your capability correctly helps all of us with oversight and incident management.
+        Tagging your capability correctly helps all of us with oversight and
+        incident management.
       </Text>
 
       <Text>
-        However, tagging capabilities is only the first step. Please remember to tag your cloud resources as well.
+        However, tagging capabilities is only the first step. Please remember to
+        tag your cloud resources as well.
       </Text>
 
       <Text>
-
         <TrackedLink
           trackName="TaggingPolicy"
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
