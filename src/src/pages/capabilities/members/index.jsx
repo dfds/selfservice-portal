@@ -6,6 +6,7 @@ import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
 import { CapabilityInvitations } from "../capabilityInvitations/capabilityInvitations";
+import { useMembershipApplications } from "@/state/remote/queries/membershipApplications";
 
 export default function Members() {
   const { members } = useContext(SelectedCapabilityContext);
@@ -27,6 +28,12 @@ export default function Members() {
 }
 
 export function TabbedMembersView({ showInvitations }) {
+  const {
+    isFetched: fetchedOtherApplications,
+    isRefetchting: refetchingOtherApplications,
+    data: otherApplicationsData,
+  } = useMembershipApplications();
+
   const header = <></>;
   const footer = <></>;
 
@@ -47,7 +54,13 @@ export function TabbedMembersView({ showInvitations }) {
         )}
       </>
     ),
-    applications: <MembershipApplicationsUserCanApprove />,
+    applications: (
+      <MembershipApplicationsUserCanApprove
+        data={otherApplicationsData}
+        isFetched={fetchedOtherApplications}
+        isRefetching={refetchingOtherApplications}
+      />
+    ),
   };
 
   return (
