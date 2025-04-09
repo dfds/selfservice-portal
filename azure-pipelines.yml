@@ -8,7 +8,7 @@ stages:
     jobs:
       - job: CD
         pool: 
-          vmImage: 'ubuntu-latest'
+          vmImage: 'ubuntu-22.04'
         steps:
           - task: NodeTool@0
             inputs:

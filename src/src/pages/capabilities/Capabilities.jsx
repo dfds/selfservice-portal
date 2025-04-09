@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "@dfds-ui/icons/system";
+import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
