@@ -181,6 +181,37 @@ export default function CapabilitiesList() {
           );
         },
       },
+
+      {
+        accessorFn: (row) => row.jsonMetadata,
+        header: "Tags",
+        size: 150,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
+          if (
+            jsonMetadata === undefined ||
+            jsonMetadata === "{}" ||
+            jsonMetadata["dfds.owner"] === undefined ||
+            jsonMetadata["dfds.owner"] === "" ||
+            jsonMetadata["dfds.cost.centre"] === undefined ||
+            jsonMetadata["dfds.cost.centre"] === "" ||
+            jsonMetadata["dfds.planned_sunset"] === undefined ||
+            jsonMetadata["dfds.planned_sunset"] === "" ||
+            jsonMetadata["dfds.planned_sunset"] <= new Date()
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          return <div></div>;
+        },
+      },
+
       {
         accessorFn: (row) => row.jsonMetadata,
         header: "Cost Centre",
