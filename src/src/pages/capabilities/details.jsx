@@ -95,7 +95,7 @@ function CapabilityDetailsPageContent() {
 
         {showJsonMetadata && <CapabilityTagsPageSection />}
 
-        {showJsonMetadata && <MetadataTabbedView />}
+        {/*showJsonMetadata && <MetadataTabbedView />*/}
 
         <Resources capabilityId={id} />
 
