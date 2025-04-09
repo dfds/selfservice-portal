@@ -33,7 +33,7 @@ export default function NewCapabilityWizard({
       skipped: false,
     },
     {
-      title: "Other Tags",
+      title: "Recommended Tags",
       content: (props) => <OptionalTagsStep {...props} />,
       optional: true,
       skipped: false,
@@ -230,14 +230,17 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <TrackedLink
-        trackName="Wiki-TaggingPolicy"
-        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Text>See Tagging Policy</Text>
-      </TrackedLink>
+      <Text>
+        If you are unsure about what tags are, please refer to the{" "}
+        <TrackedLink
+          trackName="TaggingPolicy"
+          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          DFDS Tagging Policy.
+        </TrackedLink>
+      </Text>
 
       {costCentreError && (
         <Text className={`${styles.error} ${styles.center}`}>
@@ -414,14 +417,25 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <TrackedLink
-        trackName="Wiki-TaggingPolicy"
-        href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Text>See Tagging Policy</Text>
-      </TrackedLink>
+      <Text>
+        Tagging your capability correctly helps all of us with oversight and incident management.
+      </Text>
+
+      <Text>
+        However, tagging capabilities is only the first step. Please remember to tag your cloud resources as well.
+      </Text>
+
+      <Text>
+
+        <TrackedLink
+          trackName="TaggingPolicy"
+          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          See DFDS Tagging Policy.
+        </TrackedLink>
+      </Text>
 
       {/* Sunset Data */}
       <div>
