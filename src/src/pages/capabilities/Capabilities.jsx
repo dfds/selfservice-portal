@@ -115,7 +115,14 @@ export default function CapabilitiesList() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [capabilities, setCapabilities] = useState([]);
+  const [myCapabilities, setMyCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
+
+  useEffect(() => {
+    if (isMeFetched && meData) {
+      setMyCapabilities(meData.capabilities);
+    }
+  }, [meData]);
 
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
@@ -125,13 +132,13 @@ export default function CapabilitiesList() {
 
   useEffect(() => {
     if (capabilities) {
-      if (showOnlyMyCapabilities && meData && meData.capabilities) {
-        setFilteredCapabilities(meData.capabilities);
+      if (showOnlyMyCapabilities && myCapabilities) {
+        setFilteredCapabilities(myCapabilities);
       } else {
         setFilteredCapabilities(capabilities);
       }
     }
-  }, [capabilities, showOnlyMyCapabilities]);
+  }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
 
   useEffect(() => {
     if (isMeFetched && isCapabilityFetched) {
@@ -183,7 +190,12 @@ export default function CapabilitiesList() {
       },
 
       {
-        accessorFn: (row) => row.jsonMetadata,
+        accessorFn: (row) => {
+          return {
+            jsonMetadata: row.jsonMetadata,
+            userIsMember: row.userIsMember || false,
+          };
+        },
         header: "Tags",
         size: 150,
         enableColumnFilterModes: false,
@@ -194,16 +206,26 @@ export default function CapabilitiesList() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
+          const jsonMetadata = JSON.parse(cell.getValue().jsonMetadata ?? "{}");
+          const userIsMember = cell.getValue().userIsMember ?? false;
+          if (!userIsMember) {
+            return <div></div>;
+          }
           if (
-            jsonMetadata === undefined ||
-            jsonMetadata === "{}" ||
             jsonMetadata["dfds.owner"] === undefined ||
-            jsonMetadata["dfds.owner"] === "" ||
+            jsonMetadata["dfds.owner"] === ""
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          if (
             jsonMetadata["dfds.cost.centre"] === undefined ||
-            jsonMetadata["dfds.cost.centre"] === "" ||
-            jsonMetadata["dfds.planned_sunset"] === undefined ||
-            jsonMetadata["dfds.planned_sunset"] === "" ||
+            jsonMetadata["dfds.cost.centre"] === ""
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          if (
+            jsonMetadata["dfds.planned_sunset"] !== undefined &&
+            jsonMetadata["dfds.planned_sunset"] !== "" &&
             jsonMetadata["dfds.planned_sunset"] <= new Date()
           ) {
             return <div className={styles.missingTags}>Pending</div>;
