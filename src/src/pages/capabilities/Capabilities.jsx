@@ -106,7 +106,6 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 
 export default function CapabilitiesList() {
   const { truncateString } = useContext(AppContext);
-  const { isFetched: isMeFetched, data: meData } = useMe();
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
 
@@ -119,14 +118,13 @@ export default function CapabilitiesList() {
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
 
   useEffect(() => {
-    if (isMeFetched && meData) {
-      setMyCapabilities(meData.capabilities);
-    }
-  }, [meData]);
-
-  useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
       setCapabilities(capabilitiesData);
+
+      const myCapabilities = capabilitiesData.filter((capability) => {
+        return capability.userIsMember;
+      });
+      setMyCapabilities(myCapabilities);
     }
   }, [isCapabilityFetched, capabilitiesData]);
 
@@ -141,10 +139,10 @@ export default function CapabilitiesList() {
   }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
 
   useEffect(() => {
-    if (isMeFetched && isCapabilityFetched) {
+    if (isCapabilityFetched) {
       setIsLoading(false);
     }
-  }, [isMeFetched, isCapabilityFetched]);
+  }, [isCapabilityFetched]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
