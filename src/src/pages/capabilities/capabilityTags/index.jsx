@@ -159,7 +159,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
     };
-    console.log("sending data", data);
     return data;
   };
 
