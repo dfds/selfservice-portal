@@ -85,11 +85,12 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       setOwnerError("Capabilities must have an owner");
       return;
     } else {
+      const filteredMembers = filterMembers(owner);
       setIsUserSearchActive(true);
-      setSuggestions(filterMembers(owner));
-      if (suggestions.length === 0) {
+      if (filteredMembers.length === 0) {
         setIsUserSearchActive(false);
       }
+      setSuggestions(filteredMembers);
     }
     if (!emailValidator(owner)) {
       setOwnerError("Owner must be a valid email");
