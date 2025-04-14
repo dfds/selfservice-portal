@@ -2,7 +2,7 @@ import React, { useState, useContext, createRef, useEffect } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
-import JsonSchemaContext, { JsonSchemaProvider } from "../../JsonSchemaContext";
+import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { Invitations } from "./invitations";
 import { TrackedLink } from "@/components/Tracking";
 import {
@@ -423,8 +423,11 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       </Text>
 
       <Text>
-        However, tagging capabilities is only the first step. Please remember to
-        tag your cloud resources as well.
+        However, tagging capabilities is only the first step;{" "}
+        <span className={styles.bold}>
+          Please remember to tag your cloud resources
+        </span>{" "}
+        as well.
       </Text>
 
       <Text>

@@ -163,6 +163,15 @@
   font-size: 0.75rem;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .center {
   text-align: center;
+}
+
+.missingTags {
+  color: red;
+  font-weight: bold;
 }

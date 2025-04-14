@@ -236,19 +236,18 @@ export default function Summary() {
         <div className={styles.column} style={{ paddingTop: "2rem" }}>
           <MyMembershipApplication />
           <ButtonStack align="right">
-            {canJoin && (
+            {canJoin ? (
               <TrackedButton
                 trackName="CapabilityMembership-SendApplication"
                 onClick={() => setShowJoinDialog(true)}
               >
                 Join
               </TrackedButton>
-            )}
-
-            {canLeave && (
+            ) : (
               <TrackedButton
                 trackName="CapabilityMembership-Leave"
                 variation="outlined"
+                disabled={!canLeave}
                 onClick={() => setShowLeaveDialog(true)}
               >
                 Leave
