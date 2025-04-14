@@ -1,0 +1,34 @@
+.label {
+  color: #002b45;
+  font-weight: bold;
+  line-height: 1.25;
+  display: block;
+  margin-bottom: 0;
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.inputBorder {
+  padding: 5px;
+  border-style: solid;
+  border-color: #d3d3d3;
+  border-radius: 5px !important;
+  border-width: thin;
+}
+
+.errorContainer {
+  height: 1rem;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 0.75rem;
+}
+
+.center {
+  text-align: center;
+}

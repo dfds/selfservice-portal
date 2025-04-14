@@ -102,6 +102,16 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
         actions={actions}
       >
         <Text>
+          Please familiarize yourself with the{" "}
+          <TrackedLink
+            trackName="Wiki-TaggingPolicy"
+            href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+          >
+            DFDS tagging policy
+          </TrackedLink>{" "}
+          as you are responsible for tagging your cloud resources correctly.
+        </Text>
+        <Text>
           In order to request an AWS Account and a Kubernetes Namespace, please
           click the <TextBlock>Request</TextBlock> button below.
         </Text>
@@ -280,7 +290,17 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
       >
         <div className={styles.items}>
           <Text>
-            Please select an target environment for this new resource group.
+            Please familiarize yourself with the{" "}
+            <TrackedLink
+              trackName="Wiki-TaggingPolicy"
+              href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+            >
+              DFDS tagging policy
+            </TrackedLink>{" "}
+            as you are responsible for tagging your cloud resources correctly.
+          </Text>
+          <Text>
+            Then select an target environment for this new resource group.
           </Text>
           <div className={styles.envsection}>
             <div className={styles.envitems}>
@@ -307,7 +327,7 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
           </div>
 
           <Text>
-            Please confirm that you have read and understood{" "}
+            And lastly confirm that you have read and understood{" "}
             <TrackedLink
               trackName="Wiki-CloudUsageGuidelines"
               target="_blank"
