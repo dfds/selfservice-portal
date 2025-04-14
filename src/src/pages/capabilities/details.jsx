@@ -12,9 +12,10 @@ import { Text } from "@dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
+//import { TabbedCapabilityAdoptionLevel } from "./capabilityAdoptionLevel";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { MetadataTabbedView } from "./metadataTabbedView";
+import { CapabilityTagsPageSection } from "./capabilityTags";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -90,9 +91,11 @@ function CapabilityDetailsPageContent() {
 
         <TabbedMembersView showInvitations={showInvitations} />
 
-        <TabbedCapabilityAdoptionLevel />
+        {/*<TabbedCapabilityAdoptionLevel />*/}
 
-        {showJsonMetadata && <MetadataTabbedView />}
+        {showJsonMetadata && <CapabilityTagsPageSection />}
+
+        {/*showJsonMetadata && <MetadataTabbedView />*/}
 
         <Resources capabilityId={id} />
 

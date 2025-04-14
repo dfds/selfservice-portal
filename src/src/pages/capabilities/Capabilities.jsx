@@ -106,7 +106,6 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 
 export default function CapabilitiesList() {
   const { truncateString } = useContext(AppContext);
-  const { isFetched: isMeFetched, data: meData } = useMe();
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
 
@@ -115,29 +114,35 @@ export default function CapabilitiesList() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [capabilities, setCapabilities] = useState([]);
+  const [myCapabilities, setMyCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
 
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
       setCapabilities(capabilitiesData);
+
+      const myCapabilities = capabilitiesData.filter((capability) => {
+        return capability.userIsMember;
+      });
+      setMyCapabilities(myCapabilities);
     }
   }, [isCapabilityFetched, capabilitiesData]);
 
   useEffect(() => {
     if (capabilities) {
-      if (showOnlyMyCapabilities && meData && meData.capabilities) {
-        setFilteredCapabilities(meData.capabilities);
+      if (showOnlyMyCapabilities && myCapabilities) {
+        setFilteredCapabilities(myCapabilities);
       } else {
         setFilteredCapabilities(capabilities);
       }
     }
-  }, [capabilities, showOnlyMyCapabilities]);
+  }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
 
   useEffect(() => {
-    if (isMeFetched && isCapabilityFetched) {
+    if (isCapabilityFetched) {
       setIsLoading(false);
     }
-  }, [isMeFetched, isCapabilityFetched]);
+  }, [isCapabilityFetched]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
@@ -181,6 +186,52 @@ export default function CapabilitiesList() {
           );
         },
       },
+
+      {
+        accessorFn: (row) => {
+          return {
+            jsonMetadata: row.jsonMetadata,
+            userIsMember: row.userIsMember || false,
+          };
+        },
+        header: "Tags",
+        size: 150,
+        enableColumnFilterModes: false,
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        Cell: ({ cell }) => {
+          const jsonMetadata = JSON.parse(cell.getValue().jsonMetadata ?? "{}");
+          const userIsMember = cell.getValue().userIsMember ?? false;
+          if (!userIsMember) {
+            return <div></div>;
+          }
+          if (
+            jsonMetadata["dfds.owner"] === undefined ||
+            jsonMetadata["dfds.owner"] === ""
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          if (
+            jsonMetadata["dfds.cost.centre"] === undefined ||
+            jsonMetadata["dfds.cost.centre"] === ""
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          if (
+            jsonMetadata["dfds.planned_sunset"] !== undefined &&
+            jsonMetadata["dfds.planned_sunset"] !== "" &&
+            jsonMetadata["dfds.planned_sunset"] <= new Date()
+          ) {
+            return <div className={styles.missingTags}>Pending</div>;
+          }
+          return <div></div>;
+        },
+      },
+
       {
         accessorFn: (row) => row.jsonMetadata,
         header: "Cost Centre",
