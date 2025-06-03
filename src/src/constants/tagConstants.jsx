@@ -1,11 +1,11 @@
 export const ENUM_COSTCENTER = [
   "ti-ferry",
   "ti-logistics",
-  "ti-pax",
+  "ti-pace",
   "ti-ctai",
   "ti-data",
   "ti-arch",
-  "ti-it",
+  "ti-sao",
   "ti-inno",
   "ti-platform",
   "ti-competence",
