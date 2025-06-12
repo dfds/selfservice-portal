@@ -307,18 +307,18 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
             <div className={styles.envitems}>
               <label>Environment:</label>
               {envAvailability != null ? (
-                  <Select
-                    className={styles.environmentselect}
-                    options={envAvailability.map((env) => ({
-                      value: env.env,
-                      label: env.env,
-                      isDisabled: env.exist,
-                    }))}
-                    value={{value: environment, label: environment}}
-                    onChange={(selection) => {
-                      setEnvironment(selection.value);
-                    }}
-                  ></Select>
+                <Select
+                  className={styles.environmentselect}
+                  options={envAvailability.map((env) => ({
+                    value: env.env,
+                    label: env.env,
+                    isDisabled: env.exist,
+                  }))}
+                  value={{ value: environment, label: environment }}
+                  onChange={(selection) => {
+                    setEnvironment(selection.value);
+                  }}
+                ></Select>
               ) : (
                 <>
                   <div>error</div>
