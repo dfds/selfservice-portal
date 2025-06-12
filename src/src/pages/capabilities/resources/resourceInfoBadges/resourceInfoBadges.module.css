@@ -71,23 +71,9 @@ hr.divider {
   text-align: center;
 }
 
-.envbutton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  border: 2px solid #49a2df;
-  color: #49a2df;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 70px;
-  height: 30px;
-  font-size: 16px;
-  font-weight: 550;
-  font-family: "DFDS";
-  /* box-sizing: border-box;
-  padding: 5px; Optional:  */
-  text-align: center;
+.environmentselect {
+  margin-left: 10px;
+  width: 120px;
 }
 
 .envitems {
