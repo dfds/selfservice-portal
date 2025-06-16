@@ -11,6 +11,7 @@ import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
+import Select from "react-select";
 
 function VPCInformation(id, region, cidrBlock) {
   return (
@@ -300,24 +301,24 @@ function AzureResourceRequest({ onClose, azureResourcesList }) {
             as you are responsible for tagging your cloud resources correctly.
           </Text>
           <Text>
-            Then select an target environment for this new resource group.
+            Then select a target environment for this new resource group.
           </Text>
           <div className={styles.envsection}>
             <div className={styles.envitems}>
               <label>Environment:</label>
               {envAvailability != null ? (
-                <select
-                  style={{ marginLeft: "3px" }}
-                  className={styles.envbutton}
-                  value={environment}
-                  onChange={handleChange}
-                >
-                  {envAvailability.map((env) => (
-                    <option value={env.env} key={env.env} disabled={env.exist}>
-                      {env.env}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  className={styles.environmentselect}
+                  options={envAvailability.map((env) => ({
+                    value: env.env,
+                    label: env.env,
+                    isDisabled: env.exist,
+                  }))}
+                  value={{ value: environment, label: environment }}
+                  onChange={(selection) => {
+                    setEnvironment(selection.value);
+                  }}
+                ></Select>
               ) : (
                 <>
                   <div>error</div>
