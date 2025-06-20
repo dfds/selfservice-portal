@@ -13,6 +13,7 @@ import ECRPage from "./pages/ecr";
 import ReleaseNotes from "./pages/release-notes";
 import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
+import ReleaseNotesCreate from "./pages/release-notes/create";
 
 function Footer() {
   return (
@@ -50,7 +51,7 @@ export default function App() {
           <Route path="capabilities" element={<CapabilitiesPage />} />
           <Route path="ecr" element={<ECRPage />} />
           <Route path="release-notes" element={<ReleaseNotes />} />
-          <Route path="release-notes/create" element={<ReleaseNotes />} />
+          <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
           <Route path="release-notes/manage" element={<ReleaseNotes />} />
           <Route path="release-notes/edit/:slug" element={<ReleaseNotes />} />
           <Route path="release-notes/v/:slug" element={<ReleaseNotes />} />
