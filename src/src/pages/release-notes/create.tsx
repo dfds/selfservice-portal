@@ -19,7 +19,7 @@ import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 //
 import Quill from "quill";
-import Editor from "./editor/editor";
+import Editor from "./editor/editor2";
 const Delta = Quill.import("delta");
 
 export default function ReleaseNotesCreate() {
@@ -37,7 +37,9 @@ export default function ReleaseNotesCreate() {
       <Page title="">
         <div className={styles.buffer}></div>
 
-        <div>
+        <Editor />
+
+        {/* <div>
           <Editor
             ref={quillRef}
             readOnly={readOnly}
@@ -79,7 +81,7 @@ export default function ReleaseNotesCreate() {
             <div className="state-title">Last Change:</div>
             {lastChange ? JSON.stringify((lastChange as any).ops) : "Empty"}
           </div>
-        </div>
+        </div> */}
       </Page>
     </>
   );
