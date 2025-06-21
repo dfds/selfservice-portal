@@ -1,3 +1,6 @@
+@import "editor/tiptap/styles/variables";
+@import "editor/tiptap/styles/keyframe-animations";
+
 .controls {
   display: flex;
   border: 1px solid #ccc;
@@ -17,4 +20,11 @@
 .state-title {
   color: #999;
   text-transform: uppercase;
+}
+
+
+.editor-primary {
+  display: flex;
+  flex-direction: column;
+  height: 900px;
 }
