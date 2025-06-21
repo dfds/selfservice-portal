@@ -27,14 +27,12 @@ export default function ReleaseNotesCreate() {
   const [lastChange, setLastChange] = useState();
   const [readOnly, setReadOnly] = useState(false);
 
-
   return (
     <>
       <Page title="">
         <div className={styles.buffer}></div>
 
         <Editor />
-
       </Page>
     </>
   );
