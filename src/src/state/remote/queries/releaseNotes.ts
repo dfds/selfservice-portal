@@ -1,0 +1,50 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ssuRequest } from "../query";
+import PreAppContext from "@/preAppContext";
+import { useContext } from "react";
+
+export function useReleaseNotes() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const query = useQuery({
+    queryKey: ["releasenotes", "list"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["release-notes"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return query;
+}
+
+export function useCreateReleaseNote() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["release-notes"],
+        payload: data.payload,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useToggleNoteActivity() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (input: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [input.href],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}

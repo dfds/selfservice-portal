@@ -1,3 +1,50 @@
 .buffer {
   margin-top: 40px;
 }
+
+.cardMediaImage {
+  position: unset !important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset !important;
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.inputBorder {
+  padding: 5px;
+  border-style: solid;
+  border-color: #d3d3d3;
+  border-radius: 5px !important;
+  border-width: thin;
+}
+
+.checkbox {
+  position: relative;
+  top: 50%;
+  left: -25px;
+}
+
+.title {
+  margin-left: 8px;
+  font-size: 1.5em;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-family: 'sans-serif';
+}
+
+.content {
+  padding: 0 50px;
+}
+
+.divider {}
