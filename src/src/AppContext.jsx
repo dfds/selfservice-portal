@@ -14,6 +14,8 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
+import { useCreateReleaseNote, useToggleNoteActivity } from "@/state/remote/queries/releaseNotes";
+import { create } from "domain";
 
 const AppContext = React.createContext(null);
 
@@ -91,6 +93,8 @@ function AppProvider({ children }) {
 
   const capabilityAdd = useCapabilityAdd();
   const createEcrRepository = useCreateEcrRepository();
+  const createReleaseNote = useCreateReleaseNote();
+  const toggleNoteActivity = useToggleNoteActivity();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -140,6 +144,41 @@ function AppProvider({ children }) {
     );
   }
 
+  async function addNewReleaseNote(data) {
+    createReleaseNote.mutate(
+      {
+        payload: {
+          title: data.title,
+          content: data.content,
+          releaseDate: data.releaseDate,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+        },
+      },
+    );
+  }
+
+  async function toggleReleaseNoteIsActive(note) {
+    var link = note._links?.toggleIsActive?.href;
+    if (!link) {
+      console.error("No link found for toggling release note activity.");
+      return;
+    }
+    
+    toggleNoteActivity.mutate(
+      {
+        href: link
+      }, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+        },
+      },
+    );
+  }
+
   function checkIfCloudEngineer(roles) {
     const regex = /^\s*cloud\.engineer\s*$/i;
     const match = roles?.some((element) => regex.test(element.toLowerCase()));
@@ -182,6 +221,8 @@ function AppProvider({ children }) {
     reloadUser,
     reloadSelfAssessments,
     addNewRepository,
+    addNewReleaseNote,
+    toggleReleaseNoteIsActive,
     isAllWithValues,
     getValidationError,
     checkIfCloudEngineer,
