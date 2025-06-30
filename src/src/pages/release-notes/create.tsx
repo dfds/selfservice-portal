@@ -16,9 +16,9 @@ import styles from "./releasenotes.module.css";
 import "./style.scss";
 
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
+import { Editor } from "./editor/editor";
 
 //
-import Editor from "./editor/editor2";
 
 export default function ReleaseNotesCreate() {
   const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(false);

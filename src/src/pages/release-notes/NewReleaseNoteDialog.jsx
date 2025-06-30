@@ -5,7 +5,6 @@ import { TextField } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import { TrackedButton } from "@/components/Tracking";
 import styles from "./releasenotes.module.css";
-import Editor from "./editor/editor2";
 
 export default function NewReleaseNoteDialog({ onClose }) {
   const [isCreatingNewReleaseNote, setIsCreatingNewReleaseNote] = useState(false);
