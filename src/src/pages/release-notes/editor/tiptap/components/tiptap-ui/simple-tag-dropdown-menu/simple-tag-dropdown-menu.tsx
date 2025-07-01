@@ -62,16 +62,17 @@ export function SimpleTagDropdownMenu({
   );
 
   const getActiveIcon = React.useCallback(() => {
+
     if (!editor) return <TagIcon className="tiptap-button-icon" />;
 
     const activeColour = colours.find((colour) =>
-      editor.isActive("simpleTag", { colour }),
+      editor.isActive("simpleTag", { bgColour: colour }),
     ) as string | undefined;
 
     if (!activeColour) return <TagIcon className="tiptap-button-icon" />;
 
-    const ActiveIcon = headingIcons[activeColour];
-    return <ActiveIcon className="tiptap-button-icon" />;
+    console.log(activeColour);
+    return <TagIcon className={`tiptap-button-icon ${activeColour}`} />;
   }, [editor, colours]);
 
   const canToggleAnyHeading = React.useCallback((): boolean => {

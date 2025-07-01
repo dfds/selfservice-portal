@@ -1,6 +1,14 @@
 @import "editor/tiptap/styles/variables";
 @import "editor/tiptap/styles/keyframe-animations";
 
+:root {
+  --orange-colour: #ed8800;
+  --blue-colour: #3e69ea;
+  --red-colour: #dd6868;
+  --green-colour: #9ee55b;
+  --yellow-colour: #edd853;
+}
+
 .controls {
   display: flex;
   border: 1px solid #ccc;
@@ -36,32 +44,54 @@
   font-weight: 700;
 
   &.orange {
-    background-color: #ed8800;
-    border-color: #ed8800;
+    background-color: var(--orange-colour);
+    border-color: var(--orange-colour);
     color: #ffffff;
   }
 
   &.blue {
-    background-color: #3e69ea;
-    border-color: #3e69ea;
+    background-color: var(--blue-colour);
+    border-color: var(--blue-colour);
     color: #ffffff;
   }
 
   &.red {
-    background-color: #dd6868;
-    border-color: #dd6868;
+    background-color: var(--red-colour);
+    border-color: var(--red-colour);
     color: #ffffff;
   }
 
   &.green {
-    background-color: #9ee55b;
-    border-color: #9ee55b;
+    background-color: var(--green-colour);
+    border-color: var(--green-colour);
     color: #ffffff;
   }
 
   &.yellow {
-    background-color: #edd853;
-    border-color: #edd853;
+    background-color: var(--yellow-colour);
+    border-color: var(--yellow-colour);
     color: #ffffff;
+  }
+}
+
+.tiptap-button-icon {
+  &.orange {
+    color: var(--orange-colour) !important;
+  }
+
+  &.blue {
+    color: var(--blue-colour) !important;
+  }
+
+  &.red {
+    color: var(--red-colour) !important;
+  }
+
+  &.green {
+    color: var(--green-colour) !important;
+  }
+
+  &.yellow {
+    color: var(--yellow-colour) !important;
   }
 }
