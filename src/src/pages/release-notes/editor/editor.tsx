@@ -36,6 +36,7 @@ import "./tiptap/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "./tiptap/components/tiptap-ui/heading-dropdown-menu";
+import { SimpleTagDropdownMenu } from "./tiptap/components/tiptap-ui/simple-tag-dropdown-menu";
 import { ImageUploadButton } from "./tiptap/components/tiptap-ui/image-upload-button";
 import { ListDropdownMenu } from "./tiptap/components/tiptap-ui/list-dropdown-menu";
 import { BlockQuoteButton } from "./tiptap/components/tiptap-ui/blockquote-button";
@@ -73,7 +74,11 @@ import { handleImageUpload, MAX_FILE_SIZE } from "./tiptap/lib/tiptap-utils";
 // --- Styles ---
 import "./tiptap/components/tiptap-templates/simple/simple-editor.scss";
 
+// --- DFDS components ---
+import { SimpleTag } from "./tiptap/components/simple-tag";
+
 import content from "./tiptap/components/tiptap-templates/simple/data/content.json";
+import SimpleTagButton from "./tiptap/components/tiptap-ui/simple-tag-button/simple-tag-button";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -138,6 +143,7 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <ImageUploadButton text="Add" />
+        <SimpleTagDropdownMenu />
       </ToolbarGroup>
 
       <Spacer />
@@ -224,6 +230,7 @@ export function Editor({ defaultContent }: EditorProps) {
       }),
       TrailingNode,
       Link.configure({ openOnClick: false }),
+      SimpleTag,
     ],
     content: content,
   });
