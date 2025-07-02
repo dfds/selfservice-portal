@@ -1,0 +1,18 @@
+.input {
+  font-size: 1.7em;
+
+  input {
+    border-radius: calc(
+      0.625rem - 2px
+    ) !important; // Don't like this.... but that cursed global DFDS style import is messing with it
+    border-color: #e4e5e5;
+    background-color: #d6d8d8;
+    border-style: solid;
+    border-width: 2px;
+    padding-block: calc(0.15rem * 2);
+    padding-inline: calc(0.2rem * 2);
+    max-width: 1040px;
+    min-width: 170px;
+    // field-sizing: content;
+  }
+}

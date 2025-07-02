@@ -79,6 +79,8 @@ import { SimpleTag } from "./tiptap/components/simple-tag";
 
 import content from "./tiptap/components/tiptap-templates/simple/data/content.json";
 import SimpleTagButton from "./tiptap/components/tiptap-ui/simple-tag-button/simple-tag-button";
+import { useState, useRef } from "react";
+import { Input } from "./input";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -250,10 +252,33 @@ export function Editor({ defaultContent }: EditorProps) {
     console.log(editor.getJSON());
   };
 
+  const [inputValue, setInput] = useState("");
+
+  const handleInput = (evt) => {
+    setInput(evt.target.value);
+  };
+
   return (
     <div className="editor-primary">
       <EditorContext.Provider value={{ editor }}>
-        <div onClick={handleOnSave}>save</div>
+        <div className="editor-menu">
+          <div className="button" onClick={handleOnSave}>
+            Save draft
+          </div>
+          <div
+            className="button"
+            style={{ backgroundColor: "#dd6868" }}
+            onClick={handleOnSave}
+          >
+            Discard
+          </div>
+        </div>
+        <div className="editor-metadata">
+          <Input
+            placeholder="2025.06 - The big summer release"
+            onChange={handleInput}
+          />
+        </div>
         <Toolbar
           ref={toolbarRef}
           style={

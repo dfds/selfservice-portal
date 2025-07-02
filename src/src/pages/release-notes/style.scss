@@ -95,3 +95,38 @@
     color: var(--yellow-colour) !important;
   }
 }
+
+.editor-menu {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  justify-content: flex-end;
+
+  .button {
+    display: flex;
+    background-color: #ed8800;
+    // padding: 8px 16px 8px 16px;
+    padding-block: calc(0.25rem * 2);
+    padding-inline: calc(0.25rem * 2);
+    border-radius: 8px;
+    color: #ffffff;
+    user-select: none;
+
+    &:hover {
+      background-color: #e2a048;
+      cursor: pointer;
+    }
+  }
+
+  & > .button:first-child {
+    margin: 0px 5px 0px 0px;
+  }
+
+  & > .button {
+    margin: 0px 5px 0px 5px;
+  }
+}
+
+.editor-metadata {
+  margin: 5px 0px 5px 0px;
+}
