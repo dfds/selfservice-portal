@@ -6,10 +6,13 @@ import styles from "./input.module.scss";
 export interface InputProps {
   placeholder?: any;
   onChange?: any;
+  inputOverride?: string;
 }
 
-export function Input({ placeholder, onChange }: InputProps) {
-  const [inputValue, setInput] = useState("");
+export function Input({ placeholder, onChange, inputOverride }: InputProps) {
+  const [inputValue, setInput] = useState(
+    inputOverride != null ? inputOverride : "",
+  );
   const [inputSize, setInputSize] = useState("0px");
 
   const handleInput = (evt) => {

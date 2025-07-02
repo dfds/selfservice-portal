@@ -19,6 +19,22 @@ export function useReleaseNotes() {
   return query;
 }
 
+export function useReleaseNote(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const query = useQuery({
+    queryKey: ["releasenotes", "details", id],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["release-notes", id],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return query;
+}
+
 export function useCreateReleaseNote() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({
@@ -26,6 +42,21 @@ export function useCreateReleaseNote() {
       ssuRequest({
         method: "POST",
         urlSegments: ["release-notes"],
+        payload: data.payload,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useUpdateReleaseNote(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "PUT",
+        urlSegments: ["release-notes", id],
         payload: data.payload,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),

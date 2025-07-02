@@ -81,7 +81,10 @@ import content from "./tiptap/components/tiptap-templates/simple/data/content.js
 import SimpleTagButton from "./tiptap/components/tiptap-ui/simple-tag-button/simple-tag-button";
 import { useState, useRef } from "react";
 import { Input } from "./input";
-import { useCreateReleaseNote } from "@/state/remote/queries/releaseNotes";
+import {
+  useCreateReleaseNote,
+  useUpdateReleaseNote,
+} from "@/state/remote/queries/releaseNotes";
 import { queryClient } from "@/state/remote/client";
 
 const MainToolbarContent = ({
@@ -190,17 +193,27 @@ const MobileToolbarContent = ({
   </>
 );
 
-export interface EditorProps {
-  defaultContent?: any;
+export enum EditorMode {
+  Create,
+  Edit,
+  View,
 }
 
-export function Editor({ defaultContent }: EditorProps) {
+export interface EditorProps {
+  defaultContent?: any;
+  mode?: EditorMode;
+  doc?: any;
+}
+
+export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const isMobile = useMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
+
+  const editorContent = defaultContent != null ? defaultContent : content;
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -236,7 +249,7 @@ export function Editor({ defaultContent }: EditorProps) {
       Link.configure({ openOnClick: false }),
       SimpleTag,
     ],
-    content: content,
+    content: editorContent,
   });
 
   const bodyRect = useCursorVisibility({
@@ -251,9 +264,12 @@ export function Editor({ defaultContent }: EditorProps) {
   }, [isMobile, mobileView]);
 
   // release notes
-  const createReleaseNote = useCreateReleaseNote();
+  const [title, setTitle] = useState(doc != null ? doc.title : "");
 
-  const handleOnSave = () => {
+  const createReleaseNote = useCreateReleaseNote();
+  const updateReleaseNote = useUpdateReleaseNote(doc != null ? doc.id : "0");
+
+  const handleOnSaveDraft = () => {
     console.log(editor.getJSON());
     createReleaseNote.mutate(
       {
@@ -272,7 +288,26 @@ export function Editor({ defaultContent }: EditorProps) {
     );
   };
 
-  const [title, setTitle] = useState("");
+  const handleOnSave = () => {
+    updateReleaseNote.mutate(
+      {
+        payload: {
+          title: title,
+          content: JSON.stringify(editor.getJSON()),
+          releaseDate: new Date().toJSON(),
+          isActive: false,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          queryClient.invalidateQueries({
+            queryKey: ["releasenotes", "details", doc.id],
+          });
+        },
+      },
+    );
+  };
 
   const handleTitleUpdate = (evt) => {
     setTitle(evt.target.value);
@@ -281,47 +316,66 @@ export function Editor({ defaultContent }: EditorProps) {
   return (
     <div className="editor-primary">
       <EditorContext.Provider value={{ editor }}>
-        <div className="editor-menu">
-          <div className="button" onClick={handleOnSave}>
-            Save draft
+        {mode !== EditorMode.View && (
+          <div className="editor-menu">
+            {mode === EditorMode.Create ? (
+              <div className="button" onClick={handleOnSaveDraft}>
+                Save draft
+              </div>
+            ) : (
+              <div className="button" onClick={handleOnSave}>
+                Save
+              </div>
+            )}
+
+            <div className="button" style={{ backgroundColor: "#dd6868" }}>
+              Discard
+            </div>
+
+            {mode === EditorMode.Edit && (
+              <div className="button" style={{ backgroundColor: "#dd6868" }}>
+                Delete
+              </div>
+            )}
           </div>
-          <div
-            className="button"
-            style={{ backgroundColor: "#dd6868" }}
-            onClick={handleOnSave}
-          >
-            Discard
+        )}
+
+        {mode !== EditorMode.View && (
+          <div>
+            <div className="editor-metadata">
+              <Input
+                placeholder="2025.06 - The big summer release"
+                onChange={handleTitleUpdate}
+                inputOverride={title}
+              />
+            </div>
+            <Toolbar
+              ref={toolbarRef}
+              style={
+                isMobile
+                  ? {
+                      bottom: `calc(100% - ${
+                        windowSize.height - bodyRect.y
+                      }px)`,
+                    }
+                  : {}
+              }
+            >
+              {mobileView === "main" ? (
+                <MainToolbarContent
+                  onHighlighterClick={() => setMobileView("highlighter")}
+                  onLinkClick={() => setMobileView("link")}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <MobileToolbarContent
+                  type={mobileView === "highlighter" ? "highlighter" : "link"}
+                  onBack={() => setMobileView("main")}
+                />
+              )}
+            </Toolbar>
           </div>
-        </div>
-        <div className="editor-metadata">
-          <Input
-            placeholder="2025.06 - The big summer release"
-            onChange={handleTitleUpdate}
-          />
-        </div>
-        <Toolbar
-          ref={toolbarRef}
-          style={
-            isMobile
-              ? {
-                  bottom: `calc(100% - ${windowSize.height - bodyRect.y}px)`,
-                }
-              : {}
-          }
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
-        </Toolbar>
+        )}
 
         <div className="content-wrapper">
           <EditorContent
