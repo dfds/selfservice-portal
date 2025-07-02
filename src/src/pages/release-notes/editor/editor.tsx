@@ -81,6 +81,8 @@ import content from "./tiptap/components/tiptap-templates/simple/data/content.js
 import SimpleTagButton from "./tiptap/components/tiptap-ui/simple-tag-button/simple-tag-button";
 import { useState, useRef } from "react";
 import { Input } from "./input";
+import { useCreateReleaseNote } from "@/state/remote/queries/releaseNotes";
+import { queryClient } from "@/state/remote/client";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -248,14 +250,32 @@ export function Editor({ defaultContent }: EditorProps) {
     }
   }, [isMobile, mobileView]);
 
+  // release notes
+  const createReleaseNote = useCreateReleaseNote();
+
   const handleOnSave = () => {
     console.log(editor.getJSON());
+    createReleaseNote.mutate(
+      {
+        payload: {
+          title: title,
+          content: JSON.stringify(editor.getJSON()),
+          releaseDate: new Date().toJSON(),
+          isActive: false,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+        },
+      },
+    );
   };
 
-  const [inputValue, setInput] = useState("");
+  const [title, setTitle] = useState("");
 
-  const handleInput = (evt) => {
-    setInput(evt.target.value);
+  const handleTitleUpdate = (evt) => {
+    setTitle(evt.target.value);
   };
 
   return (
@@ -276,7 +296,7 @@ export function Editor({ defaultContent }: EditorProps) {
         <div className="editor-metadata">
           <Input
             placeholder="2025.06 - The big summer release"
-            onChange={handleInput}
+            onChange={handleTitleUpdate}
           />
         </div>
         <Toolbar
