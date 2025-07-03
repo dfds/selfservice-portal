@@ -83,11 +83,14 @@ export function ReleaseNotesManage() {
                   </div>
                   <div
                     className="button"
+                    style={{
+                      backgroundColor: elem.isActive ? "#edd853" : "#9ee55b",
+                    }}
                     onClick={() => {
                       handleToggleActive(elem.id);
                     }}
                   >
-                    Publish
+                    {elem.isActive ? "Unpublish" : "Publish"}
                   </div>
                   <div
                     className="button"
