@@ -78,7 +78,6 @@ import "./tiptap/components/tiptap-templates/simple/simple-editor.scss";
 import { SimpleTag } from "./tiptap/components/simple-tag";
 
 import content from "./tiptap/components/tiptap-templates/simple/data/content.json";
-import SimpleTagButton from "./tiptap/components/tiptap-ui/simple-tag-button/simple-tag-button";
 import { useState, useRef } from "react";
 import { Input } from "./input";
 import {
