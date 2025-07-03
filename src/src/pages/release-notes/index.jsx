@@ -17,11 +17,13 @@ import styles from "./releasenotes.module.css";
 import PreAppContext from "preAppContext";
 import AppContext from "AppContext";
 import DateFlag from "./DateFlag";
+import { useNavigate } from "react-router-dom";
+
+import "./style.scss";
 
 function ReleaseNotesList() {
   const { isFetched, data } = useReleaseNotes({});
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const { toggleReleaseNoteIsActive } = useContext(AppContext);
 
   const [notes, setNotes] = useState(data?.items || []);
   useEffect(() => {
@@ -30,39 +32,40 @@ function ReleaseNotesList() {
     }
   }, [data]);
 
-  function toggleIsActive(note) {
-    notes.map((n) => {
-      if (n.id === note.id) {
-        n.isActive = !n.isActive;
-      }
-      return n;
-    });
-    setNotes([...notes]);
+  // todo: REDO this, make it use a <a> tag instead.......
+  const navigate = useNavigate();
+  const clickHandler = (id) => navigate(`/release-notes/v/${id}`);
 
-    toggleReleaseNoteIsActive(note);
-  }
+  console.log(isCloudEngineerEnabled);
 
   return (
-    <PageSection headline={`Release Notes`}>
+    <PageSection headline={``}>
+      {isCloudEngineerEnabled && (
+        <div className="manage" style={{marginBottom: '5px'}}>
+          <div
+            className="button"
+            onClick={() => {
+              navigate("/release-notes/manage");
+            }}
+          >
+            Manage content
+          </div>
+        </div>
+      )}
+
       {isFetched ? (
         notes.map((note) =>
           note.isActive || isCloudEngineerEnabled ? (
             <>
-              <div key={note.id}>
+              <div
+                className={styles.notePreview}
+                key={note.id}
+                onClick={() => clickHandler(note.id)}
+              >
                 <div className={styles.row}>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    id={note.id}
-                    name={note.id}
-                    checked={note.isActive}
-                    hidden={!isCloudEngineerEnabled}
-                    onChange={() => toggleIsActive(note)}
-                  ></input>
                   <DateFlag date={note.releaseDate} />
                   <h3 className={styles.title}>{note.title}</h3>
                 </div>
-                <p className={styles.content}>{note.content}</p>
               </div>
               <hr className={styles.divider} />
             </>
@@ -96,31 +99,6 @@ export default function ReleaseNotes() {
             onClose={() => setShowNewReleaseNoteDialog(false)}
           />
         )}
-        <PageSection>
-          <Card
-            variant="fill"
-            surface="main"
-            size="xl"
-            reverse={true}
-            media={splash}
-          >
-            <CardTitle largeTitle>Information</CardTitle>
-            <CardContent>
-              <p>Something Something description of the release notes page.</p>
-            </CardContent>
-            {isCloudEngineerEnabled && (
-              <CardActions>
-                <TrackedButton
-                  trackName="ShowNewReleaseNoteDialog"
-                  size="small"
-                  onClick={() => setShowNewReleaseNoteDialog(true)}
-                >
-                  New release note
-                </TrackedButton>
-              </CardActions>
-            )}
-          </Card>
-        </PageSection>
         <ReleaseNotesList />
       </Page>
     </>

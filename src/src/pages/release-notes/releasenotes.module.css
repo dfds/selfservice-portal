@@ -33,6 +33,8 @@
 .title {
   margin-left: 8px;
   font-size: 1.5em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
 }
 
 .row {
@@ -40,11 +42,23 @@
   align-items: center;
   gap: 8px;
   padding: 6px 0;
-  font-family: 'sans-serif';
+  font-family: "sans-serif";
 }
 
 .content {
   padding: 0 50px;
 }
 
-.divider {}
+.divider {
+}
+
+hr {
+  margin: 0px;
+}
+
+.notePreview {
+  &:hover {
+    background-color: #ebe9e9;
+    cursor: pointer;
+  }
+}

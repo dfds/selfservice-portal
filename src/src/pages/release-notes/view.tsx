@@ -19,17 +19,15 @@ import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import { Editor, EditorMode } from "./editor/editor";
 import { useReleaseNote } from "@/state/remote/queries/releaseNotes";
 import { useParams } from "react-router-dom";
-import PreAppContext from "@/preAppContext";
 
 //
 
-export function ReleaseNotesEdit() {
+export function ReleaseNotesView() {
   const { id } = useParams();
   const { isFetched, data } = useReleaseNote(id);
   const [content, setContent] = useState({});
   const [doc, setDoc] = useState({});
   const [contentReady, setContentReady] = useState(false);
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   useEffect(() => {
     if (data != null) {
@@ -43,19 +41,15 @@ export function ReleaseNotesEdit() {
 
   return (
     <>
-      {isCloudEngineerEnabled ? (
-        <Page title="">
-          <div className={styles.buffer}></div>
+      <Page title="">
+        <div className={styles.buffer}></div>
 
-          {contentReady && (
-            <Editor defaultContent={content} mode={EditorMode.Edit} doc={doc} />
-          )}
-        </Page>
-      ) : (
-        <div>Unauthorised</div>
-      )}
+        {contentReady && (
+          <Editor defaultContent={content} mode={EditorMode.View} doc={doc} />
+        )}
+      </Page>
     </>
   );
 }
 
-export default ReleaseNotesEdit;
+export default ReleaseNotesView;

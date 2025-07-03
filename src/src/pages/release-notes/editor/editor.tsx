@@ -213,9 +213,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editorContent = defaultContent != null ? defaultContent : content;
+  const editable = mode !== EditorMode.View;
 
   const editor = useEditor({
     immediatelyRender: false,
+    editable: editable,
     editorProps: {
       attributes: {
         autocomplete: "off",

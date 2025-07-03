@@ -16,6 +16,7 @@ import AuthTemplate from "auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
 import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
+import ReleaseNotesView from "./pages/release-notes/view";
 
 function Footer() {
   return (
@@ -56,7 +57,7 @@ export default function App() {
           <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
           <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
           <Route path="release-notes/edit/:id" element={<ReleaseNotesEdit />} />
-          <Route path="release-notes/v/:id" element={<ReleaseNotes />} />
+          <Route path="release-notes/v/:id" element={<ReleaseNotesView />} />
           <Route
             path="capabilities/criticality"
             element={<CapabilityCriticalityPage />}
