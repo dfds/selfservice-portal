@@ -17,13 +17,18 @@ import "./style.scss";
 
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import { Editor } from "./editor/editor";
-import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
+import {
+  useReleaseNotes,
+  useToggleReleaseNoteActive,
+} from "@/state/remote/queries/releaseNotes";
 import { useNavigate } from "react-router-dom";
+import { queryClient } from "@/state/remote/client";
 
 //
 
 export function ReleaseNotesManage() {
-  const { isFetched, data } = useReleaseNotes();
+  const { isFetched, data } = useReleaseNotes({ includeDrafts: true });
+  const toggleReleaseNoteActive = useToggleReleaseNoteActive();
 
   const [notes, setNotes] = useState(data?.items || []);
   useEffect(() => {
@@ -31,10 +36,23 @@ export function ReleaseNotesManage() {
       setNotes(data.items);
       console.log(data.items);
     }
-  }, [isFetched]);
+  }, [data]);
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/release-notes/edit/${id}`);
+
+  const handleToggleActive = (id) => {
+    toggleReleaseNoteActive.mutate(
+      {
+        id: id,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+        },
+      },
+    );
+  };
 
   return (
     <>
@@ -63,7 +81,14 @@ export function ReleaseNotesManage() {
                   >
                     Edit
                   </div>
-                  <div className="button">Publish</div>
+                  <div
+                    className="button"
+                    onClick={() => {
+                      handleToggleActive(elem.id);
+                    }}
+                  >
+                    Publish
+                  </div>
                   <div
                     className="button"
                     style={{ backgroundColor: "#dd6868" }}

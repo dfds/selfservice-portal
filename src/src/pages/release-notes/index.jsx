@@ -18,13 +18,12 @@ import PreAppContext from "preAppContext";
 import AppContext from "AppContext";
 import DateFlag from "./DateFlag";
 
-
 function ReleaseNotesList() {
-  const { isFetched, data } = useReleaseNotes();
+  const { isFetched, data } = useReleaseNotes({});
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { toggleReleaseNoteIsActive } = useContext(AppContext);
-    
-  const [ notes, setNotes ] = useState(data?.items || []);
+
+  const [notes, setNotes] = useState(data?.items || []);
   useEffect(() => {
     if (data?.items) {
       setNotes(data.items);
@@ -45,39 +44,40 @@ function ReleaseNotesList() {
 
   return (
     <PageSection headline={`Release Notes`}>
-          {isFetched ? (
-            notes.map((note) => (
-              (note.isActive || isCloudEngineerEnabled) ? (
-                <>
-                  <div key={note.id}>
-                    <div className={styles.row}>
-                      <input
-                        type="checkbox"
-                        className={styles.checkbox}
-                        id={note.id}
-                        name={note.id}
-                        checked={note.isActive}
-                        hidden={!isCloudEngineerEnabled}
-                        onChange={() => toggleIsActive(note)}
-                      ></input>
-                      <DateFlag date={note.releaseDate}/>
-                      <h3 className={styles.title}>{note.title}</h3>
-                    </div>
-                    <p className={styles.content}>{note.content}</p>
-                  </div>
-                  <hr className={styles.divider}/>
-                </>
-              ) : null
-            ))
-          ) : (
-            <Spinner />
-          )}
+      {isFetched ? (
+        notes.map((note) =>
+          note.isActive || isCloudEngineerEnabled ? (
+            <>
+              <div key={note.id}>
+                <div className={styles.row}>
+                  <input
+                    type="checkbox"
+                    className={styles.checkbox}
+                    id={note.id}
+                    name={note.id}
+                    checked={note.isActive}
+                    hidden={!isCloudEngineerEnabled}
+                    onChange={() => toggleIsActive(note)}
+                  ></input>
+                  <DateFlag date={note.releaseDate} />
+                  <h3 className={styles.title}>{note.title}</h3>
+                </div>
+                <p className={styles.content}>{note.content}</p>
+              </div>
+              <hr className={styles.divider} />
+            </>
+          ) : null,
+        )
+      ) : (
+        <Spinner />
+      )}
     </PageSection>
-  )
+  );
 }
 
 export default function ReleaseNotes() {
-  const [showNewReleaseNoteDialog, setShowNewReleaseNoteDialog] = useState(false);
+  const [showNewReleaseNoteDialog, setShowNewReleaseNoteDialog] =
+    useState(false);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const splash = (
@@ -97,25 +97,29 @@ export default function ReleaseNotes() {
           />
         )}
         <PageSection>
-        <Card variant="fill" surface="main" size="xl" reverse={true} media={splash}>
-          <CardTitle largeTitle>Information</CardTitle>
-          <CardContent>
-            <p>
-              Something Something description of the release notes page.
-            </p>
-          </CardContent>
-          {isCloudEngineerEnabled && (
-            <CardActions>
-              <TrackedButton
-                trackName="ShowNewReleaseNoteDialog"
-                size="small"
-                onClick={() => setShowNewReleaseNoteDialog(true)}
-              >
-                New release note
-              </TrackedButton>
-            </CardActions>
-          )}
-        </Card>
+          <Card
+            variant="fill"
+            surface="main"
+            size="xl"
+            reverse={true}
+            media={splash}
+          >
+            <CardTitle largeTitle>Information</CardTitle>
+            <CardContent>
+              <p>Something Something description of the release notes page.</p>
+            </CardContent>
+            {isCloudEngineerEnabled && (
+              <CardActions>
+                <TrackedButton
+                  trackName="ShowNewReleaseNoteDialog"
+                  size="small"
+                  onClick={() => setShowNewReleaseNoteDialog(true)}
+                >
+                  New release note
+                </TrackedButton>
+              </CardActions>
+            )}
+          </Card>
         </PageSection>
         <ReleaseNotesList />
       </Page>
