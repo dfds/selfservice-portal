@@ -1,7 +1,24 @@
 .input {
-  font-size: 1.7em;
+  font-size: 1.2em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .key {
+  }
+
+  .right {
+    flex: 8;
+  }
 
   input {
+    margin-left: 10px;
     border-radius: calc(
       0.625rem - 2px
     ) !important; // Don't like this.... but that cursed global DFDS style import is messing with it

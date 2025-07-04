@@ -85,6 +85,7 @@ import {
   useUpdateReleaseNote,
 } from "@/state/remote/queries/releaseNotes";
 import { queryClient } from "@/state/remote/client";
+import { DatePicker } from "./datepicker";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -266,6 +267,9 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   // release notes
   const [title, setTitle] = useState(doc != null ? doc.title : "");
+  const [releaseDate, setReleaseDate] = useState(
+    doc != null ? new Date(doc.releaseDate).toISOString().split("T")[0] : "",
+  );
 
   const createReleaseNote = useCreateReleaseNote();
   const updateReleaseNote = useUpdateReleaseNote(doc != null ? doc.id : "0");
@@ -295,7 +299,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
         payload: {
           title: title,
           content: JSON.stringify(editor.getJSON()),
-          releaseDate: new Date().toJSON(),
+          releaseDate: new Date(releaseDate).toJSON(),
           isActive: false,
         },
       },
@@ -312,6 +316,10 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   const handleTitleUpdate = (evt) => {
     setTitle(evt.target.value);
+  };
+
+  const handleReleaseDateUpdate = (evt) => {
+    setReleaseDate(evt.target.value);
   };
 
   return (
@@ -345,9 +353,16 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
           <div>
             <div className="editor-metadata">
               <Input
+                label="Title"
                 placeholder="2025.06 - The big summer release"
                 onChange={handleTitleUpdate}
                 inputOverride={title}
+              />
+              <DatePicker
+                label="Release date"
+                placeholder="nah"
+                onChange={handleReleaseDateUpdate}
+                inputOverride={releaseDate}
               />
             </div>
             <Toolbar

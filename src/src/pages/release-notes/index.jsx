@@ -36,12 +36,10 @@ function ReleaseNotesList() {
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/release-notes/v/${id}`);
 
-  console.log(isCloudEngineerEnabled);
-
   return (
     <PageSection headline={``}>
       {isCloudEngineerEnabled && (
-        <div className="manage" style={{marginBottom: '5px'}}>
+        <div className="manage" style={{ marginBottom: "5px" }}>
           <div
             className="button"
             onClick={() => {
@@ -56,19 +54,17 @@ function ReleaseNotesList() {
       {isFetched ? (
         notes.map((note) =>
           note.isActive || isCloudEngineerEnabled ? (
-            <>
-              <div
-                className={styles.notePreview}
-                key={note.id}
-                onClick={() => clickHandler(note.id)}
-              >
-                <div className={styles.row}>
-                  <DateFlag date={note.releaseDate} />
-                  <h3 className={styles.title}>{note.title}</h3>
-                </div>
+            <div
+              className={styles.notePreview}
+              key={note.id}
+              onClick={() => clickHandler(note.id)}
+            >
+              <div className={styles.row}>
+                <DateFlag date={note.releaseDate} />
+                <h3 className={styles.title}>{note.title}</h3>
               </div>
               <hr className={styles.divider} />
-            </>
+            </div>
           ) : null,
         )
       ) : (
