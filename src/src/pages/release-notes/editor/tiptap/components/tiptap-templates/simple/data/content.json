@@ -1,0 +1,240 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": {
+        "textAlign": null,
+        "level": 1
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "2025.06 - The big summer release THROWAWAYAAY"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Coming up this summer we have a bunch of new features being released"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "textAlign": null,
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "RBAC on "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "http://build.dfds.cloud",
+                "target": "_blank",
+                "rel": "noopener noreferrer nofollow",
+                "class": null
+              }
+            }
+          ],
+          "text": "build.dfds.cloud"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "blue"
+              }
+            }
+          ],
+          "text": "Selfservice"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": " "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "green"
+              }
+            }
+          ],
+          "text": "Preview"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "yellow"
+              }
+            }
+          ],
+          "text": "Available soon"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor congue nisl, a tincidunt tortor. Proin sagittis augue non elit vehicula dictum. Duis in diam lobortis, iaculis turpis vel, feugiat tellus. Maecenas nec tristique enim. Nulla facilisi. Vivamus dictum eros quis pellentesque porta. Nullam at elementum felis, sed feugiat ex. Donec sit amet tellus mauris. Nullam fermentum fringilla elit et lobortis. Proin ex nibh, hendrerit non cursus at, scelerisque nec libero. Pellentesque sodales sed nisi nec congue. In nec mattis diam, quis feugiat lacus. Aliquam erat volutpat. Mauris nec lobortis velit. Morbi tincidunt sodales interdum. Praesent sit amet porttitor nunc."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Aenean feugiat bibendum mauris. Donec venenatis non urna et hendrerit. Phasellus lorem nisl, mattis eget turpis vel, dictum efficitur nisl. In efficitur ultricies mi aliquet semper. Mauris aliquet feugiat nunc, a luctus orci aliquam sed. In dapibus at tellus et finibus. Vestibulum bibendum eu ante eu tristique. Donec interdum arcu et erat varius luctus. Quisque justo dui, pharetra at ligula quis, maximus vulputate erat. Nunc congue, nibh sed mollis convallis, orci mi tincidunt purus, ut hendrerit orci lorem eu augue. Proin ut venenatis arcu. Nulla semper venenatis diam, a condimentum lectus auctor blandit. Praesent eget porta sapien."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "textAlign": null,
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Kubernetes HPA & KEDA "
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "blue"
+              }
+            }
+          ],
+          "text": "Kubernetes"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": " "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "green"
+              }
+            }
+          ],
+          "text": "Available now"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": " "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "orange"
+              }
+            }
+          ],
+          "text": "New feature"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor congue nisl, a tincidunt tortor. Proin sagittis augue non elit vehicula dictum. Duis in diam lobortis, iaculis turpis vel, feugiat tellus. Maecenas nec tristique enim. Nulla facilisi. Vivamus dictum eros quis pellentesque porta. Nullam at elementum felis, sed feugiat ex. Donec sit amet tellus mauris. Nullam fermentum fringilla elit et lobortis. Proin ex nibh, hendrerit non cursus at, scelerisque nec libero. Pellentesque sodales sed nisi nec congue. In nec mattis diam, quis feugiat lacus. Aliquam erat volutpat. Mauris nec lobortis velit. Morbi tincidunt sodales interdum. Praesent sit amet porttitor nunc."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Aenean feugiat bibendum mauris. Donec venenatis non urna et hendrerit. Phasellus lorem nisl, mattis eget turpis vel, dictum efficitur nisl. In efficitur ultricies mi aliquet semper. Mauris aliquet feugiat nunc, a luctus orci aliquam sed. In dapibus at tellus et finibus. Vestibulum bibendum eu ante eu tristique. Donec interdum arcu et erat varius luctus. Quisque justo dui, pharetra at ligula quis, maximus vulputate erat. Nunc congue, nibh sed mollis convallis, orci mi tincidunt purus, ut hendrerit orci lorem eu augue. Proin ut venenatis arcu. Nulla semper venenatis diam, a condimentum lectus auctor blandit. Praesent eget porta sapien."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      }
+    }
+  ]
+}

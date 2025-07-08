@@ -67,6 +67,10 @@ export default function GlobalMenu() {
       title: "Status page",
       url: "https://dfdsit.statuspage.io/",
     },
+    {
+      title: "Release notes",
+      url: "/release-notes",
+    },
   ];
 
   function sleep(duration) {
