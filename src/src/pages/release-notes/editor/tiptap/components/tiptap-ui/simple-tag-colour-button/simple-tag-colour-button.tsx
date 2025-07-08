@@ -175,7 +175,6 @@ export const SimpleTagButton = React.forwardRef<
       headingInSchema,
       isDisabled,
       isActive,
-      Icon,
       shortcutKey,
       formattedName,
     } = useHeadingState(editor, colour, disabled);
