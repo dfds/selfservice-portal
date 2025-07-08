@@ -38,7 +38,7 @@ export function Input({
 
   React.useEffect(() => {
     const width = sizerRef.current.getBoundingClientRect().width;
-    if (width == 0) {
+    if (width === 0) {
       setInputSize("450px");
       return;
     }

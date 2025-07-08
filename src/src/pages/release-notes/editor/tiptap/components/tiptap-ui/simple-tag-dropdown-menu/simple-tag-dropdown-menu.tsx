@@ -6,17 +6,9 @@ import { useTiptapEditor } from "../../../hooks/use-tiptap-editor";
 
 // --- Icons ---
 import { ChevronDownIcon } from "../../tiptap-icons/chevron-down-icon";
-import { HeadingIcon } from "../../tiptap-icons/heading-icon";
 
 // --- Lib ---
-import { isMarkInSchema, isNodeInSchema } from "../../../lib/tiptap-utils";
-
-// --- Tiptap UI ---
-import {
-  HeadingButton,
-  headingIcons,
-  type Level,
-} from "../heading-button/heading-button";
+import { isMarkInSchema } from "../../../lib/tiptap-utils";
 
 // --- UI Primitives ---
 import type { ButtonProps } from "../../tiptap-ui-primitive/button";

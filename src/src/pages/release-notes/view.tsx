@@ -1,26 +1,11 @@
-import React, { useState, useMemo, useEffect, useContext, useRef } from "react";
-import { MaterialReactTable } from "material-react-table";
-import {
-  Card,
-  CardTitle,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Spinner,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import React, { useState, useEffect } from "react";
 import Page from "components/Page";
-import PageSection from "components/PageSection";
 import styles from "./releasenotes.module.css";
 import "./style.scss";
 
-import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import { Editor, EditorMode } from "./editor/editor";
 import { useReleaseNote } from "@/state/remote/queries/releaseNotes";
 import { useParams } from "react-router-dom";
-
-//
 
 export function ReleaseNotesView() {
   const { id } = useParams();

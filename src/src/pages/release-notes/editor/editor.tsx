@@ -78,7 +78,7 @@ import "./tiptap/components/tiptap-templates/simple/simple-editor.scss";
 import { SimpleTag } from "./tiptap/components/simple-tag";
 
 import content from "./tiptap/components/tiptap-templates/simple/data/content.json";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Input } from "./input";
 import {
   useCreateReleaseNote,

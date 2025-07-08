@@ -1,4 +1,4 @@
-import { Extension, mergeAttributes, Node, Mark } from "@tiptap/core";
+import { mergeAttributes, Mark } from "@tiptap/core";
 
 export type SimpleTagOptions = {
   bgColour: string;
