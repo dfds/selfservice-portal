@@ -223,9 +223,7 @@ export const SimpleTagButton = React.forwardRef<
         ref={ref}
       >
         {children || (
-          <>
-            {text && <span className={`simple-tag ${colour}`}>tag</span>}
-          </>
+          <>{text && <span className={`simple-tag ${colour}`}>tag</span>}</>
         )}
       </Button>
     );

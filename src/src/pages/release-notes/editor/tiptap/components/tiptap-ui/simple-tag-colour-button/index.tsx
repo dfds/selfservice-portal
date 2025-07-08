@@ -1,1 +1,1 @@
-export * from "./simple-tag-colour-button"
+export * from "./simple-tag-colour-button";

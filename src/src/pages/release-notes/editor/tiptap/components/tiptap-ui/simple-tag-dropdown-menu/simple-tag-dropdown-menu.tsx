@@ -62,7 +62,6 @@ export function SimpleTagDropdownMenu({
   );
 
   const getActiveIcon = React.useCallback(() => {
-
     if (!editor) return <TagIcon className="tiptap-button-icon" />;
 
     const activeColour = colours.find((colour) =>

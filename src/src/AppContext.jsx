@@ -14,7 +14,10 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
-import { useCreateReleaseNote, useToggleNoteActivity } from "@/state/remote/queries/releaseNotes";
+import {
+  useCreateReleaseNote,
+  useToggleNoteActivity,
+} from "@/state/remote/queries/releaseNotes";
 import { create } from "domain";
 
 const AppContext = React.createContext(null);
@@ -167,11 +170,12 @@ function AppProvider({ children }) {
       console.error("No link found for toggling release note activity.");
       return;
     }
-    
+
     toggleNoteActivity.mutate(
       {
-        href: link
-      }, {
+        href: link,
+      },
+      {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
         },
