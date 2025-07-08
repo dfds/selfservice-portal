@@ -12,7 +12,6 @@ import PageSection from "components/PageSection";
 import SplashImage from "./repository.jpg";
 import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
-import NewReleaseNoteDialog from "./NewReleaseNoteDialog";
 import styles from "./releasenotes.module.css";
 import PreAppContext from "preAppContext";
 import AppContext from "AppContext";
