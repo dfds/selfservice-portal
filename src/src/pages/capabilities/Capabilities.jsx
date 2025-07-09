@@ -13,7 +13,7 @@ import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
-function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
+function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
 
   return (
@@ -90,10 +90,11 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
       }}
       muiTableBodyRowProps={({ row }) => {
         return {
-          onClick: () => {
-            clickHandler(row.original.id);
-          },
+          component: "a",
+          href: `/capabilities/${row.original.id}`,
           sx: {
+            textDecoration: "none",
+            color: "inherit",
             cursor: "pointer",
             background: row.original.status === "Deleted" ? "#d88" : "",
             padding: 0,
@@ -177,9 +178,6 @@ export default function CapabilitiesList() {
       setIsLoading(false);
     }
   }, [isCapabilityFetched]);
-
-  const navigate = useNavigate();
-  const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
   const columns = useMemo(
     () => [
@@ -415,7 +413,6 @@ export default function CapabilitiesList() {
           <CapabilitiesTable
             columns={columns}
             filteredCapabilities={filteredCapabilities}
-            clickHandler={clickHandler}
           />
         )}
       </PageSection>
