@@ -29,7 +29,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
         globalFilter: globalFilter,
       }}
       onGlobalFilterChange={(value) => {
-          setGlobalFilter(value);
+        setGlobalFilter(value);
       }}
       muiTableHeadCellProps={{
         sx: {
@@ -113,7 +113,13 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 }
 
 export default function CapabilitiesList() {
-  const { truncateString, showDeletedCapabilities, setShowDeletedCapabilities, showOnlyMyCapabilities, setShowOnlyMyCapabilities } = useContext(AppContext);
+  const {
+    truncateString,
+    showDeletedCapabilities,
+    setShowDeletedCapabilities,
+    showOnlyMyCapabilities,
+    setShowOnlyMyCapabilities,
+  } = useContext(AppContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
@@ -138,28 +144,33 @@ export default function CapabilitiesList() {
   useEffect(() => {
     if (capabilities) {
       if (showOnlyMyCapabilities && myCapabilities) {
+        if (showDeletedCapabilities) {
           setFilteredCapabilities(myCapabilities);
+        } else {
+          setFilteredCapabilities(
+            myCapabilities.filter((capability) => {
+              return capability.status !== "Deleted";
+            }),
+          );
+        }
       } else {
-        setFilteredCapabilities(capabilities);
+        if (showDeletedCapabilities) {
+          setFilteredCapabilities(capabilities);
+        } else {
+          setFilteredCapabilities(
+            capabilities.filter((capability) => {
+              return capability.status !== "Deleted";
+            }),
+          );
+        }
       }
     }
-  }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
-
-  useEffect(() => {
-    if (isCapabilityFetched && capabilities) {
-      if (showDeletedCapabilities) {
-        console.log("Showing all capabilities including deleted ones");
-        setFilteredCapabilities(capabilities);
-      } else {
-        console.log("Filtering deleted capabilities");
-        setFilteredCapabilities(
-          capabilities.filter((capability) => {
-            return capability.status !== "Deleted";
-          }),
-        );
-      }
-    }
-  }, [showDeletedCapabilities]);
+  }, [
+    capabilities,
+    myCapabilities,
+    showOnlyMyCapabilities,
+    showDeletedCapabilities,
+  ]);
 
   useEffect(() => {
     if (isCapabilityFetched) {
@@ -354,7 +365,7 @@ export default function CapabilitiesList() {
   );
 
   const toggleShowMyCapabilities = () => {
-    setShowMyCapabilities(!showMyCapabilities);
+    setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
   };
 
   const toggleShowDeletedCapabilities = () => {
@@ -372,26 +383,28 @@ export default function CapabilitiesList() {
               })`
         }`}
         headlineChildren={
-          isLoading ? null : (<>
-            <div className={styles.myCapabilitiesToggleBox}>
-              <span className={styles.myCapabilitiesToggleTitle}>
-                Show just mine:{" "}
-              </span>
-              <Switch
-                checked={showOnlyMyCapabilities}
-                onChange={toggleShowMyCapabilities}
-              />
-            </div>
-            {isCloudEngineerEnabled && (
-            <div className={styles.myCapabilitiesToggleBox}>
-              <span className={styles.myCapabilitiesToggleTitle}>
-                Show deleted capabilities:{" "}
-              </span>
-              <Switch
-                checked={showDeletedCapabilities}
-                onChange={toggleShowDeletedCapabilities}
-              />
-            </div>)}
+          isLoading ? null : (
+            <>
+              <div className={styles.myCapabilitiesToggleBox}>
+                <span className={styles.myCapabilitiesToggleTitle}>
+                  Show just mine:{" "}
+                </span>
+                <Switch
+                  checked={showOnlyMyCapabilities}
+                  onChange={toggleShowMyCapabilities}
+                />
+              </div>
+              {isCloudEngineerEnabled && (
+                <div className={styles.myCapabilitiesToggleBox}>
+                  <span className={styles.myCapabilitiesToggleTitle}>
+                    Show deleted capabilities:{" "}
+                  </span>
+                  <Switch
+                    checked={showDeletedCapabilities}
+                    onChange={toggleShowDeletedCapabilities}
+                  />
+                </div>
+              )}
             </>
           )
         }
