@@ -72,6 +72,8 @@ function AppProvider({ children }) {
   const [myCapabilities, setMyCapabilities] = useState([]);
   const { data: me, isFetched: isMeFetched } = useMe();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -230,6 +232,10 @@ function AppProvider({ children }) {
     isAllWithValues,
     getValidationError,
     checkIfCloudEngineer,
+    showOnlyMyCapabilities,
+    setShowOnlyMyCapabilities,
+    globalFilter,
+    setGlobalFilter,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

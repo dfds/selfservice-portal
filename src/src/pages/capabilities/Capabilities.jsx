@@ -5,7 +5,6 @@ import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
-import { useMe } from "@/state/remote/queries/me";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { Switch } from "@dfds-ui/forms";
 import styles from "./capabilities.module.css";
@@ -14,6 +13,8 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
+  const { globalFilter, setGlobalFilter } = useContext(AppContext);
+
   return (
     <MaterialReactTable
       columns={columns}
@@ -22,6 +23,12 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
         pagination: { pageSize: 50 },
         showGlobalFilter: true,
         columnVisibility: { AwsAccountId: false },
+      }}
+      state={{
+        globalFilter: globalFilter,
+      }}
+      onGlobalFilterChange={(value) => {
+          setGlobalFilter(value);
       }}
       muiTableHeadCellProps={{
         sx: {
@@ -105,11 +112,9 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 }
 
 export default function CapabilitiesList() {
-  const { truncateString } = useContext(AppContext);
+  const { truncateString, showOnlyMyCapabilities, setShowOnlyMyCapabilities } = useContext(AppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
-
-  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
 
   const [isLoading, setIsLoading] = useState(true);
 
