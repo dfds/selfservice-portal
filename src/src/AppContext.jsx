@@ -74,6 +74,7 @@ function AppProvider({ children }) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [showDeletedCapabilities, setShowDeletedCapabilities] = useState(false);
 
   const [stats, setStats] = useState([]);
   const news = useLatestNews();
@@ -236,6 +237,8 @@ function AppProvider({ children }) {
     setShowOnlyMyCapabilities,
     globalFilter,
     setGlobalFilter,
+    showDeletedCapabilities,
+    setShowDeletedCapabilities,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

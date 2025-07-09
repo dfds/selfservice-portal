@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
+import PreAppContext from "@/preAppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { Switch } from "@dfds-ui/forms";
@@ -112,7 +113,8 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 }
 
 export default function CapabilitiesList() {
-  const { truncateString, showOnlyMyCapabilities, setShowOnlyMyCapabilities } = useContext(AppContext);
+  const { truncateString, showDeletedCapabilities, setShowDeletedCapabilities, showOnlyMyCapabilities, setShowOnlyMyCapabilities } = useContext(AppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
 
@@ -136,12 +138,28 @@ export default function CapabilitiesList() {
   useEffect(() => {
     if (capabilities) {
       if (showOnlyMyCapabilities && myCapabilities) {
-        setFilteredCapabilities(myCapabilities);
+          setFilteredCapabilities(myCapabilities);
       } else {
         setFilteredCapabilities(capabilities);
       }
     }
   }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
+
+  useEffect(() => {
+    if (isCapabilityFetched && capabilities) {
+      if (showDeletedCapabilities) {
+        console.log("Showing all capabilities including deleted ones");
+        setFilteredCapabilities(capabilities);
+      } else {
+        console.log("Filtering deleted capabilities");
+        setFilteredCapabilities(
+          capabilities.filter((capability) => {
+            return capability.status !== "Deleted";
+          }),
+        );
+      }
+    }
+  }, [showDeletedCapabilities]);
 
   useEffect(() => {
     if (isCapabilityFetched) {
@@ -336,7 +354,11 @@ export default function CapabilitiesList() {
   );
 
   const toggleShowMyCapabilities = () => {
-    setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
+    setShowMyCapabilities(!showMyCapabilities);
+  };
+
+  const toggleShowDeletedCapabilities = () => {
+    setShowDeletedCapabilities(!showDeletedCapabilities);
   };
 
   return (
@@ -350,7 +372,7 @@ export default function CapabilitiesList() {
               })`
         }`}
         headlineChildren={
-          isLoading ? null : (
+          isLoading ? null : (<>
             <div className={styles.myCapabilitiesToggleBox}>
               <span className={styles.myCapabilitiesToggleTitle}>
                 Show just mine:{" "}
@@ -360,6 +382,17 @@ export default function CapabilitiesList() {
                 onChange={toggleShowMyCapabilities}
               />
             </div>
+            {isCloudEngineerEnabled && (
+            <div className={styles.myCapabilitiesToggleBox}>
+              <span className={styles.myCapabilitiesToggleTitle}>
+                Show deleted capabilities:{" "}
+              </span>
+              <Switch
+                checked={showDeletedCapabilities}
+                onChange={toggleShowDeletedCapabilities}
+              />
+            </div>)}
+            </>
           )
         }
       >
