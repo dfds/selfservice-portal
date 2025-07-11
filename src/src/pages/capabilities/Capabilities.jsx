@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
+import PreAppContext from "@/preAppContext";
 import PageSection from "components/PageSection";
-import { useMe } from "@/state/remote/queries/me";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { Switch } from "@dfds-ui/forms";
 import styles from "./capabilities.module.css";
@@ -13,7 +13,10 @@ import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
-function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
+function CapabilitiesTable({ columns, filteredCapabilities }) {
+  const { globalFilter, setGlobalFilter } = useContext(AppContext);
+  const navigate = useNavigate();
+
   return (
     <MaterialReactTable
       columns={columns}
@@ -22,6 +25,12 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
         pagination: { pageSize: 50 },
         showGlobalFilter: true,
         columnVisibility: { AwsAccountId: false },
+      }}
+      state={{
+        globalFilter: globalFilter,
+      }}
+      onGlobalFilterChange={(value) => {
+        setGlobalFilter(value);
       }}
       muiTableHeadCellProps={{
         sx: {
@@ -82,10 +91,25 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
       }}
       muiTableBodyRowProps={({ row }) => {
         return {
-          onClick: () => {
-            clickHandler(row.original.id);
+          component: "a",
+          href: `/capabilities/${row.original.id}`,
+          onClick: (e) => {
+            if (
+              e.defaultPrevented ||
+              e.button !== 0 ||
+              e.metaKey ||
+              e.ctrlKey ||
+              e.shiftKey ||
+              e.altKey
+            ) {
+              return;
+            }
+            e.preventDefault();
+            navigate(`/capabilities/${row.original.id}`);
           },
           sx: {
+            textDecoration: "none",
+            color: "inherit",
             cursor: "pointer",
             background: row.original.status === "Deleted" ? "#d88" : "",
             padding: 0,
@@ -105,11 +129,16 @@ function CapabilitiesTable({ columns, filteredCapabilities, clickHandler }) {
 }
 
 export default function CapabilitiesList() {
-  const { truncateString } = useContext(AppContext);
+  const {
+    truncateString,
+    showDeletedCapabilities,
+    setShowDeletedCapabilities,
+    showOnlyMyCapabilities,
+    setShowOnlyMyCapabilities,
+  } = useContext(AppContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
-
-  const [showOnlyMyCapabilities, setShowOnlyMyCapabilities] = useState(true);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -131,21 +160,39 @@ export default function CapabilitiesList() {
   useEffect(() => {
     if (capabilities) {
       if (showOnlyMyCapabilities && myCapabilities) {
-        setFilteredCapabilities(myCapabilities);
+        if (showDeletedCapabilities) {
+          setFilteredCapabilities(myCapabilities);
+        } else {
+          setFilteredCapabilities(
+            myCapabilities.filter((capability) => {
+              return capability.status !== "Deleted";
+            }),
+          );
+        }
       } else {
-        setFilteredCapabilities(capabilities);
+        if (showDeletedCapabilities) {
+          setFilteredCapabilities(capabilities);
+        } else {
+          setFilteredCapabilities(
+            capabilities.filter((capability) => {
+              return capability.status !== "Deleted";
+            }),
+          );
+        }
       }
     }
-  }, [capabilities, myCapabilities, showOnlyMyCapabilities]);
+  }, [
+    capabilities,
+    myCapabilities,
+    showOnlyMyCapabilities,
+    showDeletedCapabilities,
+  ]);
 
   useEffect(() => {
     if (isCapabilityFetched) {
       setIsLoading(false);
     }
   }, [isCapabilityFetched]);
-
-  const navigate = useNavigate();
-  const clickHandler = (id) => navigate(`/capabilities/${id}`);
 
   const columns = useMemo(
     () => [
@@ -334,6 +381,10 @@ export default function CapabilitiesList() {
     setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
   };
 
+  const toggleShowDeletedCapabilities = () => {
+    setShowDeletedCapabilities(!showDeletedCapabilities);
+  };
+
   return (
     <>
       <PageSection
@@ -346,15 +397,28 @@ export default function CapabilitiesList() {
         }`}
         headlineChildren={
           isLoading ? null : (
-            <div className={styles.myCapabilitiesToggleBox}>
-              <span className={styles.myCapabilitiesToggleTitle}>
-                Show just mine:{" "}
-              </span>
-              <Switch
-                checked={showOnlyMyCapabilities}
-                onChange={toggleShowMyCapabilities}
-              />
-            </div>
+            <>
+              <div className={styles.myCapabilitiesToggleBox}>
+                <span className={styles.myCapabilitiesToggleTitle}>
+                  Show just mine:{" "}
+                </span>
+                <Switch
+                  checked={showOnlyMyCapabilities}
+                  onChange={toggleShowMyCapabilities}
+                />
+              </div>
+              {isCloudEngineerEnabled && (
+                <div className={styles.myCapabilitiesToggleBox}>
+                  <span className={styles.myCapabilitiesToggleTitle}>
+                    Show deleted capabilities:{" "}
+                  </span>
+                  <Switch
+                    checked={showDeletedCapabilities}
+                    onChange={toggleShowDeletedCapabilities}
+                  />
+                </div>
+              )}
+            </>
           )
         }
       >
@@ -364,7 +428,6 @@ export default function CapabilitiesList() {
           <CapabilitiesTable
             columns={columns}
             filteredCapabilities={filteredCapabilities}
-            clickHandler={clickHandler}
           />
         )}
       </PageSection>
