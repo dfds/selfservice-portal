@@ -15,6 +15,7 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 
 function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
+  const navigate = useNavigate();
 
   return (
     <MaterialReactTable
@@ -92,6 +93,20 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
         return {
           component: "a",
           href: `/capabilities/${row.original.id}`,
+          onClick: (e) => {
+            if (
+              e.defaultPrevented ||
+              e.button !== 0 ||
+              e.metaKey ||
+              e.ctrlKey ||
+              e.shiftKey ||
+              e.altKey
+            ) {
+              return;
+            }
+            e.preventDefault();
+            navigate(`/capabilities/${row.original.id}`);
+          },
           sx: {
             textDecoration: "none",
             color: "inherit",
