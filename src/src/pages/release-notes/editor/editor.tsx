@@ -1,5 +1,6 @@
 import * as React from "react";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import { useNavigate } from "react-router-dom";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -206,6 +207,7 @@ export interface EditorProps {
 }
 
 export function Editor({ defaultContent, mode, doc }: EditorProps) {
+  const navigate = useNavigate();
   const isMobile = useMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -293,6 +295,10 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
     );
   };
 
+  const handleDiscard = () => {
+    navigate("/release-notes/manage");
+  };
+
   const handleOnSave = () => {
     updateReleaseNote.mutate(
       {
@@ -337,7 +343,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
               </div>
             )}
 
-            <div className="button" style={{ backgroundColor: "#dd6868" }}>
+            <div
+              className="button"
+              style={{ backgroundColor: "#dd6868" }}
+              onClick={handleDiscard}
+            >
               Discard
             </div>
 
