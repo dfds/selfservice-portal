@@ -8,6 +8,7 @@ import Select from "react-select";
 import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
 import DropDownUserSelection from "./DropDownUserSelection";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ENUM_COSTCENTER_OPTIONS,
   ENUM_AVAILABILITY_OPTIONS,
@@ -160,7 +161,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
     };
-    console.log("sending data", data);
     return data;
   };
 
@@ -339,6 +339,7 @@ export function CapabilityTags() {
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const queryClient = useQueryClient();
 
   const [canEditTags, setCanEditTags] = useState(false);
 
@@ -363,6 +364,12 @@ export function CapabilityTags() {
         jsonMetadata: data,
       },
       isCloudEngineerEnabled: isCloudEngineerEnabled,
+    }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["capabilities", "metadata", details?.id],
+        });
+      }
     });
   };
 

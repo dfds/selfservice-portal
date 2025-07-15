@@ -67,13 +67,14 @@ export function useCapabilityMetadata(capabilityDefinition: any) {
 
   const query = useQuery({
     queryKey: ["capabilities", "metadata", capabilityDefinition?.id],
-    queryFn: async () =>
-      ssuRequest({
+    queryFn: async () => {
+      return ssuRequest({
         method: "GET",
         urlSegments: [link.metadata.href],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
+      });
+    },
     enabled: link != null,
   });
 
