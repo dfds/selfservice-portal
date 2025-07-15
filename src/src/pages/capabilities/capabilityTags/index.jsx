@@ -358,19 +358,22 @@ export function CapabilityTags() {
   }, [metadata]);
 
   const handleSubmit = (data) => {
-    updateCapabilityMetadata.mutate({
-      capabilityDefinition: details,
-      payload: {
-        jsonMetadata: data,
+    updateCapabilityMetadata.mutate(
+      {
+        capabilityDefinition: details,
+        payload: {
+          jsonMetadata: data,
+        },
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
       },
-      isCloudEngineerEnabled: isCloudEngineerEnabled,
-    }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["capabilities", "metadata", details?.id],
-        });
-      }
-    });
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "metadata", details?.id],
+          });
+        },
+      },
+    );
   };
 
   return (
