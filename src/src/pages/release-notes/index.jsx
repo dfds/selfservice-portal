@@ -62,7 +62,7 @@ function ReleaseNotesList() {
                 <DateFlag date={note.releaseDate} />
                 <h3 className={styles.title}>{note.title}</h3>
               </div>
-              <hr className={styles.divider} />
+              <hr />
             </div>
           ) : null,
         )

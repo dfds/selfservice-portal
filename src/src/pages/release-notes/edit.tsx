@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import styles from "./releasenotes.module.css";
+import Nope from "@/components/Nope";
 import "./style.scss";
 
 import { Editor, EditorMode } from "./editor/editor";
@@ -37,7 +38,7 @@ export function ReleaseNotesEdit() {
           )}
         </Page>
       ) : (
-        <div>Unauthorised</div>
+        <Nope />
       )}
     </>
   );
