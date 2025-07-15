@@ -426,7 +426,7 @@ export function ResourceInfoBadges() {
     } else {
       setMissingTags([]); // Reset to empty array if metadata is null or requiredTags is empty
     }
-  }, [metadataFetched]);
+  }, [metadataFetched, metadata, requiredTags]);
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
