@@ -53,17 +53,19 @@ function ReleaseNotesList() {
       {isFetched ? (
         notes.map((note) =>
           note.isActive || isCloudEngineerEnabled ? (
-            <div
-              className={styles.notePreview}
+            <a
+              href={`/release-notes/v/${note.id}`}
               key={note.id}
-              onClick={() => clickHandler(note.id)}
+              className={styles.rowLink}
             >
-              <div className={styles.row}>
-                <DateFlag date={note.releaseDate} />
-                <h3 className={styles.title}>{note.title}</h3>
+              <div className={styles.notePreview} key={note.id}>
+                <div className={styles.row}>
+                  <DateFlag date={note.releaseDate} />
+                  <h3 className={styles.title}>{note.title}</h3>
+                </div>
+                <hr />
               </div>
-              <hr />
-            </div>
+            </a>
           ) : null,
         )
       ) : (
