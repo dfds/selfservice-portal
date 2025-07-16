@@ -84,16 +84,12 @@ export function ReleaseNotesManage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const [notes, setNotes] = useState(data?.items || []);
-  const [links, setLinks] = useState(data?._links || {});
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [noteIdUpForDeletion, setNoteIdUpForDeletion] = useState(null);
+
   useEffect(() => {
     if (data?.items) {
       setNotes(data.items);
-    }
-
-    if (data?._links) {
-      setLinks(data._links);
     }
   }, [data]);
 
