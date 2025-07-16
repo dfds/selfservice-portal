@@ -542,12 +542,6 @@ function SelectedCapabilityProvider({ children }) {
         },
       },
     );
-    // try {
-    //   await selfServiceApiClient.bypassMembershipApproval(details);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    // queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   };
 
   const updateDeletionStatus = (value) => {

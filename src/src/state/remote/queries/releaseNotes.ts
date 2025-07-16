@@ -104,3 +104,18 @@ export function useToggleReleaseNoteActive() {
 
   return mutation;
 }
+
+export function useDeleteReleaseNote() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "DELETE",
+        urlSegments: ["release-notes", data.id],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}

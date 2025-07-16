@@ -62,7 +62,6 @@ export function SimpleTagDropdownMenu({
 
     if (!activeColour) return <TagIcon className="tiptap-button-icon" />;
 
-    console.log(activeColour);
     return <TagIcon className={`tiptap-button-icon ${activeColour}`} />;
   }, [editor, colours]);
 
