@@ -49,9 +49,6 @@
   padding: 0 50px;
 }
 
-.divider {
-}
-
 hr {
   margin: 0px;
 }
@@ -61,4 +58,9 @@ hr {
     background-color: #ebe9e9;
     cursor: pointer;
   }
+}
+
+.rowLink {
+  text-decoration: none;
+  color: inherit;
 }
