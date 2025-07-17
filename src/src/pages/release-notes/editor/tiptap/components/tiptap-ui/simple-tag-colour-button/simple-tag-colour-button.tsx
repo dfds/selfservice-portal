@@ -81,8 +81,6 @@ export function isHeadingActive(
 export function toggleHeading(editor: Editor | null, colour: string): void {
   if (!editor) return;
 
-  console.log(colour);
-
   if (editor.isActive("simpleTag", { bgColour: colour })) {
     editor.chain().focus().setMark("simpleTag", { bgColour: colour }).run();
     // editor.chain().focus().setMark("simpleTag", { colour: colour }).run();

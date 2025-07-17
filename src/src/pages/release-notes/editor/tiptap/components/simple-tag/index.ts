@@ -50,8 +50,6 @@ export const SimpleTag = Mark.create<SimpleTagOptions>({
   },
 
   renderHTML({ mark, HTMLAttributes }) {
-    console.log(HTMLAttributes);
-
     var mergedAttributes = mergeAttributes(
       this.options.HTMLAttributes,
       HTMLAttributes,

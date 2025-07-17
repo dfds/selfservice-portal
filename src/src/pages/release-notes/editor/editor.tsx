@@ -1,5 +1,6 @@
 import * as React from "react";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import { useNavigate } from "react-router-dom";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -86,6 +87,9 @@ import {
 } from "@/state/remote/queries/releaseNotes";
 import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
+import { TrackedButton } from "@/components/Tracking";
+import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Text } from "@dfds-ui/typography";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -205,13 +209,57 @@ export interface EditorProps {
   doc?: any;
 }
 
+function WarningDialog({ onCloseRequested, onAccept }) {
+  const actions = (
+    <>
+      {/*ModalActions does not support danger/warning variations currently*/}
+      <ModalAction
+        style={{ marginRight: "1rem" }}
+        actionVariation="primary"
+        onClick={onAccept}
+      >
+        Accept
+      </ModalAction>
+      <ModalAction
+        style={{ marginRight: "1rem" }}
+        actionVariation="secondary"
+        onClick={onCloseRequested}
+      >
+        Cancel
+      </ModalAction>
+    </>
+  );
+
+  return (
+    <>
+      <Modal
+        heading={`Cancel edits`}
+        isOpen={true}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
+        onRequestClose={onCloseRequested}
+        actions={actions}
+      >
+        <div>
+          <div>
+            <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
+            <span>All changes will be discarded and cannot be restored.</span>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
 export function Editor({ defaultContent, mode, doc }: EditorProps) {
+  const navigate = useNavigate();
   const isMobile = useMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
+  const [showDiscardWarning, setShowDiscardWarning] = useState(false);
 
   const editorContent = defaultContent != null ? defaultContent : content;
   const editable = mode !== EditorMode.View;
@@ -275,7 +323,6 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const updateReleaseNote = useUpdateReleaseNote(doc != null ? doc.id : "0");
 
   const handleOnSaveDraft = () => {
-    console.log(editor.getJSON());
     createReleaseNote.mutate(
       {
         payload: {
@@ -288,9 +335,14 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          navigate("/release-notes/manage");
         },
       },
     );
+  };
+
+  const handleDiscard = () => {
+    navigate("/release-notes/manage");
   };
 
   const handleOnSave = () => {
@@ -309,6 +361,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
           queryClient.invalidateQueries({
             queryKey: ["releasenotes", "details", doc.id],
           });
+          navigate("/release-notes/manage");
         },
       },
     );
@@ -323,84 +376,104 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   };
 
   return (
-    <div className="editor-primary">
-      <EditorContext.Provider value={{ editor }}>
-        {mode !== EditorMode.View && (
-          <div className="editor-menu">
-            {mode === EditorMode.Create ? (
-              <div className="button" onClick={handleOnSaveDraft}>
-                Save draft
-              </div>
-            ) : (
-              <div className="button" onClick={handleOnSave}>
+    <>
+      {showDiscardWarning && (
+        <WarningDialog
+          onCloseRequested={() => {
+            setShowDiscardWarning(false);
+          }}
+          onAccept={() => {
+            handleDiscard();
+            setShowDiscardWarning(false);
+          }}
+        />
+      )}
+      <div className="editor-primary">
+        <EditorContext.Provider value={{ editor }}>
+          {mode !== EditorMode.View && (
+            <div className="editor-menu">
+              <TrackedButton
+                trackName="ReleaseNotes-Save"
+                style={{ marginRight: "5px" }}
+                onClick={
+                  mode === EditorMode.Create ? handleOnSaveDraft : handleOnSave
+                }
+                trackingEvent={{
+                  category: "ReleaseNotes",
+                  action: "Save New",
+                  label: "Save New Release Note",
+                }}
+              >
                 Save
-              </div>
-            )}
-
-            <div className="button" style={{ backgroundColor: "#dd6868" }}>
-              Discard
+              </TrackedButton>
+              <TrackedButton
+                trackName="ReleaseNotes-Discard"
+                style={{ backgroundColor: "#dd6868" }}
+                onClick={() => setShowDiscardWarning(true)}
+                trackingEvent={{
+                  category: "ReleaseNotes",
+                  action: "Discard",
+                  label: "Discard Release Note",
+                }}
+              >
+                Discard
+              </TrackedButton>
             </div>
+          )}
 
-            {mode === EditorMode.Edit && (
-              <div className="button" style={{ backgroundColor: "#dd6868" }}>
-                Delete
+          {mode !== EditorMode.View && (
+            <div>
+              <div className="editor-metadata">
+                <Input
+                  label="Title"
+                  placeholder="2025.06 - The big summer release"
+                  onChange={handleTitleUpdate}
+                  inputOverride={title}
+                />
+                <DatePicker
+                  label="Release date"
+                  placeholder="nah"
+                  onChange={handleReleaseDateUpdate}
+                  inputOverride={releaseDate}
+                />
               </div>
-            )}
-          </div>
-        )}
-
-        {mode !== EditorMode.View && (
-          <div>
-            <div className="editor-metadata">
-              <Input
-                label="Title"
-                placeholder="2025.06 - The big summer release"
-                onChange={handleTitleUpdate}
-                inputOverride={title}
-              />
-              <DatePicker
-                label="Release date"
-                placeholder="nah"
-                onChange={handleReleaseDateUpdate}
-                inputOverride={releaseDate}
-              />
+              <Toolbar
+                ref={toolbarRef}
+                style={
+                  isMobile
+                    ? {
+                        bottom: `calc(100% - ${
+                          windowSize.height - bodyRect.y
+                        }px)`,
+                      }
+                    : {}
+                }
+              >
+                {mobileView === "main" ? (
+                  <MainToolbarContent
+                    onHighlighterClick={() => setMobileView("highlighter")}
+                    onLinkClick={() => setMobileView("link")}
+                    isMobile={isMobile}
+                  />
+                ) : (
+                  <MobileToolbarContent
+                    type={mobileView === "highlighter" ? "highlighter" : "link"}
+                    onBack={() => setMobileView("main")}
+                  />
+                )}
+              </Toolbar>
             </div>
-            <Toolbar
-              ref={toolbarRef}
-              style={
-                isMobile
-                  ? {
-                      bottom: `calc(100% - ${
-                        windowSize.height - bodyRect.y
-                      }px)`,
-                    }
-                  : {}
-              }
-            >
-              {mobileView === "main" ? (
-                <MainToolbarContent
-                  onHighlighterClick={() => setMobileView("highlighter")}
-                  onLinkClick={() => setMobileView("link")}
-                  isMobile={isMobile}
-                />
-              ) : (
-                <MobileToolbarContent
-                  type={mobileView === "highlighter" ? "highlighter" : "link"}
-                  onBack={() => setMobileView("main")}
-                />
-              )}
-            </Toolbar>
-          </div>
-        )}
+          )}
 
-        <div className="content-wrapper">
-          <EditorContent
-            editor={editor}
-            role="presentation"
-            className="simple-editor-content"
-          />
-        </div>
-      </EditorContext.Provider>
-    </div>
+          <div className="content-wrapper">
+            <EditorContent
+              editor={editor}
+              role="presentation"
+              className="simple-editor-content"
+            />
+          </div>
+        </EditorContext.Provider>
+      </div>
+    </>
   );
 }
