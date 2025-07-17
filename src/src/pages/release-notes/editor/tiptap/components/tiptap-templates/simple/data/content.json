@@ -10,21 +10,62 @@
       "content": [
         {
           "type": "text",
-          "text": "2025.06 - The big summer release THROWAWAYAAY"
+          "text": "Lorem ipsum dolor sit amet"
         }
       ]
     },
     {
-      "type": "text",
-      "marks": [
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
         {
-          "type": "simpleTag",
-          "attrs": {
-            "bgColour": "green"
-          }
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "blue"
+              }
+            }
+          ],
+          "text": "Dummy"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": " "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "green"
+              }
+            }
+          ],
+          "text": "Latin"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "simpleTag",
+              "attrs": {
+                "bgColour": "yellow"
+              }
+            }
+          ],
+          "text": "Available soon"
         }
-      ],
-      "text": "Preview"
+      ]
     },
     {
       "type": "paragraph",
@@ -34,7 +75,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Coming up this summer we have a bunch of new features being released"
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor congue nisl, a tincidunt tortor. Proin sagittis augue non elit vehicula dictum. Duis in diam lobortis, iaculis turpis vel, feugiat tellus. Maecenas nec tristique enim. Nulla facilisi. Vivamus dictum eros quis pellentesque porta. Nullam at elementum felis, sed feugiat ex. Donec sit amet tellus mauris. Nullam fermentum fringilla elit et lobortis. Proin ex nibh, hendrerit non cursus at, scelerisque nec libero. Pellentesque sodales sed nisi nec congue. In nec mattis diam, quis feugiat lacus. Aliquam erat volutpat. Mauris nec lobortis velit. Morbi tincidunt sodales interdum. Praesent sit amet porttitor nunc."
         }
       ]
     }
