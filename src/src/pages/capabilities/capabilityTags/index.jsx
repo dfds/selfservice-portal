@@ -27,6 +27,8 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [costCenterError, setCostCenterError] = useState(undefined);
   const [sunsetDateError, setSunsetDateError] = useState(undefined);
 
+  const [isDirty, setIsDirty] = useState(false);
+
   const [owner, setOwner] = useState("");
   const [sunsetDate, setSunsetDate] = useState(undefined);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
@@ -179,6 +181,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const ownerUpdated = (newOwner) => {
     setIsUserSearchActive(false);
     setOwner(newOwner);
+    setIsDirty(true);
   };
 
   return (
@@ -227,7 +230,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_COSTCENTER_OPTIONS}
           value={selectedCostCenterOption}
           className={styles.input}
-          onChange={setSelectedCostCenterOption}
+          onChange={(e) => {
+            setSelectedCostCenterOption(e);
+            setIsDirty(true);
+          }}
         />
         <div className={styles.errorContainer}>
           {costCenterError && (
@@ -247,7 +253,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           type="date"
           value={sunsetDate}
           className={`${styles.input} ${styles.inputBorder}`}
-          onChange={(e) => setSunsetDate(e.target.value)}
+          onChange={(e) => {
+            setSunsetDate(e.target.value);
+            setIsDirty(true);
+          }}
         />
         <div className={styles.errorContainer}>
           {sunsetDateError && (
@@ -273,7 +282,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CLASSIFICATION_OPTIONS}
           value={selectedClassificationOption}
           className={styles.input}
-          onChange={setSelectedClassificationOption}
+          onChange={(e) => {
+            setSelectedClassificationOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -296,7 +308,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CRITICALITY_OPTIONS}
           value={selectedCriticalityOption}
           className={styles.input}
-          onChange={setSelectedCriticalityOption}
+          onChange={(e) => {
+            setSelectedCriticalityOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -319,7 +334,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_AVAILABILITY_OPTIONS}
           value={selectedAvailabilityOption}
           className={styles.input}
-          onChange={setSelectedAvailabilityOption}
+          onChange={(e) => {
+            setSelectedAvailabilityOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -344,7 +362,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_AZURERG_USAGE_OPTIONS}
           value={selectedAzureRGUsageOption}
           className={styles.input}
-          onChange={setSelectedAzureRGUsageOption}
+          onChange={(e) => {
+            setSelectedAzureRGUsageOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -355,8 +376,11 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         trackName="CapabilityTags-Submit"
         size="small"
         variation="outlined"
-        disabled={!canEditTags || formHasError}
-        onClick={() => onSubmit(translateToTags())}
+        disabled={!canEditTags || formHasError || !isDirty }
+        onClick={() => {
+          onSubmit(translateToTags());
+          setIsDirty(false);
+        }}
       >
         Submit
       </TrackedButton>
