@@ -41,7 +41,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
 
   useEffect(() => {
-    if (ownerError || costCenterError ) {
+    if (ownerError || costCenterError) {
       setFormHasError(true);
     } else {
       setFormHasError(false);
@@ -306,11 +306,12 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
 
       {/* Azure Resource Group use case */}
       <div>
-        <label className={styles.label}>Azure Resource Group reason for use:</label>
+        <label className={styles.label}>
+          Azure Resource Group reason for use:
+        </label>
         <span>
           Guidance: If using Azure Resource Groups, please provide a reason for
-          using it. This is required for requesting Azure Resource Groups.
-          See:{" "}
+          using it. This is required for requesting Azure Resource Groups. See:{" "}
           <a
             href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
             target="_blank"
@@ -337,7 +338,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         trackName="CapabilityTags-Submit"
         size="small"
         variation="outlined"
-        disabled={!canEditTags || formHasError || !isDirty }
+        disabled={!canEditTags || formHasError || !isDirty}
         onClick={() => {
           onSubmit(translateToTags());
           setIsDirty(false);
