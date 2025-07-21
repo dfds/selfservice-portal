@@ -25,12 +25,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [formHasError, setFormHasError] = useState(false);
   const [ownerError, setOwnerError] = useState(undefined);
   const [costCenterError, setCostCenterError] = useState(undefined);
-  const [sunsetDateError, setSunsetDateError] = useState(undefined);
 
   const [isDirty, setIsDirty] = useState(false);
 
   const [owner, setOwner] = useState("");
-  const [sunsetDate, setSunsetDate] = useState(undefined);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
   const [selectedCriticalityOption, setSelectedCriticalityOption] =
@@ -43,12 +41,12 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
 
   useEffect(() => {
-    if (ownerError || costCenterError || sunsetDateError) {
+    if (ownerError || costCenterError ) {
       setFormHasError(true);
     } else {
       setFormHasError(false);
     }
-  }, [ownerError, costCenterError, sunsetDateError]);
+  }, [ownerError, costCenterError]);
 
   const emailValidator = (input) => {
     const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
@@ -68,14 +66,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     );
     return matches.length > 0;
   };
-
-  useEffect(() => {
-    if (sunsetDate !== "" && new Date(sunsetDate) < new Date()) {
-      setSunsetDateError("Sunset date cannot be in the past");
-    } else {
-      setSunsetDateError(undefined);
-    }
-  }, [sunsetDate]);
 
   useEffect(() => {
     if (!selectedCostCenterOption) {
@@ -126,11 +116,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         setSelectedCostCenterOption(selectedOption || undefined);
       }
 
-      const prevSunsetDate = defaultValues["dfds.planned_sunset"];
-      if (prevSunsetDate) {
-        setSunsetDate(prevSunsetDate);
-      }
-
       const prevClassification = defaultValues["dfds.data.classification"];
       if (prevClassification) {
         const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
@@ -169,7 +154,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     const data = {
       "dfds.owner": owner,
       "dfds.cost.centre": selectedCostCenterOption?.value,
-      "dfds.planned_sunset": sunsetDate,
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
@@ -238,29 +222,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         <div className={styles.errorContainer}>
           {costCenterError && (
             <span className={styles.error}>{costCenterError}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Sunset Data */}
-      <div>
-        <label className={styles.label}>Sunset Date:</label>
-        <span>
-          The date when the capability is planned to not be relevant anymore.
-          This is required for requesting Azure Resource Groups.
-        </span>
-        <input
-          type="date"
-          value={sunsetDate}
-          className={`${styles.input} ${styles.inputBorder}`}
-          onChange={(e) => {
-            setSunsetDate(e.target.value);
-            setIsDirty(true);
-          }}
-        />
-        <div className={styles.errorContainer}>
-          {sunsetDateError && (
-            <span className={styles.error}>{sunsetDateError}</span>
           )}
         </div>
       </div>

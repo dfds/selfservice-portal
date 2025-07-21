@@ -379,7 +379,6 @@ export function ResourceInfoBadges() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
   const requiredTags = [
-    "dfds.planned_sunset",
     "dfds.owner",
     "dfds.cost.centre",
     "dfds.service.availability",

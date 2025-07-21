@@ -268,13 +268,6 @@ export default function CapabilitiesList() {
           ) {
             return <div className={styles.missingTags}>Pending</div>;
           }
-          if (
-            jsonMetadata["dfds.planned_sunset"] !== undefined &&
-            jsonMetadata["dfds.planned_sunset"] !== "" &&
-            jsonMetadata["dfds.planned_sunset"] <= new Date()
-          ) {
-            return <div className={styles.missingTags}>Pending</div>;
-          }
           return <div></div>;
         },
       },
