@@ -14,6 +14,7 @@ import {
   ENUM_AVAILABILITY_OPTIONS,
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
+  ENUM_AZURERG_USAGE_OPTIONS,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -35,6 +36,8 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
     useState(undefined);
   const [selectedClassificationOption, setSelectedClassificationOption] =
+    useState(undefined);
+  const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
     useState(undefined);
 
   useEffect(() => {
@@ -149,6 +152,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         );
         setSelectedAvailabilityOption(selectedOption || undefined);
       }
+
+      const prevAzureRGUsage = defaultValues["dfds.azure.purpose"];
+      if (prevAzureRGUsage) {
+        const selectedOption = ENUM_AZURERG_USAGE_OPTIONS.find(
+          (opt) => opt.value === prevAzureRGUsage,
+        );
+        setSelectedAzureRGUsageOption(selectedOption || undefined);
+      }
     }
   }, [defaultValues]);
 
@@ -160,6 +171,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
+      "dfds.azure.purpose": selectedAzureRGUsageOption?.value,
     };
     return data;
   };
@@ -308,6 +320,31 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           value={selectedAvailabilityOption}
           className={styles.input}
           onChange={setSelectedAvailabilityOption}
+        />
+
+        <div className={styles.errorContainer}></div>
+      </div>
+
+      {/* Azure Resource Group use case */}
+      <div>
+        <label className={styles.label}>Azure Resource Group reason for use:</label>
+        <span>
+          Guidance: If using Azure Resource Groups, please provide a reason for
+          using it. This is required for requesting Azure Resource Groups.
+          See:{" "}
+          <a
+            href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
+            target="_blank"
+            rel="noreferrer"
+          >
+            cloud selection guidance
+          </a>
+        </span>
+        <Select
+          options={ENUM_AZURERG_USAGE_OPTIONS}
+          value={selectedAzureRGUsageOption}
+          className={styles.input}
+          onChange={setSelectedAzureRGUsageOption}
         />
 
         <div className={styles.errorContainer}></div>

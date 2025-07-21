@@ -383,6 +383,7 @@ export function ResourceInfoBadges() {
     "dfds.owner",
     "dfds.cost.centre",
     "dfds.service.availability",
+    "dfds.azure.purpose",
   ];
   const [missingTags, setMissingTags] = useState([]);
   const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
