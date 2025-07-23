@@ -287,8 +287,6 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 };
 
 const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
-  const [sunsetDate, setSunsetDate] = useState(undefined);
-  const [sunsetError, setSunsetError] = useState(undefined);
   const [classification, setClassification] = useState(undefined);
   const [selectedClassificationOption, setSelectedClassificationOption] =
     useState(undefined);
@@ -298,14 +296,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [availability, setAvailability] = useState(undefined);
   const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
     useState(undefined);
-
-  useEffect(() => {
-    if (sunsetError) {
-      setCanContinue(false);
-    } else {
-      setCanContinue(true);
-    }
-  }, [sunsetError]);
 
   useEffect(() => {
     if (selectedAvailabilityOption) {
@@ -326,11 +316,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   }, [selectedClassificationOption]);
 
   useEffect(() => {
-    const sunsetDate = formValues?.optionalTags["dfds.planned_sunset"];
-    if (sunsetDate) {
-      setSunsetDate(sunsetDate);
-    }
-
     const classification = formValues?.optionalTags["dfds.data.classification"];
     if (classification) {
       const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
@@ -360,24 +345,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
     const inputDate = new Date(dateString);
     return inputDate > new Date();
   };
-
-  useEffect(() => {
-    //check if sunset date is set and if so is in the future:
-    if (sunsetDate === undefined || isInFuture(sunsetDate)) {
-      setSunsetError(undefined);
-      setFormValues((prev) => {
-        return {
-          ...prev,
-          optionalTags: {
-            ...prev.optionalTags,
-            "dfds.planned_sunset": sunsetDate,
-          },
-        };
-      });
-    } else {
-      setSunsetError("If sunset date is set then it must be in the future");
-    }
-  }, [sunsetDate]);
 
   useEffect(() => {
     setFormValues((prev) => {
@@ -441,23 +408,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </TrackedLink>
       </Text>
 
-      {/* Sunset Data */}
-      <div>
-        <label className={styles.label}>Sunset Date:</label>
-        <span>
-          The date when the capability is planned to not be relevant anymore.
-          This is required for requesting Azure Resource Groups.
-        </span>
-        <input
-          type="date"
-          value={sunsetDate}
-          className={`${styles.input} ${styles.inputBorder}`}
-          onChange={(e) => setSunsetDate(e.target.value)}
-        />
-        <div className={styles.errorContainer}>
-          {sunsetError && <span className={styles.error}>{sunsetError}</span>}
-        </div>
-      </div>
       {/* Data Classification */}
       <div>
         <label className={styles.label}>Data Classification:</label>

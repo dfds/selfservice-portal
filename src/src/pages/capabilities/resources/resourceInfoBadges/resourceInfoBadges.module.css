@@ -73,7 +73,7 @@ hr.divider {
 
 .environmentselect {
   margin-left: 10px;
-  width: 120px;
+  width: 250px;
 }
 
 .envitems {
@@ -119,4 +119,22 @@ hr.divider {
 .link {
   color: #49a2df;
   text-decoration: none;
+}
+
+.separator {
+  height: 1.5em;
+}
+
+.indent20 {
+  width: 100%;
+  margin-left: 100px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catalogueId {
+  width: 250px;
+  margin-left: 10px;
+  border: 1px solid #ccc;
 }

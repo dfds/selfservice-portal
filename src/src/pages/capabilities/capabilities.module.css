@@ -175,3 +175,8 @@
   color: red;
   font-weight: bold;
 }
+
+.wizardStep {
+  margin: auto;
+  width: 60%;
+}

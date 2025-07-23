@@ -548,13 +548,11 @@ function SelectedCapabilityProvider({ children }) {
     setPendingDeletion(value);
   };
 
-  const addNewAzure = (environment) => {
+  const addNewAzure = (payload) => {
     capabilityAzureResourceRequest.mutate(
       {
         capabilityDefinition: details,
-        payload: {
-          environment: environment,
-        },
+        payload: payload,
       },
       {
         onSuccess: () => {
