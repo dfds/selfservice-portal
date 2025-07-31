@@ -44,7 +44,6 @@ function CapabilityDetailsPageContent() {
     updateDeletionStatus,
     awsAccount,
     metadata,
-    adoptionLevelInformation,
   } = useContext(SelectedCapabilityContext);
 
   useEffect(() => {
