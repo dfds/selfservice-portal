@@ -1,13 +1,15 @@
 import React from "react";
-import { TrackedLink } from "../Tracking";
+import { TrackedButton } from "../Tracking";
 
 export default function ConsumerLink({ capabilityId, topicName, linkTitle }) {
   return (
-    <TrackedLink
+    <TrackedButton
       trackName="ConsumerLink"
-      href={`https://view.grafana.dfds.cloud/d/mihl5sn/topic-consumers?orgId=1&from=now-30d&to=now&timezone=browser&var-prefix=.%2A&var-namespace=${capabilityId}&var-topic=${topicName}`}
+      onClick={() =>
+       window.open(`https://view.grafana.dfds.cloud/d/mihl5sn/topic-consumers?orgId=1&from=now-30d&to=now&timezone=browser&var-prefix=.%2A&var-namespace=${capabilityId}&var-topic=${topicName}`, '_blank', 'noopener,noreferrer')
+      }
     >
       {linkTitle}
-    </TrackedLink>
+    </TrackedButton>
   );
 }

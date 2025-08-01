@@ -107,11 +107,11 @@ export function RowDetails(data) {
         </Link>
         <br />
 
-        <Text styledAs="actionBold">Consumers</Text>
+        <Text styledAs="actionBold">Consumer Statistics</Text>
         <ConsumerLink
           capabilityId={data.data.capabilityId}
           topicName={data.data.name}
-          linkTitle="see consumers in Grafana"
+          linkTitle="Open consumer dashboard in Grafana"
         />
       </CardContent>
     </Card>
