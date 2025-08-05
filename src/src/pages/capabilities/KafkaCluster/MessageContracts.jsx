@@ -3,7 +3,7 @@ import Expandable from "../../../components/Expandable";
 import Poles from "../../../components/Poles";
 import { Text } from "@dfds-ui/typography";
 import { SelectField } from "@dfds-ui/react-components";
-import React from "react";
+import React, { useEffect } from "react";
 import { Divider } from "@dfds-ui/react-components/divider";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
@@ -71,10 +71,12 @@ export default function MessageContracts({
       >
         <div className={styles.jsoncontainer}>
           <br />
-          <div>
-            <Text styledAs="label">Schema ({schema.schemaType})</Text>
-            <JsonViewer json={schema.schema} />
-          </div>
+          {schema !== undefined && (
+            <div>
+              <Text styledAs="label">Schema ({schema.schemaType})</Text>
+              <JsonViewer json={schema.schema} />
+            </div>
+          )}
         </div>
       </Expandable>
     </div>

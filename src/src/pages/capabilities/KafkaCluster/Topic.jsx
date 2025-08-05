@@ -17,6 +17,7 @@ import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import MessageContracts from "./MessageContracts";
+import ConsumerLink from "@/components/ConsumerLink";
 
 function TopicHeader({
   name,
@@ -246,6 +247,13 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
               <br />
             </>
           }
+
+          <Text styledAs="actionBold">Consumer Statistics</Text>
+          <ConsumerLink
+            capabilityId={topic.capabilityId}
+            topicName={topic.name}
+            linkTitle="Open consumer dashboard in Grafana"
+          />
         </CardContent>
       </Card>
     </Accordion>

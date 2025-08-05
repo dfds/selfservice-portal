@@ -17,11 +17,9 @@ import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { usePublicTopics } from "@/state/remote/queries/kafka";
 import { MaterialReactTable } from "material-react-table";
-import { Link } from "react-router-dom";
 import { RowDetails } from "./rowDetails";
 import { Badge } from "@dfds-ui/react-components";
 import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
-import PreAppContext from "@/preAppContext";
 
 function Topics() {
   const { selfServiceApiClient } = useContext(AppContext);
@@ -102,17 +100,6 @@ function Topics() {
             {!cell.row.getIsExpanded() ? (
               <div className={styles.infocontainer}>
                 <p>{cell.row.original.description}</p>
-                <div>
-                  <div>
-                    Capability:{" "}
-                    <Link
-                      style={linkStyle}
-                      to={`/capabilities/${cell.row.original.capabilityId}`}
-                    >
-                      {cell.row.original.capabilityId}
-                    </Link>
-                  </div>
-                </div>
               </div>
             ) : null}
           </div>

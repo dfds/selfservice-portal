@@ -6,6 +6,7 @@ import { Card, CardContent } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
 import { useError } from "../../hooks/Error";
+import ConsumerLink from "@/components/ConsumerLink";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -73,59 +74,45 @@ export function RowDetails(data) {
     }
   };
 
+  function MessageContractTypeRow({ messageType, messageContracts }) {
+    return (
+      <div>
+        <h4>{messageType}</h4>
+        <div>
+          {messageContracts.map((contract) => (
+            <MessageContracts
+              key={contract.schema.id}
+              schema={contract.schema}
+              isSelected={messageType === selectedMessageContractType}
+              onHeaderClicked={(messageType) =>
+                handleMessageHeaderClicked(messageType)
+              }
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Card variant="fill" surface="secondary">
       <CardContent>
         <Text styledAs="actionBold">Description</Text>
         <p>{data.data.description}</p>
-        {
-          <>
-            <br />
-            {isLoadingContracts ? (
-              <Spinner instant />
-            ) : (
-              <>
-                {(contracts || []).length === 0 && (
-                  <div>No message contracts defined...yet!</div>
-                )}
-
-                {(contracts || []).length !== 0 && (
-                  <Text styledAs="actionBold">
-                    Message Contracts ({(contracts || []).length})
-                  </Text>
-                )}
-                {Object.entries(contractsGroupedByVersion).map(
-                  ([messageType, messageContracts]) => (
-                    <MessageContracts
-                      key={messageType}
-                      messageType={messageType}
-                      contracts={messageContracts}
-                      isSelected={messageType === selectedMessageContractType}
-                      onHeaderClicked={(messageType) =>
-                        handleMessageHeaderClicked(messageType)
-                      }
-                      onRetryClicked={() =>
-                        handleRetryClicked(messageContracts[0])
-                      }
-                    />
-                  ),
-                )}
-              </>
-            )}
-          </>
-        }
         <br />
-        <div>
-          <div>
-            <Text styledAs="actionBold">Capability </Text>
-            <Link
-              style={linkStyle}
-              to={`/capabilities/${data.data.capabilityId}`}
-            >
-              {data.data.capabilityId}
-            </Link>
-          </div>
-        </div>
+
+        <Text styledAs="actionBold">Capability </Text>
+        <Link style={linkStyle} to={`/capabilities/${data.data.capabilityId}`}>
+          {data.data.capabilityId}
+        </Link>
+        {/*<br />
+
+        <Text styledAs="actionBold">Consumer Statistics</Text>
+        <ConsumerLink
+          capabilityId={data.data.capabilityId}
+          topicName={data.data.name}
+          linkTitle="Open consumer dashboard in Grafana"
+        />*/}
       </CardContent>
     </Card>
   );
