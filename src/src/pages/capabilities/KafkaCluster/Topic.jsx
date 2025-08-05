@@ -248,11 +248,11 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
             </>
           }
 
-          <Text styledAs="actionBold">Consumers</Text>
+          <Text styledAs="actionBold">Consumer Statistics</Text>
           <ConsumerLink
             capabilityId={topic.capabilityId}
             topicName={topic.name}
-            linkTitle="see consumers in Grafana"
+            linkTitle="Open consumer dashboard in Grafana"
           />
         </CardContent>
       </Card>
