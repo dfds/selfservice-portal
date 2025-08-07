@@ -570,7 +570,8 @@ const SummaryStep = ({ formValues }) => {
       </p>
       <h2>Mandatory Tags</h2>
       <p>
-        <strong>Owner:</strong> {formValues.mandatoryTags["dfds.owner"] || "Not provided"}
+        <strong>Owner:</strong>{" "}
+        {formValues.mandatoryTags["dfds.owner"] || "Not provided"}
       </p>
       <p>
         <strong>Cost Center:</strong>{" "}
