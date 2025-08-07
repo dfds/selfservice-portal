@@ -129,20 +129,25 @@ const BasicInformationStep = ({
     return true;
   };
 
+  const validateDescription = (description) => {
+    if (description.length === 0) {
+      setDescriptionError("");
+      return false;
+    }
+    if (description.length > 255) {
+      setDescriptionError("Description must be less than 255 characters");
+      return false;
+    }
+
+    setDescriptionError("");
+    return true;
+  };
+
   const changeDescription = (e) => {
     e.preventDefault();
     const newDescription = e?.target?.value || "";
     setFormData((prev) => ({ ...prev, ...{ description: newDescription } }));
     validateDescription(newDescription);
-  };
-
-  const validateDescription = (description) => {
-    if (description.length === 0) {
-      //setDescriptionError("Please write a description");
-      return false;
-    }
-    setDescriptionError("");
-    return true;
   };
 
   useEffect(() => {
@@ -552,7 +557,54 @@ const SummaryStep = ({ formValues }) => {
   return (
     <>
       <h1>Summary</h1>
-      <pre>{JSON.stringify(formValues, null, 2)}</pre>
+      <Text>
+        Please review the information below before submitting your new
+        capability.
+      </Text>
+      <h2>Basic Information</h2>
+      <p>
+        <strong>Name:</strong> {formValues.name || "Not provided"}
+      </p>
+      <p>
+        <strong>Description:</strong> {formValues.description || "Not provided"}
+      </p>
+      <h2>Mandatory Tags</h2>
+      <p>
+        <strong>Owner:</strong> {formValues.mandatoryTags["dfds.owner"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Cost Center:</strong>{" "}
+        {formValues.mandatoryTags["dfds.cost.centre"] || "Not provided"}
+      </p>
+      <h2>Optional Tags</h2>
+      <p>
+        <strong>Sunset Date:</strong>{" "}
+        {formValues.optionalTags["dfds.planned_sunset"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Data Classification:</strong>{" "}
+        {formValues.optionalTags["dfds.data.classification"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Service Criticality:</strong>{" "}
+        {formValues.optionalTags["dfds.service.criticality"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Service Availability:</strong>{" "}
+        {formValues.optionalTags["dfds.service.availability"] || "Not provided"}
+      </p>
+      <h2>Invitations</h2>
+      {formValues.invitations && formValues.invitations.length > 0 ? (
+        <ul>
+          {formValues.invitations.map((invite, index) => (
+            <li key={index}>
+              <strong>Email:</strong> {invite.email}{" "}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No invitations to send.</p>
+      )}
     </>
   );
 };
