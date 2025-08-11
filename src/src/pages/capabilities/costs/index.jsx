@@ -10,7 +10,7 @@ import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { TrackedButton } from "@/components/Tracking";
 
-export default function Costs({ costCentre }) {
+export default function Costs({ anchorId, costCentre }) {
   const { query, getCostsForCapability } = useCapabilitiesCost();
   const { id } = useParams();
   const [showCostsSpinner, setShowCostsSpinner] = useState(true);
@@ -21,7 +21,7 @@ export default function Costs({ costCentre }) {
   }, [query.isFetched]);
 
   return (
-    <PageSection headline="Costs">
+    <PageSection id={anchorId} headline="Costs">
       <span>
         Use Finout to explore the costs for this capability or its entire cost
         centre, if a cost centre is set.
