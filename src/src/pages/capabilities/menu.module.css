@@ -25,6 +25,10 @@
   text-decoration: none;
 }
 
+.active {
+  font-weight: bold;
+}
+
 @keyframes glow {
   0% {
     box-shadow: 0 0 10px 5px #ed8800;
