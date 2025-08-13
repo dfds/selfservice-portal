@@ -245,16 +245,17 @@ function CapabilityDetailsPageContent() {
               </Text>
             </PageSection>
           )}
-          {awsAccount !== undefined &&
-            awsAccount &&
-            (kafkaClusters || []).map((cluster) => (
-              <KafkaCluster
-                anchorId="kafka"
-                key={cluster.id}
-                cluster={cluster}
-                capabilityId={id}
-              />
-            ))}
+          <section id="kafka">
+            {awsAccount !== undefined &&
+              awsAccount &&
+              (kafkaClusters || []).map((cluster) => (
+                <KafkaCluster
+                  key={cluster.id}
+                  cluster={cluster}
+                  capabilityId={id}
+                />
+              ))}
+          </section>
 
           {showCosts && awsAccount !== undefined && (
             <Costs anchorId="costs" costCentre={costCentre} />
