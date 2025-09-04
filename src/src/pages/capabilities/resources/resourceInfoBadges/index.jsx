@@ -214,154 +214,6 @@ const VPCPeerings = function ({ awsAccountInformation }) {
   );
 };
 
-function AzureResourceRequest({ onClose, azureResourcesList }) {
-  const { addNewAzure } = useContext(SelectedCapabilityContext);
-  const [acceptedCloudUsageGuidelines, setAcceptedCloudUsageGuidelines] =
-    useState(false);
-  const [environment, setEnvironment] = useState("test");
-  const environments = ["dev", "test", "uat", "prod"];
-  const [envAvailability, setEnvAvailability] = useState(null);
-
-  useEffect(() => {
-    if (azureResourcesList != null) {
-      setEnvAvailability(() => {
-        const copy = [...azureResourcesList];
-        var payload = [];
-        environments.forEach((env) => {
-          const found = copy.find((x) => x.environment === env);
-          if (found) {
-            payload.push({ env: found.environment, exist: true });
-          } else {
-            payload.push({ env: env, exist: false });
-          }
-        });
-        return payload;
-      });
-    }
-  }, [azureResourcesList]);
-
-  const handleChange = (event) => {
-    setEnvironment(event.target.value);
-  };
-
-  // set environment to first non-existing environment type
-  useEffect(() => {
-    if (envAvailability != null) {
-      setEnvironment(() => {
-        for (let i = 0; i < envAvailability.length; i++) {
-          if (!envAvailability[i].exist) {
-            return envAvailability[i].env;
-          }
-        }
-      });
-    }
-  }, [envAvailability]);
-
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onClose}
-      >
-        Cancel
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={() => {
-          addNewAzure(environment);
-          onClose();
-        }}
-        disabled={!acceptedCloudUsageGuidelines}
-      >
-        Request
-      </ModalAction>
-    </>
-  );
-
-  return (
-    <>
-      <Modal
-        heading={`Request New Azure Resource Group`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onClose}
-        actions={actions}
-      >
-        <div className={styles.items}>
-          <Text>
-            Please familiarize yourself with the{" "}
-            <TrackedLink
-              trackName="Wiki-TaggingPolicy"
-              href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-            >
-              DFDS tagging policy
-            </TrackedLink>{" "}
-            as you are responsible for tagging your cloud resources correctly.
-          </Text>
-          <Text>
-            Then select a target environment for this new resource group.
-          </Text>
-          <div className={styles.envsection}>
-            <div className={styles.envitems}>
-              <label>Environment:</label>
-              {envAvailability != null ? (
-                <Select
-                  className={styles.environmentselect}
-                  options={envAvailability.map((env) => ({
-                    value: env.env,
-                    label: env.env,
-                    isDisabled: env.exist,
-                  }))}
-                  value={{ value: environment, label: environment }}
-                  onChange={(selection) => {
-                    setEnvironment(selection.value);
-                  }}
-                ></Select>
-              ) : (
-                <>
-                  <div>error</div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <Text>
-            And lastly confirm that you have read and understood{" "}
-            <TrackedLink
-              trackName="Wiki-CloudUsageGuidelines"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
-            >
-              the DFDS Cloud Usage Guidelines
-            </TrackedLink>
-            . This document outlines what usecases are permitted for Azure, for
-            Vercel, and for AWS.
-          </Text>
-          <div className={styles.envsection}>
-            <div>
-              <input
-                type="checkbox"
-                checked={acceptedCloudUsageGuidelines}
-                style={{ marginRight: "5px" }}
-                onChange={() => {
-                  setAcceptedCloudUsageGuidelines(
-                    !acceptedCloudUsageGuidelines,
-                  );
-                }}
-              />
-              <label>I have read the Cloud Usage Guidelines</label>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
-  );
-}
-
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
@@ -456,6 +308,24 @@ export function ResourceInfoBadges() {
       prod: "60773f07-9b34-4256-968b-c07d5abe447a",
     };
     return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
+  };
+
+  // a temporary hack to fix a stupid issue
+  const processNewResourceGroupData = (formData) => {
+    const output = {
+      environment: formData["environment"].value || "dev",
+      purpose: metaParsed?.["dfds.azure.purpose"] || "unknown", // should always be defined here
+      catalogueId: formData["catalogueId"]
+        ? formData["catalogueId"]
+        : "unknown",
+      risk: formData["riskCategory"]?.value
+        ? formData["riskCategory"].value
+        : "unknown",
+      gdpr: formData["gdprData"]?.value
+        ? formData["gdprData"].value === "yes"
+        : false,
+    };
+    return output;
   };
 
   return (
@@ -616,7 +486,7 @@ export function ResourceInfoBadges() {
           <AzureResourceGroupRequestWizard
             onCloseClicked={() => setShowNewAzureResourcePopup(false)}
             onRequestResourceGroupClicked={(formData) => {
-              addNewAzure(formData);
+              addNewAzure(processNewResourceGroupData(formData));
               setShowNewAzureResourcePopup(false);
             }}
             inProgress={false}
