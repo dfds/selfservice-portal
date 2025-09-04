@@ -14,6 +14,7 @@ import {
   ENUM_AVAILABILITY_OPTIONS,
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
+  ENUM_AZURERG_USAGE_OPTIONS,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -24,10 +25,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [formHasError, setFormHasError] = useState(false);
   const [ownerError, setOwnerError] = useState(undefined);
   const [costCenterError, setCostCenterError] = useState(undefined);
-  const [sunsetDateError, setSunsetDateError] = useState(undefined);
+
+  const [isDirty, setIsDirty] = useState(false);
 
   const [owner, setOwner] = useState("");
-  const [sunsetDate, setSunsetDate] = useState(undefined);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
   const [selectedCriticalityOption, setSelectedCriticalityOption] =
@@ -36,14 +37,16 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
   const [selectedClassificationOption, setSelectedClassificationOption] =
     useState(undefined);
+  const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
+    useState(undefined);
 
   useEffect(() => {
-    if (ownerError || costCenterError || sunsetDateError) {
+    if (ownerError || costCenterError) {
       setFormHasError(true);
     } else {
       setFormHasError(false);
     }
-  }, [ownerError, costCenterError, sunsetDateError]);
+  }, [ownerError, costCenterError]);
 
   const emailValidator = (input) => {
     const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
@@ -63,14 +66,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     );
     return matches.length > 0;
   };
-
-  useEffect(() => {
-    if (sunsetDate !== "" && new Date(sunsetDate) < new Date()) {
-      setSunsetDateError("Sunset date cannot be in the past");
-    } else {
-      setSunsetDateError(undefined);
-    }
-  }, [sunsetDate]);
 
   useEffect(() => {
     if (!selectedCostCenterOption) {
@@ -121,11 +116,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         setSelectedCostCenterOption(selectedOption || undefined);
       }
 
-      const prevSunsetDate = defaultValues["dfds.planned_sunset"];
-      if (prevSunsetDate) {
-        setSunsetDate(prevSunsetDate);
-      }
-
       const prevClassification = defaultValues["dfds.data.classification"];
       if (prevClassification) {
         const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
@@ -149,6 +139,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         );
         setSelectedAvailabilityOption(selectedOption || undefined);
       }
+
+      const prevAzureRGUsage = defaultValues["dfds.azure.purpose"];
+      if (prevAzureRGUsage) {
+        const selectedOption = ENUM_AZURERG_USAGE_OPTIONS.find(
+          (opt) => opt.value === prevAzureRGUsage,
+        );
+        setSelectedAzureRGUsageOption(selectedOption || undefined);
+      }
     }
   }, [defaultValues]);
 
@@ -156,10 +154,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     const data = {
       "dfds.owner": owner,
       "dfds.cost.centre": selectedCostCenterOption?.value,
-      "dfds.planned_sunset": sunsetDate,
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
+      "dfds.azure.purpose": selectedAzureRGUsageOption?.value,
     };
     return data;
   };
@@ -167,6 +165,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const ownerUpdated = (newOwner) => {
     setIsUserSearchActive(false);
     setOwner(newOwner);
+    setIsDirty(true);
   };
 
   return (
@@ -215,31 +214,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_COSTCENTER_OPTIONS}
           value={selectedCostCenterOption}
           className={styles.input}
-          onChange={setSelectedCostCenterOption}
+          onChange={(e) => {
+            setSelectedCostCenterOption(e);
+            setIsDirty(true);
+          }}
         />
         <div className={styles.errorContainer}>
           {costCenterError && (
             <span className={styles.error}>{costCenterError}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Sunset Data */}
-      <div>
-        <label className={styles.label}>Sunset Date:</label>
-        <span>
-          The date when the capability is planned to not be relevant anymore.
-          This is required for requesting Azure Resource Groups.
-        </span>
-        <input
-          type="date"
-          value={sunsetDate}
-          className={`${styles.input} ${styles.inputBorder}`}
-          onChange={(e) => setSunsetDate(e.target.value)}
-        />
-        <div className={styles.errorContainer}>
-          {sunsetDateError && (
-            <span className={styles.error}>{sunsetDateError}</span>
           )}
         </div>
       </div>
@@ -261,7 +243,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CLASSIFICATION_OPTIONS}
           value={selectedClassificationOption}
           className={styles.input}
-          onChange={setSelectedClassificationOption}
+          onChange={(e) => {
+            setSelectedClassificationOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -284,7 +269,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CRITICALITY_OPTIONS}
           value={selectedCriticalityOption}
           className={styles.input}
-          onChange={setSelectedCriticalityOption}
+          onChange={(e) => {
+            setSelectedCriticalityOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -307,7 +295,39 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_AVAILABILITY_OPTIONS}
           value={selectedAvailabilityOption}
           className={styles.input}
-          onChange={setSelectedAvailabilityOption}
+          onChange={(e) => {
+            setSelectedAvailabilityOption(e);
+            setIsDirty(true);
+          }}
+        />
+
+        <div className={styles.errorContainer}></div>
+      </div>
+
+      {/* Azure Resource Group use case */}
+      <div>
+        <label className={styles.label}>
+          Azure Resource Group reason for use:
+        </label>
+        <span>
+          Guidance: If using Azure Resource Groups, please provide a reason for
+          using it. This is required for requesting Azure Resource Groups. See:{" "}
+          <a
+            href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
+            target="_blank"
+            rel="noreferrer"
+          >
+            cloud selection guidance
+          </a>
+        </span>
+        <Select
+          options={ENUM_AZURERG_USAGE_OPTIONS}
+          value={selectedAzureRGUsageOption}
+          className={styles.input}
+          onChange={(e) => {
+            setSelectedAzureRGUsageOption(e);
+            setIsDirty(true);
+          }}
         />
 
         <div className={styles.errorContainer}></div>
@@ -318,8 +338,11 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         trackName="CapabilityTags-Submit"
         size="small"
         variation="outlined"
-        disabled={!canEditTags || formHasError}
-        onClick={() => onSubmit(translateToTags())}
+        disabled={!canEditTags || formHasError || !isDirty}
+        onClick={() => {
+          onSubmit(translateToTags());
+          setIsDirty(false);
+        }}
       >
         Submit
       </TrackedButton>
