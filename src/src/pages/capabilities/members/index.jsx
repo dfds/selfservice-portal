@@ -27,7 +27,7 @@ export default function Members() {
   );
 }
 
-export function TabbedMembersView({ showInvitations }) {
+export function TabbedMembersView({ anchorId, showInvitations }) {
   const {
     isFetched: fetchedOtherApplications,
     isRefetchting: refetchingOtherApplications,
@@ -65,6 +65,7 @@ export function TabbedMembersView({ showInvitations }) {
 
   return (
     <TabbedPageSection
+      id={anchorId}
       headline="Capability Member Management"
       tabs={tabs}
       tabsContent={tabsContent}

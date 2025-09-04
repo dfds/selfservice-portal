@@ -57,7 +57,7 @@ function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
   );
 }
 
-export default function CapabilityManagement() {
+export default function CapabilityManagement({ anchorId }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const {
     links,
@@ -83,7 +83,7 @@ export default function CapabilityManagement() {
   return (
     <>
       {canDeleteCapability && (
-        <PageSection headline="Capability Management">
+        <PageSection id={anchorId} headline="Capability Management">
           {showDeleteDialog && (
             <DeleteDialog
               onCloseRequested={() => {

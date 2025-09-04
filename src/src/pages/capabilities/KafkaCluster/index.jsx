@@ -21,7 +21,7 @@ import TopicList from "./TopicList";
 import styles from "./index.module.css";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
-export default function KafkaCluster({ cluster, capabilityId }) {
+export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   const { setShouldAutoReloadTopics } = useContext(AppContext);
   const {
     id,
@@ -98,6 +98,7 @@ export default function KafkaCluster({ cluster, capabilityId }) {
 
   return (
     <PageSection
+      id={anchorId}
       headline="Kafka"
       headlineChildren={
         <div className={styles.headlineContainer}>

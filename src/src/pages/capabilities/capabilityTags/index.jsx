@@ -350,9 +350,9 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   );
 }
 
-export function CapabilityTagsPageSection() {
+export function CapabilityTagsPageSection({ anchorId }) {
   return (
-    <PageSection headline="Capability Tags">
+    <PageSection id={anchorId} headline="Capability Tags">
       <CapabilityTags />
     </PageSection>
   );

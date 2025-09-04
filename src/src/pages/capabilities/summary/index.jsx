@@ -121,7 +121,7 @@ function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
   );
 }
 
-export default function Summary() {
+export default function Summary({ anchorId }) {
   const {
     name,
     createdAt,
@@ -188,7 +188,7 @@ export default function Summary() {
   };
 
   return (
-    <PageSection headline="Summary">
+    <PageSection id={anchorId} headline="Summary">
       {showJoinDialog && (
         <JoinDialog
           name={name}
