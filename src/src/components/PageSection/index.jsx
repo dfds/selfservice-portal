@@ -13,9 +13,14 @@ export function SectionContent({ title, children }) {
   );
 }
 
-export default function PageSection({ headline, headlineChildren, children }) {
+export default function PageSection({
+  id,
+  headline,
+  headlineChildren,
+  children,
+}) {
   return (
-    <div>
+    <section id={id}>
       {headline && (
         <Text
           as="div"
@@ -29,11 +34,12 @@ export default function PageSection({ headline, headlineChildren, children }) {
       <Card variant="fill" surface="main">
         <CardContent>{children}</CardContent>
       </Card>
-    </div>
+    </section>
   );
 }
 
 export function TabbedPageSection({
+  id,
   headline,
   headlineChildren,
   tabs,
@@ -43,7 +49,7 @@ export function TabbedPageSection({
 }) {
   const [selectedTab, setSelectedTab] = useState(Object.keys(tabs)[0]);
   return (
-    <div>
+    <section id={id}>
       {headline && (
         <Text
           as="div"
@@ -85,6 +91,6 @@ export function TabbedPageSection({
           {footer}
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

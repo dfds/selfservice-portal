@@ -12,6 +12,7 @@ import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Select from "react-select";
+import AzureResourceGroupRequestWizard from "./resourceGroupRequestWizard";
 
 function VPCInformation(id, region, cidrBlock) {
   return (
@@ -374,15 +375,16 @@ export function ResourceInfoBadges() {
     isLoadedAzure,
     metadata,
     metadataFetched,
+    addNewAzure,
   } = useContext(SelectedCapabilityContext);
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
   const requiredTags = [
-    "dfds.planned_sunset",
     "dfds.owner",
     "dfds.cost.centre",
     "dfds.service.availability",
+    "dfds.azure.purpose",
   ];
   const [missingTags, setMissingTags] = useState([]);
   const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
@@ -393,6 +395,15 @@ export function ResourceInfoBadges() {
   const handleApplicationLogShow = async () => {
     setLogModal(true);
   };
+  const [metaParsed, setMetaParsed] = useState(undefined);
+  useEffect(() => {
+    if (metadataFetched && metadata != null) {
+      const meta = JSON.parse(metadata);
+      setMetaParsed(meta);
+    } else {
+      setMetaParsed(undefined);
+    }
+  }, [metadataFetched, metadata]);
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
@@ -409,9 +420,10 @@ export function ResourceInfoBadges() {
   };
 
   useEffect(() => {
-    if (metadataFetched && metadata != null && requiredTags.length > 0) {
-      const meta = JSON.parse(metadata);
-      const missing = requiredTags.filter((tag) => !meta.hasOwnProperty(tag));
+    if (metaParsed !== undefined && requiredTags.length > 0) {
+      const missing = requiredTags.filter(
+        (tag) => !metaParsed.hasOwnProperty(tag),
+      );
 
       // Only update state if the missing tags array has changed
       setMissingTags((prevMissingTags) => {
@@ -426,7 +438,7 @@ export function ResourceInfoBadges() {
     } else {
       setMissingTags([]); // Reset to empty array if metadata is null or requiredTags is empty
     }
-  }, [metadataFetched, metadata, requiredTags]);
+  }, [metaParsed, requiredTags]);
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
@@ -470,11 +482,13 @@ export function ResourceInfoBadges() {
       ) : (
         <>
           {showDialog && (
-            <RequestDialog
-              isRequesting={isSubmitting}
-              onClose={closeDialog}
-              onSubmit={handleSubmitClicked}
-            />
+            <>
+              <RequestDialog
+                isRequesting={isSubmitting}
+                onClose={closeDialog}
+                onSubmit={handleSubmitClicked}
+              />
+            </>
           )}
 
           <p style={{ textAlign: "center" }}>
@@ -598,10 +612,21 @@ export function ResourceInfoBadges() {
       )}
 
       {showNewAzureResourcePopup && (
-        <AzureResourceRequest
-          onClose={() => setShowNewAzureResourcePopup(false)}
-          azureResourcesList={azureResourcesList}
-        />
+        <>
+          <AzureResourceGroupRequestWizard
+            onCloseClicked={() => setShowNewAzureResourcePopup(false)}
+            onRequestResourceGroupClicked={(formData) => {
+              // addNewAzure(formData);
+              console.log(
+                "Requesting Azure Resource Group with data:",
+                formData,
+              );
+            }}
+            inProgress={false}
+            azurePurpose={metaParsed?.["dfds.azure.purpose"] || "unknown"}
+            azureResourcesList={azureResourcesList}
+          />
+        </>
       )}
 
       <div style={{ textAlign: "center" }}>

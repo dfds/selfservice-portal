@@ -4,10 +4,10 @@ import { Card, CardContent } from "@dfds-ui/react-components";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 import { TrackedLink } from "@/components/Tracking";
 
-export default function Resources({ capabilityId }) {
+export default function Resources({ anchorId, capabilityId }) {
   return (
     <>
-      <PageSection headline="Resources">
+      <PageSection id={anchorId} headline="Resources">
         <Card variant="fill" surface="main">
           <CardContent>
             <p>

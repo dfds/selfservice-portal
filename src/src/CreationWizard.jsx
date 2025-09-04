@@ -56,7 +56,7 @@ export default function CreationWizard({
         }
       >
         {steps.map((step) => (
-          <div key={step.title}>
+          <div key={step.title} className={styles.wizardStep}>
             {step.content({
               formValues,
               setFormValues,
