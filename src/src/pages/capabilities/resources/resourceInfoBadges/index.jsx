@@ -214,36 +214,6 @@ const VPCPeerings = function ({ awsAccountInformation }) {
   );
 };
 
-function AzureResourceRequest({ onClose, azureResourcesList }) {
-  const { addNewAzure } = useContext(SelectedCapabilityContext);
-  const [acceptedCloudUsageGuidelines, setAcceptedCloudUsageGuidelines] =
-    useState(false);
-  const [environment, setEnvironment] = useState("test");
-  const environments = ["dev", "test", "uat", "prod"];
-  const [envAvailability, setEnvAvailability] = useState(null);
-
-  useEffect(() => {
-    if (azureResourcesList != null) {
-      setEnvAvailability(() => {
-        const copy = [...azureResourcesList];
-        var payload = [];
-        environments.forEach((env) => {
-          const found = copy.find((x) => x.environment === env);
-          if (found) {
-            payload.push({ env: found.environment, exist: true });
-          } else {
-            payload.push({ env: env, exist: false });
-          }
-        });
-        return payload;
-      });
-    }
-  }, [azureResourcesList]);
-
-  const handleChange = (event) => {
-    setEnvironment(event.target.value);
-  };
-
   // set environment to first non-existing environment type
   useEffect(() => {
     if (envAvailability != null) {
@@ -458,6 +428,17 @@ export function ResourceInfoBadges() {
     return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
   };
 
+  // a temporary hack to fix a stupid issue
+  const processNewResourceGroupData = (formData) => {
+    // for each formData element, if it is an object with value and label, return value
+    return formData.map((item) => {
+      if (item && typeof item === "object" && "value" in item) {
+        return item.value;
+      }
+      return item;
+    });
+  }
+
   return (
     <>
       <hr className={styles.divider} />
@@ -616,7 +597,7 @@ export function ResourceInfoBadges() {
           <AzureResourceGroupRequestWizard
             onCloseClicked={() => setShowNewAzureResourcePopup(false)}
             onRequestResourceGroupClicked={(formData) => {
-              addNewAzure(formData);
+              addNewAzure(processNewResourceGroupData(formData));
               setShowNewAzureResourcePopup(false);
             }}
             inProgress={false}
