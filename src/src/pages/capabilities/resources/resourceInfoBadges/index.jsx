@@ -214,124 +214,6 @@ const VPCPeerings = function ({ awsAccountInformation }) {
   );
 };
 
-  // set environment to first non-existing environment type
-  useEffect(() => {
-    if (envAvailability != null) {
-      setEnvironment(() => {
-        for (let i = 0; i < envAvailability.length; i++) {
-          if (!envAvailability[i].exist) {
-            return envAvailability[i].env;
-          }
-        }
-      });
-    }
-  }, [envAvailability]);
-
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onClose}
-      >
-        Cancel
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={() => {
-          addNewAzure(environment);
-          onClose();
-        }}
-        disabled={!acceptedCloudUsageGuidelines}
-      >
-        Request
-      </ModalAction>
-    </>
-  );
-
-  return (
-    <>
-      <Modal
-        heading={`Request New Azure Resource Group`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onClose}
-        actions={actions}
-      >
-        <div className={styles.items}>
-          <Text>
-            Please familiarize yourself with the{" "}
-            <TrackedLink
-              trackName="Wiki-TaggingPolicy"
-              href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
-            >
-              DFDS tagging policy
-            </TrackedLink>{" "}
-            as you are responsible for tagging your cloud resources correctly.
-          </Text>
-          <Text>
-            Then select a target environment for this new resource group.
-          </Text>
-          <div className={styles.envsection}>
-            <div className={styles.envitems}>
-              <label>Environment:</label>
-              {envAvailability != null ? (
-                <Select
-                  className={styles.environmentselect}
-                  options={envAvailability.map((env) => ({
-                    value: env.env,
-                    label: env.env,
-                    isDisabled: env.exist,
-                  }))}
-                  value={{ value: environment, label: environment }}
-                  onChange={(selection) => {
-                    setEnvironment(selection.value);
-                  }}
-                ></Select>
-              ) : (
-                <>
-                  <div>error</div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <Text>
-            And lastly confirm that you have read and understood{" "}
-            <TrackedLink
-              trackName="Wiki-CloudUsageGuidelines"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
-            >
-              the DFDS Cloud Usage Guidelines
-            </TrackedLink>
-            . This document outlines what usecases are permitted for Azure, for
-            Vercel, and for AWS.
-          </Text>
-          <div className={styles.envsection}>
-            <div>
-              <input
-                type="checkbox"
-                checked={acceptedCloudUsageGuidelines}
-                style={{ marginRight: "5px" }}
-                onChange={() => {
-                  setAcceptedCloudUsageGuidelines(
-                    !acceptedCloudUsageGuidelines,
-                  );
-                }}
-              />
-              <label>I have read the Cloud Usage Guidelines</label>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
-  );
-}
-
 export function ResourceInfoBadges() {
   // if user cannot see: return <> </>
   const {
@@ -430,14 +312,21 @@ export function ResourceInfoBadges() {
 
   // a temporary hack to fix a stupid issue
   const processNewResourceGroupData = (formData) => {
-    // for each formData element, if it is an object with value and label, return value
-    return formData.map((item) => {
-      if (item && typeof item === "object" && "value" in item) {
-        return item.value;
-      }
-      return item;
-    });
-  }
+    const output = {
+      environment: formData["environment"].value || "dev",
+      purpose: metaParsed?.["dfds.azure.purpose"] || "unknown", // should always be defined here
+      catalogueId: formData["catalogueId"]
+        ? formData["catalogueId"]
+        : "unknown",
+      risk: formData["riskCategory"]?.value
+        ? formData["riskCategory"].value
+        : "unknown",
+      gdpr: formData["gdprData"]?.value
+        ? formData["gdprData"].value === "yes"
+        : false,
+    };
+    return output;
+  };
 
   return (
     <>
