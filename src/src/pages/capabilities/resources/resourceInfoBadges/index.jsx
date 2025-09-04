@@ -616,11 +616,8 @@ export function ResourceInfoBadges() {
           <AzureResourceGroupRequestWizard
             onCloseClicked={() => setShowNewAzureResourcePopup(false)}
             onRequestResourceGroupClicked={(formData) => {
-              // addNewAzure(formData);
-              console.log(
-                "Requesting Azure Resource Group with data:",
-                formData,
-              );
+              addNewAzure(formData);
+              setShowNewAzureResourcePopup(false);
             }}
             inProgress={false}
             azurePurpose={metaParsed?.["dfds.azure.purpose"] || "unknown"}
