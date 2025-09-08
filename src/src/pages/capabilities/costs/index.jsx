@@ -46,7 +46,7 @@ export default function Costs({ anchorId, costCentre }) {
         <a
           target="_blank"
           rel="noreferrer"
-          href={`https://app.finout.io/app/total-cost?defaultHomePage=true&accountId=e071c3ed-1e3c-46f7-9830-71951712d791&date={"range":30,"relativeRange":"last30Days","type":"day","from":1754743409808,"to":1757335409808}&filters={"costCenter":"virtualTag","key":"52c02d7e-093a-42b7-bf06-eb13050a8687","path":"Virtual Tags🔥/capability","operator":"is","value":"${id}"}&groupBy={"costCenter":"global","path":"Global/Cost Center","type":"col","key":"cost_center_type"}&xAxisGroupBy={"type":"time","value":"day"}&drilldown=[]&metrics=cost`}
+          href={`https://app.finout.io/app/total-cost?defaultHomePage=true&accountId=e071c3ed-1e3c-46f7-9830-71951712d791&date={"range":30,"relativeRange":"last30Days","type":"day"}&filters={"costCenter":"virtualTag","key":"52c02d7e-093a-42b7-bf06-eb13050a8687","path":"Virtual Tags🔥/capability","operator":"is","value":"${id}"}&groupBy={"costCenter":"global","path":"Global/Cost Center","type":"col","key":"cost_center_type"}&xAxisGroupBy={"type":"time","value":"day"}&drilldown=[]&metrics=cost`}
         >
           <TrackedButton
             trackName="FinOutButtonForCostCenter"
