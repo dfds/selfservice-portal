@@ -24,7 +24,7 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       initialState={{
         pagination: { pageSize: 50 },
         showGlobalFilter: true,
-        columnVisibility: { AwsAccountId: false },
+        columnVisibility: { AwsAccountId: false, hiddenName: false },
       }}
       state={{
         globalFilter: globalFilter,
@@ -363,6 +363,19 @@ export default function CapabilitiesList() {
         },
         Cell: ({ cell }) => {
           return <ChevronRight />;
+        },
+        Header: <div></div>, //enable empty header
+      },
+      {
+        accessorFn: (row) => row.name,
+        header: "hiddenName",
+        size: 0,
+        enableColumnFilterModes: false,
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        Cell: ({ cell }) => {
+          return <div></div>;
         },
         Header: <div></div>, //enable empty header
       },
