@@ -15,9 +15,7 @@ var CostCentreLinkMap = {
     "https://app.finout.io/app/dashboards/38443c9f-4032-450f-b639-35e579c7afc1",
   "ti-data":
     "https://app.finout.io/app/dashboards/238cd51e-9e8e-4973-b2ce-d02effa8f2ea",
-  "ti-ctia":
-    "https://app.finout.io/app/dashboards/202a5405-d7d4-49e3-8666-b45490d7e0c1",
-  "ti-pax":
+  "ti-pace":
     "https://app.finout.io/app/dashboards/3dd2a0ca-1ea6-47f8-b051-ff387fcd90ae",
   "ti-ferry":
     "https://app.finout.io/app/dashboards/b304b96e-2c33-40f2-a7d5-4ca3ca7304a6",
