@@ -84,7 +84,6 @@ function CapabilityDetailsPageContent() {
     }
   }, [metadata]);
 
-
   /*
   const scrollToSection = (id) => {
     console.log("scroll to section", id);
