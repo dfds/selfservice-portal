@@ -84,9 +84,7 @@ function CapabilityDetailsPageContent() {
     }
   }, [metadata]);
 
-  /*
   const scrollToSection = (id) => {
-    console.log("scroll to section", id);
     if (!id) return;
     setAutoscrolling(true);
     clearTimeout(autoScrollingTimerRef.current);
@@ -110,34 +108,28 @@ function CapabilityDetailsPageContent() {
     }, 100); // check every 100ms
   };
 
-
   useEffect(() => {
     autoScrollRef.current = autoscrolling;
   }, [autoscrolling]);
 
   useEffect(() => {
-    console.log("hash changed", hash);
     if (!hash) return;
     setActiveId(hash.substring(1));
     setTimeout(() => {
       scrollToSection(hash.substring(1));
     }, 800); // give time to render and expand sections before scrolling
   }, [hash]);
-  */
 
   useEffect(() => {
     if (!activeId || activeId === "") return;
     history.replaceState(null, "", `#${activeId}`);
   }, [activeId]);
 
-  /*
   const handleHighlight = (e, id) => {
-    console.log("handle highlight", hash);
     e.preventDefault();
     setActiveId(id);
     scrollToSection(id);
   };
-  */
 
   useEffect(() => {
     const handleScroll = () => {
@@ -150,8 +142,10 @@ function CapabilityDetailsPageContent() {
 
         if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
           if (!autoScrollRef.current) {
-            setActiveId(section.id);
-            window.history.replaceState(null, null, `#${section.id}`);
+            if (activeId !== section.id) {
+              setActiveId(section.id);
+              window.history.replaceState(null, null, `#${section.id}`);
+            }
           }
         }
       });
@@ -162,7 +156,7 @@ function CapabilityDetailsPageContent() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [activeId]);
 
   return (
     <>
