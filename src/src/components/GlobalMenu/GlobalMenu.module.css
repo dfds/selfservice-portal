@@ -3,3 +3,63 @@
   align-items: center;
   justify-content: center;
 }
+
+.navContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navItem {
+  text-decoration: none;
+  color: inherit;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownTitle {
+  cursor: pointer;
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.dropdown:hover .dropdownContent {
+  display: block;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 10px 15px;
+  color: black;
+  text-decoration: none;
+}
+
+.dropdownItem:hover {
+  background-color: #f2f2f2;
+}
+
+.barHeight {
+  height: 3.75rem;
+}
+
+.sideMenuHeader {
+  color: #afafaf;
+  font-size: 0.75rem;
+  padding-left: 1rem;
+  padding-top: 1rem;
+}
+
+.sideMenuSubItem {
+  padding-left: 1rem;
+}

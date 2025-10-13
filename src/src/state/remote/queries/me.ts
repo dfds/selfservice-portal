@@ -38,6 +38,22 @@ export function useUpdateMyPersonalInformation() {
   return mutation;
 }
 
+export function useUpdateUserSettingsInformation() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["me", "settings"],
+        payload: data,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+
 export function useRegisterMyVisit() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({

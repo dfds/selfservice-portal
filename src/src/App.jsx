@@ -11,12 +11,12 @@ import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
 import ReleaseNotes from "./pages/release-notes";
-import { AuthenticatedTemplate } from "@azure/msal-react";
 import AuthTemplate from "auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
 import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
+import DemosPage from "./pages/demos";
 
 function Footer() {
   return (
@@ -67,6 +67,7 @@ export default function App() {
             element={<CapabilitySelfAssessmentsPage />}
           />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
+          <Route path="demos" element={<DemosPage />} />
         </Route>
       </Routes>
     </>

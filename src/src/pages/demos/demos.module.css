@@ -1,0 +1,24 @@
+.cardMediaImage {
+  position: unset !important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset !important;
+}
+
+.container {
+  display: flex;
+}
+
+.column {
+  width: 100%;
+}
+
+.breakwords {
+  overflow-wrap: break-word;
+}
+
+.signedUpMessage {
+  color: green;
+}
