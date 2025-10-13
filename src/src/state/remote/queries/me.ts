@@ -53,7 +53,6 @@ export function useUpdateUserSettingsInformation() {
   return mutation;
 }
 
-
 export function useRegisterMyVisit() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({

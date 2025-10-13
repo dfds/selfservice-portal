@@ -77,9 +77,9 @@ export default function GlobalMenu() {
         {
           title: "Status page",
           url: "https://dfdsit.statuspage.io/",
-        }
+        },
       ],
-    }
+    },
   ];
 
   function sleep(duration) {
@@ -183,7 +183,10 @@ export default function GlobalMenu() {
         >
           {navLinks.map((item) =>
             item.children ? (
-              <div key={item.title} className={[styles.dropdown, styles.alignCenter].join(" ")}>
+              <div
+                key={item.title}
+                className={[styles.dropdown, styles.alignCenter].join(" ")}
+              >
                 <div className={styles.dropdownTitle}>
                   <AppBarListItem clickable className={styles.barHeight}>
                     <ListText>{item.title}</ListText>
@@ -200,7 +203,11 @@ export default function GlobalMenu() {
                         {child.title}
                       </a>
                     ) : (
-                      <Link key={child.title} to={child.url} className={styles.dropdownItem}>
+                      <Link
+                        key={child.title}
+                        to={child.url}
+                        className={styles.dropdownItem}
+                      >
                         {child.title}
                       </Link>
                     ),
@@ -208,65 +215,68 @@ export default function GlobalMenu() {
                 </div>
               </div>
             ) : /https:?\/\//.test(item.url) ? (
-                <a
-                  href={item.url}
-                  style={{ textDecoration: "none" }}
-                  key={item.title}
-                  className={styles.alignCenter}
-                >
-                  <AppBarListItem clickable>
-                    <ListText>{item.title}</ListText>
-                  </AppBarListItem>
-                </a>
+              <a
+                href={item.url}
+                style={{ textDecoration: "none" }}
+                key={item.title}
+                className={styles.alignCenter}
+              >
+                <AppBarListItem clickable>
+                  <ListText>{item.title}</ListText>
+                </AppBarListItem>
+              </a>
             ) : (
-                <Link
-                  to={item.url}
-                  style={{ textDecoration: "none" }}
-                  key={item.title}
-                  className={styles.alignCenter}
-                >
-                  <AppBarListItem clickable>
-                    <ListText>{item.title}</ListText>
-                  </AppBarListItem>
-                </Link>
+              <Link
+                to={item.url}
+                style={{ textDecoration: "none" }}
+                key={item.title}
+                className={styles.alignCenter}
+              >
+                <AppBarListItem clickable>
+                  <ListText>{item.title}</ListText>
+                </AppBarListItem>
+              </Link>
             ),
           )}
         </DFDSAppBar>
 
         <AppBarDrawer>
-          {navLinks.map((x) => (
+          {navLinks.map((x) =>
             x.children ? (
               <>
-              <span className={styles.sideMenuHeader}>{x.title}</span>
-              {x.children.map((child) => (
-                /https?:\/\//.test(child.url) ? (
-                  <div className={styles.sideMenuSubItem}>
-                  <div className={styles.sideMenuSubItem}>
-                  <a
-                    key={child.title}
-                    href={child.url}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <AppBarListItem clickable>
-                        <ListText>{child.title}</ListText>
-                    </AppBarListItem>
-                  </a>
-                  </div>
-                  </div>
-                ) : (
-                  <Link key={child.title} to={child.url} style={{ textDecoration: "none" }}>
+                <span className={styles.sideMenuHeader}>{x.title}</span>
+                {x.children.map((child) =>
+                  /https?:\/\//.test(child.url) ? (
                     <div className={styles.sideMenuSubItem}>
-                      <AppBarListItem clickable>
-                        <ListText>{child.title}</ListText>
-                      </AppBarListItem>
+                      <div className={styles.sideMenuSubItem}>
+                        <a
+                          key={child.title}
+                          href={child.url}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <AppBarListItem clickable>
+                            <ListText>{child.title}</ListText>
+                          </AppBarListItem>
+                        </a>
+                      </div>
                     </div>
-                  </Link>
-                )
-              ))}
+                  ) : (
+                    <Link
+                      key={child.title}
+                      to={child.url}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div className={styles.sideMenuSubItem}>
+                        <AppBarListItem clickable>
+                          <ListText>{child.title}</ListText>
+                        </AppBarListItem>
+                      </div>
+                    </Link>
+                  ),
+                )}
               </>
-            ) : (
-              /https?:\/\//.test(x.url) ? (
-                <div className={styles.sideMenuSubItem}>
+            ) : /https?:\/\//.test(x.url) ? (
+              <div className={styles.sideMenuSubItem}>
                 <a
                   key={x.title}
                   href={x.url}
@@ -276,16 +286,15 @@ export default function GlobalMenu() {
                     <ListText>{x.title}</ListText>
                   </AppBarListItem>
                 </a>
-                </div>
-              ) : (
-                <Link to={x.url} style={{ textDecoration: "none" }} key={x.title}>
-                  <AppBarListItem clickable>
-                    <ListText>{x.title}</ListText>
-                  </AppBarListItem>
-                </Link>
-              )
-            )
-          ))}
+              </div>
+            ) : (
+              <Link to={x.url} style={{ textDecoration: "none" }} key={x.title}>
+                <AppBarListItem clickable>
+                  <ListText>{x.title}</ListText>
+                </AppBarListItem>
+              </Link>
+            ),
+          )}
         </AppBarDrawer>
       </AppBarProvider>
     </>
