@@ -247,7 +247,7 @@ export default function Summary({ anchorId }) {
               <TrackedButton
                 trackName="CapabilityMembership-Leave"
                 variation="outlined"
-                disabled={!canLeave}
+                disabled={true} // !canLeave
                 onClick={() => setShowLeaveDialog(true)}
               >
                 Leave
