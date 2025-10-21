@@ -41,19 +41,19 @@ export const ENUM_CLASSIFICATION_OPTIONS = ENUM_CLASSIFICATION.map((item) => ({
 
 export const ENUM_AZURERG_USAGE = [
   {
-    label: "EntraID, Office365, Dynamics365, PowerBI, etc.",
+    label: "Core DFDS Infrasctructure",
     value: "ToolAccess",
   },
-  { label: "OpenAI Services", value: "AI" },
+  { label: "Azure OpenAI Services", value: "AI" },
   {
-    label: "Third party SaaS limited to Azure",
+    label: "Native Integrations",
     value: "ThirdPartyLimitations",
   },
   {
-    label: "Partner packages with tigh Azure coupling",
+    label: "Third-party SaaS",
     value: "PartnerPackageLimitation",
   },
-  { label: "Other", value: "Other" },
+  { label: "Partner Packages", value: "Other" },
 ];
 export const ENUM_AZURERG_USAGE_OPTIONS = ENUM_AZURERG_USAGE.map((item) => ({
   value: item.value.toLowerCase(),

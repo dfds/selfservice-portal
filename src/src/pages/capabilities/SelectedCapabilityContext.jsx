@@ -16,6 +16,7 @@ import {
   useCapabilityMetadata,
   useLeaveCapability,
 } from "@/state/remote/queries/capabilities";
+import { useUserRoles, useGetRoles } from "@/state/remote/queries/rbac";
 import {
   useAddKafkaTopic,
   useDeleteKafkaTopic,
@@ -52,7 +53,7 @@ function adjustRetention(kafkaTopic) {
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
   const queryClient = useQueryClient();
-  const { shouldAutoReloadTopics, selfServiceApiClient } =
+  const { shouldAutoReloadTopics, selfServiceApiClient, user } =
     useContext(AppContext);
 
   const { data: meData } = useMe();
@@ -134,6 +135,43 @@ function SelectedCapabilityProvider({ children }) {
       setTimeout(() => resolve(), duration);
     });
   }
+
+  const [userIsOwner, setUserIsOwner] = useState(false);
+
+  const { isFetched: availableRolesDataFetched, data: availableRolesData } =
+    useGetRoles(capabilityId);
+  const [availableRoles, setAvailableRoles] = useState([]);
+  useEffect(() => {
+    if (availableRolesDataFetched) {
+      setAvailableRoles(availableRolesData);
+    }
+  }, [availableRolesData]);
+
+  const { isFetched: userRolesDataFetched, data: userRolesData } =
+    useUserRoles(capabilityId);
+  const [userRoleMap, setUserRoleMap] = useState({});
+
+  useEffect(() => {
+    if (userRolesDataFetched && userRolesData && availableRoles) {
+      var newMap = {};
+      // for each item in userRolesData, find assignedEntityId and RoleId
+      userRolesData.forEach((item) => {
+        newMap[item.assignedEntityId] = {
+          value: item.roleId,
+          label:
+            availableRoles.find((role) => role.id === item.roleId)?.name ||
+            "Unknown Role",
+        };
+      });
+      setUserRoleMap(newMap);
+    }
+  }, [userRolesDataFetched, userRolesData, availableRoles]);
+
+  useEffect(() => {
+    if (userRoleMap !== undefined && meData !== undefined) {
+      setUserIsOwner(userRoleMap[meData.id]?.label === "Owner");
+    }
+  }, [userRoleMap, meData]);
 
   const capabilityInvitees = useCapabilityInvitees();
 
@@ -583,10 +621,14 @@ function SelectedCapabilityProvider({ children }) {
   }, [isFetched, capability]);
 
   useEffect(() => {
-    if (capabilityMembersFetched) {
-      setMembers(membersList);
+    if (capabilityMembersFetched && userRoleMap) {
+      const membersWithRoleAnnotation = membersList.map((member) => ({
+        ...member,
+        role: userRoleMap[member.email] || null,
+      }));
+      setMembers(membersWithRoleAnnotation);
     }
-  }, [capabilityMembersFetched, membersList]);
+  }, [capabilityMembersFetched, userRoleMap]);
 
   useEffect(() => {
     if (isLoadedAzure && azureResources != null) {
@@ -673,6 +715,9 @@ function SelectedCapabilityProvider({ children }) {
     deleteMembershipApplication,
     isLoadedAzure,
     setReloadConfigurationLevelInformation,
+    userIsOwner,
+    availableRoles,
+    userRoleMap,
   };
 
   return (
