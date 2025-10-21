@@ -18,17 +18,9 @@ import {
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
-  const [isUserSearchActive, setIsUserSearchActive] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const { members } = useContext(SelectedCapabilityContext);
-
   const [formHasError, setFormHasError] = useState(false);
-  const [ownerError, setOwnerError] = useState(undefined);
   const [costCenterError, setCostCenterError] = useState(undefined);
-
   const [isDirty, setIsDirty] = useState(false);
-
-  const [owner, setOwner] = useState("");
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
   const [selectedCriticalityOption, setSelectedCriticalityOption] =
@@ -41,31 +33,12 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
 
   useEffect(() => {
-    if (ownerError || costCenterError) {
+    if (costCenterError) {
       setFormHasError(true);
     } else {
       setFormHasError(false);
     }
-  }, [ownerError, costCenterError]);
-
-  const emailValidator = (input) => {
-    const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(input);
-  };
-
-  const filterMembers = (searchInput) => {
-    // filter members based on the search input and presence in owners
-    return members.filter((user) =>
-      user.name.toLowerCase().includes(searchInput.toLowerCase()),
-    );
-  };
-
-  const checkIsMember = (email) => {
-    const matches = members.filter(
-      (user) => user.email.toLowerCase() === email.toLowerCase(),
-    );
-    return matches.length > 0;
-  };
+  }, [costCenterError]);
 
   useEffect(() => {
     if (!selectedCostCenterOption) {
@@ -76,38 +49,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   }, [selectedCostCenterOption]);
 
   useEffect(() => {
-    if (!owner || owner.length === "") {
-      setIsUserSearchActive(false);
-      setOwnerError("Capabilities must have an owner");
-      return;
-    } else {
-      const filteredMembers = filterMembers(owner);
-      setIsUserSearchActive(true);
-      if (filteredMembers.length === 0) {
-        setIsUserSearchActive(false);
-      }
-      setSuggestions(filteredMembers);
-    }
-    if (!emailValidator(owner)) {
-      setOwnerError("Owner must be a valid email");
-      return;
-    }
-    if (members && !checkIsMember(owner)) {
-      setOwnerError("Owner must be a member of the capability");
-      return;
-    } else {
-      setIsUserSearchActive(false);
-    }
-    setOwnerError(undefined);
-  }, [owner, members]);
-
-  useEffect(() => {
     if (defaultValues) {
-      const prevOwner = defaultValues["dfds.owner"];
-      if (prevOwner) {
-        setOwner(prevOwner);
-      }
-
       const prevCostCenter = defaultValues["dfds.cost.centre"];
       if (prevCostCenter) {
         const selectedOption = ENUM_COSTCENTER_OPTIONS.find(
@@ -152,7 +94,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
 
   const translateToTags = () => {
     const data = {
-      "dfds.owner": owner,
       "dfds.cost.centre": selectedCostCenterOption?.value,
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
@@ -162,12 +103,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     return data;
   };
 
-  const ownerUpdated = (newOwner) => {
-    setIsUserSearchActive(false);
-    setOwner(newOwner);
-    setIsDirty(true);
-  };
-
   return (
     <>
       {formHasError && (
@@ -175,33 +110,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           Some tags are not compliant. Please correct them and resubmit.
         </Text>
       )}
-      {/* Owner */}
-      <div>
-        <label className={styles.label}>Owner:</label>
-        <span>Each capability must have a single responsible owner.</span>
-        <input
-          type="email"
-          placeholder="Search through members"
-          value={owner}
-          onChange={(e) => setOwner(e.target?.value || "")}
-          className={`${styles.input} ${styles.inputBorder}`}
-        />
-
-        {isUserSearchActive ? (
-          <div className={styles.dropDownMenu}>
-            <DropDownUserSelection
-              items={suggestions}
-              addUserFromDropDown={ownerUpdated}
-            />
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
-
-      <div className={styles.errorContainer}>
-        {ownerError && <span className={styles.error}>{ownerError}</span>}
-      </div>
 
       {/* Cost Center */}
       <div>
