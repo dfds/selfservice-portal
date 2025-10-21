@@ -64,20 +64,6 @@ function MemberRow({ member, roleTypes }) {
             label: role.name,
           }))}
         />
-        {userIsOwner && (
-          <>
-            <div className={styles.memberManagementAction}>
-              {userIsOwner && user.id !== member.email && (
-                <a href="#">Customize</a>
-              )}
-            </div>
-            <div className={styles.memberManagementAction}>
-              {userIsOwner && user.id !== member.email && (
-                <a href="#">Remove</a>
-              )}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
