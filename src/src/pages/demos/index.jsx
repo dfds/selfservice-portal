@@ -217,8 +217,9 @@ export default function DemosPage() {
             <Text>
               Recordings will be appearing soon. Please check back later.
             </Text>
-            <br />
+            {/*<br />
             <img src={wipgif} alt="WorkInProgress" width="400" height="300" />
+            */}
           </div>
         </PageSection>
       </Page>
