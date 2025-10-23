@@ -196,7 +196,6 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [selectedCostCentreOption, setSelectedCostCentreOption] =
     useState(undefined);
   const [costCentreError, setCostCentreError] = useState(undefined);
-  const { user } = useContext(AppContext);
 
   useEffect(() => {
     const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
@@ -221,7 +220,6 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         return {
           ...prev,
           mandatoryTags: {
-            "dfds.owner": user.email,
             "dfds.cost.centre": costCentre,
           },
         };
@@ -252,21 +250,6 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           Some tags are not compliant. Please correct them and resubmit.
         </Text>
       )}
-      {/* Owner */}
-      <div>
-        <label className={styles.label}>Owner:</label>
-        <span>
-          As the creator you will be the responsible owner for this capability.
-          You can change this after creation.
-        </span>
-        <input
-          type="email"
-          value={user.email}
-          disabled={true}
-          className={`${styles.input} ${styles.inputBorder}`}
-        />
-      </div>
-      <div className={styles.errorContainer}></div>
 
       {/* Cost Center */}
       <div>
