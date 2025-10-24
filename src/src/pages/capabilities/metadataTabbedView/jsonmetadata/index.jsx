@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import SyntaxHighlighter from "react-syntax-highlighter";
 import styles from "./jsonmetadata.module.css";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
-import { vs as syntaxStyle } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import JsonSchemaContext from "../../../../JsonSchemaContext";
 import { prettifyJsonString } from "../../../../Utils";
 
