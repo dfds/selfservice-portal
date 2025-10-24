@@ -99,8 +99,6 @@ function CapabilityDetailsPageContent() {
 
           {showJsonMetadata && <CapabilityTagsPageSection anchorId="tags" />}
 
-          {/*showJsonMetadata && <MetadataTabbedView />*/}
-
           <Resources anchorId="resources" capabilityId={id} />
 
           {/* <Logs /> */}
