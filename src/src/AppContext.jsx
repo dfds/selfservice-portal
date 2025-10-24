@@ -69,6 +69,7 @@ function AppProvider({ children }) {
   const [topics, setTopics] = useState([]);
   const [schemas, setSchemas] = useState([]);
   const [myProfile, setMyProfile] = useState([]);
+  const [myUserSettings, setMyUserSettings] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const { data: me, isFetched: isMeFetched } = useMe();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
@@ -112,6 +113,7 @@ function AppProvider({ children }) {
   useEffect(() => {
     if (me != null) {
       setMyProfile(me);
+      setMyUserSettings(me?.personalInformation?.userSettings);
     }
   }, [isMeFetched]);
 
@@ -211,6 +213,7 @@ function AppProvider({ children }) {
   const state = {
     user,
     myProfile,
+    myUserSettings,
     myCapabilities,
     appStatus,
     topics,
