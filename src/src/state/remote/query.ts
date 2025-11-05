@@ -23,6 +23,7 @@ export async function ssuRequest(rq: SsuRequestQuery) {
   const accessToken = await getSelfServiceAccessToken();
 
   let url = composeSegmentsUrl(rq.urlSegments);
+
   if (isValidURL(rq.urlSegments[0])) {
     url = rq.urlSegments[0];
   }
