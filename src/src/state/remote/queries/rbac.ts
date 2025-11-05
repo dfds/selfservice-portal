@@ -7,7 +7,6 @@ export function useGetRoles(capabilityId: string) {
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        //urlSegments: ["rbac/role/capability", capabilityId],
         urlSegments: ["rbac/get-assignable-roles"],
         payload: null,
         isCloudEngineerEnabled: false,
@@ -23,7 +22,7 @@ export function useUserRoles(capabilityId: string) {
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["rbac", "role", "capability", capabilityId],
+        urlSegments: ["capabilities", capabilityId, "rolegrants"],
         payload: null,
         isCloudEngineerEnabled: false,
       }),
@@ -35,10 +34,9 @@ export function useUserRoles(capabilityId: string) {
 export function useGrantRole() {
   const mutation = useMutation({
     mutationFn: async (data: any) => {
-      console.log("useGrantRole data: ", data);
       ssuRequest({
         method: "POST",
-        urlSegments: ["rbac/role/grant"],
+        urlSegments: ["capabilities", data.payload.resource, "roles", "grant"],
         payload: data.payload,
         isCloudEngineerEnabled: false,
       });
@@ -50,13 +48,20 @@ export function useGrantRole() {
 
 export function useRevokeRole() {
   const mutation = useMutation({
-    mutationFn: async (data: any) =>
+    mutationFn: async (data: any) => {
       ssuRequest({
         method: "DELETE",
-        urlSegments: ["rbac/role/revoke", data.roleId],
+        urlSegments: [
+          "capabilities",
+          data.payload.resource,
+          "roles",
+          "revoke",
+          data.payload.roleGrantId,
+        ],
         payload: null,
         isCloudEngineerEnabled: false,
-      }),
+      });
+    },
   });
 
   return mutation;

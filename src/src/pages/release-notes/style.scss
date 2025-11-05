@@ -1,5 +1,5 @@
-@import "editor/tiptap/styles/variables";
-@import "editor/tiptap/styles/keyframe-animations";
+@use "editor/tiptap/styles/variables" as *;
+@use "editor/tiptap/styles/keyframe-animations" as *;
 
 :root {
   --orange-colour: #ed8800;
