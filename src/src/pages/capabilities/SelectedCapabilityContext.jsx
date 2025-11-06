@@ -188,6 +188,10 @@ function SelectedCapabilityProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["capabilities"] });
   }
 
+  async function reloadMembers() {
+    queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
+  }
+
   const { isFetched: metadataFetched, data: metadata } =
     useCapabilityMetadata(details);
 
@@ -718,6 +722,7 @@ function SelectedCapabilityProvider({ children }) {
     userIsOwner,
     availableRoles,
     userRoleMap,
+    reloadMembers,
   };
 
   return (
