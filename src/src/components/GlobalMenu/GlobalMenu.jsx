@@ -71,10 +71,6 @@ export default function GlobalMenu() {
           url: "https://wiki.dfds.cloud/playbooks",
         },
         {
-          title: "GitHub (Code examples)",
-          url: "https://github.com/dfds",
-        },
-        {
           title: "Status page",
           url: "https://dfdsit.statuspage.io/",
         },
