@@ -22,3 +22,71 @@
 .signedUpMessage {
   color: green;
 }
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  font-family: "sans-serif";
+}
+
+.content {
+  padding: 0 50px;
+}
+
+.title {
+  margin: 0px 8px;
+  font-size: 1.5em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+}
+
+.description {
+  margin: 0px 8px;
+  font-size: 1em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+}
+
+hr {
+  margin: 0px;
+}
+
+.notePreview {
+  &:hover {
+    background-color: #ebe9e9;
+    cursor: pointer;
+  }
+}
+
+.rowLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.deleteButtonContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.deleteButtonIcon {
+  color: darkred;
+  font-size: 2em;
+}
+
+.recordingDateLabel {
+  color: rgb(0, 43, 69);
+  font-weight: bold;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+.recordingDateInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgba(77, 78, 76, 0.7);
+  font-size: 16px;
+  margin-bottom: 4px;
+}
