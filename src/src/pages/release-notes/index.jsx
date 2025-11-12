@@ -7,7 +7,7 @@ import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
 import { TrackedButton } from "@/components/Tracking";
 import styles from "./releasenotes.module.css";
 import PreAppContext from "preAppContext";
-import DateFlag from "./DateFlag";
+import DateFlag from "../../components/DateFlag/DateFlag";
 import { useNavigate } from "react-router-dom";
 
 import "./style.scss";

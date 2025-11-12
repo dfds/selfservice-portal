@@ -14,11 +14,11 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
+import { useRegisterDemo, useDeleteDemo } from "@/state/remote/queries/demos";
 import {
   useCreateReleaseNote,
   useToggleNoteActivity,
 } from "@/state/remote/queries/releaseNotes";
-import { create } from "domain";
 
 const AppContext = React.createContext(null);
 
@@ -102,6 +102,8 @@ function AppProvider({ children }) {
   const createEcrRepository = useCreateEcrRepository();
   const createReleaseNote = useCreateReleaseNote();
   const toggleNoteActivity = useToggleNoteActivity();
+  const registerDemoRecording = useRegisterDemo();
+  const deleteDemoRecording = useDeleteDemo();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -164,6 +166,31 @@ function AppProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+        },
+      },
+    );
+  }
+
+  async function addNewDemoRecording(payload) {
+    registerDemoRecording.mutate(payload, {
+      onSuccess: () => {
+        sleep(200).then(() => {
+          queryClient.invalidateQueries({ queryKey: ["demos"] });
+        });
+      },
+    });
+  }
+
+  async function removeDemoRecording(id) {
+    deleteDemoRecording.mutate(
+      {
+        demoId: id,
+      },
+      {
+        onSuccess: () => {
+          sleep(200).then(() => {
+            queryClient.invalidateQueries({ queryKey: ["demos"] });
+          });
         },
       },
     );
@@ -242,6 +269,8 @@ function AppProvider({ children }) {
     setGlobalFilter,
     showDeletedCapabilities,
     setShowDeletedCapabilities,
+    addNewDemoRecording,
+    removeDemoRecording,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
