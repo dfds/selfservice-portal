@@ -27,7 +27,7 @@ const styles = {
     borderRadius: "6px",
     overflow: "hidden",
     fontFamily: "sans-serif",
-    width: "70px",
+    minWidth: "70px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
   },
   top: {
