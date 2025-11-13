@@ -6,71 +6,17 @@ import {
   CardActions,
   CardMedia,
 } from "@dfds-ui/react-components";
-import { Modal, ModalAction } from "@dfds-ui/modal";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
-import { useDemoSignups } from "@/state/remote/queries/demos";
 import { Text } from "@dfds-ui/typography";
 import { StatusSuccess } from "@dfds-ui/icons/system";
 import Page from "components/Page";
 import SplashImage from "./demos.png";
-import wipgif from "./wip.gif";
 import styles from "./demos.module.css";
 import { TrackedButton } from "@/components/Tracking";
-import PageSection from "@/components/PageSection";
 import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
-
-function DemoSignupModal({ isOpen, onClose }) {
-  const { isFetched: isFetchedSignups, data: signups } = useDemoSignups();
-
-  useEffect(() => {
-    if (isFetchedSignups) {
-      console.log("Fetched demo signups:", signups);
-    }
-  }, [isFetchedSignups]);
-
-  return (
-    <Modal
-      heading={"Demo signups"}
-      isOpen={isOpen}
-      shouldCloseOnOverlayClick={false}
-      shouldCloseOnEsc={true}
-      showClose={true}
-      fixedTopPosition={true}
-      onRequestClose={onClose}
-    >
-      {!isFetchedSignups ? (
-        <Text>Loading...</Text>
-      ) : (
-        <>
-          {signups && signups.length > 0 ? (
-            <>
-              {signups.map((signup) => (
-                <Text key={signup.email}>
-                  {signup.name} ({signup.email})
-                </Text>
-              ))}
-            </>
-          ) : (
-            <Text>No one has signed up yet.</Text>
-          )}
-        </>
-      )}
-      <br />
-      <ModalAction
-        style={{ float: "right", marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={async () => {
-          await navigator.clipboard.writeText(
-            signups.map((signup) => signup.email).join(", "),
-          );
-        }}
-      >
-        Copy e-mails to clipboard
-      </ModalAction>
-    </Modal>
-  );
-}
+import RecordingsSection from "./RecordingsSection";
+import DemoSignupModal from "./DemoSignupModal";
 
 export default function DemosPage() {
   const [isSignedUp, setIsSignedUp] = useState(true);
@@ -206,22 +152,7 @@ export default function DemosPage() {
             </CardContent>
           )}
         </Card>
-        <PageSection id="recordings" headline="Recordings">
-          <div
-            style={{
-              display: "grid",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>
-              Recordings will be appearing soon. Please check back later.
-            </Text>
-            {/*<br />
-            <img src={wipgif} alt="WorkInProgress" width="400" height="300" />
-            */}
-          </div>
-        </PageSection>
+        <RecordingsSection />
       </Page>
     </>
   );
