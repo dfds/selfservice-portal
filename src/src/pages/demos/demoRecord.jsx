@@ -1,10 +1,16 @@
 import React from "react";
-import DateFlag from "../../components/DateFlag/DateFlag";
 import styles from "./demos.module.css";
 import { Delete as DeleteIcon } from "@dfds-ui/icons/system";
 
+function renderDate(dateString) {
+  const date = new Date(dateString);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return date.toLocaleDateString(undefined, options);
+}
+
 export default function DemoRecord({ demo, isCloudEngineerEnabled, onClick }) {
-  const { title, description, url, recordingDate } = demo;
+  const {   description, url, recordingDate } = demo;
+  console.log("DemoRecord rendering with description:", description);
   return (
     <a
       href={`${url}`}
@@ -15,9 +21,8 @@ export default function DemoRecord({ demo, isCloudEngineerEnabled, onClick }) {
     >
       <div className={styles.notePreview} key={url}>
         <div className={styles.row}>
-          <DateFlag date={recordingDate} />
           <div>
-            <h3 className={styles.title}>{title}</h3>
+            <h3 className={styles.title}>{renderDate(recordingDate)}</h3>
             <p className={styles.description}>{description}</p>
           </div>
 
