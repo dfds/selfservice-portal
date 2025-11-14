@@ -48,6 +48,7 @@
   font-size: 1em;
   font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
     sans-serif;
+  white-space: pre-line;
 }
 
 hr {
@@ -83,10 +84,21 @@ hr {
   line-height: 1.25;
   margin-bottom: 4px;
 }
+
 .recordingDateInput {
   width: 100%;
   padding: 8px;
   border: 1px solid rgba(77, 78, 76, 0.7);
   font-size: 16px;
   margin-bottom: 4px;
+}
+
+.recordingDescriptionInput {
+  width: 100%;
+  height: 10em;
+  line-height: 1.25;
+  padding: 8px;
+  border: 1px solid rgba(77, 78, 76, 0.7);
+  font-size: 16px;
+  margin-bottom: 12px;
 }
