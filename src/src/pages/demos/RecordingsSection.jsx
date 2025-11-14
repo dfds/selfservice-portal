@@ -22,6 +22,9 @@ export default function RecordingsSection() {
 
   useEffect(() => {
     if (isFetchedRecordings) {
+      demosData.sort(
+        (a, b) => new Date(b.recordingDate) - new Date(a.recordingDate),
+      );
       setDemos(demosData);
     }
   }, [isFetchedRecordings, demosData]);

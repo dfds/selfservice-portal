@@ -132,7 +132,6 @@ export default function Summary({ anchorId }) {
     submitMembershipApplication,
     submitLeaveCapability,
     bypassMembershipApproval,
-    reloadMembers,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
