@@ -9,7 +9,7 @@ function renderDate(dateString) {
 }
 
 export default function DemoRecord({ demo, isCloudEngineerEnabled, onClick }) {
-  const {   description, url, recordingDate } = demo;
+  const { description, url, recordingDate } = demo;
   return (
     <a
       href={`${url}`}

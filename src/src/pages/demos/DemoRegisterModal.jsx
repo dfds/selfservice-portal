@@ -38,7 +38,10 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
       fixedTopPosition={true}
       onRequestClose={onClose}
     >
-      <label htmlFor="recordingDescription" className={styles.recordingDateLabel}>
+      <label
+        htmlFor="recordingDescription"
+        className={styles.recordingDateLabel}
+      >
         Description
       </label>
       <textarea
