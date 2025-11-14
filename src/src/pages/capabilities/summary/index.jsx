@@ -134,7 +134,6 @@ export default function Summary({ anchorId }) {
     bypassMembershipApproval,
   } = useContext(SelectedCapabilityContext);
 
-
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);

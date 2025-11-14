@@ -18,25 +18,25 @@ function sleep(duration) {
 }
 
 function MemberRow({ member, roleTypes }) {
-  const { id: capabilityId, userIsOwner, reloadCapability } = useContext(
-    SelectedCapabilityContext,
-  );
+  const {
+    id: capabilityId,
+    userIsOwner,
+    reloadCapability,
+  } = useContext(SelectedCapabilityContext);
   const { myProfile: user } = useContext(AppContext);
   const { mutate: grantRoleMutation } = useGrantRole();
   const [selectedRole, setSelectedRole] = useState(member.role);
 
   const grantRole = (memberEmail, roleId) => {
-    grantRoleMutation(
-      {
-        payload: {
-          roleId: roleId,
-          assignedEntityType: "User",
-          assignedEntityId: memberEmail,
-          type: "Capability",
-          resource: capabilityId,
-        },
-      }
-    );
+    grantRoleMutation({
+      payload: {
+        roleId: roleId,
+        assignedEntityType: "User",
+        assignedEntityId: memberEmail,
+        type: "Capability",
+        resource: capabilityId,
+      },
+    });
   };
 
   return (
@@ -67,7 +67,6 @@ function MemberRow({ member, roleTypes }) {
             await sleep(200);
             reloadCapability();
             setSelectedRole(e);
-
           }}
           options={roleTypes.map((role) => ({
             value: role.id,

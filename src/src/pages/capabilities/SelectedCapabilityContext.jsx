@@ -189,7 +189,9 @@ function SelectedCapabilityProvider({ children }) {
   }
 
   async function reloadCapability() {
-    queryClient.invalidateQueries({ queryKey: ["capabilities", "details", capabilityId] });
+    queryClient.invalidateQueries({
+      queryKey: ["capabilities", "details", capabilityId],
+    });
   }
 
   const { isFetched: metadataFetched, data: metadata } =
