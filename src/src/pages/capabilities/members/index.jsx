@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./members.module.css";
 import { Text } from "@dfds-ui/typography";
-import ProfilePicture from "./profilepicture";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
@@ -12,10 +11,18 @@ import { Account } from "@dfds-ui/icons/system";
 import Select from "react-select";
 import { useGrantRole } from "@/state/remote/queries/rbac";
 
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), duration);
+  });
+}
+
 function MemberRow({ member, roleTypes }) {
-  const { id: capabilityId, userIsOwner } = useContext(
-    SelectedCapabilityContext,
-  );
+  const {
+    id: capabilityId,
+    userIsOwner,
+    reloadCapability,
+  } = useContext(SelectedCapabilityContext);
   const { myProfile: user } = useContext(AppContext);
   const { mutate: grantRoleMutation } = useGrantRole();
   const [selectedRole, setSelectedRole] = useState(member.role);
@@ -55,8 +62,10 @@ function MemberRow({ member, roleTypes }) {
           className={styles.roleSelect}
           value={selectedRole}
           isDisabled={!userIsOwner || member.email === user.id}
-          onChange={(e) => {
+          onChange={async (e) => {
             grantRole(member.email, e.value);
+            await sleep(200);
+            reloadCapability();
             setSelectedRole(e);
           }}
           options={roleTypes.map((role) => ({
