@@ -257,12 +257,6 @@ export default function CapabilitiesList() {
             return <div></div>;
           }
           if (
-            jsonMetadata["dfds.owner"] === undefined ||
-            jsonMetadata["dfds.owner"] === ""
-          ) {
-            return <div className={styles.missingTags}>Pending</div>;
-          }
-          if (
             jsonMetadata["dfds.cost.centre"] === undefined ||
             jsonMetadata["dfds.cost.centre"] === ""
           ) {
