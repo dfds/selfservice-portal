@@ -15,6 +15,7 @@ import {
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
   ENUM_AZURERG_USAGE_OPTIONS,
+  ENUM_CAPABILITY_AI_USAGE_OPTIONS,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -31,6 +32,13 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
   const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
     useState(undefined);
+  const [selectedCapabilityAIUsageOption, setSelectedCapabilityAIUsageOption] = useState(
+    undefined,
+  );
+
+  useEffect(() => {
+    console.log("canEditTags changed:", canEditTags);
+  }, [canEditTags]);
 
   useEffect(() => {
     if (costCenterError) {
@@ -89,6 +97,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         );
         setSelectedAzureRGUsageOption(selectedOption || undefined);
       }
+
+      const prevAIUsage = defaultValues["dfds.capability.ai-usage"];
+      if (prevAIUsage) {
+        const selectedOption = ENUM_CAPABILITY_AI_USAGE_OPTIONS.find(
+          (opt) => opt.value === prevAIUsage,
+        );
+        setSelectedCapabilityAIUsageOption(selectedOption || undefined);
+      }
     }
   }, [defaultValues]);
 
@@ -99,6 +115,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
       "dfds.azure.purpose": selectedAzureRGUsageOption?.value,
+      "dfds.capability.ai-usage": selectedCapabilityAIUsageOption?.value,
     };
     return data;
   };
@@ -239,6 +256,29 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedAzureRGUsageOption(e);
+            setIsDirty(true);
+          }}
+        />
+
+        <div className={styles.errorContainer}></div>
+      </div>
+
+      {/* Capability AI Usage Claim */}
+      <div>
+        <label className={styles.label}>
+          Does this capability provide AI services
+        </label>
+        <span>
+          Guidance: Please indicate whether this capability provides AI
+          services. This information is important for compliance and monitoring
+          purposes.
+        </span>
+        <Select
+          options={ENUM_CAPABILITY_AI_USAGE_OPTIONS}
+          value={selectedCapabilityAIUsageOption}
+          className={styles.input}
+          onChange={(e) => {
+            setSelectedCapabilityAIUsageOption(e);
             setIsDirty(true);
           }}
         />

@@ -14,6 +14,7 @@ import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsPageSection } from "./capabilityTags";
+import { AICatalogueSection } from "./aiCatalogue";
 import menustyles from "./menu.module.css";
 import GrafanaWarning from "../GrafanaWarning";
 
@@ -56,7 +57,21 @@ function CapabilityDetailsPageContent() {
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
+  const [showAICatalogueSection, setShowAICatalogueSection] = useState(false);
   const [costCentre, setCostCentre] = useState("");
+  
+  useEffect(() => {
+    console.log("Metadata changed:", metadata);
+    if (metadata && metadata !== "{}") {
+      const parsedMetadata = JSON.parse(metadata);
+      const aiUsage = parsedMetadata["dfds.capability.ai-usage"];
+      if (aiUsage === "true" || aiUsage === true) {
+        setShowAICatalogueSection(true);
+      } else {
+        setShowAICatalogueSection(false);
+      }
+    }
+  }, [metadata]);
 
   useEffect(() => {
     if ((links?.metadata?.allow || []).includes("GET")) {
@@ -98,6 +113,8 @@ function CapabilityDetailsPageContent() {
           {/*<TabbedCapabilityAdoptionLevel />*/}
 
           {showJsonMetadata && <CapabilityTagsPageSection anchorId="tags" />}
+
+          {showAICatalogueSection && <AICatalogueSection anchorId="ai-catalogue" />}
 
           <Resources anchorId="resources" capabilityId={id} />
 
