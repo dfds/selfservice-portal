@@ -461,7 +461,9 @@ function SelectedCapabilityProvider({ children }) {
       },
       {
         onSuccess: async () => {
-          queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "members"],
+          });
         },
       },
     );
