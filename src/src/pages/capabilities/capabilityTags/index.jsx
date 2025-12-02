@@ -105,7 +105,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
 
   return (
     <>
-      {formHasError && (
+      {canEditTags && formHasError && (
         <Text className={`${styles.error} ${styles.center}`}>
           Some tags are not compliant. Please correct them and resubmit.
         </Text>
@@ -122,13 +122,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_COSTCENTER_OPTIONS}
           value={selectedCostCenterOption}
           className={styles.input}
+          isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedCostCenterOption(e);
             setIsDirty(true);
           }}
         />
         <div className={styles.errorContainer}>
-          {costCenterError && (
+          {canEditTags && costCenterError && (
             <span className={styles.error}>{costCenterError}</span>
           )}
         </div>
@@ -151,6 +152,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CLASSIFICATION_OPTIONS}
           value={selectedClassificationOption}
           className={styles.input}
+          isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedClassificationOption(e);
             setIsDirty(true);
@@ -177,6 +179,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_CRITICALITY_OPTIONS}
           value={selectedCriticalityOption}
           className={styles.input}
+          isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedCriticalityOption(e);
             setIsDirty(true);
@@ -203,6 +206,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_AVAILABILITY_OPTIONS}
           value={selectedAvailabilityOption}
           className={styles.input}
+          isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedAvailabilityOption(e);
             setIsDirty(true);
@@ -232,6 +236,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           options={ENUM_AZURERG_USAGE_OPTIONS}
           value={selectedAzureRGUsageOption}
           className={styles.input}
+          isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedAzureRGUsageOption(e);
             setIsDirty(true);
