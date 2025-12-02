@@ -460,8 +460,10 @@ function SelectedCapabilityProvider({ children }) {
         capabilityDefinition: details,
       },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+        onSuccess: async () => {
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "members"],
+          });
         },
       },
     );
@@ -634,7 +636,7 @@ function SelectedCapabilityProvider({ children }) {
       }));
       setMembers(membersWithRoleAnnotation);
     }
-  }, [capabilityMembersFetched, userRoleMap]);
+  }, [capabilityMembersFetched, userRoleMap, membersList]);
 
   useEffect(() => {
     if (isLoadedAzure && azureResources != null) {

@@ -12,6 +12,12 @@ import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
 import { TrackedButton } from "@/components/Tracking";
 
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), duration);
+  });
+}
+
 function JoinDialog({
   name,
   isSubmitting,
@@ -132,6 +138,7 @@ export default function Summary({ anchorId }) {
     submitMembershipApplication,
     submitLeaveCapability,
     bypassMembershipApproval,
+    reloadCapability,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -160,7 +167,9 @@ export default function Summary({ anchorId }) {
   const handleLeaveClicked = async () => {
     setIsLeaving(true);
     await submitLeaveCapability();
+    await sleep(200);
     reloadUser();
+    reloadCapability();
     setIsLeaving(false);
     setShowLeaveDialog(false);
   };
@@ -173,7 +182,9 @@ export default function Summary({ anchorId }) {
 
   const handleBypassClicked = async () => {
     await bypassMembershipApproval();
+    await sleep(200);
     reloadUser();
+    reloadCapability();
     setShowJoinDialog(false);
   };
 
@@ -236,18 +247,18 @@ export default function Summary({ anchorId }) {
         <div className={styles.column} style={{ paddingTop: "2rem" }}>
           <MyMembershipApplication />
           <ButtonStack align="right">
-            {canJoin ? (
+            {canJoin && (
               <TrackedButton
                 trackName="CapabilityMembership-SendApplication"
                 onClick={() => setShowJoinDialog(true)}
               >
                 Join
               </TrackedButton>
-            ) : (
+            )}
+            {canLeave && (
               <TrackedButton
                 trackName="CapabilityMembership-Leave"
                 variation="outlined"
-                disabled={!canLeave}
                 onClick={() => setShowLeaveDialog(true)}
               >
                 Leave
