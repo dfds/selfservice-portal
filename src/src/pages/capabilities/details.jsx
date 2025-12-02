@@ -58,10 +58,7 @@ function CapabilityDetailsPageContent() {
   const [costCentre, setCostCentre] = useState("");
 
   useEffect(() => {
-    if (
-      (links?.metadata?.allow || []).includes("GET") &&
-      (links?.metadata?.allow || []).includes("POST")
-    ) {
+    if ((links?.metadata?.allow || []).includes("GET")) {
       setShowJsonMetadata(true);
     }
   }, [links]);

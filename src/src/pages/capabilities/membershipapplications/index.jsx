@@ -38,7 +38,7 @@ export function MyMembershipApplication() {
           waiting approval from existing members.
           <br />
           <br />
-          <strong>Please note:</strong> that it expire{" "}
+          <strong>Please note:</strong> this application expires{" "}
           <ExpirationDate date={application.expiresOn} />!
         </BannerParagraph>
       </Banner>
