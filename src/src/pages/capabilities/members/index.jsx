@@ -103,6 +103,21 @@ export function TabbedMembersView({ anchorId, showInvitations }) {
     SelectedCapabilityContext,
   );
 
+  const [capabilityApplications, setCapabilityApplications] = useState([]);
+
+  useEffect(() => {
+    if (capabilityId && otherApplicationsData) {
+      // filter otherApplicationsData to only include applications for this capability
+      setCapabilityApplications(
+        otherApplicationsData.filter(
+          (app) => app.capabilityId === capabilityId,
+        ),
+      );
+    } else {
+      setCapabilityApplications(otherApplicationsData);
+    }
+  }, [otherApplicationsData, capabilityId]);
+
   const header = <></>;
   const footer = <></>;
 
@@ -125,7 +140,7 @@ export function TabbedMembersView({ anchorId, showInvitations }) {
     ),
     applications: (
       <MembershipApplicationsUserCanApprove
-        data={otherApplicationsData}
+        data={capabilityApplications}
         isFetched={fetchedOtherApplications}
         isRefetching={refetchingOtherApplications}
       />
