@@ -23,6 +23,7 @@ import QuickLinks from "./QuickLinks";
 import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink, TrackedLinkButton } from "@/components/Tracking";
+import GrafanaWarning from "../GrafanaWarning";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
@@ -83,6 +84,10 @@ export default function FrontPage() {
 
         <Section>
           <FunStats />
+        </Section>
+
+        <Section>
+          <GrafanaWarning />
         </Section>
 
         <Section>
