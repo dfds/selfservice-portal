@@ -4,18 +4,23 @@ import { TrackedLink } from "@/components/Tracking";
 export default function GrafanaWarning() {
   return (
     <div style={warningStyle}>
-      <Text>Attention</Text>
+      <Text style={headerStyle}>Urgent: Grafana Metrics Cost Reduction Requirement</Text>
       <Text>
-        Grafana is currently experiencing issues. Please be aware that some
-        dashboards may not be available or up-to-date.
+        We are close to running out of Grafana credits due to the current high volume of metrics being ingested
       </Text>
       <Text>
-        Check this{" "}
+        If this continues, we risk losing critical observability insights.
+      </Text>
+      <Text>
+        We need <strong>you</strong> to take immediate action to reduce unnecessary metrics.
+      </Text>
+      <Text>
+        Please read{" "}
         <TrackedLink
           trackName="Wiki-Grafana-Tracking-Issue"
-          href="https://wiki.dfds.cloud/playbooks"
+          href="https://wiki.dfds.cloud/en/announcements/grafana-cost-reduction"
         >
-          Wiki page
+          these instructions
         </TrackedLink>{" "}
         for more information.
       </Text>
@@ -34,5 +39,10 @@ const warningStyle = {
   borderWidth: "2px",
   borderStyle: "solid",
   textAlign: "center",
+};
+
+const headerStyle = {
   fontWeight: "bold",
+  fontSize: "16px",
+  marginBottom: "5px",
 };
