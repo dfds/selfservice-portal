@@ -15,6 +15,7 @@ import CapabilityManagement from "./capabilityManagement";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsPageSection } from "./capabilityTags";
 import menustyles from "./menu.module.css";
+import GrafanaWarning from "../GrafanaWarning";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -79,6 +80,8 @@ function CapabilityDetailsPageContent() {
   return (
     <>
       <div>
+        <GrafanaWarning />
+
         <DeletionWarning
           deletionState={isPendingDeletion}
           updateDeletionState={updateDeletionStatus}
