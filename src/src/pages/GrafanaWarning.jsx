@@ -4,15 +4,19 @@ import { TrackedLink } from "@/components/Tracking";
 export default function GrafanaWarning() {
   return (
     <div style={warningStyle}>
-      <Text style={headerStyle}>Urgent: Grafana Metrics Cost Reduction Requirement</Text>
+      <Text style={headerStyle}>
+        Urgent: Grafana Metrics Cost Reduction Requirement
+      </Text>
       <Text>
-        We are close to running out of Grafana credits due to the current high volume of metrics being ingested
+        We are close to running out of Grafana credits due to the current high
+        volume of metrics being ingested
       </Text>
       <Text>
         If this continues, we risk losing critical observability insights.
       </Text>
       <Text>
-        We need <strong>you</strong> to take immediate action to reduce unnecessary metrics.
+        We need <strong>you</strong> to take immediate action to reduce
+        unnecessary metrics.
       </Text>
       <Text>
         Please read{" "}
