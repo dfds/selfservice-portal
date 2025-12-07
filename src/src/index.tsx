@@ -28,7 +28,10 @@ root.render(
       <MsalProvider instance={msalInstance}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <GlobalStyles />
-          <SnowFall />
+          <SnowFall
+            style={{ position: "fixed", width: "100vw", height: "100vh", zIndex: 9999 }}
+            snowflakeCount={100}
+          />
           <QueryClientProvider client={queryClient}>
             <ErrorProvider>
               <TrackingProvider>
