@@ -49,6 +49,7 @@ export default function DemosPage() {
     myUserSettings.signedUpForDemos = newValue;
     updateUserSettings(
       {
+        ...myUserSettings,
         signedUpForDemos: newValue,
       },
       {
