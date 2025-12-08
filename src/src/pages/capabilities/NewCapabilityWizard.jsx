@@ -495,8 +495,10 @@ const InviteMemberStep = ({ formValues, setFormValues }) => {
 
 const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [containsAI, setContainsAI] = useState(undefined);
-  const [selectedCapabilityContainsAIOption, setSelectedCapabilityContainsAIOption] =
-    useState(undefined);
+  const [
+    selectedCapabilityContainsAIOption,
+    setSelectedCapabilityContainsAIOption,
+  ] = useState(undefined);
 
   useEffect(() => {
     const containsAI = formValues?.optionalTags["dfds.capability.contains-ai"];
@@ -533,14 +535,12 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <Text>
-        Please indicate whether this capability contains AI projects.
-      </Text>
+      <Text>Please indicate whether this capability contains AI projects.</Text>
 
       <Text>
-        DFDS maintains an AI Catalogue to keep track of all available AI services.
-        Indicating whether your capability provides AI services helps us ensure
-        proper governance and oversight.
+        DFDS maintains an AI Catalogue to keep track of all available AI
+        services. Indicating whether your capability provides AI services helps
+        us ensure proper governance and oversight.
       </Text>
 
       <Text>
@@ -564,7 +564,9 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
         For more information about DFDS's approach to AI, please refer to the{" "}
         <TrackedLink
           trackName="WikiAIGuidelines"
-          href={"https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/AI-development-guiding-practices-handbookk"}
+          href={
+            "https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/AI-development-guiding-practices-handbookk"
+          }
           target="_blank"
           rel="noreferrer"
         >
@@ -573,17 +575,21 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
       </Text>
 
       <div>
-        <label className={styles.label}>Does this capability contain AI services?</label>
+        <label className={styles.label}>
+          Does this capability contain AI services?
+        </label>
         <Select
           options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
           value={selectedCapabilityContainsAIOption}
           className={styles.input}
-          onChange={(selection) => setSelectedCapabilityContainsAIOption(selection)}
+          onChange={(selection) =>
+            setSelectedCapabilityContainsAIOption(selection)
+          }
         ></Select>
       </div>
     </>
   );
-}
+};
 
 const SummaryStep = ({ formValues }) => {
   return (
@@ -628,7 +634,8 @@ const SummaryStep = ({ formValues }) => {
       </p>
       <p>
         <strong>Contains AI Services:</strong>{" "}
-        {formValues.optionalTags["dfds.capability.contains-ai"] || "Not provided"}
+        {formValues.optionalTags["dfds.capability.contains-ai"] ||
+          "Not provided"}
       </p>
       <h2>Invitations</h2>
       {formValues.invitations && formValues.invitations.length > 0 ? (

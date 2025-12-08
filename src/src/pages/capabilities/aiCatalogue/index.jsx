@@ -22,27 +22,29 @@ export function AICatalogue() {
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
-  const [ canEditTags, setCanEditTags ] = useState(false);
-  const [ aiCatalogueEntries, setAICatalogueEntries ] = useState([]);
-  const [ aiEntryInput, setAIEntryInput ] = useState("");
+  const [canEditTags, setCanEditTags] = useState(false);
+  const [aiCatalogueEntries, setAICatalogueEntries] = useState([]);
+  const [aiEntryInput, setAIEntryInput] = useState("");
 
   useEffect(() => {
     if (links && (links?.setRequiredMetadata?.allow || []).includes("POST")) {
       setCanEditTags(true);
     }
   }, [links]);
-  
+
   useEffect(() => {
     if (metadata) {
       const parsedMetadata = JSON.parse(metadata);
-      setAICatalogueEntries(parsedMetadata["dfds.capability.ai-catalogue-entries"] || []);
+      setAICatalogueEntries(
+        parsedMetadata["dfds.capability.ai-catalogue-entries"] || [],
+      );
     }
   }, [metadata]);
 
   useEffect(() => {
     console.log("AI Catalogue entries updated:", aiCatalogueEntries);
   }, [aiCatalogueEntries]);
-  
+
   const handleSubmit = (entries) => {
     if (aiEntryInput.trim() !== "") {
       entries = [...entries, aiEntryInput.trim()];
@@ -69,7 +71,6 @@ export function AICatalogue() {
     );
   };
 
-  
   const handleEntryIDClicked = (entryId) => {
     setAICatalogueEntries(aiCatalogueEntries.filter((i) => i !== entryId));
   };
@@ -93,9 +94,9 @@ export function AICatalogue() {
       </Text>
 
       <Text>
-        Please register all AI services contained within this capability in the AI
-        Catalogue. This helps us maintain oversight and ensure compliance with
-        relevant regulations.
+        Please register all AI services contained within this capability in the
+        AI Catalogue. This helps us maintain oversight and ensure compliance
+        with relevant regulations.
       </Text>
 
       <Text>
@@ -131,14 +132,14 @@ export function AICatalogue() {
       </Text>
       <div className={styles.entries_container}>
         {(aiCatalogueEntries || []).map((entryId) => (
-        <div
-          className={styles.entry_container}
-          key={entryId}
-          onClick={() => handleEntryIDClicked(entryId)}
-        >
-          <div className={styles.entry}>{entryId}</div>
-          <div className={styles.delete_entry_overlay}>X</div>
-        </div>
+          <div
+            className={styles.entry_container}
+            key={entryId}
+            onClick={() => handleEntryIDClicked(entryId)}
+          >
+            <div className={styles.entry}>{entryId}</div>
+            <div className={styles.delete_entry_overlay}>X</div>
+          </div>
         ))}
       </div>
 
@@ -148,15 +149,17 @@ export function AICatalogue() {
         size="small"
         variation="outlined"
         disabled={!canEditTags}
-        onClick={() => {handleSubmit(aiCatalogueEntries);}}
+        onClick={() => {
+          handleSubmit(aiCatalogueEntries);
+        }}
       >
         Submit
       </TrackedButton>
 
       <br />
       <Text>
-        Note: Currently we do not validate the entered IDs against the AI Catalogue.
-        We will add this validation in the future.
+        Note: Currently we do not validate the entered IDs against the AI
+        Catalogue. We will add this validation in the future.
       </Text>
     </>
   );

@@ -59,7 +59,7 @@ function CapabilityDetailsPageContent() {
   const [showInvitations, setShowInvitations] = useState(false);
   const [showAICatalogueSection, setShowAICatalogueSection] = useState(false);
   const [costCentre, setCostCentre] = useState("");
-  
+
   useEffect(() => {
     console.log("Metadata changed:", metadata);
     if (metadata && metadata !== "{}") {
@@ -114,7 +114,9 @@ function CapabilityDetailsPageContent() {
 
           {showJsonMetadata && <CapabilityTagsPageSection anchorId="tags" />}
 
-          {showAICatalogueSection && <AICatalogueSection anchorId="ai-catalogue" />}
+          {showAICatalogueSection && (
+            <AICatalogueSection anchorId="ai-catalogue" />
+          )}
 
           <Resources anchorId="resources" capabilityId={id} />
 

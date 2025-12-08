@@ -67,10 +67,11 @@ export const ENUM_CAPABILITY_CONTAINS_AI = [
   },
   {
     label: "This capability does not contain AI services",
-    value: "false"
+    value: "false",
   },
 ];
-export const ENUM_CAPABILITY_CONTAINS_AI_OPTIONS = ENUM_CAPABILITY_CONTAINS_AI.map((item) => ({
-  value: item.value.toLowerCase(),
-  label: item.label,
-}));
+export const ENUM_CAPABILITY_CONTAINS_AI_OPTIONS =
+  ENUM_CAPABILITY_CONTAINS_AI.map((item) => ({
+    value: item.value.toLowerCase(),
+    label: item.label,
+  }));

@@ -31,9 +31,10 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
   const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
     useState(undefined);
-  const [selectedCapabilityContainsAIOption, setSelectedCapabilityContainsAIOption] = useState(
-    undefined,
-  );
+  const [
+    selectedCapabilityContainsAIOption,
+    setSelectedCapabilityContainsAIOption,
+  ] = useState(undefined);
 
   useEffect(() => {
     console.log("canEditTags changed:", canEditTags);

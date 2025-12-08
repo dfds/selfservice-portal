@@ -31,7 +31,7 @@
 }
 
 .input_field {
-  margin-bottom: 0px!important;
+  margin-bottom: 0px !important;
 }
 
 .entries_container {
@@ -42,6 +42,6 @@
 }
 
 .entries_label {
-    margin: 0px;
-    font-size: 10px!important;
+  margin: 0px;
+  font-size: 10px !important;
 }
