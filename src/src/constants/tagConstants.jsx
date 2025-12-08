@@ -4,12 +4,7 @@ export const ENUM_COSTCENTER = [
   { label: "T&I - Group Technology and Data [ti-gtad]", value: "ti-gtad" },
   { label: "T&I - Architecture [ti-arch]", value: "ti-arch" },
   { label: "T&I - Support and Operation [ti-sao]", value: "ti-sao" },
-  { label: "T&I - Innovation [ti-inno]", value: "ti-inno" },
   { label: "T&I - Platform [ti-platform]", value: "ti-platform" },
-  {
-    label: "T&I - Competence Center [ti-competence]",
-    value: "ti-competence",
-  },
   { label: "T&I - Other [ti-other]", value: "ti-other" },
   { label: "Finance [finance]", value: "finance" },
   { label: "Ferry [ferry]", value: "ferry" },
