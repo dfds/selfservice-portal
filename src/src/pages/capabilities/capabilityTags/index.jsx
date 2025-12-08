@@ -7,7 +7,6 @@ import styles from "./capabilityTags.module.css";
 import Select from "react-select";
 import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
-import DropDownUserSelection from "./DropDownUserSelection";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ENUM_COSTCENTER_OPTIONS,
@@ -15,7 +14,7 @@ import {
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
   ENUM_AZURERG_USAGE_OPTIONS,
-  ENUM_CAPABILITY_AI_USAGE_OPTIONS,
+  ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -32,7 +31,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
   const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
     useState(undefined);
-  const [selectedCapabilityAIUsageOption, setSelectedCapabilityAIUsageOption] = useState(
+  const [selectedCapabilityContainsAIOption, setSelectedCapabilityContainsAIOption] = useState(
     undefined,
   );
 
@@ -98,12 +97,12 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         setSelectedAzureRGUsageOption(selectedOption || undefined);
       }
 
-      const prevAIUsage = defaultValues["dfds.capability.ai-usage"];
-      if (prevAIUsage) {
-        const selectedOption = ENUM_CAPABILITY_AI_USAGE_OPTIONS.find(
-          (opt) => opt.value === prevAIUsage,
+      const prevContainsAI = defaultValues["dfds.capability.contains-ai"];
+      if (prevContainsAI) {
+        const selectedOption = ENUM_CAPABILITY_CONTAINS_AI_OPTIONS.find(
+          (opt) => opt.value === prevContainsAI,
         );
-        setSelectedCapabilityAIUsageOption(selectedOption || undefined);
+        setSelectedCapabilityContainsAIOption(selectedOption || undefined);
       }
     }
   }, [defaultValues]);
@@ -115,7 +114,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
       "dfds.azure.purpose": selectedAzureRGUsageOption?.value,
-      "dfds.capability.ai-usage": selectedCapabilityAIUsageOption?.value,
+      "dfds.capability.contains-ai": selectedCapabilityContainsAIOption?.value,
     };
     return data;
   };
@@ -269,16 +268,16 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           Does this capability provide AI services
         </label>
         <span>
-          Guidance: Please indicate whether this capability provides AI
+          Guidance: Please indicate whether this capability contains AI
           services. This information is important for compliance and monitoring
           purposes.
         </span>
         <Select
-          options={ENUM_CAPABILITY_AI_USAGE_OPTIONS}
-          value={selectedCapabilityAIUsageOption}
+          options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
+          value={selectedCapabilityContainsAIOption}
           className={styles.input}
           onChange={(e) => {
-            setSelectedCapabilityAIUsageOption(e);
+            setSelectedCapabilityContainsAIOption(e);
             setIsDirty(true);
           }}
         />

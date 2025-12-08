@@ -64,7 +64,7 @@ function CapabilityDetailsPageContent() {
     console.log("Metadata changed:", metadata);
     if (metadata && metadata !== "{}") {
       const parsedMetadata = JSON.parse(metadata);
-      const aiUsage = parsedMetadata["dfds.capability.ai-usage"];
+      const aiUsage = parsedMetadata["dfds.capability.contains-ai"];
       if (aiUsage === "true" || aiUsage === true) {
         setShowAICatalogueSection(true);
       } else {
