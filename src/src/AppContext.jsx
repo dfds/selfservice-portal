@@ -19,6 +19,7 @@ import {
   useCreateReleaseNote,
   useToggleNoteActivity,
 } from "@/state/remote/queries/releaseNotes";
+import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
 
 const AppContext = React.createContext(null);
 
@@ -65,6 +66,8 @@ function AppProvider({ children }) {
     hasLoadedMyCapabilitiesCosts: false,
     hasLoadedMyCapabilitiesResourcesCounts: false,
   });
+
+  const { mutate: updateUserSettings } = useUpdateUserSettingsInformation();
 
   const [topics, setTopics] = useState([]);
   const [schemas, setSchemas] = useState([]);
@@ -118,6 +121,13 @@ function AppProvider({ children }) {
       setMyUserSettings(me?.personalInformation?.userSettings);
     }
   }, [isMeFetched]);
+
+  useEffect(() => {
+    setShowDeletedCapabilities(
+      myUserSettings?.showDeletedCapabilities === true,
+    );
+    setShowOnlyMyCapabilities(myUserSettings?.showOnlyMyCapabilities === true);
+  }, [myUserSettings]);
 
   async function addNewCapability(
     name,
@@ -221,6 +231,35 @@ function AppProvider({ children }) {
     return match;
   }
 
+  function toggleShowOnlyMyCapabilities() {
+    updateUserSettings(
+      {
+        ...myUserSettings,
+        showOnlyMyCapabilities: !showOnlyMyCapabilities,
+      },
+      {
+        onSuccess: () => {
+          setShowOnlyMyCapabilities((prev) => !prev);
+        },
+      },
+    );
+  }
+
+  function toggleShowDeletedCapabilities() {
+    updateUserSettings(
+      {
+        ...myUserSettings,
+        showDeletedCapabilities: !showDeletedCapabilities,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+          setShowDeletedCapabilities((prev) => !prev);
+        },
+      },
+    );
+  }
+
   const updateMyPersonalInformation = useUpdateMyPersonalInformation();
   const registerMyVisit = useRegisterMyVisit();
   useEffect(() => {
@@ -265,10 +304,12 @@ function AppProvider({ children }) {
     checkIfCloudEngineer,
     showOnlyMyCapabilities,
     setShowOnlyMyCapabilities,
+    toggleShowOnlyMyCapabilities,
     globalFilter,
     setGlobalFilter,
     showDeletedCapabilities,
     setShowDeletedCapabilities,
+    toggleShowDeletedCapabilities,
     addNewDemoRecording,
     removeDemoRecording,
   };
