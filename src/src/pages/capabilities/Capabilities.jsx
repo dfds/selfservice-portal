@@ -132,9 +132,9 @@ export default function CapabilitiesList() {
   const {
     truncateString,
     showDeletedCapabilities,
-    setShowDeletedCapabilities,
     showOnlyMyCapabilities,
-    setShowOnlyMyCapabilities,
+    toggleShowDeletedCapabilities,
+    toggleShowOnlyMyCapabilities,
   } = useContext(AppContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
@@ -377,14 +377,6 @@ export default function CapabilitiesList() {
     [],
   );
 
-  const toggleShowMyCapabilities = () => {
-    setShowOnlyMyCapabilities(!showOnlyMyCapabilities);
-  };
-
-  const toggleShowDeletedCapabilities = () => {
-    setShowDeletedCapabilities(!showDeletedCapabilities);
-  };
-
   return (
     <>
       <PageSection
@@ -404,7 +396,7 @@ export default function CapabilitiesList() {
                 </span>
                 <Switch
                   checked={showOnlyMyCapabilities}
-                  onChange={toggleShowMyCapabilities}
+                  onChange={toggleShowOnlyMyCapabilities}
                 />
               </div>
               {isCloudEngineerEnabled && (
