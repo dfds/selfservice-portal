@@ -1,24 +1,19 @@
-import { labelValue } from "@rjsf/utils";
-
 export const ENUM_COSTCENTER = [
-  "ti-ferry",
-  "ti-logistics",
-  "ti-pace",
-  "ti-ctai",
-  "ti-data",
-  "ti-arch",
-  "ti-sao",
-  "ti-inno",
-  "ti-platform",
-  "ti-competence",
-  "ti-other",
-  "finance",
-  "ferry",
-  "logistics",
+  { label: "T&I - Ferry [ti-ferry]", value: "ti-ferry" },
+  { label: "T&I - Logistics [ti-logistics]", value: "ti-logistics" },
+  { label: "T&I - Group Technology and Data [ti-gtad]", value: "ti-gtad" },
+  { label: "T&I - Architecture [ti-arch]", value: "ti-arch" },
+  { label: "T&I - Support and Operation [ti-sao]", value: "ti-sao" },
+  { label: "T&I - Platform [ti-platform]", value: "ti-platform" },
+  { label: "T&I - Other [ti-other]", value: "ti-other" },
+  { label: "Finance [finance]", value: "finance" },
+  { label: "Ferry [ferry]", value: "ferry" },
+  { label: "Logistics [logistics]", value: "logistics" },
 ];
+
 export const ENUM_COSTCENTER_OPTIONS = ENUM_COSTCENTER.map((item) => ({
-  value: item.toLowerCase(),
-  label: item,
+  value: item.value.toLowerCase(),
+  label: item.label,
 }));
 
 export const ENUM_CRITICALITY = ["Low", "Medium", "High"];
