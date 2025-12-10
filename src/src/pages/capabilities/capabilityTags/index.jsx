@@ -37,10 +37,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   ] = useState(undefined);
 
   useEffect(() => {
-    console.log("canEditTags changed:", canEditTags);
-  }, [canEditTags]);
-
-  useEffect(() => {
     if (costCenterError) {
       setFormHasError(true);
     } else {

@@ -61,7 +61,6 @@ function CapabilityDetailsPageContent() {
   const [costCentre, setCostCentre] = useState("");
 
   useEffect(() => {
-    console.log("Metadata changed:", metadata);
     if (metadata && metadata !== "{}") {
       const parsedMetadata = JSON.parse(metadata);
       const aiUsage = parsedMetadata["dfds.capability.contains-ai"];

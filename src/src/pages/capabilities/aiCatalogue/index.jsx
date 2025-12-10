@@ -41,10 +41,6 @@ export function AICatalogue() {
     }
   }, [metadata]);
 
-  useEffect(() => {
-    console.log("AI Catalogue entries updated:", aiCatalogueEntries);
-  }, [aiCatalogueEntries]);
-
   const handleSubmit = (entries) => {
     if (aiEntryInput.trim() !== "") {
       entries = [...entries, aiEntryInput.trim()];
