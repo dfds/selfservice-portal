@@ -87,17 +87,6 @@ export default function GlobalMenu() {
     setIsCloudEngineerEnabled((prev) => !prev);
   }
 
-  useEffect(() => {
-    async function updateData() {
-      await sleep(202);
-      queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
-      queryClient.invalidateQueries({ queryKey: ["capabilities", "details"] });
-      queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-    }
-    updateData();
-  }, [isCloudEngineerEnabled]);
-
   return (
     <>
       <AppBarProvider>

@@ -99,7 +99,12 @@ function AppProvider({ children }) {
     queryClient.invalidateQueries({ queryKey: ["me"] });
     queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
     queryClient.invalidateQueries({ queryKey: ["selfassessments", "list"] });
-  }, [selfServiceApiClient]);
+    queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+    queryClient.invalidateQueries({
+      queryKey: ["capabilities", "details"],
+      exact: false,
+    });
+  }, [selfServiceApiClient, isCloudEngineerEnabled]);
 
   const capabilityAdd = useCapabilityAdd();
   const createEcrRepository = useCreateEcrRepository();
