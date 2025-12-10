@@ -54,3 +54,19 @@ export const ENUM_AZURERG_USAGE_OPTIONS = ENUM_AZURERG_USAGE.map((item) => ({
   value: item.value.toLowerCase(),
   label: item.label,
 }));
+
+export const ENUM_CAPABILITY_CONTAINS_AI = [
+  {
+    label: "This capability contains AI services",
+    value: "true",
+  },
+  {
+    label: "This capability does not contain AI services",
+    value: "false",
+  },
+];
+export const ENUM_CAPABILITY_CONTAINS_AI_OPTIONS =
+  ENUM_CAPABILITY_CONTAINS_AI.map((item) => ({
+    value: item.value.toLowerCase(),
+    label: item.label,
+  }));
