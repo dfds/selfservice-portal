@@ -10,6 +10,7 @@ import {
   ENUM_AVAILABILITY_OPTIONS,
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
+  ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
 } from "@/constants/tagConstants";
 import AppContext from "@/AppContext";
 import Select from "react-select";
@@ -36,6 +37,12 @@ export default function NewCapabilityWizard({
       title: "Recommended Tags",
       content: (props) => <OptionalTagsStep {...props} />,
       optional: true,
+      skipped: false,
+    },
+    {
+      title: "AI Services",
+      content: (props) => <AIServicesStep {...props} />,
+      optional: false,
       skipped: false,
     },
     {
@@ -486,6 +493,104 @@ const InviteMemberStep = ({ formValues, setFormValues }) => {
   );
 };
 
+const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
+  const [containsAI, setContainsAI] = useState(undefined);
+  const [
+    selectedCapabilityContainsAIOption,
+    setSelectedCapabilityContainsAIOption,
+  ] = useState(undefined);
+
+  useEffect(() => {
+    const containsAI = formValues?.optionalTags["dfds.capability.contains-ai"];
+    if (containsAI) {
+      const selectedOption = ENUM_CAPABILITY_CONTAINS_AI_OPTIONS.find(
+        (opt) => opt.value === containsAI,
+      );
+      setSelectedCapabilityContainsAIOption(selectedOption || undefined);
+    }
+  }, [formValues]);
+
+  useEffect(() => {
+    if (selectedCapabilityContainsAIOption) {
+      setContainsAI(selectedCapabilityContainsAIOption.value);
+    }
+  }, [selectedCapabilityContainsAIOption]);
+
+  useEffect(() => {
+    if (containsAI !== undefined) {
+      setFormValues((prev) => {
+        return {
+          ...prev,
+          optionalTags: {
+            ...prev.optionalTags,
+            "dfds.capability.contains-ai": containsAI,
+          },
+        };
+      });
+      setCanContinue(true);
+    } else {
+      setCanContinue(false);
+    }
+  }, [containsAI]);
+
+  return (
+    <>
+      <Text>Please indicate whether this capability contains AI projects.</Text>
+
+      <Text>
+        DFDS maintains an AI Catalogue to keep track of all available AI
+        services. Indicating whether your capability provides AI services helps
+        us ensure proper governance and oversight.
+      </Text>
+
+      <Text>
+        The AI Catalogue can be found here{" "}
+        <TrackedLink
+          trackName="AICatalogue"
+          href={"https://internal.hellman.oxygen.dfds.cloud/aicatalogue/"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          AI Catalogue.
+        </TrackedLink>
+      </Text>
+
+      <Text>
+        Capabilities containing AI projects will be asked to provide additional
+        information for the AI Catalogue after creation.
+      </Text>
+
+      <Text>
+        For more information about DFDS's approach to AI, please refer to the{" "}
+        <TrackedLink
+          trackName="WikiAIGuidelines"
+          href={
+            "https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/AI-development-guiding-practices-handbookk"
+          }
+          target="_blank"
+          rel="noreferrer"
+        >
+          AI guiding practices.
+        </TrackedLink>
+      </Text>
+
+      <div>
+        <label className={styles.label}>
+          Does this capability contain AI services?
+        </label>
+        <Select
+          options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
+          value={selectedCapabilityContainsAIOption}
+          className={styles.input}
+          onChange={(selection) =>
+            setSelectedCapabilityContainsAIOption(selection)
+          }
+        ></Select>
+      </div>
+    </>
+  );
+};
+
 const SummaryStep = ({ formValues }) => {
   return (
     <>
@@ -526,6 +631,11 @@ const SummaryStep = ({ formValues }) => {
       <p>
         <strong>Service Availability:</strong>{" "}
         {formValues.optionalTags["dfds.service.availability"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Contains AI Services:</strong>{" "}
+        {formValues.optionalTags["dfds.capability.contains-ai"] ||
+          "Not provided"}
       </p>
       <h2>Invitations</h2>
       {formValues.invitations && formValues.invitations.length > 0 ? (
