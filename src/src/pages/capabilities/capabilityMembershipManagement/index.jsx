@@ -40,7 +40,10 @@ export function TabbedCapabilityMembershipManagement() {
 
   const tabs = {
     forApproval: (
-      <HeaderWithWarning text="Applications For Approval" data={otherApplicationsData} />
+      <HeaderWithWarning
+        text="Applications For Approval"
+        data={otherApplicationsData}
+      />
     ),
     myApplications: (
       <HeaderWithWarning text="Your Applications" data={myApplicationsData} />

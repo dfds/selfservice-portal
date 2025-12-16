@@ -92,9 +92,7 @@ function CapabilityDetailsPageContent() {
         <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
           <Summary anchorId="summary" />
 
-          <TabbedMembersView
-            anchorId="members"
-          />
+          <TabbedMembersView anchorId="members" />
 
           {/*<TabbedCapabilityAdoptionLevel />*/}
 
