@@ -12,7 +12,6 @@ import {
   useCapability,
   useCapabilityMembersDetailed,
   useCapabilityMembersApplications,
-  useCapabilityInvitees,
   useCapabilityMetadata,
   useLeaveCapability,
 } from "@/state/remote/queries/capabilities";
@@ -167,21 +166,6 @@ function SelectedCapabilityProvider({ children }) {
       setUserIsOwner(userRoleMap[meData.id]?.label === "Owner");
     }
   }, [userRoleMap, meData]);
-
-  const capabilityInvitees = useCapabilityInvitees();
-
-  async function addNewInvitees(invitations) {
-    setIsInviteesCreated(true);
-    capabilityInvitees.mutate({
-      capabilityDefinition: details,
-      payload: {
-        invitees: invitations,
-      },
-    });
-    await sleep(3000);
-    setIsInviteesCreated(false);
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-  }
 
   async function reloadCapability() {
     queryClient.invalidateQueries({
@@ -704,7 +688,6 @@ function SelectedCapabilityProvider({ children }) {
     updateDeletionStatus,
     showCosts,
     bypassMembershipApproval,
-    addNewInvitees,
     isInviteesCreated,
     // setCapabilityJsonMetadata,
     // setRequiredCapabilityJsonMetadata,

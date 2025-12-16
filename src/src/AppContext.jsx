@@ -132,7 +132,6 @@ function AppProvider({ children }) {
   async function addNewCapability(
     name,
     description,
-    invitations,
     jsonMetadataString,
   ) {
     capabilityAdd.mutate(
@@ -140,7 +139,6 @@ function AppProvider({ children }) {
         payload: {
           name: name,
           description: description,
-          invitees: invitations,
           jsonMetadata: jsonMetadataString,
         },
       },

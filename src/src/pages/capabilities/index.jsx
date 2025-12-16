@@ -32,7 +32,6 @@ export default function CapabilitiesPage() {
     await addNewCapability(
       formData.name,
       formData.description,
-      formData.invitations,
       jsonMetadataString,
     );
     setShowNewCapabilityWizard(false);

@@ -51,7 +51,6 @@ function CapabilityDetailsPageContent() {
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
-  const [showInvitations, setShowInvitations] = useState(false);
   const [showAICatalogueSection, setShowAICatalogueSection] = useState(false);
   const [costCentre, setCostCentre] = useState("");
 
@@ -70,12 +69,6 @@ function CapabilityDetailsPageContent() {
   useEffect(() => {
     if ((links?.metadata?.allow || []).includes("GET")) {
       setShowJsonMetadata(true);
-    }
-  }, [links]);
-
-  useEffect(() => {
-    if ((links?.sendInvitations?.allow || []).includes("POST")) {
-      setShowInvitations(true);
     }
   }, [links]);
 
@@ -101,7 +94,6 @@ function CapabilityDetailsPageContent() {
 
           <TabbedMembersView
             anchorId="members"
-            showInvitations={showInvitations}
           />
 
           {/*<TabbedCapabilityAdoptionLevel />*/}
