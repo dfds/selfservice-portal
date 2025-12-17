@@ -12,7 +12,6 @@ import { Text } from "@dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsPageSection } from "./capabilityTags";
 import { AICatalogueSection } from "./aiCatalogue";
 import menustyles from "./menu.module.css";
@@ -22,9 +21,7 @@ export default function CapabilityDetailsPage() {
   return (
     <>
       <SelectedCapabilityProvider>
-        <JsonSchemaProvider>
-          <CapabilityDetailsPageContent />
-        </JsonSchemaProvider>
+        <CapabilityDetailsPageContent />
       </SelectedCapabilityProvider>
     </>
   );

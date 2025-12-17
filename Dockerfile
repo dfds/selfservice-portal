@@ -7,7 +7,7 @@ ARG PUBLIC_URL
 ARG API_BASE_URL
 
 COPY src/package.json src/package-lock.json /app/src/
-RUN cd /app/src/ && npm install
+RUN cd /app/src/ && npm install --legacy-peer-deps
 
 COPY src/ /app/src/
 RUN cd /app/src/ && npm run build

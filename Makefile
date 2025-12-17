@@ -20,7 +20,7 @@ clean: ## Remove all generated files
 
 .PHONY: restore
 restore: ## Install and update npm dependencies
-	@cd src && npm install
+	@cd src && npm install --legacy-peer-deps
 
 .PHONY: check-node-version
 check-node-version: ## Verify node version dependencies

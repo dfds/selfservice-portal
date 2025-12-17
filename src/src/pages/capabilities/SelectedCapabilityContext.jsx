@@ -37,6 +37,7 @@ import {
   useSubmitMembershipApplication,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
+import { sleep } from "Utils";
 
 const SelectedCapabilityContext = createContext();
 
@@ -53,7 +54,7 @@ function adjustRetention(kafkaTopic) {
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
   const queryClient = useQueryClient();
-  const { shouldAutoReloadTopics, selfServiceApiClient, user } =
+  const { shouldAutoReloadTopics, selfServiceApiClient, reloadUser } =
     useContext(AppContext);
 
   const { data: meData } = useMe();
@@ -129,12 +130,6 @@ function SelectedCapabilityProvider({ children }) {
       loadConfigurationLevelInformation();
     }
   }, [configurationLevelInformation, configurationLevelLink]);
-
-  function sleep(duration) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), duration);
-    });
-  }
 
   const [userIsOwner, setUserIsOwner] = useState(false);
 
@@ -464,6 +459,8 @@ function SelectedCapabilityProvider({ children }) {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "members"],
           });
+          reloadUser();
+          reloadCapability();
         },
       },
     );
@@ -585,6 +582,8 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+          reloadCapability();
+          reloadUser();
         },
       },
     );

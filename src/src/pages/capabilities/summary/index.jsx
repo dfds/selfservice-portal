@@ -9,14 +9,7 @@ import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
-import AppContext from "AppContext";
 import { TrackedButton } from "@/components/Tracking";
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
 
 function JoinDialog({
   name,
@@ -138,7 +131,6 @@ export default function Summary({ anchorId }) {
     submitMembershipApplication,
     submitLeaveCapability,
     bypassMembershipApproval,
-    reloadCapability,
   } = useContext(SelectedCapabilityContext);
 
   const [showJoinDialog, setShowJoinDialog] = useState(false);
@@ -149,7 +141,6 @@ export default function Summary({ anchorId }) {
   var canJoin = (links?.membershipApplications?.allow || []).includes("POST");
   var canLeave = (links?.leaveCapability?.allow || []).includes("POST");
   var canBypass = (links?.joinCapability?.allow || []).includes("POST");
-  const { reloadUser } = useContext(AppContext);
 
   useEffect(() => {
     canJoin = (links?.membershipApplications?.allow || []).includes("POST");
@@ -167,9 +158,6 @@ export default function Summary({ anchorId }) {
   const handleLeaveClicked = async () => {
     setIsLeaving(true);
     await submitLeaveCapability();
-    await sleep(200);
-    reloadUser();
-    reloadCapability();
     setIsLeaving(false);
     setShowLeaveDialog(false);
   };
@@ -182,9 +170,6 @@ export default function Summary({ anchorId }) {
 
   const handleBypassClicked = async () => {
     await bypassMembershipApproval();
-    await sleep(200);
-    reloadUser();
-    reloadCapability();
     setShowJoinDialog(false);
   };
 

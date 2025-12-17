@@ -17,6 +17,7 @@ import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
+import { sleep } from "Utils";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -55,12 +56,6 @@ function ExpirationDate({ date }) {
   ) : (
     <span>{label}</span>
   );
-}
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
 }
 
 export function MembershipApplicationsUserCanApprovePageSection() {

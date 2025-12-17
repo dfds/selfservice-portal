@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
-import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { TrackedLink } from "@/components/Tracking";
 import {
   ENUM_COSTCENTER_OPTIONS,
@@ -11,7 +10,6 @@ import {
   ENUM_CRITICALITY_OPTIONS,
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
 } from "@/constants/tagConstants";
-import AppContext from "@/AppContext";
 import Select from "react-select";
 
 export default function NewCapabilityWizard({
@@ -64,21 +62,20 @@ export default function NewCapabilityWizard({
     mandatoryTags: {},
     optionalTags: {},
     invitations: [],
+    jsonMetadata: "{}",
   };
 
   return (
-    <JsonSchemaProvider>
-      <CreationWizard
-        isOpen={true}
-        onClose={onCloseClicked}
-        onComplete={handleAddCapabilityClicked}
-        steps={steps}
-        title="New Capability Wizard"
-        emptyFormValues={emptyFormValues}
-        completeInProgress={inProgress}
-        completeName={"Add Capability"}
-      />
-    </JsonSchemaProvider>
+    <CreationWizard
+      isOpen={true}
+      onClose={onCloseClicked}
+      onComplete={handleAddCapabilityClicked}
+      steps={steps}
+      title="New Capability Wizard"
+      emptyFormValues={emptyFormValues}
+      completeInProgress={inProgress}
+      completeName={"Add Capability"}
+    />
   );
 }
 
