@@ -1,9 +1,8 @@
-import React, { useState, useContext, createRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
 import { JsonSchemaProvider } from "../../JsonSchemaContext";
-import { Invitations } from "./invitations";
 import { TrackedLink } from "@/components/Tracking";
 import {
   ENUM_COSTCENTER_OPTIONS,
@@ -43,12 +42,6 @@ export default function NewCapabilityWizard({
       title: "AI Services",
       content: (props) => <AIServicesStep {...props} />,
       optional: false,
-      skipped: false,
-    },
-    {
-      title: "Invite Members",
-      content: (props) => <InviteMemberStep {...props} />,
-      optional: true,
       skipped: false,
     },
     {
@@ -470,29 +463,6 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   );
 };
 
-const InviteMemberStep = ({ formValues, setFormValues }) => {
-  const [formData, setFormData] = useState({});
-  const [invitees, setInvitees] = useState(formValues.invitations || []);
-
-  useEffect(() => {
-    setFormValues((prev) => {
-      return { ...prev, invitations: invitees };
-    });
-  }, [invitees]);
-
-  return (
-    <>
-      <h1>Invite Members</h1>
-      <Invitations
-        invitees={invitees}
-        setInvitees={setInvitees}
-        formData={formData}
-        setFormData={setFormData}
-      />
-    </>
-  );
-};
-
 const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [containsAI, setContainsAI] = useState(undefined);
   const [
@@ -637,18 +607,6 @@ const SummaryStep = ({ formValues }) => {
         {formValues.optionalTags["dfds.capability.contains-ai"] ||
           "Not provided"}
       </p>
-      <h2>Invitations</h2>
-      {formValues.invitations && formValues.invitations.length > 0 ? (
-        <ul>
-          {formValues.invitations.map((invite, index) => (
-            <li key={index}>
-              <strong>Email:</strong> {invite.email}{" "}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No invitations to send.</p>
-      )}
     </>
   );
 };
