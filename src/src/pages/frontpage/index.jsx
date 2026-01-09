@@ -86,9 +86,9 @@ export default function FrontPage() {
           <FunStats />
         </Section>
 
-        <Section>
+        {/*<Section>
           <GrafanaWarning />
-        </Section>
+        </Section>*/}
 
         <Section>
           <Container>
