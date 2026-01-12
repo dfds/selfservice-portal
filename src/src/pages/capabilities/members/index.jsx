@@ -5,7 +5,6 @@ import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
-import { CapabilityInvitations } from "../capabilityInvitations/capabilityInvitations";
 import { useMembershipApplications } from "@/state/remote/queries/membershipApplications";
 import { Account } from "@dfds-ui/icons/system";
 import Select from "react-select";
@@ -123,21 +122,11 @@ export function TabbedMembersView({ anchorId, showInvitations }) {
 
   const tabs = {
     members: "Current Members",
-    invitations: "Invite Members",
     applications: "Membership Applications",
   };
 
   const tabsContent = {
     members: <Members roleTypes={availableRoles} />,
-    invitations: (
-      <>
-        {showInvitations ? (
-          <CapabilityInvitations />
-        ) : (
-          <Text>You do not have access to view this information.</Text>
-        )}
-      </>
-    ),
     applications: (
       <MembershipApplicationsUserCanApprove
         data={capabilityApplications}

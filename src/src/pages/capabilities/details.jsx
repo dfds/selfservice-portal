@@ -94,7 +94,7 @@ function CapabilityDetailsPageContent() {
   return (
     <>
       <div>
-        <GrafanaWarning />
+        {/*<GrafanaWarning />*/}
 
         <DeletionWarning
           deletionState={isPendingDeletion}
