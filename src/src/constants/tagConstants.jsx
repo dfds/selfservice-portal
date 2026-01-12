@@ -21,14 +21,84 @@ export const ENUM_COSTCENTER = [
   { label: "T&I - Platform [ti-platform]", value: "ti-platform" },
   { label: "T&I - Other [ti-other]", value: "ti-other" },
   { label: "Finance [finance]", value: "finance" },
-  { label: "Ferry [ferry]", value: "ferry" },
-  { label: "Logistics [logistics]", value: "logistics" },
+];
+
+const FERRY_BUSINESS_CAPABILITIES = [
+  "Load Planning",
+  "Visit Access Control",
+  "Imaging",
+  "Load and Discharge Execution",
+  "Labour Planning",
+  "Service Pricing",
+  "Equipment Management",
+  "Unit Management",
+  "Yard Management",
+  "Unit Warehousing",
+  "Vessel Management",
+  "Train Management",
+  "Reporting",
+  "Operational Monitoring and Analysis",
+  "Adhere to regulatory requirements",
+  "Configure routes",
+  "Handle finance operations",
+  "Make ferry bookings",
+  "Marketing and sales activities",
+  "Operate ports",
+  "Optimize capacity for vessel utilization",
+  "Optimize revenue",
+  "Schedule voyages",
+  "Take Customer Payments",
+];
+
+const LOGISTICS_BUSINESS_CAPABILITIES = [
+  "Product Management",
+  "Sales and Marketing",
+  "Customer Service",
+  "Finance",
+  "Fleet management",
+  "Transportation execution",
+  "Customs handling",
+  "Monitoring transport execution",
+  "Haulage procurement",
+  "Two-way supplier communication",
+  "Operational transport planning",
+  "Warehousing",
+  "Networking planning",
+  "Charging hub management",
+  "Asset management",
+  "Supporting capabilities",
+  "Packaging",
+  "IT Enablers - M&A",
+  "IT Enablers - Velocity",
+  "IT Enablers - Messaging",
+  "IT Enablers - Observability",
+  "IT Enablers - TMS Modernization",
 ];
 
 export const ENUM_COSTCENTER_OPTIONS = ENUM_COSTCENTER.map((item) => ({
   value: item.value.toLowerCase(),
   label: item.label,
 }));
+
+// Business Capabilities per Cost Center (default empty, easy to update)
+export const BUSINESS_CAPABILITIES_BY_COSTCENTER = {
+  "ti-ferry": FERRY_BUSINESS_CAPABILITIES,
+  "ti-logistics": LOGISTICS_BUSINESS_CAPABILITIES,
+};
+
+export const getBusinessCapabilitiesOptions = (costCenter) => {
+  const list = BUSINESS_CAPABILITIES_BY_COSTCENTER[costCenter] || [];
+  if (list.length === 0) {
+    return [
+      {
+        value: "",
+        label: "No selectable Business Capabilities -- contact your tribe lead",
+        isDisabled: true,
+      },
+    ];
+  }
+  return list.map((item) => ({ value: item, label: item }));
+};
 
 export const ENUM_CRITICALITY = ["Low", "Medium", "High"];
 export const ENUM_CRITICALITY_OPTIONS = ENUM_CRITICALITY.map((item) => ({

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
 import { TrackedLink } from "@/components/Tracking";
 import {
   ENUM_COSTCENTER_OPTIONS,
+  getBusinessCapabilitiesOptions,
   ENUM_AVAILABILITY_OPTIONS,
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
@@ -192,40 +193,66 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [selectedCostCentreOption, setSelectedCostCentreOption] =
     useState(undefined);
   const [costCentreError, setCostCentreError] = useState(undefined);
+  const [businessCapability, setBusinessCapability] = useState("");
+  const [
+    selectedBusinessCapabilityOption,
+    setSelectedBusinessCapabilityOption,
+  ] = useState(undefined);
+
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (!initialized.current) {
+      const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
+      const businessCapability =
+        formValues?.mandatoryTags["dfds.businessCapability"];
+      const selectedCostOption = costCentre
+        ? ENUM_COSTCENTER_OPTIONS.find((opt) => opt.value === costCentre)
+        : undefined;
+      setSelectedCostCentreOption(selectedCostOption);
+      setCostCentre(costCentre || "");
+      if (costCentre && businessCapability) {
+        const options = getBusinessCapabilitiesOptions(costCentre);
+        const selectedBusinessOption = options.find(
+          (opt) => opt.value === businessCapability,
+        );
+        setSelectedBusinessCapabilityOption(
+          selectedBusinessOption || undefined,
+        );
+        setBusinessCapability(businessCapability);
+      } else {
+        setSelectedBusinessCapabilityOption(undefined);
+        setBusinessCapability("");
+      }
+      initialized.current = true;
+    }
+  }, []);
 
   useEffect(() => {
-    const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
-    if (costCentre) {
-      const selectedOption = ENUM_COSTCENTER_OPTIONS.find(
-        (opt) => opt.value === costCentre,
-      );
-      setSelectedCostCentreOption(selectedOption || undefined);
+    if (selectedBusinessCapabilityOption) {
+      setBusinessCapability(selectedBusinessCapabilityOption.value);
+    } else {
+      setBusinessCapability("");
     }
-  }, [formValues]);
-
-  useEffect(() => {
-    if (selectedCostCentreOption) {
-      setCostCentre(selectedCostCentreOption.value);
-    }
-  }, [selectedCostCentreOption]);
+  }, [selectedBusinessCapabilityOption]);
 
   useEffect(() => {
     setCostCentreError(undefined);
-    if (costCentre && costCentre.length > 0) {
-      setFormValues((prev) => {
-        return {
-          ...prev,
-          mandatoryTags: {
-            "dfds.cost.centre": costCentre,
-          },
-        };
-      });
-      setCanContinue(true);
-    } else {
+    let valid = true;
+    if (!costCentre || costCentre.length === 0) {
       setCostCentreError("Capabilities must have a cost centre");
-      setCanContinue(false);
+      valid = false;
     }
-  }, [costCentre]);
+    setFormValues((prev) => {
+      return {
+        ...prev,
+        mandatoryTags: {
+          "dfds.cost.centre": costCentre,
+          "dfds.businessCapability": businessCapability,
+        },
+      };
+    });
+    setCanContinue(valid);
+  }, [costCentre, businessCapability]);
 
   return (
     <>
@@ -258,13 +285,56 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_COSTCENTER_OPTIONS}
           className={styles.input}
           value={selectedCostCentreOption}
-          onChange={(selection) => setSelectedCostCentreOption(selection)}
+          onChange={(selection) => {
+            setSelectedCostCentreOption(selection);
+            // Only reset business capability if cost center actually changed
+            setSelectedBusinessCapabilityOption(undefined);
+            setBusinessCapability("");
+            setCostCentre(selection?.value || "");
+            setFormValues((prev) => {
+              // Only update if cost centre actually changed
+              const prevCost = prev?.mandatoryTags?.["dfds.cost.centre"];
+              if (prevCost === (selection?.value || "")) return prev;
+              return {
+                ...prev,
+                mandatoryTags: {
+                  ...prev.mandatoryTags,
+                  "dfds.cost.centre": selection?.value || "",
+                  "dfds.businessCapability": "",
+                },
+              };
+            });
+          }}
         ></Select>
         <div className={styles.errorContainer}>
           {costCentreError && (
             <span className={styles.error}>{costCentreError}</span>
           )}
         </div>
+      </div>
+
+      {/* Business Capability */}
+      <div>
+        <label className={styles.label}>Business Capability:</label>
+        <span>Select the Business Capability for this Cost Center.</span>
+        <Select
+          options={getBusinessCapabilitiesOptions(costCentre)}
+          className={styles.input}
+          value={selectedBusinessCapabilityOption ?? null}
+          placeholder="Select..."
+          onChange={(selection) => {
+            setSelectedBusinessCapabilityOption(selection);
+            setBusinessCapability(selection?.value || "");
+            setFormValues((prev) => ({
+              ...prev,
+              mandatoryTags: {
+                ...prev.mandatoryTags,
+                "dfds.businessCapability": selection?.value || "",
+              },
+            }));
+          }}
+        ></Select>
+        {/* No error for business capability, as it's not required */}
       </div>
     </>
   );
@@ -597,6 +667,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
 };
 
 const SummaryStep = ({ formValues }) => {
+  const { user } = useContext(AppContext);
   return (
     <>
       <h1>Summary</h1>
@@ -613,18 +684,17 @@ const SummaryStep = ({ formValues }) => {
       </p>
       <h2>Mandatory Tags</h2>
       <p>
-        <strong>Owner:</strong>{" "}
-        {formValues.mandatoryTags["dfds.owner"] || "Not provided"}
+        <strong>Owner:</strong> {user?.name || user?.username || "Not provided"}
       </p>
       <p>
         <strong>Cost Center:</strong>{" "}
         {formValues.mandatoryTags["dfds.cost.centre"] || "Not provided"}
       </p>
-      <h2>Optional Tags</h2>
       <p>
-        <strong>Sunset Date:</strong>{" "}
-        {formValues.optionalTags["dfds.planned_sunset"] || "Not provided"}
+        <strong>Business Capability:</strong>{" "}
+        {formValues.mandatoryTags["dfds.businessCapability"] || "Not provided"}
       </p>
+      <h2>Optional Tags</h2>
       <p>
         <strong>Environment:</strong>{" "}
         {formValues.optionalTags["dfds.env"] || "Not provided"}

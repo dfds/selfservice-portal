@@ -10,6 +10,7 @@ import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ENUM_COSTCENTER_OPTIONS,
+  getBusinessCapabilitiesOptions,
   ENUM_AVAILABILITY_OPTIONS,
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
@@ -21,9 +22,15 @@ import {
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [formHasError, setFormHasError] = useState(false);
   const [costCenterError, setCostCenterError] = useState(undefined);
+  const [businessCapabilityError, setBusinessCapabilityError] =
+    useState(undefined);
   const [isDirty, setIsDirty] = useState(false);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
+  const [
+    selectedBusinessCapabilityOption,
+    setSelectedBusinessCapabilityOption,
+  ] = useState(undefined);
   const [selectedCriticalityOption, setSelectedCriticalityOption] =
     useState(undefined);
   const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
@@ -55,6 +62,18 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   }, [selectedCostCenterOption]);
 
   useEffect(() => {
+    console.log(
+      "selectedBusinessCapabilityOption",
+      selectedBusinessCapabilityOption,
+    );
+    if (!selectedBusinessCapabilityOption) {
+      setBusinessCapabilityError("A Business Capability must be set");
+    } else {
+      setBusinessCapabilityError(undefined);
+    }
+  }, [selectedBusinessCapabilityOption]);
+
+  useEffect(() => {
     if (defaultValues) {
       const prevCostCenter = defaultValues["dfds.cost.centre"];
       if (prevCostCenter) {
@@ -62,6 +81,15 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           (opt) => opt.value === prevCostCenter,
         );
         setSelectedCostCenterOption(selectedOption || undefined);
+      }
+
+      const prevBusinessCapability = defaultValues["dfds.businessCapability"];
+      if (prevBusinessCapability && prevCostCenter) {
+        const options = getBusinessCapabilitiesOptions(prevCostCenter);
+        const selectedOption = options.find(
+          (opt) => opt.value === prevBusinessCapability,
+        );
+        setSelectedBusinessCapabilityOption(selectedOption || undefined);
       }
 
       const prevClassification = defaultValues["dfds.data.classification"];
@@ -117,6 +145,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const translateToTags = () => {
     const data = {
       "dfds.cost.centre": selectedCostCenterOption?.value,
+      "dfds.businessCapability": selectedBusinessCapabilityOption?.value,
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
@@ -139,8 +168,8 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       <div>
         <label className={styles.label}>Cost Center:</label>
         <span>
-          Internal analysis and cost aggregation tools such as FinOut requires
-          this to be present.
+          Required for internal analysis and cost aggregation tools such as
+          FinOut.
         </span>
         <Select
           options={ENUM_COSTCENTER_OPTIONS}
@@ -149,12 +178,38 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           isDisabled={!canEditTags}
           onChange={(e) => {
             setSelectedCostCenterOption(e);
+            setSelectedBusinessCapabilityOption(null); // force dropdown to show placeholder
             setIsDirty(true);
+            setBusinessCapabilityError("A Business Capability must be set");
           }}
         />
         <div className={styles.errorContainer}>
           {canEditTags && costCenterError && (
             <span className={styles.error}>{costCenterError}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Business Capability */}
+      <div>
+        <label className={styles.label}>Business Capability:</label>
+        <span>Select the Business Capability for this Cost Center.</span>
+        <Select
+          options={getBusinessCapabilitiesOptions(
+            selectedCostCenterOption?.value,
+          )}
+          value={selectedBusinessCapabilityOption ?? null}
+          className={styles.input}
+          isDisabled={!canEditTags}
+          placeholder="Select..."
+          onChange={(e) => {
+            setSelectedBusinessCapabilityOption(e);
+            setIsDirty(true);
+          }}
+        />
+        <div className={styles.errorContainer}>
+          {canEditTags && businessCapabilityError && (
+            <span className={styles.error}>{businessCapabilityError}</span>
           )}
         </div>
       </div>
