@@ -68,6 +68,8 @@ export default function CapabilitiesCriticalityPage() {
           jsonMetadata["dfds.service.criticality"] || "unknown";
         enrichedCapability.classification =
           jsonMetadata["dfds.data.classification"] || "unknown";
+        enrichedCapability.costCenter =
+          jsonMetadata["dfds.cost.centre"] || "unknown";
         enrichedCapability.criticalityLevel = calculateCriticalityLevel(
           jsonMetadata["dfds.service.availability"],
           jsonMetadata["dfds.service.criticality"],
@@ -90,16 +92,25 @@ export default function CapabilitiesCriticalityPage() {
         disableFilters: false,
         enableGlobalFilter: true,
         enableFilterMatchHighlighting: true,
-
         Cell: ({ cell, renderedCellValue }) => {
           return (
             <div>
-              {" "}
               <Text styledAs="action" as={"div"}>
                 {truncateString(renderedCellValue, 40)}
               </Text>
             </div>
           );
+        },
+      },
+      {
+        accessorFn: (row) => row.costCenter,
+        header: "Cost Center",
+        size: 120,
+        enableColumnFilterModes: true,
+        enableGlobalFilter: true,
+        enableFilterMatchHighlighting: true,
+        Cell: ({ cell }) => {
+          return <div>{cell.getValue()}</div>;
         },
       },
       {
