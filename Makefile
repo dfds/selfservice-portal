@@ -20,7 +20,7 @@ clean: ## Remove all generated files
 
 .PHONY: restore
 restore: ## Install and update npm dependencies
-	@cd src && npm install
+	@cd src && npm install --legacy-peer-deps
 
 .PHONY: check-node-version
 check-node-version: ## Verify node version dependencies
@@ -80,5 +80,5 @@ help: ## Shows this list
 
 .PHONY: test
 test: ## Run playwright tests
-	@cd src && npx npx playwright test --project parallel
-	@cd src && npx npx playwright test --project sequential --workers 1
+	@cd src && npx playwright test --project parallel
+	@cd src && npx playwright test --project sequential --workers 1

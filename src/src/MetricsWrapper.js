@@ -117,7 +117,7 @@ export class MetricsWrapper {
       return 0;
     }
     let total = 0;
-    // eslint-disable-next-line no-unused-vars
+
     for (let [_, value] of counts) {
       total += value;
     }

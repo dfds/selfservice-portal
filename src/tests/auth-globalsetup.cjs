@@ -13,6 +13,16 @@ export default async function globalSetup(config) {
 
   await page.goto("http://localhost:3001/");
 
+  // Click the sign-in button
+  //await page.getByText('Sign in with DFDS account').click();
+  //await page.waitForTimeout(3000);
+
+  // Take screenshot before any interaction
+  await page.screenshot({
+    path: "playwright/.auth/initial.png",
+    fullPage: true,
+  });
+
   await page.getByPlaceholder("someone@dfds.com").click();
   await page
     .getByPlaceholder("someone@dfds.com")

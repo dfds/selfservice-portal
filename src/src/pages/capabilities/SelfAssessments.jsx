@@ -186,16 +186,16 @@ export default function CapabilitiesSelfAssessmentsPage() {
                     description={selfAssessment.description}
                     state={selfAssessment.isActive}
                     activateFunction={(id) => {
-                      selfAssessmentActivate.mutate({
+                      (selfAssessmentActivate.mutate({
                         id: id,
                       }),
-                        reloadSelfAssessments("Activate");
+                        reloadSelfAssessments("Activate"));
                     }}
                     deactivateFunction={(id) => {
-                      selfAssessmentDeactivate.mutate({
+                      (selfAssessmentDeactivate.mutate({
                         id: id,
                       }),
-                        reloadSelfAssessments("Deactivate");
+                        reloadSelfAssessments("Deactivate"));
                     }}
                   />
                 </CardContent>

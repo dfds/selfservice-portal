@@ -39,15 +39,15 @@
 .title {
   margin: 0px 8px;
   font-size: 1.5em;
-  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
-    sans-serif;
+  font-family:
+    DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 
 .description {
   margin: 0px 8px;
   font-size: 1em;
-  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
-    sans-serif;
+  font-family:
+    DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica, sans-serif;
   white-space: pre-line;
 }
 

@@ -1,3 +1,7 @@
+## Run Playwright tests
+.PHONY: test
+test:
+	npm test
 .PHONY: default
 default: help
 
