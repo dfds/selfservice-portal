@@ -16,6 +16,43 @@ export const ENUM_COSTCENTER_OPTIONS = ENUM_COSTCENTER.map((item) => ({
   label: item.label,
 }));
 
+// Hardcoded projects by cost center
+export const ENUM_PROJECTS_BY_COSTCENTER = {
+  "ti-ferry": [
+    { label: "Ferry Booking", value: "ferry-booking" },
+    { label: "Ferry Operations", value: "ferry-ops" },
+  ],
+  "ti-logistics": [
+    { label: "Logistics Platform", value: "logistics-platform" },
+    { label: "Cargo Tracking", value: "cargo-tracking" },
+  ],
+  "ti-gtad": [
+    { label: "Data Lake", value: "data-lake" },
+    { label: "Analytics Hub", value: "analytics-hub" },
+  ],
+  "ti-arch": [
+    { label: "Architecture Review", value: "arch-review" },
+  ],
+  "ti-sao": [
+    { label: "Support Portal", value: "support-portal" },
+  ],
+  "ti-platform": [
+    { label: "Platform Core", value: "platform-core" },
+  ],
+  "ti-other": [
+    { label: "Other Project", value: "other-project" },
+  ],
+  "finance": [
+    { label: "Finance Suite", value: "finance-suite" },
+  ],
+  "ferry": [
+    { label: "Ferry App", value: "ferry-app" },
+  ],
+  "logistics": [
+    { label: "Logistics App", value: "logistics-app" },
+  ],
+};
+
 export const ENUM_CRITICALITY = ["Low", "Medium", "High"];
 export const ENUM_CRITICALITY_OPTIONS = ENUM_CRITICALITY.map((item) => ({
   value: item.toLowerCase(),

@@ -193,9 +193,12 @@ const BasicInformationStep = ({
 
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [costCentre, setCostCentre] = useState("");
-  const [selectedCostCentreOption, setSelectedCostCentreOption] =
-    useState(undefined);
+  const [selectedCostCentreOption, setSelectedCostCentreOption] = useState(undefined);
   const [costCentreError, setCostCentreError] = useState(undefined);
+  const [project, setProject] = useState("");
+  const [selectedProjectOption, setSelectedProjectOption] = useState(undefined);
+  const [projectError, setProjectError] = useState(undefined);
+  const { ENUM_PROJECTS_BY_COSTCENTER } = require("@/constants/tagConstants");
 
   useEffect(() => {
     const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
@@ -204,12 +207,23 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         (opt) => opt.value === costCentre,
       );
       setSelectedCostCentreOption(selectedOption || undefined);
+      // Set project if present
+      const projectVal = formValues?.mandatoryTags["dfds.project"];
+      if (projectVal && ENUM_PROJECTS_BY_COSTCENTER[costCentre]) {
+        const selectedProj = ENUM_PROJECTS_BY_COSTCENTER[costCentre].find(
+          (opt) => opt.value === projectVal
+        );
+        setSelectedProjectOption(selectedProj || undefined);
+      }
     }
   }, [formValues]);
 
   useEffect(() => {
     if (selectedCostCentreOption) {
       setCostCentre(selectedCostCentreOption.value);
+      // Reset project if cost center changes
+      setSelectedProjectOption(undefined);
+      setProject("");
     }
   }, [selectedCostCentreOption]);
 
@@ -220,16 +234,18 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         return {
           ...prev,
           mandatoryTags: {
+            ...prev.mandatoryTags,
             "dfds.cost.centre": costCentre,
+            "dfds.project": project,
           },
         };
       });
-      setCanContinue(true);
+      setCanContinue(!costCentreError && !projectError);
     } else {
       setCostCentreError("Capabilities must have a cost centre");
       setCanContinue(false);
     }
-  }, [costCentre]);
+  }, [costCentre, project, costCentreError, projectError]);
 
   return (
     <>
@@ -267,6 +283,29 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         <div className={styles.errorContainer}>
           {costCentreError && (
             <span className={styles.error}>{costCentreError}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Project */}
+      <div>
+        <label className={styles.label}>Project:</label>
+        <span>
+          Select the project this capability belongs to. Projects are grouped by cost center.
+        </span>
+        <Select
+          options={costCentre ? ENUM_PROJECTS_BY_COSTCENTER[costCentre] || [] : []}
+          className={styles.input}
+          value={selectedProjectOption}
+          onChange={(selection) => {
+            setSelectedProjectOption(selection);
+            setProject(selection ? selection.value : "");
+          }}
+          isDisabled={!costCentre}
+        ></Select>
+        <div className={styles.errorContainer}>
+          {projectError && (
+            <span className={styles.error}>{projectError}</span>
           )}
         </div>
       </div>

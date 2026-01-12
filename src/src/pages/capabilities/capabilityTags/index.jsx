@@ -15,6 +15,7 @@ import {
   ENUM_CRITICALITY_OPTIONS,
   ENUM_AZURERG_USAGE_OPTIONS,
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
+  ENUM_PROJECTS_BY_COSTCENTER,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -23,6 +24,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const [isDirty, setIsDirty] = useState(false);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
+  const [selectedProjectOption, setSelectedProjectOption] = useState(undefined);
   const [selectedCriticalityOption, setSelectedCriticalityOption] =
     useState(undefined);
   const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
@@ -60,6 +62,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           (opt) => opt.value === prevCostCenter,
         );
         setSelectedCostCenterOption(selectedOption || undefined);
+        // Set project if present
+        const prevProject = defaultValues["dfds.project"];
+        if (prevProject && ENUM_PROJECTS_BY_COSTCENTER[prevCostCenter]) {
+          const selectedProj = ENUM_PROJECTS_BY_COSTCENTER[prevCostCenter].find(
+            (opt) => opt.value === prevProject
+          );
+          setSelectedProjectOption(selectedProj || undefined);
+        }
       }
 
       const prevClassification = defaultValues["dfds.data.classification"];
@@ -107,6 +117,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   const translateToTags = () => {
     const data = {
       "dfds.cost.centre": selectedCostCenterOption?.value,
+      "dfds.project": selectedProjectOption?.value,
       "dfds.data.classification": selectedClassificationOption?.value,
       "dfds.service.criticality": selectedCriticalityOption?.value,
       "dfds.service.availability": selectedAvailabilityOption?.value,
@@ -139,6 +150,8 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           onChange={(e) => {
             setSelectedCostCenterOption(e);
             setIsDirty(true);
+            // Reset project selection when cost center changes
+            setSelectedProjectOption(undefined);
           }}
         />
         <div className={styles.errorContainer}>
@@ -146,6 +159,25 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
             <span className={styles.error}>{costCenterError}</span>
           )}
         </div>
+      </div>
+
+      {/* Project */}
+      <div>
+        <label className={styles.label}>Project:</label>
+        <span>
+          Select the project this capability belongs to. Projects are grouped by cost center.
+        </span>
+        <Select
+          options={selectedCostCenterOption ? ENUM_PROJECTS_BY_COSTCENTER[selectedCostCenterOption.value] || [] : []}
+          value={selectedProjectOption}
+          className={styles.input}
+          isDisabled={!canEditTags || !selectedCostCenterOption}
+          onChange={(e) => {
+            setSelectedProjectOption(e);
+            setIsDirty(true);
+          }}
+        />
+        <div className={styles.errorContainer}></div>
       </div>
 
       {/* Data Classification */}
