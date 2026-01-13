@@ -21,12 +21,7 @@ import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
 import { TrackedButton } from "@/components/Tracking";
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
+import { sleep } from "../../Utils";
 
 const ToggleSwitch = ({ initialState, switchedOff, switchedOn }) => {
   const [isOn, setIsOn] = useState(initialState);

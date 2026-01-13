@@ -37,6 +37,7 @@ import {
   useSubmitMembershipApplication,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
+import { sleep } from "../../Utils";
 
 const SelectedCapabilityContext = createContext();
 
@@ -129,12 +130,6 @@ function SelectedCapabilityProvider({ children }) {
       loadConfigurationLevelInformation();
     }
   }, [configurationLevelInformation, configurationLevelLink]);
-
-  function sleep(duration) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), duration);
-    });
-  }
 
   const [userIsOwner, setUserIsOwner] = useState(false);
 
