@@ -123,14 +123,25 @@ export default function FrontPage() {
 
             <Column>
               <PageSection>
-
                 <SectionContent title="Welcome">
                   <div id="welcome-content">
                     Hello {name}, and welcome to the Developer Portal.
                   </div>
-                  <div style={{ marginTop: '1em', background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 4, padding: '1em' }}>
-                    <strong>Note:</strong> Invitations to capabilities have been <strong>removed</strong>.<br />
-                    Having multiple ways to join a capability made it harder for people to know what the process was, leading to confusion and misunderstandings. Therefore, we have gone back to having just one way to join a capability.
+                  <div
+                    style={{
+                      marginTop: "1em",
+                      background: "#fffbe6",
+                      border: "1px solid #ffe58f",
+                      borderRadius: 4,
+                      padding: "1em",
+                    }}
+                  >
+                    <strong>Note:</strong> Invitations to capabilities have been{" "}
+                    <strong>removed</strong>.<br />
+                    Having multiple ways to join a capability made it harder for
+                    people to know what the process was, leading to confusion
+                    and misunderstandings. Therefore, we have gone back to
+                    having just one way to join a capability.
                   </div>
                 </SectionContent>
 
