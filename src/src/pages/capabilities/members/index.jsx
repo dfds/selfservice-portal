@@ -87,7 +87,7 @@ export default function Members({ roleTypes }) {
   );
 }
 
-export function TabbedMembersView({ anchorId, showInvitations }) {
+export function TabbedMembersView({ anchorId }) {
   const {
     isFetched: fetchedOtherApplications,
     isRefetchting: refetchingOtherApplications,

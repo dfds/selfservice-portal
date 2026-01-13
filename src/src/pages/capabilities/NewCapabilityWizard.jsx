@@ -61,7 +61,6 @@ export default function NewCapabilityWizard({
     description: "",
     mandatoryTags: {},
     optionalTags: {},
-    invitations: [],
   };
 
   return (
