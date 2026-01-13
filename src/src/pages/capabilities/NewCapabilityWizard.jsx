@@ -11,7 +11,6 @@ import {
   ENUM_CRITICALITY_OPTIONS,
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
 } from "@/constants/tagConstants";
-import AppContext from "@/AppContext";
 import Select from "react-select";
 
 export default function NewCapabilityWizard({

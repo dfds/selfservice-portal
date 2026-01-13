@@ -3,7 +3,7 @@
  * @param {number} duration Amount of delay in miliseconds.
  * @returns An awaitable promise that gets resolved after the provided amount of miliseconds.
  */
-export function delay(duration) {
+export function sleep(duration) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(), duration);
   });

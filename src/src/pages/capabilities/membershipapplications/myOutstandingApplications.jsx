@@ -4,12 +4,7 @@ import PageSection from "components/PageSection";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
+import { sleep } from "src/Utils";
 
 export function MyOutstandingMembershipApplicationsPageSection() {
   return (

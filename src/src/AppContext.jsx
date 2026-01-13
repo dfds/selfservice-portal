@@ -20,14 +20,9 @@ import {
   useToggleNoteActivity,
 } from "@/state/remote/queries/releaseNotes";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
+import { sleep } from "./Utils";
 
 const AppContext = React.createContext(null);
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
 
 function getValidationError(value, errorText) {
   const isValid =

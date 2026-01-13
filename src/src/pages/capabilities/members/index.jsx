@@ -9,12 +9,7 @@ import { useMembershipApplications } from "@/state/remote/queries/membershipAppl
 import { Account } from "@dfds-ui/icons/system";
 import Select from "react-select";
 import { useGrantRole } from "@/state/remote/queries/rbac";
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
+import { sleep } from "src/Utils";
 
 function MemberRow({ member, roleTypes }) {
   const {
