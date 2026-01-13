@@ -43,21 +43,6 @@ export function composeSegmentsUrl(segments) {
   return url;
 }
 
-export function removeNonRequiredJsonSchemaProperties(jsonSchemaString) {
-  const jsonSchemaCopy = JSON.parse(jsonSchemaString);
-  let newProperties = JSON.parse("{}");
-  if (jsonSchemaCopy.required) {
-    jsonSchemaCopy.required.forEach((requiredProperty) => {
-      newProperties[requiredProperty] =
-        jsonSchemaCopy.properties[requiredProperty];
-    });
-    jsonSchemaCopy.properties = newProperties;
-  } else {
-    jsonSchemaCopy.properties = {};
-  }
-  return JSON.stringify(jsonSchemaCopy, null, 2);
-}
-
 export function shallowEqual(object1, object2) {
   try {
     const keys1 = Object.keys(object1);
@@ -76,14 +61,5 @@ export function shallowEqual(object1, object2) {
     return true;
   } catch {
     return false;
-  }
-}
-
-export function prettifyJsonString(json) {
-  try {
-    const obj = JSON.parse(json);
-    return JSON.stringify(obj, null, 2);
-  } catch (e) {
-    return json;
   }
 }

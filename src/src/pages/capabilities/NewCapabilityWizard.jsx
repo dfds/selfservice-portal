@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
-import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { TrackedLink } from "@/components/Tracking";
 import {
   ENUM_COSTCENTER_OPTIONS,
@@ -66,18 +65,16 @@ export default function NewCapabilityWizard({
   };
 
   return (
-    <JsonSchemaProvider>
-      <CreationWizard
-        isOpen={true}
-        onClose={onCloseClicked}
-        onComplete={handleAddCapabilityClicked}
-        steps={steps}
-        title="New Capability Wizard"
-        emptyFormValues={emptyFormValues}
-        completeInProgress={inProgress}
-        completeName={"Add Capability"}
-      />
-    </JsonSchemaProvider>
+    <CreationWizard
+      isOpen={true}
+      onClose={onCloseClicked}
+      onComplete={handleAddCapabilityClicked}
+      steps={steps}
+      title="New Capability Wizard"
+      emptyFormValues={emptyFormValues}
+      completeInProgress={inProgress}
+      completeName={"Add Capability"}
+    />
   );
 }
 
