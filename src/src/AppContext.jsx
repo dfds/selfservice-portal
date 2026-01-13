@@ -129,11 +129,7 @@ function AppProvider({ children }) {
     setShowOnlyMyCapabilities(myUserSettings?.showOnlyMyCapabilities === true);
   }, [myUserSettings]);
 
-  async function addNewCapability(
-    name,
-    description,
-    jsonMetadataString,
-  ) {
+  async function addNewCapability(name, description, jsonMetadataString) {
     capabilityAdd.mutate(
       {
         payload: {
