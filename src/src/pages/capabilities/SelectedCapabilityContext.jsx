@@ -37,7 +37,7 @@ import {
   useSubmitMembershipApplication,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
-import { sleep } from "src/Utils";
+import { sleep } from "../../Utils";
 
 const SelectedCapabilityContext = createContext();
 

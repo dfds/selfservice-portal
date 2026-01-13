@@ -11,7 +11,7 @@ import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
 import { TrackedButton } from "@/components/Tracking";
-import { sleep } from "src/Utils";
+import { sleep } from "../../../Utils";
 
 function JoinDialog({
   name,

@@ -17,7 +17,7 @@ import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
-import { sleep } from "src/Utils";
+import { sleep } from "../../../Utils";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);

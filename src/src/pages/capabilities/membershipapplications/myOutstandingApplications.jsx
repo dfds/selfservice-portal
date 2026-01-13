@@ -4,7 +4,7 @@ import PageSection from "components/PageSection";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
-import { sleep } from "src/Utils";
+import { sleep } from "../../../Utils";
 
 export function MyOutstandingMembershipApplicationsPageSection() {
   return (
