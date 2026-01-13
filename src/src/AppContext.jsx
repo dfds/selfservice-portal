@@ -135,17 +135,22 @@ function AppProvider({ children }) {
     invitations,
     jsonMetadataString,
   ) {
-    capabilityAdd.mutate({
-      payload: {
-        name: name,
-        description: description,
-        invitees: invitations,
-        jsonMetadata: jsonMetadataString,
+    capabilityAdd.mutate(
+      {
+        payload: {
+          name: name,
+          description: description,
+          invitees: invitations,
+          jsonMetadata: jsonMetadataString,
+        },
       },
-    });
-    await sleep(2000);
-    queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
-    queryClient.invalidateQueries({ queryKey: ["me"] });
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+          queryClient.invalidateQueries({ queryKey: ["me"] });
+        },
+      },
+    );
   }
 
   async function addNewRepository(data) {
@@ -183,8 +188,8 @@ function AppProvider({ children }) {
 
   async function addNewDemoRecording(payload) {
     registerDemoRecording.mutate(payload, {
-      onSuccess: () => {
-        sleep(200).then(() => {
+      onSuccess: async () => {
+        await sleep(200).then(() => {
           queryClient.invalidateQueries({ queryKey: ["demos"] });
         });
       },
@@ -197,8 +202,8 @@ function AppProvider({ children }) {
         demoId: id,
       },
       {
-        onSuccess: () => {
-          sleep(200).then(() => {
+        onSuccess: async () => {
+          await sleep(200).then(() => {
             queryClient.invalidateQueries({ queryKey: ["demos"] });
           });
         },
