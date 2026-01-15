@@ -125,24 +125,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.env": selectedEnvOption?.value,
     };
     return data;
-    {
-      /* Environment Tag */
-    }
-    <div style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
-      <label className={styles.label}>Environment:</label>
-      <span>Select the environment for this capability.</span>
-      <Select
-        options={ENUM_ENV_OPTIONS}
-        value={selectedEnvOption}
-        className={styles.input}
-        isDisabled={!canEditTags}
-        onChange={(e) => {
-          setSelectedEnvOption(e);
-          setIsDirty(true);
-        }}
-      />
-      <div className={styles.errorContainer}></div>
-    </div>;
   };
 
   return (
@@ -413,42 +395,11 @@ export function CapabilityTags() {
         </TrackedLink>
       </Text>
 
-      {!canEditTags && (
-        <div style={{ marginBottom: "2rem" }}>
-          <p>
-            <strong>Cost Centre:</strong>{" "}
-            {existingTags["dfds.cost.centre"] || "Not provided"}
-          </p>
-          <p>
-            <strong>Environment:</strong>{" "}
-            {existingTags["dfds.env"] || "Not provided"}
-          </p>
-          <p>
-            <strong>Data Classification:</strong>{" "}
-            {existingTags["dfds.data.classification"] || "Not provided"}
-          </p>
-          <p>
-            <strong>Service Criticality:</strong>{" "}
-            {existingTags["dfds.service.criticality"] || "Not provided"}
-          </p>
-          <p>
-            <strong>Service Availability:</strong>{" "}
-            {existingTags["dfds.service.availability"] || "Not provided"}
-          </p>
-          <p>
-            <strong>Contains AI Services:</strong>{" "}
-            {existingTags["dfds.capability.contains-ai"] || "Not provided"}
-          </p>
-        </div>
-      )}
-
-      {canEditTags && (
-        <TagsForm
-          defaultValues={existingTags}
-          canEditTags={canEditTags}
-          onSubmit={(data) => handleSubmit(data)}
-        />
-      )}
+      <TagsForm
+        defaultValues={existingTags}
+        canEditTags={canEditTags}
+        onSubmit={(data) => handleSubmit(data)}
+      />
     </>
   );
 }
