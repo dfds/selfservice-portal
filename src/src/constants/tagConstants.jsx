@@ -1,7 +1,11 @@
 // Environment tag for Capabilities
 export const ENUM_ENV = [
-  { label: "Production", value: "production" },
   { label: "Development", value: "development" },
+  { label: "Testing", value: "testing" },
+  { label: "Staging", value: "staging" },
+  { label: "User Acceptance Testing", value: "user acceptance testing" },
+  { label: "Training", value: "training" },
+  { label: "Production", value: "production" },
   { label: "Mixed", value: "mixed" },
 ];
 export const ENUM_ENV_OPTIONS = ENUM_ENV.map((item) => ({
