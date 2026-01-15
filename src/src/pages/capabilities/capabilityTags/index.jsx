@@ -15,6 +15,7 @@ import {
   ENUM_CRITICALITY_OPTIONS,
   ENUM_AZURERG_USAGE_OPTIONS,
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
+  ENUM_ENV_OPTIONS,
 } from "@/constants/tagConstants";
 
 function TagsForm({ canEditTags, onSubmit, defaultValues }) {
@@ -31,6 +32,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     useState(undefined);
   const [selectedAzureRGUsageOption, setSelectedAzureRGUsageOption] =
     useState(undefined);
+  const [selectedEnvOption, setSelectedEnvOption] = useState(undefined);
   const [
     selectedCapabilityContainsAIOption,
     setSelectedCapabilityContainsAIOption,
@@ -94,6 +96,14 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
         setSelectedAzureRGUsageOption(selectedOption || undefined);
       }
 
+      const prevEnv = defaultValues["dfds.env"];
+      if (prevEnv) {
+        const selectedOption = ENUM_ENV_OPTIONS.find(
+          (opt) => opt.value === prevEnv,
+        );
+        setSelectedEnvOption(selectedOption || undefined);
+      }
+
       const prevContainsAI = defaultValues["dfds.capability.contains-ai"];
       if (prevContainsAI) {
         const selectedOption = ENUM_CAPABILITY_CONTAINS_AI_OPTIONS.find(
@@ -112,8 +122,27 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       "dfds.service.availability": selectedAvailabilityOption?.value,
       "dfds.azure.purpose": selectedAzureRGUsageOption?.value,
       "dfds.capability.contains-ai": selectedCapabilityContainsAIOption?.value,
+      "dfds.env": selectedEnvOption?.value,
     };
     return data;
+    {
+      /* Environment Tag */
+    }
+    <div style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+      <label className={styles.label}>Environment:</label>
+      <span>Select the environment for this capability.</span>
+      <Select
+        options={ENUM_ENV_OPTIONS}
+        value={selectedEnvOption}
+        className={styles.input}
+        isDisabled={!canEditTags}
+        onChange={(e) => {
+          setSelectedEnvOption(e);
+          setIsDirty(true);
+        }}
+      />
+      <div className={styles.errorContainer}></div>
+    </div>;
   };
 
   return (
@@ -146,6 +175,23 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
             <span className={styles.error}>{costCenterError}</span>
           )}
         </div>
+      </div>
+
+      {/* Environment Tag */}
+      <div>
+        <label className={styles.label}>Environment:</label>
+        <span>Select the environment for this capability.</span>
+        <Select
+          options={ENUM_ENV_OPTIONS}
+          value={selectedEnvOption}
+          className={styles.input}
+          isDisabled={!canEditTags}
+          onChange={(e) => {
+            setSelectedEnvOption(e);
+            setIsDirty(true);
+          }}
+        />
+        <div className={styles.errorContainer}></div>
       </div>
 
       {/* Data Classification */}
@@ -367,11 +413,42 @@ export function CapabilityTags() {
         </TrackedLink>
       </Text>
 
-      <TagsForm
-        defaultValues={existingTags}
-        canEditTags={canEditTags}
-        onSubmit={(data) => handleSubmit(data)}
-      />
+      {!canEditTags && (
+        <div style={{ marginBottom: "2rem" }}>
+          <p>
+            <strong>Cost Centre:</strong>{" "}
+            {existingTags["dfds.cost.centre"] || "Not provided"}
+          </p>
+          <p>
+            <strong>Environment:</strong>{" "}
+            {existingTags["dfds.env"] || "Not provided"}
+          </p>
+          <p>
+            <strong>Data Classification:</strong>{" "}
+            {existingTags["dfds.data.classification"] || "Not provided"}
+          </p>
+          <p>
+            <strong>Service Criticality:</strong>{" "}
+            {existingTags["dfds.service.criticality"] || "Not provided"}
+          </p>
+          <p>
+            <strong>Service Availability:</strong>{" "}
+            {existingTags["dfds.service.availability"] || "Not provided"}
+          </p>
+          <p>
+            <strong>Contains AI Services:</strong>{" "}
+            {existingTags["dfds.capability.contains-ai"] || "Not provided"}
+          </p>
+        </div>
+      )}
+
+      {canEditTags && (
+        <TagsForm
+          defaultValues={existingTags}
+          canEditTags={canEditTags}
+          onSubmit={(data) => handleSubmit(data)}
+        />
+      )}
     </>
   );
 }

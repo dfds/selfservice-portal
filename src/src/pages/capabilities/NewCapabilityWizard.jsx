@@ -9,6 +9,7 @@ import {
   ENUM_CLASSIFICATION_OPTIONS,
   ENUM_CRITICALITY_OPTIONS,
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
+  ENUM_ENV_OPTIONS,
 } from "@/constants/tagConstants";
 import Select from "react-select";
 
@@ -279,12 +280,20 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [availability, setAvailability] = useState(undefined);
   const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
     useState(undefined);
+  const [env, setEnv] = useState(undefined);
+  const [selectedEnvOption, setSelectedEnvOption] = useState(undefined);
 
   useEffect(() => {
     if (selectedAvailabilityOption) {
       setAvailability(selectedAvailabilityOption.value);
     }
   }, [selectedAvailabilityOption]);
+
+  useEffect(() => {
+    if (selectedEnvOption) {
+      setEnv(selectedEnvOption.value);
+    }
+  }, [selectedEnvOption]);
 
   useEffect(() => {
     if (selectedCriticalityOption) {
@@ -322,6 +331,12 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       );
       setSelectedAvailabilityOption(selectedOption || undefined);
     }
+
+    const env = formValues?.optionalTags["dfds.env"];
+    if (env) {
+      const selectedOption = ENUM_ENV_OPTIONS.find((opt) => opt.value === env);
+      setSelectedEnvOption(selectedOption || undefined);
+    }
   }, [formValues]);
 
   const isInFuture = (dateString) => {
@@ -340,6 +355,18 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       };
     });
   }, [availability]);
+
+  useEffect(() => {
+    setFormValues((prev) => {
+      return {
+        ...prev,
+        optionalTags: {
+          ...prev.optionalTags,
+          "dfds.env": env,
+        },
+      };
+    });
+  }, [env]);
 
   useEffect(() => {
     setFormValues((prev) => {
@@ -390,6 +417,19 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           See DFDS Tagging Policy.
         </TrackedLink>
       </Text>
+
+      {/* Environment Tag */}
+      <div style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
+        <label className={styles.label}>Environment:</label>
+        <span>Select the environment for this capability.</span>
+        <Select
+          options={ENUM_ENV_OPTIONS}
+          value={selectedEnvOption}
+          className={styles.input}
+          onChange={(selection) => setSelectedEnvOption(selection)}
+        />
+        <div className={styles.errorContainer}></div>
+      </div>
 
       {/* Data Classification */}
       <div>
@@ -584,6 +624,10 @@ const SummaryStep = ({ formValues }) => {
       <p>
         <strong>Sunset Date:</strong>{" "}
         {formValues.optionalTags["dfds.planned_sunset"] || "Not provided"}
+      </p>
+      <p>
+        <strong>Environment:</strong>{" "}
+        {formValues.optionalTags["dfds.env"] || "Not provided"}
       </p>
       <p>
         <strong>Data Classification:</strong>{" "}
