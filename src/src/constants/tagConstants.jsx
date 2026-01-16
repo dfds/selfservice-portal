@@ -36,7 +36,7 @@ export const ENUM_CLASSIFICATION_OPTIONS = ENUM_CLASSIFICATION.map((item) => ({
 
 export const ENUM_AZURERG_USAGE = [
   {
-    label: "Core DFDS Infrasctructure",
+    label: "Core DFDS Infrastructure",
     value: "ToolAccess",
   },
   { label: "Azure OpenAI Services", value: "AI" },
