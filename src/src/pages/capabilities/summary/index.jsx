@@ -11,12 +11,7 @@ import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "AppContext";
 import { TrackedButton } from "@/components/Tracking";
-
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), duration);
-  });
-}
+import { sleep } from "../../../Utils";
 
 function JoinDialog({
   name,

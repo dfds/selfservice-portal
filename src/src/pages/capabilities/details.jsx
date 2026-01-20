@@ -12,19 +12,14 @@ import { Text } from "@dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
-import { JsonSchemaProvider } from "../../JsonSchemaContext";
 import { CapabilityTagsPageSection } from "./capabilityTags";
 import { AICatalogueSection } from "./aiCatalogue";
-import menustyles from "./menu.module.css";
-import GrafanaWarning from "../GrafanaWarning";
 
 export default function CapabilityDetailsPage() {
   return (
     <>
       <SelectedCapabilityProvider>
-        <JsonSchemaProvider>
-          <CapabilityDetailsPageContent />
-        </JsonSchemaProvider>
+        <CapabilityDetailsPageContent />
       </SelectedCapabilityProvider>
     </>
   );
@@ -56,7 +51,6 @@ function CapabilityDetailsPageContent() {
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
   const [showJsonMetadata, setShowJsonMetadata] = useState(false);
-  const [showInvitations, setShowInvitations] = useState(false);
   const [showAICatalogueSection, setShowAICatalogueSection] = useState(false);
   const [costCentre, setCostCentre] = useState("");
 
@@ -75,12 +69,6 @@ function CapabilityDetailsPageContent() {
   useEffect(() => {
     if ((links?.metadata?.allow || []).includes("GET")) {
       setShowJsonMetadata(true);
-    }
-  }, [links]);
-
-  useEffect(() => {
-    if ((links?.sendInvitations?.allow || []).includes("POST")) {
-      setShowInvitations(true);
     }
   }, [links]);
 
@@ -104,10 +92,7 @@ function CapabilityDetailsPageContent() {
         <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
           <Summary anchorId="summary" />
 
-          <TabbedMembersView
-            anchorId="members"
-            showInvitations={showInvitations}
-          />
+          <TabbedMembersView anchorId="members" />
 
           {/*<TabbedCapabilityAdoptionLevel />*/}
 

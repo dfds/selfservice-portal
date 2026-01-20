@@ -12,7 +12,6 @@ import {
   useCapability,
   useCapabilityMembersDetailed,
   useCapabilityMembersApplications,
-  useCapabilityInvitees,
   useCapabilityMetadata,
   useLeaveCapability,
 } from "@/state/remote/queries/capabilities";
@@ -37,6 +36,7 @@ import {
   useSubmitMembershipApplication,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
+import { sleep } from "../../Utils";
 
 const SelectedCapabilityContext = createContext();
 
@@ -130,12 +130,6 @@ function SelectedCapabilityProvider({ children }) {
     }
   }, [configurationLevelInformation, configurationLevelLink]);
 
-  function sleep(duration) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), duration);
-    });
-  }
-
   const [userIsOwner, setUserIsOwner] = useState(false);
 
   const { isFetched: availableRolesDataFetched, data: availableRolesData } =
@@ -172,21 +166,6 @@ function SelectedCapabilityProvider({ children }) {
       setUserIsOwner(userRoleMap[meData.id]?.label === "Owner");
     }
   }, [userRoleMap, meData]);
-
-  const capabilityInvitees = useCapabilityInvitees();
-
-  async function addNewInvitees(invitations) {
-    setIsInviteesCreated(true);
-    capabilityInvitees.mutate({
-      capabilityDefinition: details,
-      payload: {
-        invitees: invitations,
-      },
-    });
-    await sleep(3000);
-    setIsInviteesCreated(false);
-    queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-  }
 
   async function reloadCapability() {
     queryClient.invalidateQueries({
@@ -709,7 +688,6 @@ function SelectedCapabilityProvider({ children }) {
     updateDeletionStatus,
     showCosts,
     bypassMembershipApproval,
-    addNewInvitees,
     isInviteesCreated,
     // setCapabilityJsonMetadata,
     // setRequiredCapabilityJsonMetadata,

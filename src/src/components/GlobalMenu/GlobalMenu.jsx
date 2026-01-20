@@ -78,11 +78,6 @@ export default function GlobalMenu() {
     },
   ];
 
-  function sleep(duration) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), duration);
-    });
-  }
   function toggleCloudEngineer() {
     setIsCloudEngineerEnabled((prev) => !prev);
   }

@@ -15,7 +15,6 @@ export default function CreationWizard({
   onComplete,
   steps,
   title,
-  jsonSchemaString,
   emptyFormValues,
   completeInProgress,
   completeName,
@@ -61,7 +60,6 @@ export default function CreationWizard({
               formValues,
               setFormValues,
               setCanContinue,
-              jsonSchemaString,
             })}
           </div>
         ))}
