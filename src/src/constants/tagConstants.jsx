@@ -1,3 +1,17 @@
+// Environment tag for Capabilities
+export const ENUM_ENV = [
+  { label: "Development", value: "dev" },
+  { label: "Testing", value: "test" },
+  { label: "Staging", value: "staging" },
+  { label: "User Acceptance Testing", value: "uat" },
+  { label: "Training", value: "training" },
+  { label: "Production", value: "prod" },
+  { label: "Mixed", value: "mixed" },
+];
+export const ENUM_ENV_OPTIONS = ENUM_ENV.map((item) => ({
+  value: item.value.toLowerCase(),
+  label: item.label,
+}));
 export const ENUM_COSTCENTER = [
   { label: "T&I - Ferry [ti-ferry]", value: "ti-ferry" },
   { label: "T&I - Logistics [ti-logistics]", value: "ti-logistics" },
