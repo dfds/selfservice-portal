@@ -193,6 +193,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [selectedCostCentreOption, setSelectedCostCentreOption] =
     useState(undefined);
   const [costCentreError, setCostCentreError] = useState(undefined);
+  const [businessCapabilityError, setBusinessCapabilityError] = useState(undefined);
   const [businessCapability, setBusinessCapability] = useState("");
   const [
     selectedBusinessCapabilityOption,
@@ -200,6 +201,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   ] = useState(undefined);
 
   const initialized = useRef(false);
+  // Auto-select the only business capability option if there is just one, on init
   useEffect(() => {
     if (!initialized.current) {
       const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
@@ -210,15 +212,20 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         : undefined;
       setSelectedCostCentreOption(selectedCostOption);
       setCostCentre(costCentre || "");
-      if (costCentre && businessCapability) {
+      if (costCentre) {
         const options = getBusinessCapabilitiesOptions(costCentre);
-        const selectedBusinessOption = options.find(
-          (opt) => opt.value === businessCapability,
-        );
-        setSelectedBusinessCapabilityOption(
-          selectedBusinessOption || undefined,
-        );
-        setBusinessCapability(businessCapability);
+        let selectedBusinessOption = undefined;
+        if (businessCapability) {
+          selectedBusinessOption = options.find(
+            (opt) => opt.value === businessCapability,
+          );
+        }
+        // Auto-select if only one option
+        if (!selectedBusinessOption && options.length === 1) {
+          selectedBusinessOption = options[0];
+        }
+        setSelectedBusinessCapabilityOption(selectedBusinessOption || undefined);
+        setBusinessCapability(selectedBusinessOption?.value || "");
       } else {
         setSelectedBusinessCapabilityOption(undefined);
         setBusinessCapability("");
@@ -226,6 +233,24 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
       initialized.current = true;
     }
   }, []);
+
+  // Auto-select the only business capability option if there is just one, on cost center change
+  useEffect(() => {
+    if (costCentre) {
+      const options = getBusinessCapabilitiesOptions(costCentre);
+      if (options.length === 1 && (!selectedBusinessCapabilityOption || selectedBusinessCapabilityOption.value !== options[0].value)) {
+        setSelectedBusinessCapabilityOption(options[0]);
+        setBusinessCapability(options[0].value);
+        setFormValues((prev) => ({
+          ...prev,
+          mandatoryTags: {
+            ...prev.mandatoryTags,
+            "dfds.businessCapability": options[0].value,
+          },
+        }));
+      }
+    }
+  }, [costCentre]);
 
   useEffect(() => {
     if (selectedBusinessCapabilityOption) {
@@ -237,9 +262,14 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   useEffect(() => {
     setCostCentreError(undefined);
+    setBusinessCapabilityError(undefined);
     let valid = true;
     if (!costCentre || costCentre.length === 0) {
       setCostCentreError("Capabilities must have a cost centre");
+      valid = false;
+    }
+    if (!businessCapability || businessCapability.length === 0) {
+      setBusinessCapabilityError("A Business Capability must be set");
       valid = false;
     }
     setFormValues((prev) => {
@@ -300,7 +330,6 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
                 mandatoryTags: {
                   ...prev.mandatoryTags,
                   "dfds.cost.centre": selection?.value || "",
-                  "dfds.businessCapability": "",
                 },
               };
             });
@@ -334,7 +363,11 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
             }));
           }}
         ></Select>
-        {/* No error for business capability, as it's not required */}
+        {businessCapabilityError && (
+          <div className={styles.errorContainer}>
+            <span className={styles.error}>{businessCapabilityError}</span>
+          </div>
+        )}
       </div>
     </>
   );
