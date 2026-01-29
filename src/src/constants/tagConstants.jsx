@@ -27,15 +27,27 @@ export const ENUM_COSTCENTER = [
   { label: "People Division [people]", value: "people" },
 ];
 const COMPETENCE_ENGINEERING_BUSINESS_CAPABILITIES = [
-  { label: "Event Streaming & Data Integration", value: "event-streaming-data-integration" },
-  { label: "Internal Developer Platform", value: "internal-developer-platform" },
+  {
+    label: "Event Streaming & Data Integration",
+    value: "event-streaming-data-integration",
+  },
+  {
+    label: "Internal Developer Platform",
+    value: "internal-developer-platform",
+  },
   { label: "Observability & Monitoring", value: "observability-monitoring" },
-  { label: "Platform Infrastructure & Orchestration", value: "platform-infrastructure-orchestration" },
+  {
+    label: "Platform Infrastructure & Orchestration",
+    value: "platform-infrastructure-orchestration",
+  },
   { label: "Research & Development", value: "research-development" },
 ];
 
 const FERRY_BUSINESS_CAPABILITIES = [
-  { label: "Adhere to regulatory requirements", value: "adhere-to-regulatory-requirements" },
+  {
+    label: "Adhere to regulatory requirements",
+    value: "adhere-to-regulatory-requirements",
+  },
   { label: "Bill Processing", value: "bill-processing" },
   { label: "Configure routes", value: "configure-routes" },
   { label: "Customs Compliance", value: "customs-compliance" },
@@ -48,13 +60,25 @@ const FERRY_BUSINESS_CAPABILITIES = [
   { label: "Imaging", value: "imaging" },
   { label: "Invoicing", value: "invoicing" },
   { label: "Labour Planning", value: "labour-planning" },
-  { label: "Load and Discharge Execution", value: "load-and-discharge-execution" },
+  {
+    label: "Load and Discharge Execution",
+    value: "load-and-discharge-execution",
+  },
   { label: "Load Planning", value: "load-planning" },
   { label: "Make ferry bookings", value: "make-ferry-bookings" },
-  { label: "Marketing and sales activities", value: "marketing-and-sales-activities" },
+  {
+    label: "Marketing and sales activities",
+    value: "marketing-and-sales-activities",
+  },
   { label: "Operate ports", value: "operate-ports" },
-  { label: "Operational Monitoring and Analysis", value: "operational-monitoring-and-analysis" },
-  { label: "Optimize capacity for vessel utilization", value: "optimize-capacity-for-vessel-utilization" },
+  {
+    label: "Operational Monitoring and Analysis",
+    value: "operational-monitoring-and-analysis",
+  },
+  {
+    label: "Optimize capacity for vessel utilization",
+    value: "optimize-capacity-for-vessel-utilization",
+  },
   { label: "Optimize revenue", value: "optimize-revenue" },
   { label: "Order Intake", value: "order-intake" },
   { label: "Order Tracking", value: "order-tracking" },
@@ -87,10 +111,19 @@ const LOGISTICS_BUSINESS_CAPABILITIES = [
   { label: "IT Enablers – Messaging", value: "it-enablers-messaging" },
   { label: "IT Enablers – Observability", value: "it-enablers-observability" },
   { label: "IT Enablers – Velocity", value: "it-enablers-velocity" },
-  { label: "IT Enablers - TMS Modernization", value: "it-enablers-tms-modernization" },
-  { label: "Monitoring transport execution", value: "monitoring-transport-execution" },
+  {
+    label: "IT Enablers - TMS Modernization",
+    value: "it-enablers-tms-modernization",
+  },
+  {
+    label: "Monitoring transport execution",
+    value: "monitoring-transport-execution",
+  },
   { label: "Networking planning", value: "networking-planning" },
-  { label: "Operational transport planning", value: "operational-transport-planning" },
+  {
+    label: "Operational transport planning",
+    value: "operational-transport-planning",
+  },
   { label: "Packaging", value: "packaging" },
   { label: "Product Management", value: "product-management" },
   { label: "Returnable Packaging", value: "returnable-packaging" },
@@ -99,18 +132,30 @@ const LOGISTICS_BUSINESS_CAPABILITIES = [
   { label: "Team Productivity", value: "team-productivity" },
   { label: "TMS Modernization", value: "tms-modernization" },
   { label: "Transportation execution", value: "transportation-execution" },
-  { label: "Two-way supplier communication", value: "two-way-supplier-communication" },
+  {
+    label: "Two-way supplier communication",
+    value: "two-way-supplier-communication",
+  },
   { label: "Warehousing", value: "warehousing" },
 ];
 const GROUP_TECHNOLOGY_AND_DATA_BUSINESS_CAPABILITIES = [
   { label: "App Experience Platform", value: "app-experience-platform" },
-  { label: "Consent & Preference Management", value: "consent-preference-management" },
-  { label: "Customer Identity & Access Management", value: "customer-identity-access-management" },
+  {
+    label: "Consent & Preference Management",
+    value: "consent-preference-management",
+  },
+  {
+    label: "Customer Identity & Access Management",
+    value: "customer-identity-access-management",
+  },
   { label: "Data Analytics", value: "data-analytics" },
   { label: "Data Engineering", value: "data-engineering" },
   { label: "Data Platform", value: "data-platform" },
   { label: "Data Science", value: "data-science" },
-  { label: "Marketing & Campaign Management", value: "marketing-campaign-management" },
+  {
+    label: "Marketing & Campaign Management",
+    value: "marketing-campaign-management",
+  },
   { label: "Sales Enablement", value: "sales-enablement" },
   { label: "Web Experience Platform", value: "web-experience-platform" },
 ];

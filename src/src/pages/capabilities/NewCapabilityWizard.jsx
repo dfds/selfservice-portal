@@ -193,7 +193,8 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const [selectedCostCentreOption, setSelectedCostCentreOption] =
     useState(undefined);
   const [costCentreError, setCostCentreError] = useState(undefined);
-  const [businessCapabilityError, setBusinessCapabilityError] = useState(undefined);
+  const [businessCapabilityError, setBusinessCapabilityError] =
+    useState(undefined);
   const [businessCapability, setBusinessCapability] = useState("");
   const [
     selectedBusinessCapabilityOption,
@@ -224,7 +225,9 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         if (!selectedBusinessOption && options.length === 1) {
           selectedBusinessOption = options[0];
         }
-        setSelectedBusinessCapabilityOption(selectedBusinessOption || undefined);
+        setSelectedBusinessCapabilityOption(
+          selectedBusinessOption || undefined,
+        );
         setBusinessCapability(selectedBusinessOption?.value || "");
       } else {
         setSelectedBusinessCapabilityOption(undefined);
@@ -238,7 +241,11 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   useEffect(() => {
     if (costCentre) {
       const options = getBusinessCapabilitiesOptions(costCentre);
-      if (options.length === 1 && (!selectedBusinessCapabilityOption || selectedBusinessCapabilityOption.value !== options[0].value)) {
+      if (
+        options.length === 1 &&
+        (!selectedBusinessCapabilityOption ||
+          selectedBusinessCapabilityOption.value !== options[0].value)
+      ) {
         setSelectedBusinessCapabilityOption(options[0]);
         setBusinessCapability(options[0].value);
         setFormValues((prev) => ({

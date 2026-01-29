@@ -53,15 +53,21 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     }
   }, [costCenterError]);
 
-// Auto-select the only business capability option if there is just one
-    useEffect(() => {
-      if (selectedCostCenterOption) {
-        const options = getBusinessCapabilitiesOptions(selectedCostCenterOption.value);
-        if (options.length === 1 && (!selectedBusinessCapabilityOption || selectedBusinessCapabilityOption.value !== options[0].value)) {
-          setSelectedBusinessCapabilityOption(options[0]);
-        }
+  // Auto-select the only business capability option if there is just one
+  useEffect(() => {
+    if (selectedCostCenterOption) {
+      const options = getBusinessCapabilitiesOptions(
+        selectedCostCenterOption.value,
+      );
+      if (
+        options.length === 1 &&
+        (!selectedBusinessCapabilityOption ||
+          selectedBusinessCapabilityOption.value !== options[0].value)
+      ) {
+        setSelectedBusinessCapabilityOption(options[0]);
       }
-    }, [selectedCostCenterOption, selectedBusinessCapabilityOption]);
+    }
+  }, [selectedCostCenterOption, selectedBusinessCapabilityOption]);
 
   useEffect(() => {
     if (!selectedCostCenterOption) {
