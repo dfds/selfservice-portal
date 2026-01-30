@@ -78,10 +78,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
   }, [selectedCostCenterOption]);
 
   useEffect(() => {
-    console.log(
-      "selectedBusinessCapabilityOption",
-      selectedBusinessCapabilityOption,
-    );
     if (!selectedBusinessCapabilityOption) {
       setBusinessCapabilityError("A Business Capability must be set");
     } else {
