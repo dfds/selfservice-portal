@@ -24,7 +24,6 @@ function Link({ title, url }) {
 }
 
 const swaggerUrl = process.env.REACT_APP_API_BASE_URL + "/swagger";
-const chatUrl = process.env.REACT_APP_AI_CHAT_URL;
 
 export default function QuickLinks() {
   return (
@@ -41,7 +40,6 @@ export default function QuickLinks() {
         url="https://ui-components-three.vercel.app"
       />
       <Link title={"Swagger API Documentation"} url={swaggerUrl} />
-      <Link title={"Chat Bot assistance"} url={chatUrl} />
       {/*<Link
         title={"AI Deployment in Azure"}
         url="https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/getting-started"

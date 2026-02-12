@@ -66,14 +66,8 @@ function FunStats() {
 export default function FrontPage() {
   const { user } = useContext(AppContext);
   const [chatInput, setChatInput] = useState("");
-  const aiChatUrl = process.env.REACT_APP_AI_CHAT_URL;
 
   const name = user ? user.name : "there";
-
-  const onChatAsked = (e) => {
-    e.preventDefault();
-    window.open(`${aiChatUrl}?q=${chatInput}`);
-  };
 
   return (
     <>
@@ -180,26 +174,6 @@ export default function FrontPage() {
                   <br />
                   Then grab the default Kubernetes config file from the column
                   on your right.
-                </SectionContent>
-              </PageSection>
-              <br />
-              <PageSection>
-                <SectionContent title="Get help from our GPT-powered Chat Bot">
-                  <form onSubmit={onChatAsked}>
-                    <div className={styles.aichatcontainer}>
-                      <Text>
-                        Need help? Trained on our internal documentation our
-                        friendly chat bot is ready to assist you...
-                      </Text>
-                      <IconButton
-                        icon={ExternalLink}
-                        disableTooltip
-                        disableOverlay
-                        type={"submit"}
-                        ariaLabel="Submit"
-                      />
-                    </div>
-                  </form>
                 </SectionContent>
               </PageSection>
             </Column>
