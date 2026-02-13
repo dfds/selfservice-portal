@@ -333,7 +333,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
           Guidance: If using Azure Resource Groups, please provide a reason for
           using it. This is required for requesting Azure Resource Groups. See:{" "}
           <a
-            href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
+            href="https://dfds.sharepoint.com/sites/GroupIT_Architecture/Lists/TEST%20%20Architecture%20Decision%20Record/DispForm.aspx?ID=5&e=M0gIY9"
             target="_blank"
             rel="noreferrer"
           >
