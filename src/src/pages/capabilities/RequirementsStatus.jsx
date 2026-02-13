@@ -111,35 +111,30 @@ export default function RequirementsScore() {
                 <span className={styles.individualScoreValue}>
                   {score.score} / 100
                 </span>
-                <a
-                  href="https://wiki.dfds.cloud/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Learn more about requirements"
-                  style={{ marginLeft: 8, verticalAlign: "middle" }}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    style={{ display: "inline-block", verticalAlign: "middle" }}
-                  >
-                    <rect
-                      x="2"
-                      y="2"
-                      width="12"
-                      height="12"
-                      rx="2"
-                      fill="#90caf9"
-                    />
-                    <rect x="4" y="4" width="8" height="8" rx="1" fill="#fff" />
-                    <rect x="6" y="6" width="4" height="1" fill="#90caf9" />
-                    <rect x="6" y="8" width="4" height="1" fill="#90caf9" />
-                  </svg>
-                </a>
               </div>
-              <div className={styles.scoreDescription}>{score.description}</div>
+              <div className={styles.scoreDescription}>
+                {score.description} {" "}
+                  <a
+                    href="https://wiki.dfds.cloud/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginLeft: 6, verticalAlign: "middle" }}
+                    title="Learn more about requirements"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      style={{ display: "inline-block", verticalAlign: "middle" }}
+                    >
+                      <rect x="2" y="2" width="12" height="12" rx="2" fill="#90caf9" />
+                      <rect x="4" y="4" width="8" height="8" rx="1" fill="#fff" />
+                      <rect x="6" y="6" width="4" height="1" fill="#90caf9" />
+                      <rect x="6" y="8" width="4" height="1" fill="#90caf9" />
+                    </svg>
+                  </a>
+              </div>
             </div>
           ))}
       </div>
