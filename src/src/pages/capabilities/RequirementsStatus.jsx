@@ -89,7 +89,7 @@ export default function RequirementsScore() {
           <LightBulb score={overallScore} size={32} />
         </span>
         <span className={styles.overallScoreLabel}>Overall Score:</span>
-        <span className={styles.overallScoreValue}>{overallScore}</span>
+        <span className={styles.overallScoreValue}>{overallScore} / 100</span>
       </div>
       <div className={styles.individualScoresTitle}>
         Individual Requirement Scores
@@ -109,7 +109,7 @@ export default function RequirementsScore() {
                   {score.title}
                 </span>
                 <span className={styles.individualScoreValue}>
-                  {score.score}
+                  {score.score} / 100
                 </span>
                 <a
                   href="https://wiki.dfds.cloud/"
