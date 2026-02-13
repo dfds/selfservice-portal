@@ -113,27 +113,80 @@ export default function RequirementsScore() {
                 </span>
               </div>
               <div className={styles.scoreDescription}>
-                {score.description} {" "}
+                {score.description}
+                <div className={styles.requirementLinkBox}>
                   <a
                     href="https://wiki.dfds.cloud/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ marginLeft: 6, verticalAlign: "middle" }}
                     title="Learn more about requirements"
+                    style={{ textDecoration: "none" }}
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                      style={{ display: "inline-block", verticalAlign: "middle" }}
-                    >
-                      <rect x="2" y="2" width="12" height="12" rx="2" fill="#90caf9" />
-                      <rect x="4" y="4" width="8" height="8" rx="1" fill="#fff" />
-                      <rect x="6" y="6" width="4" height="1" fill="#90caf9" />
-                      <rect x="6" y="8" width="4" height="1" fill="#90caf9" />
-                    </svg>
+                    <span className={styles.requirementLinkIcon}>
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        style={{ display: "block" }}
+                      >
+                        <rect
+                          x="3"
+                          y="3"
+                          width="14"
+                          height="14"
+                          rx="2.5"
+                          fill="#e0e0e0"
+                          stroke="#444"
+                          strokeWidth="1"
+                        />
+                        <rect
+                          x="5"
+                          y="5"
+                          width="10"
+                          height="10"
+                          rx="1.5"
+                          fill="#fff"
+                          stroke="#bbb"
+                          strokeWidth="0.7"
+                        />
+                        <rect
+                          x="7"
+                          y="7"
+                          width="6"
+                          height="1.2"
+                          fill="#888"
+                          rx="0.6"
+                        />
+                        <rect
+                          x="7"
+                          y="9"
+                          width="6"
+                          height="1.2"
+                          fill="#bbb"
+                          rx="0.6"
+                        />
+                        <g>
+                          <path
+                            d="M15.5 6.5V4.5H13.5"
+                            stroke="#444"
+                            strokeWidth="1.1"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M15.5 4.5L11 9"
+                            stroke="#444"
+                            strokeWidth="1.1"
+                            strokeLinecap="round"
+                          />
+                        </g>
+                      </svg>
+                    </span>
+                    <span className={styles.requirementLinkText}>
+                      read more
+                    </span>
                   </a>
+                </div>
               </div>
             </div>
           ))}
