@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./demos.module.css";
-import { Delete as DeleteIcon } from "@dfds-ui/icons/system";
+import { Delete as DeleteIcon, Edit as EditIcon } from "@dfds-ui/icons/system";
 
 function renderDate(dateString) {
   const date = new Date(dateString);
@@ -8,7 +8,12 @@ function renderDate(dateString) {
   return date.toLocaleDateString(undefined, options);
 }
 
-export default function DemoRecord({ demo, isCloudEngineerEnabled, onClick }) {
+export default function DemoRecord({
+  demo,
+  isCloudEngineerEnabled,
+  onDeleteClick,
+  onEditClick,
+}) {
   const { description, url, recordingDate } = demo;
   return (
     <a
@@ -26,15 +31,27 @@ export default function DemoRecord({ demo, isCloudEngineerEnabled, onClick }) {
           </div>
 
           {isCloudEngineerEnabled && (
-            <div className={styles.deleteButtonContainer}>
-              <DeleteIcon
-                className={styles.deleteButtonIcon}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClick();
-                }}
-              />
+            <div className={styles.iconButtonRow}>
+              <div className={styles.editButtonContainer}>
+                <EditIcon
+                  className={styles.editButtonIcon}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onEditClick();
+                  }}
+                />
+              </div>
+              <div className={styles.deleteButtonContainer}>
+                <DeleteIcon
+                  className={styles.deleteButtonIcon}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDeleteClick();
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>
