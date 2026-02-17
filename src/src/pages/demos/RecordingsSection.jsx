@@ -9,6 +9,8 @@ import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
 import DemoRecord from "./demoRecord";
 import DemoRegisterModal from "./DemoRegisterModal";
+// DemoEditModal will be created for editing
+import DemoEditModal from "./DemoEditModal";
 
 export default function RecordingsSection() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -17,6 +19,8 @@ export default function RecordingsSection() {
   const [demos, setDemos] = useState([]);
   const [selectedDemoId, setSelectedDemoId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editDemo, setEditDemo] = useState(null);
 
   const { isFetched: isFetchedRecordings, data: demosData } = useDemos();
 
@@ -56,6 +60,16 @@ export default function RecordingsSection() {
             onClose={() => setShowRegisterModal(false)}
           />
         )}
+        {showEditModal && editDemo && (
+          <DemoEditModal
+            isOpen={showEditModal}
+            demo={editDemo}
+            onClose={() => {
+              setShowEditModal(false);
+              setEditDemo(null);
+            }}
+          />
+        )}
         {showDeleteModal && (
           <Modal
             heading={"Confirm Deletion"}
@@ -88,9 +102,14 @@ export default function RecordingsSection() {
                 <DemoRecord
                   demo={demo}
                   isCloudEngineerEnabled={isCloudEngineerEnabled}
-                  onClick={() => {
+                  onDeleteClick={() => {
                     setSelectedDemoId(demo.id);
                     setShowDeleteModal(true);
+                  }}
+                  onEditClick={() => {
+                    console.log("Edit clicked for demo:", demo);
+                    setEditDemo(demo);
+                    setShowEditModal(true);
                   }}
                 />
                 {/* Render <hr> if not the last item */}

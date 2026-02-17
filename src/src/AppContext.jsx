@@ -14,7 +14,11 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
-import { useRegisterDemo, useDeleteDemo } from "@/state/remote/queries/demos";
+import {
+  useRegisterDemo,
+  useDeleteDemo,
+  useUpdateDemo,
+} from "@/state/remote/queries/demos";
 import {
   useCreateReleaseNote,
   useToggleNoteActivity,
@@ -107,6 +111,7 @@ function AppProvider({ children }) {
   const toggleNoteActivity = useToggleNoteActivity();
   const registerDemoRecording = useRegisterDemo();
   const deleteDemoRecording = useDeleteDemo();
+  const updateDemoRecording = useUpdateDemo();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -203,6 +208,16 @@ function AppProvider({ children }) {
         },
       },
     );
+  }
+
+  async function editDemoRecording(payload) {
+    updateDemoRecording.mutate(payload, {
+      onSuccess: async () => {
+        await sleep(200).then(() => {
+          queryClient.invalidateQueries({ queryKey: ["demos"] });
+        });
+      },
+    });
   }
 
   async function toggleReleaseNoteIsActive(note) {
@@ -311,6 +326,7 @@ function AppProvider({ children }) {
     toggleShowDeletedCapabilities,
     addNewDemoRecording,
     removeDemoRecording,
+    editDemoRecording,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

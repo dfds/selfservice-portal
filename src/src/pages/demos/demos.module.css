@@ -1,3 +1,10 @@
+.iconButtonRow {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  align-items: center;
+}
+
 .cardMediaImage {
   position: unset !important;
   float: right;
@@ -75,6 +82,17 @@ hr {
 
 .deleteButtonIcon {
   color: darkred;
+  font-size: 2em;
+}
+
+.editButtonContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.editButtonIcon {
+  color: black;
   font-size: 2em;
 }
 
