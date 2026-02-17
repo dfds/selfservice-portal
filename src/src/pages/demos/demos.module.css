@@ -97,6 +97,9 @@ hr {
   display: flex;
   align-items: center;
   margin-left: auto;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .deleteButtonIcon {
@@ -108,6 +111,9 @@ hr {
   display: flex;
   align-items: center;
   margin-left: auto;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .editButtonIcon {
