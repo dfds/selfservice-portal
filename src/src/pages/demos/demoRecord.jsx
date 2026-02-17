@@ -38,7 +38,7 @@ export default function DemoRecord({
                 Watch Recording
               </a>
             )}
-            {slidesUrl && (
+            {slidesUrl && slidesUrl.trim() !== "" && (
               <a
                 href={slidesUrl}
                 target="_blank"
