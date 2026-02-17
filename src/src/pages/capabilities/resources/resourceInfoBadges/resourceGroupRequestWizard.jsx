@@ -161,7 +161,7 @@ const BasicInformationStep = ({
           trackName="Wiki-CloudUsageGuidelines"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://wiki.dfds.cloud/en/architecture/Architectural-Decision-Records-ADRS/which-cloud"
+          href="https://dfds.sharepoint.com/sites/GroupIT_Architecture/Lists/TEST%20%20Architecture%20Decision%20Record/DispForm.aspx?ID=5&e=M0gIY9"
         >
           the DFDS Cloud Usage Guidelines
         </TrackedLink>

@@ -74,3 +74,18 @@ export function useDeleteDemo() {
 
   return mutation;
 }
+
+export function useUpdateDemo() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["demos", data.id],
+        payload: data,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      });
+    },
+  });
+  return mutation;
+}

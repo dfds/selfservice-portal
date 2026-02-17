@@ -4,13 +4,16 @@ import { Modal, ModalAction } from "@dfds-ui/modal";
 import styles from "./demos.module.css";
 import AppContext from "@/AppContext";
 
-export default function DemoRegisterModal({ isOpen, onClose }) {
+export default function DemoEditModal({ isOpen, onClose, demo }) {
+  const { editDemoRecording } = useContext(AppContext);
   const [formData, setFormData] = useState({
-    title: "This is unused", // kept for backward compatibility
-    description: "",
-    recordingUrl: "",
-    slidesUrl: "",
-    recordingDate: new Date().toISOString().split("T")[0],
+    title: demo.title || "This is unused",
+    description: demo.description || "",
+    recordingUrl: demo.recordingUrl || "",
+    slidesUrl: demo.slidesUrl || "",
+    recordingDate: demo.recordingDate
+      ? demo.recordingDate.split("T")[0]
+      : new Date().toISOString().split("T")[0],
   });
   const [descriptionError, setDescriptionError] = useState("");
 
@@ -27,11 +30,9 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
     setFormData({ ...formData, recordingDate: evt.target.value });
   };
 
-  const { addNewDemoRecording } = useContext(AppContext);
-
   return (
     <Modal
-      heading={"Register Demo Recording"}
+      heading={"Edit Demo Recording"}
       isOpen={isOpen}
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEsc={true}
@@ -101,6 +102,7 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
 
           // Prepare data
           const payload = {
+            id: demo.id,
             title: formData.title,
             description: formData.description,
             recordingUrl: formData.recordingUrl,
@@ -109,11 +111,11 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
           };
 
           // Call mutation
-          addNewDemoRecording(payload);
+          editDemoRecording(payload);
           onClose();
         }}
       >
-        Register Demo
+        Save Changes
       </ModalAction>
     </Modal>
   );
