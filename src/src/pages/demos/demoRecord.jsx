@@ -1,6 +1,11 @@
 import React from "react";
 import styles from "./demos.module.css";
-import { Delete as DeleteIcon, Edit as EditIcon } from "@dfds-ui/icons/system";
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Document as DocumentIcon,
+  Play as PlayIcon,
+} from "@dfds-ui/icons/system";
 
 function renderDate(dateString) {
   const date = new Date(dateString);
@@ -14,48 +19,63 @@ export default function DemoRecord({
   onDeleteClick,
   onEditClick,
 }) {
-  const { description, url, recordingDate } = demo;
+  const { description, recordingUrl, slidesUrl, recordingDate } = demo;
   return (
-    <a
-      href={`${url}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      key={url}
-      className={styles.rowLink}
-    >
-      <div className={styles.notePreview} key={url}>
-        <div className={styles.row}>
-          <div>
-            <h3 className={styles.title}>{renderDate(recordingDate)}</h3>
-            <p className={styles.description}>{description}</p>
+    <div className={styles.notePreview} key={demo.id}>
+      <div className={styles.row}>
+        <div>
+          <h3 className={styles.title}>{renderDate(recordingDate)}</h3>
+          <p className={styles.description}>{description}</p>
+          <div className={styles.linksRow}>
+            {recordingUrl && (
+              <a
+                href={recordingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.linkButton}
+              >
+                <PlayIcon style={{ fontSize: "1.1em" }} />
+                Watch Recording
+              </a>
+            )}
+            {slidesUrl && (
+              <a
+                href={slidesUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.linkButton}
+              >
+                <DocumentIcon style={{ fontSize: "1.1em" }} />
+                View Slides
+              </a>
+            )}
           </div>
-
-          {isCloudEngineerEnabled && (
-            <div className={styles.iconButtonRow}>
-              <div className={styles.editButtonContainer}>
-                <EditIcon
-                  className={styles.editButtonIcon}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onEditClick();
-                  }}
-                />
-              </div>
-              <div className={styles.deleteButtonContainer}>
-                <DeleteIcon
-                  className={styles.deleteButtonIcon}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onDeleteClick();
-                  }}
-                />
-              </div>
-            </div>
-          )}
         </div>
+        {isCloudEngineerEnabled && (
+          <div className={styles.iconButtonRow}>
+            <div className={styles.editButtonContainer}>
+              <EditIcon
+                className={styles.editButtonIcon}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEditClick();
+                }}
+              />
+            </div>
+            <div className={styles.deleteButtonContainer}>
+              <DeleteIcon
+                className={styles.deleteButtonIcon}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDeleteClick();
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </a>
+    </div>
   );
 }
