@@ -88,13 +88,6 @@ hr {
   margin: 0px;
 }
 
-.notePreview {
-  &:hover {
-    background-color: #ebe9e9;
-    cursor: pointer;
-  }
-}
-
 .rowLink {
   text-decoration: none;
   color: inherit;
