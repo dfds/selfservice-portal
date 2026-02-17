@@ -1,3 +1,29 @@
+/* Align links with description and add spacing */
+.linksRow {
+  margin: 0px 8px 8px 8px;
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  text-decoration: none;
+  color: #005eb8;
+  font-weight: 500;
+  font-size: 1em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+  white-space: pre-line;
+  transition: color 0.2s;
+}
+
+.linkButton:hover {
+  color: #003d6a;
+  text-decoration: underline;
+}
 .iconButtonRow {
   display: flex;
   flex-direction: row;

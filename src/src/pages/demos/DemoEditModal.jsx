@@ -9,7 +9,8 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
   const [formData, setFormData] = useState({
     title: demo.title || "This is unused",
     description: demo.description || "",
-    recordingUrl: demo.url || "",
+    recordingUrl: demo.recordingUrl || "",
+    slidesUrl: demo.slidesUrl || "",
     recordingDate: demo.recordingDate
       ? demo.recordingDate.split("T")[0]
       : new Date().toISOString().split("T")[0],
@@ -64,6 +65,16 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
         }
         maxLength={500}
       ></TextField>
+      <TextField
+        label="Slides URL"
+        placeholder="Enter the URL of the slides (optional)"
+        value={formData.slidesUrl}
+        onChange={(e) =>
+          setFormData({ ...formData, slidesUrl: e.target.value })
+        }
+        maxLength={500}
+        style={{ marginTop: "1rem" }}
+      ></TextField>
       <label htmlFor="recordingDate" className={styles.recordingDateLabel}>
         Recording Date
       </label>
@@ -94,7 +105,8 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
             id: demo.id,
             title: formData.title,
             description: formData.description,
-            url: formData.recordingUrl,
+            recordingUrl: formData.recordingUrl,
+            slidesUrl: formData.slidesUrl,
             recordingDate: formData.recordingDate,
           };
 

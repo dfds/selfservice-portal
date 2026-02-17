@@ -9,6 +9,7 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
     title: "This is unused", // kept for backward compatibility
     description: "",
     recordingUrl: "",
+    slidesUrl: "",
     recordingDate: new Date().toISOString().split("T")[0],
   });
   const [descriptionError, setDescriptionError] = useState("");
@@ -63,6 +64,16 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
         }
         maxLength={500}
       ></TextField>
+      <TextField
+        label="Slides URL"
+        placeholder="Enter the URL of the slides (optional)"
+        value={formData.slidesUrl}
+        onChange={(e) =>
+          setFormData({ ...formData, slidesUrl: e.target.value })
+        }
+        maxLength={500}
+        style={{ marginTop: "1rem" }}
+      ></TextField>
       <label htmlFor="recordingDate" className={styles.recordingDateLabel}>
         Recording Date
       </label>
@@ -92,7 +103,8 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
           const payload = {
             title: formData.title,
             description: formData.description,
-            url: formData.recordingUrl,
+            recordingUrl: formData.recordingUrl,
+            slidesUrl: formData.slidesUrl,
             recordingDate: formData.recordingDate,
           };
 
