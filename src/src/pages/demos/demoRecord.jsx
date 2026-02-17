@@ -21,7 +21,7 @@ export default function DemoRecord({
 }) {
   const { description, recordingUrl, slidesUrl, recordingDate } = demo;
   return (
-    <div className={styles.notePreview} key={demo.id}>
+    <div key={demo.id}>
       <div className={styles.row}>
         <div>
           <h3 className={styles.title}>{renderDate(recordingDate)}</h3>
