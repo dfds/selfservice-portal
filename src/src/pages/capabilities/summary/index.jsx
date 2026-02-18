@@ -9,7 +9,7 @@ import styles from "./summary.module.css";
 import { TextBlock } from "components/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import { TrackedButton } from "@/components/Tracking";
 import { sleep } from "../../../Utils";
 

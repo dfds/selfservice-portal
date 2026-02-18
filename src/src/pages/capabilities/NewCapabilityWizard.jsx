@@ -13,6 +13,7 @@ import {
   ENUM_ENV_OPTIONS,
 } from "@/constants/tagConstants";
 import Select from "react-select";
+import AppContext from "@/AppContext";
 
 export default function NewCapabilityWizard({
   inProgress,
