@@ -34,7 +34,7 @@
     "@tiptap/pm": "^2.22.1",
     "@tiptap/react": "^2.22.1",
     "@tiptap/starter-kit": "^2.22.1",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
     "date-fns": "^2.29.3",
