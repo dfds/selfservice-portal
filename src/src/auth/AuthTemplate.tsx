@@ -1,7 +1,7 @@
-import React from "react";
-import { msalInstance, selfServiceApiScopes } from "./context";
+import React, { useEffect } from "react";
+import { msalInstance, selfServiceApiScopes, tokenCache } from "./context";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAuthState } from "@/state/local/auth";
+import { refreshAuthState, sessionExpired } from "@/state/local/auth";
 import { StoreReducers } from "@/state/local/store";
 import styles from "./AuthTemplate.module.css";
 
@@ -20,14 +20,38 @@ function AuthTemplate({ children }) {
   const dispatch = useDispatch();
   const authState = useSelector((s) => (s as StoreReducers).auth);
 
-  msalInstance.handleRedirectPromise().then((data) => {
-    dispatch(
-      refreshAuthState({ msalInstance: msalInstance, redirectResponse: data }),
-    );
-  });
+  useEffect(() => {
+    tokenCache.remove("selfservice-api");
+    tokenCache.remove("msgraph");
 
-  const signIn = () => {
-    msalInstance.acquireTokenRedirect({ scopes: selfServiceApiScopes });
+    msalInstance
+      .handleRedirectPromise()
+      .then((data) => {
+        if (
+          !msalInstance.getActiveAccount() &&
+          msalInstance.getAllAccounts().length > 0
+        ) {
+          msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
+        }
+        dispatch(
+          refreshAuthState({
+            msalInstance: msalInstance,
+            redirectResponse: data,
+          }),
+        );
+      })
+      .catch((err) => {
+        console.error("handleRedirectPromise failed:", err);
+        dispatch(sessionExpired());
+      });
+  }, []);
+
+  const signIn = async () => {
+    try {
+      await msalInstance.acquireTokenRedirect({ scopes: selfServiceApiScopes });
+    } catch (e) {
+      console.log("acquireTokenRedirect skipped:", e);
+    }
   };
 
   return (
