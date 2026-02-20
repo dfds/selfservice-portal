@@ -73,12 +73,12 @@ export default function RequirementsScore() {
   const { requirementsScore } = useContext(SelectedCapabilityContext);
 
   const [overallScore, setOverallScore] = React.useState(0);
-  const [individualScores, setIndividualScores] = React.useState([]);
+  const [requirementsMetrics, setRequirementsMetrics] = React.useState([]);
 
   useEffect(() => {
     if (requirementsScore && Object.keys(requirementsScore).length !== 0) {
       setOverallScore(requirementsScore.totalScore);
-      setIndividualScores(requirementsScore.requirementScores);
+      setRequirementsMetrics(requirementsScore.requirementsMetrics);
     }
   }, [requirementsScore]);
 
@@ -95,28 +95,29 @@ export default function RequirementsScore() {
         Individual Requirement Scores
       </div>
       <div className={styles.individualScores}>
-        {individualScores &&
-          individualScores.map((score) => (
+        {requirementsMetrics &&
+          requirementsMetrics.map((metric) => (
             <div
-              key={score.requirementId}
+              key={metric.id}
               className={styles.individualScoreItem}
             >
               <div className={styles.individualScoreHeader}>
                 <span className={styles.individualScoreBulb}>
-                  <LightBulb score={score.score} size={20} />
+                  <LightBulb score={metric.value} size={20} />
                 </span>
                 <span className={styles.individualScoreLabel}>
-                  {score.title}
+                  {metric.requirementId}
                 </span>
                 <span className={styles.individualScoreValue}>
-                  {score.score} / 100
+                  {metric.value} / 100
                 </span>
               </div>
               <div className={styles.scoreDescription}>
-                {score.description}
+                {metric.description}
                 <div className={styles.requirementLinkBox}>
+                  {metric.helpUrl && (
                   <a
-                    href="https://wiki.dfds.cloud/"
+                    href={metric.helpUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     title="Learn more about requirements"
@@ -185,7 +186,7 @@ export default function RequirementsScore() {
                     <span className={styles.requirementLinkText}>
                       read more
                     </span>
-                  </a>
+                  </a>)}
                 </div>
               </div>
             </div>
