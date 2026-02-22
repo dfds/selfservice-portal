@@ -223,14 +223,13 @@ export default function GlobalMenu() {
         <AppBarDrawer>
           {navLinks.map((x) =>
             x.children ? (
-              <>
+              <React.Fragment key={x.title}>
                 <span className={styles.sideMenuHeader}>{x.title}</span>
                 {x.children.map((child) =>
                   /https?:\/\//.test(child.url) ? (
-                    <div className={styles.sideMenuSubItem}>
+                    <div key={child.title} className={styles.sideMenuSubItem}>
                       <div className={styles.sideMenuSubItem}>
                         <a
-                          key={child.title}
                           href={child.url}
                           style={{ textDecoration: "none" }}
                         >
@@ -254,11 +253,10 @@ export default function GlobalMenu() {
                     </Link>
                   ),
                 )}
-              </>
+              </React.Fragment>
             ) : /https?:\/\//.test(x.url) ? (
-              <div className={styles.sideMenuSubItem}>
+              <div key={x.title} className={styles.sideMenuSubItem}>
                 <a
-                  key={x.title}
                   href={x.url}
                   style={{ textDecoration: "none" }}
                 >
