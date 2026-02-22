@@ -1,10 +1,9 @@
 import { ButtonStack, Spinner } from "@dfds-ui/react-components";
 import { Text } from "@dfds-ui/typography";
-import AppContext from "AppContext";
-import { useContext } from "react";
 import styles from "./LatestNews.module.css";
 import { intlFormatDistance } from "date-fns";
 import { TrackedLink } from "@/components/Tracking";
+import { useLatestNews } from "hooks/LatestNews";
 
 function NewsItem({ date, title, text, link }) {
   const temp = intlFormatDistance(date, new Date());
@@ -32,7 +31,7 @@ function NewsItem({ date, title, text, link }) {
 }
 
 export default function LatestNews() {
-  const { news } = useContext(AppContext);
+  const news = useLatestNews();
   return (
     <div>
       {news.length === 0 && <Spinner />}
