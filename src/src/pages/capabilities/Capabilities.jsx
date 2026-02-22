@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Text } from "@dfds-ui/typography";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
 import { Spinner } from "@dfds-ui/react-components";
 import AppContext from "AppContext";
@@ -15,7 +15,6 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 
 function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
-  const navigate = useNavigate();
 
   return (
     <MaterialReactTable
@@ -89,41 +88,19 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
           background: "none",
         },
       }}
-      muiTableBodyRowProps={({ row }) => {
-        return {
-          component: "a",
-          href: `/capabilities/${row.original.id}`,
-          onClick: (e) => {
-            if (
-              e.defaultPrevented ||
-              e.button !== 0 ||
-              e.metaKey ||
-              e.ctrlKey ||
-              e.shiftKey ||
-              e.altKey
-            ) {
-              return;
-            }
-            e.preventDefault();
-            navigate(`/capabilities/${row.original.id}`);
+      muiTableBodyRowProps={({ row }) => ({
+        sx: {
+          position: "relative",
+          cursor: "pointer",
+          background: row.original.status === "Deleted" ? "#d88" : "",
+          "&:hover td": {
+            backgroundColor:
+              row.original.status === "Deleted"
+                ? "rgba(187, 221, 243, 0.1)"
+                : "rgba(187, 221, 243, 0.4)",
           },
-          sx: {
-            textDecoration: "none",
-            color: "inherit",
-            cursor: "pointer",
-            background: row.original.status === "Deleted" ? "#d88" : "",
-            padding: 0,
-            margin: 0,
-            minHeight: 0,
-            "&:hover td": {
-              backgroundColor:
-                row.original.status === "Deleted"
-                  ? "rgba(187, 221, 243, 0.1)"
-                  : "rgba(187, 221, 243, 0.4)",
-            },
-          },
-        };
-      }}
+        },
+      })}
     />
   );
 }
@@ -355,8 +332,21 @@ export default function CapabilitiesList() {
         muiTableBodyCellProps: {
           align: "right",
         },
-        Cell: ({ cell }) => {
-          return <ChevronRight />;
+        Cell: ({ row }) => {
+          return (
+            <>
+              <Link
+                to={`/capabilities/${row.original.id}`}
+                aria-label={`View ${row.original.name}`}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  zIndex: 1,
+                }}
+              />
+              <ChevronRight />
+            </>
+          );
         },
         Header: <div></div>, //enable empty header
       },
