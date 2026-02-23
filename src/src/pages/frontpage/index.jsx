@@ -79,14 +79,14 @@ export default function FrontPage() {
         <Section>
           <FunStats />
         </Section>
+      </Page>
 
-        {/*<Section>
+      {/*<Section>
           <GrafanaWarning />
         </Section>*/}
 
-        <Section>
-          <Container>
-            <Column m={3} l={3} xl={3} xxl={3}>
+      <Container>
+          <Column m={3} l={3} xl={3} xxl={3}>
               <PageSection>
                 <SectionContent title="Whats happening...?">
                   <LatestNews />
@@ -212,9 +212,7 @@ export default function FrontPage() {
                 </SectionContent>
               </PageSection>
             </Column>
-          </Container>
-        </Section>
-      </Page>
+      </Container>
     </>
   );
 }

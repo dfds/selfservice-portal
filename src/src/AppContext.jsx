@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useCurrentUser } from "./AuthService";
 import * as ApiClient from "./SelfServiceApiClient";
-import { useLatestNews } from "hooks/LatestNews";
 import ErrorContext from "./ErrorContext";
 import { useCapabilityAdd } from "@/state/remote/queries/capabilities";
 import { MetricsWrapper } from "./MetricsWrapper";
@@ -80,8 +79,6 @@ function AppProvider({ children }) {
   const [showDeletedCapabilities, setShowDeletedCapabilities] = useState(false);
 
   const [stats, setStats] = useState([]);
-  const news = useLatestNews();
-
   const [shouldAutoReloadTopics, setShouldAutoReloadTopics] = useState(false);
   const { handleError } = useContext(ErrorContext);
   const selfServiceApiClient = useMemo(
@@ -301,7 +298,6 @@ function AppProvider({ children }) {
     schemas,
     setSchemas,
     stats,
-    news,
     shouldAutoReloadTopics,
     setShouldAutoReloadTopics,
     selfServiceApiClient,

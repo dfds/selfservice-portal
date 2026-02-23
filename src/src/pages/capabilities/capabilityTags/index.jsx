@@ -452,13 +452,15 @@ export function CapabilityTags() {
       <Text>
         However, tagging capabilities is only the first step; Please remember to
         tag your cloud resources as well.
+      </Text>
+      <Text>
         <TrackedLink
           trackName="TaggingPolicy"
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
           target="_blank"
           rel="noreferrer"
         >
-          <Text>see DFDS Tagging Policy.</Text>
+          see DFDS Tagging Policy.
         </TrackedLink>
       </Text>
 
