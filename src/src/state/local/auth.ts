@@ -1,5 +1,5 @@
 import { getGraphAccessToken, getSelfServiceAccessToken } from "@/AuthService";
-import { allTokensAvailable, tokenCache } from "@/auth/context";
+import { tokenCache } from "@/auth/context";
 import {
   AuthenticationResult,
   PublicClientApplication,
@@ -47,37 +47,30 @@ export const auth: Slice<AuthStruct> = createSlice({
       if (msalInstance.getAllAccounts().length > 0) {
         state.isSignedIn = true;
 
-        if (allTokensAvailable()) {
+        if (!tokenCache.hasTokenExpired("selfservice-api")) {
           state.isSessionActive = true;
-        } else {
-          console.log("Tokens missing, acquiring");
-
-          if (tokenCache.hasTokenExpired("selfservice-api")) {
-            getSelfServiceAccessToken();
-          }
-
+          state.initialLoadFinished = true;
           if (tokenCache.hasTokenExpired("msgraph")) {
             getGraphAccessToken();
           }
+        } else {
+          getSelfServiceAccessToken();
         }
       } else {
         state.isSignedIn = false;
         state.isSessionActive = false;
+        state.initialLoadFinished = true;
       }
+    },
 
+    sessionExpired: (state) => {
+      state.isSessionActive = false;
       state.initialLoadFinished = true;
     },
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isTokenExpired(token: string): boolean {
-  const decoded = jwtDecode(token);
-  const currentTime = Math.floor(Date.now() / 1000);
-  return decoded.exp > currentTime;
-}
-
 export default auth.reducer;
 
-export const { refreshAuthState } = auth.actions;
+export const { refreshAuthState, sessionExpired } = auth.actions;
 export { AuthStruct };

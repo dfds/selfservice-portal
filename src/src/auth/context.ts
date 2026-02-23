@@ -45,6 +45,10 @@ class TokenCache {
   put(key: string, token: string) {
     return localStorage.setItem(`${this.lsKeyPrefix}-${key}`, token);
   }
+
+  remove(key: string) {
+    localStorage.removeItem(`${this.lsKeyPrefix}-${key}`);
+  }
 }
 
 function isTokenExpired(token: string): boolean {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import { getUserProfile, getUserProfilePictureUrl } from "./GraphApiClient";
 import {
   msalInstance,
@@ -8,7 +9,7 @@ import {
   tokenCache,
 } from "./auth/context";
 import store from "./state/local/store";
-import { refreshAuthState } from "./state/local/auth";
+import { refreshAuthState, sessionExpired } from "./state/local/auth";
 
 export function callApi(
   url,
@@ -40,28 +41,42 @@ export function callApi(
   return fetch(url, options);
 }
 
+let selfServiceTokenInFlight = null;
+
 export async function getSelfServiceAccessToken() {
+  if (selfServiceTokenInFlight) {
+    return selfServiceTokenInFlight;
+  }
+
   const account = msalInstance.getActiveAccount();
   if (!account) {
+    store.dispatch(sessionExpired());
     return null;
   }
 
-  try {
-    const { accessToken } = await msalInstance.acquireTokenSilent({
-      scopes: selfServiceApiScopes,
-      account: account,
-    });
-    tokenCache.put("selfservice-api", accessToken);
-    store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
+  selfServiceTokenInFlight = (async () => {
+    try {
+      const { accessToken } = await msalInstance.acquireTokenSilent({
+        scopes: selfServiceApiScopes,
+        account: account,
+      });
+      tokenCache.put("selfservice-api", accessToken);
+      store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
+      return accessToken;
+    } catch (e) {
+      console.log("getSelfServiceAccessToken failed:", e);
+      tokenCache.remove("selfservice-api");
 
-    return accessToken;
-  } catch (e) {
-    console.log(e);
-    await msalInstance.acquireTokenRedirect({
-      scopes: selfServiceApiScopes,
-      account: account,
-    });
-  }
+      if (e instanceof InteractionRequiredAuthError) {
+        store.dispatch(sessionExpired());
+      }
+      return null;
+    } finally {
+      selfServiceTokenInFlight = null;
+    }
+  })();
+
+  return selfServiceTokenInFlight;
 }
 
 export async function getGraphAccessToken() {
@@ -80,11 +95,9 @@ export async function getGraphAccessToken() {
 
     return accessToken;
   } catch (e) {
-    console.log(e);
-    await msalInstance.acquireTokenRedirect({
-      scopes: graphScopes,
-      account: account,
-    });
+    console.log("getGraphAccessToken silent acquisition failed:", e);
+    tokenCache.remove("msgraph");
+    return null;
   }
 }
 

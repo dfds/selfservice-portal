@@ -144,6 +144,9 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
 
       let resps = await Promise.all(
         membersResp.items.map(async (member) => {
+          if (!member.email) {
+            return { ...member, pictureUrl: "" };
+          }
           let resp = await msGraphRequest({
             method: "GET",
             url: `https://graph.microsoft.com/v1.0/users/${member.email}/photos/96x96/$value`,
@@ -189,6 +192,9 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
 
       let resps = await Promise.all(
         membersResp.items.map(async (member) => {
+          if (!member.email) {
+            return { ...member, applicantProfilePictureUrl: "" };
+          }
           let resp = await msGraphRequest({
             method: "GET",
             url: `https://graph.microsoft.com/v1.0/users/${member.email}/photos/96x96/$value`,
@@ -225,6 +231,7 @@ export function useUserProfilePicture(upn: string) {
         url: `https://graph.microsoft.com/v1.0/users/${upn}/photos/96x96/$value`,
         payload: null,
       }),
+    enabled: !!upn,
   });
 
   const [profilePicture, setProfilePicture] = useState("");

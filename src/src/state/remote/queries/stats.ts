@@ -25,6 +25,7 @@ export function useTopVisitors(profileDefinition: any) {
 
   const query = useQuery({
     queryKey: ["topVisitors"],
+    enabled: !!visitorsLink,
     queryFn: async () =>
       ssuRequest({
         method: "GET",
