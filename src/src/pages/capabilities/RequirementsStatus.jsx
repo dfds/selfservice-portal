@@ -34,38 +34,8 @@ export function LightBulb({ score, size = 20 }) {
           height: size,
           borderRadius: "50%",
           backgroundColor: color,
-          boxShadow:
-            "0 2px 8px 2px rgba(0,0,0,0.18), 0 0 8px 2px rgba(255,255,180,0.25)",
-          position: "relative",
         }}
-      >
-        <span
-          style={{
-            position: "absolute",
-            top: size * 0.1,
-            left: size * 0.2,
-            width: size * 0.6,
-            height: size * 0.3,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.5)",
-            filter: "blur(0.5px)",
-            pointerEvents: "none",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            bottom: size * 0.1,
-            left: size * 0.3,
-            width: size * 0.4,
-            height: size * 0.2,
-            borderRadius: "50%",
-            background: "rgba(255,255,180,0.3)",
-            filter: "blur(1px)",
-            pointerEvents: "none",
-          }}
-        />
-      </span>
+      />
     </span>
   );
 }
@@ -95,7 +65,6 @@ export function QuestionMarkBulb({
           height: size,
           borderRadius: "50%",
           backgroundColor: "#9e9e9e",
-          boxShadow: "0 2px 8px 2px rgba(0,0,0,0.18)",
           position: "relative",
           color: "#fff",
           fontSize: size * 0.7,
