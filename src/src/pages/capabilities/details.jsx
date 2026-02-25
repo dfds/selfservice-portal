@@ -12,8 +12,10 @@ import { Text } from "@dfds-ui/typography";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
+
 import { CapabilityTagsPageSection } from "./capabilityTags";
 import { AICatalogueSection } from "./aiCatalogue";
+import RequirementsScore from "./RequirementsStatus";
 
 export default function CapabilityDetailsPage() {
   return (
@@ -91,6 +93,8 @@ function CapabilityDetailsPageContent() {
 
         <Page title={pagetitle} isLoading={isLoading} isNotFound={!isFound}>
           <Summary anchorId="summary" />
+
+          <RequirementsScore />
 
           <TabbedMembersView anchorId="members" />
 

@@ -37,6 +37,7 @@ import {
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
 import { sleep } from "../../Utils";
+import { de } from "date-fns/locale";
 
 const SelectedCapabilityContext = createContext();
 
@@ -91,44 +92,46 @@ function SelectedCapabilityProvider({ children }) {
   const capabilityAzureResourceRequest = useCapabilityAzureResourceRequest();
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
-  const configurationLevelLink = details?._links?.configurationLevel?.href;
-  const canAccessConfigurationLevel = (
-    details?._links?.configurationLevel?.allow || []
-  ).includes("GET");
+  const [requirementsScoreLink, setRequirementsScoreLink] = useState(
+    details?._links?.requirementsScore?.href,
+  );
+  const [canAccessRequirementsScore, setCanAccessRequirementsScore] =
+    useState(false);
+  const [requirementsScore, setRequirementsScore] = useState(null);
 
-  const [
-    reloadConfigurationLevelInformation,
-    setReloadConfigurationLevelInformation,
-  ] = useState(true);
   const {
-    responseData: configurationLevelInformation,
-    sendRequest: getConfiguraitionLevelInformation,
+    responseData: requirementsScoreData,
+    sendRequest: getRequirementsScores,
   } = useSelfServiceRequest();
 
-  const loadConfigurationLevelInformation = () => {
-    if (configurationLevelLink) {
-      getConfiguraitionLevelInformation({
-        urlSegments: [configurationLevelLink],
+  useEffect(() => {
+    if (requirementsScoreLink && requirementsScoreLink.allow) {
+      setCanAccessRequirementsScore(
+        (requirementsScoreLink?.allow || []).includes("GET"),
+      );
+    }
+  }, [requirementsScoreLink]);
+
+  useEffect(() => {
+    if (requirementsScoreData) {
+      setRequirementsScore(requirementsScoreData);
+    }
+  }, [requirementsScoreData]);
+
+  useEffect(() => {
+    console.log(requirementsScore);
+    if (!requirementsScore && canAccessRequirementsScore) {
+      getRequirementsScores({
+        urlSegments: [requirementsScoreLink.href],
       });
     }
-  };
+  }, [requirementsScore, canAccessRequirementsScore]);
 
   useEffect(() => {
-    if (reloadConfigurationLevelInformation) {
-      loadConfigurationLevelInformation();
-      setReloadConfigurationLevelInformation(false);
+    if (details && details._links && details._links.requirementScore) {
+      setRequirementsScoreLink(details._links?.requirementScore);
     }
-  }, [reloadConfigurationLevelInformation]);
-
-  useEffect(() => {
-    if (
-      !configurationLevelInformation &&
-      configurationLevelLink &&
-      canAccessConfigurationLevel
-    ) {
-      loadConfigurationLevelInformation();
-    }
-  }, [configurationLevelInformation, configurationLevelLink]);
+  }, [details]);
 
   const [userIsOwner, setUserIsOwner] = useState(false);
 
@@ -693,14 +696,13 @@ function SelectedCapabilityProvider({ children }) {
     // setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
-    configurationLevelInformation,
+    requirementsScore,
     inProgressMetadata: metadataFetched,
     metadataFetched,
     azureResourcesList,
     addNewAzure,
     deleteMembershipApplication,
     isLoadedAzure,
-    setReloadConfigurationLevelInformation,
     userIsOwner,
     availableRoles,
     userRoleMap,
