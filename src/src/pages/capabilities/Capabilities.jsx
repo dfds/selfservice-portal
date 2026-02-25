@@ -11,6 +11,7 @@ import { Switch } from "@dfds-ui/forms";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
+import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function CapabilitiesTable({ columns, filteredCapabilities }) {
@@ -214,11 +215,13 @@ export default function CapabilitiesList() {
       {
         accessorFn: (row) => {
           return {
-            jsonMetadata: row.jsonMetadata,
-            userIsMember: row.userIsMember || false,
+            requirementsScore: row.requirementScore,
+            totalScore: row.totalScore,
+            modifiedAt: row.modifiedAt,
+            id: row.id,
           };
         },
-        header: "Tags",
+        header: "Compliance",
         size: 150,
         enableColumnFilterModes: false,
         muiTableHeadCellProps: {
@@ -228,18 +231,62 @@ export default function CapabilitiesList() {
           align: "center",
         },
         Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue().jsonMetadata ?? "{}");
-          const userIsMember = cell.getValue().userIsMember ?? false;
-          if (!userIsMember) {
-            return <div></div>;
+          const cellValue = cell.getValue();
+          let requirementsScore = cellValue.requirementsScore;
+          const modifiedAt = cellValue.modifiedAt;
+          const capabilityId = cellValue.id;
+
+          // Check if data is stale (older than 2 weeks)
+          const isStale = (() => {
+            if (!modifiedAt) return true;
+            const twoWeeksAgo = new Date();
+            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+            const modifiedDate = new Date(modifiedAt);
+            return modifiedDate < twoWeeksAgo;
+          })();
+
+          if (isStale) {
+            requirementsScore = -1; // Treat score as unavailable if data is stale
           }
-          if (
-            jsonMetadata["dfds.cost.centre"] === undefined ||
-            jsonMetadata["dfds.cost.centre"] === ""
-          ) {
-            return <div className={styles.missingTags}>Pending</div>;
+
+          if (requirementsScore !== undefined && requirementsScore !== null) {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                }}
+              >
+                <LightBulb score={requirementsScore} size={20} />
+                {isStale ? (
+                  <span
+                    style={{
+                      fontFamily: "monospace",
+                      width: "70px",
+                      textAlign: "center",
+                      fontSize: "10px",
+                      paddingLeft: "20px",
+                    }}
+                  >
+                    click to
+                    <br />
+                    reload
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontFamily: "monospace",
+                      width: "70px",
+                      textAlign: "right",
+                    }}
+                  >{`${requirementsScore.toFixed(1)}%`}</span>
+                )}
+              </div>
+            );
           }
-          return <div></div>;
+          return <div>Unknown</div>;
         },
       },
 
