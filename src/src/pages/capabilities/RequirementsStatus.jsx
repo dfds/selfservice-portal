@@ -114,7 +114,7 @@ export default function RequirementsScore() {
                   <LightBulb score={metric.value} size={20} />
                 </span>
                 <span className={styles.individualScoreLabel}>
-                  {metric.display_name || metric.name}
+                  {metric.displayName || metric.name}
                 </span>
                 <span className={styles.individualScoreValue}>
                   {metric.value.toFixed(1)} %
