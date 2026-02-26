@@ -114,7 +114,7 @@ export default function RequirementsScore() {
                   <LightBulb score={metric.value} size={20} />
                 </span>
                 <span className={styles.individualScoreLabel}>
-                  {metric.name}
+                  {metric.displayName || metric.name}
                 </span>
                 <span className={styles.individualScoreValue}>
                   {metric.value.toFixed(1)} %
@@ -209,7 +209,8 @@ export default function RequirementsScore() {
               fontStyle: "italic",
             }}
           >
-            No requirements data currently available for this capability.
+            All is good! We see no issues with the current requirements for this
+            capability.
           </div>
         )}
       </div>

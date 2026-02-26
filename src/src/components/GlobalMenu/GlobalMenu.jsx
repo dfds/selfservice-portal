@@ -229,10 +229,7 @@ export default function GlobalMenu() {
                   /https?:\/\//.test(child.url) ? (
                     <div key={child.title} className={styles.sideMenuSubItem}>
                       <div className={styles.sideMenuSubItem}>
-                        <a
-                          href={child.url}
-                          style={{ textDecoration: "none" }}
-                        >
+                        <a href={child.url} style={{ textDecoration: "none" }}>
                           <AppBarListItem clickable>
                             <ListText>{child.title}</ListText>
                           </AppBarListItem>
@@ -256,10 +253,7 @@ export default function GlobalMenu() {
               </React.Fragment>
             ) : /https?:\/\//.test(x.url) ? (
               <div key={x.title} className={styles.sideMenuSubItem}>
-                <a
-                  href={x.url}
-                  style={{ textDecoration: "none" }}
-                >
+                <a href={x.url} style={{ textDecoration: "none" }}>
                   <AppBarListItem clickable>
                     <ListText>{x.title}</ListText>
                   </AppBarListItem>

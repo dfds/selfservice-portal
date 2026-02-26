@@ -236,18 +236,16 @@ export default function CapabilitiesList() {
           const modifiedAt = cellValue.modifiedAt;
           const capabilityId = cellValue.id;
 
-          // Check if data is stale (older than 2 weeks)
+          // Check if data is stale (older than 2 weeks or score is missing)
           const isStale = (() => {
             if (!modifiedAt) return true;
+            if (requirementsScore === null || requirementsScore === undefined)
+              return true;
             const twoWeeksAgo = new Date();
             twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
             const modifiedDate = new Date(modifiedAt);
             return modifiedDate < twoWeeksAgo;
           })();
-
-          if (isStale) {
-            requirementsScore = -1; // Treat score as unavailable if data is stale
-          }
 
           if (requirementsScore !== undefined && requirementsScore !== null) {
             return (
