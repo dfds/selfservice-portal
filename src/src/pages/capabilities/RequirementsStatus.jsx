@@ -209,7 +209,8 @@ export default function RequirementsScore() {
               fontStyle: "italic",
             }}
           >
-            No requirements data currently available for this capability.
+            All is good! We see no issues with the current requirements for this
+            capability.
           </div>
         )}
       </div>
