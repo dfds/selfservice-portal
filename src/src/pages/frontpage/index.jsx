@@ -86,132 +86,132 @@ export default function FrontPage() {
         </Section>*/}
 
       <Container>
-          <Column m={3} l={3} xl={3} xxl={3}>
-              <PageSection>
-                <SectionContent title="Whats happening...?">
-                  <LatestNews />
-                </SectionContent>
-              </PageSection>
+        <Column m={3} l={3} xl={3} xxl={3}>
+          <PageSection>
+            <SectionContent title="Whats happening...?">
+              <LatestNews />
+            </SectionContent>
+          </PageSection>
 
+          <br />
+
+          <PageSection>
+            <SectionContent title="Need Help...?">
+              <i>Did you know</i> that there is a <strong>Slack</strong> channel
+              where you can ask your peers a question and/or answer some of them
+              yourself?
               <br />
-
-              <PageSection>
-                <SectionContent title="Need Help...?">
-                  <i>Did you know</i> that there is a <strong>Slack</strong>{" "}
-                  channel where you can ask your peers a question and/or answer
-                  some of them yourself?
-                  <br />
-                  <br />
-                  <TrackedLinkButton
-                    trackName="SlackArchive-DevPeerSupport"
-                    title="Click to head on over to Slack..."
-                    size="small"
-                    href="slack://dfds.slack.com/archives/C9948TVRC"
-                    variation="outlined"
-                  >
-                    #dev-peer-support
-                  </TrackedLinkButton>
-                </SectionContent>
-              </PageSection>
-            </Column>
-
-            <Column>
-              <PageSection>
-                <SectionContent title="Welcome">
-                  <div id="welcome-content">
-                    Hello {name}, and welcome to the Developer Portal.
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "1em",
-                      background: "#fffbe6",
-                      border: "1px solid #ffe58f",
-                      borderRadius: 4,
-                      padding: "1em",
-                    }}
-                  >
-                    <strong>Note:</strong> Invitations to capabilities have been{" "}
-                    <strong>removed</strong>.<br />
-                    Having multiple ways to join a capability made it harder for
-                    people to know what the process was, leading to confusion
-                    and misunderstandings. Therefore, we have gone back to
-                    having just one way to join a capability.
-                  </div>
-                </SectionContent>
-
-                <SectionContent title="Capabilities">
-                  To get started creating a capability, or joining an existing
-                  please go to <Link to={"/capabilities"}>Capabilities</Link>.
-                </SectionContent>
-
-                <SectionContent title="Kafka Topics">
-                  Want to find an awesome Kafka Topic to consume from? Head on
-                  over to <Link to={"/topics"}>Topics</Link> and browse amongst
-                  all our wonderful topics.
-                  <br />
-                  <br />
-                  <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance
-                  and want to play with Kafka? If so, go check out{" "}
-                  <TrackedLink
-                    trackName="Dafda"
-                    href="https://tniconf.dfds.cloud/dafda/"
-                  >
-                    <strong>dafda</strong>
-                  </TrackedLink>{" "}
-                  ...you're welcome!
-                </SectionContent>
-
-                <SectionContent title="Kubernetes">
-                  If this is your first visit, please go to{" "}
-                  <TrackedLink
-                    trackName="Wiki-KubernetesGettingStarted"
-                    href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
-                  >
-                    Kubernetes Getting Started
-                  </TrackedLink>
-                  , for information about what to do to get started.
-                  <br />
-                  <br />
-                  Then grab the default Kubernetes config file from the column
-                  on your right.
-                </SectionContent>
-              </PageSection>
-            </Column>
-
-            <Column m={3} l={3} xl={3} xxl={3}>
-              <PageSection>
-                <SectionContent title="Quick links">
-                  <QuickLinks />
-                </SectionContent>
-              </PageSection>
-
               <br />
+              <TrackedLinkButton
+                trackName="SlackArchive-DevPeerSupport"
+                title="Click to head on over to Slack..."
+                size="small"
+                href="slack://dfds.slack.com/archives/C9948TVRC"
+                variation="outlined"
+              >
+                #dev-peer-support
+              </TrackedLinkButton>
+            </SectionContent>
+          </PageSection>
+        </Column>
 
-              <PageSection>
-                <SectionContent title="KubeConfig..?">
-                  Are you looking for a fresh config for your{" "}
-                  <TextBlock>KubeCtl</TextBlock> ?
-                  <br />
-                  <br />
-                  <TrackedLinkButton
-                    trackName="DownloadKubeConfig"
-                    size="small"
-                    href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
-                    variation="outlined"
-                  >
-                    Download
-                  </TrackedLinkButton>
-                </SectionContent>
-              </PageSection>
+        <Column>
+          <PageSection>
+            <SectionContent title="Welcome">
+              <div id="welcome-content">
+                Hello {name}, and welcome to the Developer Portal.
+              </div>
+              <div
+                style={{
+                  marginTop: "1em",
+                  background: "#fffbe6",
+                  border: "1px solid #ffe58f",
+                  borderRadius: 4,
+                  padding: "1em",
+                }}
+              >
+                <strong>Note:</strong> Invitations to capabilities have been{" "}
+                <strong>removed</strong>.<br />
+                Having multiple ways to join a capability made it harder for
+                people to know what the process was, leading to confusion and
+                misunderstandings. Therefore, we have gone back to having just
+                one way to join a capability.
+              </div>
+            </SectionContent>
 
+            <SectionContent title="Capabilities">
+              To get started creating a capability, or joining an existing
+              please go to <Link to={"/capabilities"}>Capabilities</Link>.
+            </SectionContent>
+
+            <SectionContent title="Kafka Topics">
+              Want to find an awesome Kafka Topic to consume from? Head on over
+              to <Link to={"/topics"}>Topics</Link> and browse amongst all our
+              wonderful topics.
               <br />
+              <br />
+              <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance and
+              want to play with Kafka? If so, go check out{" "}
+              <TrackedLink
+                trackName="Dafda"
+                href="https://tniconf.dfds.cloud/dafda/"
+              >
+                <strong>dafda</strong>
+              </TrackedLink>{" "}
+              ...you're welcome!
+            </SectionContent>
 
-              <PageSection>
-                <SectionContent title="Top visitors this week">
-                  <TopVisitors />
-                </SectionContent>
-              </PageSection>
-            </Column>
+            <SectionContent title="Kubernetes">
+              If this is your first visit, please go to{" "}
+              <TrackedLink
+                trackName="Wiki-KubernetesGettingStarted"
+                href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
+              >
+                Kubernetes Getting Started
+              </TrackedLink>
+              , for information about what to do to get started.
+              <br />
+              <br />
+              Then grab the default Kubernetes config file from the column on
+              your right.
+            </SectionContent>
+          </PageSection>
+        </Column>
+
+        <Column m={3} l={3} xl={3} xxl={3}>
+          <PageSection>
+            <SectionContent title="Quick links">
+              <QuickLinks />
+            </SectionContent>
+          </PageSection>
+
+          <br />
+
+          <PageSection>
+            <SectionContent title="KubeConfig..?">
+              Are you looking for a fresh config for your{" "}
+              <TextBlock>KubeCtl</TextBlock> ?
+              <br />
+              <br />
+              <TrackedLinkButton
+                trackName="DownloadKubeConfig"
+                size="small"
+                href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
+                variation="outlined"
+              >
+                Download
+              </TrackedLinkButton>
+            </SectionContent>
+          </PageSection>
+
+          <br />
+
+          <PageSection>
+            <SectionContent title="Top visitors this week">
+              <TopVisitors />
+            </SectionContent>
+          </PageSection>
+        </Column>
       </Container>
     </>
   );

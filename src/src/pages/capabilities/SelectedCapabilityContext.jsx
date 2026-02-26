@@ -115,6 +115,8 @@ function SelectedCapabilityProvider({ children }) {
   useEffect(() => {
     if (requirementsScoreData) {
       setRequirementsScore(requirementsScoreData);
+      // Invalidate capabilities list to refetch with updated score
+      queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
     }
   }, [requirementsScoreData]);
 
