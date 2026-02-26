@@ -7,6 +7,7 @@ import AppContext from "AppContext";
 import PreAppContext from "@/preAppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
+import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { Switch } from "@dfds-ui/forms";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
@@ -117,6 +118,7 @@ export default function CapabilitiesList() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
+  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -126,14 +128,18 @@ export default function CapabilitiesList() {
 
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
-      setCapabilities(capabilitiesData);
+      const capsWithCosts = capabilitiesData.map((cap) => ({
+        ...cap,
+        costs: getCostsForCapability(cap.id, 7),
+      }));
+      setCapabilities(capsWithCosts);
 
-      const myCapabilities = capabilitiesData.filter((capability) => {
+      const myCapabilities = capsWithCosts.filter((capability) => {
         return capability.userIsMember;
       });
       setMyCapabilities(myCapabilities);
     }
-  }, [isCapabilityFetched, capabilitiesData]);
+  }, [isCapabilityFetched, capabilitiesData, costsQuery.isFetched]);
 
   useEffect(() => {
     if (capabilities) {
