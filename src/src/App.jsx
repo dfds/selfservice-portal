@@ -26,6 +26,38 @@ function Footer() {
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    console.error("ErrorBoundary caught:", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: "2rem" }}>
+          <p>
+            Oh no! Something went wrong while loading the page. You can try{" "}
+            <button onClick={() => window.location.reload()}>
+              refreshing the page
+            </button>{" "}
+            to resolve the issue.
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function Layout() {
   return (
     <>
@@ -35,8 +67,10 @@ function Layout() {
             <GlobalMenu />
           </SiteLayout.Header>
           <SiteLayout.Main>
-            <Outlet />
-            <Footer />
+            <ErrorBoundary>
+              <Outlet />
+              <Footer />
+            </ErrorBoundary>
           </SiteLayout.Main>
         </SiteLayout.Grid>
       </AuthTemplate>

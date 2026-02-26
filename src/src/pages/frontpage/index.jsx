@@ -44,7 +44,7 @@ function Hero() {
 function FunStats() {
   const { data, isFetched } = useStats();
 
-  if (!isFetched) {
+  if (!isFetched || !data) {
     return <></>;
   }
 
