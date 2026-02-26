@@ -22,6 +22,10 @@ export class MsGraphRequestQuery {
 export async function ssuRequest(rq: SsuRequestQuery) {
   const accessToken = await getSelfServiceAccessToken();
 
+  if (!accessToken) {
+    throw new Error("No access token available");
+  }
+
   let url = composeSegmentsUrl(rq.urlSegments);
 
   if (isValidURL(rq.urlSegments[0])) {
