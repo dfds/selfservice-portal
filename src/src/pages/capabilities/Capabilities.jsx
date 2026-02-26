@@ -247,7 +247,7 @@ export default function CapabilitiesList() {
             return modifiedDate < twoWeeksAgo;
           })();
 
-          if (requirementsScore !== undefined && requirementsScore !== null) {
+          if (isStale) {
             return (
               <div
                 style={{
@@ -257,34 +257,43 @@ export default function CapabilitiesList() {
                   gap: "8px",
                 }}
               >
-                <LightBulb score={requirementsScore} size={20} />
-                {isStale ? (
-                  <span
-                    style={{
-                      fontFamily: "monospace",
-                      width: "70px",
-                      textAlign: "center",
-                      fontSize: "10px",
-                      paddingLeft: "20px",
-                    }}
-                  >
-                    click to
-                    <br />
-                    reload
-                  </span>
-                ) : (
-                  <span
-                    style={{
-                      fontFamily: "monospace",
-                      width: "70px",
-                      textAlign: "right",
-                    }}
-                  >{`${requirementsScore.toFixed(1)}%`}</span>
-                )}
+                <LightBulb score={-1} size={20} />
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    width: "70px",
+                    textAlign: "center",
+                    fontSize: "10px",
+                    paddingLeft: "20px",
+                  }}
+                >
+                  click to
+                  <br />
+                  reload
+                </span>
               </div>
             );
           }
-          return <div>Unknown</div>;
+
+          return (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+              }}
+            >
+              <LightBulb score={requirementsScore} size={20} />
+              <span
+                style={{
+                  fontFamily: "monospace",
+                  width: "70px",
+                  textAlign: "right",
+                }}
+              >{`${requirementsScore.toFixed(1)}%`}</span>
+            </div>
+          );
         },
       },
 
