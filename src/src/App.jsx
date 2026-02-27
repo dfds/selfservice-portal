@@ -17,6 +17,7 @@ import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
 import DemosPage from "./pages/demos";
+import { Header } from "./components/Header";
 
 function Footer() {
   return (
@@ -64,7 +65,8 @@ function Layout() {
       <AuthTemplate>
         <SiteLayout.Grid>
           <SiteLayout.Header>
-            <GlobalMenu />
+            {/* <GlobalMenu /> */}
+            <Header />
           </SiteLayout.Header>
           <SiteLayout.Main>
             <ErrorBoundary>
