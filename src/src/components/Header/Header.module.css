@@ -54,6 +54,7 @@
   text-decoration: none;
   font-size: 0.9rem;
   white-space: nowrap;
+  border-bottom: 2px solid transparent;
   transition:
     color 0.15s,
     background-color 0.15s;
@@ -66,7 +67,7 @@
 
 .navLinkActive {
   color: #0e7cc1;
-  border-bottom: 2px solid #002b45;
+  border-bottom-color: #002b45;
 }
 
 /* ===== Dropdown ===== */

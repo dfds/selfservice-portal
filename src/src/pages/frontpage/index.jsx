@@ -5,9 +5,6 @@ import {
   Column,
   Container,
   Hero as DfdsHero,
-  IconButton,
-  LinkButton,
-  Text,
 } from "@dfds-ui/react-components";
 import { Link } from "react-router-dom";
 
@@ -20,10 +17,8 @@ import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
-import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink, TrackedLinkButton } from "@/components/Tracking";
-import GrafanaWarning from "../GrafanaWarning";
 
 function Section({ children }) {
   return <div className={styles.section}>{children}</div>;
