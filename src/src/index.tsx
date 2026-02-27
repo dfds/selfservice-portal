@@ -14,7 +14,6 @@ import { Provider } from "react-redux";
 import store from "./state/local/store";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./state/remote/client";
-import SnowFall from "react-snowfall";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -28,15 +27,6 @@ root.render(
       <MsalProvider instance={msalInstance}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <GlobalStyles />
-          <SnowFall
-            style={{
-              position: "fixed",
-              width: "100vw",
-              height: "100vh",
-              zIndex: 9999,
-            }}
-            snowflakeCount={100}
-          />
           <QueryClientProvider client={queryClient}>
             <ErrorProvider>
               <TrackingProvider>
