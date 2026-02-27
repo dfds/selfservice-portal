@@ -15,6 +15,29 @@ import CapabilityCostSummary from "components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
+function RowLink({ to }) {
+  return (
+    <Link
+      to={to}
+      tabIndex={-1}
+      aria-hidden="true"
+      style={{ position: "absolute", inset: 0, zIndex: 1 }}
+    />
+  );
+}
+
+function withRowLinks(columns, getHref) {
+  return columns.map((col) => ({
+    ...col,
+    Cell: (props) => (
+      <>
+        <RowLink to={getHref(props.row)} />
+        {col.Cell ? col.Cell(props) : null}
+      </>
+    ),
+  }));
+}
+
 function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
 
@@ -43,6 +66,7 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       }}
       muiTableBodyCellProps={{
         sx: {
+          position: "relative",
           fontWeight: "400",
           fontSize: "16px",
           fontFamily: "DFDS",
@@ -92,7 +116,6 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       }}
       muiTableBodyRowProps={({ row }) => ({
         sx: {
-          position: "relative",
           cursor: "pointer",
           background: row.original.status === "Deleted" ? "#d88" : "",
           "&:hover td": {
@@ -179,7 +202,7 @@ export default function CapabilitiesList() {
   }, [isCapabilityFetched]);
 
   const columns = useMemo(
-    () => [
+    () => withRowLinks([
       {
         accessorFn: (row) => {
           return {
@@ -392,22 +415,7 @@ export default function CapabilitiesList() {
         muiTableBodyCellProps: {
           align: "right",
         },
-        Cell: ({ row }) => {
-          return (
-            <>
-              <Link
-                to={`/capabilities/${row.original.id}`}
-                aria-label={`View ${row.original.name}`}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 1,
-                }}
-              />
-              <ChevronRight />
-            </>
-          );
-        },
+        Cell: () => <ChevronRight />,
         Header: <div></div>, //enable empty header
       },
       {
@@ -423,7 +431,7 @@ export default function CapabilitiesList() {
         },
         Header: <div></div>, //enable empty header
       },
-    ],
+    ], (row) => `/capabilities/${row.original.id}`),
     [],
   );
 
