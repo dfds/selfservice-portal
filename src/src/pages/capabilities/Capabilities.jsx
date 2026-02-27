@@ -202,150 +202,159 @@ export default function CapabilitiesList() {
   }, [isCapabilityFetched]);
 
   const columns = useMemo(
-    () => withRowLinks([
-      {
-        accessorFn: (row) => {
-          return {
-            name: row.name,
-            description: row.description,
-            status: row.status,
-          };
-        },
-        header: "Name",
-        size: 350,
-        enableColumnFilterModes: true,
-        disableFilters: false,
-        enableGlobalFilter: true,
-        enableFilterMatchHighlighting: true,
+    () =>
+      withRowLinks(
+        [
+          {
+            accessorFn: (row) => {
+              return {
+                name: row.name,
+                description: row.description,
+                status: row.status,
+              };
+            },
+            header: "Name",
+            size: 350,
+            enableColumnFilterModes: true,
+            disableFilters: false,
+            enableGlobalFilter: true,
+            enableFilterMatchHighlighting: true,
 
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              {cell.getValue().status === "Pending Deletion" ? (
-                <Text styledAs="action" as={"div"}>
-                  <StatusAlert className={styles.warningIcon} />
-                </Text>
-              ) : null}
-              <Text styledAs="action" style={{ marginLeft: "20px" }} as={"div"}>
-                {truncateString(cell.getValue().name, 70)}
-              </Text>
-              <Text
-                styledAs="caption"
-                style={{ marginLeft: "20px" }}
-                as={"div"}
-              >
-                {truncateString(cell.getValue().description, 70)}
-              </Text>
-            </div>
-          );
-        },
-      },
+            Cell: ({ cell }) => {
+              return (
+                <div>
+                  {cell.getValue().status === "Pending Deletion" ? (
+                    <Text styledAs="action" as={"div"}>
+                      <StatusAlert className={styles.warningIcon} />
+                    </Text>
+                  ) : null}
+                  <Text
+                    styledAs="action"
+                    style={{ marginLeft: "20px" }}
+                    as={"div"}
+                  >
+                    {truncateString(cell.getValue().name, 70)}
+                  </Text>
+                  <Text
+                    styledAs="caption"
+                    style={{ marginLeft: "20px" }}
+                    as={"div"}
+                  >
+                    {truncateString(cell.getValue().description, 70)}
+                  </Text>
+                </div>
+              );
+            },
+          },
 
-      {
-        accessorFn: (row) => {
-          return {
-            requirementsScore: row.requirementScore,
-            totalScore: row.totalScore,
-            modifiedAt: row.modifiedAt,
-            id: row.id,
-          };
-        },
-        header: "Compliance",
-        size: 150,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          const cellValue = cell.getValue();
-          let requirementsScore = cellValue.requirementsScore;
-          const modifiedAt = cellValue.modifiedAt;
-          const capabilityId = cellValue.id;
+          {
+            accessorFn: (row) => {
+              return {
+                requirementsScore: row.requirementScore,
+                totalScore: row.totalScore,
+                modifiedAt: row.modifiedAt,
+                id: row.id,
+              };
+            },
+            header: "Compliance",
+            size: 150,
+            enableColumnFilterModes: false,
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            muiTableBodyCellProps: {
+              align: "center",
+            },
+            Cell: ({ cell }) => {
+              const cellValue = cell.getValue();
+              let requirementsScore = cellValue.requirementsScore;
+              const modifiedAt = cellValue.modifiedAt;
+              const capabilityId = cellValue.id;
 
-          // Check if data is stale (older than 2 weeks or score is missing)
-          const isStale = (() => {
-            if (!modifiedAt) return true;
-            if (requirementsScore === null || requirementsScore === undefined)
-              return true;
-            const twoWeeksAgo = new Date();
-            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-            const modifiedDate = new Date(modifiedAt);
-            return modifiedDate < twoWeeksAgo;
-          })();
+              // Check if data is stale (older than 2 weeks or score is missing)
+              const isStale = (() => {
+                if (!modifiedAt) return true;
+                if (
+                  requirementsScore === null ||
+                  requirementsScore === undefined
+                )
+                  return true;
+                const twoWeeksAgo = new Date();
+                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+                const modifiedDate = new Date(modifiedAt);
+                return modifiedDate < twoWeeksAgo;
+              })();
 
-          if (isStale) {
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                }}
-              >
-                <LightBulb score={-1} size={20} />
-                <span
+              if (isStale) {
+                return (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <LightBulb score={-1} size={20} />
+                    <span
+                      style={{
+                        fontFamily: "monospace",
+                        width: "70px",
+                        textAlign: "center",
+                        fontSize: "10px",
+                        paddingLeft: "20px",
+                      }}
+                    >
+                      click to
+                      <br />
+                      reload
+                    </span>
+                  </div>
+                );
+              }
+
+              return (
+                <div
                   style={{
-                    fontFamily: "monospace",
-                    width: "70px",
-                    textAlign: "center",
-                    fontSize: "10px",
-                    paddingLeft: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
                   }}
                 >
-                  click to
-                  <br />
-                  reload
-                </span>
-              </div>
-            );
-          }
+                  <LightBulb score={requirementsScore} size={20} />
+                  <span
+                    style={{
+                      fontFamily: "monospace",
+                      width: "70px",
+                      textAlign: "right",
+                    }}
+                  >{`${requirementsScore.toFixed(1)}%`}</span>
+                </div>
+              );
+            },
+          },
 
-          return (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-              }}
-            >
-              <LightBulb score={requirementsScore} size={20} />
-              <span
-                style={{
-                  fontFamily: "monospace",
-                  width: "70px",
-                  textAlign: "right",
-                }}
-              >{`${requirementsScore.toFixed(1)}%`}</span>
-            </div>
-          );
-        },
-      },
-
-      {
-        accessorFn: (row) => row.jsonMetadata,
-        header: "Cost Centre",
-        size: 50,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
-          if (jsonMetadata["dfds.cost.centre"] === undefined) {
-            return <div></div>;
-          }
-          return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
-        },
-      },
-      /*
+          {
+            accessorFn: (row) => row.jsonMetadata,
+            header: "Cost Centre",
+            size: 50,
+            enableColumnFilterModes: false,
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            muiTableBodyCellProps: {
+              align: "center",
+            },
+            Cell: ({ cell }) => {
+              const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
+              if (jsonMetadata["dfds.cost.centre"] === undefined) {
+                return <div></div>;
+              }
+              return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
+            },
+          },
+          /*
             {
               accessorFn: (row) => row.id,
               header: "Aws Resources",
@@ -371,67 +380,69 @@ export default function CapabilitiesList() {
             },
             */
 
-      {
-        accessorFn: (row) => row.costs,
-        header: "Costs",
-        size: 150,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        Cell: ({ cell }) => {
-          let data = cell.getValue() != null ? cell.getValue() : [];
-          return (
-            <div className={styles.costs}>
-              <CapabilityCostSummary data={data} />
-            </div>
-          );
-        },
-      },
+          {
+            accessorFn: (row) => row.costs,
+            header: "Costs",
+            size: 150,
+            enableColumnFilterModes: false,
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            muiTableBodyCellProps: {
+              align: "right",
+            },
+            Cell: ({ cell }) => {
+              let data = cell.getValue() != null ? cell.getValue() : [];
+              return (
+                <div className={styles.costs}>
+                  <CapabilityCostSummary data={data} />
+                </div>
+              );
+            },
+          },
 
-      {
-        accessorFn: (row) => row.awsAccountId,
-        header: "AwsAccountId",
-        enableColumnFilterModes: false,
-        disableFilters: false,
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue()}</div>;
-        },
-      },
-      {
-        accessorFn: (row) => row.id,
-        header: "arrow",
-        size: 1,
-        enableColumnFilterModes: false,
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        Cell: () => <ChevronRight />,
-        Header: <div></div>, //enable empty header
-      },
-      {
-        accessorFn: (row) => row.name,
-        header: "hiddenName",
-        size: 0,
-        enableColumnFilterModes: false,
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        Cell: ({ cell }) => {
-          return <div></div>;
-        },
-        Header: <div></div>, //enable empty header
-      },
-    ], (row) => `/capabilities/${row.original.id}`),
+          {
+            accessorFn: (row) => row.awsAccountId,
+            header: "AwsAccountId",
+            enableColumnFilterModes: false,
+            disableFilters: false,
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            muiTableBodyCellProps: {
+              align: "center",
+            },
+            Cell: ({ cell }) => {
+              return <div>{cell.getValue()}</div>;
+            },
+          },
+          {
+            accessorFn: (row) => row.id,
+            header: "arrow",
+            size: 1,
+            enableColumnFilterModes: false,
+            muiTableBodyCellProps: {
+              align: "right",
+            },
+            Cell: () => <ChevronRight />,
+            Header: <div></div>, //enable empty header
+          },
+          {
+            accessorFn: (row) => row.name,
+            header: "hiddenName",
+            size: 0,
+            enableColumnFilterModes: false,
+            muiTableBodyCellProps: {
+              align: "right",
+            },
+            Cell: ({ cell }) => {
+              return <div></div>;
+            },
+            Header: <div></div>, //enable empty header
+          },
+        ],
+        (row) => `/capabilities/${row.original.id}`,
+      ),
     [],
   );
 
