@@ -96,7 +96,10 @@ const FERRY_BUSINESS_CAPABILITIES = [
   { label: "Unit Warehousing", value: "unit-warehousing" },
   { label: "Vessel Management", value: "vessel-management" },
   { label: "Visit Access Control", value: "visit-access-control" },
-  { label: "Voyage Fuel Emission Optimisation", value: "voyage-fuel-emission-optimisation" },
+  {
+    label: "Voyage Fuel Emission Optimisation",
+    value: "voyage-fuel-emission-optimisation",
+  },
   { label: "Yard Management", value: "yard-management" },
 ];
 
@@ -199,7 +202,12 @@ export const ENUM_AVAILABILITY_OPTIONS = ENUM_AVAILABILITY.map((item) => ({
   label: item,
 }));
 
-export const ENUM_CLASSIFICATION = ["Private", "Confidential", "Restricted", "Public"];
+export const ENUM_CLASSIFICATION = [
+  "Private",
+  "Confidential",
+  "Restricted",
+  "Public",
+];
 export const ENUM_CLASSIFICATION_OPTIONS = ENUM_CLASSIFICATION.map((item) => ({
   value: item.toLowerCase(),
   label: item,
