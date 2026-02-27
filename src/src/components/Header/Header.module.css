@@ -1,0 +1,412 @@
+/* ===== Header bar ===== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  /* background-color: #002b45; */
+  color: #002b45;
+  height: 3.75rem;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); */
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 0.5rem;
+  gap: 2rem;
+}
+
+/* ===== Logo ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logoSvg {
+  height: 1.75rem;
+  width: auto;
+}
+
+/* ===== Desktop nav ===== */
+.desktopNav {
+  flex: 1;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  height: 3.75rem;
+  padding: 0 0.75rem;
+  color: #002b45;
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.navLink:hover {
+  color: #0e7cc1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navLinkActive {
+  color: #0e7cc1;
+  border-bottom: 2px solid #002b45;
+}
+
+/* ===== Dropdown ===== */
+.dropdown {
+  position: relative;
+  list-style: none;
+}
+
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  height: 3.75rem;
+  padding: 0 0.75rem;
+  /* color: rgba(255, 255, 255, 0.85); */
+  color: #002b45;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  gap: 0.25rem;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.dropdownTrigger:hover {
+  color: #002b45;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chevron {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 200;
+}
+
+.dropdown:hover .dropdownMenu {
+  display: block;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: #002b45;
+  text-decoration: none;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover {
+  background-color: #f2f2f2;
+}
+
+/* ===== Right actions ===== */
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ===== Profile button ===== */
+.profileWrapper {
+  position: relative;
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  color: #002b45;
+  transition: border-color 0.15s;
+}
+
+.profileButton:hover {
+  border-color: #002b45;
+}
+
+.profilePicture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profileIcon {
+  width: 1.4rem;
+  height: 1.4rem;
+  opacity: 0.85;
+}
+
+/* ===== Profile popover ===== */
+.profilePopover {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: white;
+  color: #002b45;
+  min-width: 220px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  padding: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 0.25rem;
+}
+
+.profilePictureSmall {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid #002b45;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profilePictureLarge {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileIconLarge {
+  width: 80%;
+  height: 80%;
+  opacity: 0.35;
+  color: #002b45;
+}
+
+.profileTitle {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.popoverLink {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: #002b45;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.popoverLink:hover {
+  background-color: #f2f2f2;
+}
+
+/* ===== Cloud engineer toggle ===== */
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #002b45;
+}
+
+.toggleWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleTrack {
+  display: inline-block;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: #ccc;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggleInput:checked ~ .toggleTrack {
+  background-color: #002b45;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggleInput:checked ~ .toggleTrack .toggleThumb {
+  transform: translateX(1rem);
+}
+
+/* ===== Hamburger ===== */
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #002b45;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  width: 40px;
+}
+
+.hamburger:hover {
+  background-color: rgba(0, 43, 69, 0.08);
+}
+
+/* ===== Mobile drawer ===== */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 300;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  background-color: #002b45;
+  color: white;
+  z-index: 400;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 1rem;
+}
+
+.drawerList {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 1rem;
+}
+
+.drawerLink {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.drawerLink:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.drawerLinkActive {
+  color: white;
+  font-weight: 600;
+  border-left: 3px solid white;
+  padding-left: calc(1.5rem - 3px);
+}
+
+.drawerGroupHeader {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem 0.25rem;
+}
+
+.drawerSubItem .drawerLink {
+  padding-left: 2.5rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .inner {
+    gap: 0.5rem;
+  }
+}
