@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
-import { Text } from "@dfds-ui/typography";
+import { useTheme } from "@/context/ThemeContext";
+import { Text } from "@/components/ui/Text";
 import { Link } from "react-router-dom";
-import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
-import { Spinner } from "@dfds-ui/react-components";
+import { ChevronRight, AlertCircle } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import AppContext from "AppContext";
 import PreAppContext from "@/preAppContext";
 import PageSection from "components/PageSection";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
-import { Switch } from "@dfds-ui/forms";
+import { Switch } from "@/components/ui/switch";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
@@ -40,6 +41,17 @@ function withRowLinks(columns, getHref) {
 
 function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
+  const { isDark } = useTheme();
+
+  const bg = isDark ? "#1e293b" : "#ffffff";
+  const bgMuted = isDark ? "#0f172a" : "#f2f2f2";
+  const bgDeleted = isDark ? "#3b1a1a" : "#dd8888";
+  const bgDeletedHover = isDark ? "#4a2020" : "rgba(187, 221, 243, 0.1)";
+  const textPrimary = isDark ? "#e2e8f0" : "#002b45";
+  const textMuted = isDark ? "#64748b" : "#afafaf";
+  const borderColor = isDark ? "#334155" : "#eeeeee";
+  const inputBorder = isDark ? "#334155" : undefined;
+  const inputText = isDark ? "#e2e8f0" : undefined;
 
   return (
     <MaterialReactTable
@@ -58,27 +70,32 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       }}
       muiTableHeadCellProps={{
         sx: {
-          fontWeight: "700",
-          fontSize: "16px",
-          fontFamily: "DFDS",
-          color: "#002b45",
+          fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
+          fontSize: "11px",
+          fontWeight: "600",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: textMuted,
+          borderBottom: `1px solid ${borderColor}`,
+          backgroundColor: bg,
         },
       }}
-      muiTableBodyCellProps={{
+      muiTableBodyCellProps={({ row }) => ({
         sx: {
           position: "relative",
           fontWeight: "400",
-          fontSize: "16px",
-          fontFamily: "DFDS",
-          color: "#4d4e4c",
+          fontSize: "14px",
+          color: textPrimary,
           padding: "5px",
+          backgroundColor: row.original.status === "Deleted" ? bgDeleted : bg,
+          borderBottom: `1px solid ${borderColor}`,
         },
-      }}
+      })}
       muiTablePaperProps={{
-        elevation: 0, //change the mui box shadow
-        //customize paper styles
+        elevation: 0,
         sx: {
           borderRadius: "0",
+          backgroundColor: bg,
         },
       }}
       enableGlobalFilterModes={true}
@@ -90,6 +107,16 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
           fontWeight: "400",
           fontSize: "16px",
           padding: "5px",
+          "& .MuiOutlinedInput-root": {
+            color: inputText,
+            "& fieldset": { borderColor: inputBorder },
+            "&:hover fieldset": { borderColor: inputBorder },
+            "&.Mui-focused fieldset": { borderColor: isDark ? "#60a5fa" : undefined },
+          },
+          "& .MuiInputBase-input::placeholder": {
+            color: textMuted,
+            opacity: 1,
+          },
         },
         size: "small",
         variant: "outlined",
@@ -106,23 +133,30 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       enableColumnActions={false}
       muiTopToolbarProps={{
         sx: {
-          background: "none",
+          background: bg,
+          color: textPrimary,
+          "& .MuiIconButton-root": { color: textMuted },
+          "& .MuiSvgIcon-root": { color: textMuted },
         },
       }}
       muiBottomToolbarProps={{
         sx: {
-          background: "none",
+          background: bg,
+          color: textPrimary,
+          borderTop: `1px solid ${borderColor}`,
+          "& .MuiIconButton-root": { color: textMuted },
+          "& .MuiTablePagination-root": { color: textPrimary },
+          "& .MuiTablePagination-selectLabel": { color: textMuted },
+          "& .MuiTablePagination-displayedRows": { color: textMuted },
+          "& .MuiSelect-icon": { color: textMuted },
         },
       }}
       muiTableBodyRowProps={({ row }) => ({
         sx: {
           cursor: "pointer",
-          background: row.original.status === "Deleted" ? "#d88" : "",
           "&:hover td": {
             backgroundColor:
-              row.original.status === "Deleted"
-                ? "rgba(187, 221, 243, 0.1)"
-                : "rgba(187, 221, 243, 0.4)",
+              row.original.status === "Deleted" ? bgDeletedHover : bgMuted,
           },
         },
       })}
@@ -225,7 +259,7 @@ export default function CapabilitiesList() {
                 <div>
                   {cell.getValue().status === "Pending Deletion" ? (
                     <Text styledAs="action" as={"div"}>
-                      <StatusAlert className={styles.warningIcon} />
+                      <AlertCircle className={styles.warningIcon} />
                     </Text>
                   ) : null}
                   <Text
@@ -302,7 +336,6 @@ export default function CapabilitiesList() {
                         width: "70px",
                         textAlign: "center",
                         fontSize: "10px",
-                        paddingLeft: "20px",
                       }}
                     >
                       click to
@@ -465,7 +498,7 @@ export default function CapabilitiesList() {
                 </span>
                 <Switch
                   checked={showOnlyMyCapabilities}
-                  onChange={toggleShowOnlyMyCapabilities}
+                  onCheckedChange={toggleShowOnlyMyCapabilities}
                 />
               </div>
               {isCloudEngineerEnabled && (
@@ -475,7 +508,7 @@ export default function CapabilitiesList() {
                   </span>
                   <Switch
                     checked={showDeletedCapabilities}
-                    onChange={toggleShowDeletedCapabilities}
+                    onCheckedChange={toggleShowDeletedCapabilities}
                   />
                 </div>
               )}

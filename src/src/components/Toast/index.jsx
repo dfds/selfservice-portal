@@ -1,12 +1,16 @@
 import styles from "./toast.module.css";
-import { Close } from "@dfds-ui/icons/system";
+import { X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { TrackedButton } from "@/components/Tracking";
 
-/*
- * This hook is used to get the previous value of a prop or state.
- */
 function usePrevious(value) {
   const ref = useRef();
   useEffect(() => {
@@ -23,29 +27,17 @@ export default function ErrorToast({ message, title, details }) {
   const [hide, setHide] = useState(false);
   const prevHide = usePrevious(hide);
 
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={() => setShowDetails(false)}
-      >
-        Close
-      </ModalAction>
-    </>
-  );
-
   useEffect(() => {
     setTimeout(() => {
       setOpacity(0.8);
-    }, 100); // arbitrary delay to allow the toast to render before fading in
+    }, 100);
   }, []);
 
   useEffect(() => {
     if (prevOpacity !== undefined && opacity === 0) {
       setTimeout(() => {
         setHide(true);
-      }, 300); // 300ms is the duration of the fade-out animation
+      }, 300);
     }
   }, [opacity]);
 
@@ -53,36 +45,26 @@ export default function ErrorToast({ message, title, details }) {
     if (prevHide !== undefined && hide === true) {
       setTimeout(() => {
         setShowToast(false);
-      }, 2000); // 300ms is the duration of the squeeze animation
+      }, 2000);
     }
   }, [hide]);
 
   return (
     <>
       {showDetails && details && (
-        <Modal
-          heading={title}
-          isOpen={true}
-          shouldCloseOnOverlayClick={true}
-          shouldCloseOnEsc={true}
-          showClose={false}
-          fixedTopPosition={true}
-          onRequestClose={() => setShowDetails(false)}
-          actions={actions}
-          sizes={{
-            s: "50%",
-            m: "50%",
-            l: "50%",
-            xl: "50%",
-            xxl: "50%",
-          }}
-        >
-          {details ? (
-            <div className={styles.error_body}>{details}</div>
-          ) : (
-            "No details available"
-          )}
-        </Modal>
+        <Dialog open={true} onOpenChange={(open) => !open && setShowDetails(false)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+            </DialogHeader>
+            <div className={styles.error_body}>{details ?? "No details available"}</div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowDetails(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
       {showToast && (
         <div
@@ -97,7 +79,7 @@ export default function ErrorToast({ message, title, details }) {
               fillWidth="true"
               onClick={() => setOpacity(0)}
             >
-              <Close className={styles.close_icon} />
+              <X className={styles.close_icon} />
             </TrackedButton>
           </div>
           <div className={styles.toast_message}>{message}</div>

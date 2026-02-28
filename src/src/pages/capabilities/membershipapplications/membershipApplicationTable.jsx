@@ -1,9 +1,9 @@
-import { Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
+import { Spinner } from "@/components/ui/spinner";
 import { MaterialReactTable } from "material-react-table";
 import { useMemo, useContext } from "react";
-import styles from "./index.module.css";
 import AppContext from "@/AppContext";
+import { useTheme } from "@/context/ThemeContext";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 export function MembershipApplicationTable({
   tableData,
@@ -13,6 +13,25 @@ export function MembershipApplicationTable({
   rejectButtonLabel,
 }) {
   const { truncateString } = useContext(AppContext);
+  const { isDark } = useTheme();
+  const muiTheme = useMemo(
+    () =>
+      createTheme({
+        palette: { mode: isDark ? "dark" : "light" },
+        components: {
+          MuiTableSortLabel: {
+            styleOverrides: {
+              icon: { opacity: 0.5 },
+              root: {
+                "&:hover .MuiTableSortLabel-icon": { opacity: 1 },
+                "&.Mui-active .MuiTableSortLabel-icon": { opacity: 1 },
+              },
+            },
+          },
+        },
+      }),
+    [isDark],
+  );
 
   const columns = useMemo(
     () => [
@@ -20,214 +39,159 @@ export function MembershipApplicationTable({
         accessorFn: (row) => row.capabilityId,
         header: "Capability",
         size: 30,
-        enableColumnFilterModes: false,
         enableClickToCopy: true,
-        Cell: ({ cell }) => {
-          return (
-            <div>
-              <Text styledAs="action" style={{ marginLeft: "0px" }} as={"div"}>
-                {truncateString(cell.getValue(), 70)}
-              </Text>
-              {/* <div style={{marginTop: "20px"}}></div> */}
-            </div>
-          );
-        },
+        Cell: ({ cell }) => (
+          <span className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0]">
+            {truncateString(cell.getValue(), 70)}
+          </span>
+        ),
       },
       {
-        accessorFn: (row) => {
-          return {
-            applicant: row.applicant,
-          };
-        },
+        accessorFn: (row) => row.applicant,
         header: "Applicant",
         size: 50,
-        enableColumnFilterModes: false,
-        enableClickToCopy: true,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue().applicant}</div>;
-        },
+        Cell: ({ cell }) => (
+          <span className="font-mono text-[11px] text-[#666666] dark:text-slate-400">
+            {cell.getValue()}
+          </span>
+        ),
       },
       {
         accessorFn: (row) => row.submittedAt,
         header: "Submitted",
         size: 50,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue()}</div>;
-        },
+        Cell: ({ cell }) => (
+          <span className="tabular-nums text-[12px] text-[#666666] dark:text-slate-400">
+            {cell.getValue()}
+          </span>
+        ),
       },
       {
         accessorFn: (row) => row.expiresOn,
         header: "Expires",
         size: 50,
-        enableColumnFilterModes: false,
-        muiTableHeadCellProps: {
-          align: "left",
-        },
-        muiTableBodyCellProps: {
-          align: "left",
-        },
-        Cell: ({ cell }) => {
-          return <div>{cell.getValue()}</div>;
-        },
+        Cell: ({ cell }) => (
+          <span className="tabular-nums text-[12px] text-[#666666] dark:text-slate-400">
+            {cell.getValue()}
+          </span>
+        ),
       },
       {
-        accessorFn: (row) => {
-          return {
-            data: row,
-          };
-        },
-        header: "op",
+        accessorFn: (row) => row,
+        header: "",
+        id: "actions",
         size: 50,
-        enableColumnFilterModes: false,
         enableSorting: false,
-        muiTableHeadCellProps: {
-          align: "right",
-        },
-        muiTableBodyCellProps: {
-          align: "right",
-        },
+        enableColumnFilter: false,
+        muiTableHeadCellProps: { align: "right" },
+        muiTableBodyCellProps: { align: "right" },
         Cell: ({ cell }) => {
-          return (
-            <div>
-              {cell.getValue().data.activeCrudOperation ? (
-                <div className={styles.buttons}>
-                  <Spinner />
-                </div>
-              ) : (
-                <div className={styles.buttons}>
-                  {handleApproveClicked != null && (
-                    <div
-                      className={styles.button}
-                      onClick={() => {
-                        handleApproveClicked(cell.getValue().data);
-                      }}
-                    >
-                      {approveButtonLabel != null
-                        ? approveButtonLabel
-                        : "Approve"}
-                    </div>
-                  )}
-                  <div
-                    className={`${styles.button} ${styles.reject}`}
-                    onClick={() => {
-                      handleRejectClicked(cell.getValue().data);
-                    }}
-                  >
-                    {rejectButtonLabel != null ? rejectButtonLabel : "Reject"}
-                  </div>
-                </div>
+          const row = cell.getValue();
+          return row.activeCrudOperation ? (
+            <div className="flex justify-end">
+              <Spinner size="sm" />
+            </div>
+          ) : (
+            <div className="flex justify-end gap-2">
+              {handleApproveClicked != null && (
+                <button
+                  type="button"
+                  onClick={() => handleApproveClicked(row)}
+                  className="cursor-pointer rounded-[4px] bg-[#0e7cc1] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#0b6aa5]"
+                >
+                  {approveButtonLabel ?? "Approve"}
+                </button>
               )}
+              <button
+                type="button"
+                onClick={() => handleRejectClicked(row)}
+                className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#a1192a]"
+              >
+                {rejectButtonLabel ?? "Reject"}
+              </button>
             </div>
           );
         },
-        Header: <div></div>,
+        Header: <div />,
       },
     ],
     [],
   );
 
   return (
-    <>
-      <div className={styles.membershipApplicationsContainer}>
-        <MaterialReactTable
-          columns={columns}
-          data={tableData}
-          initialState={{
-            pagination: { pageSize: 5 },
-            showGlobalFilter: false,
-            initialState: { density: "compact" },
-          }}
-          muiTableHeadCellProps={{
-            sx: {
-              fontWeight: "700",
-              fontSize: "16px",
-              fontFamily: "DFDS",
-              color: "#002b45",
-              padding: "0px 0px 0px 0px",
-            },
-          }}
-          muiTableBodyCellProps={{
-            sx: {
-              fontWeight: "400",
-              fontSize: "16px",
-              fontFamily: "DFDS",
-              color: "#4d4e4c",
-              padding: "15px 0px 15px 0px",
-            },
-          }}
-          muiTablePaperProps={{
-            elevation: 0,
-            sx: {
-              borderRadius: "0",
-            },
-          }}
-          muiTopToolbarProps={{
-            sx: {
-              background: "none",
-            },
-          }}
-          enableGlobalFilterModes={true}
-          positionGlobalFilter="left"
-          muiSearchTextFieldProps={{
-            placeholder: `Find a capability...`,
-            sx: {
-              minWidth: "1120px",
-              fontWeight: "400",
-              fontSize: "16px",
-              padding: "5px",
-            },
-            size: "small",
-            variant: "outlined",
-          }}
-          enablePagination={true}
-          globalFilterFn="contains"
-          enableFilterMatchHighlighting={true}
-          enableDensityToggle={true}
-          enableHiding={false}
-          enableFilters={false}
-          enableGlobalFilter={false}
-          enableFullScreenToggle={false}
-          enableTopToolbar={false}
-          enableBottomToolbar={true}
-          enableColumnActions={false}
-          muiBottomToolbarProps={{
-            sx: {
-              background: "none",
-            },
-          }}
-          muiTableBodyRowProps={({ row }) => {
-            return {
-              onClick: () => {},
-              sx: {
-                cursor: "pointer",
-                background: "",
-                padding: "0",
-                margin: "0",
-                minHeight: 0,
-                "&:hover td": {
-                  backgroundColor:
-                    row.original.status === "Deleted"
-                      ? "rgba(187, 221, 243, 0.1)"
-                      : "rgba(187, 221, 243, 0.4)",
-                },
-              },
-            };
-          }}
-        />
-      </div>
-    </>
+    <ThemeProvider theme={muiTheme}>
+      <MaterialReactTable
+        columns={columns}
+        data={tableData}
+        initialState={{
+          pagination: { pageSize: 5 },
+          showGlobalFilter: true,
+        }}
+        muiTableHeadCellProps={{
+          sx: {
+            fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
+            fontSize: "10px",
+            fontWeight: "600",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: isDark ? "#64748b" : "#afafaf",
+            borderBottom: isDark ? "1px solid #1e2d3d" : "1px solid #eeeeee",
+            background: "transparent",
+            paddingLeft: "0",
+            paddingRight: "16px",
+          },
+        }}
+        muiTableBodyCellProps={{
+          sx: {
+            fontSize: "13px",
+            color: isDark ? "#e2e8f0" : "#002b45",
+            borderBottom: isDark ? "1px solid #1e2d3d" : "1px solid #eeeeee",
+            background: "transparent",
+            padding: "10px 16px 10px 0",
+          },
+        }}
+        muiTablePaperProps={{
+          elevation: 0,
+          sx: { borderRadius: "0", background: "transparent" },
+        }}
+        muiTableContainerProps={{
+          sx: { background: "transparent" },
+        }}
+        muiTopToolbarProps={{
+          sx: { background: "transparent", minHeight: "40px", paddingLeft: 0 },
+        }}
+        muiBottomToolbarProps={{
+          sx: { background: "transparent" },
+        }}
+        muiSearchTextFieldProps={{
+          placeholder: "Search applications...",
+          sx: { minWidth: "260px", fontSize: "13px" },
+          size: "small",
+          variant: "outlined",
+        }}
+        muiTableHeadRowProps={{
+          sx: { background: "transparent" },
+        }}
+        muiTableBodyRowProps={{
+          sx: {
+            background: "transparent",
+            "&:hover td": { backgroundColor: isDark ? "#334155" : "#f2f2f2" },
+          },
+        }}
+        enableGlobalFilter={true}
+        enableGlobalFilterModes={true}
+        positionGlobalFilter="left"
+        globalFilterFn="contains"
+        enableFilterMatchHighlighting={true}
+        enableFilters={true}
+        enableColumnActions={false}
+        enableDensityToggle={false}
+        enableHiding={false}
+        enableFullScreenToggle={false}
+        enableTopToolbar={true}
+        enableBottomToolbar={true}
+        enablePagination={true}
+      />
+    </ThemeProvider>
   );
 }

@@ -1,7 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useDemos } from "@/state/remote/queries/demos";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/ui/Text";
 import styles from "./demos.module.css";
 import { TrackedButton } from "@/components/Tracking";
 import PageSection from "@/components/PageSection";
@@ -9,7 +16,6 @@ import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
 import DemoRecord from "./demoRecord";
 import DemoRegisterModal from "./DemoRegisterModal";
-// DemoEditModal will be created for editing
 import DemoEditModal from "./DemoEditModal";
 
 export default function RecordingsSection() {
@@ -71,29 +77,29 @@ export default function RecordingsSection() {
           />
         )}
         {showDeleteModal && (
-          <Modal
-            heading={"Confirm Deletion"}
-            isOpen={showDeleteModal}
-            shouldCloseOnOverlayClick={false}
-            shouldCloseOnEsc={true}
-            showClose={true}
-            fixedTopPosition={true}
-            onRequestClose={() => setShowDeleteModal(false)}
-          >
-            <Text>Are you sure you want to delete this demo recording?</Text>
-            <br />
-            <ModalAction
-              style={{ float: "right", marginRight: "1rem" }}
-              actionVariation="danger"
-              onClick={async () => {
-                removeDemoRecording(selectedDemoId);
-                setSelectedDemoId(null);
-                setShowDeleteModal(false);
-              }}
-            >
-              Delete
-            </ModalAction>
-          </Modal>
+          <Dialog open={showDeleteModal} onOpenChange={(o) => !o && setShowDeleteModal(false)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+              </DialogHeader>
+              <Text>Are you sure you want to delete this demo recording?</Text>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    removeDemoRecording(selectedDemoId);
+                    setSelectedDemoId(null);
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
         {isFetchedRecordings && demos.length > 0 ? (
           <div className={styles.recordingsGrid}>

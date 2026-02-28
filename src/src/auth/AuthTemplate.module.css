@@ -21,6 +21,11 @@
 .logo {
   width: 200px;
   margin-bottom: 30px;
+  color: #002b45;
+}
+
+:global(.dark) .logo {
+  color: #e2e8f0;
 }
 
 .button {

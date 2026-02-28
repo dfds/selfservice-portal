@@ -1,25 +1,20 @@
-import { ListItem, ListText, ListIcon } from "@dfds-ui/react-components";
-import { ArrowForward } from "@dfds-ui/icons/system";
 import { TrackedLink } from "@/components/Tracking";
 
 function Link({ title, url }) {
-  const Anchor = (props) => {
-    // eslint-disable-next-line jsx-a11y/anchor-has-content, react/jsx-no-target-blank
-    return (
-      <TrackedLink
-        trackName={`QuickLink-${title}`}
-        target="_blank"
-        href={url}
-        {...props}
-      />
-    ); // Looks like a link attribute is being mis-used, needs to be investigated further
-  };
-
   return (
-    <ListItem condensed divider as={Anchor} clickable>
-      <ListText>{title}</ListText>
-      <ListIcon icon={ArrowForward} />
-    </ListItem>
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="group flex items-center justify-between py-2 border-b border-[#eeeeee] dark:border-[#1e2d3d] no-underline first:pt-0 last:border-0 last:pb-0"
+    >
+      <span className="text-[13px] text-[#666666] dark:text-[#94a3b8] group-hover:text-[#0e7cc1] dark:group-hover:text-[#60a5fa] transition-colors">
+        {title}
+      </span>
+      <span className="font-mono text-[11px] text-[#afafaf] dark:text-[#64748b]">
+        ↗
+      </span>
+    </a>
   );
 }
 
@@ -28,22 +23,15 @@ const swaggerUrl = process.env.REACT_APP_API_BASE_URL + "/swagger";
 export default function QuickLinks() {
   return (
     <div>
-      <Link title={"AWS Login"} url="https://dfds.awsapps.com/start" />
-      <Link title={"Azure DevOps"} url="https://dev.azure.com/dfds" />
-      <Link title={"Finout"} url="https://app.finout.io/" />
-      <Link title={"GitHub"} url="https://github.com/dfds" />
-      <Link title={"Snyk"} url="https://app.snyk.io/login/sso" />
-      <Link title={"1Password"} url="https://dfds.1password.com/signin" />
-      <Link title={"Mural"} url="https://app.mural.co/t/dfds9874/home" />
-      <Link
-        title={"React Frontend Components"}
-        url="https://ui-components-three.vercel.app"
-      />
-      <Link title={"Swagger API Documentation"} url={swaggerUrl} />
-      {/*<Link
-        title={"AI Deployment in Azure"}
-        url="https://wiki.dfds.cloud/en/playbooks/ai-deployment-azure/getting-started"
-      />*/}
+      <Link title="AWS Login" url="https://dfds.awsapps.com/start" />
+      <Link title="Azure DevOps" url="https://dev.azure.com/dfds" />
+      <Link title="Finout" url="https://app.finout.io/" />
+      <Link title="Grafana read stack" url="https://view.grafana.dfds.cloud/" />
+      <Link title="GitHub" url="https://github.com/dfds" />
+      <Link title="Snyk" url="https://app.snyk.io/login/sso" />
+      <Link title="1Password" url="https://dfds.1password.com/signin" />
+      <Link title="Mural" url="https://app.mural.co/t/dfds9874/home" />
+      <Link title="Self Service API Documentation" url={swaggerUrl} />
     </div>
   );
 }

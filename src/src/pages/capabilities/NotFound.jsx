@@ -1,14 +1,14 @@
-import { Container, Column, Card } from "@dfds-ui/react-components";
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/Text";
 import styles from "./NotFound.module.css";
-import { Text } from "@dfds-ui/typography";
 
 export default function NotFound() {
   // TODO: currently not being used because of the new error/notFound banner
   return (
     <>
-      <Container>
-        <Column m={12} l={12} xl={12} xxl={12}>
-          <Card variant="fill" surface="main">
+      <div className="container mx-auto px-4 max-w-screen-xl">
+        <div className="w-full">
+          <Card className="bg-white">
             <div className={styles.notfound}>
               <br />
 
@@ -24,8 +24,8 @@ export default function NotFound() {
               </Text>
             </div>
           </Card>
-        </Column>
-      </Container>
+        </div>
+      </div>
     </>
   );
 }

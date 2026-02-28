@@ -1,6 +1,14 @@
 import React, { useState, useContext } from "react";
-import { TextField } from "@dfds-ui/react-components";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import styles from "./demos.module.css";
 import AppContext from "@/AppContext";
 
@@ -29,92 +37,82 @@ export default function DemoRegisterModal({ isOpen, onClose }) {
 
   const { addNewDemoRecording } = useContext(AppContext);
 
+  const handleRegister = async () => {
+    let valid = true;
+    if (formData.description.trim() === "") {
+      setDescriptionError("Description is required.");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      recordingUrl: formData.recordingUrl,
+      slidesUrl: formData.slidesUrl,
+      recordingDate: formData.recordingDate,
+    };
+
+    addNewDemoRecording(payload);
+    onClose();
+  };
+
   return (
-    <Modal
-      heading={"Register Demo Recording"}
-      isOpen={isOpen}
-      shouldCloseOnOverlayClick={false}
-      shouldCloseOnEsc={true}
-      showClose={true}
-      fixedTopPosition={true}
-      onRequestClose={onClose}
-    >
-      <label
-        htmlFor="recordingDescription"
-        className={styles.recordingDateLabel}
-      >
-        Description
-      </label>
-      <textarea
-        id="recordingDescription"
-        className={styles.recordingDescriptionInput}
-        placeholder="Enter a description"
-        required
-        value={formData.description}
-        onChange={changeDescription}
-        errorMessage={descriptionError}
-      ></textarea>
-      <TextField
-        label="Recording URL"
-        placeholder="Enter the URL of the recording (e.g., YouTube link)"
-        required
-        value={formData.recordingUrl}
-        onChange={(e) =>
-          setFormData({ ...formData, recordingUrl: e.target.value })
-        }
-        maxLength={500}
-      ></TextField>
-      <TextField
-        label="Slides URL"
-        placeholder="Enter the URL of the slides (optional)"
-        value={formData.slidesUrl}
-        onChange={(e) =>
-          setFormData({ ...formData, slidesUrl: e.target.value })
-        }
-        maxLength={500}
-        style={{ marginTop: "1rem" }}
-      ></TextField>
-      <label htmlFor="recordingDate" className={styles.recordingDateLabel}>
-        Recording Date
-      </label>
-      <input
-        id="recordingDate"
-        type="date"
-        onChange={handleRecordingDateChange}
-        value={formData.recordingDate}
-        className={styles.recordingDateInput}
-      ></input>
-
-      <div style={{ height: "1rem" }}></div>
-      <ModalAction
-        style={{ float: "right", marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={async () => {
-          // Basic validation
-          let valid = true;
-          if (formData.description.trim() === "") {
-            setDescriptionError("Description is required.");
-            valid = false;
-          }
-
-          if (!valid) return;
-
-          // Prepare data
-          const payload = {
-            title: formData.title,
-            description: formData.description,
-            recordingUrl: formData.recordingUrl,
-            slidesUrl: formData.slidesUrl,
-            recordingDate: formData.recordingDate,
-          };
-
-          // Call mutation
-          addNewDemoRecording(payload);
-          onClose();
-        }}
-      >
-        Register Demo
-      </ModalAction>
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Register Demo Recording</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="recordingDescription">Description</Label>
+            <textarea
+              id="recordingDescription"
+              className={styles.recordingDescriptionInput}
+              placeholder="Enter a description"
+              required
+              value={formData.description}
+              onChange={changeDescription}
+            ></textarea>
+            {descriptionError && <p className="text-xs text-red-500">{descriptionError}</p>}
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="register-recording-url">Recording URL</Label>
+            <Input
+              id="register-recording-url"
+              placeholder="Enter the URL of the recording (e.g., YouTube link)"
+              required
+              value={formData.recordingUrl}
+              onChange={(e) => setFormData({ ...formData, recordingUrl: e.target.value })}
+              maxLength={500}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="register-slides-url">Slides URL</Label>
+            <Input
+              id="register-slides-url"
+              placeholder="Enter the URL of the slides (optional)"
+              value={formData.slidesUrl}
+              onChange={(e) => setFormData({ ...formData, slidesUrl: e.target.value })}
+              maxLength={500}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="register-recording-date">Recording Date</Label>
+            <input
+              id="register-recording-date"
+              type="date"
+              onChange={handleRecordingDateChange}
+              value={formData.recordingDate}
+              className={`${styles.recordingDateInput} border rounded px-3 py-2 text-sm`}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleRegister}>Register Demo</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

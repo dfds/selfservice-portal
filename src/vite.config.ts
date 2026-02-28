@@ -1,11 +1,13 @@
 import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import {
   defineConfig,
   loadEnv,
   createFilter,
   transformWithEsbuild,
 } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
@@ -17,6 +19,7 @@ export default defineConfig(({ mode }) => {
   setEnv(mode);
   return {
     plugins: [
+      tailwindcss(),
       react(),
       tsconfigPaths(),
       envPlugin(),
@@ -40,6 +43,16 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       global: {},
+      "process.env.REACT_APP_COMMIT_HASH": JSON.stringify(
+        process.env.REACT_APP_COMMIT_HASH ||
+          (() => {
+            try {
+              return execSync("git rev-parse --short HEAD").toString().trim();
+            } catch {
+              return "";
+            }
+          })(),
+      ),
     },
     resolve: {
       alias: {

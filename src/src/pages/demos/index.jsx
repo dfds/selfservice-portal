@@ -1,16 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  Card,
-  CardTitle,
-  CardContent,
-  CardActions,
-  CardMedia,
-} from "@dfds-ui/react-components";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
-import { Text } from "@dfds-ui/typography";
-import { StatusSuccess } from "@dfds-ui/icons/system";
+import { Text } from "@/components/ui/Text";
+import { CheckCircle } from "lucide-react";
+import { InfoAlert } from "@/components/ui/InfoAlert";
 import Page from "components/Page";
-import SplashImage from "./demos.png";
 import styles from "./demos.module.css";
 import { TrackedButton } from "@/components/Tracking";
 import AppContext from "@/AppContext";
@@ -34,14 +27,6 @@ export default function DemosPage() {
       setIsLoading(false);
     }
   }, [myUserSettings]);
-
-  const splash = (
-    <CardMedia
-      aspectRatio="3:2"
-      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
-      className={styles.cardMedia}
-    />
-  );
 
   const toggleSignedUpForDemos = () => {
     const newValue = !isSignedUp;
@@ -70,89 +55,61 @@ export default function DemosPage() {
             onClose={() => setShowSignupModal(false)}
           />
         )}
-        <Card
-          variant="fill"
-          surface="main"
-          size="xl"
-          reverse={true}
-          media={splash}
-        >
-          <CardTitle largeTitle>Stay in the loop</CardTitle>
-          <CardContent>
-            <p>
-              The cloud engineering team hosts demo sessions on a regular basis
-              in order to showcase new features, tools, and best practices.
-              These sessions are designed to provide valuable insights and
-              updates to our community.
-            </p>
-            <p>
-              All our demos are recorded and will be made available on this
-              page.
-            </p>
-            <p>
-              By signing up for the demo sessions on this page, we will know to
-              keep you in the loop going forward.
-            </p>
-          </CardContent>
-          {isLoading ? (
-            <CardActions>
+        <InfoAlert className="mb-4">
+          <p className="font-semibold mb-1">Stay in the loop</p>
+          <p className="mb-1">
+            The cloud engineering team hosts demo sessions on a regular basis
+            to showcase new features, tools, and best practices. All demos are
+            recorded and available on this page.
+          </p>
+          <p className="mb-3">
+            Sign up below to receive invitations for future demo sessions.
+          </p>
+          <div className="flex gap-2 flex-wrap items-center">
+            {isLoading ? (
               <Text>Loading...</Text>
-            </CardActions>
-          ) : (
-            <CardActions>
-              {!isSignedUp ? (
-                <TrackedButton
-                  trackName="SignUpForDemos"
-                  size="small"
-                  onClick={() => toggleSignedUpForDemos()}
-                >
-                  Sign Up For Future Demos
-                </TrackedButton>
-              ) : (
-                <>
-                  <Text
-                    style={{ width: "100%", color: "green", fontSize: "16px" }}
-                    className="signedUpMessage"
-                  >
-                    <StatusSuccess
-                      style={{
-                        width: "25px",
-                        height: "25px",
-                        marginRight: "4px",
-                      }}
-                    />
-                    Great, you're signed up for demo invitations!
-                  </Text>
+            ) : (
+              <>
+                {!isSignedUp ? (
                   <TrackedButton
-                    trackName="CancelSignUpForDemos"
-                    variation="outlined"
+                    trackName="SignUpForDemos"
                     size="small"
                     onClick={() => toggleSignedUpForDemos()}
                   >
-                    Stop Receiving Demo Invites
+                    Sign Up For Future Demos
                   </TrackedButton>
-                </>
-              )}
-            </CardActions>
-          )}
+                ) : (
+                  <>
+                    <span className="flex items-center gap-1.5 text-[#4caf50] text-[13px]">
+                      <CheckCircle size={16} />
+                      You're signed up for demo invitations
+                    </span>
+                    <TrackedButton
+                      trackName="CancelSignUpForDemos"
+                      variation="outlined"
+                      size="small"
+                      onClick={() => toggleSignedUpForDemos()}
+                    >
+                      Stop Receiving Demo Invites
+                    </TrackedButton>
+                  </>
+                )}
+              </>
+            )}
+          </div>
           {isCloudEngineerEnabled && (
-            <CardContent>
-              <p>
-                As a Cloud Engineer, you have access to the list of signups:
-              </p>
+            <div className="mt-3 pt-3 border-t border-[rgba(14,124,193,0.2)] dark:border-[rgba(14,124,193,0.3)]">
               <TrackedButton
                 trackName="ViewDemoSignups"
                 variation="outlined"
                 size="small"
-                onClick={() => {
-                  setShowSignupModal(true);
-                }}
+                onClick={() => setShowSignupModal(true)}
               >
                 View Demo Signups
               </TrackedButton>
-            </CardContent>
+            </div>
           )}
-        </Card>
+        </InfoAlert>
         <RecordingsSection />
       </Page>
     </>

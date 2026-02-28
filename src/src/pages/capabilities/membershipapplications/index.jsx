@@ -3,13 +3,8 @@ import {
   useMembershipApplications,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
-import { StatusSuccess } from "@dfds-ui/icons/system";
-import {
-  Badge,
-  Banner,
-  BannerHeadline,
-  BannerParagraph,
-} from "@dfds-ui/react-components";
+import { CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
@@ -32,17 +27,20 @@ export function MyMembershipApplication() {
 
   return (
     <div>
-      <Banner variant={"lowEmphasis"} icon={StatusSuccess}>
-        <BannerHeadline>Membership Application Received</BannerHeadline>
-        <BannerParagraph>
-          Your request to join this capability has been received and it's
-          waiting approval from existing members.
-          <br />
-          <br />
-          <strong>Please note:</strong> this application expires{" "}
-          <ExpirationDate date={application.expiresOn} />!
-        </BannerParagraph>
-      </Banner>
+      <div className="flex gap-3 items-start rounded-md border border-[#c8e6c9] dark:border-green-800 bg-[#e8f5e9] dark:bg-green-950 p-4">
+        <CheckCircle className="mt-0.5 shrink-0 text-[#388e3c] dark:text-green-400" size={20} />
+        <div>
+          <p className="font-semibold text-[#1b5e20] dark:text-green-300">Membership Application Received</p>
+          <p className="text-sm text-[#2e7d32] dark:text-green-300">
+            Your request to join this capability has been received and it&apos;s
+            waiting approval from existing members.
+            <br />
+            <br />
+            <strong>Please note:</strong> this application expires{" "}
+            <ExpirationDate date={application.expiresOn} />!
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -52,7 +50,7 @@ function ExpirationDate({ date }) {
   const label = intlFormatDistance(new Date(date), new Date());
 
   return daysUntil < 3 ? (
-    <Badge intent="critical">{label}</Badge>
+    <Badge variant="destructive">{label}</Badge>
   ) : (
     <span>{label}</span>
   );
@@ -178,7 +176,7 @@ export function MembershipApplicationsUserCanApprove({
           handleRejectClicked={handleRejectClicked}
         />
       ) : (
-        <>You have no membership applications to consider</>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">No pending membership applications</p>
       )}
     </>
   );

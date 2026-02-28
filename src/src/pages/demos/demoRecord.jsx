@@ -1,11 +1,6 @@
 import React from "react";
 import styles from "./demos.module.css";
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  Document as DocumentIcon,
-  Play as PlayIcon,
-} from "@dfds-ui/icons/system";
+import { Trash2, Pencil, FileText, Play } from "lucide-react";
 
 function renderDate(dateString) {
   const date = new Date(dateString);
@@ -34,7 +29,7 @@ export default function DemoRecord({
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
-                <PlayIcon style={{ fontSize: "1.1em" }} />
+                <Play style={{ fontSize: "1.1em" }} />
                 Watch Recording
               </a>
             )}
@@ -45,7 +40,7 @@ export default function DemoRecord({
                 rel="noopener noreferrer"
                 className={styles.linkButton}
               >
-                <DocumentIcon style={{ fontSize: "1.1em" }} />
+                <FileText style={{ fontSize: "1.1em" }} />
                 View Slides
               </a>
             )}
@@ -54,7 +49,7 @@ export default function DemoRecord({
         {isCloudEngineerEnabled && (
           <div className={styles.iconButtonRow}>
             <div className={styles.editButtonContainer}>
-              <EditIcon
+              <Pencil
                 className={styles.editButtonIcon}
                 onClick={(e) => {
                   e.preventDefault();
@@ -64,7 +59,7 @@ export default function DemoRecord({
               />
             </div>
             <div className={styles.deleteButtonContainer}>
-              <DeleteIcon
+              <Trash2
                 className={styles.deleteButtonIcon}
                 onClick={(e) => {
                   e.preventDefault();

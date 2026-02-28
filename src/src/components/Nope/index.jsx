@@ -1,34 +1,23 @@
-import { Container, Column } from "@dfds-ui/react-components";
 import styles from "./Nope.module.css";
-import { Text } from "@dfds-ui/typography";
 import image from "./404.gif";
 
 export default function Nope() {
   return (
     <>
-      <br />
-      <br />
-      <Container>
-        <Column m={12} l={12} xl={12} xxl={12}>
-          <div className={styles.nope}>
-            <div className={styles.column}>
-              <Text
-                as={"div"}
-                style={{ fontSize: "10rem" }}
-                styledAs="heroHeadline"
-              >
-                Nope!
-              </Text>
-              <Text as={"div"} styledAs="subHeadline">
-                Not for you
-              </Text>
+      <div className="h-8" />
+      <div className="container mx-auto px-4 max-w-screen-xl">
+        <div className={styles.nope}>
+          <div className={styles.column}>
+            <div style={{ fontSize: "10rem" }} className="font-bold text-[#002b45] leading-none">
+              Nope!
             </div>
-            <div className={styles.column}>
-              <img src={image} alt={""} />
-            </div>
+            <div className="text-xl text-[#002b45]">Not for you</div>
           </div>
-        </Column>
-      </Container>
+          <div className={styles.column}>
+            <img src={image} alt="" />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

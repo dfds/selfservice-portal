@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip, TextField, Text } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
 
@@ -135,25 +143,42 @@ const BasicInformationStep = ({
   return (
     <>
       <div className={styles.tooltip}>
-        <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word name (e.g. foo-bar instead of foo_bar).'></Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="cursor-help underline decoration-dotted text-sm text-[#666666]">
+                Naming tip
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              It is recommended to use &quot;-&quot; (dashes) to separate words in a multi word name (e.g. foo-bar instead of foo_bar).
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <TextField
-        label="Name"
-        placeholder="Enter name of capability"
-        required
-        value={formData.shortName}
-        onChange={changeName}
-        errorMessage={nameError}
-        maxLength={255}
-      />
-      <TextField
-        label="Description"
-        placeholder="Enter a description"
-        required
-        value={formData.description}
-        onChange={changeDescription}
-        errorMessage={descriptionError}
-      ></TextField>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="selfassessment-name">Name <span aria-hidden="true">*</span></Label>
+        <Input
+          id="selfassessment-name"
+          placeholder="Enter name of capability"
+          required
+          value={formData.shortName}
+          onChange={changeName}
+          maxLength={255}
+        />
+        {nameError && <p className="text-xs text-red-600">{nameError}</p>}
+      </div>
+      <div className="flex flex-col gap-1 mt-2">
+        <Label htmlFor="selfassessment-description">Description <span aria-hidden="true">*</span></Label>
+        <Input
+          id="selfassessment-description"
+          placeholder="Enter a description"
+          required
+          value={formData.description}
+          onChange={changeDescription}
+        />
+        {descriptionError && <p className="text-xs text-red-600">{descriptionError}</p>}
+      </div>
     </>
   );
 };
@@ -191,13 +216,16 @@ const DocumentationStep = ({ formValues, setFormValues, setCanContinue }) => {
         future, we will link capability users to whichever documentation you see
         fit for this assessment. Consider adding this information already now.
       </Text>
-      <TextField
-        label="Documentation URL"
-        placeholder="Enter a URL for documentation"
-        required
-        value={formData.documentationUrl}
-        onChange={changeDocumentationURL}
-      ></TextField>
+      <div className="flex flex-col gap-1 mt-2">
+        <Label htmlFor="documentation-url">Documentation URL <span aria-hidden="true">*</span></Label>
+        <Input
+          id="documentation-url"
+          placeholder="Enter a URL for documentation"
+          required
+          value={formData.documentationUrl}
+          onChange={changeDocumentationURL}
+        />
+      </div>
     </>
   );
 };

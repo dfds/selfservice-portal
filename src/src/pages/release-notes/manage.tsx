@@ -13,8 +13,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "@/state/remote/client";
 import PreAppContext from "@/preAppContext";
-import { Modal, ModalAction } from "@dfds-ui/modal";
-import { Text } from "@dfds-ui/typography";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/Text";
 
 function CreateReleaseNoteButton({ onClick }) {
   return (
@@ -33,36 +40,12 @@ function CreateReleaseNoteButton({ onClick }) {
 }
 
 function WarningDialog({ onCloseRequested, onAccept }) {
-  const actions = (
-    <>
-      {/*ModalActions does not support danger/warning variations currently*/}
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={onAccept}
-      >
-        Accept
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Cancel
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`Delete Release Note`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete Release Note</DialogTitle>
+        </DialogHeader>
         <div className={styles.container}>
           <div className={styles.column}>
             <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
@@ -72,8 +55,14 @@ function WarningDialog({ onCloseRequested, onAccept }) {
             </span>
           </div>
         </div>
-      </Modal>
-    </>
+        <DialogFooter>
+          <Button variant="outline" onClick={onCloseRequested}>
+            Cancel
+          </Button>
+          <Button onClick={onAccept}>Accept</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

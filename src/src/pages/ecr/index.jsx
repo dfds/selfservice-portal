@@ -1,22 +1,20 @@
-import React, { useState, useMemo, useEffect, useContext } from "react";
-import { MaterialReactTable } from "material-react-table";
+import React, { useState, useMemo } from "react";
 import {
-  Card,
-  CardTitle,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Spinner,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
-import Page from "components/Page";
-import PageSection from "components/PageSection";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import NewRepositoryDialog from "./NewRepositoryDialog";
-import SplashImage from "./repository.jpg";
-import styles from "./ecr.module.css";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
-import { TrackedButton, TrackedLink } from "@/components/Tracking";
+import { TrackedLink } from "@/components/Tracking";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { InfoAlert } from "@/components/ui/InfoAlert";
+
+const PAGE_SIZE = 20;
 
 const asDate = (dateString) => {
   let millis = Date.parse(dateString);
@@ -30,214 +28,181 @@ const asDate = (dateString) => {
 
 const documentationUrl =
   "https://wiki.dfds.cloud/playbooks/supporting-services/ecr/push_image_to_an_ecr_repository";
-const NoUri = () => {
+
+function NoUri() {
   return (
-    <Text>
+    <span>
       Error producing URI. Please refer to the{" "}
       <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>
         documentation
       </TrackedLink>
-    </Text>
+    </span>
   );
-};
+}
 
-function Repositories() {
+function RepositoryDetailDialog({ repository, onClose }) {
+  if (!repository) return null;
+  return (
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>ECR Repository Details</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-3 mt-1">
+          {[
+            { label: "Description", value: repository.description },
+            { label: "Name", value: repository.name },
+            {
+              label: "URI",
+              value: repository.uri ? repository.uri : <NoUri />,
+            },
+            {
+              label: "Created",
+              value: repository.requestedAt
+                ? `${asDate(repository.requestedAt)}, by ${repository.createdBy}`
+                : "—",
+            },
+          ].map(({ label, value }) => (
+            <div key={label} className="flex gap-4 text-[13px]">
+              <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] pt-[3px] w-[100px] flex-shrink-0">
+                {label}
+              </span>
+              <span className="text-[#002b45] dark:text-[#e2e8f0] break-all">{value}</span>
+            </div>
+          ))}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Repositories({ onNewRepository }) {
   const { isFetched, data } = useEcrRepositories();
-  const [showRepositoryDetails, setShowRepositoryDetails] = useState(false);
   const [selectedRepository, setSelectedRepository] = useState(null);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
 
-  const clickHandler = (data) => {
-    setSelectedRepository(data);
-    setShowRepositoryDetails(true);
-  };
-
-  function RepositoryDetails({ onCloseRequested }) {
-    const actions = (
-      <>
-        {/*ModalActions does not support danger/warning variations currently*/}
-        <ModalAction
-          style={{ marginRight: "1rem" }}
-          actionVariation="secondary"
-          onClick={onCloseRequested}
-        >
-          Close
-        </ModalAction>
-      </>
+  const filtered = useMemo(() => {
+    const repos = data ?? [];
+    const q = search.trim().toLowerCase();
+    if (!q) return repos;
+    return repos.filter(
+      (r) =>
+        r.name?.toLowerCase().includes(q) ||
+        r.description?.toLowerCase().includes(q),
     );
+  }, [data, search]);
 
-    return (
-      <>
-        <Modal
-          heading={`ECR Repository details`}
-          isOpen={true}
-          shouldCloseOnOverlayClick={true}
-          shouldCloseOnEsc={true}
-          onRequestClose={onCloseRequested}
-          actions={actions}
-        >
-          <div className={styles.container}>
-            <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Description</Text>{" "}
-              <span className={styles.breakwords}>
-                {selectedRepository.description}
-              </span>
-            </div>
-          </div>
-          <div className={styles.container}>
-            <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Name</Text>{" "}
-              <span className={styles.breakwords}>
-                {selectedRepository.name}
-              </span>
-            </div>
-          </div>
-          <div className={styles.container}>
-            <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>URI</Text>{" "}
-              <span className={styles.breakwords}>
-                {selectedRepository.uri ? selectedRepository.uri : <NoUri />}
-              </span>
-            </div>
-          </div>
-          <div className={styles.container}>
-            <div className={styles.column}>
-              <Text styledAs={"smallHeadline"}>Creation</Text>{" "}
-              <span className={styles.breakwords}>
-                {asDate(selectedRepository.requestedAt)}, by{" "}
-                {selectedRepository.createdBy}
-              </span>
-            </div>
-          </div>
-        </Modal>
-      </>
-    );
-  }
-
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "description",
-        header: "Description",
-        size: 250,
-        Cell: ({ renderedCellValue }) => {
-          return (
-            <Text styledAs="action" as={"div"}>
-              {renderedCellValue}
-            </Text>
-          );
-        },
-      },
-      {
-        accessorKey: "name",
-        header: "Name",
-        size: 250,
-        Cell: ({ renderedCellValue }) => {
-          return (
-            <Text styledAs="action" as={"div"}>
-              {renderedCellValue}
-            </Text>
-          );
-        },
-      },
-    ],
-    [],
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const pageRepos = filtered.slice(
+    currentPage * PAGE_SIZE,
+    currentPage * PAGE_SIZE + PAGE_SIZE,
   );
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setPage(0);
+  };
 
   return (
     <>
-      {showRepositoryDetails && (
-        <RepositoryDetails
-          onCloseRequested={() => {
-            setShowRepositoryDetails(false);
-          }}
+      {selectedRepository && (
+        <RepositoryDetailDialog
           repository={selectedRepository}
+          onClose={() => setSelectedRepository(null)}
         />
       )}
-      <PageSection headline={`Repositories`}>
-        {!isFetched && <Spinner />}
-        {isFetched && (
-          <MaterialReactTable
-            columns={columns}
-            data={data}
-            initialState={{
-              pagination: { pageSize: 50 },
-              showGlobalFilter: true,
-            }}
-            muiTableHeadCellProps={{
-              sx: {
-                fontWeight: "700",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#002b45",
-              },
-            }}
-            muiTableBodyCellProps={{
-              sx: {
-                fontWeight: "400",
-                fontSize: "16px",
-                fontFamily: "DFDS",
-                color: "#4d4e4c",
-                padding: "15px",
-              },
-            }}
-            muiTablePaperProps={{
-              elevation: 0,
-              sx: {
-                borderRadius: "0",
-              },
-            }}
-            muiTopToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-            muiBottomToolbarProps={{
-              sx: {
-                background: "none",
-              },
-            }}
-            enableGlobalFilterModes={true}
-            positionGlobalFilter="left"
-            muiSearchTextFieldProps={{
-              placeholder: `Find a repository...`,
-              sx: {
-                minWidth: "1120px",
-                fontWeight: "400",
-                fontSize: "16px",
-                padding: "5px",
-              },
-              size: "small",
-              variant: "outlined",
-            }}
-            enablePagination={true}
-            globalFilterFn="contains"
-            enableFilterMatchHighlighting={true}
-            enableDensityToggle={false}
-            enableHiding={false}
-            enableFilters={true}
-            enableGlobalFilter={true}
-            enableTopToolbar={true}
-            enableBottomToolbar={true}
-            enableColumnActions={false}
-            muiTableBodyRowProps={({ row }) => {
-              return {
-                onClick: () => {
-                  clickHandler(row.original);
-                },
-                sx: {
-                  cursor: "pointer",
-                  padding: 0,
-                  margin: 0,
-                  minHeight: 0,
-                  "&:hover td": {
-                    backgroundColor: "rgba(187, 221, 243, 0.4)",
-                  },
-                },
-              };
-            }}
-          />
-        )}
-      </PageSection>
+
+      <div className="mb-5">
+        <input
+          type="text"
+          value={search}
+          onChange={handleSearch}
+          placeholder="Find a repository..."
+          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
+        />
+      </div>
+
+      {!isFetched ? (
+        <Spinner />
+      ) : (
+        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
+          <div className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
+               style={{ gridTemplateColumns: "2fr 3fr" }}>
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+              Description
+            </span>
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+              Name
+            </span>
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="px-[1.125rem] py-4 font-mono text-[12px] text-[#afafaf]">
+              No repositories found.
+            </div>
+          )}
+
+          {pageRepos.map((repo) => (
+            <div
+              key={repo.name}
+              className="grid border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 px-[1.125rem] py-[0.875rem] cursor-pointer hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors items-center"
+              style={{ gridTemplateColumns: "2fr 3fr" }}
+              onClick={() => setSelectedRepository(repo)}
+            >
+              <span className="text-[13px] text-[#666666] dark:text-[#94a3b8] leading-[1.4] pr-4">
+                {repo.description}
+              </span>
+              <span className="font-mono text-[12px] font-semibold text-[#002b45] dark:text-[#e2e8f0] tracking-[-0.01em]">
+                {repo.name}
+              </span>
+            </div>
+          ))}
+
+          <div className="flex items-center justify-between px-[1.125rem] py-3 border-t border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a]">
+            <span className="font-mono text-[11px] text-[#afafaf] tracking-[0.04em]">
+              {filtered.length} {filtered.length === 1 ? "repository" : "repositories"}
+            </span>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={currentPage === 0}
+                  className="w-7 h-7 flex items-center justify-center border border-[#d9dcde] dark:border-[#334155] rounded-[4px] bg-white dark:bg-[#1e293b] text-[#666666] dark:text-[#94a3b8] disabled:opacity-40 hover:bg-[#eef0f1] dark:hover:bg-[#334155] transition-colors"
+                >
+                  <ChevronLeft size={12} />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i)}
+                    className={`w-7 h-7 flex items-center justify-center border rounded-[4px] font-mono text-[11px] transition-colors ${
+                      i === currentPage
+                        ? "bg-[#0e7cc1] border-[#0e7cc1] text-white"
+                        : "bg-white dark:bg-[#1e293b] border-[#d9dcde] dark:border-[#334155] text-[#666666] dark:text-[#94a3b8] hover:bg-[#eef0f1] dark:hover:bg-[#334155]"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={currentPage === totalPages - 1}
+                  className="w-7 h-7 flex items-center justify-center border border-[#d9dcde] dark:border-[#334155] rounded-[4px] bg-white dark:bg-[#1e293b] text-[#666666] dark:text-[#94a3b8] disabled:opacity-40 hover:bg-[#eef0f1] dark:hover:bg-[#334155] transition-colors"
+                >
+                  <ChevronRight size={12} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -245,65 +210,50 @@ function Repositories() {
 export default function ECRPage() {
   const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(false);
 
-  const splash = (
-    <CardMedia
-      aspectRatio="3:2"
-      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
-      className={styles.cardMedia}
-    />
-  );
-
   return (
-    <>
-      <Page title="ECR Repositories">
-        {showNewRepositoryDialog && (
-          <NewRepositoryDialog
-            onClose={() => setShowNewRepositoryDialog(false)}
-          />
-        )}
-        <Card
-          variant="fill"
-          surface="main"
-          size="xl"
-          reverse={true}
-          media={splash}
+    <div className="p-8">
+      {showNewRepositoryDialog && (
+        <NewRepositoryDialog
+          onClose={() => setShowNewRepositoryDialog(false)}
+        />
+      )}
+
+      <div className="flex items-start justify-between mb-6 gap-8">
+        <div>
+          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
+            // Container Registries
+          </div>
+          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
+            ECR Repositories
+          </h1>
+        </div>
+        <div className="flex items-end pb-1">
+          <Button
+            variant="action"
+            onClick={() => setShowNewRepositoryDialog(true)}
+          >
+            + New repository
+          </Button>
+        </div>
+      </div>
+
+      <InfoAlert className="mb-5">
+        All AWS ECR repositories created by DFDS development teams. Naming
+        convention:{" "}
+        <code className="font-mono text-[12px] bg-[rgba(14,124,193,0.08)] dark:bg-[rgba(14,124,193,0.15)] px-[5px] py-[1px] rounded-[3px]">
+          team-name/app-name
+        </code>
+        . See the{" "}
+        <TrackedLink
+          trackName="Wiki-ECRRepositoryPush"
+          href={documentationUrl}
         >
-          <CardTitle largeTitle>Information</CardTitle>
-          <CardContent>
-            <p>
-              This is a comprehensive list of all AWS ECR Repositories that have
-              been created by DFDS development teams. All users with access to
-              this portal can request new repositories.
-            </p>
-            <p>
-              When creating new repositories, please be mindful of the naming
-              conventions. Normally the repository name should consist of the
-              team name and the application name. For example:{" "}
-              <b>cloudengineering/selfservice-portal</b>.
-            </p>
-            <p>
-              For more information on how to use the ECR repositories, please
-              refer to the{" "}
-              <TrackedLink
-                trackName="Wiki-ECRRepositoryPush"
-                href={documentationUrl}
-              >
-                documentation
-              </TrackedLink>
-            </p>
-          </CardContent>
-          <CardActions>
-            <TrackedButton
-              trackName="ShowNewRepositoryDialog"
-              size="small"
-              onClick={() => setShowNewRepositoryDialog(true)}
-            >
-              New repository
-            </TrackedButton>
-          </CardActions>
-        </Card>
-        <Repositories />
-      </Page>
-    </>
+          documentation
+        </TrackedLink>{" "}
+        for push instructions.
+      </InfoAlert>
+
+      <Repositories />
+    </div>
   );
 }

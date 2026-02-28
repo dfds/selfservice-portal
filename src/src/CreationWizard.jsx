@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import styles from "pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
-import { Modal } from "@dfds-ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Check from "@mui/icons-material/Check";
 import Circle from "@mui/icons-material/Circle";
 import { TrackedButton } from "@/components/Tracking";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function CreationWizard({
   isOpen,
@@ -18,53 +25,42 @@ export default function CreationWizard({
   emptyFormValues,
   completeInProgress,
   completeName,
-  sizes = {
-    s: "75%",
-    m: "75%",
-    l: "75%",
-    xl: "75%",
-    xxl: "75%",
-  },
 }) {
   const [canContinue, setCanContinue] = useState(true);
   const [formValues, setFormValues] = useState(emptyFormValues);
 
   return (
-    <Modal
-      heading={title}
-      isOpen={isOpen}
-      shouldCloseOnOverlayClick={false}
-      shouldCloseOnEsc={true}
-      showClose={true}
-      fixedTopPosition={true}
-      onRequestClose={onClose}
-      sizes={sizes}
-    >
-      <Wizard
-        startIndex={0}
-        header={<Header steps={steps} />}
-        footer={
-          <Footer
-            onComplete={onComplete}
-            steps={steps}
-            canContinue={canContinue}
-            formValues={formValues}
-            completeInProgress={completeInProgress}
-            completeName={completeName}
-          />
-        }
-      >
-        {steps.map((step) => (
-          <div key={step.title} className={styles.wizardStep}>
-            {step.content({
-              formValues,
-              setFormValues,
-              setCanContinue,
-            })}
-          </div>
-        ))}
-      </Wizard>
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader className="mb-4">
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <Wizard
+          startIndex={0}
+          header={<Header steps={steps} />}
+          footer={
+            <Footer
+              onComplete={onComplete}
+              steps={steps}
+              canContinue={canContinue}
+              formValues={formValues}
+              completeInProgress={completeInProgress}
+              completeName={completeName}
+            />
+          }
+        >
+          {steps.map((step) => (
+            <div key={step.title} className={styles.wizardStep}>
+              {step.content({
+                formValues,
+                setFormValues,
+                setCanContinue,
+              })}
+            </div>
+          ))}
+        </Wizard>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -84,29 +80,36 @@ function SelfServiceStepIcon(props) {
 
 const Header = ({ steps }) => {
   const { activeStep } = useWizard();
+  const { isDark } = useTheme();
+  const muiTheme = useMemo(
+    () => createTheme({ palette: { mode: isDark ? "dark" : "light" } }),
+    [isDark],
+  );
 
   return (
-    <Stepper activeStep={activeStep} alternativeLabel>
-      {steps.map((step, index) => {
-        const stepProps = {
-          completed: step.completed && !step.skipped,
-          active: activeStep === index,
-        };
-        return (
-          <Step key={step.title} {...stepProps}>
-            <StepLabel StepIconComponent={SelfServiceStepIcon}>
-              {step.title}{" "}
-              {step.optional && (
-                <>
-                  <br />
-                  <span>(optional step)</span>
-                </>
-              )}
-            </StepLabel>
-          </Step>
-        );
-      })}
-    </Stepper>
+    <ThemeProvider theme={muiTheme}>
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((step, index) => {
+          const stepProps = {
+            completed: step.completed && !step.skipped,
+            active: activeStep === index,
+          };
+          return (
+            <Step key={step.title} {...stepProps}>
+              <StepLabel StepIconComponent={SelfServiceStepIcon}>
+                {step.title}{" "}
+                {step.optional && (
+                  <>
+                    <br />
+                    <span>(optional step)</span>
+                  </>
+                )}
+              </StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+    </ThemeProvider>
   );
 };
 
@@ -130,7 +133,6 @@ const Footer = ({
             steps[activeStep - 1].skipped = false;
             steps[activeStep - 1].completed = false;
             if (activeStep + 1 === stepCount) {
-              // last step; activeStep is 0-based
               steps[activeStep].completed = false;
             }
             previousStep();
@@ -150,7 +152,6 @@ const Footer = ({
             steps[activeStep].skipped = false;
             steps[activeStep].completed = true;
             if (activeStep + 2 === stepCount) {
-              // next step is last step; activeStep is 0-based
               steps[activeStep + 1].completed = true;
             }
             nextStep();

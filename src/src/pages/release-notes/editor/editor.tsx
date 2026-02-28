@@ -88,8 +88,15 @@ import {
 import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
 import { TrackedButton } from "@/components/Tracking";
-import { Modal, ModalAction } from "@dfds-ui/modal";
-import { Text } from "@dfds-ui/typography";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button as UiButton } from "@/components/ui/button";
+import { Text } from "@/components/ui/Text";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -210,44 +217,24 @@ export interface EditorProps {
 }
 
 function WarningDialog({ onCloseRequested, onAccept }) {
-  const actions = (
-    <>
-      {/*ModalActions does not support danger/warning variations currently*/}
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={onAccept}
-      >
-        Accept
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Cancel
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`Cancel edits`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel edits</DialogTitle>
+        </DialogHeader>
         <div>
-          <div>
-            <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
-            <span>All changes will be discarded and cannot be restored.</span>
-          </div>
+          <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
+          <span>All changes will be discarded and cannot be restored.</span>
         </div>
-      </Modal>
-    </>
+        <DialogFooter>
+          <UiButton variant="outline" onClick={onCloseRequested}>
+            Cancel
+          </UiButton>
+          <UiButton onClick={onAccept}>Accept</UiButton>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

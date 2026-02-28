@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./profilepicture.module.css";
-import { Account } from "@dfds-ui/icons/system";
+import { User as Account } from "lucide-react";
 
 export default function ProfilePicture({ name, pictureUrl }) {
   return (

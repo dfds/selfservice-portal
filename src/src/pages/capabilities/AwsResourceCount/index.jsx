@@ -2,9 +2,16 @@ import React, { useContext, useMemo } from "react";
 import awsLogo from "./aws-logo.svg";
 import AppContext from "AppContext";
 import styles from "./AwsCount.module.css";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
 import { MaterialReactTable } from "material-react-table";
 import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdataapi";
 
@@ -114,17 +121,6 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
     name: val.resourceId,
     count: val.resourceCount,
   }));
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Close
-      </ModalAction>
-    </>
-  );
 
   const columns = useMemo(
     () => [
@@ -161,22 +157,11 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
   );
 
   return (
-    <>
-      <Modal
-        heading={`Complete list of resources in AWS`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-        sizes={{
-          s: "60%",
-          m: "60%",
-          l: "60%",
-          xl: "60%",
-          xxl: "60%",
-        }}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
+      <DialogContent className="max-w-[60%]">
+        <DialogHeader>
+          <DialogTitle>Complete list of resources in AWS</DialogTitle>
+        </DialogHeader>
         <MaterialReactTable
           columns={columns}
           data={countsArray}
@@ -209,7 +194,12 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
           enableColumnActions={false}
           enableColumnFilters={false}
         />
-      </Modal>
-    </>
+        <DialogFooter>
+          <Button variant="outline" onClick={onCloseRequested}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

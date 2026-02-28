@@ -8,15 +8,8 @@ import {
   useSelfAssessmentDeactivate,
 } from "@/state/remote/queries/selfassessments";
 import NewSelfAssessmentWizard from "./NewSelfAssessmentWizard";
-import {
-  Card,
-  CardTitle,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Button,
-  Spinner,
-} from "@dfds-ui/react-components";
+import { Card, CardTitle, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
@@ -121,14 +114,6 @@ export default function CapabilitiesSelfAssessmentsPage() {
     setShowNewSelfAssessmentWizard(false);
   };
 
-  const splash = (
-    <CardMedia
-      aspectRatio="3:2"
-      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
-      className={styles.cardMedia}
-    />
-  );
-
   return (
     <>
       <Page title="Capability Self Assessments">
@@ -140,30 +125,33 @@ export default function CapabilitiesSelfAssessmentsPage() {
           />
         )}
 
-        <Card
-          variant="fill"
-          surface="main"
-          size="xl"
-          reverse={true}
-          media={splash}
-        >
-          <CardTitle largeTitle>Information</CardTitle>
-          <CardContent>
-            <p>
-              Self assessments allows capability owners to evaluate the current
-              state of a capability. Self assessments can be disabled but never
-              deleted, thus preserving historical data and meaning.
-            </p>
-            <CardActions>
-              <TrackedButton
-                trackName="SelfAssessmentWizard-Begin"
-                size="small"
-                onClick={() => setShowNewSelfAssessmentWizard(true)}
-              >
-                Add
-              </TrackedButton>
-            </CardActions>
-          </CardContent>
+        <Card className="bg-white dark:bg-[#1e293b] overflow-hidden">
+          <div className="flex flex-col md:flex-row">
+            <img
+              src={SplashImage}
+              className={`${styles.cardMediaImage} md:w-1/3 object-cover`}
+              alt=""
+            />
+            <div className="flex-1">
+              <CardTitle className="text-xl font-bold p-6 pb-2">Information</CardTitle>
+              <CardContent>
+                <p>
+                  Self assessments allows capability owners to evaluate the current
+                  state of a capability. Self assessments can be disabled but never
+                  deleted, thus preserving historical data and meaning.
+                </p>
+                <div className="flex gap-2 flex-wrap items-center mt-4">
+                  <TrackedButton
+                    trackName="SelfAssessmentWizard-Begin"
+                    size="sm"
+                    onClick={() => setShowNewSelfAssessmentWizard(true)}
+                  >
+                    Add
+                  </TrackedButton>
+                </div>
+              </CardContent>
+            </div>
+          </div>
         </Card>
 
         <PageSection headline="Self Assessments">
@@ -173,8 +161,8 @@ export default function CapabilitiesSelfAssessmentsPage() {
           )}
           {isFetched &&
             (selfAssessments || []).map((selfAssessment) => (
-              <Card key={selfAssessment.id}>
-                <CardContent>
+              <Card key={selfAssessment.id} className="mb-2">
+                <CardContent className="pt-4">
                   <SelfAssessmentRow
                     id={selfAssessment.id}
                     shortName={selfAssessment.shortName}

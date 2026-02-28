@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  SideSheet,
-  SideSheetContent,
-  TextField,
-} from "@dfds-ui/react-components";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { TrackedButton } from "@/components/Tracking";
 
 export default function EditTopicDialog({
@@ -49,35 +47,35 @@ export default function EditTopicDialog({
   const canUpdate = newDescription !== "" && !inProgress;
 
   return (
-    <SideSheet
-      header={`Edit topic ${topicCopy.name}`}
-      onRequestClose={handleCloseClicked}
-      isOpen={true}
-      width="30%"
-      alignSideSheet="right"
-      variant="elevated"
-      backdrop
-    >
-      <SideSheetContent>
-        <TextField
-          label="Description"
-          placeholder="Enter a description"
-          required
-          value={newDescription}
-          onChange={changeDescription}
-        />
+    <Sheet open={true} onOpenChange={(o) => !o && handleCloseClicked()}>
+      <SheetContent side="right" className="w-[30%]">
+        <SheetHeader>
+          <SheetTitle>Edit topic {topicCopy.name}</SheetTitle>
+        </SheetHeader>
+        <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="edit-description">Description</Label>
+            <Input
+              id="edit-description"
+              placeholder="Enter a description"
+              required
+              value={newDescription}
+              onChange={changeDescription}
+            />
+          </div>
 
-        <TrackedButton
-          trackName="TopicEdit-Confirm"
-          variation="primary"
-          type="button"
-          disabled={!allowedToUpdate && !canUpdate}
-          submitting={inProgress}
-          onClick={handleUpdateClicked}
-        >
-          Update
-        </TrackedButton>
-      </SideSheetContent>
-    </SideSheet>
+          <TrackedButton
+            trackName="TopicEdit-Confirm"
+            variation="primary"
+            type="button"
+            disabled={!allowedToUpdate && !canUpdate}
+            submitting={inProgress}
+            onClick={handleUpdateClicked}
+          >
+            Update
+          </TrackedButton>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }

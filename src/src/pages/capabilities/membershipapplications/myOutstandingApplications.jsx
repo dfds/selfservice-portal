@@ -109,7 +109,7 @@ export function MyOutstandingMembershipApplications({
           rejectButtonLabel={"Cancel"}
         />
       ) : (
-        <>You have no outstanding membership applications</>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">No outstanding membership applications</p>
       )}
     </>
   );

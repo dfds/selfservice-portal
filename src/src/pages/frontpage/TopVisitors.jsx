@@ -1,61 +1,51 @@
-import AppContext from "AppContext";
-import { SmallProfilePicture } from "components/ProfilePicture";
 import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
-import { useContext } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-// import { useTopVisitors } from "hooks/Profile";
+import { useEffect, useState } from "react";
 import { useTopVisitors } from "@/state/remote/queries/stats";
-
 import Confetti from "react-confetti";
-
-import styles from "./TopVisitors.module.css";
 import { useMe } from "@/state/remote/queries/me";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 function useWindowSize() {
-  // Initialize state with undefined width/height so server and client renders match
-  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
   const [windowSize, setWindowSize] = useState({
     width: undefined,
     height: undefined,
   });
   useEffect(() => {
-    // Handler to call on window resize
     function handleResize() {
-      // Set window width/height to state
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight + 200,
       });
     }
-    // Add event listener
     window.addEventListener("resize", handleResize);
-    // Call handler right away so state gets updated with initial window size
     handleResize();
-    // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleResize);
-  }, []); // Empty array ensures that effect is only run on mount
+  }, []);
   return windowSize;
 }
 
 function Visitor({ rank, name, pictureUrl, onClicked }) {
   const handler = onClicked ?? (() => {});
+
   return (
     <div
-      className={`${styles.visitor} ${rank === 1 ? styles.leader : ""}`}
+      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider first:pt-0 last:border-0 last:pb-0 ${rank === 1 ? "cursor-pointer" : ""}`}
       onClick={handler}
-      title={`${rank === 1 ? "Celebrate...?" : ""}`}
+      title={rank === 1 ? "Celebrate...?" : ""}
     >
-      <div className={styles.profilepicture}>
-        <SmallProfilePicture name={name} pictureUrl={pictureUrl} />
+      <div
+        className="font-mono text-[11px] w-4 text-right flex-shrink-0"
+        style={{ color: rank === 1 ? "#ed8800" : "#afafaf" }}
+      >
+        {rank}
       </div>
-      <div className={styles.information}>{name}</div>
+      <UserAvatar name={name} pictureUrl={pictureUrl} size="sm" />
+      <div className="text-[13px] text-secondary">{name}</div>
     </div>
   );
 }
 
 export default function TopVisitors() {
-  // const { myProfile } = useContext(AppContext);
   const { data: myProfile } = useMe();
   const [visitors, setVisitors] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -74,35 +64,19 @@ export default function TopVisitors() {
       handler = setTimeout(() => setShowConfetti(false), 1000 * 10);
     }
     return () => {
-      if (handler) {
-        clearTimeout(handler);
-      }
+      if (handler) clearTimeout(handler);
     };
   }, [showConfetti]);
 
   function loadVisitors() {
     const items = data.items;
-
     items.sort((a, b) => a.rank - b.rank);
-
     items.forEach(async (visitor) => {
-      const profilePictureUrl = await getAnotherUserProfilePictureUrl(
-        visitor.id,
-      );
+      const profilePictureUrl = await getAnotherUserProfilePictureUrl(visitor.id);
       setVisitors((prev) => {
-        let copy;
-        if (prev.length === 0) {
-          copy = items;
-        } else {
-          copy = prev;
-        }
-
+        let copy = prev.length === 0 ? items : prev;
         const found = copy.find((x) => x.id === visitor.id);
-
-        if (found) {
-          found.pictureUrl = profilePictureUrl;
-        }
-
+        if (found) found.pictureUrl = profilePictureUrl;
         return copy;
       });
     });
@@ -124,9 +98,10 @@ export default function TopVisitors() {
           onClicked={() => handleVisitorClicked(x.rank)}
         />
       ))}
-
       {(visitors || []).length === 0 && (
-        <div className={styles.tooearly}>too early to tell...</div>
+        <div className="font-mono text-[11px] text-[#afafaf] italic">
+          too early to tell...
+        </div>
       )}
     </div>
   );

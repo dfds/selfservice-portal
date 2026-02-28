@@ -657,7 +657,7 @@ function SelectedCapabilityProvider({ children }) {
   //--------------------------------------------------------------------
 
   const state = {
-    isLoading: !isFetched,
+    isLoading: capabilityId === null || !isFetched,
     isFound: details != null,
     id: capabilityId,
     name: details?.name,

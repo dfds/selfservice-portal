@@ -1,8 +1,6 @@
 import React from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
-import { SiteLayout } from "@dfds-ui/react-components";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 
-import GlobalMenu from "./components/GlobalMenu/GlobalMenu";
 import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
 import CapabilitiesPage from "./pages/capabilities";
@@ -17,15 +15,10 @@ import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
 import DemosPage from "./pages/demos";
-import { Header } from "./components/Header";
+import Sidebar from "./components/Sidebar/Sidebar";
+import TopBar from "./components/TopBar/TopBar";
+import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
 
-function Footer() {
-  return (
-    <div className="globalfooter">
-      By: Cloud Engineering | Released: {process.env.REACT_APP_DATE_OF_RELEASE}
-    </div>
-  );
-}
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -47,7 +40,10 @@ class ErrorBoundary extends React.Component {
         <div style={{ padding: "2rem" }}>
           <p>
             Oh no! Something went wrong while loading the page. You can try{" "}
-            <button onClick={() => window.location.reload()}>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-[#0e7cc1] underline cursor-pointer bg-transparent border-none p-0 font-inherit"
+            >
               refreshing the page
             </button>{" "}
             to resolve the issue.
@@ -60,23 +56,23 @@ class ErrorBoundary extends React.Component {
 }
 
 function Layout() {
+  const location = useLocation();
   return (
-    <>
-      <AuthTemplate>
-        <SiteLayout.Grid>
-          <SiteLayout.Header>
-            {/* <GlobalMenu /> */}
-            <Header />
-          </SiteLayout.Header>
-          <SiteLayout.Main>
-            <ErrorBoundary>
-              <Outlet />
-              <Footer />
-            </ErrorBoundary>
-          </SiteLayout.Main>
-        </SiteLayout.Grid>
-      </AuthTemplate>
-    </>
+    <AuthTemplate>
+      <TopBarActionsProvider>
+        <div className="flex min-h-screen bg-[#f2f2f2] dark:bg-[#0f172a]">
+          <Sidebar />
+          <div className="flex flex-col flex-1 min-w-0">
+            <TopBar />
+            <main className="flex-1 bg-[#f2f2f2] dark:bg-[#0f172a]">
+              <ErrorBoundary key={location.pathname}>
+                <Outlet />
+              </ErrorBoundary>
+            </main>
+          </div>
+        </div>
+      </TopBarActionsProvider>
+    </AuthTemplate>
   );
 }
 
