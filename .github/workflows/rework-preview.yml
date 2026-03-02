@@ -66,10 +66,10 @@ jobs:
           wget https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O /tmp/yq
           chmod +x /tmp/yq
           cd ssu-apps/apps/ssu
-          /tmp/yq -i '.spec.values.image.tag = strenv(IMAGE_TAG)' selfservice-portal.yaml
+          /tmp/yq -i '.spec.values.image.tag = strenv(IMAGE_TAG)' selfservice-portal-preview.yaml
           git pull
           git config user.name "ssu-apps SA"
           git config user.email ssu-apps@dfds.cloud
-          git add selfservice-portal.yaml
-          git commit -m "Updated selfservice-portal image tag to rework-preview-${{ steps.build_push_container.outputs.sha }}"
+          git add selfservice-portal-preview.yaml
+          git commit -m "Updated selfservice-portal-preview image tag to rework-preview-${{ steps.build_push_container.outputs.sha }}"
           git push
