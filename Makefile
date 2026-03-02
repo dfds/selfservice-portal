@@ -36,7 +36,7 @@ build: check-node-version ## Build and copy build artifacts over
 
 .PHONY: container
 container: ## Build docker image
-	@docker build -t $(APP_IMAGE_NAME) .
+	@docker build -t $(APP_IMAGE_NAME) --build-arg REACT_APP_COMMIT_HASH="$(shell git rev-parse --short HEAD)" .
 
 .PHONY: manifests
 manifests: ## Copy manifests over and update build number
