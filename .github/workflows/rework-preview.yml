@@ -54,9 +54,9 @@ jobs:
           aws_region: eu-central-1
           sha_tag_prefix: rework-preview
           args: |
-            REACT_APP_API_BASE_URL=https://build-preview.dfds.cloud/api
-            REACT_APP_AUTH_REDIRECT_URL=https://build-preview.dfds.cloud
-            REACT_APP_PUBLIC_URL=https://build-preview.dfds.cloud
+            REACT_APP_API_BASE_URL=https://ssu-preview.hellman.oxygen.dfds.cloud/api
+            REACT_APP_AUTH_REDIRECT_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
+            REACT_APP_PUBLIC_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
             PUBLIC_URL=/
       - shell: bash
         name: "Update image tag"
