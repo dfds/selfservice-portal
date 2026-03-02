@@ -166,7 +166,7 @@ export default function NewTopicDialog({
   return (
     <TooltipProvider>
       <Sheet open={true} onOpenChange={(o) => !o && handleCloseClicked()}>
-        <SheetContent side="right" className="w-[30%] overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:w-[30%] overflow-y-auto top-[10%] h-[90%] sm:top-0 sm:h-full">
           <SheetHeader>
             <SheetTitle>Add new topic to {clusterName}...</SheetTitle>
           </SheetHeader>
@@ -188,8 +188,9 @@ export default function NewTopicDialog({
               <div className="text-sm">{fullTopicName}</div>
             </div>
 
-            <div className={styles.tooltipsection}>
-              <div className={styles.tooltip}>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <Label htmlFor="topic-name">Name</Label>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
@@ -199,20 +200,17 @@ export default function NewTopicDialog({
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <Label htmlFor="topic-name">Name</Label>
-                <Input
-                  id="topic-name"
-                  placeholder="Enter name of topic"
-                  required
-                  value={formData.name}
-                  onChange={changeName}
-                />
-                {nameHintMessage && <p className="text-xs text-[#666666]">{nameHintMessage}</p>}
-                {(nameErrorMessage || nameError) && (
-                  <p className="text-xs text-red-500">{nameErrorMessage || nameError}</p>
-                )}
-              </div>
+              <Input
+                id="topic-name"
+                placeholder="Enter name of topic"
+                required
+                value={formData.name}
+                onChange={changeName}
+              />
+              {nameHintMessage && <p className="text-xs text-[#666666]">{nameHintMessage}</p>}
+              {(nameErrorMessage || nameError) && (
+                <p className="text-xs text-red-500">{nameErrorMessage || nameError}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -227,8 +225,9 @@ export default function NewTopicDialog({
               {descriptionError && <p className="text-xs text-red-500">{descriptionError}</p>}
             </div>
 
-            <div className={styles.tooltipsection}>
-              <div className={styles.tooltip}>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <Label htmlFor="topic-partitions">Partitions</Label>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
@@ -238,24 +237,22 @@ export default function NewTopicDialog({
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <Label htmlFor="topic-partitions">Partitions</Label>
-                <select
-                  id="topic-partitions"
-                  name="partitions"
-                  className="border rounded px-3 py-2 text-sm"
-                  value={formData.partitions}
-                  onChange={changePartitions}
-                >
-                  <option value={1}>1</option>
-                  <option value={3}>3 (default)</option>
-                  <option value={6}>6</option>
-                </select>
-              </div>
+              <select
+                id="topic-partitions"
+                name="partitions"
+                className="border rounded px-3 py-2 text-base md:text-sm"
+                value={formData.partitions}
+                onChange={changePartitions}
+              >
+                <option value={1}>1</option>
+                <option value={3}>3 (default)</option>
+                <option value={6}>6</option>
+              </select>
             </div>
 
-            <div className={styles.tooltipsection}>
-              <div className={styles.tooltip}>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <Label htmlFor="topic-retention">Retention</Label>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
@@ -265,25 +262,23 @@ export default function NewTopicDialog({
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <Label htmlFor="topic-retention">Retention</Label>
-                <select
-                  id="topic-retention"
-                  name="retention"
-                  className="border rounded px-3 py-2 text-sm"
-                  value={formData.retention}
-                  onChange={changeRetention}
-                >
-                  <option value={7}>7 days</option>
-                  <option value={31}>31 days</option>
-                  <option value={365}>365 days</option>
-                  <option value={"forever"}>Forever</option>
-                </select>
-              </div>
+              <select
+                id="topic-retention"
+                name="retention"
+                className="border rounded px-3 py-2 text-base md:text-sm"
+                value={formData.retention}
+                onChange={changeRetention}
+              >
+                <option value={7}>7 days</option>
+                <option value={31}>31 days</option>
+                <option value={365}>365 days</option>
+                <option value={"forever"}>Forever</option>
+              </select>
             </div>
 
-            <div className={styles.tooltipsection}>
-              <div className={styles.tooltip}>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <Label htmlFor="topic-availability">Availability</Label>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
@@ -293,44 +288,41 @@ export default function NewTopicDialog({
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <Label htmlFor="topic-availability">Availability</Label>
-                <select
-                  id="topic-availability"
-                  name="availability"
-                  className="border rounded px-3 py-2 text-sm"
-                  value={formData.availability}
-                  onChange={changeAvailability}
-                >
-                  <option value={"private"}>Private</option>
-                  <option value={"public"}>Public</option>
-                </select>
+              <select
+                id="topic-availability"
+                name="availability"
+                className="border rounded px-3 py-2 text-base md:text-sm"
+                value={formData.availability}
+                onChange={changeAvailability}
+              >
+                <option value={"private"}>Private</option>
+                <option value={"public"}>Public</option>
+              </select>
 
-                {formData.availability === "public" && (
-                  <Banner variant="lowEmphasis">
-                    <p className="font-bold text-sm mb-1">Please note</p>
-                    <BannerParagraph>
-                      All public topics will be prefixed with{" "}
-                      <span className={styles.capabilityid}>pub.</span> to make it
-                      explicit. Have a look at the change to the example above.
-                      <br />
-                      <br />
-                      Public topics comes with a responsibility. All other
-                      capabilities has read access to your public topics and can
-                      potentially depend on you to not introduce breaking changes to
-                      your messages.
-                      <br />
-                      <br />
-                      You also have a responsibility to communicate about any new
-                      messages that you want to introduce to the topic as it can
-                      potentially have consequences for consumers.
-                      <br />
-                      <br />
-                      But remember, <i>sharing is caring.</i>
-                    </BannerParagraph>
-                  </Banner>
-                )}
-              </div>
+              {formData.availability === "public" && (
+                <Banner variant="lowEmphasis">
+                  <p className="font-bold text-sm mb-1">Please note</p>
+                  <BannerParagraph>
+                    All public topics will be prefixed with{" "}
+                    <span className={styles.capabilityid}>pub.</span> to make it
+                    explicit. Have a look at the change to the example above.
+                    <br />
+                    <br />
+                    Public topics comes with a responsibility. All other
+                    capabilities has read access to your public topics and can
+                    potentially depend on you to not introduce breaking changes to
+                    your messages.
+                    <br />
+                    <br />
+                    You also have a responsibility to communicate about any new
+                    messages that you want to introduce to the topic as it can
+                    potentially have consequences for consumers.
+                    <br />
+                    <br />
+                    But remember, <i>sharing is caring.</i>
+                  </BannerParagraph>
+                </Banner>
+              )}
             </div>
 
             <TrackedButton

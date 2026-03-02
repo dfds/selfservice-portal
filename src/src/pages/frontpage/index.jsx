@@ -25,7 +25,7 @@ function HeroRow({ name }) {
   const firstName = name.split(" ")[0] || name;
 
   return (
-    <div className="flex items-start justify-between mb-6 gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
       <div>
         <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
           // Developer Portal
@@ -44,13 +44,14 @@ function HeroRow({ name }) {
         )}
       </div>
       {isFetched && stats && stats.length > 0 && (
-        <div className="grid grid-cols-3 gap-2 flex-shrink-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
           {stats.map((stat, i) => {
             const cfg = STAT_CONFIG[i] || STAT_CONFIG[0];
             return (
               <div
                 key={i}
-                className="bg-surface border border-card rounded-[8px] flex items-center gap-2.5 px-3 py-2.5 min-w-[110px]"
+                className="bg-surface border border-card rounded-[8px] flex items-center gap-2.5 px-3 py-2.5 min-w-[110px] animate-fade-up"
+                style={{ animationDelay: `${i * 60}ms` }}
               >
                 <div
                   className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center flex-shrink-0"
@@ -100,7 +101,7 @@ function NavCard({ to, href, iconBg, icon, name, description }) {
   );
 
   const cardClass =
-    "flex items-start gap-[0.875rem] bg-surface border border-card rounded-[10px] p-[1.125rem] mb-3 last:mb-0 no-underline transition-all duration-150 hover:shadow-[0_4px_12px_rgba(0,0,0,0.09)] hover:-translate-y-[1px]";
+    "flex items-start gap-[0.875rem] bg-surface border border-card rounded-[10px] p-[1.125rem] mb-3 last:mb-0 no-underline transition-[box-shadow,transform] duration-200 ease-out-expo hover:shadow-[0_4px_12px_rgba(0,0,0,0.09)] hover:-translate-y-[2px]";
 
   if (to) {
     return (
@@ -121,11 +122,11 @@ export default function FrontPage() {
   const name = user?.name ?? "there";
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <HeroRow name={name} />
 
       {/* Notice */}
-      <div className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6]">
+      <div className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up" style={{ animationDelay: "40ms" }}>
         <span className="font-bold tracking-[0.05em]">NOTE — </span>
         Invitations to capabilities have been <strong>removed</strong>. Having
         multiple ways to join a capability made it harder for people to know
@@ -134,15 +135,15 @@ export default function FrontPage() {
       </div>
 
       {/* 3-column grid */}
-      <div className="grid grid-cols-[1fr_2fr_1fr] gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
         {/* LEFT: Latest News + Need Help */}
-        <div>
-          <SectionLabel className="mb-2 block">// latest news</SectionLabel>
+        <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">// latest news</SectionLabel>
           <PageSection>
             <LatestNews />
           </PageSection>
 
-          <SectionLabel className="mb-2 block">// need help?</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">// need help?</SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
               <em>Did you know</em> there's a Slack channel for peer Q&amp;A?
@@ -158,8 +159,8 @@ export default function FrontPage() {
         </div>
 
         {/* CENTER: Platform nav cards */}
-        <div>
-          <SectionLabel className="mb-2 block">// platform</SectionLabel>
+        <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">// platform</SectionLabel>
           <NavCard
             to="/capabilities"
             iconBg="#e8f4fb"
@@ -191,13 +192,13 @@ export default function FrontPage() {
         </div>
 
         {/* RIGHT: Quick Links + KubeConfig + Top Visitors */}
-        <div>
-          <SectionLabel className="mb-2 block">// quick links</SectionLabel>
+        <div className="animate-fade-up" style={{ animationDelay: "160ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">// quick links</SectionLabel>
           <PageSection>
             <QuickLinks />
           </PageSection>
 
-          <SectionLabel className="mb-2 block">// kubeconfig</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">// kubeconfig</SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
               Looking for a fresh config for your{" "}
@@ -213,7 +214,7 @@ export default function FrontPage() {
             </TrackedLink>
           </PageSection>
 
-          <SectionLabel className="mb-2 block">// top visitors this week</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">// top visitors this week</SectionLabel>
           <PageSection>
             <TopVisitors />
           </PageSection>

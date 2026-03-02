@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonTopicRow } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import { TopicsProvider } from "./TopicsContext";
@@ -62,7 +62,11 @@ function Topics() {
       </div>
 
       {isLoading ? (
-        <Spinner />
+        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonTopicRow key={i} />
+          ))}
+        </div>
       ) : (
         <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
           {filtered.length === 0 && (
@@ -114,20 +118,24 @@ export default function TopicsPage() {
   return (
     <TopicsProvider>
       <div className="p-8">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
-          // Kafka Topics
+        <div className="animate-fade-up">
+          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
+            // Kafka Topics
+          </div>
+          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2] mb-6">
+            Public Topics
+          </h1>
         </div>
-        <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2] mb-6">
-          Public Topics
-        </h1>
 
-        <InfoAlert className="mb-5">
+        <InfoAlert className="mb-5 animate-fade-up animate-stagger-1">
           A comprehensive list of Kafka topics available for development teams.
           Every capability has read access to all public topics. Handle
           sensitive data responsibly — both when producing and consuming.
         </InfoAlert>
 
-        <Topics />
+        <div className="animate-fade-up animate-stagger-2">
+          <Topics />
+        </div>
       </div>
     </TopicsProvider>
   );

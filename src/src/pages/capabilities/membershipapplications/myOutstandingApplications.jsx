@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 import { sleep } from "../../../Utils";
+import { SkeletonMembershipApplicationRow } from "@/components/ui/skeleton";
 
 export function MyOutstandingMembershipApplicationsPageSection() {
   return (
@@ -100,9 +101,19 @@ export function MyOutstandingMembershipApplications({
     );
   };
 
+  if (!isFetched) {
+    return (
+      <div>
+        {[0, 1, 2].map((i) => (
+          <SkeletonMembershipApplicationRow key={i} isLast={i === 2} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <>
-      {isFetched && tableData.length > 0 ? (
+      {tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
           handleRejectClicked={handleDeleteClicked}

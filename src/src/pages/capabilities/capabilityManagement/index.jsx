@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
@@ -31,21 +30,14 @@ function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
           resources related to this capability will be removed permanently, once
           deletion begins.
         </Text>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            style={{ marginRight: "1rem" }}
-            onClick={onCloseRequested}
-          >
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end mt-2">
+          <Button variant="outline" onClick={onCloseRequested}>
             Cancel
           </Button>
-          <Button
-            variant="destructive"
-            onClick={onDeleteClicked}
-          >
+          <Button variant="destructive" onClick={onDeleteClicked}>
             Delete
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { SkeletonRequirementsScore, SkeletonRequirementsRow } from "@/components/ui/skeleton";
 
 // Helper to get color based on score — also used by Capabilities.jsx
 export function getScoreColor(score) {
@@ -71,7 +72,7 @@ export function QuestionMarkBulb({ size = 20, onClick, title = "Data may be stal
 }
 
 export default function RequirementsScore() {
-  const { requirementsScore } = useContext(SelectedCapabilityContext);
+  const { isLoading, requirementsScore, requirementsScoreLoading } = useContext(SelectedCapabilityContext);
 
   const [overallScore, setOverallScore] = React.useState(0);
   const [requirementsMetrics, setRequirementsMetrics] = React.useState([]);
@@ -87,26 +88,38 @@ export default function RequirementsScore() {
   const metCount = requirementsMetrics.filter((m) => m.value >= 80).length;
   const scoreColor = getScoreColor(overallScore);
 
+  const loading = isLoading || requirementsScoreLoading;
+
   return (
     <PageSection id="requirements-status" headline="Requirements Status">
       {/* Overall score */}
-      <div className="mb-4">
-        <span
-          className="font-mono text-[1.5rem] font-bold block mb-1.5"
-          style={{ color: scoreColor }}
-        >
-          {totalCount > 0 ? `${metCount} / ${totalCount}` : `${overallScore.toFixed(1)}%`}
-        </span>
-        <ProgressBar value={overallScore} color={scoreColor} className="mb-1.5" />
-        <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
-          {totalCount > 0
-            ? `${metCount} of ${totalCount} requirements met`
-            : `${overallScore.toFixed(1)}% overall score`}
-        </span>
-      </div>
+      {loading ? (
+        <SkeletonRequirementsScore />
+      ) : (
+        <div className="mb-4">
+          <span
+            className="font-mono text-[1.5rem] font-bold block mb-1.5"
+            style={{ color: scoreColor }}
+          >
+            {totalCount > 0 ? `${metCount} / ${totalCount}` : `${overallScore.toFixed(1)}%`}
+          </span>
+          <ProgressBar value={overallScore} color={scoreColor} className="mb-1.5" />
+          <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
+            {totalCount > 0
+              ? `${metCount} of ${totalCount} requirements met`
+              : `${overallScore.toFixed(1)}% overall score`}
+          </span>
+        </div>
+      )}
 
       {/* Individual metrics */}
-      {requirementsMetrics && requirementsMetrics.length > 0 ? (
+      {loading ? (
+        <div className="border border-[#d9dcde] dark:border-[#334155] rounded-[6px] overflow-hidden">
+          {[0, 1, 2].map((i) => (
+            <SkeletonRequirementsRow key={i} isLast={i === 2} />
+          ))}
+        </div>
+      ) : requirementsMetrics && requirementsMetrics.length > 0 ? (
         <div className="border border-[#d9dcde] dark:border-[#334155] rounded-[6px] overflow-hidden">
           {requirementsMetrics.map((metric, index) => (
             <div

@@ -7,7 +7,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonEcrRow } from "@/components/ui/skeleton";
 import NewRepositoryDialog from "./NewRepositoryDialog";
 import { useEcrRepositories } from "@/state/remote/queries/ecr";
 import { TrackedLink } from "@/components/Tracking";
@@ -130,7 +130,18 @@ function Repositories({ onNewRepository }) {
       </div>
 
       {!isFetched ? (
-        <Spinner />
+        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
+          <div
+            className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
+            style={{ gridTemplateColumns: "2fr 3fr" }}
+          >
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">Description</span>
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">Name</span>
+          </div>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonEcrRow key={i} />
+          ))}
+        </div>
       ) : (
         <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
           <div className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
@@ -218,7 +229,7 @@ export default function ECRPage() {
         />
       )}
 
-      <div className="flex items-start justify-between mb-6 gap-8">
+      <div className="flex items-start justify-between mb-6 gap-8 animate-fade-up">
         <div>
           <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
             // Container Registries
@@ -237,7 +248,7 @@ export default function ECRPage() {
         </div>
       </div>
 
-      <InfoAlert className="mb-5">
+      <InfoAlert className="mb-5 animate-fade-up animate-stagger-1">
         All AWS ECR repositories created by DFDS development teams. Naming
         convention:{" "}
         <code className="font-mono text-[12px] bg-[rgba(14,124,193,0.08)] dark:bg-[rgba(14,124,193,0.15)] px-[5px] py-[1px] rounded-[3px]">
@@ -253,7 +264,9 @@ export default function ECRPage() {
         for push instructions.
       </InfoAlert>
 
-      <Repositories />
+      <div className="animate-fade-up animate-stagger-2">
+        <Repositories />
+      </div>
     </div>
   );
 }

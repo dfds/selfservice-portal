@@ -30,6 +30,7 @@ export const TrackedButton = ({
   fillWidth,
   submitting,
   className,
+  trackingEvent,
   ...props
 }) => {
   const { track } = useTracking();

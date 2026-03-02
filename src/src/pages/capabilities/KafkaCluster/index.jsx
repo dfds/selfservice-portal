@@ -107,7 +107,7 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
       )}
 
       <Dialog open={showAccess} onOpenChange={(o) => !o && setShowAccess(false)}>
-        <DialogContent className="max-w-[50%]">
+        <DialogContent className="max-w-[95vw] sm:max-w-[50%] overflow-y-auto max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Connect to cluster</DialogTitle>
           </DialogHeader>
@@ -129,19 +129,19 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
             </thead>
             <tbody>
               <tr>
-                <td className="border px-3 py-2"><code>bootstrap.servers</code></td>
+                <td className="border px-3 py-2 break-all"><code>bootstrap.servers</code></td>
                 <td className="border px-3 py-2"><TextBlock>{access.bootstrapServers}</TextBlock></td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>security.protocol</code></td>
+                <td className="border px-3 py-2 break-all"><code>security.protocol</code></td>
                 <td className="border px-3 py-2"><TextBlock>SASL_SSL</TextBlock></td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>sasl.mechanism</code></td>
+                <td className="border px-3 py-2 break-all"><code>sasl.mechanism</code></td>
                 <td className="border px-3 py-2"><TextBlock>PLAIN</TextBlock></td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>sasl.username</code></td>
+                <td className="border px-3 py-2 break-all"><code>sasl.username</code></td>
                 <td className="border px-3 py-2">
                   See{" "}
                   <TrackedLink
@@ -155,7 +155,7 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
                 </td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>sasl.password</code></td>
+                <td className="border px-3 py-2 break-all"><code>sasl.password</code></td>
                 <td className="border px-3 py-2">
                   See{" "}
                   <TrackedLink
@@ -169,7 +169,7 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
                 </td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>group.id</code></td>
+                <td className="border px-3 py-2 break-all"><code>group.id</code></td>
                 <td className="border px-3 py-2">
                   <TextBlock>{capabilityId}.application-name</TextBlock> (
                   <i>example</i>)
@@ -201,15 +201,15 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
             </thead>
             <tbody>
               <tr>
-                <td className="border px-3 py-2"><code>schema.registry.url</code></td>
+                <td className="border px-3 py-2 break-all"><code>schema.registry.url</code></td>
                 <td className="border px-3 py-2"><TextBlock>{access.schemaRegistryUrl}</TextBlock></td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>schema.registry.basic.auth.credentials.source</code></td>
+                <td className="border px-3 py-2 break-all"><code>schema.registry.basic.auth.credentials.source</code></td>
                 <td className="border px-3 py-2"><TextBlock>USER_INFO</TextBlock></td>
               </tr>
               <tr>
-                <td className="border px-3 py-2"><code>schema.registry.basic.auth.user.info</code></td>
+                <td className="border px-3 py-2 break-all"><code>schema.registry.basic.auth.user.info</code></td>
                 <td className="border px-3 py-2">
                   <TextBlock>username:password</TextBlock> (See{" "}
                   <TrackedLink

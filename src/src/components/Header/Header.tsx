@@ -296,7 +296,10 @@ export default function Header() {
                           checked={isCloudEngineerEnabled}
                           onChange={toggleCloudEngineer}
                         />
-                        <span className={styles.toggleTrack}>
+                        <span className={isCloudEngineerEnabled ? styles.toggleTrackRainbow : styles.toggleTrack}>
+                          {isCloudEngineerEnabled && (
+                            <span className={styles.toggleRainbowLayer} aria-hidden="true" />
+                          )}
                           <span className={styles.toggleThumb} />
                         </span>
                       </span>

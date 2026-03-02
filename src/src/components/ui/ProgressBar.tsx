@@ -18,8 +18,8 @@ export function ProgressBar({ value, color, className, ...props }: ProgressBarPr
       {...props}
     >
       <div
-        className="h-full rounded transition-all"
-        style={{ width: `${clamped}%`, backgroundColor: color }}
+        className="h-full rounded animate-progress-fill"
+        style={{ transform: `scaleX(${clamped / 100})`, transformOrigin: "left", backgroundColor: color }}
       />
     </div>
   );

@@ -63,7 +63,6 @@ import { LinkIcon } from "./tiptap/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
 import { useMobile } from "./tiptap/hooks/use-mobile";
-import { useWindowSize } from "./tiptap/hooks/use-window-size";
 import { useCursorVisibility } from "./tiptap/hooks/use-cursor-visibility";
 
 // --- Components ---
@@ -241,7 +240,6 @@ function WarningDialog({ onCloseRequested, onAccept }) {
 export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const navigate = useNavigate();
   const isMobile = useMobile();
-  const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
@@ -289,7 +287,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
     content: editorContent,
   });
 
-  const bodyRect = useCursorVisibility({
+  useCursorVisibility({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
@@ -378,10 +376,9 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
       <div className="editor-primary">
         <EditorContext.Provider value={{ editor }}>
           {mode !== EditorMode.View && (
-            <div className="editor-menu">
+            <div className="flex flex-row justify-end gap-2 mb-2.5">
               <TrackedButton
                 trackName="ReleaseNotes-Save"
-                style={{ marginRight: "5px" }}
                 onClick={
                   mode === EditorMode.Create ? handleOnSaveDraft : handleOnSave
                 }
@@ -395,7 +392,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
               </TrackedButton>
               <TrackedButton
                 trackName="ReleaseNotes-Discard"
-                style={{ backgroundColor: "#dd6868" }}
+                variation="danger"
                 onClick={() => setShowDiscardWarning(true)}
                 trackingEvent={{
                   category: "ReleaseNotes",
@@ -424,18 +421,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                   inputOverride={releaseDate}
                 />
               </div>
-              <Toolbar
-                ref={toolbarRef}
-                style={
-                  isMobile
-                    ? {
-                        bottom: `calc(100% - ${
-                          windowSize.height - bodyRect.y
-                        }px)`,
-                      }
-                    : {}
-                }
-              >
+              <Toolbar ref={toolbarRef}>
                 {mobileView === "main" ? (
                   <MainToolbarContent
                     onHighlighterClick={() => setMobileView("highlighter")}

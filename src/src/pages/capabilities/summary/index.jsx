@@ -44,18 +44,18 @@ function JoinDialog({
             been approved by existing members.
           </i>
         </Text>
-        {canBypassMembershipApplications && (
-          <TrackedButton
-            trackName="CapabilityMembership-ForceJoin"
-            variant="destructive"
-            style={{ position: "absolute", bottom: "1rem" }}
-            disabled={isSubmitting}
-            onClick={onBypassClicked}
-          >
-            FORCE JOIN (CE)
-          </TrackedButton>
-        )}
-        <DialogFooter>
+        <DialogFooter className="gap-2">
+          {canBypassMembershipApplications && (
+            <TrackedButton
+              trackName="CapabilityMembership-ForceJoin"
+              variant="destructive"
+              className="sm:mr-auto"
+              disabled={isSubmitting}
+              onClick={onBypassClicked}
+            >
+              FORCE JOIN (CE)
+            </TrackedButton>
+          )}
           <Button variant="outline" disabled={isSubmitting} onClick={onCloseRequested}>
             Cancel
           </Button>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import Page from "components/Page";
 import AppContext from "AppContext";
+import { useToast } from "@/context/ToastContext";
 import {
   useSelfAssessments,
   useSelfAssessmentAdd,
@@ -9,7 +10,7 @@ import {
 } from "@/state/remote/queries/selfassessments";
 import NewSelfAssessmentWizard from "./NewSelfAssessmentWizard";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonSelfAssessmentCard } from "@/components/ui/skeleton";
 import PageSection from "components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
@@ -68,6 +69,7 @@ const SelfAssessmentRow = ({
 
 export default function CapabilitiesSelfAssessmentsPage() {
   const { reloadSelfAssessments } = useContext(AppContext);
+  const toast = useToast();
   const { isFetched, data } = useSelfAssessments();
   const selfAssessmentAdd = useSelfAssessmentAdd();
   const selfAssessmentDeactivate = useSelfAssessmentDeactivate();
@@ -84,13 +86,19 @@ export default function CapabilitiesSelfAssessmentsPage() {
     description,
     documentationUrl,
   ) {
-    selfAssessmentAdd.mutate({
-      payload: {
-        shortName: shortName,
-        description: description,
-        documentationUrl: documentationUrl,
+    selfAssessmentAdd.mutate(
+      {
+        payload: {
+          shortName: shortName,
+          description: description,
+          documentationUrl: documentationUrl,
+        },
       },
-    });
+      {
+        onSuccess: () => toast.success("Self-assessment created"),
+        onError: () => toast.error("Could not create assessment"),
+      },
+    );
     await sleep(1000);
     reloadSelfAssessments("addNewSelfAssessment");
   }
@@ -155,7 +163,7 @@ export default function CapabilitiesSelfAssessmentsPage() {
         </Card>
 
         <PageSection headline="Self Assessments">
-          {!isFetched && <Spinner />}
+          {!isFetched && [0, 1, 2, 3].map((i) => <SkeletonSelfAssessmentCard key={i} />)}
           {isFetched && selfAssessments.length === 0 && (
             <p>No self assessments found</p>
           )}
@@ -169,16 +177,24 @@ export default function CapabilitiesSelfAssessmentsPage() {
                     description={selfAssessment.description}
                     state={selfAssessment.isActive}
                     activateFunction={(id) => {
-                      selfAssessmentActivate.mutate({
-                        id: id,
-                      }),
-                        reloadSelfAssessments("Activate");
+                      selfAssessmentActivate.mutate(
+                        { id: id },
+                        {
+                          onSuccess: () => toast.success("Assessment activated"),
+                          onError: () => toast.error("Could not activate assessment"),
+                        },
+                      );
+                      reloadSelfAssessments("Activate");
                     }}
                     deactivateFunction={(id) => {
-                      selfAssessmentDeactivate.mutate({
-                        id: id,
-                      }),
-                        reloadSelfAssessments("Deactivate");
+                      selfAssessmentDeactivate.mutate(
+                        { id: id },
+                        {
+                          onSuccess: () => toast.success("Assessment deactivated"),
+                          onError: () => toast.error("Could not deactivate assessment"),
+                        },
+                      );
+                      reloadSelfAssessments("Deactivate");
                     }}
                   />
                 </CardContent>

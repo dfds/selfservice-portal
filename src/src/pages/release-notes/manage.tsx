@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import Page from "@/components/Page";
 import { TrackedButton } from "@/components/Tracking";
-import styles from "./releasenotes.module.css";
 import Nope from "@/components/Nope";
-import "./style.scss";
+import { useToast } from "@/context/ToastContext";
 
 import {
   useReleaseNotes,
@@ -21,22 +20,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/Text";
+import { Badge } from "@/components/ui/badge";
 
-function CreateReleaseNoteButton({ onClick }) {
-  return (
-    <TrackedButton
-      onClick={onClick}
-      trackName="ReleaseNote-CreateButtonClicked"
-      trackingEvent={{
-        category: "ReleaseNotes",
-        action: "CreateNew",
-        label: "Create Release Note",
-      }}
-    >
-      Create Release Note
-    </TrackedButton>
-  );
+function formatDate(iso: string) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function WarningDialog({ onCloseRequested, onAccept }) {
@@ -46,20 +38,17 @@ function WarningDialog({ onCloseRequested, onAccept }) {
         <DialogHeader>
           <DialogTitle>Delete Release Note</DialogTitle>
         </DialogHeader>
-        <div className={styles.container}>
-          <div className={styles.column}>
-            <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
-            <span className={styles.breakwords}>
-              This action will delete the release note and all its content. This
-              action cannot be undone.
-            </span>
-          </div>
-        </div>
+        <p className="text-sm text-secondary">
+          This action will delete the release note and all its content. This
+          action cannot be undone.
+        </p>
         <DialogFooter>
           <Button variant="outline" onClick={onCloseRequested}>
             Cancel
           </Button>
-          <Button onClick={onAccept}>Accept</Button>
+          <Button variant="destructive" onClick={onAccept}>
+            Delete
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -71,6 +60,7 @@ export function ReleaseNotesManage() {
   const toggleReleaseNoteActive = useToggleReleaseNoteActive();
   const deleteReleaseNote = useDeleteReleaseNote();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const toast = useToast();
 
   const [notes, setNotes] = useState(data?.items || []);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
@@ -83,30 +73,29 @@ export function ReleaseNotesManage() {
   }, [data]);
 
   const navigate = useNavigate();
-  const clickHandler = (id) => navigate(`/release-notes/edit/${id}`);
 
   const handleToggleActive = (id) => {
     toggleReleaseNoteActive.mutate(
-      {
-        id: id,
-      },
+      { id },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          toast.success("Release note status updated");
         },
+        onError: () => toast.error("Could not update release note status"),
       },
     );
   };
 
   const handleDelete = () => {
     deleteReleaseNote.mutate(
-      {
-        id: noteIdUpForDeletion,
-      },
+      { id: noteIdUpForDeletion },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          toast.success("Release note deleted");
         },
+        onError: () => toast.error("Could not delete release note"),
       },
     );
   };
@@ -127,102 +116,114 @@ export function ReleaseNotesManage() {
         />
       )}
       {isCloudEngineerEnabled ? (
-        <Page
-          title={
-            <>
-              Release Notes archive
-              <div style={{ float: "right" }}>
-                <CreateReleaseNoteButton
-                  onClick={() => navigate("/release-notes/create")}
-                />
+        <Page title="Release Notes archive">
+          <div className="flex items-center justify-end mb-4">
+            <TrackedButton
+              onClick={() => navigate("/release-notes/create")}
+              variation="action"
+              trackName="ReleaseNote-CreateButtonClicked"
+              trackingEvent={{
+                category: "ReleaseNotes",
+                action: "CreateNew",
+                label: "Create Release Note",
+              }}
+            >
+              Create Release Note
+            </TrackedButton>
+          </div>
+
+          <div className="bg-surface border border-card rounded-[8px] overflow-hidden animate-fade-up">
+            {notes.length === 0 ? (
+              <div className="px-5 py-8 text-center text-muted text-sm font-mono">
+                No release notes found
               </div>
-            </>
-          }
-        >
-          <div className="notes">
-            {notes.map((elem, index) => {
-              return (
-                <>
-                  <div className="note" key={elem.id}>
-                    <div className="view">
-                      <span className="title">{elem.title}</span>
-                      <div className="metadata">
-                        <span>release date: {elem.releaseDate}</span>
-                        <span>created date: {elem.createdAt}</span>
-                        <span>modified date: {elem.modifiedAt}</span>
-                        <span>author: {elem.createdBy}</span>
-                        <span>published: {elem.isActive ? "yes" : "no"}</span>
-                      </div>
-                    </div>
-                    <div className="manage">
-                      {elem._links?.toggleIsActive && (
-                        <span style={{ marginRight: "5px" }}>
-                          <TrackedButton
-                            trackName="ReleaseNote-ToggleActiveButtonClicked"
-                            onClick={() => {
-                              handleToggleActive(elem.id);
-                            }}
-                            style={{
-                              backgroundColor: elem.isActive
-                                ? "#edd853"
-                                : "#9ee55b",
-                              width: "100px",
-                            }}
-                            trackingEvent={{
-                              category: "ReleaseNotes",
-                              action: "ToggleActive",
-                              label: elem.isActive ? "Unpublish" : "Publish",
-                            }}
-                          >
-                            {elem.isActive ? "Unpublish" : "Publish"}
-                          </TrackedButton>
-                        </span>
-                      )}
-                      <span style={{ marginRight: "5px" }}>
-                        <TrackedButton
-                          trackName="ReleaseNote-EditButtonClicked"
-                          onClick={() => {
-                            clickHandler(elem.id);
-                          }}
-                          style={{ width: "100px" }}
-                          trackingEvent={{
-                            category: "ReleaseNotes",
-                            action: "View",
-                            label: `Edit Release Note: ${elem.id}`,
-                          }}
-                        >
-                          Edit
-                        </TrackedButton>
+            ) : (
+              notes.map((elem, index) => (
+                <div
+                  key={elem.id}
+                  className={`flex flex-col sm:flex-row sm:items-start gap-3 px-5 py-4 ${
+                    index !== notes.length - 1 ? "border-b border-divider" : ""
+                  }`}
+                >
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="font-mono text-[14px] font-semibold text-primary">
+                        {elem.title}
                       </span>
-                      {elem._links?.remove && (
-                        <span style={{ marginRight: "5px" }}>
-                          <TrackedButton
-                            trackName="ReleaseNote-DeleteButtonClicked"
-                            onClick={() => {
-                              setNoteIdUpForDeletion(elem.id);
-                              setShowDeleteWarning(true);
-                            }}
-                            style={{
-                              backgroundColor: "#dd6868",
-                              width: "100px",
-                            }}
-                            trackingEvent={{
-                              category: "ReleaseNotes",
-                              action: "Delete",
-                              label: "Delete Release Note",
-                            }}
-                          >
-                            Delete
-                          </TrackedButton>
-                        </span>
-                      )}
+                      <Badge
+                        variant={elem.isActive ? "soft-success" : "outline"}
+                        className="text-[10px] shrink-0"
+                      >
+                        {elem.isActive ? "Published" : "Draft"}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-mono text-[11px] text-muted">
+                        Release: {formatDate(elem.releaseDate)}
+                      </span>
+                      <span className="font-mono text-[11px] text-muted">
+                        Created: {formatDate(elem.createdAt)} by{" "}
+                        {elem.createdBy ?? "—"}
+                      </span>
+                      <span className="font-mono text-[11px] text-muted">
+                        Modified: {formatDate(elem.modifiedAt)}
+                      </span>
                     </div>
                   </div>
-                  {/* Render <hr> if not the last item */}
-                  {index !== notes.length - 1 && <hr />}
-                </>
-              );
-            })}
+
+                  {/* Actions */}
+                  <div className="flex flex-row flex-wrap gap-2 shrink-0">
+                    {elem._links?.toggleIsActive && (
+                      <TrackedButton
+                        trackName="ReleaseNote-ToggleActiveButtonClicked"
+                        onClick={() => handleToggleActive(elem.id)}
+                        variation={elem.isActive ? "outline" : "action"}
+                        size="small"
+                        trackingEvent={{
+                          category: "ReleaseNotes",
+                          action: "ToggleActive",
+                          label: elem.isActive ? "Unpublish" : "Publish",
+                        }}
+                      >
+                        {elem.isActive ? "Unpublish" : "Publish"}
+                      </TrackedButton>
+                    )}
+                    <TrackedButton
+                      trackName="ReleaseNote-EditButtonClicked"
+                      onClick={() => navigate(`/release-notes/edit/${elem.id}`)}
+                      variation="outline"
+                      size="small"
+                      trackingEvent={{
+                        category: "ReleaseNotes",
+                        action: "View",
+                        label: `Edit Release Note: ${elem.id}`,
+                      }}
+                    >
+                      Edit
+                    </TrackedButton>
+                    {elem._links?.remove && (
+                      <TrackedButton
+                        trackName="ReleaseNote-DeleteButtonClicked"
+                        onClick={() => {
+                          setNoteIdUpForDeletion(elem.id);
+                          setShowDeleteWarning(true);
+                        }}
+                        variation="danger"
+                        size="small"
+                        trackingEvent={{
+                          category: "ReleaseNotes",
+                          action: "Delete",
+                          label: "Delete Release Note",
+                        }}
+                      >
+                        Delete
+                      </TrackedButton>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </Page>
       ) : (

@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { useToast } from "@/context/ToastContext";
 import PageSection from "components/PageSection";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
@@ -73,8 +74,8 @@ const selectPortalProps = {
 
 function TagField({ label, description, error, children }) {
   return (
-    <div className="flex items-start py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 gap-4">
-      <div className="min-w-[220px] flex-shrink-0">
+    <div className="flex flex-col @[626px]:flex-row @[626px]:items-start py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 gap-2 @[626px]:gap-4">
+      <div className="@[626px]:w-[220px] @[626px]:flex-shrink-0">
         <div className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
           {label}
         </div>
@@ -84,8 +85,8 @@ function TagField({ label, description, error, children }) {
           </div>
         )}
       </div>
-      <div className="flex-1 flex justify-end">
-        <div className="w-[390px]">
+      <div className="flex-1 @[626px]:flex @[626px]:justify-end">
+        <div className="w-full @[626px]:w-[390px]">
           {children}
           {error && (
             <div className="font-mono text-[10px] text-[#be1e2d] mt-1">
@@ -257,7 +258,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
         </div>
       )}
 
-      <div className="tag-list">
+      <div className="tag-list @container">
         <TagField
           label="dfds.cost.centre"
           description="Required for internal analysis and cost aggregation tools such as FinOut."
@@ -481,6 +482,7 @@ export function CapabilityTags() {
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const [canEditTags, setCanEditTags] = useState(false);
   const [existingTags, setExistingTags] = useState({});
@@ -515,6 +517,7 @@ export function CapabilityTags() {
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 3000);
         },
+        onError: () => toast.error("Could not save tags"),
       },
     );
   };

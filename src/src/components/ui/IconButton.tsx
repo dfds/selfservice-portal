@@ -11,7 +11,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       ref={ref}
       type={type}
       className={cn(
-        "inline-flex items-center justify-center rounded transition-colors",
+        "inline-flex items-center justify-center rounded transition duration-150 ease-out-expo hover:scale-[1.05] active:scale-[0.9]",
         "hover:bg-[#eeeeee] dark:hover:bg-[#334155]",
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-action)]",
         "disabled:pointer-events-none disabled:opacity-50",

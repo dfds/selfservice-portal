@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonStatCardValue } from "@/components/ui/skeleton";
 
 interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: React.ReactNode;
@@ -13,26 +13,26 @@ export function StatCard({ value, label, loading, hasData = true, className, ...
   return (
     <div
       className={cn(
-        "text-center p-3 bg-[#f2f2f2] dark:bg-[#0f172a] rounded-[6px] border border-[#d9dcde] dark:border-[#334155]",
+        "text-center p-3 bg-surface-muted rounded-[6px] border border-card",
         className,
       )}
       {...props}
     >
       {loading ? (
-        <div className="flex justify-center py-1">
-          <Spinner size="sm" />
+        <div className="flex justify-center mb-[5px]">
+          <SkeletonStatCardValue className="h-5 w-[70%]" />
         </div>
       ) : (
         <span
           className={cn(
-            "font-mono text-[1.25rem] font-bold block mb-[3px]",
-            hasData ? "text-[#0e7cc1] dark:text-[#60a5fa]" : "text-[#afafaf] dark:text-slate-500",
+            "font-mono text-[1.25rem] font-bold block mb-[3px] animate-number-reveal",
+            hasData ? "text-action" : "text-muted",
           )}
         >
           {hasData ? value : "—"}
         </span>
       )}
-      <span className="font-mono text-[9px] tracking-[0.08em] text-[#afafaf] dark:text-slate-500 uppercase block">
+      <span className="font-mono text-[9px] tracking-[0.08em] text-muted uppercase block">
         {label}
       </span>
     </div>

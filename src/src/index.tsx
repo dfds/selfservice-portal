@@ -14,6 +14,7 @@ import { Provider } from "react-redux";
 import store from "./state/local/store";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./state/remote/client";
+import { ToastProvider } from "./context/ToastContext";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -28,15 +29,17 @@ root.render(
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <QueryClientProvider client={queryClient}>
             <ErrorProvider>
-              <TrackingProvider>
-                <PreAppProvider>
-                  <ThemeProvider>
-                    <AppProvider>
-                      <App />
-                    </AppProvider>
-                  </ThemeProvider>
-                </PreAppProvider>
-              </TrackingProvider>
+              <ToastProvider>
+                <TrackingProvider>
+                  <PreAppProvider>
+                    <ThemeProvider>
+                      <AppProvider>
+                        <App />
+                      </AppProvider>
+                    </ThemeProvider>
+                  </PreAppProvider>
+                </TrackingProvider>
+              </ToastProvider>
             </ErrorProvider>
           </QueryClientProvider>
         </BrowserRouter>

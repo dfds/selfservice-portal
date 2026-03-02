@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 
 import FrontPage from "./pages/frontpage";
@@ -19,6 +19,10 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
 
+
+function PageTransition({ children }) {
+  return <div className="animate-fade-up">{children}</div>;
+}
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -42,7 +46,7 @@ class ErrorBoundary extends React.Component {
             Oh no! Something went wrong while loading the page. You can try{" "}
             <button
               onClick={() => window.location.reload()}
-              className="text-[#0e7cc1] underline cursor-pointer bg-transparent border-none p-0 font-inherit"
+              className="text-action underline cursor-pointer bg-transparent border-none p-0 font-inherit"
             >
               refreshing the page
             </button>{" "}
@@ -57,16 +61,37 @@ class ErrorBoundary extends React.Component {
 
 function Layout() {
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile sidebar on navigation
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
   return (
     <AuthTemplate>
       <TopBarActionsProvider>
-        <div className="flex min-h-screen bg-[#f2f2f2] dark:bg-[#0f172a]">
-          <Sidebar />
+        <div className="flex min-h-screen bg-surface-muted">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#002b45] focus:text-white focus:rounded-[5px] focus:text-sm focus:no-underline"
+          >
+            Skip to main content
+          </a>
+          {/* Mobile backdrop */}
+          <div
+            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+          <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
           <div className="flex flex-col flex-1 min-w-0">
-            <TopBar />
-            <main className="flex-1 bg-[#f2f2f2] dark:bg-[#0f172a]">
+            <TopBar onMenuOpen={() => setMobileOpen(true)} menuOpen={mobileOpen} />
+            <main id="main-content" className="flex-1 bg-surface-muted overflow-x-hidden">
               <ErrorBoundary key={location.pathname}>
-                <Outlet />
+                <PageTransition>
+                  <Outlet />
+                </PageTransition>
               </ErrorBoundary>
             </main>
           </div>

@@ -15,6 +15,7 @@ import Circle from "@mui/icons-material/Circle";
 import { TrackedButton } from "@/components/Tracking";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useTheme } from "@/context/ThemeContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function CreationWizard({
   isOpen,
@@ -31,7 +32,7 @@ export default function CreationWizard({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader className="mb-4">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
@@ -78,13 +79,98 @@ function SelfServiceStepIcon(props) {
   return <Circle className={styles.stepiconunresolved} />;
 }
 
+function SnakeStepper({ steps, activeStep, stepsPerRow = 3 }) {
+  const rows = [];
+  for (let i = 0; i < steps.length; i += stepsPerRow) {
+    const chunk = steps
+      .slice(i, i + stepsPerRow)
+      .map((step, j) => ({ ...step, globalIndex: i + j }));
+    while (chunk.length < stepsPerRow) chunk.push(null);
+    rows.push(chunk);
+  }
+
+  return (
+    <div className="w-full px-2 pb-2">
+      {rows.map((rowItems, rowIndex) => {
+        const isOdd = rowIndex % 2 === 1;
+        const isLastRow = rowIndex === rows.length - 1;
+
+        return (
+          <div key={rowIndex}>
+            <div className={`flex items-start ${isOdd ? "flex-row-reverse" : ""}`}>
+              {rowItems.map((item, colIndex) => {
+                const prevItem = rowItems[colIndex - 1];
+                const connectorCompleted =
+                  item !== null &&
+                  prevItem != null &&
+                  prevItem.completed &&
+                  !prevItem.skipped &&
+                  item.completed &&
+                  !item.skipped;
+
+                return (
+                  <React.Fragment key={item ? item.globalIndex : `ph-${colIndex}`}>
+                    {colIndex > 0 && (
+                      <div
+                        className={`flex-1 h-0.5 mt-[10px] ${
+                          connectorCompleted
+                            ? "bg-[#4caf50]"
+                            : "bg-[#afafaf] dark:bg-[#334155]"
+                        }`}
+                      />
+                    )}
+                    {item === null ? (
+                      <div className="w-[56px] flex-shrink-0" />
+                    ) : (
+                      <div className="flex flex-col items-center flex-shrink-0 w-[56px]">
+                        <SelfServiceStepIcon
+                          completed={item.completed && !item.skipped}
+                          active={activeStep === item.globalIndex}
+                        />
+                        <span className="text-[10px] text-center mt-1 leading-tight text-muted">
+                          {item.title}
+                        </span>
+                        {item.optional && (
+                          <span className="text-[9px] text-muted text-center block">
+                            (optional)
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+            {!isLastRow && (
+              <div
+                className={`flex ${isOdd ? "justify-start" : "justify-end"}`}
+                style={{
+                  paddingLeft: isOdd ? "27px" : undefined,
+                  paddingRight: isOdd ? undefined : "27px",
+                }}
+              >
+                <div className="w-0.5 h-5 bg-[#afafaf] dark:bg-[#334155]" />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 const Header = ({ steps }) => {
   const { activeStep } = useWizard();
   const { isDark } = useTheme();
+  const isMobile = useIsMobile();
   const muiTheme = useMemo(
     () => createTheme({ palette: { mode: isDark ? "dark" : "light" } }),
     [isDark],
   );
+
+  if (isMobile) {
+    return <SnakeStepper steps={steps} activeStep={activeStep} />;
+  }
 
   return (
     <ThemeProvider theme={muiTheme}>
@@ -96,7 +182,16 @@ const Header = ({ steps }) => {
           };
           return (
             <Step key={step.title} {...stepProps}>
-              <StepLabel StepIconComponent={SelfServiceStepIcon}>
+              <StepLabel
+                StepIconComponent={SelfServiceStepIcon}
+                sx={{
+                  "& .MuiStepLabel-label": {
+                    fontSize: "10px",
+                    fontFamily: "inherit",
+                    lineHeight: 1.3,
+                  },
+                }}
+              >
                 {step.title}{" "}
                 {step.optional && (
                   <>

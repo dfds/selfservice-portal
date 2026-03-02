@@ -24,6 +24,7 @@ import {
 } from "@/state/remote/queries/releaseNotes";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
 import { sleep } from "./Utils";
+import { useToast } from "@/context/ToastContext";
 
 const AppContext = React.createContext(null);
 
@@ -54,6 +55,7 @@ function truncateString(str, maxLength) {
 
 function AppProvider({ children }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const user = useCurrentUser();
   const validAuthSession = useSelector((s) => s.auth.isSessionActive);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
@@ -144,7 +146,9 @@ function AppProvider({ children }) {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
           queryClient.invalidateQueries({ queryKey: ["me"] });
+          toast.success("Capability created. Time to spend 💰");
         },
+        onError: () => toast.error("Could not create capability"),
       },
     );
   }
@@ -160,7 +164,11 @@ function AppProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+          toast.success(
+            "Repository created. Ready for your finest container spaghetti",
+          );
         },
+        onError: () => toast.error("Could not create repository"),
       },
     );
   }
@@ -177,7 +185,9 @@ function AppProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          toast.success("Release note draft created");
         },
+        onError: () => toast.error("Could not create release note"),
       },
     );
   }
@@ -187,8 +197,10 @@ function AppProvider({ children }) {
       onSuccess: async () => {
         await sleep(200).then(() => {
           queryClient.invalidateQueries({ queryKey: ["demos"] });
+          toast.success("Demo registered. DFDS management thanks you");
         });
       },
+      onError: () => toast.error("Could not register demo"),
     });
   }
 
@@ -201,8 +213,10 @@ function AppProvider({ children }) {
         onSuccess: async () => {
           await sleep(200).then(() => {
             queryClient.invalidateQueries({ queryKey: ["demos"] });
+            toast.success("Demo deleted.");
           });
         },
+        onError: () => toast.error("Could not delete demo"),
       },
     );
   }
@@ -212,15 +226,17 @@ function AppProvider({ children }) {
       onSuccess: async () => {
         await sleep(200).then(() => {
           queryClient.invalidateQueries({ queryKey: ["demos"] });
+          toast.success("Demo updated.");
         });
       },
+      onError: () => toast.error("Could not update demo"),
     });
   }
 
   async function toggleReleaseNoteIsActive(note) {
     var link = note._links?.toggleIsActive?.href;
     if (!link) {
-      console.error("No link found for toggling release note activity.");
+      console.error("No link found for toggling release note activity");
       return;
     }
 

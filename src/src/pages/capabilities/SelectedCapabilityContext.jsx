@@ -38,6 +38,7 @@ import {
 } from "@/state/remote/queries/membershipApplications";
 import { sleep } from "../../Utils";
 import { de } from "date-fns/locale";
+import { useToast } from "@/context/ToastContext";
 
 const SelectedCapabilityContext = createContext();
 
@@ -54,6 +55,7 @@ function adjustRetention(kafkaTopic) {
 // TODO: Cleanup, very messy
 function SelectedCapabilityProvider({ children }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { shouldAutoReloadTopics, selfServiceApiClient, user } =
     useContext(AppContext);
 
@@ -102,6 +104,7 @@ function SelectedCapabilityProvider({ children }) {
   const {
     responseData: requirementsScoreData,
     sendRequest: getRequirementsScores,
+    inProgress: requirementsScoreInProgress,
   } = useSelfServiceRequest();
 
   useEffect(() => {
@@ -266,7 +269,9 @@ function SelectedCapabilityProvider({ children }) {
       },
       {
         onSuccess: (data) => {
+          toast.success("Topic created. May your consumers never fall behind");
           const newTopic = data;
+
           adjustRetention(newTopic);
           setKafkaClusters((prev) => {
             const copy = [...prev];
@@ -291,6 +296,7 @@ function SelectedCapabilityProvider({ children }) {
             queryKey: ["capabilities", "kafka"],
           });
         },
+        onError: () => toast.error("Could not create topic"),
       },
     );
   };
@@ -388,7 +394,9 @@ function SelectedCapabilityProvider({ children }) {
               "membershipapplications/my-outstanding-applications",
             ],
           });
+          toast.success("Membership declined. The capability moves on");
         },
+        onError: () => toast.error("Could not decline membership"),
       },
     );
   };
@@ -409,6 +417,7 @@ function SelectedCapabilityProvider({ children }) {
       },
       {
         onSuccess: async () => {
+          toast.success("Access granted. Welcome to the capability");
           await sleep(2000);
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "members"],
@@ -417,6 +426,7 @@ function SelectedCapabilityProvider({ children }) {
             queryKey: ["membershipapplications/eligible-for-approval"],
           });
         },
+        onError: () => toast.error("Could not approve membership"),
       },
     );
   };
@@ -431,7 +441,9 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+          toast.success("Application submitted. The approval pipeline has been informed");
         },
+        onError: () => toast.error("Could not submit membership application"),
       },
     );
     // await selfServiceApiClient.submitMembershipApplication(details);
@@ -448,7 +460,9 @@ function SelectedCapabilityProvider({ children }) {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "members"],
           });
+          toast.success("You've left the capability. Your on-call obligations have been reassigned");
         },
+        onError: () => toast.error("Could not leave capability"),
       },
     );
   }, [details]);
@@ -474,7 +488,9 @@ function SelectedCapabilityProvider({ children }) {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "kafka"],
           });
+          toast.success("Kafka access requested. The brokers are deliberating");
         },
+        onError: () => toast.error("Could not request cluster access"),
       },
     );
   };
@@ -492,10 +508,16 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    updateTopic.mutate({
-      topicDefinition: found,
-      payload: { ...topicDescriptor },
-    });
+    updateTopic.mutate(
+      {
+        topicDefinition: found,
+        payload: { ...topicDescriptor },
+      },
+      {
+        onSuccess: () => toast.success("Topic updated"),
+        onError: () => toast.error("Could not update topic"),
+      },
+    );
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -525,9 +547,15 @@ function SelectedCapabilityProvider({ children }) {
       throw Error(`A kafka topic with id "${topicId}" could not be found.`);
     }
 
-    deleteTopic.mutate({
-      topicDefinition: found,
-    });
+    deleteTopic.mutate(
+      {
+        topicDefinition: found,
+      },
+      {
+        onSuccess: () => toast.success("Topic deleted. The partition is gone"),
+        onError: () => toast.error("Could not delete topic"),
+      },
+    );
 
     setKafkaClusters((prev) => {
       const copy = [...prev];
@@ -569,7 +597,9 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+          toast.success("Membership bypassed. Speed run complete");
         },
+        onError: () => toast.error("Could not bypass approval"),
       },
     );
   };
@@ -589,7 +619,9 @@ function SelectedCapabilityProvider({ children }) {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "azure"],
           });
+          toast.success("Azure resource requested. The cloud shall provide");
         },
+        onError: () => toast.error("Could not request Azure resource"),
       },
     );
   };
@@ -699,6 +731,7 @@ function SelectedCapabilityProvider({ children }) {
     metadata,
     validateContract,
     requirementsScore,
+    requirementsScoreLoading: requirementsScoreInProgress,
     inProgressMetadata: metadataFetched,
     metadataFetched,
     azureResourcesList,

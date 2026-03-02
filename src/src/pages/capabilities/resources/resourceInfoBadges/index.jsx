@@ -157,6 +157,12 @@ function VPCPeerings({ awsAccountInformation }) {
   );
 }
 
+const REQUIRED_TAGS = [
+  "dfds.cost.centre",
+  "dfds.service.availability",
+  "dfds.azure.purpose",
+];
+
 export function ResourceInfoBadges() {
   const {
     id,
@@ -175,11 +181,6 @@ export function ResourceInfoBadges() {
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
-  const requiredTags = [
-    "dfds.cost.centre",
-    "dfds.service.availability",
-    "dfds.azure.purpose",
-  ];
   const [missingTags, setMissingTags] = useState([]);
   const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
   const [showNewAzureResourcePopup, setShowNewAzureResourcePopup] =
@@ -208,8 +209,8 @@ export function ResourceInfoBadges() {
   };
 
   useEffect(() => {
-    if (metaParsed !== undefined && requiredTags.length > 0) {
-      const missing = requiredTags.filter(
+    if (metaParsed !== undefined && REQUIRED_TAGS.length > 0) {
+      const missing = REQUIRED_TAGS.filter(
         (tag) => !metaParsed.hasOwnProperty(tag),
       );
       setMissingTags((prev) => {
@@ -224,7 +225,7 @@ export function ResourceInfoBadges() {
     } else {
       setMissingTags([]);
     }
-  }, [metaParsed, requiredTags]);
+  }, [metaParsed]);
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
@@ -283,7 +284,7 @@ export function ResourceInfoBadges() {
         />
       )}
       <Dialog open={showLogModal} onOpenChange={(o) => !o && setLogModal(false)}>
-        <DialogContent className="max-w-[50%]">
+        <DialogContent className="max-w-[95vw] sm:max-w-[50%]">
           <DialogHeader>
             <DialogTitle>How do I see my application logs?</DialogTitle>
           </DialogHeader>
@@ -327,6 +328,7 @@ export function ResourceInfoBadges() {
               target="_blank"
               rel="noreferrer"
               href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
+              className="break-all whitespace-normal h-auto"
             >
               https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
             </TrackedButton>

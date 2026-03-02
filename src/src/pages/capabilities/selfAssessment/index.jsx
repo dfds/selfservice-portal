@@ -13,6 +13,7 @@ import {
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 import { TrackedButton } from "@/components/Tracking";
+import { SkeletonSelfAssessmentRow } from "@/components/ui/skeleton";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -145,7 +146,13 @@ export default function SelfAssessments() {
               capabilities.
             </p>
 
-            {(assessments || []).length > 0 ? (
+            {!responseData ? (
+              <div className="mt-4">
+                {[0, 1, 2, 3].map((i) => (
+                  <SkeletonSelfAssessmentRow key={i} />
+                ))}
+              </div>
+            ) : (assessments || []).length > 0 ? (
               <>
                 <p>
                   The following self assessments are available for this

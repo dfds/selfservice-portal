@@ -4,6 +4,7 @@ import { useTopVisitors } from "@/state/remote/queries/stats";
 import Confetti from "react-confetti";
 import { useMe } from "@/state/remote/queries/me";
 import { UserAvatar } from "@/components/ui/UserAvatar";
+import { SkeletonVisitorRow } from "@/components/ui/skeleton";
 
 function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
@@ -24,12 +25,13 @@ function useWindowSize() {
   return windowSize;
 }
 
-function Visitor({ rank, name, pictureUrl, onClicked }) {
+function Visitor({ rank, name, pictureUrl, onClicked, index = 0 }) {
   const handler = onClicked ?? (() => {});
 
   return (
     <div
-      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider first:pt-0 last:border-0 last:pb-0 ${rank === 1 ? "cursor-pointer" : ""}`}
+      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider first:pt-0 last:border-0 last:pb-0 animate-fade-up ${rank === 1 ? "cursor-pointer" : ""}`}
+      style={{ animationDelay: `${index * 50}ms` }}
       onClick={handler}
       title={rank === 1 ? "Celebrate...?" : ""}
     >
@@ -88,12 +90,23 @@ export default function TopVisitors() {
     }
   }, [myProfile, data, isFetched]);
 
+  if (!isFetched) {
+    return (
+      <div>
+        {[0, 1, 2, 3, 4].map((i) => (
+          <SkeletonVisitorRow key={i} isFirst={i === 0} isLast={i === 4} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div>
       {showConfetti && <Confetti width={width} height={height} />}
       {(visitors || []).map((x, i) => (
         <Visitor
           key={i}
+          index={i}
           {...x}
           onClicked={() => handleVisitorClicked(x.rank)}
         />

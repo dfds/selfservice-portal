@@ -11,7 +11,7 @@ function Link({ title, url }) {
       <span className="text-[13px] text-[#666666] dark:text-[#94a3b8] group-hover:text-[#0e7cc1] dark:group-hover:text-[#60a5fa] transition-colors">
         {title}
       </span>
-      <span className="font-mono text-[11px] text-[#afafaf] dark:text-[#64748b]">
+      <span className="font-mono text-[11px] text-[#afafaf] dark:text-[#64748b] transition-transform duration-150 ease-out-expo group-hover:translate-x-[2px] group-hover:-translate-y-[2px]">
         ↗
       </span>
     </a>

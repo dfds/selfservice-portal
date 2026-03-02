@@ -20,6 +20,172 @@
   --color-border-card: #d9dcde;
   --color-border-tab: #ced0d1;
   --color-border-divider: #eeeeee;
+
+  /* Easing curves — exponential deceleration for natural motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animation utilities — @keyframes must be inside @theme for Tailwind v4 */
+  --animate-fade-up: fade-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-menu-enter: menu-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes menu-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --animate-accordion-down: accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+
+  --animate-accordion-up: accordion-up 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  --animate-card-enter: card-enter 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --animate-section-enter: section-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes section-enter {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-toast-enter: toast-enter 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes toast-enter {
+    from {
+      opacity: 0;
+      transform: translateX(20px) translateY(8px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) translateY(0) scale(1);
+    }
+  }
+
+  --animate-toast-exit: toast-exit 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  @keyframes toast-exit {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+
+  --animate-progress-fill: progress-fill 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes progress-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  --animate-badge-pulse: badge-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  @keyframes badge-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @keyframes number-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Switch thumb slider — two differently-named keyframes so the browser
+     re-fires the animation on every state toggle. Thumb stretches horizontally
+     during travel, elongating in the direction of motion. */
+  --animate-switch-slider-on: switch-slider-on 660ms ease-in-out both;
+  --animate-switch-slider-off: switch-slider-off 660ms ease-in-out both;
+  @keyframes switch-slider-on {
+    0%   { scale: 1; }
+    40%  { scale: 1.25 1; }
+    75%  { scale: 1; }
+    100% { scale: 1; }
+  }
+  @keyframes switch-slider-off {
+    0%   { scale: 1; }
+    40%  { scale: 1.25 1; }
+    75%  { scale: 1; }
+    100% { scale: 1; }
+  }
+
+  /* Skeleton shimmer */
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* CE mode rainbow hue rotation */
+  --animate-rainbow-hue: rainbow-hue 3s linear infinite;
+  @keyframes rainbow-hue {
+    0%   { filter: hue-rotate(0deg);   }
+    100% { filter: hue-rotate(360deg); }
+  }
 }
 
 :root {
@@ -63,8 +229,8 @@
   --shadow-overlay-strong: 0px 8px 16px rgba(0, 0, 0, 0.2);
 
   /* Transitions */
-  --transition-base: 150ms ease;
-  --transition-slow: 300ms ease;
+  --transition-base: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 300ms cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Layout */
   --header-height: 3.75rem;
@@ -98,29 +264,81 @@ html.dark {
 /* Semantic utilities — auto-switch with CSS vars (no dark: variant needed) */
 @layer utilities {
   /* Text colors */
-  .text-primary { color: var(--color-text-primary); }
-  .text-secondary { color: var(--color-text-secondary); }
-  .text-muted { color: var(--color-text-muted); }
-  .text-action { color: var(--color-action); }
-  .text-inverse { color: var(--color-text-inverse); }
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-action {
+    color: var(--color-action);
+  }
+  .text-inverse {
+    color: var(--color-text-inverse);
+  }
 
   /* Surface backgrounds */
-  .bg-surface { background-color: var(--color-surface); }
-  .bg-surface-muted { background-color: var(--color-surface-muted); }
-  .bg-surface-subtle { background-color: var(--color-surface-subtle); }
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+  .bg-surface-muted {
+    background-color: var(--color-surface-muted);
+  }
+  .bg-surface-subtle {
+    background-color: var(--color-surface-subtle);
+  }
 
   /* Border colors */
-  .border-card { border-color: var(--color-border-card); }
-  .border-divider { border-color: var(--color-border-divider); }
-  .border-tab { border-color: var(--color-border-tab); }
+  .border-card {
+    border-color: var(--color-border-card);
+  }
+  .border-divider {
+    border-color: var(--color-border-divider);
+  }
+  .border-tab {
+    border-color: var(--color-border-tab);
+  }
 
   /* Shadows */
-  .shadow-card { box-shadow: var(--shadow-card); }
-  .shadow-overlay { box-shadow: var(--shadow-overlay); }
-  .shadow-overlay-strong { box-shadow: var(--shadow-overlay-strong); }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-overlay {
+    box-shadow: var(--shadow-overlay);
+  }
+  .shadow-overlay-strong {
+    box-shadow: var(--shadow-overlay-strong);
+  }
 
   /* Typography patterns */
-  .text-description { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+  .text-description {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ease-out-expo {
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Stagger delays — combine with animate-fade-up or animate-section-enter */
+  .animate-stagger-1 { animation-delay: 60ms; }
+  .animate-stagger-2 { animation-delay: 120ms; }
+  .animate-stagger-3 { animation-delay: 180ms; }
+  .animate-stagger-4 { animation-delay: 240ms; }
+  .animate-stagger-5 { animation-delay: 300ms; }
+}
+
+.ce-rainbow-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: oklch(0.55 0.22 260);
+  animation: var(--animate-rainbow-hue);
+  z-index: 0;
 }
 
 body {
@@ -146,7 +364,7 @@ code {
   align-items: center;
 
   text-transform: lowercase;
-  color: #002b454d;
+  color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
   font-size: 0.65rem;
   font-family: monospace;
 }

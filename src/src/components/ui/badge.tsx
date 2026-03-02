@@ -17,6 +17,8 @@ const badgeVariants = cva(
           "bg-[rgba(76,175,80,0.1)] text-[#4caf50] font-mono tracking-[0.06em]",
         "soft-warning":
           "bg-[rgba(237,136,0,0.1)] text-[#ed8800] font-mono tracking-[0.06em]",
+        pending:
+          "border-transparent bg-[rgba(237,136,0,0.1)] text-[#ed8800] font-mono tracking-[0.06em] animate-badge-pulse",
       },
     },
     defaultVariants: {

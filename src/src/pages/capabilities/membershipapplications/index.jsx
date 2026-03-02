@@ -3,8 +3,10 @@ import {
   useMembershipApplications,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
+import { useToast } from "@/context/ToastContext";
 import { CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { SkeletonMembershipApplicationRow } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
@@ -70,6 +72,7 @@ export function MembershipApplicationsUserCanApprove({
   isRefetching,
 }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
@@ -148,7 +151,9 @@ export function MembershipApplicationsUserCanApprove({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          toast.success("Access granted. Welcome to the team");
         },
+        onError: () => toast.error("Could not approve membership"),
       },
     );
   };
@@ -162,14 +167,26 @@ export function MembershipApplicationsUserCanApprove({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          toast.success("Application declined");
         },
+        onError: () => toast.error("Could not decline membership"),
       },
     );
   };
 
+  if (!isFetched) {
+    return (
+      <div>
+        {[0, 1, 2].map((i) => (
+          <SkeletonMembershipApplicationRow key={i} isLast={i === 2} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <>
-      {isFetched && tableData.length > 0 ? (
+      {tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
           handleApproveClicked={handleApproveClicked}

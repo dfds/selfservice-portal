@@ -1,6 +1,6 @@
 import styles from "./toast.module.css";
 import { X } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,43 +11,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { TrackedButton } from "@/components/Tracking";
 
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-
 export default function ErrorToast({ message, title, details }) {
-  const [showToast, setShowToast] = useState(true);
+  const [visible, setVisible] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [opacity, setOpacity] = useState(0);
-  const prevOpacity = usePrevious(opacity);
-  const [hide, setHide] = useState(false);
-  const prevHide = usePrevious(hide);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setOpacity(0.8);
-    }, 100);
-  }, []);
+  const dismiss = () => setIsExiting(true);
 
-  useEffect(() => {
-    if (prevOpacity !== undefined && opacity === 0) {
-      setTimeout(() => {
-        setHide(true);
-      }, 300);
-    }
-  }, [opacity]);
+  const handleAnimationEnd = () => {
+    if (isExiting) setVisible(false);
+  };
 
-  useEffect(() => {
-    if (prevHide !== undefined && hide === true) {
-      setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
-    }
-  }, [hide]);
+  if (!visible) return null;
 
   return (
     <>
@@ -66,38 +41,36 @@ export default function ErrorToast({ message, title, details }) {
           </DialogContent>
         </Dialog>
       )}
-      {showToast && (
-        <div
-          className={`${styles.toast_container} ${hide ? styles.hidden : ""}`}
-          style={{ opacity: opacity }}
-        >
-          <div className={styles.toast_close_bar}>
+      <div
+        className={`fixed bottom-4 right-4 z-[100] w-[290px] rounded-[5px] bg-[var(--color-error)] ${isExiting ? "animate-toast-exit" : "animate-toast-enter"}`}
+        onAnimationEnd={handleAnimationEnd}
+      >
+        <div className="w-full h-8 flex items-center justify-end pr-1">
+          <TrackedButton
+            trackName="Toast-Close"
+            size="small"
+            variation="link"
+            onClick={dismiss}
+            className="text-white hover:text-white/80 h-7 w-7 p-0"
+          >
+            <X size={15} strokeWidth={2} />
+          </TrackedButton>
+        </div>
+        <div className="text-white text-center px-5 pb-2 text-sm">{message}</div>
+        {details && (
+          <div className="text-center pb-3">
             <TrackedButton
-              trackName="Toast-Close"
+              trackName="Toast-ShowDetails"
               size="small"
               variation="link"
-              fillWidth="true"
-              onClick={() => setOpacity(0)}
+              onClick={() => setShowDetails(true)}
+              className="text-white/70 hover:text-white text-[0.8rem] h-auto py-0.5"
             >
-              <X className={styles.close_icon} />
+              Details
             </TrackedButton>
           </div>
-          <div className={styles.toast_message}>{message}</div>
-          {details && (
-            <div>
-              <TrackedButton
-                trackName="Toast-ShowDetails"
-                size="small"
-                variation="link"
-                fillWidth="true"
-                onClick={() => setShowDetails(true)}
-              >
-                <span className={styles.toast_details_button}>Details</span>
-              </TrackedButton>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

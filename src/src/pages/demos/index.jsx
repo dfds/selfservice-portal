@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
-import { Text } from "@/components/ui/Text";
+import { SkeletonDemoAction } from "@/components/ui/skeleton";
 import { CheckCircle } from "lucide-react";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import Page from "components/Page";
@@ -55,7 +55,7 @@ export default function DemosPage() {
             onClose={() => setShowSignupModal(false)}
           />
         )}
-        <InfoAlert className="mb-4">
+        <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
           <p className="font-semibold mb-1">Stay in the loop</p>
           <p className="mb-1">
             The cloud engineering team hosts demo sessions on a regular basis
@@ -67,7 +67,7 @@ export default function DemosPage() {
           </p>
           <div className="flex gap-2 flex-wrap items-center">
             {isLoading ? (
-              <Text>Loading...</Text>
+              <SkeletonDemoAction />
             ) : (
               <>
                 {!isSignedUp ? (
@@ -110,7 +110,9 @@ export default function DemosPage() {
             </div>
           )}
         </InfoAlert>
-        <RecordingsSection />
+        <div className="animate-fade-up animate-stagger-2">
+          <RecordingsSection />
+        </div>
       </Page>
     </>
   );

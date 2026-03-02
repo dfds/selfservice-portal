@@ -16,7 +16,7 @@ export default function Page({ title, isLoading = false, isNotFound = false, chi
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       {title && (
         <h1 className={styles.pageTitle}>
           {title}

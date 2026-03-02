@@ -3,6 +3,7 @@ import { useState } from "react";
 
 export function useLatestNews() {
   const [news, setNews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadNews = async () => {
     const response = await fetch("https://dfdsit.statuspage.io/history.rss");
@@ -28,6 +29,7 @@ export function useLatestNews() {
     });
 
     setNews(newsItems);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -38,5 +40,5 @@ export function useLatestNews() {
     };
   }, []);
 
-  return news;
+  return { news, isLoading };
 }

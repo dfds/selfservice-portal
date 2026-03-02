@@ -1,9 +1,129 @@
 import { Spinner } from "@/components/ui/spinner";
 import { MaterialReactTable } from "material-react-table";
-import { useMemo, useContext } from "react";
+import { useMemo, useContext, useState, useEffect } from "react";
 import AppContext from "@/AppContext";
 import { useTheme } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { Card, CardContent } from "@/components/ui/card";
+import { PaginationControls } from "@/components/ui/PaginationControls";
+
+const APP_CARD_PAGE_SIZE = 10;
+
+function MembershipApplicationCard({
+  row,
+  truncateString,
+  handleApproveClicked,
+  approveButtonLabel,
+  handleRejectClicked,
+  rejectButtonLabel,
+}) {
+  return (
+    <Card className="mb-2">
+      <CardContent className="p-3">
+        <p className="text-sm font-medium text-primary mb-0.5">
+          {truncateString(row.capabilityId, 80)}
+        </p>
+        <p className="font-mono text-xs text-secondary mb-2">{row.applicant}</p>
+        <div className="flex gap-4 text-xs text-muted font-mono mb-3">
+          <span>Submitted: {row.submittedAt}</span>
+          <span>Expires: {row.expiresOn}</span>
+        </div>
+        {row.activeCrudOperation ? (
+          <div className="flex justify-end">
+            <Spinner size="sm" />
+          </div>
+        ) : (
+          <div className="flex justify-end gap-2">
+            {handleApproveClicked != null && (
+              <button
+                type="button"
+                onClick={() => handleApproveClicked(row)}
+                className="cursor-pointer rounded-[4px] bg-[#0e7cc1] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#0b6aa5]"
+              >
+                {approveButtonLabel ?? "Approve"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => handleRejectClicked(row)}
+              className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#a1192a]"
+            >
+              {rejectButtonLabel ?? "Reject"}
+            </button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function MembershipApplicationCardList({
+  tableData,
+  truncateString,
+  handleApproveClicked,
+  approveButtonLabel,
+  handleRejectClicked,
+  rejectButtonLabel,
+}) {
+  const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const visible = filter
+    ? tableData.filter((row) => {
+        const q = filter.toLowerCase();
+        return (
+          row.capabilityId?.toLowerCase().includes(q) ||
+          row.applicant?.toLowerCase().includes(q)
+        );
+      })
+    : tableData;
+
+  const totalPages = Math.max(1, Math.ceil(visible.length / APP_CARD_PAGE_SIZE));
+  const pageStart = (currentPage - 1) * APP_CARD_PAGE_SIZE;
+  const pageItems = visible.slice(pageStart, pageStart + APP_CARD_PAGE_SIZE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tableData, filter]);
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search applications..."
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="w-full mb-4 px-3 py-2 text-sm border border-divider rounded-[5px] bg-surface text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+      {pageItems.map((row) => (
+        <MembershipApplicationCard
+          key={row.id}
+          row={row}
+          truncateString={truncateString}
+          handleApproveClicked={handleApproveClicked}
+          approveButtonLabel={approveButtonLabel}
+          handleRejectClicked={handleRejectClicked}
+          rejectButtonLabel={rejectButtonLabel}
+        />
+      ))}
+      {visible.length === 0 && (
+        <p className="text-center text-sm text-muted italic py-8">
+          No applications found.
+        </p>
+      )}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageStart={pageStart}
+        pageSize={APP_CARD_PAGE_SIZE}
+        total={visible.length}
+        onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+        onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+      />
+    </div>
+  );
+}
 
 export function MembershipApplicationTable({
   tableData,
@@ -14,6 +134,8 @@ export function MembershipApplicationTable({
 }) {
   const { truncateString } = useContext(AppContext);
   const { isDark } = useTheme();
+  const isMobile = useIsMobile();
+
   const muiTheme = useMemo(
     () =>
       createTheme({
@@ -117,6 +239,19 @@ export function MembershipApplicationTable({
     ],
     [],
   );
+
+  if (isMobile) {
+    return (
+      <MembershipApplicationCardList
+        tableData={tableData}
+        truncateString={truncateString}
+        handleApproveClicked={handleApproveClicked}
+        approveButtonLabel={approveButtonLabel}
+        handleRejectClicked={handleRejectClicked}
+        rejectButtonLabel={rejectButtonLabel}
+      />
+    );
+  }
 
   return (
     <ThemeProvider theme={muiTheme}>

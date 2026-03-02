@@ -297,10 +297,32 @@
   background-color: white;
   transition: transform 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 
 .toggleInput:checked ~ .toggleTrack .toggleThumb {
   transform: translateX(1rem);
+}
+
+/* Rainbow variant when CE mode is active */
+.toggleTrackRainbow {
+  display: inline-block;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: oklch(0.55 0.22 260);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s;
+}
+
+.toggleRainbowLayer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: oklch(0.55 0.22 260);
+  animation: rainbow-hue 3s linear infinite;
+  z-index: 0;
 }
 
 /* ===== Hamburger ===== */

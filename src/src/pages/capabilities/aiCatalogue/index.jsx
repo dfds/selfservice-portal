@@ -4,6 +4,8 @@ import { Text } from "@/components/ui/Text";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/context/ToastContext";
 import { TrackedLink } from "@/components/Tracking";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +24,8 @@ export function AICatalogue() {
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
+  const queryClient = useQueryClient();
+  const toast = useToast();
   const [canEditTags, setCanEditTags] = useState(false);
   const [aiCatalogueEntries, setAICatalogueEntries] = useState([]);
   const [aiEntryInput, setAIEntryInput] = useState("");
@@ -62,7 +66,9 @@ export function AICatalogue() {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "metadata", details?.id],
           });
+          toast.success("Catalogue updated");
         },
+        onError: () => toast.error("Could not save catalogue entries"),
       },
     );
   };
