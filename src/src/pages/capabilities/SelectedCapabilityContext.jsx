@@ -423,6 +423,9 @@ function SelectedCapabilityProvider({ children }) {
             queryKey: ["capabilities", "members"],
           });
           queryClient.invalidateQueries({
+            queryKey: ["rbac", "user-roles", capabilityId],
+          });
+          queryClient.invalidateQueries({
             queryKey: ["membershipapplications/eligible-for-approval"],
           });
         },
@@ -459,6 +462,9 @@ function SelectedCapabilityProvider({ children }) {
         onSuccess: async () => {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "members"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["rbac", "user-roles", capabilityId],
           });
           toast.success("You've left the capability. Your on-call obligations have been reassigned");
         },
@@ -597,6 +603,9 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities"] });
+          queryClient.invalidateQueries({
+            queryKey: ["rbac", "user-roles", capabilityId],
+          });
           toast.success("Membership bypassed. Speed run complete");
         },
         onError: () => toast.error("Could not bypass approval"),

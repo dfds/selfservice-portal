@@ -33,14 +33,13 @@ export function useUserRoles(capabilityId: string) {
 
 export function useGrantRole() {
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
         urlSegments: ["capabilities", data.payload.resource, "roles", "grant"],
         payload: data.payload,
         isCloudEngineerEnabled: false,
-      });
-    },
+      }),
   });
 
   return mutation;
@@ -48,7 +47,7 @@ export function useGrantRole() {
 
 export function useRevokeRole() {
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: any) =>
       ssuRequest({
         method: "DELETE",
         urlSegments: [
@@ -60,8 +59,7 @@ export function useRevokeRole() {
         ],
         payload: null,
         isCloudEngineerEnabled: false,
-      });
-    },
+      }),
   });
 
   return mutation;

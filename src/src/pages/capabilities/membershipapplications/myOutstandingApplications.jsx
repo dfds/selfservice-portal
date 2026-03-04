@@ -96,6 +96,8 @@ export function MyOutstandingMembershipApplications({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "details", def.capabilityId] });
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "members", "membership-applications", def.capabilityId] });
         },
       },
     );

@@ -9,18 +9,23 @@ import { useGrantRole } from "@/state/remote/queries/rbac";
 import { useTheme } from "@/context/ThemeContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Banner } from "@/components/ui/banner";
+import { useQueryClient } from "@tanstack/react-query";
 
 function MemberRow({ member, roleTypes }) {
   const {
     id: capabilityId,
     userIsOwner,
-    reloadCapability,
   } = useContext(SelectedCapabilityContext);
   const { myProfile: user } = useContext(AppContext);
   const { mutate: grantRoleMutation, isPending } = useGrantRole();
+  const queryClient = useQueryClient();
   const [selectedRole, setSelectedRole] = useState(member.role);
   const [showSuccess, setShowSuccess] = useState(false);
   const { isDark } = useTheme();
+
+  useEffect(() => {
+    setSelectedRole(member.role);
+  }, [member.role]);
 
   const grantRole = (memberEmail, roleId, newRole) => {
     grantRoleMutation(
@@ -35,7 +40,8 @@ function MemberRow({ member, roleTypes }) {
       },
       {
         onSuccess: () => {
-          reloadCapability();
+          queryClient.invalidateQueries({ queryKey: ["rbac", "user-roles", capabilityId] });
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "details", capabilityId] });
           setSelectedRole(newRole);
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 3000);
