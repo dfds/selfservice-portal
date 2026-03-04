@@ -90,7 +90,7 @@ export function useSubmitMembershipApplicationApproval() {
         urlSegments: [
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
-        payload: null,
+        payload: data.roleId ? { roleId: data.roleId } : null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });

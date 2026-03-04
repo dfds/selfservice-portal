@@ -40,7 +40,11 @@
     max-width: 100%;
     min-width: 170px;
     font-family: inherit;
-    font-size: 0.875rem;
+    font-size: 1rem;
+
+    @media (min-width: 768px) {
+      font-size: 0.875rem;
+    }
     outline: none;
 
     &::placeholder {

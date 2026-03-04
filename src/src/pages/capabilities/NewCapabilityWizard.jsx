@@ -50,7 +50,7 @@ function getSelectStyles(isDark) {
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
     singleValue: (base) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45", fontWeight: 500 }),
     placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
-    input: (base) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45" }),
+    input: (base) => ({ ...base, fontSize: "16px", color: isDark ? "#e2e8f0" : "#002b45" }),
     option: (base, state) => ({
       ...base,
       backgroundColor: state.isSelected

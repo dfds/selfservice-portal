@@ -7,6 +7,7 @@ import { useToast } from "@/context/ToastContext";
 import { CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonMembershipApplicationRow } from "@/components/ui/skeleton";
+import { useGetRoles } from "@/state/remote/queries/rbac";
 import { useQueryClient } from "@tanstack/react-query";
 import AppContext from "AppContext";
 import PageSection from "components/PageSection";
@@ -76,6 +77,7 @@ export function MembershipApplicationsUserCanApprove({
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
+  const { data: availableRolesData } = useGetRoles(null);
   const submitMembershipApplicationApproval =
     useSubmitMembershipApplicationApproval();
   const deleteMembershipApplicationApproval =
@@ -142,11 +144,12 @@ export function MembershipApplicationsUserCanApprove({
     });
   };
 
-  const handleApproveClicked = async (def) => {
+  const handleApproveClicked = (def, roleId) => {
     setActiveCrudOpOnTableDataItem(def);
     submitMembershipApplicationApproval.mutate(
       {
         membershipApplicationDefinition: def,
+        roleId,
       },
       {
         onSuccess: () => {
@@ -184,11 +187,17 @@ export function MembershipApplicationsUserCanApprove({
     );
   }
 
+  const roleOptions = (availableRolesData || []).map((role) => ({
+    value: role.id,
+    label: role.name,
+  }));
+
   return (
     <>
       {tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
+          roleOptions={roleOptions}
           handleApproveClicked={handleApproveClicked}
           handleRejectClicked={handleRejectClicked}
         />
