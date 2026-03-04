@@ -171,9 +171,20 @@ export function TabbedMembersView({ anchorId }) {
   const header = <></>;
   const footer = <></>;
 
+  const applicationCount = (capabilityApplications || []).length;
+
   const tabs = {
     members: "Current Members",
-    applications: "Membership Applications",
+    applications: (
+      <span className="flex items-center gap-1.5">
+        Membership Applications
+        {applicationCount > 0 && (
+          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[10px] font-bold leading-none text-white">
+            {applicationCount}
+          </span>
+        )}
+      </span>
+    ),
   };
 
   const tabsContent = {
