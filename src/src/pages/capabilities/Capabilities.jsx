@@ -13,6 +13,7 @@ import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
+import { getCostCentreLabel } from "@/constants/tagConstants";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function RowLink({ to }) {
@@ -256,6 +257,12 @@ export default function CapabilitiesList() {
                 id: row.id,
               };
             },
+            sortingFn: (rowA, rowB) => {
+              // Sort by requirementsScore descending
+              const scoreA = rowA.original.requirementScore ?? 0;
+              const scoreB = rowB.original.requirementScore ?? 0;
+              return scoreB - scoreA;
+            },
             header: "Compliance",
             size: 150,
             enableColumnFilterModes: false,
@@ -346,12 +353,27 @@ export default function CapabilitiesList() {
             muiTableBodyCellProps: {
               align: "center",
             },
+            sortingFn: (rowA, rowB) => {
+              const metaA = JSON.parse(rowA.original.jsonMetadata ?? "{}");
+              const metaB = JSON.parse(rowB.original.jsonMetadata ?? "{}");
+              const labelA = getCostCentreLabel(
+                metaA["dfds.cost.centre"] || "",
+              );
+              const labelB = getCostCentreLabel(
+                metaB["dfds.cost.centre"] || "",
+              );
+              if (typeof labelA === "string" && typeof labelB === "string") {
+                return labelA.localeCompare(labelB);
+              }
+              return 0;
+            },
             Cell: ({ cell }) => {
               const jsonMetadata = JSON.parse(cell.getValue() ?? "{}");
-              if (jsonMetadata["dfds.cost.centre"] === undefined) {
+              const value = jsonMetadata["dfds.cost.centre"];
+              if (value === undefined) {
                 return <div></div>;
               }
-              return <div>{jsonMetadata["dfds.cost.centre"]}</div>;
+              return <div>{getCostCentreLabel(value)}</div>;
             },
           },
           /*
