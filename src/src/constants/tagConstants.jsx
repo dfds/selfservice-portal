@@ -26,6 +26,12 @@ export const ENUM_COSTCENTER = [
   { label: "Logistics Division [logistics]", value: "logistics" },
   { label: "People Division [people]", value: "people" },
 ];
+
+// Utility to get human-readable cost centre label
+export function getCostCentreLabel(value) {
+  const found = ENUM_COSTCENTER.find((item) => item.value === value);
+  return found ? found.label : value;
+}
 const COMPETENCE_ENGINEERING_BUSINESS_CAPABILITIES = [
   {
     label: "Event Streaming & Data Integration",
