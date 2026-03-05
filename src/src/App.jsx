@@ -87,7 +87,7 @@ function Layout() {
           <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
           <div className="flex flex-col flex-1 min-w-0">
             <TopBar onMenuOpen={() => setMobileOpen(true)} menuOpen={mobileOpen} />
-            <main id="main-content" className="flex-1 bg-surface-muted overflow-x-hidden">
+            <main id="main-content" className="flex-1 bg-surface-muted overflow-x-clip">
               <ErrorBoundary key={location.pathname}>
                 <PageTransition>
                   <Outlet />

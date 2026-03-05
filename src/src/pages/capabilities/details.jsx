@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -262,7 +263,7 @@ function CapabilityDetailsPageContent() {
       </div>
 
       {/* Mobile: fixed bottom nav bar — md:hidden */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white dark:bg-[#1e293b] border-t border-[#d9dcde] dark:border-[#334155] shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+      {createPortal(<div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white dark:bg-[#1e293b] border-t border-[#d9dcde] dark:border-[#334155] shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
         {/* Expandable link list */}
         <div
           className="grid transition-[grid-template-rows] duration-200 ease-in-out"
@@ -320,7 +321,7 @@ function CapabilityDetailsPageContent() {
             )}
           />
         </button>
-      </div>
+      </div>, document.body)}
     </div>
   );
 }
