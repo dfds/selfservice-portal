@@ -499,6 +499,11 @@ export default function CapabilitiesList() {
             header: "Compliance",
             size: 150,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB) => {
+              const aScore = rowA.original.requirementScore ?? -1;
+              const bScore = rowB.original.requirementScore ?? -1;
+              return aScore - bScore;
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
@@ -579,6 +584,11 @@ export default function CapabilitiesList() {
             header: "Cost Centre",
             size: 50,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB) => {
+              const ac = JSON.parse(rowA.original.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
+              const bc = JSON.parse(rowB.original.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
+              return ac.localeCompare(bc) || rowA.original.name.localeCompare(rowB.original.name);
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
@@ -624,6 +634,16 @@ export default function CapabilitiesList() {
             header: "Costs",
             size: 150,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB) => {
+              const aCosts = rowA.original.costs ?? [];
+              const bCosts = rowB.original.costs ?? [];
+              const aAvg = aCosts.length > 0 ? aCosts.reduce((s, x) => s + x.pv, 0) / aCosts.length : null;
+              const bAvg = bCosts.length > 0 ? bCosts.reduce((s, x) => s + x.pv, 0) / bCosts.length : null;
+              if (aAvg == null && bAvg == null) return 0;
+              if (aAvg == null) return 1;
+              if (bAvg == null) return -1;
+              return aAvg - bAvg;
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
