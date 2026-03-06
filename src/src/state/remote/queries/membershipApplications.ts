@@ -90,7 +90,14 @@ export function useSubmitMembershipApplicationApproval() {
         urlSegments: [
           data.membershipApplicationDefinition?.approvals?._links?.self.href,
         ],
-        payload: data.roleId ? { roleId: data.roleId } : null,
+        payload: data.roleId
+          ? {
+              roleId: data.roleId,
+              assignedEntityId: data.membershipApplicationDefinition?.applicant,
+              type: "capability",
+              resource: data.membershipApplicationDefinition?.capabilityId,
+            }
+          : null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
