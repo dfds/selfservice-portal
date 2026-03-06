@@ -61,6 +61,25 @@ export function useCapabilityAdd() {
   return mutation;
 }
 
+export function useCapabilityCompliance(capabilityId: string | null) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const query = useQuery({
+    queryKey: ["capabilities", "compliance", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["compliance", "capabilities", capabilityId],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+    enabled: !!capabilityId,
+    staleTime: 60000,
+  });
+
+  return query;
+}
+
 export function useCapabilityMetadata(capabilityDefinition: any) {
   const link = capabilityDefinition?._links;
   const { isCloudEngineerEnabled } = useContext(PreAppContext);

@@ -129,7 +129,7 @@
       transform: scaleX(0);
     }
     to {
-      transform: scaleX(1);
+      transform: scaleX(var(--progress-value, 1));
     }
   }
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { ExternalLink } from "lucide-react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
@@ -72,23 +72,13 @@ export function QuestionMarkBulb({ size = 20, onClick, title = "Data may be stal
 }
 
 export default function RequirementsScore() {
-  const { isLoading, requirementsScore, requirementsScoreLoading } = useContext(SelectedCapabilityContext);
+  const { isLoading, complianceData, complianceLoading } = useContext(SelectedCapabilityContext);
 
-  const [overallScore, setOverallScore] = React.useState(0);
-  const [requirementsMetrics, setRequirementsMetrics] = React.useState([]);
-
-  useEffect(() => {
-    if (requirementsScore && Object.keys(requirementsScore).length !== 0) {
-      setOverallScore(requirementsScore.totalScore);
-      setRequirementsMetrics(requirementsScore.requirementsMetrics);
-    }
-  }, [requirementsScore]);
-
-  const totalCount = requirementsMetrics.length;
-  const metCount = requirementsMetrics.filter((m) => m.value >= 80).length;
-  const scoreColor = getScoreColor(overallScore);
-
-  const loading = isLoading || requirementsScoreLoading;
+  const categories = complianceData?.categories ?? [];
+  const overallScore = complianceData?.totalScore ?? 0;
+  const totalCount = categories.length;
+  const metCount = categories.filter((c) => c.status === "Compliant").length;
+  const loading = isLoading || complianceLoading;
 
   return (
     <PageSection id="requirements-status" headline="Requirements Status">
@@ -98,12 +88,11 @@ export default function RequirementsScore() {
       ) : (
         <div className="mb-4">
           <span
-            className="font-mono text-[1.5rem] font-bold block mb-1.5"
-            style={{ color: scoreColor }}
+            className="font-mono text-[1.5rem] font-bold block mb-1.5 text-[#002b45] dark:text-[#e2e8f0]"
           >
             {totalCount > 0 ? `${metCount} / ${totalCount}` : `${overallScore.toFixed(1)}%`}
           </span>
-          <ProgressBar value={overallScore} color={scoreColor} className="mb-1.5" />
+          <ProgressBar value={totalCount > 0 ? (metCount / totalCount) * 100 : overallScore} color="#4caf50" className="mb-1.5" />
           <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
             {totalCount > 0
               ? `${metCount} of ${totalCount} requirements met`
@@ -112,60 +101,74 @@ export default function RequirementsScore() {
         </div>
       )}
 
-      {/* Individual metrics */}
+      {/* Individual categories */}
       {loading ? (
         <div className="border border-[#d9dcde] dark:border-[#334155] rounded-[6px] overflow-hidden">
           {[0, 1, 2].map((i) => (
             <SkeletonRequirementsRow key={i} isLast={i === 2} />
           ))}
         </div>
-      ) : requirementsMetrics && requirementsMetrics.length > 0 ? (
+      ) : categories.length > 0 ? (
         <div className="border border-[#d9dcde] dark:border-[#334155] rounded-[6px] overflow-hidden">
-          {requirementsMetrics.map((metric, index) => (
-            <div
-              key={metric.id}
-              className={`px-4 py-3 flex items-start gap-3 ${
-                index < requirementsMetrics.length - 1 ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""
-              }`}
-            >
-              <div className="flex-shrink-0 mt-1">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: getScoreColor(metric.value) }}
-                  title={`Score: ${metric.value.toFixed(1)}%`}
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0]">
-                    {metric.displayName || metric.name}
-                  </span>
-                  <span
-                    className="font-mono text-[12px] font-bold flex-shrink-0"
-                    style={{ color: getScoreColor(metric.value) }}
-                  >
-                    {metric.value.toFixed(1)}%
-                  </span>
+          {categories.map((category, index) => {
+            const isUnknown = category.status === "Unknown" || category.score === null;
+            const score = category.score ?? -1;
+            return (
+              <div
+                key={category.categoryName}
+                className={`px-4 py-3 flex items-start gap-3 ${
+                  index < categories.length - 1 ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""
+                }`}
+              >
+                <div className="flex-shrink-0 mt-1">
+                  {isUnknown ? (
+                    <div
+                      className="w-3 h-3 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: "#9e9e9e" }}
+                      title="Status unknown"
+                    >
+                      <span className="text-white font-bold" style={{ fontSize: 7, lineHeight: 1 }}>?</span>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: getScoreColor(score) }}
+                      title={`Score: ${score.toFixed(1)}%`}
+                    />
+                  )}
                 </div>
-                {metric.description && (
-                  <p className="text-[12px] text-[#666666] dark:text-slate-400 leading-[1.5]">
-                    {metric.description}
-                  </p>
-                )}
-                {metric.helpUrl && (
-                  <a
-                    href={metric.helpUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-1 text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
-                  >
-                    <ExternalLink size={10} />
-                    read more
-                  </a>
-                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-0.5">
+                    <span className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0]">
+                      {category.displayName || category.categoryName}
+                    </span>
+                    <span
+                      className="font-mono text-[12px] font-bold flex-shrink-0"
+                      style={{ color: isUnknown ? "#9e9e9e" : getScoreColor(score) }}
+                    >
+                      {isUnknown ? "?" : `${score.toFixed(1)}%`}
+                    </span>
+                  </div>
+                  {category.description && (
+                    <p className="text-[12px] text-[#666666] dark:text-slate-400 leading-[1.5]">
+                      {category.description}
+                    </p>
+                  )}
+                  {category.helpUrl && (
+                    <a
+                      href={category.helpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-1 text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+                    >
+                      <ExternalLink size={10} />
+                      read more
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="py-5 text-center text-[13px] text-[#afafaf] dark:text-slate-500 italic">

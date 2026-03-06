@@ -10,6 +10,7 @@ import React, {
 import { useSelfServiceRequest } from "hooks/SelfServiceApi";
 import {
   useCapability,
+  useCapabilityCompliance,
   useCapabilityMembersDetailed,
   useCapabilityMembersApplications,
   useCapabilityMetadata,
@@ -94,49 +95,10 @@ function SelectedCapabilityProvider({ children }) {
   const capabilityAzureResourceRequest = useCapabilityAzureResourceRequest();
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
-  const [requirementsScoreLink, setRequirementsScoreLink] = useState(
-    details?._links?.requirementsScore?.href,
-  );
-  const [canAccessRequirementsScore, setCanAccessRequirementsScore] =
-    useState(false);
-  const [requirementsScore, setRequirementsScore] = useState(null);
-
   const {
-    responseData: requirementsScoreData,
-    sendRequest: getRequirementsScores,
-    inProgress: requirementsScoreInProgress,
-  } = useSelfServiceRequest();
-
-  useEffect(() => {
-    if (requirementsScoreLink && requirementsScoreLink.allow) {
-      setCanAccessRequirementsScore(
-        (requirementsScoreLink?.allow || []).includes("GET"),
-      );
-    }
-  }, [requirementsScoreLink]);
-
-  useEffect(() => {
-    if (requirementsScoreData) {
-      setRequirementsScore(requirementsScoreData);
-      // Invalidate capabilities list to refetch with updated score
-      queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
-    }
-  }, [requirementsScoreData]);
-
-  useEffect(() => {
-    console.log(requirementsScore);
-    if (!requirementsScore && canAccessRequirementsScore) {
-      getRequirementsScores({
-        urlSegments: [requirementsScoreLink.href],
-      });
-    }
-  }, [requirementsScore, canAccessRequirementsScore]);
-
-  useEffect(() => {
-    if (details && details._links && details._links.requirementScore) {
-      setRequirementsScoreLink(details._links?.requirementScore);
-    }
-  }, [details]);
+    data: complianceData,
+    isFetching: complianceLoading,
+  } = useCapabilityCompliance(capabilityId);
 
   const [userIsOwner, setUserIsOwner] = useState(false);
 
@@ -739,8 +701,8 @@ function SelectedCapabilityProvider({ children }) {
     // setRequiredCapabilityJsonMetadata,
     metadata,
     validateContract,
-    requirementsScore,
-    requirementsScoreLoading: requirementsScoreInProgress,
+    complianceData,
+    complianceLoading,
     inProgressMetadata: metadataFetched,
     metadataFetched,
     azureResourcesList,

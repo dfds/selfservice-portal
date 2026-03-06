@@ -19,7 +19,7 @@ export function ProgressBar({ value, color, className, ...props }: ProgressBarPr
     >
       <div
         className="h-full rounded animate-progress-fill"
-        style={{ transform: `scaleX(${clamped / 100})`, transformOrigin: "left", backgroundColor: color }}
+        style={{ "--progress-value": clamped / 100, transformOrigin: "left", backgroundColor: color } as React.CSSProperties}
       />
     </div>
   );
