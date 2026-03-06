@@ -124,9 +124,6 @@ export function MembershipApplicationsUserCanApprove({
   const addApplicationToRemovalTracker = (id) => {
     setRemovalTracker((prev) => {
       prev.add(id);
-      queryClient.invalidateQueries({
-        queryKey: ["membershipapplications/eligible-for-approval"],
-      });
       return prev;
     });
   };
@@ -154,6 +151,11 @@ export function MembershipApplicationsUserCanApprove({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          sleep(2000).then(() => {
+            queryClient.invalidateQueries({ queryKey: ["membershipapplications/eligible-for-approval"] });
+            queryClient.invalidateQueries({ queryKey: ["membershipapplications/my-outstanding-applications"] });
+            queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
+          });
           toast.success("Access granted. Welcome to the team");
         },
         onError: () => toast.error("Could not approve membership"),
@@ -170,6 +172,10 @@ export function MembershipApplicationsUserCanApprove({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          sleep(2000).then(() => {
+            queryClient.invalidateQueries({ queryKey: ["membershipapplications/eligible-for-approval"] });
+            queryClient.invalidateQueries({ queryKey: ["membershipapplications/my-outstanding-applications"] });
+          });
           toast.success("Application declined");
         },
         onError: () => toast.error("Could not decline membership"),

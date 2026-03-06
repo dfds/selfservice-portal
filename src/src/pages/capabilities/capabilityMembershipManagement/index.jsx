@@ -28,7 +28,7 @@ export function TabbedCapabilityMembershipManagement() {
   } = useMyOutstandingMembershipApplications();
   const {
     isFetched: fetchedOtherApplications,
-    isRefetchting: refetchingOtherApplications,
+    isRefetching: refetchingOtherApplications,
     data: otherApplicationsData,
   } = useMembershipApplications();
 
