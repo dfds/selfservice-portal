@@ -15,6 +15,7 @@ import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
 import DemosPage from "./pages/demos";
+import CompliancePage from "./pages/compliance";
 import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
@@ -125,6 +126,7 @@ export default function App() {
           />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
           <Route path="demos" element={<DemosPage />} />
+          <Route path="compliance" element={<CompliancePage />} />
         </Route>
       </Routes>
     </>

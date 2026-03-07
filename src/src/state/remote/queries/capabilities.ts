@@ -61,6 +61,23 @@ export function useCapabilityAdd() {
   return mutation;
 }
 
+export function useCostCentreCompliance(costCentre: string | null) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  return useQuery({
+    queryKey: ["compliance", "cost-centres", costCentre],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["compliance", "cost-centres", costCentre],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+    enabled: !!costCentre,
+    staleTime: 60000,
+  });
+}
+
 export function useCapabilityCompliance(capabilityId: string | null) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 

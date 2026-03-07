@@ -189,6 +189,22 @@ export function SkeletonMembershipApplicationRow({ isLast = false }: { isLast?: 
   );
 }
 
+// Compliance dashboard: cost centre card — name + count on left, bar + compliant count on right
+export function SkeletonComplianceCard() {
+  return (
+    <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] px-[1.125rem] py-[0.875rem] flex items-center gap-4">
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <Skeleton className="h-3.5 w-[160px]" />
+        <Skeleton className="h-3 w-[80px]" />
+      </div>
+      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+        <Skeleton className="h-3 w-[80px]" />
+        <Skeleton className="h-2 w-[120px] rounded-full" />
+      </div>
+    </div>
+  );
+}
+
 // StatCard value area — uses darker gradient since the card bg is already surface-muted
 export function SkeletonStatCardValue({ className }: React.HTMLAttributes<HTMLDivElement>) {
   return (

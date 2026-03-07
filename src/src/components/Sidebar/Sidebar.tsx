@@ -25,6 +25,9 @@ import {
   LogOut,
   RefreshCw,
   ChevronUp,
+  ChevronDown,
+  Building2,
+  ShieldCheck,
   X,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -57,6 +60,12 @@ interface NavItemDef {
   url: string;
   icon: React.ElementType;
   external?: boolean;
+}
+
+interface NavGroupDef {
+  title: string;
+  icon: React.ElementType;
+  children: NavItemDef[];
 }
 
 const platformNav: NavItemDef[] = [
@@ -94,6 +103,14 @@ const ceNav: NavItemDef[] = [
     icon: ClipboardCheck,
   },
 ];
+
+const costCentresGroup: NavGroupDef = {
+  title: "Cost Centres",
+  icon: Building2,
+  children: [
+    { title: "Compliance", url: "/compliance", icon: ShieldCheck },
+  ],
+};
 
 function NavItemLink({
   item,
@@ -140,6 +157,61 @@ function NavItemLink({
       <Icon size={15} strokeWidth={1.75} className="flex-shrink-0" />
       <span>{item.title}</span>
     </Link>
+  );
+}
+
+function NavGroupLink({
+  group,
+  isActive,
+}: {
+  group: NavGroupDef;
+  isActive: (url: string) => boolean;
+}) {
+  const anyChildActive = group.children.some((c) => isActive(c.url));
+  const [open, setOpen] = useState(anyChildActive);
+  const Icon = group.icon;
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[13px] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-0 bg-transparent text-left",
+          anyChildActive
+            ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
+            : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
+        )}
+      >
+        <Icon size={15} strokeWidth={1.75} className="flex-shrink-0" aria-hidden="true" />
+        <span className="flex-1">{group.title}</span>
+        <ChevronDown
+          size={13}
+          strokeWidth={1.75}
+          className={cn(
+            "flex-shrink-0 text-muted transition-transform duration-200 ease-out-expo",
+            open ? "rotate-180" : "",
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      <div
+        className="overflow-hidden"
+        style={{
+          display: "grid",
+          gridTemplateRows: open ? "1fr" : "0fr",
+          transition: "grid-template-rows 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div className="min-h-0">
+          <div className="flex flex-col gap-1 md:gap-0.5 pl-4 pt-1">
+            {group.children.map((item) => (
+              <NavItemLink key={item.url} item={item} isActive={isActive(item.url)} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -352,7 +424,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     if (location.pathname === url) return true;
     if (location.pathname.startsWith(url + "/")) {
       // Don't match prefix if a more-specific nav item matches
-      const allNavItems = [...platformNav, ...contentNav, ...ceNav];
+      const allNavItems = [...platformNav, ...contentNav, ...ceNav, ...costCentresGroup.children];
       const hasMoreSpecificMatch = allNavItems.some(
         (item) => item.url !== url && location.pathname.startsWith(item.url),
       );
@@ -431,6 +503,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
                   isActive={isActive(item.url)}
                 />
               ))}
+            <NavGroupLink group={costCentresGroup} isActive={isActive} />
           </div>
         </div>
 
