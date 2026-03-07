@@ -189,17 +189,27 @@ export function SkeletonMembershipApplicationRow({ isLast = false }: { isLast?: 
   );
 }
 
-// Compliance dashboard: cost centre card — name + count on left, bar + compliant count on right
+// Compliance dashboard: cost centre card — donut + name/count + score, progress strip, chip row
 export function SkeletonComplianceCard() {
   return (
-    <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] px-[1.125rem] py-[0.875rem] flex items-center gap-4">
-      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-        <Skeleton className="h-3.5 w-[160px]" />
-        <Skeleton className="h-3 w-[80px]" />
+    <div className="bg-surface border border-card rounded-[10px] overflow-hidden">
+      <div className="flex items-center gap-3 p-4">
+        <Skeleton className="w-12 h-12 rounded-full flex-shrink-0" />
+        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+          <Skeleton className="h-3.5 w-[110px]" />
+          <Skeleton className="h-2.5 w-[70px]" />
+        </div>
+        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <Skeleton className="h-5 w-[44px]" />
+          <Skeleton className="h-2.5 w-[52px]" />
+        </div>
+        <Skeleton className="w-3.5 h-3.5 flex-shrink-0" />
       </div>
-      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-        <Skeleton className="h-3 w-[80px]" />
-        <Skeleton className="h-2 w-[120px] rounded-full" />
+      <Skeleton className="h-1 w-full rounded-none" />
+      <div className="flex gap-1.5 px-4 py-3">
+        <Skeleton className="h-5 w-[64px] rounded-full" />
+        <Skeleton className="h-5 w-[56px] rounded-full" />
+        <Skeleton className="h-5 w-[72px] rounded-full" />
       </div>
     </div>
   );
