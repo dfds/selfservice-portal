@@ -14,7 +14,11 @@ const VARIANTS = {
   error: { bg: "#6b1a1a", icon: XCircle, iconColor: "text-[#f87171]" },
 };
 
-export default function SuccessToast({ message, onDismiss, variant = "success" }: SuccessToastProps) {
+export default function SuccessToast({
+  message,
+  onDismiss,
+  variant = "success",
+}: SuccessToastProps) {
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(100);
 
@@ -58,8 +62,14 @@ export default function SuccessToast({ message, onDismiss, variant = "success" }
         />
       </div>
       <div className="flex items-start gap-2.5 px-3.5 py-3">
-        <Icon size={15} className={`${iconColor} shrink-0 mt-px`} strokeWidth={2} />
-        <p className="text-white text-[13px] leading-[1.45] flex-1">{message}</p>
+        <Icon
+          size={15}
+          className={`${iconColor} shrink-0 mt-px`}
+          strokeWidth={2}
+        />
+        <p className="text-white text-[13px] leading-[1.45] flex-1">
+          {message}
+        </p>
         <button
           onClick={dismiss}
           className="text-white/40 hover:text-white transition-colors h-4 w-4 shrink-0 flex items-center justify-center mt-px"

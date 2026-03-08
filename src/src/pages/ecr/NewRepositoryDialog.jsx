@@ -1,5 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AppContext from "AppContext";
@@ -108,17 +113,16 @@ export default function NewRepositoryDialog({ onClose }) {
 
   return (
     <>
-      <Sheet
-        open={true}
-        onOpenChange={(open) => !open && handleClose()}
-      >
+      <Sheet open={true} onOpenChange={(open) => !open && handleClose()}>
         <SheetContent side="right">
           <SheetHeader>
             <SheetTitle>Add new Repository</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col gap-4 mt-4">
             <div className="flex flex-col gap-1">
-              <Label htmlFor="repo-name">Name <span className="text-red-500">*</span></Label>
+              <Label htmlFor="repo-name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="repo-name"
                 placeholder="Enter name of repository"
@@ -128,12 +132,16 @@ export default function NewRepositoryDialog({ onClose }) {
                 maxLength={255}
               />
               {(nameErrorMessage || nameError) && (
-                <p className="text-xs text-red-500">{nameErrorMessage || nameError}</p>
+                <p className="text-xs text-red-500">
+                  {nameErrorMessage || nameError}
+                </p>
               )}
             </div>
 
             <div className="flex flex-col gap-1">
-              <Label htmlFor="repo-description">Description <span className="text-red-500">*</span></Label>
+              <Label htmlFor="repo-description">
+                Description <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="repo-description"
                 placeholder="Enter a description"

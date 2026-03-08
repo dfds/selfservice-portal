@@ -31,9 +31,14 @@ export function MyMembershipApplication() {
   return (
     <div>
       <div className="flex gap-3 items-start rounded-md border border-[#c8e6c9] dark:border-green-800 bg-[#e8f5e9] dark:bg-green-950 p-4">
-        <CheckCircle className="mt-0.5 shrink-0 text-[#388e3c] dark:text-green-400" size={20} />
+        <CheckCircle
+          className="mt-0.5 shrink-0 text-[#388e3c] dark:text-green-400"
+          size={20}
+        />
         <div>
-          <p className="font-semibold text-[#1b5e20] dark:text-green-300">Membership Application Received</p>
+          <p className="font-semibold text-[#1b5e20] dark:text-green-300">
+            Membership Application Received
+          </p>
           <p className="text-sm text-[#2e7d32] dark:text-green-300">
             Your request to join this capability has been received and it&apos;s
             waiting approval from existing members.
@@ -152,9 +157,15 @@ export function MembershipApplicationsUserCanApprove({
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
           sleep(2000).then(() => {
-            queryClient.invalidateQueries({ queryKey: ["membershipapplications/eligible-for-approval"] });
-            queryClient.invalidateQueries({ queryKey: ["membershipapplications/my-outstanding-applications"] });
-            queryClient.invalidateQueries({ queryKey: ["capabilities", "members"] });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/eligible-for-approval"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/my-outstanding-applications"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "members"],
+            });
           });
           toast.success("Access granted. Welcome to the team");
         },
@@ -173,8 +184,12 @@ export function MembershipApplicationsUserCanApprove({
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
           sleep(2000).then(() => {
-            queryClient.invalidateQueries({ queryKey: ["membershipapplications/eligible-for-approval"] });
-            queryClient.invalidateQueries({ queryKey: ["membershipapplications/my-outstanding-applications"] });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/eligible-for-approval"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/my-outstanding-applications"],
+            });
           });
           toast.success("Application declined");
         },
@@ -208,7 +223,9 @@ export function MembershipApplicationsUserCanApprove({
           handleRejectClicked={handleRejectClicked}
         />
       ) : (
-        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">No pending membership applications</p>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">
+          No pending membership applications
+        </p>
       )}
     </>
   );

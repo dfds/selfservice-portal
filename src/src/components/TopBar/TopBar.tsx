@@ -10,7 +10,6 @@ function checkIfCloudEngineer(roles: string[]): boolean {
   return roles?.some((r) => regex.test(r.toLowerCase())) ?? false;
 }
 
-
 const pathLabels: Record<string, string> = {
   "/": "Home",
   "/capabilities": "Capabilities",
@@ -34,10 +33,16 @@ function getBreadcrumbs(pathname: string): Crumb[] {
   }
   if (/^\/capabilities\/[^/]+$/.test(pathname)) {
     const capabilityId = pathname.split("/")[2];
-    return [{ label: "Capabilities", to: "/capabilities" }, { label: capabilityId }];
+    return [
+      { label: "Capabilities", to: "/capabilities" },
+      { label: capabilityId },
+    ];
   }
   if (pathname.startsWith("/release-notes/")) {
-    return [{ label: "Release Notes", to: "/release-notes" }, { label: "Note" }];
+    return [
+      { label: "Release Notes", to: "/release-notes" },
+      { label: "Note" },
+    ];
   }
   return [];
 }
@@ -78,7 +83,10 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
         </button>
 
         {/* Breadcrumb — desktop: full trail, mobile: current page only */}
-        <nav aria-label="Breadcrumb" className="hidden md:flex items-center gap-1.5 text-[13px]">
+        <nav
+          aria-label="Breadcrumb"
+          className="hidden md:flex items-center gap-1.5 text-[13px]"
+        >
           <Link
             to="/"
             className="text-muted hover:text-primary no-underline transition-colors"
@@ -87,7 +95,11 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
           </Link>
           {crumbs.map((crumb, i) => (
             <React.Fragment key={i}>
-              <ChevronRight size={12} className="text-muted" aria-hidden="true" />
+              <ChevronRight
+                size={12}
+                className="text-muted"
+                aria-hidden="true"
+              />
               {crumb.to ? (
                 <Link
                   to={crumb.to}
@@ -96,7 +108,9 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-primary font-medium" aria-current="page">{crumb.label}</span>
+                <span className="text-primary font-medium" aria-current="page">
+                  {crumb.label}
+                </span>
               )}
             </React.Fragment>
           ))}
@@ -114,7 +128,10 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
         {/* CE Mode toggle */}
         {isCloudEngineer && (
           <div className="flex items-center gap-2 select-none">
-            <span id="ce-mode-label" className="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted font-mono">
+            <span
+              id="ce-mode-label"
+              className="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted font-mono"
+            >
               CE Mode
             </span>
             <button

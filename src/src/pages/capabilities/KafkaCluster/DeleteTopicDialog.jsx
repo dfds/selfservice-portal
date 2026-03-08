@@ -32,14 +32,14 @@ export default function DeleteTopicDialog({
         {isPublic && !allowedToDelete ? (
           <>
             <p>
-              Before initiating the deletion process, it is crucial to verify that
-              there are no active users relying on the topic, as it may result in
-              unfavorable outcomes for those who depend on it.
+              Before initiating the deletion process, it is crucial to verify
+              that there are no active users relying on the topic, as it may
+              result in unfavorable outcomes for those who depend on it.
             </p>
             <p>
               Deleting <strong>public topics</strong> can potentially have
-              unfortunate consequences for other systems that you are not aware of
-              nor have responsibility for.
+              unfortunate consequences for other systems that you are not aware
+              of nor have responsibility for.
             </p>
             <Banner icon={AlertTriangle} variant="lowEmphasis">
               <BannerParagraph>
@@ -48,9 +48,9 @@ export default function DeleteTopicDialog({
               </BannerParagraph>
             </Banner>
             <p>
-              Deleting <strong>public topics</strong> is currently only available
-              for cloud engineers in the Cloud Engineering department. You need to
-              request the deletion by creating a ticket via email to{" "}
+              Deleting <strong>public topics</strong> is currently only
+              available for cloud engineers in the Cloud Engineering department.
+              You need to request the deletion by creating a ticket via email to{" "}
               <TrackedLink
                 trackName="TopDeskEmail"
                 href="mailto:cloud.engineering@dfds.com"
@@ -62,13 +62,13 @@ export default function DeleteTopicDialog({
         ) : (
           <>
             <p>
-              Before proceeding with the deletion, ensure that there are no active
-              consumers for the topic, as it can lead to unfortunate consequences
-              for those who rely on that specific topic.
+              Before proceeding with the deletion, ensure that there are no
+              active consumers for the topic, as it can lead to unfortunate
+              consequences for those who rely on that specific topic.
             </p>
             <p>
-              To provide an additional safety measure, we kindly request that you
-              enter the complete name of the topic you wish to delete.
+              To provide an additional safety measure, we kindly request that
+              you enter the complete name of the topic you wish to delete.
             </p>
 
             <div className="flex flex-col gap-1">
@@ -84,8 +84,8 @@ export default function DeleteTopicDialog({
 
             <p>
               <i>
-                <strong>Please be aware</strong> that all messages related to the
-                topic will be permanently deleted, and this action cannot be
+                <strong>Please be aware</strong> that all messages related to
+                the topic will be permanently deleted, and this action cannot be
                 undone.
               </i>
             </p>

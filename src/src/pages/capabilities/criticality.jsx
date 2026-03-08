@@ -207,7 +207,9 @@ export default function CapabilitiesCriticalityPage() {
     <>
       <Page title="Capability Criticality">
         <Card className="mb-6">
-          <CardTitle className="text-xl font-bold p-6 pb-2">Information</CardTitle>
+          <CardTitle className="text-xl font-bold p-6 pb-2">
+            Information
+          </CardTitle>
           <CardContent>
             <p>
               Criticality is derived from the tags applied to the capability.
@@ -242,124 +244,128 @@ export default function CapabilitiesCriticalityPage() {
 
           {isFetched && (
             <ThemeProvider theme={muiTheme}>
-            <MaterialReactTable
-              columns={columns}
-              data={enrichedCapabilities}
-              initialState={{
-                pagination: { pageSize: 50 },
-                showGlobalFilter: true,
-                showColumnFilters: true,
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  fontWeight: "700",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: textPrimary,
-                  backgroundColor: bg,
-                  borderBottom: `1px solid ${borderColor}`,
-                },
-              }}
-              muiTableBodyCellProps={{
-                sx: {
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: textBody,
-                  backgroundColor: bg,
-                  padding: "5px",
-                  borderBottom: `1px solid ${borderColor}`,
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => clickHandler(row.original.id),
-                sx: {
-                  cursor: "pointer",
-                  padding: 0,
-                  margin: 0,
-                  minHeight: 0,
-                  "&:hover td": {
-                    backgroundColor: bgMuted,
+              <MaterialReactTable
+                columns={columns}
+                data={enrichedCapabilities}
+                initialState={{
+                  pagination: { pageSize: 50 },
+                  showGlobalFilter: true,
+                  showColumnFilters: true,
+                }}
+                muiTableHeadCellProps={{
+                  sx: {
+                    fontWeight: "700",
+                    fontSize: "16px",
+                    fontFamily: "DFDS",
+                    color: textPrimary,
+                    backgroundColor: bg,
+                    borderBottom: `1px solid ${borderColor}`,
                   },
-                },
-              })}
-              muiTablePaperProps={{
-                elevation: 0,
-                sx: {
-                  borderRadius: "0",
-                  backgroundColor: bg,
-                },
-              }}
-              muiTopToolbarProps={{
-                sx: {
-                  background: bg,
-                  color: textPrimary,
-                  "& .MuiIconButton-root": { color: textMuted },
-                  "& .MuiSvgIcon-root": { color: textMuted },
-                },
-              }}
-              muiBottomToolbarProps={{
-                sx: {
-                  background: bg,
-                  color: textPrimary,
-                  borderTop: `1px solid ${borderColor}`,
-                  "& .MuiIconButton-root": { color: textMuted },
-                  "& .MuiTablePagination-root": { color: textPrimary },
-                  "& .MuiTablePagination-selectLabel": { color: textMuted },
-                  "& .MuiTablePagination-displayedRows": { color: textMuted },
-                  "& .MuiSelect-icon": { color: textMuted },
-                },
-              }}
-              enableGlobalFilterModes={true}
-              positionGlobalFilter="left"
-              muiSearchTextFieldProps={{
-                placeholder: `Find a capability...`,
-                sx: {
-                  minWidth: "1120px",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  padding: "5px",
-                  "& .MuiOutlinedInput-root": {
-                    color: inputText,
-                    "& fieldset": { borderColor: inputBorder },
-                    "&:hover fieldset": { borderColor: inputBorder },
-                    "&.Mui-focused fieldset": { borderColor: isDark ? "#60a5fa" : undefined },
+                }}
+                muiTableBodyCellProps={{
+                  sx: {
+                    fontWeight: "400",
+                    fontSize: "16px",
+                    fontFamily: "DFDS",
+                    color: textBody,
+                    backgroundColor: bg,
+                    padding: "5px",
+                    borderBottom: `1px solid ${borderColor}`,
                   },
-                  "& .MuiInputBase-input::placeholder": {
-                    color: textMuted,
-                    opacity: 1,
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => clickHandler(row.original.id),
+                  sx: {
+                    cursor: "pointer",
+                    padding: 0,
+                    margin: 0,
+                    minHeight: 0,
+                    "&:hover td": {
+                      backgroundColor: bgMuted,
+                    },
                   },
-                },
-                size: "small",
-                variant: "outlined",
-              }}
-              muiFilterTextFieldProps={{
-                sx: {
-                  "& .MuiOutlinedInput-root": {
-                    color: inputText,
-                    "& fieldset": { borderColor: inputBorder },
-                    "&:hover fieldset": { borderColor: inputBorder },
-                    "&.Mui-focused fieldset": { borderColor: isDark ? "#60a5fa" : undefined },
+                })}
+                muiTablePaperProps={{
+                  elevation: 0,
+                  sx: {
+                    borderRadius: "0",
+                    backgroundColor: bg,
                   },
-                  "& .MuiInputBase-input::placeholder": {
-                    color: textMuted,
-                    opacity: 1,
+                }}
+                muiTopToolbarProps={{
+                  sx: {
+                    background: bg,
+                    color: textPrimary,
+                    "& .MuiIconButton-root": { color: textMuted },
+                    "& .MuiSvgIcon-root": { color: textMuted },
                   },
-                  "& .MuiSvgIcon-root": { color: textMuted },
-                },
-              }}
-              enablePagination={true}
-              globalFilterFn="contains"
-              enableFilterMatchHighlighting={true}
-              enableDensityToggle={true}
-              enableFullScreenToggle={true}
-              enableHiding={true}
-              enableFilters={true}
-              enableGlobalFilter={false}
-              enableTopToolbar={true}
-              enableBottomToolbar={true}
-              enableColumnActions={true}
-            />
+                }}
+                muiBottomToolbarProps={{
+                  sx: {
+                    background: bg,
+                    color: textPrimary,
+                    borderTop: `1px solid ${borderColor}`,
+                    "& .MuiIconButton-root": { color: textMuted },
+                    "& .MuiTablePagination-root": { color: textPrimary },
+                    "& .MuiTablePagination-selectLabel": { color: textMuted },
+                    "& .MuiTablePagination-displayedRows": { color: textMuted },
+                    "& .MuiSelect-icon": { color: textMuted },
+                  },
+                }}
+                enableGlobalFilterModes={true}
+                positionGlobalFilter="left"
+                muiSearchTextFieldProps={{
+                  placeholder: `Find a capability...`,
+                  sx: {
+                    minWidth: "1120px",
+                    fontWeight: "400",
+                    fontSize: "16px",
+                    padding: "5px",
+                    "& .MuiOutlinedInput-root": {
+                      color: inputText,
+                      "& fieldset": { borderColor: inputBorder },
+                      "&:hover fieldset": { borderColor: inputBorder },
+                      "&.Mui-focused fieldset": {
+                        borderColor: isDark ? "#60a5fa" : undefined,
+                      },
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: textMuted,
+                      opacity: 1,
+                    },
+                  },
+                  size: "small",
+                  variant: "outlined",
+                }}
+                muiFilterTextFieldProps={{
+                  sx: {
+                    "& .MuiOutlinedInput-root": {
+                      color: inputText,
+                      "& fieldset": { borderColor: inputBorder },
+                      "&:hover fieldset": { borderColor: inputBorder },
+                      "&.Mui-focused fieldset": {
+                        borderColor: isDark ? "#60a5fa" : undefined,
+                      },
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: textMuted,
+                      opacity: 1,
+                    },
+                    "& .MuiSvgIcon-root": { color: textMuted },
+                  },
+                }}
+                enablePagination={true}
+                globalFilterFn="contains"
+                enableFilterMatchHighlighting={true}
+                enableDensityToggle={true}
+                enableFullScreenToggle={true}
+                enableHiding={true}
+                enableFilters={true}
+                enableGlobalFilter={false}
+                enableTopToolbar={true}
+                enableBottomToolbar={true}
+                enableColumnActions={true}
+              />
             </ThemeProvider>
           )}
         </PageSection>

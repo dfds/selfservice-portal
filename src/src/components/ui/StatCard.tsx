@@ -9,7 +9,14 @@ interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   hasData?: boolean;
 }
 
-export function StatCard({ value, label, loading, hasData = true, className, ...props }: StatCardProps) {
+export function StatCard({
+  value,
+  label,
+  loading,
+  hasData = true,
+  className,
+  ...props
+}: StatCardProps) {
   return (
     <div
       className={cn(

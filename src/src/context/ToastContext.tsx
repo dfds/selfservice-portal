@@ -12,7 +12,10 @@ interface ToastContextValue {
   error: (message: string) => void;
 }
 
-const ToastContext = createContext<ToastContextValue>({ success: () => {}, error: () => {} });
+const ToastContext = createContext<ToastContextValue>({
+  success: () => {},
+  error: () => {},
+});
 
 export function useToast() {
   return useContext(ToastContext);

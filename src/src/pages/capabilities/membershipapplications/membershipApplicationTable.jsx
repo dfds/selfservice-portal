@@ -11,7 +11,12 @@ import { PaginationControls } from "@/components/ui/PaginationControls";
 
 const APP_CARD_PAGE_SIZE = 10;
 
-function ApproveButtonWithRoles({ row, roleOptions, onApproveWithRole, label }) {
+function ApproveButtonWithRoles({
+  row,
+  roleOptions,
+  onApproveWithRole,
+  label,
+}) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -22,8 +27,10 @@ function ApproveButtonWithRoles({ row, roleOptions, onApproveWithRole, label }) 
     if (!open) return;
     const handler = (e) => {
       if (
-        menuRef.current && !menuRef.current.contains(e.target) &&
-        buttonRef.current && !buttonRef.current.contains(e.target)
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target)
       ) {
         setOpen(false);
       }
@@ -67,28 +74,35 @@ function ApproveButtonWithRoles({ row, roleOptions, onApproveWithRole, label }) 
       >
         {label ?? "Approve"}
       </button>
-      {open && createPortal(
-        <div
-          ref={menuRef}
-          style={{ position: "absolute", top: pos.top, left: pos.left, width: POPUP_WIDTH, zIndex: 9999 }}
-          className="rounded-[5px] border border-[#d9dcde] dark:border-[#334155] bg-white dark:bg-[#1e293b] shadow-lg py-1"
-        >
-          {(roleOptions || []).map((role) => (
-            <button
-              key={role.value}
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                onApproveWithRole(row, role.value);
-              }}
-              className="w-full text-left px-3 py-1.5 text-[12px] text-[#002b45] dark:text-[#e2e8f0] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
-            >
-              {role.label}
-            </button>
-          ))}
-        </div>,
-        document.body
-      )}
+      {open &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={{
+              position: "absolute",
+              top: pos.top,
+              left: pos.left,
+              width: POPUP_WIDTH,
+              zIndex: 9999,
+            }}
+            className="rounded-[5px] border border-[#d9dcde] dark:border-[#334155] bg-white dark:bg-[#1e293b] shadow-lg py-1"
+          >
+            {(roleOptions || []).map((role) => (
+              <button
+                key={role.value}
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onApproveWithRole(row, role.value);
+                }}
+                className="w-full text-left px-3 py-1.5 text-[12px] text-[#002b45] dark:text-[#e2e8f0] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
+              >
+                {role.label}
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
@@ -163,7 +177,10 @@ function MembershipApplicationCardList({
       })
     : tableData;
 
-  const totalPages = Math.max(1, Math.ceil(visible.length / APP_CARD_PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(visible.length / APP_CARD_PAGE_SIZE),
+  );
   const pageStart = (currentPage - 1) * APP_CARD_PAGE_SIZE;
   const pageItems = visible.slice(pageStart, pageStart + APP_CARD_PAGE_SIZE);
 

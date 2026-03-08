@@ -47,7 +47,10 @@ export const TrackedButton = ({
       variant={mapVariant(variation)}
       size={mapSize(size)}
       disabled={submitting || props.disabled}
-      className={cn(fillWidth === "true" || fillWidth === true ? "w-full" : "", className)}
+      className={cn(
+        fillWidth === "true" || fillWidth === true ? "w-full" : "",
+        className,
+      )}
       onClick={handleClick}
       {...props}
     >
@@ -78,10 +81,15 @@ export const TrackedLinkButton = ({
 
   return (
     <Button
-      variant={mapVariant(variation) === "default" ? "link" : mapVariant(variation)}
+      variant={
+        mapVariant(variation) === "default" ? "link" : mapVariant(variation)
+      }
       size={mapSize(size)}
       disabled={submitting || props.disabled}
-      className={cn(fillWidth === "true" || fillWidth === true ? "w-full" : "", className)}
+      className={cn(
+        fillWidth === "true" || fillWidth === true ? "w-full" : "",
+        className,
+      )}
       onClick={handleClick}
       {...props}
     >

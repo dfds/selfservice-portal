@@ -95,10 +95,8 @@ function SelectedCapabilityProvider({ children }) {
   const capabilityAzureResourceRequest = useCapabilityAzureResourceRequest();
   const [azureResourcesList, setAzureResourcesList] = useState([]);
 
-  const {
-    data: complianceData,
-    isFetching: complianceLoading,
-  } = useCapabilityCompliance(capabilityId);
+  const { data: complianceData, isFetching: complianceLoading } =
+    useCapabilityCompliance(capabilityId);
 
   const [userIsOwner, setUserIsOwner] = useState(false);
 
@@ -406,7 +404,9 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["capabilities"] });
-          toast.success("Application submitted. The approval pipeline has been informed");
+          toast.success(
+            "Application submitted. The approval pipeline has been informed",
+          );
         },
         onError: () => toast.error("Could not submit membership application"),
       },
@@ -428,7 +428,9 @@ function SelectedCapabilityProvider({ children }) {
           queryClient.invalidateQueries({
             queryKey: ["rbac", "user-roles", capabilityId],
           });
-          toast.success("You've left the capability. Your on-call obligations have been reassigned");
+          toast.success(
+            "You've left the capability. Your on-call obligations have been reassigned",
+          );
         },
         onError: () => toast.error("Could not leave capability"),
       },

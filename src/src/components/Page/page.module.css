@@ -1,6 +1,12 @@
 .pageTitle {
   overflow-wrap: break-word;
-  font-family: var(--mono, "SFMono-Regular", "Fira Code", "Consolas", monospace);
+  font-family: var(
+    --mono,
+    "SFMono-Regular",
+    "Fira Code",
+    "Consolas",
+    monospace
+  );
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-brand, #002b45);

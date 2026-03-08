@@ -97,7 +97,9 @@ function SnakeStepper({ steps, activeStep, stepsPerRow = 3 }) {
 
         return (
           <div key={rowIndex}>
-            <div className={`flex items-start ${isOdd ? "flex-row-reverse" : ""}`}>
+            <div
+              className={`flex items-start ${isOdd ? "flex-row-reverse" : ""}`}
+            >
               {rowItems.map((item, colIndex) => {
                 const prevItem = rowItems[colIndex - 1];
                 const connectorCompleted =
@@ -109,7 +111,9 @@ function SnakeStepper({ steps, activeStep, stepsPerRow = 3 }) {
                   !item.skipped;
 
                 return (
-                  <React.Fragment key={item ? item.globalIndex : `ph-${colIndex}`}>
+                  <React.Fragment
+                    key={item ? item.globalIndex : `ph-${colIndex}`}
+                  >
                     {colIndex > 0 && (
                       <div
                         className={`flex-1 h-0.5 mt-[10px] ${

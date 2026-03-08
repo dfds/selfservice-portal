@@ -4,12 +4,7 @@ import styles from "./selfAssessment.module.css";
 import { Card, CardContent } from "@/components/ui/card";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
-import {
-  CheckCircle,
-  AlertCircle,
-  Info,
-  HelpCircle,
-} from "lucide-react";
+import { CheckCircle, AlertCircle, Info, HelpCircle } from "lucide-react";
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 import { TrackedButton } from "@/components/Tracking";

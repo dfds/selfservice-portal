@@ -27,12 +27,17 @@ export default function ErrorToast({ message, title, details }) {
   return (
     <>
       {showDetails && details && (
-        <Dialog open={true} onOpenChange={(open) => !open && setShowDetails(false)}>
+        <Dialog
+          open={true}
+          onOpenChange={(open) => !open && setShowDetails(false)}
+        >
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{title}</DialogTitle>
             </DialogHeader>
-            <div className={styles.error_body}>{details ?? "No details available"}</div>
+            <div className={styles.error_body}>
+              {details ?? "No details available"}
+            </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowDetails(false)}>
                 Close
@@ -42,7 +47,9 @@ export default function ErrorToast({ message, title, details }) {
         </Dialog>
       )}
       <div
-        className={`fixed bottom-4 right-4 z-[100] w-[290px] rounded-[5px] bg-[var(--color-error)] ${isExiting ? "animate-toast-exit" : "animate-toast-enter"}`}
+        className={`fixed bottom-4 right-4 z-[100] w-[290px] rounded-[5px] bg-[var(--color-error)] ${
+          isExiting ? "animate-toast-exit" : "animate-toast-enter"
+        }`}
         onAnimationEnd={handleAnimationEnd}
       >
         <div className="w-full h-8 flex items-center justify-end pr-1">
@@ -56,7 +63,9 @@ export default function ErrorToast({ message, title, details }) {
             <X size={15} strokeWidth={2} />
           </TrackedButton>
         </div>
-        <div className="text-white text-center px-5 pb-2 text-sm">{message}</div>
+        <div className="text-white text-center px-5 pb-2 text-sm">
+          {message}
+        </div>
         {details && (
           <div className="text-center pb-3">
             <TrackedButton

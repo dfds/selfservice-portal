@@ -15,13 +15,12 @@ import { TrackedButton } from "@/components/Tracking";
 
 function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
   return (
-    <Dialog
-      open={true}
-      onOpenChange={(open) => !open && onCloseRequested()}
-    >
+    <Dialog open={true} onOpenChange={(open) => !open && onCloseRequested()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you certain you wish to delete this capability?</DialogTitle>
+          <DialogTitle>
+            Are you certain you wish to delete this capability?
+          </DialogTitle>
         </DialogHeader>
         <Text>
           <strong>Warning:</strong> You are about to request deletion of this

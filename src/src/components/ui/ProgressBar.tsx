@@ -6,7 +6,12 @@ interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: string;
 }
 
-export function ProgressBar({ value, color, className, ...props }: ProgressBarProps) {
+export function ProgressBar({
+  value,
+  color,
+  className,
+  ...props
+}: ProgressBarProps) {
   const clamped = Math.max(0, Math.min(100, value));
 
   return (
@@ -19,7 +24,13 @@ export function ProgressBar({ value, color, className, ...props }: ProgressBarPr
     >
       <div
         className="h-full rounded animate-progress-fill"
-        style={{ "--progress-value": clamped / 100, transformOrigin: "left", backgroundColor: color } as React.CSSProperties}
+        style={
+          {
+            "--progress-value": clamped / 100,
+            transformOrigin: "left",
+            backgroundColor: color,
+          } as React.CSSProperties
+        }
       />
     </div>
   );

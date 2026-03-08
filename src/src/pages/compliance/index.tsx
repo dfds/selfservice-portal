@@ -328,8 +328,8 @@ function CostCentreCard({
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a]"
                       : catPct >= 50
-                        ? "bg-[#fffbeb] text-[#d97706]"
-                        : "bg-[#fff1f2] text-[#dc2626]",
+                      ? "bg-[#fffbeb] text-[#d97706]"
+                      : "bg-[#fff1f2] text-[#dc2626]",
                   )}
                 >
                   {cat.categoryName}
@@ -372,7 +372,11 @@ function CostCentreCard({
                   {cat.categoryName}
                 </span>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <ProgressBar value={catPct} color={catColor} className="w-[80px]" />
+                  <ProgressBar
+                    value={catPct}
+                    color={catColor}
+                    className="w-[80px]"
+                  />
                   <span
                     className="font-mono text-[10.5px] w-[28px] text-right font-semibold"
                     style={{ color: catColor }}
@@ -474,7 +478,15 @@ export default function CompliancePage() {
     const fetchedCount = nGreen + nOrange + nRed;
     const overallPct =
       totalCaps > 0 ? Math.round((totalCompliant / totalCaps) * 100) : 0;
-    return { totalCaps, totalCompliant, overallPct, nGreen, nOrange, nRed, fetchedCount };
+    return {
+      totalCaps,
+      totalCompliant,
+      overallPct,
+      nGreen,
+      nOrange,
+      nRed,
+      fetchedCount,
+    };
   }, [complianceMap]);
 
   const filtered = useMemo(() => {
@@ -528,8 +540,15 @@ export default function CompliancePage() {
   }
 
   const n = costCentres.length;
-  const { overallPct, nGreen, nOrange, nRed, fetchedCount, totalCaps, totalCompliant } =
-    sidePanelStats;
+  const {
+    overallPct,
+    nGreen,
+    nOrange,
+    nRed,
+    fetchedCount,
+    totalCaps,
+    totalCompliant,
+  } = sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
 
   return (

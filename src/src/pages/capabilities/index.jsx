@@ -47,7 +47,7 @@ export default function CapabilitiesPage() {
         onClick={startAddCapabilityWizard}
       >
         New capability
-      </TrackedButton>
+      </TrackedButton>,
     );
     return () => setActions(null);
   }, []);

@@ -77,7 +77,9 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
               value={formData.description}
               onChange={changeDescription}
             ></textarea>
-            {descriptionError && <p className="text-xs text-red-500">{descriptionError}</p>}
+            {descriptionError && (
+              <p className="text-xs text-red-500">{descriptionError}</p>
+            )}
           </div>
           <div className="flex flex-col gap-1">
             <Label htmlFor="edit-recording-url">Recording URL</Label>
@@ -86,7 +88,9 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
               placeholder="Enter the URL of the recording (e.g., YouTube link)"
               required
               value={formData.recordingUrl}
-              onChange={(e) => setFormData({ ...formData, recordingUrl: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, recordingUrl: e.target.value })
+              }
               maxLength={500}
             />
           </div>
@@ -96,7 +100,9 @@ export default function DemoEditModal({ isOpen, onClose, demo }) {
               id="edit-slides-url"
               placeholder="Enter the URL of the slides (optional)"
               value={formData.slidesUrl}
-              onChange={(e) => setFormData({ ...formData, slidesUrl: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, slidesUrl: e.target.value })
+              }
               maxLength={500}
             />
           </div>

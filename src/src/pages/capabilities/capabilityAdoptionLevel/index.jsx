@@ -2,12 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import PageSection from "../../../components/PageSection";
 import styles from "./capabilityAdoptionLevel.module.css";
 import { Text } from "@/components/ui/Text";
-import {
-  CheckCircle,
-  AlertCircle,
-  Info,
-  HelpCircle,
-} from "lucide-react";
+import { CheckCircle, AlertCircle, Info, HelpCircle } from "lucide-react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import SelfAssessments from "../selfAssessment";
 import { TabbedPageSection } from "../../../components/PageSection";

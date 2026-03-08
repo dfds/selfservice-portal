@@ -1,7 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -46,7 +49,10 @@ export function SkeletonCapabilitySummary() {
     ["90px", "85%"],
   ];
   return (
-    <div className="grid gap-x-4 gap-y-3" style={{ gridTemplateColumns: "130px 1fr" }}>
+    <div
+      className="grid gap-x-4 gap-y-3"
+      style={{ gridTemplateColumns: "130px 1fr" }}
+    >
       {rows.map(([labelW, valW], i) => (
         <React.Fragment key={i}>
           <Skeleton className="h-3 self-center" style={{ width: labelW }} />
@@ -127,9 +133,19 @@ export function SkeletonSelfAssessmentCard() {
 }
 
 // Latest news: timestamp + title + link
-export function SkeletonNewsItem({ isFirst = false, isLast = false }: { isFirst?: boolean; isLast?: boolean }) {
+export function SkeletonNewsItem({
+  isFirst = false,
+  isLast = false,
+}: {
+  isFirst?: boolean;
+  isLast?: boolean;
+}) {
   return (
-    <div className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] ${isFirst ? "pt-0" : ""} ${isLast ? "border-0 pb-0" : ""}`}>
+    <div
+      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] ${
+        isFirst ? "pt-0" : ""
+      } ${isLast ? "border-0 pb-0" : ""}`}
+    >
       <Skeleton className="h-2.5 w-[52px] mb-[4px]" />
       <Skeleton className="h-3.5 w-[82%] mb-[5px]" />
       <Skeleton className="h-2.5 w-[56px]" />
@@ -138,9 +154,19 @@ export function SkeletonNewsItem({ isFirst = false, isLast = false }: { isFirst?
 }
 
 // Top visitors: rank + avatar circle + name
-export function SkeletonVisitorRow({ isFirst = false, isLast = false }: { isFirst?: boolean; isLast?: boolean }) {
+export function SkeletonVisitorRow({
+  isFirst = false,
+  isLast = false,
+}: {
+  isFirst?: boolean;
+  isLast?: boolean;
+}) {
   return (
-    <div className={`flex items-center gap-[0.625rem] py-2 border-b border-divider ${isFirst ? "pt-0" : ""} ${isLast ? "border-0 pb-0" : ""}`}>
+    <div
+      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider ${
+        isFirst ? "pt-0" : ""
+      } ${isLast ? "border-0 pb-0" : ""}`}
+    >
       <Skeleton className="w-4 h-2.5 flex-shrink-0" />
       <Skeleton className="w-[26px] h-[26px] rounded-full flex-shrink-0" />
       <Skeleton className="h-3 w-[110px]" />
@@ -160,10 +186,16 @@ export function SkeletonRequirementsScore() {
 }
 
 // Requirements: single metric row — dot + name + score
-export function SkeletonRequirementsRow({ isLast = false }: { isLast?: boolean }) {
+export function SkeletonRequirementsRow({
+  isLast = false,
+}: {
+  isLast?: boolean;
+}) {
   return (
     <div
-      className={`px-4 py-3 flex items-start gap-3 ${!isLast ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""}`}
+      className={`px-4 py-3 flex items-start gap-3 ${
+        !isLast ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""
+      }`}
     >
       <Skeleton className="w-3 h-3 rounded-full mt-1 flex-shrink-0" />
       <div className="flex-1 flex items-center justify-between gap-2">
@@ -175,10 +207,16 @@ export function SkeletonRequirementsRow({ isLast = false }: { isLast?: boolean }
 }
 
 // Membership application: capability name + applicant + dates + action stub
-export function SkeletonMembershipApplicationRow({ isLast = false }: { isLast?: boolean }) {
+export function SkeletonMembershipApplicationRow({
+  isLast = false,
+}: {
+  isLast?: boolean;
+}) {
   return (
     <div
-      className={`flex items-center gap-4 py-[10px] ${!isLast ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""}`}
+      className={`flex items-center gap-4 py-[10px] ${
+        !isLast ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""
+      }`}
     >
       <Skeleton className="h-3 flex-1" style={{ maxWidth: "220px" }} />
       <Skeleton className="h-3 w-[140px] flex-shrink-0" />
@@ -216,7 +254,9 @@ export function SkeletonComplianceCard() {
 }
 
 // StatCard value area — uses darker gradient since the card bg is already surface-muted
-export function SkeletonStatCardValue({ className }: React.HTMLAttributes<HTMLDivElement>) {
+export function SkeletonStatCardValue({
+  className,
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(

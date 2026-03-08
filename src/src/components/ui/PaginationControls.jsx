@@ -1,6 +1,14 @@
 import React from "react";
 
-export function PaginationControls({ currentPage, totalPages, pageStart, pageSize, total, onPrev, onNext }) {
+export function PaginationControls({
+  currentPage,
+  totalPages,
+  pageStart,
+  pageSize,
+  total,
+  onPrev,
+  onNext,
+}) {
   if (total === 0) return null;
   return (
     <div className="flex items-center justify-between mt-4 py-2 border-t border-divider">

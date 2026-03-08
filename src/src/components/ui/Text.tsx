@@ -30,13 +30,11 @@ interface TextProps extends React.HTMLAttributes<HTMLElement> {
 const Text = React.forwardRef<HTMLElement, TextProps>(
   ({ styledAs, as, className, children, ...props }, ref) => {
     const Tag = (as as React.ElementType) ?? "p";
-    const styleClass = styledAs ? (styleMap[styledAs] ?? "text-base text-primary") : "";
+    const styleClass = styledAs
+      ? styleMap[styledAs] ?? "text-base text-primary"
+      : "";
     return (
-      <Tag
-        ref={ref as any}
-        className={cn(styleClass, className)}
-        {...props}
-      >
+      <Tag ref={ref as any} className={cn(styleClass, className)} {...props}>
         {children}
       </Tag>
     );

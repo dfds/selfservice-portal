@@ -25,7 +25,15 @@ import AzureResourceGroupRequestWizard from "./resourceGroupRequestWizard";
 const statusBadgeVariant = (status) =>
   status === "active" ? "soft-success" : "soft-warning";
 
-function ResourceRow({ label, value, sub, status, statusLabel, action, children }) {
+function ResourceRow({
+  label,
+  value,
+  sub,
+  status,
+  statusLabel,
+  action,
+  children,
+}) {
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-divider last:border-0 gap-4">
       <div className="min-w-0">
@@ -41,7 +49,10 @@ function ResourceRow({ label, value, sub, status, statusLabel, action, children 
       <div className="flex items-center gap-3 flex-shrink-0">
         {action}
         {statusLabel && (
-          <Badge variant={statusBadgeVariant(status)} className="flex-shrink-0 text-[10px] px-2 py-[3px]">
+          <Badge
+            variant={statusBadgeVariant(status)}
+            className="flex-shrink-0 text-[10px] px-2 py-[3px]"
+          >
             {statusLabel}
           </Badge>
         )}
@@ -249,9 +260,15 @@ export function ResourceInfoBadges() {
     return {
       environment: formData["environment"].value || "dev",
       purpose: metaParsed?.["dfds.azure.purpose"] || "unknown",
-      catalogueId: formData["catalogueId"] ? formData["catalogueId"] : "unknown",
-      risk: formData["riskCategory"]?.value ? formData["riskCategory"].value : "unknown",
-      gdpr: formData["gdprData"]?.value ? formData["gdprData"].value === "yes" : false,
+      catalogueId: formData["catalogueId"]
+        ? formData["catalogueId"]
+        : "unknown",
+      risk: formData["riskCategory"]?.value
+        ? formData["riskCategory"].value
+        : "unknown",
+      gdpr: formData["gdprData"]?.value
+        ? formData["gdprData"].value === "yes"
+        : false,
     };
   };
 
@@ -283,7 +300,10 @@ export function ResourceInfoBadges() {
           azureResourcesList={azureResourcesList}
         />
       )}
-      <Dialog open={showLogModal} onOpenChange={(o) => !o && setLogModal(false)}>
+      <Dialog
+        open={showLogModal}
+        onOpenChange={(o) => !o && setLogModal(false)}
+      >
         <DialogContent className="max-w-[95vw] sm:max-w-[50%]">
           <DialogHeader>
             <DialogTitle>How do I see my application logs?</DialogTitle>
@@ -442,7 +462,9 @@ export function ResourceInfoBadges() {
           />
         ))
       ) : (
-        <EmptyState>No Azure Resource Groups linked with this capability.</EmptyState>
+        <EmptyState>
+          No Azure Resource Groups linked with this capability.
+        </EmptyState>
       )}
 
       <div className="pt-3">

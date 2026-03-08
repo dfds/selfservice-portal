@@ -33,7 +33,11 @@ function TopicHeader({
     <div
       className={`flex items-center gap-3 py-2.5 border-b border-divider transition-colors ${
         provisioned ? "cursor-pointer" : ""
-      } ${isOpen ? "bg-[#f2f2f2] dark:bg-slate-700" : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"}`}
+      } ${
+        isOpen
+          ? "bg-[#f2f2f2] dark:bg-slate-700"
+          : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
+      }`}
       onClick={notProvisioned ? null : onClicked}
     >
       <div className="flex-1 min-w-0">
@@ -189,7 +193,9 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
             <SectionLabel>Schemas ({schemasCount})</SectionLabel>
           </div>
           {schemasCount === 0 && (
-            <EmptyState className="mb-3">No schemas are defined for this topic</EmptyState>
+            <EmptyState className="mb-3">
+              No schemas are defined for this topic
+            </EmptyState>
           )}
           {Object.entries(filteredSchemas).map(([elem, schema]) => (
             <MessageContracts

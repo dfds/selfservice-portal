@@ -87,7 +87,8 @@
     }
   }
 
-  --animate-section-enter: section-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-section-enter: section-enter 480ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
   @keyframes section-enter {
     from {
       opacity: 0;
@@ -123,7 +124,8 @@
     }
   }
 
-  --animate-progress-fill: progress-fill 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-progress-fill: progress-fill 600ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
   @keyframes progress-fill {
     from {
       transform: scaleX(0);
@@ -135,7 +137,8 @@
 
   --animate-badge-pulse: badge-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   @keyframes badge-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -143,7 +146,8 @@
     }
   }
 
-  --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
   @keyframes number-reveal {
     from {
       opacity: 0;
@@ -161,30 +165,54 @@
   --animate-switch-slider-on: switch-slider-on 660ms ease-in-out both;
   --animate-switch-slider-off: switch-slider-off 660ms ease-in-out both;
   @keyframes switch-slider-on {
-    0%   { scale: 1; }
-    40%  { scale: 1.25 1; }
-    75%  { scale: 1; }
-    100% { scale: 1; }
+    0% {
+      scale: 1;
+    }
+    40% {
+      scale: 1.25 1;
+    }
+    75% {
+      scale: 1;
+    }
+    100% {
+      scale: 1;
+    }
   }
   @keyframes switch-slider-off {
-    0%   { scale: 1; }
-    40%  { scale: 1.25 1; }
-    75%  { scale: 1; }
-    100% { scale: 1; }
+    0% {
+      scale: 1;
+    }
+    40% {
+      scale: 1.25 1;
+    }
+    75% {
+      scale: 1;
+    }
+    100% {
+      scale: 1;
+    }
   }
 
   /* Skeleton shimmer */
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
   @keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 
   /* CE mode rainbow hue rotation */
   --animate-rainbow-hue: rainbow-hue 3s linear infinite;
   @keyframes rainbow-hue {
-    0%   { filter: hue-rotate(0deg);   }
-    100% { filter: hue-rotate(360deg); }
+    0% {
+      filter: hue-rotate(0deg);
+    }
+    100% {
+      filter: hue-rotate(360deg);
+    }
   }
 }
 
@@ -325,11 +353,21 @@ html.dark {
   }
 
   /* Stagger delays — combine with animate-fade-up or animate-section-enter */
-  .animate-stagger-1 { animation-delay: 60ms; }
-  .animate-stagger-2 { animation-delay: 120ms; }
-  .animate-stagger-3 { animation-delay: 180ms; }
-  .animate-stagger-4 { animation-delay: 240ms; }
-  .animate-stagger-5 { animation-delay: 300ms; }
+  .animate-stagger-1 {
+    animation-delay: 60ms;
+  }
+  .animate-stagger-2 {
+    animation-delay: 120ms;
+  }
+  .animate-stagger-3 {
+    animation-delay: 180ms;
+  }
+  .animate-stagger-4 {
+    animation-delay: 240ms;
+  }
+  .animate-stagger-5 {
+    animation-delay: 300ms;
+  }
 }
 
 .ce-rainbow-layer {

@@ -151,13 +151,16 @@ const BasicInformationStep = ({
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              It is recommended to use &quot;-&quot; (dashes) to separate words in a multi word name (e.g. foo-bar instead of foo_bar).
+              It is recommended to use &quot;-&quot; (dashes) to separate words
+              in a multi word name (e.g. foo-bar instead of foo_bar).
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
       <div className="flex flex-col gap-1">
-        <Label htmlFor="selfassessment-name">Name <span aria-hidden="true">*</span></Label>
+        <Label htmlFor="selfassessment-name">
+          Name <span aria-hidden="true">*</span>
+        </Label>
         <Input
           id="selfassessment-name"
           placeholder="Enter name of capability"
@@ -169,7 +172,9 @@ const BasicInformationStep = ({
         {nameError && <p className="text-xs text-red-600">{nameError}</p>}
       </div>
       <div className="flex flex-col gap-1 mt-2">
-        <Label htmlFor="selfassessment-description">Description <span aria-hidden="true">*</span></Label>
+        <Label htmlFor="selfassessment-description">
+          Description <span aria-hidden="true">*</span>
+        </Label>
         <Input
           id="selfassessment-description"
           placeholder="Enter a description"
@@ -177,7 +182,9 @@ const BasicInformationStep = ({
           value={formData.description}
           onChange={changeDescription}
         />
-        {descriptionError && <p className="text-xs text-red-600">{descriptionError}</p>}
+        {descriptionError && (
+          <p className="text-xs text-red-600">{descriptionError}</p>
+        )}
       </div>
     </>
   );
@@ -217,7 +224,9 @@ const DocumentationStep = ({ formValues, setFormValues, setCanContinue }) => {
         fit for this assessment. Consider adding this information already now.
       </Text>
       <div className="flex flex-col gap-1 mt-2">
-        <Label htmlFor="documentation-url">Documentation URL <span aria-hidden="true">*</span></Label>
+        <Label htmlFor="documentation-url">
+          Documentation URL <span aria-hidden="true">*</span>
+        </Label>
         <Input
           id="documentation-url"
           placeholder="Enter a URL for documentation"

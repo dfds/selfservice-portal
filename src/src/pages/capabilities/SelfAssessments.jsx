@@ -141,12 +141,15 @@ export default function CapabilitiesSelfAssessmentsPage() {
               alt=""
             />
             <div className="flex-1">
-              <CardTitle className="text-xl font-bold p-6 pb-2">Information</CardTitle>
+              <CardTitle className="text-xl font-bold p-6 pb-2">
+                Information
+              </CardTitle>
               <CardContent>
                 <p>
-                  Self assessments allows capability owners to evaluate the current
-                  state of a capability. Self assessments can be disabled but never
-                  deleted, thus preserving historical data and meaning.
+                  Self assessments allows capability owners to evaluate the
+                  current state of a capability. Self assessments can be
+                  disabled but never deleted, thus preserving historical data
+                  and meaning.
                 </p>
                 <div className="flex gap-2 flex-wrap items-center mt-4">
                   <TrackedButton
@@ -163,7 +166,8 @@ export default function CapabilitiesSelfAssessmentsPage() {
         </Card>
 
         <PageSection headline="Self Assessments">
-          {!isFetched && [0, 1, 2, 3].map((i) => <SkeletonSelfAssessmentCard key={i} />)}
+          {!isFetched &&
+            [0, 1, 2, 3].map((i) => <SkeletonSelfAssessmentCard key={i} />)}
           {isFetched && selfAssessments.length === 0 && (
             <p>No self assessments found</p>
           )}
@@ -180,8 +184,10 @@ export default function CapabilitiesSelfAssessmentsPage() {
                       selfAssessmentActivate.mutate(
                         { id: id },
                         {
-                          onSuccess: () => toast.success("Assessment activated"),
-                          onError: () => toast.error("Could not activate assessment"),
+                          onSuccess: () =>
+                            toast.success("Assessment activated"),
+                          onError: () =>
+                            toast.error("Could not activate assessment"),
                         },
                       );
                       reloadSelfAssessments("Activate");
@@ -190,8 +196,10 @@ export default function CapabilitiesSelfAssessmentsPage() {
                       selfAssessmentDeactivate.mutate(
                         { id: id },
                         {
-                          onSuccess: () => toast.success("Assessment deactivated"),
-                          onError: () => toast.error("Could not deactivate assessment"),
+                          onSuccess: () =>
+                            toast.success("Assessment deactivated"),
+                          onError: () =>
+                            toast.error("Could not deactivate assessment"),
                         },
                       );
                       reloadSelfAssessments("Deactivate");

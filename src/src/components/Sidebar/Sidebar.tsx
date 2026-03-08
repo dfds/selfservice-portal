@@ -107,9 +107,7 @@ const ceNav: NavItemDef[] = [
 const costCentresGroup: NavGroupDef = {
   title: "Cost Centres",
   icon: Building2,
-  children: [
-    { title: "Compliance", url: "/compliance", icon: ShieldCheck },
-  ],
+  children: [{ title: "Compliance", url: "/compliance", icon: ShieldCheck }],
 };
 
 function NavItemLink({
@@ -171,19 +169,29 @@ function NavGroupLink({
   const [open, setOpen] = useState(anyChildActive);
   const Icon = group.icon;
 
+  const location = useLocation();
+  useEffect(() => {
+    if (!anyChildActive) setOpen(false);
+  }, [location.pathname]);
+
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[13px] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-0 bg-transparent text-left",
+          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[13px] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
           anyChildActive
             ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
             : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
         )}
       >
-        <Icon size={15} strokeWidth={1.75} className="flex-shrink-0" aria-hidden="true" />
+        <Icon
+          size={15}
+          strokeWidth={1.75}
+          className="flex-shrink-0"
+          aria-hidden="true"
+        />
         <span className="flex-1">{group.title}</span>
         <ChevronDown
           size={13}
@@ -206,7 +214,11 @@ function NavGroupLink({
         <div className="min-h-0">
           <div className="flex flex-col gap-1 md:gap-0.5 pl-4 pt-1">
             {group.children.map((item) => (
-              <NavItemLink key={item.url} item={item} isActive={isActive(item.url)} />
+              <NavItemLink
+                key={item.url}
+                item={item}
+                isActive={isActive(item.url)}
+              />
             ))}
           </div>
         </div>
@@ -424,7 +436,12 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     if (location.pathname === url) return true;
     if (location.pathname.startsWith(url + "/")) {
       // Don't match prefix if a more-specific nav item matches
-      const allNavItems = [...platformNav, ...contentNav, ...ceNav, ...costCentresGroup.children];
+      const allNavItems = [
+        ...platformNav,
+        ...contentNav,
+        ...ceNav,
+        ...costCentresGroup.children,
+      ];
       const hasMoreSpecificMatch = allNavItems.some(
         (item) => item.url !== url && location.pathname.startsWith(item.url),
       );

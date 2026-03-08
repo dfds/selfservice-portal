@@ -8,9 +8,12 @@ interface BannerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const variantStyles: Record<string, string> = {
   info: "bg-[#e8f4fc] border-[#0e7cc1] text-[#002b45] dark:bg-[#0e7cc1]/10 dark:border-[#60a5fa] dark:text-slate-200",
-  warning: "bg-[#fff3e0] border-[#ed8800] text-[#002b45] dark:bg-[#ed8800]/10 dark:border-[#ed8800] dark:text-slate-200",
-  error: "bg-[#fdecea] border-[#be1e2d] text-[#002b45] dark:bg-[#be1e2d]/10 dark:border-[#f87171] dark:text-slate-200",
-  success: "bg-[#e8f5e9] border-[#4caf50] text-[#002b45] dark:bg-[#4caf50]/10 dark:border-[#4ade80] dark:text-slate-200",
+  warning:
+    "bg-[#fff3e0] border-[#ed8800] text-[#002b45] dark:bg-[#ed8800]/10 dark:border-[#ed8800] dark:text-slate-200",
+  error:
+    "bg-[#fdecea] border-[#be1e2d] text-[#002b45] dark:bg-[#be1e2d]/10 dark:border-[#f87171] dark:text-slate-200",
+  success:
+    "bg-[#e8f5e9] border-[#4caf50] text-[#002b45] dark:bg-[#4caf50]/10 dark:border-[#4ade80] dark:text-slate-200",
 };
 
 const variantBarStyles: Record<string, string> = {
@@ -20,7 +23,13 @@ const variantBarStyles: Record<string, string> = {
   success: "bg-[#4caf50] dark:bg-[#4ade80]",
 };
 
-function CountdownBar({ duration, variant }: { duration: number; variant: string }) {
+function CountdownBar({
+  duration,
+  variant,
+}: {
+  duration: number;
+  variant: string;
+}) {
   const [width, setWidth] = React.useState(100);
 
   React.useEffect(() => {
@@ -34,7 +43,10 @@ function CountdownBar({ duration, variant }: { duration: number; variant: string
   return (
     <div className="absolute bottom-0 left-0 right-0 h-[3px]">
       <div
-        className={cn("h-full opacity-60", variantBarStyles[variant] ?? variantBarStyles.info)}
+        className={cn(
+          "h-full opacity-60",
+          variantBarStyles[variant] ?? variantBarStyles.info,
+        )}
         style={{
           width: `${width}%`,
           transition: `width ${duration}ms linear`,

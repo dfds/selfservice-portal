@@ -56,7 +56,11 @@ function JoinDialog({
               FORCE JOIN (CE)
             </TrackedButton>
           )}
-          <Button variant="outline" disabled={isSubmitting} onClick={onCloseRequested}>
+          <Button
+            variant="outline"
+            disabled={isSubmitting}
+            onClick={onCloseRequested}
+          >
             Cancel
           </Button>
           <Button disabled={isSubmitting} onClick={onSubmitClicked}>
@@ -81,7 +85,11 @@ function LeaveDialog({ name, isLeaving, onCloseRequested, onLeaveClicked }) {
           access.
         </Text>
         <DialogFooter>
-          <Button variant="outline" disabled={isLeaving} onClick={onCloseRequested}>
+          <Button
+            variant="outline"
+            disabled={isLeaving}
+            onClick={onCloseRequested}
+          >
             Cancel
           </Button>
           <Button disabled={isLeaving} onClick={onLeaveClicked}>
@@ -193,7 +201,7 @@ export default function Summary({ anchorId }) {
     <PageSection
       id={anchorId}
       headline="Summary"
-      headlineChildren={(canJoin || canLeave) ? actionButtons : null}
+      headlineChildren={canJoin || canLeave ? actionButtons : null}
     >
       {showJoinDialog && (
         <JoinDialog
@@ -244,7 +252,9 @@ export default function Summary({ anchorId }) {
           {createdBy && (
             <>
               , by{" "}
-              <span className="font-mono text-[12px] dark:text-slate-400">{createdBy}</span>
+              <span className="font-mono text-[12px] dark:text-slate-400">
+                {createdBy}
+              </span>
             </>
           )}
         </span>

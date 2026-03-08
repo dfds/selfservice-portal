@@ -44,17 +44,31 @@ function getSelectStyles(isDark) {
       border: isDark ? "1px solid #334155" : undefined,
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    singleValue: (base) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45", fontWeight: 500 }),
+    singleValue: (base) => ({
+      ...base,
+      color: isDark ? "#e2e8f0" : "#002b45",
+      fontWeight: 500,
+    }),
     placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
-    input: (base) => ({ ...base, fontSize: "16px", color: isDark ? "#e2e8f0" : "#002b45" }),
+    input: (base) => ({
+      ...base,
+      fontSize: "16px",
+      color: isDark ? "#e2e8f0" : "#002b45",
+    }),
     option: (base, state) => ({
       ...base,
       backgroundColor: state.isSelected
-        ? (isDark ? "#1d4ed8" : "#0e7cc1")
+        ? isDark
+          ? "#1d4ed8"
+          : "#0e7cc1"
         : state.isFocused
-          ? (isDark ? "#0f172a" : "#f2f2f2")
-          : (isDark ? "#1e293b" : "#ffffff"),
-      color: state.isSelected ? "#ffffff" : (isDark ? "#e2e8f0" : "#002b45"),
+        ? isDark
+          ? "#0f172a"
+          : "#f2f2f2"
+        : isDark
+        ? "#1e293b"
+        : "#ffffff",
+      color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
     }),
     indicatorSeparator: (base) => ({
       ...base,

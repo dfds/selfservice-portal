@@ -11,7 +11,10 @@ import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
 import PageSection from "components/PageSection";
 import { Text } from "@/components/ui/Text";
-import { SkeletonCapabilityHeader, SkeletonCapabilitySummary } from "@/components/ui/skeleton";
+import {
+  SkeletonCapabilityHeader,
+  SkeletonCapabilitySummary,
+} from "@/components/ui/skeleton";
 import { SelectedCapabilityProvider } from "./SelectedCapabilityContext";
 import DeletionWarning from "./deletionWarning";
 import CapabilityManagement from "./capabilityManagement";
@@ -86,7 +89,9 @@ function CapabilityDetailsPageContent() {
     { href: "#requirements-status", label: "Requirements" },
     { href: "#members", label: "Members" },
     ...(showJsonMetadata ? [{ href: "#tags", label: "Tags" }] : []),
-    ...(showAICatalogueSection ? [{ href: "#ai-catalogue", label: "AI Catalogue" }] : []),
+    ...(showAICatalogueSection
+      ? [{ href: "#ai-catalogue", label: "AI Catalogue" }]
+      : []),
     { href: "#resources", label: "Resources" },
     { href: "#kafka", label: "Kafka" },
     ...(showCosts && awsAccount ? [{ href: "#costs", label: "Costs" }] : []),
@@ -96,7 +101,9 @@ function CapabilityDetailsPageContent() {
   const [activeSection, setActiveSection] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const activeLabel = anchorLinks.find(({ href }) => href === activeSection)?.label;
+  const activeLabel = anchorLinks.find(
+    ({ href }) => href === activeSection,
+  )?.label;
 
   // Close expanded mobile nav on scroll
   useEffect(() => {
@@ -128,7 +135,13 @@ function CapabilityDetailsPageContent() {
     updateActive();
 
     return () => window.removeEventListener("scroll", updateActive);
-  }, [showJsonMetadata, showAICatalogueSection, showCosts, awsAccount, isDeleted]);
+  }, [
+    showJsonMetadata,
+    showAICatalogueSection,
+    showCosts,
+    awsAccount,
+    isDeleted,
+  ]);
 
   if (isLoading) {
     return (
@@ -167,45 +180,69 @@ function CapabilityDetailsPageContent() {
       <div className="grid gap-8 items-stretch md:grid-cols-[1fr_180px]">
         {/* Left: content sections */}
         <div className="min-w-0">
-          <div className="animate-section-enter" style={{ animationDelay: "60ms" }}>
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "60ms" }}
+          >
             <Summary anchorId="summary" />
           </div>
 
-          <div className="animate-section-enter" style={{ animationDelay: "130ms" }}>
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "130ms" }}
+          >
             <RequirementsScore />
           </div>
 
-          <div className="animate-section-enter" style={{ animationDelay: "200ms" }}>
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "200ms" }}
+          >
             <TabbedMembersView anchorId="members" />
           </div>
 
           {showJsonMetadata && (
-            <div className="animate-section-enter" style={{ animationDelay: "270ms" }}>
+            <div
+              className="animate-section-enter"
+              style={{ animationDelay: "270ms" }}
+            >
               <CapabilityTagsPageSection anchorId="tags" />
             </div>
           )}
 
           {showAICatalogueSection && (
-            <div className="animate-section-enter" style={{ animationDelay: "270ms" }}>
+            <div
+              className="animate-section-enter"
+              style={{ animationDelay: "270ms" }}
+            >
               <AICatalogueSection anchorId="ai-catalogue" />
             </div>
           )}
 
-          <div className="animate-section-enter" style={{ animationDelay: "270ms" }}>
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "270ms" }}
+          >
             <Resources anchorId="resources" capabilityId={id} />
           </div>
 
           {!awsAccount && (
-            <div className="animate-section-enter" style={{ animationDelay: "340ms" }}>
+            <div
+              className="animate-section-enter"
+              style={{ animationDelay: "340ms" }}
+            >
               <PageSection id="kafka" headline="Kafka Clusters">
                 <Text>
-                  No AWS account is linked to this capability. Please link an AWS
-                  account to view Kafka clusters.
+                  No AWS account is linked to this capability. Please link an
+                  AWS account to view Kafka clusters.
                 </Text>
               </PageSection>
             </div>
           )}
-          <div className="animate-section-enter" style={{ animationDelay: "340ms" }}>
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "340ms" }}
+          >
             <section id="kafka">
               {awsAccount !== undefined &&
                 awsAccount &&
@@ -220,13 +257,19 @@ function CapabilityDetailsPageContent() {
           </div>
 
           {showCosts && awsAccount !== undefined && (
-            <div className="animate-section-enter" style={{ animationDelay: "400ms" }}>
+            <div
+              className="animate-section-enter"
+              style={{ animationDelay: "400ms" }}
+            >
               <Costs anchorId="costs" costCentre={costCentre} />
             </div>
           )}
 
           {!isDeleted && (
-            <div className="animate-section-enter" style={{ animationDelay: "460ms" }}>
+            <div
+              className="animate-section-enter"
+              style={{ animationDelay: "460ms" }}
+            >
               <CapabilityManagement
                 anchorId="management"
                 deletionState={isPendingDeletion}
@@ -237,7 +280,10 @@ function CapabilityDetailsPageContent() {
         </div>
 
         {/* Right: sticky anchor nav — desktop only */}
-        <div className="hidden md:block animate-fade-up" style={{ animationDelay: "100ms" }}>
+        <div
+          className="hidden md:block animate-fade-up"
+          style={{ animationDelay: "100ms" }}
+        >
           <div className="sticky top-[68px] bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
             <div className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 px-4 py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
               On this page
@@ -263,65 +309,70 @@ function CapabilityDetailsPageContent() {
       </div>
 
       {/* Mobile: fixed bottom nav bar — md:hidden */}
-      {createPortal(<div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white dark:bg-[#1e293b] border-t border-[#d9dcde] dark:border-[#334155] shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-        {/* Expandable link list */}
-        <div
-          className="grid transition-[grid-template-rows] duration-200 ease-in-out"
-          style={{ gridTemplateRows: mobileNavOpen ? "1fr" : "0fr" }}
-        >
-          <div className="overflow-hidden">
-          <div className="border-b border-[#d9dcde] dark:border-[#334155] overflow-y-auto max-h-80">
-            {anchorLinks.map(({ href, label }) => {
-              const isActive = activeSection === href;
-              return (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileNavOpen(false)}
-                  className={cn(
-                    "flex items-center px-4 py-3 font-mono text-[12px] no-underline tracking-[0.03em] transition-colors border-l-2",
-                    isActive
-                      ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] bg-[#f0f9ff] dark:bg-[#0e7cc1]/10"
-                      : "text-[#666666] dark:text-slate-400 border-transparent hover:bg-[#f2f2f2] dark:hover:bg-slate-700",
-                  )}
-                >
-                  {label}
-                </a>
-              );
-            })}
+      {createPortal(
+        <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white dark:bg-[#1e293b] border-t border-[#d9dcde] dark:border-[#334155] shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+          {/* Expandable link list */}
+          <div
+            className="grid transition-[grid-template-rows] duration-200 ease-in-out"
+            style={{ gridTemplateRows: mobileNavOpen ? "1fr" : "0fr" }}
+          >
+            <div className="overflow-hidden">
+              <div className="border-b border-[#d9dcde] dark:border-[#334155] overflow-y-auto max-h-80">
+                {anchorLinks.map(({ href, label }) => {
+                  const isActive = activeSection === href;
+                  return (
+                    <a
+                      key={href}
+                      href={href}
+                      onClick={() => setMobileNavOpen(false)}
+                      className={cn(
+                        "flex items-center px-4 py-3 font-mono text-[12px] no-underline tracking-[0.03em] transition-colors border-l-2",
+                        isActive
+                          ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] bg-[#f0f9ff] dark:bg-[#0e7cc1]/10"
+                          : "text-[#666666] dark:text-slate-400 border-transparent hover:bg-[#f2f2f2] dark:hover:bg-slate-700",
+                      )}
+                    >
+                      {label}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
 
-        {/* Collapsed bar — always visible trigger */}
-        <button
-          type="button"
-          onClick={() => setMobileNavOpen((o) => !o)}
-          className="w-full flex items-center justify-between px-4 h-12 cursor-pointer border-0 bg-transparent text-left"
-        >
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 flex-shrink-0">
-              On this page
-            </span>
-            {activeLabel && (
-              <>
-                <span className="text-[#d9dcde] dark:text-[#334155] flex-shrink-0">·</span>
-                <span className="font-mono text-[12px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] truncate">
-                  {activeLabel}
-                </span>
-              </>
-            )}
-          </div>
-          <ChevronUp
-            size={14}
-            strokeWidth={1.75}
-            className={cn(
-              "flex-shrink-0 ml-2 text-[#afafaf] dark:text-slate-500 transition-transform duration-200",
-              mobileNavOpen ? "rotate-0" : "rotate-180",
-            )}
-          />
-        </button>
-      </div>, document.body)}
+          {/* Collapsed bar — always visible trigger */}
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-4 h-12 cursor-pointer border-0 bg-transparent text-left"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 flex-shrink-0">
+                On this page
+              </span>
+              {activeLabel && (
+                <>
+                  <span className="text-[#d9dcde] dark:text-[#334155] flex-shrink-0">
+                    ·
+                  </span>
+                  <span className="font-mono text-[12px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] truncate">
+                    {activeLabel}
+                  </span>
+                </>
+              )}
+            </div>
+            <ChevronUp
+              size={14}
+              strokeWidth={1.75}
+              className={cn(
+                "flex-shrink-0 ml-2 text-[#afafaf] dark:text-slate-500 transition-transform duration-200",
+                mobileNavOpen ? "rotate-0" : "rotate-180",
+              )}
+            />
+          </button>
+        </div>,
+        document.body,
+      )}
     </div>
   );
 }

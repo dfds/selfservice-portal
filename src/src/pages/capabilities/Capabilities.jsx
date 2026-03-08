@@ -79,15 +79,15 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
         <CardContent className="p-3">
           <div className="flex items-start gap-2 mb-1">
             {isPendingDeletion && (
-              <AlertCircle
-                size={14}
-                className="text-red-500 shrink-0 mt-0.5"
-              />
+              <AlertCircle size={14} className="text-red-500 shrink-0 mt-0.5" />
             )}
             <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
               {truncateString(capability.name, 80)}
             </span>
-            <ChevronRight size={16} className="text-muted shrink-0 mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+            <ChevronRight
+              size={16}
+              className="text-muted shrink-0 mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5"
+            />
           </div>
           <p className="text-secondary text-xs mb-2 leading-relaxed">
             {truncateString(capability.description, 100)}
@@ -150,8 +150,14 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
       });
     } else if (sortBy === "cost") {
       arr.sort((a, b) => {
-        const ac = a.costs?.length > 0 ? Math.floor(a.costs.reduce((s, x) => s + x.pv, 0) / a.costs.length) : null;
-        const bc = b.costs?.length > 0 ? Math.floor(b.costs.reduce((s, x) => s + x.pv, 0) / b.costs.length) : null;
+        const ac =
+          a.costs?.length > 0
+            ? Math.floor(a.costs.reduce((s, x) => s + x.pv, 0) / a.costs.length)
+            : null;
+        const bc =
+          b.costs?.length > 0
+            ? Math.floor(b.costs.reduce((s, x) => s + x.pv, 0) / b.costs.length)
+            : null;
         if (ac == null && bc == null) return 0;
         if (ac == null) return 1;
         if (bc == null) return -1;
@@ -170,9 +176,15 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
     return arr;
   }, [visibleCapabilities, sortBy, sortDir]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedCapabilities.length / CARD_PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedCapabilities.length / CARD_PAGE_SIZE),
+  );
   const pageStart = (currentPage - 1) * CARD_PAGE_SIZE;
-  const pageItems = sortedCapabilities.slice(pageStart, pageStart + CARD_PAGE_SIZE);
+  const pageItems = sortedCapabilities.slice(
+    pageStart,
+    pageStart + CARD_PAGE_SIZE,
+  );
 
   const handleFilterChange = (value) => {
     setGlobalFilter(value);
@@ -196,7 +208,10 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
         <div className="flex gap-2">
           <select
             value={sortBy}
-            onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              setCurrentPage(1);
+            }}
             className="flex-1 px-2 py-2 text-base md:text-sm border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="name">Name</option>
@@ -205,11 +220,20 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
             <option value="score">Score</option>
           </select>
           <button
-            onClick={() => { setSortDir((d) => d === "asc" ? "desc" : "asc"); setCurrentPage(1); }}
+            onClick={() => {
+              setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+              setCurrentPage(1);
+            }}
             className="shrink-0 flex items-center justify-center px-3 py-2 border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
-            aria-label={sortDir === "asc" ? "Sort descending" : "Sort ascending"}
+            aria-label={
+              sortDir === "asc" ? "Sort descending" : "Sort ascending"
+            }
           >
-            {sortDir === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+            {sortDir === "asc" ? (
+              <ArrowUp size={14} />
+            ) : (
+              <ArrowDown size={14} />
+            )}
           </button>
         </div>
       </div>
@@ -311,7 +335,9 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
             color: inputText,
             "& fieldset": { borderColor: inputBorder },
             "&:hover fieldset": { borderColor: inputBorder },
-            "&.Mui-focused fieldset": { borderColor: isDark ? "#60a5fa" : undefined },
+            "&.Mui-focused fieldset": {
+              borderColor: isDark ? "#60a5fa" : undefined,
+            },
           },
           "& .MuiInputBase-input::placeholder": {
             color: textMuted,
@@ -585,9 +611,18 @@ export default function CapabilitiesList() {
             size: 50,
             enableColumnFilterModes: false,
             sortingFn: (rowA, rowB) => {
-              const ac = JSON.parse(rowA.original.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
-              const bc = JSON.parse(rowB.original.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
-              return ac.localeCompare(bc) || rowA.original.name.localeCompare(rowB.original.name);
+              const ac =
+                JSON.parse(rowA.original.jsonMetadata ?? "{}")[
+                  "dfds.cost.centre"
+                ] ?? "";
+              const bc =
+                JSON.parse(rowB.original.jsonMetadata ?? "{}")[
+                  "dfds.cost.centre"
+                ] ?? "";
+              return (
+                ac.localeCompare(bc) ||
+                rowA.original.name.localeCompare(rowB.original.name)
+              );
             },
             muiTableHeadCellProps: {
               align: "center",
@@ -637,8 +672,14 @@ export default function CapabilitiesList() {
             sortingFn: (rowA, rowB) => {
               const aCosts = rowA.original.costs ?? [];
               const bCosts = rowB.original.costs ?? [];
-              const aAvg = aCosts.length > 0 ? aCosts.reduce((s, x) => s + x.pv, 0) / aCosts.length : null;
-              const bAvg = bCosts.length > 0 ? bCosts.reduce((s, x) => s + x.pv, 0) / bCosts.length : null;
+              const aAvg =
+                aCosts.length > 0
+                  ? aCosts.reduce((s, x) => s + x.pv, 0) / aCosts.length
+                  : null;
+              const bAvg =
+                bCosts.length > 0
+                  ? bCosts.reduce((s, x) => s + x.pv, 0) / bCosts.length
+                  : null;
               if (aAvg == null && bAvg == null) return 0;
               if (aAvg == null) return 1;
               if (bAvg == null) return -1;
@@ -750,8 +791,8 @@ export default function CapabilitiesList() {
           </div>
         )}
 
-        {!isLoading && (
-          isMobile ? (
+        {!isLoading &&
+          (isMobile ? (
             <CapabilityCardList
               filteredCapabilities={filteredCapabilities}
               truncateString={truncateString}
@@ -763,8 +804,7 @@ export default function CapabilitiesList() {
                 filteredCapabilities={filteredCapabilities}
               />
             </div>
-          )
-        )}
+          ))}
       </PageSection>
     </>
   );

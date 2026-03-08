@@ -59,7 +59,9 @@ function RepositoryDetailDialog({ repository, onClose }) {
             {
               label: "Created",
               value: repository.requestedAt
-                ? `${asDate(repository.requestedAt)}, by ${repository.createdBy}`
+                ? `${asDate(repository.requestedAt)}, by ${
+                    repository.createdBy
+                  }`
                 : "—",
             },
           ].map(({ label, value }) => (
@@ -67,7 +69,9 @@ function RepositoryDetailDialog({ repository, onClose }) {
               <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] pt-[3px] w-[100px] flex-shrink-0">
                 {label}
               </span>
-              <span className="text-[#002b45] dark:text-[#e2e8f0] break-all">{value}</span>
+              <span className="text-[#002b45] dark:text-[#e2e8f0] break-all">
+                {value}
+              </span>
             </div>
           ))}
         </div>
@@ -135,8 +139,12 @@ function Repositories({ onNewRepository }) {
             className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
             style={{ gridTemplateColumns: "2fr 3fr" }}
           >
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">Description</span>
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">Name</span>
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+              Description
+            </span>
+            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+              Name
+            </span>
           </div>
           {Array.from({ length: 8 }).map((_, i) => (
             <SkeletonEcrRow key={i} />
@@ -144,8 +152,10 @@ function Repositories({ onNewRepository }) {
         </div>
       ) : (
         <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
-          <div className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
-               style={{ gridTemplateColumns: "2fr 3fr" }}>
+          <div
+            className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
+            style={{ gridTemplateColumns: "2fr 3fr" }}
+          >
             <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
               Description
             </span>
@@ -178,7 +188,8 @@ function Repositories({ onNewRepository }) {
 
           <div className="flex items-center justify-between px-[1.125rem] py-3 border-t border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a]">
             <span className="font-mono text-[11px] text-[#afafaf] tracking-[0.04em]">
-              {filtered.length} {filtered.length === 1 ? "repository" : "repositories"}
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "repository" : "repositories"}
             </span>
             {totalPages > 1 && (
               <div className="flex items-center gap-1">
@@ -203,7 +214,9 @@ function Repositories({ onNewRepository }) {
                   </button>
                 ))}
                 <button
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
                   disabled={currentPage === totalPages - 1}
                   className="w-7 h-7 flex items-center justify-center border border-[#d9dcde] dark:border-[#334155] rounded-[4px] bg-white dark:bg-[#1e293b] text-[#666666] dark:text-[#94a3b8] disabled:opacity-40 hover:bg-[#eef0f1] dark:hover:bg-[#334155] transition-colors"
                 >
@@ -255,10 +268,7 @@ export default function ECRPage() {
           team-name/app-name
         </code>
         . See the{" "}
-        <TrackedLink
-          trackName="Wiki-ECRRepositoryPush"
-          href={documentationUrl}
-        >
+        <TrackedLink trackName="Wiki-ECRRepositoryPush" href={documentationUrl}>
           documentation
         </TrackedLink>{" "}
         for push instructions.

@@ -2,7 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { Text } from "@/components/ui/Text";
 import styles from "./Topics.module.css";
 import AppContext from "AppContext";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Banner, BannerParagraph } from "@/components/ui/banner";
@@ -166,21 +171,24 @@ export default function NewTopicDialog({
   return (
     <TooltipProvider>
       <Sheet open={true} onOpenChange={(o) => !o && handleCloseClicked()}>
-        <SheetContent side="right" className="w-full sm:w-[30%] overflow-y-auto top-[10%] h-[90%] sm:top-0 sm:h-full">
+        <SheetContent
+          side="right"
+          className="w-full sm:w-[30%] overflow-y-auto top-[10%] h-[90%] sm:top-0 sm:h-full"
+        >
           <SheetHeader>
             <SheetTitle>Add new topic to {clusterName}...</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col gap-4 mt-4">
             <Text>
               Topics can be used to communicate that something significant has
-              happened within <i>your</i> capability. Thats also one of the reasons
-              that the id of your capability (e.g.{" "}
-              <span className={styles.capabilityid}>{capabilityId}</span> in your
-              case) will be embedded in the topic name.
+              happened within <i>your</i> capability. Thats also one of the
+              reasons that the id of your capability (e.g.{" "}
+              <span className={styles.capabilityid}>{capabilityId}</span> in
+              your case) will be embedded in the topic name.
             </Text>
             <Text>
-              Below is the full name of your new topic and a topic build that you
-              can use to define the attributes of your topic.
+              Below is the full name of your new topic and a topic build that
+              you can use to define the attributes of your topic.
             </Text>
 
             <div>
@@ -196,7 +204,8 @@ export default function NewTopicDialog({
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    It is recommended to use "-" (dashes) to separate words in a multi word topic name (e.g. foo-bar instead of foo_bar).
+                    It is recommended to use "-" (dashes) to separate words in a
+                    multi word topic name (e.g. foo-bar instead of foo_bar).
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -207,9 +216,13 @@ export default function NewTopicDialog({
                 value={formData.name}
                 onChange={changeName}
               />
-              {nameHintMessage && <p className="text-xs text-[#666666]">{nameHintMessage}</p>}
+              {nameHintMessage && (
+                <p className="text-xs text-[#666666]">{nameHintMessage}</p>
+              )}
               {(nameErrorMessage || nameError) && (
-                <p className="text-xs text-red-500">{nameErrorMessage || nameError}</p>
+                <p className="text-xs text-red-500">
+                  {nameErrorMessage || nameError}
+                </p>
               )}
             </div>
 
@@ -222,7 +235,9 @@ export default function NewTopicDialog({
                 value={formData.description}
                 onChange={changeDescription}
               />
-              {descriptionError && <p className="text-xs text-red-500">{descriptionError}</p>}
+              {descriptionError && (
+                <p className="text-xs text-red-500">{descriptionError}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -233,7 +248,10 @@ export default function NewTopicDialog({
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    A topic is split into multiple partitions for scalability and parallel processing. Each partition is an ordered, immutable sequence of records that is continually appended to.
+                    A topic is split into multiple partitions for scalability
+                    and parallel processing. Each partition is an ordered,
+                    immutable sequence of records that is continually appended
+                    to.
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -258,7 +276,8 @@ export default function NewTopicDialog({
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    The amount of time a topic retains its data before it is discarded or automatically deleted.
+                    The amount of time a topic retains its data before it is
+                    discarded or automatically deleted.
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -284,7 +303,12 @@ export default function NewTopicDialog({
                     <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    Private topics are used to facilitate information flow within your capability and no other capabilities has access to those topics. Public topics is one that is intended to be shared with other capabilities which means that all capabilities has read access to public topics - and you will in addition have write access to your own public topics.
+                    Private topics are used to facilitate information flow
+                    within your capability and no other capabilities has access
+                    to those topics. Public topics is one that is intended to be
+                    shared with other capabilities which means that all
+                    capabilities has read access to public topics - and you will
+                    in addition have write access to your own public topics.
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -310,8 +334,8 @@ export default function NewTopicDialog({
                     <br />
                     Public topics comes with a responsibility. All other
                     capabilities has read access to your public topics and can
-                    potentially depend on you to not introduce breaking changes to
-                    your messages.
+                    potentially depend on you to not introduce breaking changes
+                    to your messages.
                     <br />
                     <br />
                     You also have a responsibility to communicate about any new

@@ -296,9 +296,18 @@ export default function Header() {
                           checked={isCloudEngineerEnabled}
                           onChange={toggleCloudEngineer}
                         />
-                        <span className={isCloudEngineerEnabled ? styles.toggleTrackRainbow : styles.toggleTrack}>
+                        <span
+                          className={
+                            isCloudEngineerEnabled
+                              ? styles.toggleTrackRainbow
+                              : styles.toggleTrack
+                          }
+                        >
                           {isCloudEngineerEnabled && (
-                            <span className={styles.toggleRainbowLayer} aria-hidden="true" />
+                            <span
+                              className={styles.toggleRainbowLayer}
+                              aria-hidden="true"
+                            />
                           )}
                           <span className={styles.toggleThumb} />
                         </span>
@@ -329,7 +338,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </header>

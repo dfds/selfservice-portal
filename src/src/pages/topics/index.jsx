@@ -77,7 +77,10 @@ function Topics() {
           {filtered.map((topic) => {
             const isExpanded = expandedIds.has(topic.id);
             return (
-              <div key={topic.id} className="border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0">
+              <div
+                key={topic.id}
+                className="border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0"
+              >
                 <div
                   className="flex items-center gap-[0.875rem] px-[1.125rem] py-[0.875rem] cursor-pointer hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
                   onClick={() => toggleExpand(topic.id)}
@@ -88,7 +91,9 @@ function Topics() {
                   {topic.kafkaClusterName && (
                     <span
                       className="font-mono text-[10px] font-semibold tracking-[0.06em] px-2 py-[3px] rounded-[20px] text-white flex-shrink-0"
-                      style={{ backgroundColor: topic.clusterColor ?? "#afafaf" }}
+                      style={{
+                        backgroundColor: topic.clusterColor ?? "#afafaf",
+                      }}
                     >
                       {topic.kafkaClusterName}
                     </span>
@@ -96,7 +101,9 @@ function Topics() {
                   <ChevronRight
                     size={14}
                     className="flex-shrink-0 text-[#afafaf] transition-transform duration-150"
-                    style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)" }}
+                    style={{
+                      transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                    }}
                   />
                 </div>
 

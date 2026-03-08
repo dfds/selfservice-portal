@@ -9,7 +9,9 @@ const selectStyles = {
   control: (base, state) => ({
     ...base,
     backgroundColor: "var(--color-surface)",
-    borderColor: state.isFocused ? "var(--color-action)" : "var(--color-border)",
+    borderColor: state.isFocused
+      ? "var(--color-action)"
+      : "var(--color-border)",
     boxShadow: state.isFocused ? "0 0 0 1px var(--color-action)" : "none",
     "&:hover": { borderColor: "var(--color-action)" },
   }),
@@ -24,9 +26,11 @@ const selectStyles = {
     backgroundColor: state.isSelected
       ? "var(--color-action)"
       : state.isFocused
-        ? "var(--color-surface-muted)"
-        : "transparent",
-    color: state.isSelected ? "var(--color-text-inverse)" : "var(--color-text-primary)",
+      ? "var(--color-surface-muted)"
+      : "transparent",
+    color: state.isSelected
+      ? "var(--color-text-inverse)"
+      : "var(--color-text-primary)",
     cursor: state.isDisabled ? "not-allowed" : "pointer",
     opacity: state.isDisabled ? 0.5 : 1,
   }),
@@ -34,7 +38,10 @@ const selectStyles = {
   input: (base) => ({ ...base, color: "var(--color-text-primary)" }),
   placeholder: (base) => ({ ...base, color: "var(--color-text-muted)" }),
   dropdownIndicator: (base) => ({ ...base, color: "var(--color-text-muted)" }),
-  indicatorSeparator: (base) => ({ ...base, backgroundColor: "var(--color-border)" }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    backgroundColor: "var(--color-border)",
+  }),
 };
 
 export default function AzureResourceGroupRequestWizard({

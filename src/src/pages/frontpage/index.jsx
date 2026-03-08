@@ -9,15 +9,23 @@ import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Code } from "@/components/ui/Code";
-import { Layers, Cloud, Server, Database, Globe, Lock, List } from "lucide-react";
+import {
+  Layers,
+  Cloud,
+  Server,
+  Database,
+  Globe,
+  Lock,
+  List,
+} from "lucide-react";
 
 const STAT_CONFIG = [
-  { icon: <Layers size={16} />,   bg: "#e8f4fb",              color: "#0e7cc1" },
-  { icon: <Cloud size={16} />,    bg: "rgba(237,136,0,0.1)",  color: "#ed8800" },
-  { icon: <Server size={16} />,   bg: "rgba(76,175,80,0.1)",  color: "#4caf50" },
-  { icon: <Database size={16} />, bg: "#ede9fe",              color: "#6d28d9" },
-  { icon: <Globe size={16} />,    bg: "rgba(14,124,193,0.1)", color: "#0e7cc1" },
-  { icon: <Lock size={16} />,     bg: "#eef0f1",              color: "#666666" },
+  { icon: <Layers size={16} />, bg: "#e8f4fb", color: "#0e7cc1" },
+  { icon: <Cloud size={16} />, bg: "rgba(237,136,0,0.1)", color: "#ed8800" },
+  { icon: <Server size={16} />, bg: "rgba(76,175,80,0.1)", color: "#4caf50" },
+  { icon: <Database size={16} />, bg: "#ede9fe", color: "#6d28d9" },
+  { icon: <Globe size={16} />, bg: "rgba(14,124,193,0.1)", color: "#0e7cc1" },
+  { icon: <Lock size={16} />, bg: "#eef0f1", color: "#666666" },
 ];
 
 function HeroRow({ name }) {
@@ -79,7 +87,6 @@ function HeroRow({ name }) {
   );
 }
 
-
 function NavCard({ to, href, iconBg, icon, name, description }) {
   const inner = (
     <>
@@ -126,7 +133,10 @@ export default function FrontPage() {
       <HeroRow name={name} />
 
       {/* Notice */}
-      <div className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up" style={{ animationDelay: "40ms" }}>
+      <div
+        className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up"
+        style={{ animationDelay: "40ms" }}
+      >
         <span className="font-bold tracking-[0.05em]">NOTE — </span>
         Invitations to capabilities have been <strong>removed</strong>. Having
         multiple ways to join a capability made it harder for people to know
@@ -138,12 +148,16 @@ export default function FrontPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
         {/* LEFT: Latest News + Need Help */}
         <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
-          <SectionLabel as="h2" className="mb-2 block">// latest news</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // latest news
+          </SectionLabel>
           <PageSection>
             <LatestNews />
           </PageSection>
 
-          <SectionLabel as="h2" className="mb-2 block">// need help?</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // need help?
+          </SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
               <em>Did you know</em> there's a Slack channel for peer Q&amp;A?
@@ -160,7 +174,9 @@ export default function FrontPage() {
 
         {/* CENTER: Platform nav cards */}
         <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
-          <SectionLabel as="h2" className="mb-2 block">// platform</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // platform
+          </SectionLabel>
           <NavCard
             to="/capabilities"
             iconBg="#e8f4fb"
@@ -193,17 +209,19 @@ export default function FrontPage() {
 
         {/* RIGHT: Quick Links + KubeConfig + Top Visitors */}
         <div className="animate-fade-up" style={{ animationDelay: "160ms" }}>
-          <SectionLabel as="h2" className="mb-2 block">// quick links</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // quick links
+          </SectionLabel>
           <PageSection>
             <QuickLinks />
           </PageSection>
 
-          <SectionLabel as="h2" className="mb-2 block">// kubeconfig</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // kubeconfig
+          </SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              Looking for a fresh config for your{" "}
-              <Code>kubectl</Code>
-              ?
+              Looking for a fresh config for your <Code>kubectl</Code>?
             </p>
             <TrackedLink
               trackName="DownloadKubeConfig"
@@ -214,7 +232,9 @@ export default function FrontPage() {
             </TrackedLink>
           </PageSection>
 
-          <SectionLabel as="h2" className="mb-2 block">// top visitors this week</SectionLabel>
+          <SectionLabel as="h2" className="mb-2 block">
+            // top visitors this week
+          </SectionLabel>
           <PageSection>
             <TopVisitors />
           </PageSection>

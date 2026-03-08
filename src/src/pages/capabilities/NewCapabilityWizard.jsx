@@ -48,17 +48,31 @@ function getSelectStyles(isDark) {
       border: isDark ? "1px solid #334155" : undefined,
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    singleValue: (base) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45", fontWeight: 500 }),
+    singleValue: (base) => ({
+      ...base,
+      color: isDark ? "#e2e8f0" : "#002b45",
+      fontWeight: 500,
+    }),
     placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
-    input: (base) => ({ ...base, fontSize: "16px", color: isDark ? "#e2e8f0" : "#002b45" }),
+    input: (base) => ({
+      ...base,
+      fontSize: "16px",
+      color: isDark ? "#e2e8f0" : "#002b45",
+    }),
     option: (base, state) => ({
       ...base,
       backgroundColor: state.isSelected
-        ? (isDark ? "#1d4ed8" : "#0e7cc1")
+        ? isDark
+          ? "#1d4ed8"
+          : "#0e7cc1"
         : state.isFocused
-          ? (isDark ? "#0f172a" : "#f2f2f2")
-          : (isDark ? "#1e293b" : "#ffffff"),
-      color: state.isSelected ? "#ffffff" : (isDark ? "#e2e8f0" : "#002b45"),
+        ? isDark
+          ? "#0f172a"
+          : "#f2f2f2"
+        : isDark
+        ? "#1e293b"
+        : "#ffffff",
+      color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
     }),
     indicatorSeparator: (base) => ({
       ...base,
@@ -223,7 +237,9 @@ const BasicInformationStep = ({
     <>
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <Label htmlFor="capability-name">Name <span aria-hidden="true">*</span></Label>
+          <Label htmlFor="capability-name">
+            Name <span aria-hidden="true">*</span>
+          </Label>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -232,7 +248,9 @@ const BasicInformationStep = ({
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                It is recommended to use &quot;-&quot; (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).
+                It is recommended to use &quot;-&quot; (dashes) to separate
+                words in a multi word Capability name (e.g. foo-bar instead of
+                foo_bar).
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -248,7 +266,9 @@ const BasicInformationStep = ({
         {nameError && <p className="text-xs text-red-600">{nameError}</p>}
       </div>
       <div className="flex flex-col gap-1 mt-2">
-        <Label htmlFor="capability-description">Description <span aria-hidden="true">*</span></Label>
+        <Label htmlFor="capability-description">
+          Description <span aria-hidden="true">*</span>
+        </Label>
         <Input
           id="capability-description"
           placeholder="Enter a description"
@@ -256,7 +276,9 @@ const BasicInformationStep = ({
           value={formData.description}
           onChange={changeDescription}
         />
-        {descriptionError && <p className="text-xs text-red-600">{descriptionError}</p>}
+        {descriptionError && (
+          <p className="text-xs text-red-600">{descriptionError}</p>
+        )}
       </div>
     </>
   );

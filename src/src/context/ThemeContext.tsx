@@ -36,12 +36,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       : "system";
   });
 
-  const [isDark, setIsDark] = useState(() => resolveIsDark(
-    (() => {
-      const stored = localStorage.getItem("ssu-theme") as Theme | null;
-      return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
-    })()
-  ));
+  const [isDark, setIsDark] = useState(() =>
+    resolveIsDark(
+      (() => {
+        const stored = localStorage.getItem("ssu-theme") as Theme | null;
+        return stored === "light" || stored === "dark" || stored === "system"
+          ? stored
+          : "system";
+      })(),
+    ),
+  );
 
   useEffect(() => {
     const dark = resolveIsDark(theme);

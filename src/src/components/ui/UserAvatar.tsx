@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 
 function getInitials(name?: string): string {
   const parts = (name || "").trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  if (parts.length >= 2)
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   return parts[0].substring(0, 2).toUpperCase() || "?";
 }
 
@@ -19,7 +20,13 @@ interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg";
 }
 
-export function UserAvatar({ name, pictureUrl, size = "md", className, ...props }: UserAvatarProps) {
+export function UserAvatar({
+  name,
+  pictureUrl,
+  size = "md",
+  className,
+  ...props
+}: UserAvatarProps) {
   const initials = getInitials(name);
 
   return (
@@ -32,7 +39,11 @@ export function UserAvatar({ name, pictureUrl, size = "md", className, ...props 
       {...props}
     >
       {pictureUrl ? (
-        <img src={pictureUrl} alt={name ?? ""} className="w-full h-full object-cover" />
+        <img
+          src={pictureUrl}
+          alt={name ?? ""}
+          className="w-full h-full object-cover"
+        />
       ) : (
         initials
       )}

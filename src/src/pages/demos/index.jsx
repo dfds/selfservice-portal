@@ -58,8 +58,8 @@ export default function DemosPage() {
         <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
           <p className="font-semibold mb-1">Stay in the loop</p>
           <p className="mb-1">
-            The cloud engineering team hosts demo sessions on a regular basis
-            to showcase new features, tools, and best practices. All demos are
+            The cloud engineering team hosts demo sessions on a regular basis to
+            showcase new features, tools, and best practices. All demos are
             recorded and available on this page.
           </p>
           <p className="mb-3">

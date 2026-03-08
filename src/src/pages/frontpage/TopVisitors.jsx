@@ -30,7 +30,9 @@ function Visitor({ rank, name, pictureUrl, onClicked, index = 0 }) {
 
   return (
     <div
-      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider first:pt-0 last:border-0 last:pb-0 animate-fade-up ${rank === 1 ? "cursor-pointer" : ""}`}
+      className={`flex items-center gap-[0.625rem] py-2 border-b border-divider first:pt-0 last:border-0 last:pb-0 animate-fade-up ${
+        rank === 1 ? "cursor-pointer" : ""
+      }`}
       style={{ animationDelay: `${index * 50}ms` }}
       onClick={handler}
       title={rank === 1 ? "Celebrate...?" : ""}
@@ -74,7 +76,9 @@ export default function TopVisitors() {
     const items = data.items;
     items.sort((a, b) => a.rank - b.rank);
     items.forEach(async (visitor) => {
-      const profilePictureUrl = await getAnotherUserProfilePictureUrl(visitor.id);
+      const profilePictureUrl = await getAnotherUserProfilePictureUrl(
+        visitor.id,
+      );
       setVisitors((prev) => {
         let copy = prev.length === 0 ? items : prev;
         const found = copy.find((x) => x.id === visitor.id);

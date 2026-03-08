@@ -77,14 +77,20 @@ export default function RecordingsSection() {
           />
         )}
         {showDeleteModal && (
-          <Dialog open={showDeleteModal} onOpenChange={(o) => !o && setShowDeleteModal(false)}>
+          <Dialog
+            open={showDeleteModal}
+            onOpenChange={(o) => !o && setShowDeleteModal(false)}
+          >
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Confirm Deletion</DialogTitle>
               </DialogHeader>
               <Text>Are you sure you want to delete this demo recording?</Text>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteModal(false)}
+                >
                   Cancel
                 </Button>
                 <Button

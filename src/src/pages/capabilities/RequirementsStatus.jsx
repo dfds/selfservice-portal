@@ -3,7 +3,10 @@ import { ExternalLink } from "lucide-react";
 import PageSection from "components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { SkeletonRequirementsScore, SkeletonRequirementsRow } from "@/components/ui/skeleton";
+import {
+  SkeletonRequirementsScore,
+  SkeletonRequirementsRow,
+} from "@/components/ui/skeleton";
 
 // Helper to get color based on score — also used by Capabilities.jsx
 export function getScoreColor(score) {
@@ -38,7 +41,11 @@ export function LightBulb({ score, size = 20 }) {
   );
 }
 
-export function QuestionMarkBulb({ size = 20, onClick, title = "Data may be stale" }) {
+export function QuestionMarkBulb({
+  size = 20,
+  onClick,
+  title = "Data may be stale",
+}) {
   return (
     <span
       title={title}
@@ -72,7 +79,9 @@ export function QuestionMarkBulb({ size = 20, onClick, title = "Data may be stal
 }
 
 export default function RequirementsScore() {
-  const { isLoading, complianceData, complianceLoading } = useContext(SelectedCapabilityContext);
+  const { isLoading, complianceData, complianceLoading } = useContext(
+    SelectedCapabilityContext,
+  );
 
   const categories = complianceData?.categories ?? [];
   const overallScore = complianceData?.totalScore ?? 0;
@@ -87,12 +96,18 @@ export default function RequirementsScore() {
         <SkeletonRequirementsScore />
       ) : (
         <div className="mb-4">
-          <span
-            className="font-mono text-[1.5rem] font-bold block mb-1.5 text-[#002b45] dark:text-[#e2e8f0]"
-          >
-            {totalCount > 0 ? `${metCount} / ${totalCount}` : `${overallScore.toFixed(1)}%`}
+          <span className="font-mono text-[1.5rem] font-bold block mb-1.5 text-[#002b45] dark:text-[#e2e8f0]">
+            {totalCount > 0
+              ? `${metCount} / ${totalCount}`
+              : `${overallScore.toFixed(1)}%`}
           </span>
-          <ProgressBar value={totalCount > 0 ? (metCount / totalCount) * 100 : overallScore} color="#4caf50" className="mb-1.5" />
+          <ProgressBar
+            value={
+              totalCount > 0 ? (metCount / totalCount) * 100 : overallScore
+            }
+            color="#4caf50"
+            className="mb-1.5"
+          />
           <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
             {totalCount > 0
               ? `${metCount} of ${totalCount} requirements met`
@@ -111,13 +126,16 @@ export default function RequirementsScore() {
       ) : categories.length > 0 ? (
         <div className="border border-[#d9dcde] dark:border-[#334155] rounded-[6px] overflow-hidden">
           {categories.map((category, index) => {
-            const isUnknown = category.status === "Unknown" || category.score === null;
+            const isUnknown =
+              category.status === "Unknown" || category.score === null;
             const score = category.score ?? -1;
             return (
               <div
                 key={category.categoryName}
                 className={`px-4 py-3 flex items-start gap-3 ${
-                  index < categories.length - 1 ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]" : ""
+                  index < categories.length - 1
+                    ? "border-b border-[#eeeeee] dark:border-[#1e2d3d]"
+                    : ""
                 }`}
               >
                 <div className="flex-shrink-0 mt-1">
@@ -127,7 +145,12 @@ export default function RequirementsScore() {
                       style={{ backgroundColor: "#9e9e9e" }}
                       title="Status unknown"
                     >
-                      <span className="text-white font-bold" style={{ fontSize: 7, lineHeight: 1 }}>?</span>
+                      <span
+                        className="text-white font-bold"
+                        style={{ fontSize: 7, lineHeight: 1 }}
+                      >
+                        ?
+                      </span>
                     </div>
                   ) : (
                     <div
@@ -144,7 +167,9 @@ export default function RequirementsScore() {
                     </span>
                     <span
                       className="font-mono text-[12px] font-bold flex-shrink-0"
-                      style={{ color: isUnknown ? "#9e9e9e" : getScoreColor(score) }}
+                      style={{
+                        color: isUnknown ? "#9e9e9e" : getScoreColor(score),
+                      }}
                     >
                       {isUnknown ? "?" : `${score.toFixed(1)}%`}
                     </span>
@@ -172,7 +197,8 @@ export default function RequirementsScore() {
         </div>
       ) : (
         <div className="py-5 text-center text-[13px] text-[#afafaf] dark:text-slate-500 italic">
-          All is good! We see no issues with the current requirements for this capability.
+          All is good! We see no issues with the current requirements for this
+          capability.
         </div>
       )}
     </PageSection>

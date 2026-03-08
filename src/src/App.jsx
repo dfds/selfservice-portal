@@ -20,7 +20,6 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
 
-
 function PageTransition({ children }) {
   return <div className="animate-fade-up">{children}</div>;
 }
@@ -81,14 +80,25 @@ function Layout() {
           </a>
           {/* Mobile backdrop */}
           <div
-            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
+              mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
-          <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+          <Sidebar
+            mobileOpen={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+          />
           <div className="flex flex-col flex-1 min-w-0">
-            <TopBar onMenuOpen={() => setMobileOpen(true)} menuOpen={mobileOpen} />
-            <main id="main-content" className="flex-1 bg-surface-muted overflow-x-clip">
+            <TopBar
+              onMenuOpen={() => setMobileOpen(true)}
+              menuOpen={mobileOpen}
+            />
+            <main
+              id="main-content"
+              className="flex-1 bg-surface-muted overflow-x-clip"
+            >
               <ErrorBoundary key={location.pathname}>
                 <PageTransition>
                   <Outlet />

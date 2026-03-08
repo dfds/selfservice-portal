@@ -96,8 +96,17 @@ export function MyOutstandingMembershipApplications({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
-          queryClient.invalidateQueries({ queryKey: ["capabilities", "details", def.capabilityId] });
-          queryClient.invalidateQueries({ queryKey: ["capabilities", "members", "membership-applications", def.capabilityId] });
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "details", def.capabilityId],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [
+              "capabilities",
+              "members",
+              "membership-applications",
+              def.capabilityId,
+            ],
+          });
         },
       },
     );
@@ -122,7 +131,9 @@ export function MyOutstandingMembershipApplications({
           rejectButtonLabel={"Cancel"}
         />
       ) : (
-        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">No outstanding membership applications</p>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">
+          No outstanding membership applications
+        </p>
       )}
     </>
   );
