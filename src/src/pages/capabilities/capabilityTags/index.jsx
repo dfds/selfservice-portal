@@ -116,10 +116,6 @@ function TagField({ label, description, error, children }) {
 function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
   const { isDark } = useTheme();
   const selectStyles = getSelectStyles(isDark);
-  const [formHasError, setFormHasError] = useState(false);
-  const [costCenterError, setCostCenterError] = useState(undefined);
-  const [businessCapabilityError, setBusinessCapabilityError] =
-    useState(undefined);
   const [isDirty, setIsDirty] = useState(false);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
@@ -141,13 +137,26 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
     setSelectedCapabilityContainsAIOption,
   ] = useState(undefined);
 
-  useEffect(() => {
-    if (costCenterError) {
-      setFormHasError(true);
-    } else {
-      setFormHasError(false);
-    }
-  }, [costCenterError]);
+  const requiredErrors = {
+    "dfds.cost.centre": !selectedCostCenterOption
+      ? "A cost centre must be set"
+      : undefined,
+    "dfds.businessCapability": !selectedBusinessCapabilityOption
+      ? "A Business Capability must be set"
+      : undefined,
+    "dfds.env": !selectedEnvOption ? "An environment must be set" : undefined,
+    "dfds.data.classification": !selectedClassificationOption
+      ? "Data classification must be set"
+      : undefined,
+    "dfds.service.criticality": !selectedCriticalityOption
+      ? "Service criticality must be set"
+      : undefined,
+    "dfds.service.availability": !selectedAvailabilityOption
+      ? "Service availability must be set"
+      : undefined,
+  };
+
+  const formHasError = Object.values(requiredErrors).some(Boolean);
 
   // Auto-select the only business capability option if there is just one
   useEffect(() => {
@@ -164,22 +173,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
       }
     }
   }, [selectedCostCenterOption, selectedBusinessCapabilityOption]);
-
-  useEffect(() => {
-    if (!selectedCostCenterOption) {
-      setCostCenterError("A cost center must be set");
-    } else {
-      setCostCenterError(undefined);
-    }
-  }, [selectedCostCenterOption]);
-
-  useEffect(() => {
-    if (!selectedBusinessCapabilityOption) {
-      setBusinessCapabilityError("A Business Capability must be set");
-    } else {
-      setBusinessCapabilityError(undefined);
-    }
-  }, [selectedBusinessCapabilityOption]);
 
   useEffect(() => {
     if (defaultValues) {
@@ -276,7 +269,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
         <TagField
           label="dfds.cost.centre"
           description="Required for internal analysis and cost aggregation tools such as FinOut."
-          error={canEditTags ? costCenterError : undefined}
+          error={canEditTags ? requiredErrors["dfds.cost.centre"] : undefined}
         >
           <Select
             {...selectPortalProps}
@@ -288,15 +281,16 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
               setSelectedCostCenterOption(e);
               setSelectedBusinessCapabilityOption(null);
               setIsDirty(true);
-              setBusinessCapabilityError("A Business Capability must be set");
             }}
           />
         </TagField>
 
         <TagField
           label="dfds.businessCapability"
-          description="Select the Business Capability for this Cost Center."
-          error={canEditTags ? businessCapabilityError : undefined}
+          description="If in doubt, contact your enterprise architect"
+          error={
+            canEditTags ? requiredErrors["dfds.businessCapability"] : undefined
+          }
         >
           <Select
             {...selectPortalProps}
@@ -317,6 +311,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
         <TagField
           label="dfds.env"
           description="Select the environment for this capability."
+          error={canEditTags ? requiredErrors["dfds.env"] : undefined}
         >
           <Select
             {...selectPortalProps}
@@ -345,6 +340,9 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
                 Understand Classification
               </a>
             </>
+          }
+          error={
+            canEditTags ? requiredErrors["dfds.data.classification"] : undefined
           }
         >
           <Select
@@ -375,6 +373,9 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
               </a>
             </>
           }
+          error={
+            canEditTags ? requiredErrors["dfds.service.criticality"] : undefined
+          }
         >
           <Select
             {...selectPortalProps}
@@ -403,6 +404,11 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
                 Understand Availability
               </a>
             </>
+          }
+          error={
+            canEditTags
+              ? requiredErrors["dfds.service.availability"]
+              : undefined
           }
         >
           <Select
@@ -470,7 +476,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
           trackName="CapabilityTags-Submit"
           size="small"
           variation="outlined"
-          disabled={!canEditTags || formHasError || !isDirty || isPending}
+          disabled={!canEditTags || !isDirty || isPending}
           onClick={() => {
             onSubmit(translateToTags());
             setIsDirty(false);
