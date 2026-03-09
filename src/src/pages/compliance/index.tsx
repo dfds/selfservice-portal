@@ -800,8 +800,8 @@ export default function CompliancePage() {
           />
         </div>
 
-        {/* Sort pills */}
-        <div className="flex gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-3">
+        {/* Sort pills + expand/collapse all */}
+        <div className="flex items-center gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-3">
           {SORT_OPTIONS.map(({ key, label }) => (
             <button
               key={key}
@@ -817,6 +817,25 @@ export default function CompliancePage() {
               {label}
             </button>
           ))}
+          <div className="flex-1" />
+          {isFetched && filtered.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                const allExpanded = filtered.every(({ name }) => expandedCards.has(name));
+                if (allExpanded) {
+                  setExpandedCards(new Set());
+                } else {
+                  setExpandedCards(new Set(filtered.map(({ name }) => name)));
+                }
+              }}
+              className="h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]"
+            >
+              {filtered.every(({ name }) => expandedCards.has(name))
+                ? "Collapse all"
+                : "Expand all"}
+            </button>
+          )}
         </div>
 
         {/* Card grid */}
