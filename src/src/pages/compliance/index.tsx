@@ -326,10 +326,10 @@ function CostCentreCard({
                   className={cn(
                     "text-[10px] font-medium px-2 py-0.5 rounded-full",
                     catPct >= 80
-                      ? "bg-[#f0fdf4] text-[#16a34a]"
+                      ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
-                      ? "bg-[#fffbeb] text-[#d97706]"
-                      : "bg-[#fff1f2] text-[#dc2626]",
+                      ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
+                      : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
                   )}
                 >
                   {cat.categoryName}
@@ -402,7 +402,7 @@ export default function CompliancePage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched, data: capabilities } = useCapabilities();
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortMode>("name");
+  const [sort, setSort] = useState<SortMode>("pct-desc");
   const [activeFilters, setActiveFilters] = useState<Set<string>>(
     () => new Set(["green", "orange", "red"]),
   );
@@ -554,7 +554,7 @@ export default function CompliancePage() {
   return (
     <div className="flex min-h-full">
       {/* ─── Side Panel ──────────────────────────────────────────────── */}
-      <aside className="sticky top-[52px] h-[calc(100dvh-52px)] w-[240px] flex-shrink-0 overflow-y-auto bg-surface border-r border-card">
+      <aside className="hidden md:block sticky top-[52px] h-[calc(100dvh-52px)] w-[240px] flex-shrink-0 overflow-y-auto bg-surface border-r border-card">
         <div className="p-5">
           {/* Overall Health */}
           <div className="mb-5">
@@ -716,7 +716,7 @@ export default function CompliancePage() {
       </aside>
 
       {/* ─── Main Content ─────────────────────────────────────────────── */}
-      <div className="flex-1 min-w-0 p-8">
+      <div className="flex-1 min-w-0 p-4 md:p-8">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
@@ -734,8 +734,59 @@ export default function CompliancePage() {
           </div>
         </div>
 
+        {/* Mobile-only: compact stats + filter chips */}
+        <div className="md:hidden mb-4 animate-fade-up animate-stagger-1">
+          {fetchedCount > 0 && (
+            <div className="flex items-center gap-3 mb-3 text-[11px] font-mono text-[#4a6278] dark:text-[#94a3b8]">
+              <span
+                className="text-[20px] font-bold tracking-tight leading-none"
+                style={{ color: gaugeColor }}
+              >
+                {overallPct}%
+              </span>
+              <span>overall</span>
+            </div>
+          )}
+          <div className="flex gap-1.5 flex-wrap">
+            {(
+              [
+                { key: "green", label: "≥80%", color: "#22c55e", count: nGreen },
+                { key: "orange", label: "50–79%", color: "#f59e0b", count: nOrange },
+                { key: "red", label: "<50%", color: "#ef4444", count: nRed },
+              ] as const
+            ).map(({ key, label, color, count }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggleFilter(key)}
+                className={cn(
+                  "flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all",
+                  !activeFilters.has(key) &&
+                    "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
+                )}
+                style={
+                  activeFilters.has(key)
+                    ? {
+                        color,
+                        borderColor: color,
+                        background: `${color}18`,
+                      }
+                    : {}
+                }
+              >
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: activeFilters.has(key) ? color : "#afafaf" }}
+                />
+                {label}
+                <span className="font-mono">{count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Search */}
-        <div className="relative mb-3 animate-fade-up animate-stagger-1">
+        <div className="relative mb-3 animate-fade-up animate-stagger-2">
           <Search
             size={13}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[#afafaf] pointer-events-none"
@@ -750,7 +801,7 @@ export default function CompliancePage() {
         </div>
 
         {/* Sort pills */}
-        <div className="flex gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-2">
+        <div className="flex gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-3">
           {SORT_OPTIONS.map(({ key, label }) => (
             <button
               key={key}
@@ -769,7 +820,7 @@ export default function CompliancePage() {
         </div>
 
         {/* Card grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 animate-fade-up animate-stagger-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 animate-fade-up animate-stagger-4">
           {!isFetched ? (
             Array.from({ length: 6 }).map((_, i) => (
               <SkeletonComplianceCard key={i} />
