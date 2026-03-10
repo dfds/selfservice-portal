@@ -170,7 +170,7 @@ function CapabilityRow({ capability }: { capability: any }) {
         onClick={handleClick}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted transition-colors bg-transparent border-0 cursor-pointer"
       >
-        <span className="flex-1 text-sm font-medium text-primary">
+        <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
           {capability.name}
         </span>
         <Badge variant={statusVariant} className="text-[10px] shrink-0 hidden sm:inline-flex">

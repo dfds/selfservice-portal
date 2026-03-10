@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
 import { msGraphRequest } from "@/state/remote/query";
-import { useCapabilities } from "@/state/remote/queries/capabilities";
-import { ssuRequest } from "@/state/remote/query";
+import { useAllCapabilitiesWithMembers } from "@/state/remote/queries/capabilities";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,101 +127,6 @@ function UserSearchCombobox({
   );
 }
 
-// ── Member search results ──────────────────────────────────────────────────────
-
-function MemberSearchResults({
-  userId,
-  capabilities,
-}: {
-  userId: string;
-  capabilities: any[];
-}) {
-  const memberQueries = useQueries({
-    queries: capabilities.map((cap) => ({
-      queryKey: ["capabilities", "members", cap.id],
-      queryFn: async () =>
-        ssuRequest({
-          method: "GET",
-          urlSegments: ["capabilities", cap.id, "members"],
-          payload: null,
-          isCloudEngineerEnabled: true,
-        }),
-      select: (data: any) => data?.items ?? (Array.isArray(data) ? data : []),
-    })),
-  });
-
-  const allFetched = memberQueries.every((q) => q.isFetched);
-  const totalFetched = memberQueries.filter((q) => q.isFetched).length;
-
-  const matched: Array<{ cap: any; member: any }> = [];
-  memberQueries.forEach((q, i) => {
-    if (!q.data) return;
-    const members: any[] = q.data as any[];
-    const found = members.find(
-      (m: any) =>
-        (m.email ?? m.userId ?? m.id ?? "").toLowerCase() === userId.toLowerCase(),
-    );
-    if (found) {
-      matched.push({ cap: capabilities[i], member: found });
-    }
-  });
-
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-3">
-        <p className="text-xs text-muted font-mono">
-          {allFetched
-            ? `Searched ${capabilities.length} capabilities`
-            : `Searching… ${totalFetched}/${capabilities.length}`}
-        </p>
-        {!allFetched && (
-          <div className="h-3 w-3 rounded-full border-2 border-muted border-t-action animate-spin" />
-        )}
-        {allFetched && matched.length > 0 && (
-          <Badge variant="soft-success" className="text-xs">
-            {matched.length} {matched.length === 1 ? "capability" : "capabilities"}
-          </Badge>
-        )}
-      </div>
-
-      {allFetched && matched.length === 0 && (
-        <EmptyState>No capability memberships found for this user.</EmptyState>
-      )}
-
-      <div className="space-y-2">
-        {matched.map(({ cap }) => (
-          <div
-            key={cap.id}
-            className="border border-card rounded-[8px] px-4 py-3 flex items-center gap-3"
-          >
-            <span className="flex-1 text-sm font-medium text-primary">{cap.name}</span>
-            {cap.status && (
-              <Badge
-                variant={
-                  cap.status === "Active"
-                    ? "soft-success"
-                    : cap.status === "Pending Deletion"
-                      ? "soft-warning"
-                      : "outline"
-                }
-                className="text-[10px] shrink-0"
-              >
-                {cap.status}
-              </Badge>
-            )}
-          </div>
-        ))}
-        {!allFetched &&
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="border border-card rounded-[8px] p-4">
-              <Skeleton className="h-4 w-48" />
-            </div>
-          ))}
-      </div>
-    </div>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function MemberSearchPage() {
@@ -230,8 +134,16 @@ export default function MemberSearchPage() {
   const [selectedLabel, setSelectedLabel] = useState("");
   const [searchActive, setSearchActive] = useState(false);
 
-  const { data: capabilitiesData } = useCapabilities();
-  const capabilities: any[] = (capabilitiesData as any[]) ?? [];
+  const { data: allCapabilities = [], isFetched } = useAllCapabilitiesWithMembers();
+
+  const matched: any[] = searchActive
+    ? (allCapabilities as any[]).filter((cap: any) =>
+        (cap.members ?? []).some(
+          (m: any) =>
+            (m.email ?? "").toLowerCase() === searchedUserId.toLowerCase(),
+        ),
+      )
+    : [];
 
   function handleSelect(userId: string, label: string) {
     setSearchedUserId(userId);
@@ -281,9 +193,44 @@ export default function MemberSearchPage() {
       </div>
 
       {/* Results */}
-      {searchActive && capabilities.length > 0 && (
+      {searchActive && (
         <div className="animate-fade-up">
-          <MemberSearchResults userId={searchedUserId} capabilities={capabilities} />
+          {!isFetched ? (
+            <div className="space-y-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="border border-card rounded-[8px] p-4">
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <p className="text-xs text-muted font-mono">
+                  Searched {(allCapabilities as any[]).length} capabilities
+                </p>
+                {matched.length > 0 && (
+                  <Badge variant="soft-success" className="text-xs">
+                    {matched.length} {matched.length === 1 ? "capability" : "capabilities"}
+                  </Badge>
+                )}
+              </div>
+              {matched.length === 0 ? (
+                <EmptyState>No capability memberships found for this user.</EmptyState>
+              ) : (
+                <div className="space-y-2">
+                  {matched.map((cap: any) => (
+                    <div
+                      key={cap.id}
+                      className="border border-card rounded-[8px] px-4 py-3 flex items-center gap-3"
+                    >
+                      <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">{cap.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 

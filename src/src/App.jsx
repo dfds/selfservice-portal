@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import AppContext from "./AppContext";
 
 import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
@@ -71,9 +72,32 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+function NotFoundPage() {
+  return (
+    <div className="px-5 md:px-8 py-16 max-w-4xl mx-auto text-center">
+      <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-3">
+        // 404
+      </div>
+      <h1 className="text-[2rem] font-bold text-[#002b45] dark:text-[#e2e8f0] mb-2">
+        Page not found
+      </h1>
+    </div>
+  );
+}
+
 function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useContext(AppContext);
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const userLoaded = user?.isAuthenticated === true;
+  const isCloudEngineer =
+    userLoaded &&
+    Array.isArray(user.roles) &&
+    user.roles.some((r) => /^\s*cloud\.engineer\s*$/i.test(r));
+  const showAdminGuard = isAdminRoute && userLoaded && !isCloudEngineer;
+  const showAdminLoader = isAdminRoute && !userLoaded;
 
   // Close mobile sidebar on navigation
   useEffect(() => {
@@ -111,11 +135,21 @@ function Layout() {
               id="main-content"
               className="flex-1 bg-surface-muted overflow-x-clip"
             >
-              <ErrorBoundary key={location.pathname}>
-                <PageTransition>
-                  <Outlet />
-                </PageTransition>
-              </ErrorBoundary>
+              {isAdminRoute && isCloudEngineer && (
+                <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[12px] font-mono font-semibold tracking-[0.12em]">
+                  <span aria-hidden="true">⚠</span>
+                  WORK IN PROGRESS — This section is under active development and may change without notice.
+                </div>
+              )}
+              {showAdminLoader ? null : showAdminGuard ? (
+                <NotFoundPage />
+              ) : (
+                <ErrorBoundary key={location.pathname}>
+                  <PageTransition>
+                    <Outlet />
+                  </PageTransition>
+                </ErrorBoundary>
+              )}
             </main>
           </div>
         </div>
@@ -173,6 +207,7 @@ export default function App() {
           <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
           <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
           <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </>

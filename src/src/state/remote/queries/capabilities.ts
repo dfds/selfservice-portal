@@ -416,3 +416,18 @@ export function useUserProfilePicture(upn: string) {
 
   return { ...query, profilePicture };
 }
+
+export function useAllCapabilitiesWithMembers() {
+  return useQuery({
+    queryKey: ["capabilities", "all-with-members"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["system", "legacy", "aad-aws-sync"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    select: (data: any) => (Array.isArray(data) ? data : []),
+    staleTime: 60000,
+  });
+}
