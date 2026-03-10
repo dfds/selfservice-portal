@@ -13,11 +13,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-const KNOWN_SCHEMA_IDS = [
-  "capability-metadata",
-  "required-metadata",
-  "capability",
-];
+const KNOWN_SCHEMA_IDS = ["capability"];
 
 // ── Schema editor ─────────────────────────────────────────────────────────────
 
@@ -37,12 +33,21 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
   // Initialise editor text once schema loads
   React.useEffect(() => {
     if (isFetched && text === null) {
-      const initial =
-        data !== undefined && data !== null
-          ? typeof data === "string"
-            ? data
-            : JSON.stringify(data, null, 2)
-          : "{}";
+      let initial = "{}";
+      if (data !== undefined && data !== null) {
+        const raw: any = data;
+        // API wraps the schema in a "schema" field as a JSON string
+        const schemaField = raw.schema ?? raw;
+        if (typeof schemaField === "string") {
+          try {
+            initial = JSON.stringify(JSON.parse(schemaField), null, 2);
+          } catch {
+            initial = schemaField;
+          }
+        } else {
+          initial = JSON.stringify(schemaField, null, 2);
+        }
+      }
       setText(initial);
     }
   }, [isFetched, data]);
@@ -57,7 +62,7 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
       return;
     }
     setTextError("");
-    validateSchema.mutate(parsed, {
+    validateSchema.mutate({ schema: parsed }, {
       onSuccess: (result: any) => {
         setValidationResult({
           ok: true,
@@ -84,7 +89,7 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
     }
     setTextError("");
     updateSchema.mutate(
-      { schemaId, schema: parsed },
+      { schemaId, schema: { schema: parsed } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["json-schema", schemaId] });
@@ -225,7 +230,7 @@ export default function JsonSchemaEditorPage() {
         <SectionLabel className="block mb-2">Schema ID</SectionLabel>
         <form onSubmit={handleLoad} className="flex gap-2 max-w-sm">
           <Input
-            placeholder="e.g. capability-metadata"
+            placeholder="e.g. capability"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             list="schema-id-suggestions"
@@ -246,7 +251,7 @@ export default function JsonSchemaEditorPage() {
           </Button>
         </form>
         <p className="text-[11px] text-muted font-mono mt-1.5">
-          Known IDs: {KNOWN_SCHEMA_IDS.join(", ")}
+          Known ID: {KNOWN_SCHEMA_IDS[0]}
         </p>
       </div>
 

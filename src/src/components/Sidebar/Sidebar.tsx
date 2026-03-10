@@ -35,7 +35,6 @@ import {
   Network,
   X,
   Users,
-  MessageSquare,
   Container,
   LineChart,
   Database,
@@ -144,10 +143,8 @@ const adminNav: NavGroupDef = {
       icon: Database,
     },
     { title: "Member Search", url: "/admin/members", icon: Users },
-    { title: "Messages", url: "/admin/messages", icon: MessageSquare },
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
-    { title: "Schema Browser", url: "/admin/schemas", icon: FileText },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
   ],
 };
@@ -495,7 +492,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "w-4/5 md:w-[220px] flex-shrink-0 flex flex-col bg-surface-subtle border-r border-card",
+        "w-4/5 md:w-[220px] flex-shrink-0 flex flex-col bg-surface-subtle border-r border-card overflow-hidden",
         // Mobile: fixed overlay drawer
         "fixed inset-y-0 left-0 z-50",
         // Desktop: sticky in-flow sidebar
@@ -541,7 +538,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       <nav
         id="sidebar-nav"
         aria-label="Main navigation"
-        className="flex-1 px-3 py-4 flex flex-col gap-5 overflow-y-auto"
+        className="flex-1 min-h-0 px-3 py-4 flex flex-col gap-5 overflow-y-auto"
       >
         {/* PLATFORM */}
         <div>
