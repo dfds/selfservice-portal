@@ -258,6 +258,137 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
   return query;
 }
 
+export function useCancelCapabilityDeletion() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [
+          "capabilities",
+          data.capabilityId,
+          "canceldeletionrequest",
+        ],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+  return mutation;
+}
+
+export function useCapabilityAwsAccount(capabilityId: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  return useQuery({
+    queryKey: ["capabilities", "aws-account", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "awsaccount"],
+        payload: null,
+        isCloudEngineerEnabled,
+      }),
+    enabled: !!capabilityId,
+  });
+}
+
+export function useCapabilityAzureResources(capabilityId: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  return useQuery({
+    queryKey: ["capabilities", "azure-resources", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "azureresources"],
+        payload: null,
+        isCloudEngineerEnabled,
+      }),
+    enabled: !!capabilityId,
+  });
+}
+
+export function useCapabilityKafkaAccess(capabilityId: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  return useQuery({
+    queryKey: ["capabilities", "kafka-access", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "kafkaclusteraccess"],
+        payload: null,
+        isCloudEngineerEnabled,
+      }),
+    enabled: !!capabilityId,
+  });
+}
+
+export function useCapabilityMembers(capabilityId: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  return useQuery({
+    queryKey: ["capabilities", "members", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "members"],
+        payload: null,
+        isCloudEngineerEnabled,
+      }),
+    enabled: !!capabilityId,
+    select: (data: any) => data.items || [],
+  });
+}
+
+export function useCapabilityMetadataById(capabilityId: string) {
+  return useQuery({
+    queryKey: ["capabilities", "metadata-raw", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "metadata"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: !!capabilityId,
+  });
+}
+
+export function useSetCapabilityMetadata() {
+  return useMutation({
+    mutationFn: async (data: { capabilityId: string; metadata: any }) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["capabilities", data.capabilityId, "metadata"],
+        payload: { JsonMetadata: data.metadata },
+        isCloudEngineerEnabled: true,
+      }),
+  });
+}
+
+export function useCapabilityRequirementScore(capabilityId: string) {
+  return useQuery({
+    queryKey: ["capabilities", "requirement-score", capabilityId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["capabilities", capabilityId, "requirement-score"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: !!capabilityId,
+  });
+}
+
+export function useBypassJoinCapability() {
+  return useMutation({
+    mutationFn: async (data: { capabilityId: string; userId: string }) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["capabilities", data.capabilityId, "join"],
+        payload: { userId: data.userId },
+        isCloudEngineerEnabled: true,
+      }),
+  });
+}
+
 export function useUserProfilePicture(upn: string) {
   const query = useQuery({
     queryKey: [`user-profilepicture.${upn}`],

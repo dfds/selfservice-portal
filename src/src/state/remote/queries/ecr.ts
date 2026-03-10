@@ -33,3 +33,29 @@ export function useCreateEcrRepository() {
 
   return mutation;
 }
+
+export function useEcrOutOfSyncInfo() {
+  return useQuery({
+    queryKey: ["ecr", "out-of-sync"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["metrics/out-of-sync-ecr-repos"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    staleTime: 30000,
+  });
+}
+
+export function useSyncEcr() {
+  return useMutation({
+    mutationFn: async (data: { updateOnMismatch: boolean }) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: [`ecr/synchronize?updateOnMismatch=${data.updateOnMismatch}`],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+  });
+}

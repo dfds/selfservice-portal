@@ -16,6 +16,18 @@ import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
 import DemosPage from "./pages/demos";
 import CompliancePage from "./pages/compliance";
+import RbacViewerPage from "./pages/admin/rbac";
+import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
+import MembershipApplicationsAdminPage from "./pages/admin/membership-applications";
+import UserInspectorPage from "./pages/admin/rbac/user";
+import AdminCompliancePage from "./pages/admin/compliance";
+import TopicExplorerPage from "./pages/admin/topics";
+import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
+import BulkMetadataPage from "./pages/admin/capabilities/metadata";
+import MemberSearchPage from "./pages/admin/members";
+import EcrSyncDashboardPage from "./pages/admin/ecr";
+import PlatformMetricsDashboardPage from "./pages/admin/metrics";
+import JsonSchemaEditorPage from "./pages/admin/json-schema";
 import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
@@ -137,6 +149,30 @@ export default function App() {
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
           <Route path="demos" element={<DemosPage />} />
           <Route path="compliance" element={<CompliancePage />} />
+          <Route path="admin/rbac" element={<RbacViewerPage />} />
+          <Route path="admin/rbac/user" element={<UserInspectorPage />} />
+          <Route
+            path="admin/capabilities/deletion-queue"
+            element={<DeletionQueuePage />}
+          />
+          <Route
+            path="admin/capabilities/:id"
+            element={<CapabilityAdminDetailPage />}
+          />
+          <Route
+            path="admin/membership-applications"
+            element={<MembershipApplicationsAdminPage />}
+          />
+          <Route path="admin/compliance" element={<AdminCompliancePage />} />
+          <Route path="admin/topics" element={<TopicExplorerPage />} />
+          <Route
+            path="admin/capabilities/metadata"
+            element={<BulkMetadataPage />}
+          />
+          <Route path="admin/members" element={<MemberSearchPage />} />
+          <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
+          <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
+          <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
         </Route>
       </Routes>
     </>

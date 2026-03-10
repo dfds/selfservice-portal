@@ -117,6 +117,59 @@ export function useAddKafkaTopic() {
   return mutation;
 }
 
+export function useAllKafkaTopics() {
+  const query = useQuery({
+    queryKey: ["kafka", "all-topics"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["kafkatopics"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    select: (data: any) => {
+      return (data.items || []).map((topic: any) => {
+        const copy = { ...topic };
+        const found = (data._embedded?.kafkaClusters?.items || []).find(
+          (cluster: any) => cluster.id === topic.kafkaClusterId,
+        );
+        copy.kafkaClusterName = found?.name || "";
+        return copy;
+      });
+    },
+  });
+  return query;
+}
+
+export function useTopicMessageContracts(topicId: string) {
+  return useQuery({
+    queryKey: ["kafka", "topic-message-contracts", topicId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["kafkatopics", topicId, "messagecontracts"],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: !!topicId,
+    select: (data: any) => data.items || [],
+  });
+}
+
+export function useKafkaSchemas(clusterId: string) {
+  return useQuery({
+    queryKey: ["kafka", "schemas", clusterId],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: ["kafkaschemas", clusterId],
+        payload: null,
+        isCloudEngineerEnabled: true,
+      }),
+    enabled: !!clusterId,
+  });
+}
+
 export function useRequestAccessToCluster() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const mutation = useMutation({

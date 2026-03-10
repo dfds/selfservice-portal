@@ -28,7 +28,17 @@ import {
   ChevronDown,
   Building2,
   ShieldCheck,
+  KeyRound,
+  Trash2,
+  UserSearch,
+  Inbox,
+  Network,
   X,
+  Users,
+  MessageSquare,
+  Container,
+  LineChart,
+  Database,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -108,6 +118,38 @@ const costCentresGroup: NavGroupDef = {
   title: "Cost Centres",
   icon: Building2,
   children: [{ title: "Compliance", url: "/compliance", icon: ShieldCheck }],
+};
+
+const adminNav: NavGroupDef = {
+  title: "Admin",
+  icon: ShieldCheck,
+  children: [
+    { title: "RBAC Viewer", url: "/admin/rbac", icon: KeyRound },
+    { title: "User Inspector", url: "/admin/rbac/user", icon: UserSearch },
+    {
+      title: "Deletion Queue",
+      url: "/admin/capabilities/deletion-queue",
+      icon: Trash2,
+    },
+    {
+      title: "Membership Queue",
+      url: "/admin/membership-applications",
+      icon: Inbox,
+    },
+    { title: "Compliance", url: "/admin/compliance", icon: ClipboardCheck },
+    { title: "Topic Explorer", url: "/admin/topics", icon: Network },
+    {
+      title: "Metadata Remediation",
+      url: "/admin/capabilities/metadata",
+      icon: Database,
+    },
+    { title: "Member Search", url: "/admin/members", icon: Users },
+    { title: "Messages", url: "/admin/messages", icon: MessageSquare },
+    { title: "ECR Sync", url: "/admin/ecr", icon: Container },
+    { title: "Metrics", url: "/admin/metrics", icon: LineChart },
+    { title: "Schema Browser", url: "/admin/schemas", icon: FileText },
+    { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
+  ],
 };
 
 function NavItemLink({
@@ -521,6 +563,9 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
                 />
               ))}
             <NavGroupLink group={costCentresGroup} isActive={isActive} />
+            {isCloudEngineerEnabled && (
+              <NavGroupLink group={adminNav} isActive={isActive} />
+            )}
           </div>
         </div>
 
