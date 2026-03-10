@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import Select from "react-select";
 import { msGraphRequest } from "@/state/remote/query";
+import { useTheme } from "@/context/ThemeContext";
 import {
   useUserPermissions,
   useUserRbacRoles,
@@ -161,24 +163,21 @@ function PermissionCombobox({
   value,
   onChange,
   allPerms,
+  namespace,
 }: {
   value: string;
   onChange: (v: string) => void;
   allPerms: any[];
+  namespace: string;
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const pool = namespace ? allPerms.filter((p: any) => p.namespace === namespace) : allPerms;
   const filtered = value.trim().length === 0
     ? []
-    : allPerms
-        .filter((p: any) => {
-          const q = value.toLowerCase();
-          return (
-            (p.name ?? "").toLowerCase().includes(q) ||
-            (p.namespace ?? "").toLowerCase().includes(q)
-          );
-        })
+    : pool
+        .filter((p: any) => (p.name ?? "").toLowerCase().includes(value.toLowerCase()))
         .slice(0, 10);
 
   useEffect(() => {
@@ -335,24 +334,33 @@ function CanTheyTester({ userId }: { userId: string }) {
   const allPerms: any[] = (allPermsData as any[]) ?? [];
   const caps: any[] = (capsData as any[]) ?? [];
 
+  const { isDark } = useTheme();
   const canTheyMutation = useCanThey();
+  const [namespace, setNamespace] = useState("");
   const [permission, setPermission] = useState("");
   const [resource, setResource] = useState("");
   const [result, setResult] = useState<boolean | null>(null);
 
+  const namespaces: string[] = Array.from(
+    new Set(allPerms.map((p: any) => p.namespace).filter(Boolean)),
+  ).sort() as string[];
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!permission.trim()) return;
+    if (!permission.trim() || !namespace) return;
     setResult(null);
     canTheyMutation.mutate(
       {
         userId,
-        permissionName: permission.trim(),
-        resource: resource.trim() || undefined,
+        permissions: [{ description: "", name: permission.trim(), namespace }],
+        objectid: resource.trim() || "",
       },
       {
         onSuccess: (data: any) => {
-          setResult(data?.isAllowed ?? data?.allowed ?? false);
+          const permitted = Object.values(data?.permissionMatrix ?? {}).some(
+            (v: any) => v?.permitted === true,
+          );
+          setResult(permitted);
         },
         onError: () => {
           setResult(false);
@@ -365,10 +373,56 @@ function CanTheyTester({ userId }: { userId: string }) {
     <div className="border border-card rounded-[8px] p-4">
       <SectionLabel className="block mb-3">Can they?</SectionLabel>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+        <Select
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
+          placeholder="— namespace —"
+          value={namespace ? { value: namespace, label: namespace } : null}
+          onChange={(opt: any) => { setNamespace(opt?.value ?? ""); setPermission(""); setResult(null); }}
+          options={namespaces.map((ns) => ({ value: ns, label: ns }))}
+          styles={{
+            control: (base: any) => ({
+              ...base,
+              minHeight: "36px",
+              height: "36px",
+              fontSize: "11px",
+              fontFamily: "monospace",
+              border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
+              boxShadow: "none",
+              minWidth: "160px",
+              backgroundColor: isDark ? "#0f172a" : "#ffffff",
+            }),
+            valueContainer: (base: any) => ({ ...base, padding: "0 8px" }),
+            indicatorsContainer: (base: any) => ({ ...base, height: "36px" }),
+            menu: (base: any) => ({
+              ...base,
+              fontSize: "11px",
+              fontFamily: "monospace",
+              backgroundColor: isDark ? "#1e293b" : "#ffffff",
+              border: isDark ? "1px solid #334155" : undefined,
+            }),
+            menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+            singleValue: (base: any) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45" }),
+            placeholder: (base: any) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
+            input: (base: any) => ({ ...base, fontSize: "16px", color: isDark ? "#e2e8f0" : "#002b45" }),
+            option: (base: any, state: any) => ({
+              ...base,
+              backgroundColor: state.isSelected
+                ? isDark ? "#1d4ed8" : "#0e7cc1"
+                : state.isFocused
+                ? isDark ? "#0f172a" : "#f2f2f2"
+                : isDark ? "#1e293b" : "#ffffff",
+              color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
+            }),
+            indicatorSeparator: (base: any) => ({ ...base, backgroundColor: isDark ? "#334155" : "#d9dcde" }),
+            dropdownIndicator: (base: any) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
+          }}
+        />
         <PermissionCombobox
           value={permission}
-          onChange={setPermission}
+          onChange={(v) => { setPermission(v); setResult(null); }}
           allPerms={allPerms}
+          namespace={namespace}
         />
         <div className="flex-1">
           <Input
@@ -388,7 +442,7 @@ function CanTheyTester({ userId }: { userId: string }) {
           type="submit"
           variant="outline"
           size="sm"
-          disabled={!permission.trim() || canTheyMutation.isPending}
+          disabled={!namespace || !permission.trim() || canTheyMutation.isPending}
           className="shrink-0"
         >
           {canTheyMutation.isPending ? "Checking…" : "Check"}
