@@ -16,6 +16,7 @@ import {
   useGrantRoleToGroup,
   useCreateRole,
   useDeleteRole,
+  useGrantPermissionToRole,
 } from "@/state/remote/queries/rbac";
 import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
@@ -594,11 +595,18 @@ export default function RbacViewerPage() {
   const [showCreateRole, setShowCreateRole] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [newRoleDescription, setNewRoleDescription] = useState("");
+  const [createdRoleId, setCreatedRoleId] = useState<string | null>(null);
+  const [selectedPerms, setSelectedPerms] = useState<Set<string>>(new Set());
+  const [isGrantingPerms, setIsGrantingPerms] = useState(false);
 
   const createGroup = useCreateRbacGroup();
   const deleteGroup = useDeleteRbacGroup();
   const createRole = useCreateRole();
   const deleteRole = useDeleteRole();
+  const grantPermToRole = useGrantPermissionToRole();
+
+  const { data: allPermsData } = useAllPermissions();
+  const allPerms: any[] = (allPermsData as any[]) ?? [];
 
   // API returns direct arrays
   const { data: rolesData, isFetched: rolesFetched } = useGetRoles("");
@@ -607,18 +615,51 @@ export default function RbacViewerPage() {
   const { data: groupsData, isFetched: groupsFetched } = useRbacGroups();
   const groups: any[] = (groupsData as any[]) ?? [];
 
+  function resetCreateRoleForm() {
+    setNewRoleName("");
+    setNewRoleDescription("");
+    setShowCreateRole(false);
+    setCreatedRoleId(null);
+    setSelectedPerms(new Set());
+    setIsGrantingPerms(false);
+  }
+
+  async function handleGrantAndClose() {
+    if (!createdRoleId) return;
+    setIsGrantingPerms(true);
+    let failed = 0;
+    for (const key of selectedPerms) {
+      const [namespace, permission] = key.split("||");
+      try {
+        await grantPermToRole.mutateAsync({ roleId: createdRoleId, permission, namespace });
+      } catch {
+        failed++;
+      }
+    }
+    queryClient.invalidateQueries({ queryKey: ["rbac", "role-permissions"] });
+    if (failed > 0) {
+      toast.error(`${selectedPerms.size - failed}/${selectedPerms.size} permissions granted`);
+    } else {
+      toast.success(`Role created with ${selectedPerms.size} permissions`);
+    }
+    resetCreateRoleForm();
+  }
+
   function handleCreateRole(e: React.FormEvent) {
     e.preventDefault();
     if (!newRoleName.trim()) return;
     createRole.mutate(
       { name: newRoleName.trim(), description: newRoleDescription.trim(), type: "global" },
       {
-        onSuccess: () => {
+        onSuccess: (response: any) => {
           queryClient.invalidateQueries({ queryKey: ["rbac", "roles"] });
           toast.success("Role created");
-          setNewRoleName("");
-          setNewRoleDescription("");
-          setShowCreateRole(false);
+          setCreatedRoleId(response?.id ?? null);
+          if (!response?.id) {
+            setNewRoleName("");
+            setNewRoleDescription("");
+            setShowCreateRole(false);
+          }
         },
         onError: () => {
           toast.error("Could not create role");
@@ -734,46 +775,111 @@ export default function RbacViewerPage() {
 
           {/* Create role inline form */}
           {showCreateRole && (
-            <form
-              onSubmit={handleCreateRole}
-              className="flex flex-col gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40"
-            >
-              <Input
-                placeholder="Role name"
-                value={newRoleName}
-                onChange={(e) => setNewRoleName(e.target.value)}
-                className="text-sm font-mono"
-                autoFocus
-              />
-              <Input
-                placeholder="Description (optional)"
-                value={newRoleDescription}
-                onChange={(e) => setNewRoleDescription(e.target.value)}
-                className="text-sm"
-              />
-              <div className="flex gap-2 justify-end">
-                <Button
-                  type="submit"
-                  variant="default"
-                  size="sm"
-                  disabled={!newRoleName.trim() || createRole.isPending}
-                >
-                  {createRole.isPending ? "Creating…" : "Create"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setShowCreateRole(false);
-                    setNewRoleName("");
-                    setNewRoleDescription("");
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
+            <div className="flex flex-col gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40">
+              {/* Step 1: name + description */}
+              {!createdRoleId && (
+                <form onSubmit={handleCreateRole} className="flex flex-col gap-2">
+                  <Input
+                    placeholder="Role name"
+                    value={newRoleName}
+                    onChange={(e) => setNewRoleName(e.target.value)}
+                    className="text-sm font-mono"
+                    autoFocus
+                  />
+                  <Input
+                    placeholder="Description (optional)"
+                    value={newRoleDescription}
+                    onChange={(e) => setNewRoleDescription(e.target.value)}
+                    className="text-sm"
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      type="submit"
+                      variant="default"
+                      size="sm"
+                      disabled={!newRoleName.trim() || createRole.isPending}
+                    >
+                      {createRole.isPending ? "Creating…" : "Create"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={resetCreateRoleForm}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {/* Step 2: assign permissions */}
+              {createdRoleId && (
+                <div className="flex flex-col gap-2">
+                  <SectionLabel className="block">
+                    Assign initial permissions (optional)
+                  </SectionLabel>
+                  <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
+                    {Object.entries(
+                      groupPermsByNamespace(allPerms, "name"),
+                    )
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([ns, permNames]) => (
+                        <div key={ns}>
+                          <SectionLabel className="block mb-1">{ns}</SectionLabel>
+                          <div className="flex flex-wrap gap-1.5">
+                            {permNames.map((p) => {
+                              const key = `${ns}||${p}`;
+                              return (
+                                <label
+                                  key={key}
+                                  className="flex items-center gap-1.5 text-xs font-mono cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedPerms.has(key)}
+                                    onChange={() => {
+                                      setSelectedPerms((prev) => {
+                                        const next = new Set(prev);
+                                        if (next.has(key)) {
+                                          next.delete(key);
+                                        } else {
+                                          next.add(key);
+                                        }
+                                        return next;
+                                      });
+                                    }}
+                                  />
+                                  {p}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                  <div className="flex gap-2 justify-end pt-1">
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="sm"
+                      disabled={selectedPerms.size === 0 || isGrantingPerms}
+                      onClick={handleGrantAndClose}
+                    >
+                      {isGrantingPerms ? "Granting…" : "Grant & Close"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={resetCreateRoleForm}
+                    >
+                      Skip & Close
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
 
           <div className="space-y-2">

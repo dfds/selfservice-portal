@@ -291,3 +291,26 @@ export function useGrantRoleToGroup() {
       }),
   });
 }
+
+export function useGrantPermissionToRole() {
+  return useMutation({
+    mutationFn: async (data: {
+      roleId: string;
+      permission: string;
+      namespace: string;
+    }) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["rbac", "permission", "grant"],
+        payload: {
+          assignedEntityType: "Role",
+          assignedEntityId: data.roleId,
+          namespace: data.namespace,
+          permission: data.permission,
+          type: "Allow",
+          resource: "",
+        },
+        isCloudEngineerEnabled: true,
+      }),
+  });
+}
