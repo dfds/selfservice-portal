@@ -4,12 +4,15 @@ import { Text } from "@dfds-ui/typography";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
+import PreAppContext from "@/preAppContext";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
 import { useMembershipApplications } from "@/state/remote/queries/membershipApplications";
 import { Account } from "@dfds-ui/icons/system";
 import Select from "react-select";
 import { useGrantRole } from "@/state/remote/queries/rbac";
 import { sleep } from "../../../Utils";
+import { TrackedButton } from "@/components/Tracking";
+import UserEmailsModal from "@/components/UserEmailsModal";
 
 function MemberRow({ member, roleTypes }) {
   const {
@@ -74,15 +77,39 @@ function MemberRow({ member, roleTypes }) {
 
 export default function Members({ roleTypes }) {
   const { members } = useContext(SelectedCapabilityContext);
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const [showEmailsModal, setShowEmailsModal] = useState(false);
+
+  const handleExtractEmails = () => {
+    setShowEmailsModal(true);
+  };
 
   return (
     <>
-      <Text styledAs="sectionHeadline">Members ({(members || []).length})</Text>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Text styledAs="sectionHeadline">Members ({(members || []).length})</Text>
+        {isCloudEngineerEnabled && (
+          <TrackedButton
+            trackName="ExtractMemberEmails"
+            size="small"
+            onClick={handleExtractEmails}
+          >
+            Extract Emails
+          </TrackedButton>
+        )}
+      </div>
       <div className={styles.members}>
         {(members || []).map((member) => (
           <MemberRow key={member.email} member={member} roleTypes={roleTypes} />
         ))}
       </div>
+
+      <UserEmailsModal
+        isOpen={showEmailsModal}
+        onClose={() => setShowEmailsModal(false)}
+        users={members}
+        isLoading={false}
+      />
     </>
   );
 }
