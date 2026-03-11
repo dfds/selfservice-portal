@@ -86,8 +86,16 @@ export default function Members({ roleTypes }) {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Text styledAs="sectionHeadline">Members ({(members || []).length})</Text>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text styledAs="sectionHeadline">
+          Members ({(members || []).length})
+        </Text>
         {isCloudEngineerEnabled && (
           <TrackedButton
             trackName="ExtractMemberEmails"

@@ -507,7 +507,7 @@ export default function CapabilitiesList() {
                 </div>
               )}
               {isCloudEngineerEnabled && (
-                <div style={{ float: 'right', marginLeft: '20px' }}>
+                <div style={{ float: "right", marginLeft: "20px" }}>
                   <TrackedButton
                     trackName="ExtractUserEmails"
                     size="small"

@@ -492,16 +492,25 @@ export class SelfServiceApiClient {
     return obj.schema.toString() || "";
   }
 
-  async getUserEmails(roles = [], costCentres = [], businessCapabilities = [], capabilities = []) {
+  async getUserEmails(
+    roles = [],
+    costCentres = [],
+    businessCapabilities = [],
+    capabilities = [],
+  ) {
     const params = new URLSearchParams();
     roles.forEach((role) => params.append("role", role));
     costCentres.forEach((cc) => params.append("cost-centre", cc));
-    businessCapabilities.forEach((bc) => params.append("business-capability", bc));
+    businessCapabilities.forEach((bc) =>
+      params.append("business-capability", bc),
+    );
     capabilities.forEach((cap) => params.append("capability", cap));
-    
-    const url = composeUrl("users/emails") + (params.toString() ? `?${params.toString()}` : "");
+
+    const url =
+      composeUrl("users/emails") +
+      (params.toString() ? `?${params.toString()}` : "");
     const response = await this.fetchWithToken(url);
-    
+
     if (!response) {
       return [];
     }

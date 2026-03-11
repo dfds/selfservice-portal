@@ -2,7 +2,13 @@ import React from "react";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Text } from "@dfds-ui/typography";
 
-export default function UserEmailsModal({ isOpen, onClose, users, isLoading, onBack }) {
+export default function UserEmailsModal({
+  isOpen,
+  onClose,
+  users,
+  isLoading,
+  onBack,
+}) {
   const emails = users ? users.map((user) => user.email).filter(Boolean) : [];
 
   return (
@@ -33,18 +39,21 @@ export default function UserEmailsModal({ isOpen, onClose, users, isLoading, onB
         </>
       )}
       <br />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         {onBack && (
-          <ModalAction
-            actionVariation="outlined"
-            onClick={onBack}
-          >
+          <ModalAction actionVariation="outlined" onClick={onBack}>
             Back to Filters
           </ModalAction>
         )}
         {emails && emails.length > 0 && (
           <ModalAction
-            style={{ marginLeft: 'auto', marginRight: '1rem' }}
+            style={{ marginLeft: "auto", marginRight: "1rem" }}
             actionVariation="secondary"
             onClick={async () => {
               await navigator.clipboard.writeText(emails.join(", "));

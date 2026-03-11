@@ -3,14 +3,23 @@ import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Text } from "@dfds-ui/typography";
 import AppContext from "../../AppContext";
 import Select from "react-select";
-import { ENUM_COSTCENTER, BUSINESS_CAPABILITIES_BY_COSTCENTER } from "@/constants/tagConstants";
+import {
+  ENUM_COSTCENTER,
+  BUSINESS_CAPABILITIES_BY_COSTCENTER,
+} from "@/constants/tagConstants";
 import UserEmailsModal from "../UserEmailsModal";
 
-export default function ExtractEmailsModal({ isOpen, onClose, availableRoles, availableCapabilities }) {
+export default function ExtractEmailsModal({
+  isOpen,
+  onClose,
+  availableRoles,
+  availableCapabilities,
+}) {
   const { selfServiceApiClient } = useContext(AppContext);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedCostCentres, setSelectedCostCentres] = useState([]);
-  const [selectedBusinessCapabilities, setSelectedBusinessCapabilities] = useState([]);
+  const [selectedBusinessCapabilities, setSelectedBusinessCapabilities] =
+    useState([]);
   const [selectedCapabilities, setSelectedCapabilities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState(null);
@@ -29,7 +38,7 @@ export default function ExtractEmailsModal({ isOpen, onClose, availableRoles, av
   // Get all unique business capabilities from hardcoded constants
   const businessCapabilityOptions = React.useMemo(() => {
     const allBusinessCaps = new Map();
-    
+
     Object.values(BUSINESS_CAPABILITIES_BY_COSTCENTER).forEach((capList) => {
       capList.forEach((cap) => {
         if (!allBusinessCaps.has(cap.value)) {
@@ -40,9 +49,9 @@ export default function ExtractEmailsModal({ isOpen, onClose, availableRoles, av
         }
       });
     });
-    
-    return Array.from(allBusinessCaps.values()).sort((a, b) => 
-      a.label.localeCompare(b.label)
+
+    return Array.from(allBusinessCaps.values()).sort((a, b) =>
+      a.label.localeCompare(b.label),
     );
   }, []);
 
@@ -57,7 +66,9 @@ export default function ExtractEmailsModal({ isOpen, onClose, availableRoles, av
     try {
       const roles = selectedRoles.map((r) => r.value);
       const costCentres = selectedCostCentres.map((cc) => cc.value);
-      const businessCapabilities = selectedBusinessCapabilities.map((bc) => bc.value);
+      const businessCapabilities = selectedBusinessCapabilities.map(
+        (bc) => bc.value,
+      );
       const capabilities = selectedCapabilities.map((c) => c.value);
       const result = await selfServiceApiClient.getUserEmails(
         roles,
