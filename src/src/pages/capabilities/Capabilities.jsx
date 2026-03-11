@@ -14,6 +14,9 @@ import { MaterialReactTable } from "material-react-table";
 import CapabilityCostSummary from "components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
 import { getCostCentreLabel } from "@/constants/tagConstants";
+import { TrackedButton } from "@/components/Tracking";
+import ExtractEmailsModal from "@/components/ExtractEmailsModal";
+import { useGetRoles } from "@/state/remote/queries/rbac";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function RowLink({ to }) {
@@ -143,8 +146,10 @@ export default function CapabilitiesList() {
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
   const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
+  const { isFetched: isRolesFetched, data: rolesData } = useGetRoles("");
 
   const [isLoading, setIsLoading] = useState(true);
+  const [showExtractEmailsModal, setShowExtractEmailsModal] = useState(false);
 
   const [capabilities, setCapabilities] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
@@ -501,6 +506,17 @@ export default function CapabilitiesList() {
                   />
                 </div>
               )}
+              {isCloudEngineerEnabled && (
+                <div style={{ float: "right", marginLeft: "20px" }}>
+                  <TrackedButton
+                    trackName="ExtractUserEmails"
+                    size="small"
+                    onClick={() => setShowExtractEmailsModal(true)}
+                  >
+                    Extract User Emails
+                  </TrackedButton>
+                </div>
+              )}
             </>
           )
         }
@@ -514,6 +530,13 @@ export default function CapabilitiesList() {
           />
         )}
       </PageSection>
+
+      <ExtractEmailsModal
+        isOpen={showExtractEmailsModal}
+        onClose={() => setShowExtractEmailsModal(false)}
+        availableRoles={rolesData}
+        availableCapabilities={capabilities}
+      />
     </>
   );
 }
