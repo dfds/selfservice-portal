@@ -406,3 +406,24 @@ code {
   font-size: 0.65rem;
   font-family: monospace;
 }
+
+/* Template variable chips — used in the email broadcast TipTap editor */
+.template-variable-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  margin: 0 1px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-family: "SFMono-Regular", "Fira Code", monospace;
+  font-weight: 500;
+  user-select: none;
+  vertical-align: baseline;
+}
+
+.dark .template-variable-chip {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+}

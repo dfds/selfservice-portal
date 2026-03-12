@@ -29,6 +29,9 @@ import MemberSearchPage from "./pages/admin/members";
 import EcrSyncDashboardPage from "./pages/admin/ecr";
 import PlatformMetricsDashboardPage from "./pages/admin/metrics";
 import JsonSchemaEditorPage from "./pages/admin/json-schema";
+import EmailBroadcastsPage from "./pages/admin/email-broadcasts";
+import EmailBroadcastEditor from "./pages/admin/email-broadcasts/editor";
+import EmailBroadcastDetail from "./pages/admin/email-broadcasts/detail";
 import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
@@ -207,6 +210,10 @@ export default function App() {
           <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
           <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
           <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
+          <Route path="admin/email-broadcasts" element={<EmailBroadcastsPage />} />
+          <Route path="admin/email-broadcasts/create" element={<EmailBroadcastEditor />} />
+          <Route path="admin/email-broadcasts/edit/:id" element={<EmailBroadcastEditor />} />
+          <Route path="admin/email-broadcasts/:id" element={<EmailBroadcastDetail />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

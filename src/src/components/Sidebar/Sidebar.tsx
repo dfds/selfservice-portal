@@ -38,6 +38,7 @@ import {
   Container,
   LineChart,
   Database,
+  Mail,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -146,6 +147,7 @@ const adminNav: NavGroupDef = {
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
+    { title: "Email Broadcasts", url: "/admin/email-broadcasts", icon: Mail },
   ],
 };
 

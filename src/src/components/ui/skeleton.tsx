@@ -253,6 +253,54 @@ export function SkeletonComplianceCard() {
   );
 }
 
+// Email broadcast list row: name + subject + status badge + date + action buttons
+export function SkeletonBroadcastRow() {
+  return (
+    <div className="flex items-center gap-4 p-4 rounded-lg border border-card">
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <Skeleton className="h-3.5 w-[200px]" />
+        <Skeleton className="h-2.5 w-[140px]" />
+      </div>
+      <Skeleton className="h-5 w-[60px] rounded-full flex-shrink-0" />
+      <Skeleton className="h-3 w-[80px] flex-shrink-0" />
+      <div className="flex gap-1">
+        <Skeleton className="h-7 w-7 rounded flex-shrink-0" />
+        <Skeleton className="h-7 w-7 rounded flex-shrink-0" />
+      </div>
+    </div>
+  );
+}
+
+// Email broadcast detail: header + info cards + content area
+export function SkeletonBroadcastDetail() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-3 w-[120px]" />
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-6 w-[240px]" />
+        <Skeleton className="h-5 w-[60px] rounded-full" />
+      </div>
+      <Skeleton className="h-3 w-[180px]" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-card p-3">
+            <Skeleton className="h-2.5 w-[50px] mb-2" />
+            <Skeleton className="h-4 w-[80px]" />
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-card p-3 text-center">
+            <Skeleton className="h-2.5 w-[40px] mx-auto mb-2" />
+            <Skeleton className="h-5 w-[30px] mx-auto" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // StatCard value area — uses darker gradient since the card bg is already surface-muted
 export function SkeletonStatCardValue({
   className,
