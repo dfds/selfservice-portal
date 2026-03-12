@@ -8,6 +8,7 @@ import PreAppContext from "@/preAppContext";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { cn } from "@/lib/utils";
+import { ENUM_COSTCENTER } from "@/constants/tagConstants";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -38,6 +39,18 @@ const SORT_OPTIONS: { key: SortMode; label: string }[] = [
   { key: "pct-desc", label: "Best first" },
   { key: "caps", label: "Largest first" },
 ];
+
+// ─── Cost Centre Labels ───────────────────────────────────────────────────────
+
+const COST_CENTRE_LABEL_MAP = new Map<string, string>(
+  (ENUM_COSTCENTER as { value: string; label: string }[]).map((cc) => [cc.value, cc.label]),
+);
+
+function getCostCentreLabel(value: string): string {
+  const raw = COST_CENTRE_LABEL_MAP.get(value);
+  if (!raw) return value;
+  return raw.replace(/\s*\[.*?\]\s*$/, "").trim();
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -258,7 +271,10 @@ function CostCentreCard({
         )}
 
         <div className="flex-1 min-w-0">
-          <span className="font-mono text-[12.5px] font-bold text-[#002b45] dark:text-[#e2e8f0] block truncate">
+          <span className="text-[12.5px] font-bold text-[#002b45] dark:text-[#e2e8f0] block truncate">
+            {getCostCentreLabel(name)}
+          </span>
+          <span className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] block truncate">
             {name}
           </span>
           <span className="text-[11px] text-[#afafaf] dark:text-[#64748b]">
@@ -492,7 +508,7 @@ export default function CompliancePage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = costCentres.filter((cc) => {
-      if (q && !cc.name.toLowerCase().includes(q)) return false;
+      if (q && !cc.name.toLowerCase().includes(q) && !getCostCentreLabel(cc.name).toLowerCase().includes(q)) return false;
       const entry = complianceMap.get(cc.name);
       if (!entry?.isFetched || entry.tier === null) return true;
       return activeFilters.has(entry.tier);
