@@ -1,7 +1,7 @@
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import QuickLinks from "./QuickLinks";

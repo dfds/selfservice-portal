@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Text } from "@/components/ui/Text";
 import styles from "./Topics.module.css";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import {
   Sheet,
   SheetContent,

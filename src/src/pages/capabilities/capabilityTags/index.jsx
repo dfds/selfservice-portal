@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useToast } from "@/context/ToastContext";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import Select from "react-select";

@@ -1,6 +1,6 @@
 import { useDeleteMembershipApplicationApproval } from "@/state/remote/queries/membershipApplications";
 import { useQueryClient } from "@tanstack/react-query";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";

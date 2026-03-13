@@ -3,7 +3,7 @@ import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
 import { SkeletonDemoAction } from "@/components/ui/skeleton";
 import { CheckCircle } from "lucide-react";
 import { InfoAlert } from "@/components/ui/InfoAlert";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import styles from "./demos.module.css";
 import { TrackedButton } from "@/components/Tracking";
 import AppContext from "@/AppContext";

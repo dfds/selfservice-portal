@@ -9,7 +9,7 @@ import Summary from "./summary";
 import Costs from "./costs";
 import Resources from "./resources";
 import KafkaCluster from "./KafkaCluster";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
 import {
   SkeletonCapabilityHeader,
@@ -21,7 +21,7 @@ import CapabilityManagement from "./capabilityManagement";
 import { CapabilityTagsPageSection } from "./capabilityTags";
 import { AICatalogueSection } from "./aiCatalogue";
 import RequirementsScore from "./RequirementsStatus";
-import NotFound from "components/Page/NotFound";
+import NotFound from "@/components/Page/NotFound";
 
 export default function CapabilityDetailsPage() {
   return (

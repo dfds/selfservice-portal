@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/Text";
-import { TextBlock } from "components/Text";
+import { TextBlock } from "@/components/Text";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import {
   Dialog,
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useContext, useState, useEffect } from "react";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
-import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+import { DetailedAwsCountSummary } from "@/pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";

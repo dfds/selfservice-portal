@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SkeletonReleaseNoteRow } from "@/components/ui/skeleton";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
 import { TrackedButton } from "@/components/Tracking";
-import PreAppContext from "preAppContext";
+import PreAppContext from "@/preAppContext";
 import DateFlag from "../../components/DateFlag/DateFlag";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";

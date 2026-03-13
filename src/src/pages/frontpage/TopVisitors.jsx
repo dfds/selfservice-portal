@@ -1,4 +1,4 @@
-import { getAnotherUserProfilePictureUrl } from "GraphApiClient";
+import { getAnotherUserProfilePictureUrl } from "@/GraphApiClient";
 import { useEffect, useState } from "react";
 import { useTopVisitors } from "@/state/remote/queries/stats";
 import Confetti from "react-confetti";

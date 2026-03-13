@@ -1,5 +1,5 @@
 import React from "react";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { ResourceInfoBadges } from "./resourceInfoBadges";
 import { TrackedLink } from "@/components/Tracking";
 

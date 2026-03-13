@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ExternalLink } from "lucide-react";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import {

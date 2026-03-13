@@ -1,4 +1,4 @@
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import React, {
   createContext,
   useCallback,
@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import { useSelfServiceRequest } from "hooks/SelfServiceApi";
+import { useSelfServiceRequest } from "@/hooks/SelfServiceApi";
 import {
   useCapability,
   useCapabilityCompliance,

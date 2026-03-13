@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import PreAppContext from "@/preAppContext";

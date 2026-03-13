@@ -1,7 +1,7 @@
 import React from "react";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import { Text } from "@/components/ui/Text";
-import { TextBlock } from "components/Text";
+import { TextBlock } from "@/components/Text";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
 import { useContext } from "react";

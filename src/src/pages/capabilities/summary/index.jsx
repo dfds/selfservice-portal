@@ -7,9 +7,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import { TextBlock } from "components/Text";
+import { TextBlock } from "@/components/Text";
 import { Text } from "@/components/ui/Text";
 import { useState } from "react";
 import { MyMembershipApplication } from "../membershipapplications";

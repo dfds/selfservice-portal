@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import { Text } from "@/components/ui/Text";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { MaterialReactTable } from "material-react-table";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import PreAppContext from "../../preAppContext";
 import { useTheme } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import awsLogo from "./aws-logo.svg";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import styles from "./AwsCount.module.css";
 import {
   Dialog,

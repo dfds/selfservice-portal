@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import Page from "components/Page";
-import AppContext from "AppContext";
+import Page from "@/components/Page";
+import AppContext from "@/AppContext";
 import { useToast } from "@/context/ToastContext";
 import {
   useSelfAssessments,
@@ -11,7 +11,7 @@ import {
 import NewSelfAssessmentWizard from "./NewSelfAssessmentWizard";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { SkeletonSelfAssessmentCard } from "@/components/ui/skeleton";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import SplashImage from "./splash.jpg";
 import styles from "./selfassessments.module.css";
 import { TrackedButton } from "@/components/Tracking";

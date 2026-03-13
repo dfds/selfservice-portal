@@ -1,6 +1,6 @@
 import { intlFormatDistance } from "date-fns";
 import { TrackedLink } from "@/components/Tracking";
-import { useLatestNews } from "hooks/LatestNews";
+import { useLatestNews } from "@/hooks/LatestNews";
 import { SkeletonNewsItem } from "@/components/ui/skeleton";
 
 function NewsItem({ date, title, link, index = 0 }) {

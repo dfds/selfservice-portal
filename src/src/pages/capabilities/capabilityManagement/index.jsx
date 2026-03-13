@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
 import {
   Dialog,

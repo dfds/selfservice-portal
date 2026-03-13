@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import styles from "pages/capabilities/capabilities.module.css";
+import styles from "@/pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import {
   Dialog,

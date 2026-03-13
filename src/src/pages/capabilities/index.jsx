@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./capabilities.module.css";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import CapabilitiesList from "./Capabilities";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
-import Page from "components/Page";
+import Page from "@/components/Page";
 import { TabbedCapabilityMembershipManagement } from "./capabilityMembershipManagement";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";

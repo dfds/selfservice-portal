@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import { TrackedButton } from "@/components/Tracking";
 
 export default function NewRepositoryDialog({ onClose }) {

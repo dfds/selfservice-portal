@@ -10,7 +10,7 @@ import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
 import ReleaseNotes from "./pages/release-notes";
-import AuthTemplate from "auth/AuthTemplate";
+import AuthTemplate from "./auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
 import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
@@ -141,7 +141,8 @@ function Layout() {
               {isAdminRoute && isCloudEngineer && (
                 <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[12px] font-mono font-semibold tracking-[0.12em]">
                   <span aria-hidden="true">⚠</span>
-                  WORK IN PROGRESS — This section is under active development and may change without notice.
+                  WORK IN PROGRESS — This section is under active development
+                  and may change without notice.
                 </div>
               )}
               {showAdminLoader ? null : showAdminGuard ? (
@@ -208,12 +209,27 @@ export default function App() {
           />
           <Route path="admin/members" element={<MemberSearchPage />} />
           <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
-          <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
+          <Route
+            path="admin/metrics"
+            element={<PlatformMetricsDashboardPage />}
+          />
           <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
-          <Route path="admin/email-broadcasts" element={<EmailBroadcastsPage />} />
-          <Route path="admin/email-broadcasts/create" element={<EmailBroadcastEditor />} />
-          <Route path="admin/email-broadcasts/edit/:id" element={<EmailBroadcastEditor />} />
-          <Route path="admin/email-broadcasts/:id" element={<EmailBroadcastDetail />} />
+          <Route
+            path="admin/email-broadcasts"
+            element={<EmailBroadcastsPage />}
+          />
+          <Route
+            path="admin/email-broadcasts/create"
+            element={<EmailBroadcastEditor />}
+          />
+          <Route
+            path="admin/email-broadcasts/edit/:id"
+            element={<EmailBroadcastEditor />}
+          />
+          <Route
+            path="admin/email-broadcasts/:id"
+            element={<EmailBroadcastDetail />}
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
