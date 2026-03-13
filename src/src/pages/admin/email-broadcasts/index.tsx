@@ -34,7 +34,10 @@ export default function EmailBroadcastsPage() {
   const [sendTarget, setSendTarget] = useState<any>(null);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
 
-  const broadcasts = (data || []) as any[];
+  const allBroadcasts = (data || []) as any[];
+  const broadcasts = statusFilter
+    ? allBroadcasts.filter((b: any) => b.status === statusFilter)
+    : allBroadcasts;
 
   const tabs: StatusTab[] = [
     "all",

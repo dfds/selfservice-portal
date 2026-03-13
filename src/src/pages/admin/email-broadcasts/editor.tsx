@@ -406,7 +406,12 @@ export default function EmailBroadcastEditor() {
           </div>
         </div>
 
-        <AudienceBuilder value={audience} onChange={setAudience} />
+        <AudienceBuilder
+          value={audience}
+          onChange={setAudience}
+          recipientFilter={recipientFilter}
+          onRecipientFilterChange={isDraft ? setRecipientFilter : undefined}
+        />
 
         <SchedulePicker
           scheduleType={scheduleType}
@@ -419,25 +424,6 @@ export default function EmailBroadcastEditor() {
           }}
           disabled={!isDraft}
         />
-
-        <div>
-          <Label
-            htmlFor="recipient-filter"
-            className="text-[12px] mb-1 block"
-          >
-            Recipient Filter (optional)
-          </Label>
-          <Input
-            id="recipient-filter"
-            value={recipientFilter}
-            onChange={(e) => setRecipientFilter(e.target.value)}
-            placeholder="RBAC role name (leave empty for all members)"
-            disabled={!isDraft}
-          />
-          <span className="text-[11px] text-muted mt-1 block">
-            Optionally limit recipients to members with a specific RBAC role.
-          </span>
-        </div>
 
         <div className="flex gap-2 pt-2">
           <Button

@@ -70,7 +70,7 @@ export function SchedulePicker({
             className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md border cursor-pointer transition-colors ${
               scheduleType === mode.value
                 ? "border-action bg-action/10 text-action"
-                : "border-card bg-surface text-muted hover:text-secondary hover:border-secondary"
+                : "border-card bg-surface text-muted hover:bg-surface-subtle hover:text-primary hover:border-secondary"
             } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {mode.icon}

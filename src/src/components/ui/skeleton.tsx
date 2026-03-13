@@ -9,7 +9,7 @@ export function Skeleton({
     <div
       className={cn(
         "animate-shimmer rounded-[5px] bg-[length:200%_100%]",
-        "bg-[linear-gradient(90deg,var(--color-surface-muted)_25%,var(--color-surface-subtle)_50%,var(--color-surface-muted)_75%)]",
+        "bg-[linear-gradient(90deg,#e5e7eb_25%,#d1d5db_50%,#e5e7eb_75%)]",
         "dark:bg-[linear-gradient(90deg,#1e293b_25%,#2d3e50_50%,#1e293b_75%)]",
         className,
       )}

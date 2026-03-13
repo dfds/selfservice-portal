@@ -10,6 +10,7 @@ interface FilterCondition {
   field: string;
   operator: string;
   value: string;
+  key?: string;
 }
 
 interface AudienceConfig {
@@ -21,6 +22,8 @@ interface AudienceConfig {
 interface AudienceBuilderProps {
   value: AudienceConfig;
   onChange: (value: AudienceConfig) => void;
+  recipientFilter?: string;
+  onRecipientFilterChange?: (v: string) => void;
 }
 
 const FIELD_OPTIONS = [
@@ -30,6 +33,19 @@ const FIELD_OPTIONS = [
   { value: "createdAt", label: "Created At" },
   { value: "requirementScore", label: "Requirement Score" },
   { value: "metadataKeyExists", label: "Metadata Key Exists" },
+  { value: "metadataKeyValue", label: "Metadata Key = Value" },
+  { value: "awsAccountCount", label: "AWS Account Count" },
+  { value: "azureResourceGroupCount", label: "Azure Resource Count" },
+  { value: "activeMembershipApplicationCount", label: "Active Membership Applications" },
+  { value: "cost", label: "Monthly Cost (USD)" },
+];
+
+const NUMERIC_OPS = [
+  { value: "eq", label: "=" },
+  { value: "gte", label: ">=" },
+  { value: "lte", label: "<=" },
+  { value: "gt", label: ">" },
+  { value: "lt", label: "<" },
 ];
 
 const OPERATOR_OPTIONS: Record<string, { value: string; label: string }[]> = {
@@ -41,30 +57,28 @@ const OPERATOR_OPTIONS: Record<string, { value: string; label: string }[]> = {
     { value: "eq", label: "equals" },
     { value: "contains", label: "contains" },
   ],
-  memberCount: [
-    { value: "eq", label: "=" },
-    { value: "gte", label: ">=" },
-    { value: "lte", label: "<=" },
-    { value: "gt", label: ">" },
-    { value: "lt", label: "<" },
-  ],
+  memberCount: NUMERIC_OPS,
   createdAt: [
     { value: "gte", label: ">=" },
     { value: "lte", label: "<=" },
     { value: "gt", label: ">" },
     { value: "lt", label: "<" },
   ],
-  requirementScore: [
-    { value: "eq", label: "=" },
-    { value: "gte", label: ">=" },
-    { value: "lte", label: "<=" },
-    { value: "gt", label: ">" },
-    { value: "lt", label: "<" },
-  ],
+  requirementScore: NUMERIC_OPS,
   metadataKeyExists: [{ value: "eq", label: "equals" }],
+  metadataKeyValue: [{ value: "eq", label: "=" }],
+  awsAccountCount: NUMERIC_OPS,
+  azureResourceGroupCount: NUMERIC_OPS,
+  activeMembershipApplicationCount: NUMERIC_OPS,
+  cost: NUMERIC_OPS,
 };
 
-export function AudienceBuilder({ value, onChange }: AudienceBuilderProps) {
+export function AudienceBuilder({
+  value,
+  onChange,
+  recipientFilter,
+  onRecipientFilterChange,
+}: AudienceBuilderProps) {
   const resolveAudience = useResolveAudience();
   const [resolved, setResolved] = useState<any>(null);
 
@@ -90,7 +104,12 @@ export function AudienceBuilder({ value, onChange }: AudienceBuilderProps) {
 
   const handleResolve = () => {
     resolveAudience.mutate(
-      { payload: { audienceJson: JSON.stringify(value) } },
+      {
+        payload: {
+          audienceJson: JSON.stringify(value),
+          recipientFilter: recipientFilter || undefined,
+        },
+      },
       {
         onSuccess: (data: any) => setResolved(data),
         onError: () => setResolved(null),
@@ -158,6 +177,7 @@ export function AudienceBuilder({ value, onChange }: AudienceBuilderProps) {
                   updateFilter(i, {
                     field: e.target.value,
                     operator: ops[0]?.value || "eq",
+                    key: undefined,
                   });
                 }}
                 className="h-9 rounded-md border border-card bg-surface px-2 text-[12px] text-primary"
@@ -179,12 +199,41 @@ export function AudienceBuilder({ value, onChange }: AudienceBuilderProps) {
                   </option>
                 ))}
               </select>
-              <Input
-                value={filter.value}
-                onChange={(e) => updateFilter(i, { value: e.target.value })}
-                placeholder="Value"
-                className="flex-1"
-              />
+              {filter.field === "metadataKeyValue" ? (
+                <>
+                  <Input
+                    value={filter.key || ""}
+                    onChange={(e) => updateFilter(i, { key: e.target.value })}
+                    placeholder="Key"
+                    className="w-[130px]"
+                  />
+                  <span className="text-muted text-[12px] flex-shrink-0">=</span>
+                  <Input
+                    value={filter.value}
+                    onChange={(e) => updateFilter(i, { value: e.target.value })}
+                    placeholder="Value"
+                    className="flex-1"
+                  />
+                </>
+              ) : filter.field === "status" ? (
+                <select
+                  value={filter.value}
+                  onChange={(e) => updateFilter(i, { value: e.target.value })}
+                  className="h-9 flex-1 rounded-md border border-card bg-surface px-2 text-[12px] text-primary"
+                >
+                  <option value="">— select —</option>
+                  <option value="Active">Active</option>
+                  <option value="Pending Deletion">Pending Deletion</option>
+                  <option value="Deleted">Deleted</option>
+                </select>
+              ) : (
+                <Input
+                  value={filter.value}
+                  onChange={(e) => updateFilter(i, { value: e.target.value })}
+                  placeholder="Value"
+                  className="flex-1"
+                />
+              )}
               <button
                 type="button"
                 onClick={() => removeFilter(i)}
@@ -203,6 +252,22 @@ export function AudienceBuilder({ value, onChange }: AudienceBuilderProps) {
             <Plus size={14} />
             Add Filter
           </Button>
+        </div>
+      )}
+
+      {onRecipientFilterChange !== undefined && (
+        <div>
+          <Label className="text-[12px] mb-1 block">
+            Recipient Filter (optional)
+          </Label>
+          <Input
+            value={recipientFilter || ""}
+            onChange={(e) => onRecipientFilterChange(e.target.value)}
+            placeholder="RBAC role name (leave empty for all members)"
+          />
+          <span className="text-[11px] text-muted mt-1 block">
+            Optionally limit recipients to members with a specific RBAC role. Applied during audience resolution.
+          </span>
         </div>
       )}
 
