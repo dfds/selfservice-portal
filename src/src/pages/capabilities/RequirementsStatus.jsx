@@ -97,8 +97,8 @@ export default function RequirementsScore() {
     <PageSection id="requirements-status" headline="Requirements Status">
       <Banner variant="lowEmphasis" icon={Information}>
         <BannerParagraph>
-          Requirements are calculated externally and reconciled periodically.
-          Requirement score changes may take up to an hour to reflect here.
+          "Requirements scores are reconciled periodically and score changes may
+          take up to an hour to appear"
         </BannerParagraph>
       </Banner>
       <div style={{ marginTop: "16px" }} />
