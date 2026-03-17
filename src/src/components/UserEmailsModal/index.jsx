@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, ModalAction } from "@dfds-ui/modal";
 import { Text } from "@dfds-ui/typography";
+import Select from "react-select";
 
 export default function UserEmailsModal({
   isOpen,
@@ -9,6 +10,13 @@ export default function UserEmailsModal({
   isLoading,
   onBack,
 }) {
+  const separatorOptions = [
+    { value: "; ", label: "Separate by semicolon (;)" },
+    { value: ", ", label: "Separate by comma (,)" },
+  ];
+  const [selectedSeparator, setSelectedSeparator] = useState(
+    separatorOptions[0],
+  );
   const emails = users ? users.map((user) => user.email).filter(Boolean) : [];
 
   return (
@@ -39,6 +47,23 @@ export default function UserEmailsModal({
         </>
       )}
       <br />
+      {emails && emails.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "1rem",
+          }}
+        >
+          <div style={{ width: "250px" }}>
+            <Select
+              options={separatorOptions}
+              value={selectedSeparator}
+              onChange={(selection) => setSelectedSeparator(selection)}
+            />
+          </div>
+        </div>
+      )}
       <div
         style={{
           display: "flex",
@@ -56,7 +81,9 @@ export default function UserEmailsModal({
             style={{ marginLeft: "auto", marginRight: "1rem" }}
             actionVariation="secondary"
             onClick={async () => {
-              await navigator.clipboard.writeText(emails.join(", "));
+              await navigator.clipboard.writeText(
+                emails.join(selectedSeparator.value),
+              );
             }}
           >
             Copy e-mails to clipboard
