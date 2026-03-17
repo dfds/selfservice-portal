@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Plus, Trash2, Users } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2, Users } from "lucide-react";
 
 interface FilterCondition {
   field: string;
@@ -81,6 +81,15 @@ export function AudienceBuilder({
 }: AudienceBuilderProps) {
   const resolveAudience = useResolveAudience();
   const [resolved, setResolved] = useState<any>(null);
+  const [expandedCapabilities, setExpandedCapabilities] = useState<Set<string>>(new Set());
+
+  const toggleCapability = (id: string) => {
+    setExpandedCapabilities((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   const addFilter = () => {
     const filters = [
@@ -292,7 +301,7 @@ export function AudienceBuilder({
       </div>
 
       {resolved && resolved.capabilities?.length > 0 && (
-        <div className="max-h-48 overflow-auto border border-card rounded-lg">
+        <div className="max-h-96 overflow-auto border border-card rounded-lg">
           <table className="w-full text-[12px]">
             <thead>
               <tr className="border-b border-card bg-surface-subtle">
@@ -300,21 +309,56 @@ export function AudienceBuilder({
                   Capability
                 </th>
                 <th className="text-right px-3 py-1.5 font-medium text-muted">
-                  Members
+                  Recipients
                 </th>
               </tr>
             </thead>
             <tbody>
-              {resolved.capabilities.map((cap: any) => (
-                <tr key={cap.id} className="border-b border-card last:border-0">
-                  <td className="px-3 py-1.5 text-primary truncate max-w-[300px]">
-                    {cap.name}
-                  </td>
-                  <td className="px-3 py-1.5 text-right text-muted font-mono">
-                    {cap.memberCount}
-                  </td>
-                </tr>
-              ))}
+              {resolved.capabilities.map((cap: any) => {
+                const isExpanded = expandedCapabilities.has(cap.id);
+                const recipients: any[] = cap.recipients ?? [];
+                return (
+                  <React.Fragment key={cap.id}>
+                    <tr
+                      className="border-b border-card cursor-pointer hover:bg-surface-subtle"
+                      onClick={() => toggleCapability(cap.id)}
+                    >
+                      <td className="px-3 py-1.5 text-primary">
+                        <div className="flex items-center gap-1.5">
+                          {isExpanded ? (
+                            <ChevronDown size={12} className="text-muted flex-shrink-0" />
+                          ) : (
+                            <ChevronRight size={12} className="text-muted flex-shrink-0" />
+                          )}
+                          <span className="truncate max-w-[300px]">{cap.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-1.5 text-right text-muted font-mono">
+                        {cap.memberCount}
+                      </td>
+                    </tr>
+                    {isExpanded && recipients.length === 0 && (
+                      <tr className="border-b border-card last:border-0 bg-surface-subtle">
+                        <td className="pl-8 pr-3 py-1.5 text-muted italic" colSpan={2}>
+                          No recipients
+                        </td>
+                      </tr>
+                    )}
+                    {isExpanded &&
+                      recipients.map((r: any) => (
+                        <tr
+                          key={r.email}
+                          className="border-b border-card last:border-0 bg-surface-subtle"
+                        >
+                          <td className="pl-8 pr-3 py-1 text-secondary" colSpan={2}>
+                            <span className="font-medium">{r.displayName}</span>
+                            <span className="text-muted ml-2">{r.email}</span>
+                          </td>
+                        </tr>
+                      ))}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
