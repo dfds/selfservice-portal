@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from "react";
 import PageSection from "components/PageSection";
 import styles from "./RequirementsStatus.module.css";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
+import { Banner, BannerParagraph } from "@dfds-ui/react-components";
+import { Information } from "@dfds-ui/icons/system";
 
 // Helper to get color based on score
 export function getScoreColor(score) {
@@ -93,6 +95,13 @@ export default function RequirementsScore() {
 
   return (
     <PageSection id="requirements-status" headline="Requirements Status">
+      <Banner variant="lowEmphasis" icon={Information}>
+        <BannerParagraph>
+          "Requirements scores are reconciled periodically and score changes may
+          take up to an hour to appear"
+        </BannerParagraph>
+      </Banner>
+      <div style={{ marginTop: "16px" }} />
       <div className={styles.overallScoreRow}>
         <span className={styles.overallScoreBulb}>
           <LightBulb score={overallScore} size={32} />
