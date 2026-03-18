@@ -29,9 +29,9 @@ import MemberSearchPage from "./pages/admin/members";
 import EcrSyncDashboardPage from "./pages/admin/ecr";
 import PlatformMetricsDashboardPage from "./pages/admin/metrics";
 import JsonSchemaEditorPage from "./pages/admin/json-schema";
-import EmailBroadcastsPage from "./pages/admin/email-broadcasts";
-import EmailBroadcastEditor from "./pages/admin/email-broadcasts/editor";
-import EmailBroadcastDetail from "./pages/admin/email-broadcasts/detail";
+import EmailCampaignsPage from "./pages/admin/email-campaigns";
+import EmailCampaignEditor from "./pages/admin/email-campaigns/editor";
+import EmailCampaignDetail from "./pages/admin/email-campaigns/detail";
 import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
@@ -215,20 +215,20 @@ export default function App() {
           />
           <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
           <Route
-            path="admin/email-broadcasts"
-            element={<EmailBroadcastsPage />}
+            path="admin/email-campaigns"
+            element={<EmailCampaignsPage />}
           />
           <Route
-            path="admin/email-broadcasts/create"
-            element={<EmailBroadcastEditor />}
+            path="admin/email-campaigns/create"
+            element={<EmailCampaignEditor />}
           />
           <Route
-            path="admin/email-broadcasts/edit/:id"
-            element={<EmailBroadcastEditor />}
+            path="admin/email-campaigns/edit/:id"
+            element={<EmailCampaignEditor />}
           />
           <Route
-            path="admin/email-broadcasts/:id"
-            element={<EmailBroadcastDetail />}
+            path="admin/email-campaigns/:id"
+            element={<EmailCampaignDetail />}
           />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

@@ -10,7 +10,7 @@ const statusConfig: Record<string, { variant: string; label: string }> = {
   Failed: { variant: "destructive", label: "Failed" },
 };
 
-export function BroadcastStatusBadge({ status }: { status: string }) {
+export function CampaignStatusBadge({ status }: { status: string }) {
   const config = statusConfig[status] ?? { variant: "outline", label: status };
   return <Badge variant={config.variant as any}>{config.label}</Badge>;
 }

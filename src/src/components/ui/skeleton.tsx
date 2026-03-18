@@ -253,8 +253,8 @@ export function SkeletonComplianceCard() {
   );
 }
 
-// Email broadcast list row: name + subject + status badge + date + action buttons
-export function SkeletonBroadcastRow() {
+// Email campaign list row: name + subject + status badge + date + action buttons
+export function SkeletonCampaignRow() {
   return (
     <div className="flex items-center gap-4 p-4 rounded-lg border border-card">
       <div className="flex-1 min-w-0 flex flex-col gap-1.5">
@@ -271,8 +271,8 @@ export function SkeletonBroadcastRow() {
   );
 }
 
-// Email broadcast detail: header + info cards + content area
-export function SkeletonBroadcastDetail() {
+// Email campaign detail: header + info cards + content area
+export function SkeletonCampaignDetail() {
   return (
     <div className="space-y-4">
       <Skeleton className="h-3 w-[120px]" />

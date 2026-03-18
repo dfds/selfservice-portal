@@ -9,14 +9,15 @@ import { Typography } from "@tiptap/extension-typography";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
 import {
-  useEmailBroadcast,
-  useCreateEmailBroadcast,
-  useUpdateEmailBroadcast,
-  usePreviewEmailBroadcast,
-  useSendEmailBroadcast,
-  useScheduleEmailBroadcast,
+  useEmailCampaign,
+  useCreateEmailCampaign,
+  useUpdateEmailCampaign,
+  usePreviewEmailCampaign,
+  usePreviewEmailCampaignContent,
+  useSendEmailCampaign,
+  useScheduleEmailCampaign,
   useTemplateVariables,
-} from "@/state/remote/queries/emailBroadcasts";
+} from "@/state/remote/queries/emailCampaigns";
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
 import { VariableInserter } from "./components/variable-inserter";
@@ -41,19 +42,20 @@ interface AudienceConfig {
   filters?: any[];
 }
 
-export default function EmailBroadcastEditor() {
+export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
   const isEdit = !!id;
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { data: existingBroadcast, isFetched } = useEmailBroadcast(id || "");
+  const { data: existingCampaign, isFetched } = useEmailCampaign(id || "");
   const { data: variables } = useTemplateVariables();
-  const createBroadcast = useCreateEmailBroadcast();
-  const updateBroadcast = useUpdateEmailBroadcast(id || "");
-  const previewBroadcast = usePreviewEmailBroadcast(id || "");
-  const sendBroadcast = useSendEmailBroadcast(id || "");
-  const scheduleBroadcast = useScheduleEmailBroadcast(id || "");
+  const createCampaign = useCreateEmailCampaign();
+  const updateCampaign = useUpdateEmailCampaign(id || "");
+  const previewCampaign = usePreviewEmailCampaign(id || "");
+  const previewContent = usePreviewEmailCampaignContent();
+  const sendCampaign = useSendEmailCampaign(id || "");
+  const scheduleCampaign = useScheduleEmailCampaign(id || "");
 
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -169,34 +171,34 @@ export default function EmailBroadcastEditor() {
   );
 
   useEffect(() => {
-    if (isEdit && isFetched && existingBroadcast && editor && !loaded) {
-      setName(existingBroadcast.name || "");
-      setSubject(existingBroadcast.subject || "");
-      setRecipientFilter(existingBroadcast.recipientFilter || "");
-      setScheduleType(existingBroadcast.scheduleType || "Immediate");
-      if (existingBroadcast.scheduledAt) {
-        const dt = new Date(existingBroadcast.scheduledAt);
+    if (isEdit && isFetched && existingCampaign && editor && !loaded) {
+      setName(existingCampaign.name || "");
+      setSubject(existingCampaign.subject || "");
+      setRecipientFilter(existingCampaign.recipientFilter || "");
+      setScheduleType(existingCampaign.scheduleType || "Immediate");
+      if (existingCampaign.scheduledAt) {
+        const dt = new Date(existingCampaign.scheduledAt);
         setScheduledAt(dt.toISOString().slice(0, 16));
       }
-      setCronExpression(existingBroadcast.cronExpression || "");
+      setCronExpression(existingCampaign.cronExpression || "");
       try {
         const audienceData =
-          typeof existingBroadcast.audienceJson === "string"
-            ? JSON.parse(existingBroadcast.audienceJson)
-            : existingBroadcast.audienceJson;
+          typeof existingCampaign.audienceJson === "string"
+            ? JSON.parse(existingCampaign.audienceJson)
+            : existingCampaign.audienceJson;
         setAudience(audienceData || { mode: "all" });
       } catch {
         setAudience({ mode: "all" });
       }
       try {
-        const content = JSON.parse(existingBroadcast.contentJson);
+        const content = JSON.parse(existingCampaign.contentJson);
         editor.commands.setContent(content);
       } catch {
-        editor.commands.setContent(existingBroadcast.contentJson || "");
+        editor.commands.setContent(existingCampaign.contentJson || "");
       }
       setLoaded(true);
     }
-  }, [isEdit, isFetched, existingBroadcast, editor, loaded]);
+  }, [isEdit, isFetched, existingCampaign, editor, loaded]);
 
   const handleSave = () => {
     if (!editor) return;
@@ -214,41 +216,65 @@ export default function EmailBroadcastEditor() {
       recipientFilter: recipientFilter || null,
     };
 
-    const mutation = isEdit ? updateBroadcast : createBroadcast;
+    const mutation = isEdit ? updateCampaign : createCampaign;
 
     mutation.mutate(
       { payload },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-          toast.success(isEdit ? "Broadcast updated" : "Broadcast created");
-          navigate("/admin/email-broadcasts");
+          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+          toast.success(isEdit ? "Campaign updated" : "Campaign created");
+          navigate("/admin/email-campaigns");
         },
-        onError: () => toast.error("Could not save broadcast"),
+        onError: () => toast.error("Could not save campaign"),
       },
     );
   };
 
   const handlePreview = () => {
-    if (!isEdit) {
-      toast.error("Save the broadcast first to preview");
-      return;
-    }
     setPreviewLoading(true);
     setPreviewOpen(true);
-    previewBroadcast.mutate(
-      { payload: {} },
-      {
-        onSuccess: (data: any) => {
-          setPreviews(data?.previews || []);
-          setPreviewLoading(false);
+
+    if (isEdit) {
+      previewCampaign.mutate(
+        { payload: {} },
+        {
+          onSuccess: (data: any) => {
+            setPreviews(data?.previews || []);
+            setPreviewLoading(false);
+          },
+          onError: () => {
+            toast.error("Could not generate preview");
+            setPreviewLoading(false);
+          },
         },
-        onError: () => {
-          toast.error("Could not generate preview");
-          setPreviewLoading(false);
+      );
+    } else {
+      if (!editor) {
+        setPreviewLoading(false);
+        return;
+      }
+      previewContent.mutate(
+        {
+          payload: {
+            contentJson: JSON.stringify(editor.getJSON()),
+            contentHtml: editor.getHTML(),
+            subject: subject.trim(),
+            audienceJson: JSON.stringify(audience),
+          },
         },
-      },
-    );
+        {
+          onSuccess: (data: any) => {
+            setPreviews(data?.previews || []);
+            setPreviewLoading(false);
+          },
+          onError: () => {
+            toast.error("Could not generate preview");
+            setPreviewLoading(false);
+          },
+        },
+      );
+    }
   };
 
   const handleSchedule = () => {
@@ -269,37 +295,37 @@ export default function EmailBroadcastEditor() {
       payload.cronExpression = cronExpression.trim();
     }
 
-    scheduleBroadcast.mutate(
+    scheduleCampaign.mutate(
       { payload },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-          toast.success("Broadcast scheduled");
-          navigate("/admin/email-broadcasts");
+          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+          toast.success("Campaign scheduled");
+          navigate("/admin/email-campaigns");
         },
-        onError: () => toast.error("Could not schedule broadcast"),
+        onError: () => toast.error("Could not schedule campaign"),
       },
     );
   };
 
   const handleSend = () => {
-    sendBroadcast.mutate(undefined, {
+    sendCampaign.mutate(undefined, {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
         toast.success(
-          `Broadcast sent to ${data?.totalRecipients || 0} recipients`,
+          `Campaign sent to ${data?.totalRecipients || 0} recipients`,
         );
         setSendConfirmOpen(false);
-        navigate("/admin/email-broadcasts");
+        navigate("/admin/email-campaigns");
       },
       onError: () => {
-        toast.error("Could not send broadcast");
+        toast.error("Could not send campaign");
         setSendConfirmOpen(false);
       },
     });
   };
 
-  const isDraft = !isEdit || existingBroadcast?.status === "Draft";
+  const isDraft = !isEdit || existingCampaign?.status === "Draft";
 
   if (isEdit && !isFetched) {
     return (
@@ -316,24 +342,24 @@ export default function EmailBroadcastEditor() {
     <div className="px-5 md:px-8 py-6 max-w-4xl">
       <button
         type="button"
-        onClick={() => navigate("/admin/email-broadcasts")}
+        onClick={() => navigate("/admin/email-campaigns")}
         className="flex items-center gap-1.5 text-[12px] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
       >
         <ArrowLeft size={14} />
-        Back to broadcasts
+        Back to campaigns
       </button>
 
       <h1 className="text-[1.25rem] font-bold text-primary mb-6">
-        {isEdit ? "Edit Broadcast" : "New Broadcast"}
+        {isEdit ? "Edit Campaign" : "New Campaign"}
       </h1>
 
       <div className="space-y-5">
         <div>
-          <Label htmlFor="broadcast-name" className="text-[12px] mb-1 block">
+          <Label htmlFor="campaign-name" className="text-[12px] mb-1 block">
             Campaign Name
           </Label>
           <Input
-            id="broadcast-name"
+            id="campaign-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Q1 Migration Notice"
@@ -343,13 +369,13 @@ export default function EmailBroadcastEditor() {
 
         <div>
           <Label
-            htmlFor="broadcast-subject"
+            htmlFor="campaign-subject"
             className="text-[12px] mb-1 block"
           >
             Email Subject Line
           </Label>
           <Input
-            id="broadcast-subject"
+            id="campaign-subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="e.g., Action Required: {{Capability.Name}} migration"
@@ -428,7 +454,7 @@ export default function EmailBroadcastEditor() {
         <div className="flex gap-2 pt-2">
           <Button
             variant="outline"
-            onClick={() => navigate("/admin/email-broadcasts")}
+            onClick={() => navigate("/admin/email-campaigns")}
           >
             Cancel
           </Button>
@@ -437,7 +463,7 @@ export default function EmailBroadcastEditor() {
               variant="action"
               onClick={handleSave}
               disabled={
-                createBroadcast.isPending || updateBroadcast.isPending
+                createCampaign.isPending || updateCampaign.isPending
               }
               className="gap-1.5"
             >
@@ -445,26 +471,24 @@ export default function EmailBroadcastEditor() {
               {isEdit ? "Save Changes" : "Create Draft"}
             </Button>
           )}
-          {isEdit && (
-            <Button
-              variant="outline"
-              onClick={handlePreview}
-              disabled={previewBroadcast.isPending}
-              className="gap-1.5"
-            >
-              <Eye size={14} />
-              Preview
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            onClick={handlePreview}
+            disabled={previewCampaign.isPending || previewContent.isPending}
+            className="gap-1.5"
+          >
+            <Eye size={14} />
+            Preview
+          </Button>
           {isEdit && isDraft && scheduleType !== "Immediate" && (
             <Button
               variant="action"
               onClick={handleSchedule}
-              disabled={scheduleBroadcast.isPending}
+              disabled={scheduleCampaign.isPending}
               className="gap-1.5"
             >
               <CalendarClock size={14} />
-              {scheduleBroadcast.isPending ? "Scheduling..." : "Schedule"}
+              {scheduleCampaign.isPending ? "Scheduling..." : "Schedule"}
             </Button>
           )}
           {isEdit && isDraft && scheduleType === "Immediate" && (
@@ -490,7 +514,7 @@ export default function EmailBroadcastEditor() {
       <Dialog open={sendConfirmOpen} onOpenChange={setSendConfirmOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Send broadcast now?</DialogTitle>
+            <DialogTitle>Send campaign now?</DialogTitle>
           </DialogHeader>
           <p className="text-[13px] text-secondary">
             This will send <strong>{name}</strong> to all matching recipients
@@ -506,11 +530,11 @@ export default function EmailBroadcastEditor() {
             <Button
               variant="destructive"
               onClick={handleSend}
-              disabled={sendBroadcast.isPending}
+              disabled={sendCampaign.isPending}
               className="gap-1.5"
             >
               <Send size={14} />
-              {sendBroadcast.isPending ? "Sending..." : "Send Now"}
+              {sendCampaign.isPending ? "Sending..." : "Send Now"}
             </Button>
           </div>
         </DialogContent>

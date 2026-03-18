@@ -94,7 +94,7 @@ export function SchedulePicker({
             disabled={disabled}
           />
           <span className="text-[11px] text-muted mt-1 block">
-            The broadcast will be sent at this time (UTC).
+            The campaign will be sent at this time (UTC).
           </span>
         </div>
       )}

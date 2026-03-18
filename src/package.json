@@ -93,6 +93,12 @@
         "react": "18.2.0",
         "react-dom": "18.2.0"
       }
+    },
+    "@tailwindcss/vite": {
+      "vite": "^8.0.0"
+    },
+    "vite-plugin-node-polyfills": {
+      "vite": "^8.0.0"
     }
   },
   "scripts": {

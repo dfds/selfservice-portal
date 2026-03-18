@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useResolveAudience } from "@/state/remote/queries/emailBroadcasts";
+import React, { useState, useEffect } from "react";
+import { useResolveAudience } from "@/state/remote/queries/emailCampaigns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,6 +82,13 @@ export function AudienceBuilder({
   const resolveAudience = useResolveAudience();
   const [resolved, setResolved] = useState<any>(null);
   const [expandedCapabilities, setExpandedCapabilities] = useState<Set<string>>(new Set());
+  const [capIdsRaw, setCapIdsRaw] = useState(() =>
+    (value.capabilityIds || []).join(", "),
+  );
+
+  useEffect(() => {
+    setCapIdsRaw((value.capabilityIds || []).join(", "));
+  }, [(value.capabilityIds || []).join(",")]);
 
   const toggleCapability = (id: string) => {
     setExpandedCapabilities((prev) => {
@@ -160,11 +167,12 @@ export function AudienceBuilder({
             Capability IDs (comma-separated)
           </Label>
           <Input
-            value={(value.capabilityIds || []).join(", ")}
-            onChange={(e) =>
+            value={capIdsRaw}
+            onChange={(e) => setCapIdsRaw(e.target.value)}
+            onBlur={() =>
               onChange({
                 ...value,
-                capabilityIds: e.target.value
+                capabilityIds: capIdsRaw
                   .split(",")
                   .map((s) => s.trim())
                   .filter(Boolean),

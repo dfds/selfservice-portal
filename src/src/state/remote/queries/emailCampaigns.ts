@@ -3,16 +3,16 @@ import { ssuRequest } from "../query";
 import PreAppContext from "@/preAppContext";
 import { useContext } from "react";
 
-export function useEmailBroadcasts(statusFilter?: string) {
+export function useEmailCampaigns(statusFilter?: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
-  const segments = ["email-broadcasts"];
+  const segments = ["email-campaigns"];
   if (statusFilter) {
-    segments[0] = `email-broadcasts?status=${statusFilter}`;
+    segments[0] = `email-campaigns?status=${statusFilter}`;
   }
 
   const query = useQuery({
-    queryKey: ["emailBroadcasts", "list", statusFilter],
+    queryKey: ["emailCampaigns", "list", statusFilter],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
@@ -25,15 +25,15 @@ export function useEmailBroadcasts(statusFilter?: string) {
   return query;
 }
 
-export function useEmailBroadcast(id: string) {
+export function useEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
-    queryKey: ["emailBroadcasts", "detail", id],
+    queryKey: ["emailCampaigns", "detail", id],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["email-broadcasts", id],
+        urlSegments: ["email-campaigns", id],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -47,11 +47,11 @@ export function useTemplateVariables() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
-    queryKey: ["emailBroadcasts", "variables"],
+    queryKey: ["emailCampaigns", "variables"],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["email-broadcasts/variables"],
+        urlSegments: ["email-campaigns/variables"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -61,14 +61,14 @@ export function useTemplateVariables() {
   return query;
 }
 
-export function useCreateEmailBroadcast() {
+export function useCreateEmailCampaign() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts"],
+        urlSegments: ["email-campaigns"],
         payload: data.payload,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -77,14 +77,14 @@ export function useCreateEmailBroadcast() {
   return mutation;
 }
 
-export function useUpdateEmailBroadcast(id: string) {
+export function useUpdateEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "PUT",
-        urlSegments: ["email-broadcasts", id],
+        urlSegments: ["email-campaigns", id],
         payload: data.payload,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -93,14 +93,14 @@ export function useUpdateEmailBroadcast(id: string) {
   return mutation;
 }
 
-export function useDeleteEmailBroadcast() {
+export function useDeleteEmailCampaign() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "DELETE",
-        urlSegments: ["email-broadcasts", data.id],
+        urlSegments: ["email-campaigns", data.id],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -109,14 +109,14 @@ export function useDeleteEmailBroadcast() {
   return mutation;
 }
 
-export function useDuplicateEmailBroadcast(id: string) {
+export function useDuplicateEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async () =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts", id, "duplicate"],
+        urlSegments: ["email-campaigns", id, "duplicate"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -132,7 +132,7 @@ export function useResolveAudience() {
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts/resolve-audience"],
+        urlSegments: ["email-campaigns/resolve-audience"],
         payload: data.payload,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -141,14 +141,14 @@ export function useResolveAudience() {
   return mutation;
 }
 
-export function usePreviewEmailBroadcast(id: string) {
+export function usePreviewEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts", id, "preview"],
+        urlSegments: ["email-campaigns", id, "preview"],
         payload: data?.payload || {},
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -157,46 +157,14 @@ export function usePreviewEmailBroadcast(id: string) {
   return mutation;
 }
 
-export function useSendEmailBroadcast(id: string) {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-
-  const mutation = useMutation({
-    mutationFn: async () =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["email-broadcasts", id, "send"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useCancelEmailBroadcast(id: string) {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-
-  const mutation = useMutation({
-    mutationFn: async () =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["email-broadcasts", id, "cancel"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useScheduleEmailBroadcast(id: string) {
+export function usePreviewEmailCampaignContent() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const mutation = useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts", id, "schedule"],
+        urlSegments: ["email-campaigns/preview"],
         payload: data.payload,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -205,15 +173,63 @@ export function useScheduleEmailBroadcast(id: string) {
   return mutation;
 }
 
-export function useEmailBroadcastExecutions(id: string) {
+export function useSendEmailCampaign(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const mutation = useMutation({
+    mutationFn: async () =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["email-campaigns", id, "send"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useCancelEmailCampaign(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const mutation = useMutation({
+    mutationFn: async () =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["email-campaigns", id, "cancel"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useScheduleEmailCampaign(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const mutation = useMutation({
+    mutationFn: async (data: any) =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["email-campaigns", id, "schedule"],
+        payload: data.payload,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+
+  return mutation;
+}
+
+export function useEmailCampaignExecutions(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
-    queryKey: ["emailBroadcasts", "executions", id],
+    queryKey: ["emailCampaigns", "executions", id],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["email-broadcasts", id, "executions"],
+        urlSegments: ["email-campaigns", id, "executions"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -223,15 +239,15 @@ export function useEmailBroadcastExecutions(id: string) {
   return query;
 }
 
-export function useEmailBroadcastRecipients(id: string) {
+export function useEmailCampaignRecipients(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const query = useQuery({
-    queryKey: ["emailBroadcasts", "recipients", id],
+    queryKey: ["emailCampaigns", "recipients", id],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["email-broadcasts", id, "recipients"],
+        urlSegments: ["email-campaigns", id, "recipients"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
@@ -248,7 +264,7 @@ export function useRetryFailedRecipients(id: string) {
     mutationFn: async () =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-broadcasts", id, "retry-failed"],
+        urlSegments: ["email-campaigns", id, "retry-failed"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),

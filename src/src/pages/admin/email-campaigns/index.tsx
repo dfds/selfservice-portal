@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
 import {
-  useEmailBroadcasts,
-  useDeleteEmailBroadcast,
-  useSendEmailBroadcast,
-  useCancelEmailBroadcast,
-  useDuplicateEmailBroadcast,
-} from "@/state/remote/queries/emailBroadcasts";
-import { BroadcastStatusBadge } from "./components/broadcast-status-badge";
+  useEmailCampaigns,
+  useDeleteEmailCampaign,
+  useSendEmailCampaign,
+  useCancelEmailCampaign,
+  useDuplicateEmailCampaign,
+} from "@/state/remote/queries/emailCampaigns";
+import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,26 +18,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { SkeletonBroadcastRow } from "@/components/ui/skeleton";
+import { SkeletonCampaignRow } from "@/components/ui/skeleton";
 import { Plus, Trash2, Pencil, Send, Eye, Ban, Copy } from "lucide-react";
 
 type StatusTab = "all" | "Draft" | "Scheduled" | "Sent" | "Failed" | "Cancelled";
 
-export default function EmailBroadcastsPage() {
-  const [activeTab, setActiveTab] = useState<StatusTab>("all");
+let _savedTab: StatusTab = "all";
+
+export default function EmailCampaignsPage() {
+  const [activeTab, setActiveTab] = useState<StatusTab>(_savedTab);
   const statusFilter = activeTab === "all" ? undefined : activeTab;
-  const { data, isFetched } = useEmailBroadcasts(statusFilter);
-  const deleteBroadcast = useDeleteEmailBroadcast();
+  const { data, isFetched } = useEmailCampaigns(statusFilter);
+  const deleteCampaign = useDeleteEmailCampaign();
   const toast = useToast();
   const navigate = useNavigate();
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [sendTarget, setSendTarget] = useState<any>(null);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
 
-  const allBroadcasts = (data || []) as any[];
-  const broadcasts = statusFilter
-    ? allBroadcasts.filter((b: any) => b.status === statusFilter)
-    : allBroadcasts;
+  const allCampaigns = (data || []) as any[];
+  const campaigns = statusFilter
+    ? allCampaigns.filter((b: any) => b.status === statusFilter)
+    : allCampaigns;
 
   const tabs: StatusTab[] = [
     "all",
@@ -48,16 +50,21 @@ export default function EmailBroadcastsPage() {
     "Cancelled",
   ];
 
-  const handleDelete = (broadcast: any) => {
-    deleteBroadcast.mutate(
-      { id: broadcast.id },
+  const handleTabChange = (tab: StatusTab) => {
+    _savedTab = tab;
+    setActiveTab(tab);
+  };
+
+  const handleDelete = (campaign: any) => {
+    deleteCampaign.mutate(
+      { id: campaign.id },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-          toast.success("Broadcast deleted");
+          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+          toast.success("Campaign deleted");
           setDeleteTarget(null);
         },
-        onError: () => toast.error("Could not delete broadcast"),
+        onError: () => toast.error("Could not delete campaign"),
       },
     );
   };
@@ -67,7 +74,7 @@ export default function EmailBroadcastsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-[1.25rem] font-bold text-primary">
-            Email Broadcasts
+            Email Campaigns
           </h1>
           <p className="text-[13px] text-muted mt-1">
             Create and manage email campaigns to capability members.
@@ -76,10 +83,10 @@ export default function EmailBroadcastsPage() {
         <Button
           variant="action"
           className="gap-1.5"
-          onClick={() => navigate("/admin/email-broadcasts/create")}
+          onClick={() => navigate("/admin/email-campaigns/create")}
         >
           <Plus size={14} />
-          New Broadcast
+          New Campaign
         </Button>
       </div>
 
@@ -88,7 +95,7 @@ export default function EmailBroadcastsPage() {
           <button
             key={tab}
             type="button"
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabChange(tab)}
             className={`px-3 py-2 text-[12px] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors ${
               activeTab === tab
                 ? "border-action text-action"
@@ -103,27 +110,27 @@ export default function EmailBroadcastsPage() {
       {!isFetched ? (
         <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonBroadcastRow key={i} />
+            <SkeletonCampaignRow key={i} />
           ))}
         </div>
-      ) : broadcasts.length === 0 ? (
+      ) : campaigns.length === 0 ? (
         <EmptyState>
-          No broadcasts found. Create your first broadcast to get started.
+          No campaigns found. Create your first campaign to get started.
         </EmptyState>
       ) : (
         <div className="space-y-2">
-          {broadcasts.map((b: any, i: number) => (
-            <BroadcastRow
+          {campaigns.map((b: any, i: number) => (
+            <CampaignRow
               key={b.id}
-              broadcast={b}
+              campaign={b}
               index={i}
               onEdit={() =>
-                navigate(`/admin/email-broadcasts/edit/${b.id}`)
+                navigate(`/admin/email-campaigns/edit/${b.id}`)
               }
               onDelete={() => setDeleteTarget(b)}
               onSend={() => setSendTarget(b)}
               onCancel={() => setCancelTarget(b)}
-              onView={() => navigate(`/admin/email-broadcasts/${b.id}`)}
+              onView={() => navigate(`/admin/email-campaigns/${b.id}`)}
             />
           ))}
         </div>
@@ -132,7 +139,7 @@ export default function EmailBroadcastsPage() {
       <Dialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete broadcast?</DialogTitle>
+            <DialogTitle>Delete campaign?</DialogTitle>
           </DialogHeader>
           <p className="text-[13px] text-secondary">
             Are you sure you want to delete{" "}
@@ -154,7 +161,7 @@ export default function EmailBroadcastsPage() {
 
       {sendTarget && (
         <SendConfirmDialog
-          broadcast={sendTarget}
+          campaign={sendTarget}
           open={!!sendTarget}
           onOpenChange={() => setSendTarget(null)}
         />
@@ -162,7 +169,7 @@ export default function EmailBroadcastsPage() {
 
       {cancelTarget && (
         <CancelConfirmDialog
-          broadcast={cancelTarget}
+          campaign={cancelTarget}
           open={!!cancelTarget}
           onOpenChange={() => setCancelTarget(null)}
         />
@@ -171,8 +178,8 @@ export default function EmailBroadcastsPage() {
   );
 }
 
-function BroadcastRow({
-  broadcast,
+function CampaignRow({
+  campaign,
   index,
   onEdit,
   onDelete,
@@ -180,7 +187,7 @@ function BroadcastRow({
   onCancel,
   onView,
 }: {
-  broadcast: any;
+  campaign: any;
   index: number;
   onEdit: () => void;
   onDelete: () => void;
@@ -188,28 +195,28 @@ function BroadcastRow({
   onCancel: () => void;
   onView: () => void;
 }) {
-  const duplicateBroadcast = useDuplicateEmailBroadcast(broadcast.id);
+  const duplicateCampaign = useDuplicateEmailCampaign(campaign.id);
   const toast = useToast();
   const navigate = useNavigate();
 
   const handleDuplicate = () => {
-    duplicateBroadcast.mutate(undefined, {
+    duplicateCampaign.mutate(undefined, {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-        toast.success("Broadcast duplicated");
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+        toast.success("Campaign duplicated");
         if (data?.id) {
-          navigate(`/admin/email-broadcasts/edit/${data.id}`);
+          navigate(`/admin/email-campaigns/edit/${data.id}`);
         }
       },
-      onError: () => toast.error("Could not duplicate broadcast"),
+      onError: () => toast.error("Could not duplicate campaign"),
     });
   };
 
   const scheduleInfo =
-    broadcast.scheduleType === "Scheduled" && broadcast.scheduledAt
-      ? `Scheduled: ${new Date(broadcast.scheduledAt).toLocaleString()}`
-      : broadcast.scheduleType === "Recurring" && broadcast.cronExpression
-        ? `Cron: ${broadcast.cronExpression}`
+    campaign.scheduleType === "Scheduled" && campaign.scheduledAt
+      ? `Scheduled: ${new Date(campaign.scheduledAt).toLocaleString()}`
+      : campaign.scheduleType === "Recurring" && campaign.cronExpression
+        ? `Cron: ${campaign.cronExpression}`
         : null;
 
   return (
@@ -219,13 +226,13 @@ function BroadcastRow({
     >
       <div className="flex-1 min-w-0">
         <Link
-          to={`/admin/email-broadcasts/${broadcast.id}`}
+          to={`/admin/email-campaigns/${campaign.id}`}
           className="text-[13px] font-medium text-primary hover:text-action no-underline truncate block"
         >
-          {broadcast.name}
+          {campaign.name}
         </Link>
         <span className="text-[11px] text-muted font-mono">
-          {broadcast.subject}
+          {campaign.subject}
         </span>
         {scheduleInfo && (
           <span className="text-[10px] text-action font-mono block mt-0.5">
@@ -233,12 +240,12 @@ function BroadcastRow({
           </span>
         )}
       </div>
-      <BroadcastStatusBadge status={broadcast.status} />
+      <CampaignStatusBadge status={campaign.status} />
       <span className="text-[11px] text-muted whitespace-nowrap">
-        {new Date(broadcast.modifiedAt).toLocaleDateString()}
+        {new Date(campaign.modifiedAt).toLocaleDateString()}
       </span>
       <div className="flex gap-1">
-        {broadcast.status === "Draft" && (
+        {campaign.status === "Draft" && (
           <>
             <button
               type="button"
@@ -261,7 +268,7 @@ function BroadcastRow({
               onClick={handleDuplicate}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
-              disabled={duplicateBroadcast.isPending}
+              disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
             </button>
@@ -275,7 +282,7 @@ function BroadcastRow({
             </button>
           </>
         )}
-        {broadcast.status === "Scheduled" && (
+        {campaign.status === "Scheduled" && (
           <>
             <button
               type="button"
@@ -290,7 +297,7 @@ function BroadcastRow({
               onClick={handleDuplicate}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
-              disabled={duplicateBroadcast.isPending}
+              disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
             </button>
@@ -304,7 +311,7 @@ function BroadcastRow({
             </button>
           </>
         )}
-        {(broadcast.status === "Sent" || broadcast.status === "Failed") && (
+        {(campaign.status === "Sent" || campaign.status === "Failed") && (
           <>
             <button
               type="button"
@@ -319,7 +326,7 @@ function BroadcastRow({
               onClick={handleDuplicate}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate as new draft"
-              disabled={duplicateBroadcast.isPending}
+              disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
             </button>
@@ -331,28 +338,28 @@ function BroadcastRow({
 }
 
 function SendConfirmDialog({
-  broadcast,
+  campaign,
   open,
   onOpenChange,
 }: {
-  broadcast: any;
+  campaign: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const sendBroadcast = useSendEmailBroadcast(broadcast.id);
+  const sendCampaign = useSendEmailCampaign(campaign.id);
   const toast = useToast();
 
   const handleSend = () => {
-    sendBroadcast.mutate(undefined, {
+    sendCampaign.mutate(undefined, {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
         toast.success(
-          `Broadcast sent to ${data?.totalRecipients || 0} recipients`,
+          `Campaign sent to ${data?.totalRecipients || 0} recipients`,
         );
         onOpenChange(false);
       },
       onError: () => {
-        toast.error("Could not send broadcast");
+        toast.error("Could not send campaign");
         onOpenChange(false);
       },
     });
@@ -362,10 +369,10 @@ function SendConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Send broadcast now?</DialogTitle>
+          <DialogTitle>Send campaign now?</DialogTitle>
         </DialogHeader>
         <p className="text-[13px] text-secondary">
-          This will send <strong>{broadcast.name}</strong> to all matching
+          This will send <strong>{campaign.name}</strong> to all matching
           recipients immediately. This action cannot be undone.
         </p>
         <div className="flex gap-2 justify-end pt-2">
@@ -375,11 +382,11 @@ function SendConfirmDialog({
           <Button
             variant="destructive"
             onClick={handleSend}
-            disabled={sendBroadcast.isPending}
+            disabled={sendCampaign.isPending}
             className="gap-1.5"
           >
             <Send size={14} />
-            {sendBroadcast.isPending ? "Sending..." : "Send Now"}
+            {sendCampaign.isPending ? "Sending..." : "Send Now"}
           </Button>
         </div>
       </DialogContent>
@@ -388,26 +395,26 @@ function SendConfirmDialog({
 }
 
 function CancelConfirmDialog({
-  broadcast,
+  campaign,
   open,
   onOpenChange,
 }: {
-  broadcast: any;
+  campaign: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const cancelBroadcast = useCancelEmailBroadcast(broadcast.id);
+  const cancelCampaign = useCancelEmailCampaign(campaign.id);
   const toast = useToast();
 
   const handleCancel = () => {
-    cancelBroadcast.mutate(undefined, {
+    cancelCampaign.mutate(undefined, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-        toast.success("Broadcast cancelled");
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+        toast.success("Campaign cancelled");
         onOpenChange(false);
       },
       onError: () => {
-        toast.error("Could not cancel broadcast");
+        toast.error("Could not cancel campaign");
         onOpenChange(false);
       },
     });
@@ -417,13 +424,13 @@ function CancelConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Cancel scheduled broadcast?</DialogTitle>
+          <DialogTitle>Cancel scheduled campaign?</DialogTitle>
         </DialogHeader>
         <p className="text-[13px] text-secondary">
-          This will cancel <strong>{broadcast.name}</strong>.{" "}
-          {broadcast.scheduleType === "Recurring"
+          This will cancel <strong>{campaign.name}</strong>.{" "}
+          {campaign.scheduleType === "Recurring"
             ? "No further recurring executions will run."
-            : "The broadcast will not be sent."}
+            : "The campaign will not be sent."}
         </p>
         <div className="flex gap-2 justify-end pt-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -432,11 +439,11 @@ function CancelConfirmDialog({
           <Button
             variant="destructive"
             onClick={handleCancel}
-            disabled={cancelBroadcast.isPending}
+            disabled={cancelCampaign.isPending}
             className="gap-1.5"
           >
             <Ban size={14} />
-            {cancelBroadcast.isPending ? "Cancelling..." : "Cancel Broadcast"}
+            {cancelCampaign.isPending ? "Cancelling..." : "Cancel Campaign"}
           </Button>
         </div>
       </DialogContent>

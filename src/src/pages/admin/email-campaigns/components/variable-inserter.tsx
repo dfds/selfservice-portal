@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTemplateVariables } from "@/state/remote/queries/emailBroadcasts";
+import { useTemplateVariables } from "@/state/remote/queries/emailCampaigns";
 import { ChevronDown, Search } from "lucide-react";
 import type { Editor } from "@tiptap/core";
 

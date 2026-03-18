@@ -3,18 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
 import {
-  useEmailBroadcast,
-  useEmailBroadcastExecutions,
-  useEmailBroadcastRecipients,
-  useCancelEmailBroadcast,
+  useEmailCampaign,
+  useEmailCampaignExecutions,
+  useEmailCampaignRecipients,
+  useCancelEmailCampaign,
   useRetryFailedRecipients,
-  useDuplicateEmailBroadcast,
-} from "@/state/remote/queries/emailBroadcasts";
-import { BroadcastStatusBadge } from "./components/broadcast-status-badge";
+  useDuplicateEmailCampaign,
+} from "@/state/remote/queries/emailCampaigns";
+import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton, SkeletonBroadcastDetail } from "@/components/ui/skeleton";
+import { Skeleton, SkeletonCampaignDetail } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import {
@@ -37,29 +37,32 @@ import { useState } from "react";
 
 type RecipientTab = "all" | "Pending" | "Sent" | "Failed";
 
-export default function EmailBroadcastDetail() {
+export default function EmailCampaignDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const toast = useToast();
-  const { data: broadcast, isFetched } = useEmailBroadcast(id || "");
+  const { data: campaign, isFetched } = useEmailCampaign(id || "");
   const { data: executions, isFetched: execFetched } =
-    useEmailBroadcastExecutions(id || "");
+    useEmailCampaignExecutions(id || "");
   const { data: recipients, isFetched: recipientsFetched } =
-    useEmailBroadcastRecipients(id || "");
-  const cancelBroadcast = useCancelEmailBroadcast(id || "");
+    useEmailCampaignRecipients(id || "");
+  const cancelCampaign = useCancelEmailCampaign(id || "");
   const retryFailed = useRetryFailedRecipients(id || "");
-  const duplicateBroadcast = useDuplicateEmailBroadcast(id || "");
+  const duplicateCampaign = useDuplicateEmailCampaign(id || "");
   const [cancelOpen, setCancelOpen] = useState(false);
   const [recipientTab, setRecipientTab] = useState<RecipientTab>("all");
+  const [bodyExpanded, setBodyExpanded] = useState(
+    campaign?.status === "Sent" || campaign?.status === "Failed",
+  );
 
   const handleCancel = () => {
-    cancelBroadcast.mutate(undefined, {
+    cancelCampaign.mutate(undefined, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-        toast.success("Broadcast cancelled");
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+        toast.success("Campaign cancelled");
         setCancelOpen(false);
       },
-      onError: () => toast.error("Could not cancel broadcast"),
+      onError: () => toast.error("Could not cancel campaign"),
     });
   };
 
@@ -67,7 +70,7 @@ export default function EmailBroadcastDetail() {
     retryFailed.mutate(undefined, {
       onSuccess: (data: any) => {
         queryClient.invalidateQueries({
-          queryKey: ["emailBroadcasts", "recipients", id],
+          queryKey: ["emailCampaigns", "recipients", id],
         });
         toast.success(`Retrying ${data?.retriedCount || 0} failed recipients`);
       },
@@ -76,38 +79,38 @@ export default function EmailBroadcastDetail() {
   };
 
   const handleDuplicate = () => {
-    duplicateBroadcast.mutate(undefined, {
+    duplicateCampaign.mutate(undefined, {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailBroadcasts"] });
-        toast.success("Broadcast duplicated as new draft");
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+        toast.success("Campaign duplicated as new draft");
         if (data?.id) {
-          navigate(`/admin/email-broadcasts/edit/${data.id}`);
+          navigate(`/admin/email-campaigns/edit/${data.id}`);
         }
       },
-      onError: () => toast.error("Could not duplicate broadcast"),
+      onError: () => toast.error("Could not duplicate campaign"),
     });
   };
 
   if (!isFetched) {
     return (
       <div className="px-5 md:px-8 py-6 max-w-4xl">
-        <SkeletonBroadcastDetail />
+        <SkeletonCampaignDetail />
       </div>
     );
   }
 
-  if (!broadcast) {
+  if (!campaign) {
     return (
       <div className="px-5 md:px-8 py-6 max-w-4xl">
-        <EmptyState>Broadcast not found.</EmptyState>
+        <EmptyState>Campaign not found.</EmptyState>
       </div>
     );
   }
 
-  const isScheduled = broadcast.status === "Scheduled";
-  const isRecurring = broadcast.scheduleType === "Recurring";
+  const isScheduled = campaign.status === "Scheduled";
+  const isRecurring = campaign.scheduleType === "Recurring";
   const hasSent =
-    broadcast.status === "Sent" || broadcast.status === "Failed";
+    campaign.status === "Sent" || campaign.status === "Failed";
   const executionList = (executions || []) as any[];
   const recipientList = (recipients || []) as any[];
 
@@ -129,30 +132,30 @@ export default function EmailBroadcastDetail() {
     <div className="px-5 md:px-8 py-6 max-w-4xl">
       <button
         type="button"
-        onClick={() => navigate("/admin/email-broadcasts")}
+        onClick={() => navigate("/admin/email-campaigns")}
         className="flex items-center gap-1.5 text-[12px] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
       >
         <ArrowLeft size={14} />
-        Back to broadcasts
+        Back to campaigns
       </button>
 
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-[1.25rem] font-bold text-primary flex items-center gap-2">
-            {broadcast.name}
-            <BroadcastStatusBadge status={broadcast.status} />
+            {campaign.name}
+            <CampaignStatusBadge status={campaign.status} />
           </h1>
           <p className="text-[13px] text-muted mt-1 font-mono">
-            {broadcast.subject}
+            {campaign.subject}
           </p>
         </div>
         <div className="flex gap-2">
-          {broadcast.status === "Draft" && (
+          {campaign.status === "Draft" && (
             <Button
               variant="outline"
               className="gap-1.5"
               onClick={() =>
-                navigate(`/admin/email-broadcasts/edit/${broadcast.id}`)
+                navigate(`/admin/email-campaigns/edit/${campaign.id}`)
               }
             >
               <Pencil size={14} />
@@ -163,10 +166,10 @@ export default function EmailBroadcastDetail() {
             variant="outline"
             className="gap-1.5"
             onClick={handleDuplicate}
-            disabled={duplicateBroadcast.isPending}
+            disabled={duplicateCampaign.isPending}
           >
             <Copy size={14} />
-            {duplicateBroadcast.isPending ? "Duplicating..." : "Duplicate"}
+            {duplicateCampaign.isPending ? "Duplicating..." : "Duplicate"}
           </Button>
           {isScheduled && (
             <Button
@@ -182,53 +185,78 @@ export default function EmailBroadcastDetail() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <InfoCard label="Status" value={broadcast.status} />
-        <InfoCard label="Schedule Type" value={broadcast.scheduleType} />
+        <InfoCard label="Status" value={campaign.status} />
+        <InfoCard label="Schedule Type" value={campaign.scheduleType} />
         <InfoCard
           label="Created"
-          value={new Date(broadcast.createdAt).toLocaleDateString()}
+          value={new Date(campaign.createdAt).toLocaleDateString()}
         />
-        <InfoCard label="Created By" value={broadcast.createdBy} />
+        <InfoCard label="Created By" value={campaign.createdBy} />
       </div>
 
-      {broadcast.scheduleType === "Scheduled" && broadcast.scheduledAt && (
+      {campaign.scheduleType === "Scheduled" && campaign.scheduledAt && (
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Calendar size={14} className="text-action" />
             <span className="text-[13px] text-secondary">
               Scheduled for{" "}
               <strong>
-                {new Date(broadcast.scheduledAt).toLocaleString()} UTC
+                {new Date(campaign.scheduledAt).toLocaleString()} UTC
               </strong>
             </span>
           </CardContent>
         </Card>
       )}
 
-      {broadcast.scheduleType === "Recurring" && broadcast.cronExpression && (
+      {campaign.scheduleType === "Recurring" && campaign.cronExpression && (
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Repeat size={14} className="text-action" />
             <span className="text-[13px] text-secondary">
               Recurring:{" "}
               <code className="text-[12px] bg-surface-subtle px-1.5 py-0.5 rounded font-mono">
-                {broadcast.cronExpression}
+                {campaign.cronExpression}
               </code>
             </span>
           </CardContent>
         </Card>
       )}
 
-      {broadcast.sentAt && (
+      {campaign.sentAt && (
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Clock size={14} className="text-green-500" />
             <span className="text-[13px] text-secondary">
               Sent at{" "}
-              <strong>{new Date(broadcast.sentAt).toLocaleString()}</strong>
+              <strong>{new Date(campaign.sentAt).toLocaleString()}</strong>
             </span>
           </CardContent>
         </Card>
+      )}
+
+      {campaign.contentHtml && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <SectionLabel className="block">Email Body</SectionLabel>
+            <button
+              type="button"
+              onClick={() => setBodyExpanded((v) => !v)}
+              className="text-[12px] text-muted hover:text-secondary cursor-pointer bg-transparent border-0"
+            >
+              {bodyExpanded ? "Hide" : "Show"}
+            </button>
+          </div>
+          {bodyExpanded && (
+            <div className="border border-card rounded-lg overflow-hidden">
+              <iframe
+                srcDoc={campaign.contentHtml}
+                sandbox="allow-same-origin"
+                className="w-full min-h-[400px] bg-white"
+                title="Email body"
+              />
+            </div>
+          )}
+        </div>
       )}
 
       {hasSent && recipientsFetched && recipientList.length > 0 && (
@@ -440,13 +468,13 @@ export default function EmailBroadcastDetail() {
       <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel scheduled broadcast?</DialogTitle>
+            <DialogTitle>Cancel scheduled campaign?</DialogTitle>
           </DialogHeader>
           <p className="text-[13px] text-secondary">
-            This will cancel <strong>{broadcast.name}</strong>.{" "}
+            This will cancel <strong>{campaign.name}</strong>.{" "}
             {isRecurring
               ? "No further recurring executions will run."
-              : "The broadcast will not be sent."}
+              : "The campaign will not be sent."}
           </p>
           <div className="flex gap-2 justify-end pt-2">
             <Button variant="outline" onClick={() => setCancelOpen(false)}>
@@ -455,11 +483,11 @@ export default function EmailBroadcastDetail() {
             <Button
               variant="destructive"
               onClick={handleCancel}
-              disabled={cancelBroadcast.isPending}
+              disabled={cancelCampaign.isPending}
               className="gap-1.5"
             >
               <Ban size={14} />
-              {cancelBroadcast.isPending ? "Cancelling..." : "Cancel Broadcast"}
+              {cancelCampaign.isPending ? "Cancelling..." : "Cancel Campaign"}
             </Button>
           </div>
         </DialogContent>
