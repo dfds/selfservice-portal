@@ -8,9 +8,6 @@
   "type": "module",
   "homepage": "",
   "dependencies": {
-    "@dfds-ui/forms": "2.0.12",
-    "@dfds-ui/modal": "2.0.12",
-    "@dfds-ui/react-components": "2.0.12",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@floating-ui/react": "^0.27.12",
@@ -77,22 +74,12 @@
   },
   "overrides": {
     "react-dates": {
-      "react": "18.2.0"
+      "react": "18.2.0",
+      "react-dom": "18.2.0"
     },
     "react-json-view": {
       "react": "18.2.0",
       "react-dom": "18.2.0"
-    },
-    "@dfds-ui/forms": {
-      "react-select": "5.7.0",
-      "react-dates": "^21.8.0"
-    },
-    "@dfds-ui/react-components": {
-      "react-select": "5.7.0",
-      "react-dates@21.8.0": {
-        "react": "18.2.0",
-        "react-dom": "18.2.0"
-      }
     },
     "@tailwindcss/vite": {
       "vite": "^8.0.0"

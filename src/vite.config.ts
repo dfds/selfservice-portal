@@ -42,6 +42,9 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths: true,
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
+        // Rolldown (Vite 8) drops the `default` export from the CJS version of this
+        // package when bundling for production. Alias to the ESM version to fix it.
+        "@mui/system/createStyled": fileURLToPath(new URL("./node_modules/@mui/system/esm/createStyled.js", import.meta.url)),
       },
     },
   };
