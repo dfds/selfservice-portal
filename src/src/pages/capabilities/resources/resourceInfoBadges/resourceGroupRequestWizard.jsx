@@ -308,7 +308,7 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
           trackName="Sharepoint-AICatalogue"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://dfds.sharepoint.com/sites/DataAnalyticsCommunity/Lists/AI%20Catalogue/AllItems.aspx?sortField=DFDSDeveloped&isAscending=true&viewid=5b58d3e2%2Deaa7%2D4021%2D931a%2D2ab9c8ee3685&ovuser=73a99466%2Dad05%2D4221%2D9f90%2De7142aa2f6c1%2Cshiypen%40dfds%2Ecom&OR=Teams%2DHL&CT=1753261542079&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNTA3MDMxODgwNiIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+          href="https://internal.hellman.oxygen.dfds.cloud/aicatalogue/Overview"
         >
           here
         </TrackedLink>
@@ -342,7 +342,7 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
           trackName="Sharepoint-AICatalogue"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://dfds.sharepoint.com/sites/DataAnalyticsCommunity/Lists/AI%20Catalogue/AllItems.aspx?sortField=DFDSDeveloped&isAscending=true&viewid=5b58d3e2%2Deaa7%2D4021%2D931a%2D2ab9c8ee3685&ovuser=73a99466%2Dad05%2D4221%2D9f90%2De7142aa2f6c1%2Cshiypen%40dfds%2Ecom&OR=Teams%2DHL&CT=1753261542079&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNTA3MDMxODgwNiIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+          href="https://internal.hellman.oxygen.dfds.cloud/aicatalogue/Overview"
         >
           AI Catalogue
         </TrackedLink>
