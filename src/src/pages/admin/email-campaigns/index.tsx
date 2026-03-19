@@ -11,14 +11,10 @@ import {
 } from "@/state/remote/queries/emailCampaigns";
 import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ListPageContent } from "@/components/ui/ListPageContent";
 import { SkeletonCampaignRow } from "@/components/ui/skeleton";
+import { useMutationToast } from "@/hooks/useMutationToast";
 import { Plus, Trash2, Pencil, Send, Eye, Ban, Copy } from "lucide-react";
 
 type StatusTab = "all" | "Draft" | "Scheduled" | "Sent" | "Failed" | "Cancelled";
@@ -30,7 +26,6 @@ export default function EmailCampaignsPage() {
   const statusFilter = activeTab === "all" ? undefined : activeTab;
   const { data, isFetched } = useEmailCampaigns(statusFilter);
   const deleteCampaign = useDeleteEmailCampaign();
-  const toast = useToast();
   const navigate = useNavigate();
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [sendTarget, setSendTarget] = useState<any>(null);
@@ -55,19 +50,12 @@ export default function EmailCampaignsPage() {
     setActiveTab(tab);
   };
 
-  const handleDelete = (campaign: any) => {
-    deleteCampaign.mutate(
-      { id: campaign.id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-          toast.success("Campaign deleted");
-          setDeleteTarget(null);
-        },
-        onError: () => toast.error("Could not delete campaign"),
-      },
-    );
-  };
+  const fireDelete = useMutationToast(deleteCampaign, {
+    invalidateKeys: [["emailCampaigns"]],
+    successMessage: "Campaign deleted",
+    errorMessage: "Could not delete campaign",
+    onSuccess: () => setDeleteTarget(null),
+  });
 
   return (
     <div className="px-5 md:px-8 py-6">
@@ -107,57 +95,39 @@ export default function EmailCampaignsPage() {
         ))}
       </div>
 
-      {!isFetched ? (
-        <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonCampaignRow key={i} />
-          ))}
-        </div>
-      ) : campaigns.length === 0 ? (
-        <EmptyState>
-          No campaigns found. Create your first campaign to get started.
-        </EmptyState>
-      ) : (
-        <div className="space-y-2">
-          {campaigns.map((b: any, i: number) => (
-            <CampaignRow
-              key={b.id}
-              campaign={b}
-              index={i}
-              onEdit={() =>
-                navigate(`/admin/email-campaigns/edit/${b.id}`)
-              }
-              onDelete={() => setDeleteTarget(b)}
-              onSend={() => setSendTarget(b)}
-              onCancel={() => setCancelTarget(b)}
-              onView={() => navigate(`/admin/email-campaigns/${b.id}`)}
-            />
-          ))}
-        </div>
-      )}
+      <ListPageContent
+        isFetched={isFetched}
+        items={campaigns}
+        renderItem={(b: any, i: number) => (
+          <CampaignRow
+            key={b.id}
+            campaign={b}
+            index={i}
+            onEdit={() => navigate(`/admin/email-campaigns/edit/${b.id}`)}
+            onDelete={() => setDeleteTarget(b)}
+            onSend={() => setSendTarget(b)}
+            onCancel={() => setCancelTarget(b)}
+            onView={() => navigate(`/admin/email-campaigns/${b.id}`)}
+          />
+        )}
+        skeletonCount={4}
+        renderSkeleton={(i) => <SkeletonCampaignRow key={i} />}
+        emptyMessage="No campaigns found. Create your first campaign to get started."
+      />
 
-      <Dialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete campaign?</DialogTitle>
-          </DialogHeader>
-          <p className="text-[13px] text-secondary">
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={() => setDeleteTarget(null)}
+        title="Delete campaign?"
+        description={
+          <p>
             Are you sure you want to delete{" "}
             <strong>{deleteTarget?.name}</strong>? This cannot be undone.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => deleteTarget && handleDelete(deleteTarget)}
-            >
-              Delete
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Delete"
+        onConfirm={() => deleteTarget && fireDelete({ id: deleteTarget.id })}
+      />
 
       {sendTarget && (
         <SendConfirmDialog
@@ -196,21 +166,18 @@ function CampaignRow({
   onView: () => void;
 }) {
   const duplicateCampaign = useDuplicateEmailCampaign(campaign.id);
-  const toast = useToast();
   const navigate = useNavigate();
 
-  const handleDuplicate = () => {
-    duplicateCampaign.mutate(undefined, {
-      onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-        toast.success("Campaign duplicated");
-        if (data?.id) {
-          navigate(`/admin/email-campaigns/edit/${data.id}`);
-        }
-      },
-      onError: () => toast.error("Could not duplicate campaign"),
-    });
-  };
+  const fireDuplicate = useMutationToast(duplicateCampaign, {
+    invalidateKeys: [["emailCampaigns"]],
+    successMessage: "Campaign duplicated",
+    errorMessage: "Could not duplicate campaign",
+    onSuccess: (data: any) => {
+      if (data?.id) {
+        navigate(`/admin/email-campaigns/edit/${data.id}`);
+      }
+    },
+  });
 
   const scheduleInfo =
     campaign.scheduleType === "Scheduled" && campaign.scheduledAt
@@ -265,7 +232,7 @@ function CampaignRow({
             </button>
             <button
               type="button"
-              onClick={handleDuplicate}
+              onClick={() => fireDuplicate(undefined)}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
               disabled={duplicateCampaign.isPending}
@@ -294,7 +261,7 @@ function CampaignRow({
             </button>
             <button
               type="button"
-              onClick={handleDuplicate}
+              onClick={() => fireDuplicate(undefined)}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
               disabled={duplicateCampaign.isPending}
@@ -323,7 +290,7 @@ function CampaignRow({
             </button>
             <button
               type="button"
-              onClick={handleDuplicate}
+              onClick={() => fireDuplicate(undefined)}
               className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate as new draft"
               disabled={duplicateCampaign.isPending}
@@ -347,50 +314,32 @@ function SendConfirmDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const sendCampaign = useSendEmailCampaign(campaign.id);
-  const toast = useToast();
 
-  const handleSend = () => {
-    sendCampaign.mutate(undefined, {
-      onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-        toast.success(
-          `Campaign sent to ${data?.totalRecipients || 0} recipients`,
-        );
-        onOpenChange(false);
-      },
-      onError: () => {
-        toast.error("Could not send campaign");
-        onOpenChange(false);
-      },
-    });
-  };
+  const fireSend = useMutationToast(sendCampaign, {
+    invalidateKeys: [["emailCampaigns"]],
+    successMessage: (data: any) =>
+      `Campaign sent to ${data?.totalRecipients || 0} recipients`,
+    errorMessage: "Could not send campaign",
+    onSuccess: () => onOpenChange(false),
+    onError: () => onOpenChange(false),
+  });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Send campaign now?</DialogTitle>
-        </DialogHeader>
-        <p className="text-[13px] text-secondary">
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Send campaign now?"
+      description={
+        <p>
           This will send <strong>{campaign.name}</strong> to all matching
           recipients immediately. This action cannot be undone.
         </p>
-        <div className="flex gap-2 justify-end pt-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={handleSend}
-            disabled={sendCampaign.isPending}
-            className="gap-1.5"
-          >
-            <Send size={14} />
-            {sendCampaign.isPending ? "Sending..." : "Send Now"}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      }
+      confirmLabel="Send Now"
+      confirmLoadingLabel="Sending…"
+      isPending={sendCampaign.isPending}
+      onConfirm={() => fireSend(undefined)}
+    />
   );
 }
 
@@ -404,49 +353,33 @@ function CancelConfirmDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const cancelCampaign = useCancelEmailCampaign(campaign.id);
-  const toast = useToast();
 
-  const handleCancel = () => {
-    cancelCampaign.mutate(undefined, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-        toast.success("Campaign cancelled");
-        onOpenChange(false);
-      },
-      onError: () => {
-        toast.error("Could not cancel campaign");
-        onOpenChange(false);
-      },
-    });
-  };
+  const fireCancel = useMutationToast(cancelCampaign, {
+    invalidateKeys: [["emailCampaigns"]],
+    successMessage: "Campaign cancelled",
+    errorMessage: "Could not cancel campaign",
+    onSuccess: () => onOpenChange(false),
+    onError: () => onOpenChange(false),
+  });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Cancel scheduled campaign?</DialogTitle>
-        </DialogHeader>
-        <p className="text-[13px] text-secondary">
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Cancel scheduled campaign?"
+      description={
+        <p>
           This will cancel <strong>{campaign.name}</strong>.{" "}
           {campaign.scheduleType === "Recurring"
             ? "No further recurring executions will run."
             : "The campaign will not be sent."}
         </p>
-        <div className="flex gap-2 justify-end pt-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Keep
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={handleCancel}
-            disabled={cancelCampaign.isPending}
-            className="gap-1.5"
-          >
-            <Ban size={14} />
-            {cancelCampaign.isPending ? "Cancelling..." : "Cancel Campaign"}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      }
+      confirmLabel="Cancel Campaign"
+      confirmLoadingLabel="Cancelling…"
+      cancelLabel="Keep"
+      isPending={cancelCampaign.isPending}
+      onConfirm={() => fireCancel(undefined)}
+    />
   );
 }

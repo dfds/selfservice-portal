@@ -15,6 +15,17 @@ export function statusIcon(status: string): React.ReactNode {
 }
 
 /**
+ * Returns a Badge variant for capability statuses.
+ */
+export function capabilityStatusVariant(
+  status: string,
+): "soft-success" | "soft-warning" | "outline" {
+  if (status === "Active") return "soft-success";
+  if (status === "Pending Deletion") return "soft-warning";
+  return "outline";
+}
+
+/**
  * Returns a Badge variant for compliance-style statuses.
  */
 export function complianceStatusVariant(

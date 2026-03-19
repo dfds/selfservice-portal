@@ -1,22 +1,16 @@
 import React, { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { queryClient } from "@/state/remote/client";
 import {
   useCapabilities,
   useCancelCapabilityDeletion,
 } from "@/state/remote/queries/capabilities";
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ListPageContent } from "@/components/ui/ListPageContent";
+import { useMutationToast } from "@/hooks/useMutationToast";
 
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -105,7 +99,6 @@ function CapabilityRow({
 }
 
 export default function DeletionQueuePage() {
-  const toast = useToast();
   const { data: capabilities, isFetched } = useCapabilities();
   const cancelDeletion = useCancelCapabilityDeletion();
   const [confirmTarget, setConfirmTarget] = useState<any>(null);
@@ -121,24 +114,12 @@ export default function DeletionQueuePage() {
       );
     });
 
-  function handleConfirmCancel() {
-    if (!confirmTarget) return;
-    cancelDeletion.mutate(
-      { capabilityId: confirmTarget.id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["capabilities", "list"],
-          });
-          toast.success("Deletion cancelled");
-          setConfirmTarget(null);
-        },
-        onError: () => {
-          toast.error("Could not cancel deletion");
-        },
-      },
-    );
-  }
+  const fireCancelDeletion = useMutationToast(cancelDeletion, {
+    invalidateKeys: [["capabilities", "list"]],
+    successMessage: "Deletion cancelled",
+    errorMessage: "Could not cancel deletion",
+    onSuccess: () => setConfirmTarget(null),
+  });
 
   return (
     <div className="px-5 md:px-8 py-6">
@@ -155,73 +136,59 @@ export default function DeletionQueuePage() {
       />
 
       {/* List */}
-      <div className="space-y-2">
-        {!isFetched ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="border border-card rounded-[8px] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="space-y-1.5 flex-1">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-3 w-64" />
-                </div>
-                <Skeleton className="h-8 w-28 rounded-[6px]" />
-              </div>
-            </div>
-          ))
-        ) : pendingDeletion.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-center gap-3">
-            <CheckCircle2
-              size={32}
-              strokeWidth={1.5}
-              className="text-muted"
-            />
-            <EmptyState>No capabilities are pending deletion.</EmptyState>
-          </div>
-        ) : (
-          pendingDeletion.map((c: any) => (
-            <CapabilityRow
-              key={c.id}
-              capability={c}
-              onCancel={setConfirmTarget}
-            />
-          ))
+      <ListPageContent
+        isFetched={isFetched}
+        items={pendingDeletion}
+        renderItem={(c: any) => (
+          <CapabilityRow
+            key={c.id}
+            capability={c}
+            onCancel={setConfirmTarget}
+          />
         )}
-      </div>
+        skeletonCount={3}
+        renderSkeleton={(i) => (
+          <div key={i} className="border border-card rounded-[8px] p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <Skeleton className="h-8 w-28 rounded-[6px]" />
+            </div>
+          </div>
+        )}
+        emptyMessage="No capabilities are pending deletion."
+        emptyIcon={
+          <CheckCircle2
+            size={32}
+            strokeWidth={1.5}
+            className="text-muted"
+          />
+        }
+      />
 
       {/* Confirmation dialog */}
-      <Dialog
+      <ConfirmDialog
         open={!!confirmTarget}
         onOpenChange={(open) => !open && setConfirmTarget(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cancel deletion?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Cancel deletion?"
+        description={
+          <p>
             Cancel the deletion request for{" "}
             <span className="font-medium text-primary">
               {confirmTarget?.name}
             </span>
             ? This will restore the capability to Active status.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setConfirmTarget(null)}
-              disabled={cancelDeletion.isPending}
-            >
-              Keep Pending
-            </Button>
-            <Button
-              variant="default"
-              onClick={handleConfirmCancel}
-              disabled={cancelDeletion.isPending}
-            >
-              {cancelDeletion.isPending ? "Cancelling…" : "Cancel Deletion"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Cancel Deletion"
+        confirmLoadingLabel="Cancelling…"
+        cancelLabel="Keep Pending"
+        confirmVariant="default"
+        isPending={cancelDeletion.isPending}
+        onConfirm={() => confirmTarget && fireCancelDeletion({ capabilityId: confirmTarget.id })}
+      />
     </div>
   );
 }

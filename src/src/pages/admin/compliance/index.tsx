@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
 import {
   useCapabilities,
   useCapabilityCompliance,
 } from "@/state/remote/queries/capabilities";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
-import { statusIcon, complianceStatusVariant } from "@/lib/statusUtils";
-import { cn } from "@/lib/utils";
+import { ExpandableRow } from "@/components/ui/ExpandableRow";
+import { ListPageContent } from "@/components/ui/ListPageContent";
+import { statusIcon, complianceStatusVariant, capabilityStatusVariant } from "@/lib/statusUtils";
 
 // ── Compliance row ────────────────────────────────────────────────────────────
 
@@ -34,7 +33,6 @@ function CapabilityComplianceContent({ capabilityId }: { capabilityId: string })
   }
 
   const raw: any = data ?? {};
-  // Try common shapes: { categories: [{name, status}] } or { items: [] } or flat object
   const categories: any[] = raw.categories ?? raw.items ?? [];
 
   return (
@@ -74,49 +72,21 @@ function CapabilityComplianceContent({ capabilityId }: { capabilityId: string })
 }
 
 function CapabilityRow({ capability }: { capability: any }) {
-  const [expanded, setExpanded] = useState(false);
-  const [triggered, setTriggered] = useState(false);
-
-  function handleClick() {
-    if (!triggered) setTriggered(true);
-    setExpanded((e) => !e);
-  }
-
-  const statusBadgeVariant =
-    capability.status === "Active" ? "soft-success" :
-    capability.status === "Pending Deletion" ? "soft-warning" :
-    "outline";
-
   return (
-    <div className="border border-card rounded-[8px] overflow-hidden">
-      <button
-        type="button"
-        onClick={handleClick}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted transition-colors bg-transparent border-0 cursor-pointer"
-      >
-        <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
-          {capability.name}
-        </span>
-        <Badge variant={statusBadgeVariant} className="text-[10px] shrink-0 hidden sm:inline-flex">
-          {capability.status}
-        </Badge>
-        <ChevronDown
-          size={14}
-          strokeWidth={1.75}
-          className={cn(
-            "text-muted transition-transform duration-200 flex-shrink-0",
-            expanded && "rotate-180",
-          )}
-        />
-      </button>
-      {expanded && (
-        <div className="px-4 pb-3 border-t border-card bg-surface-muted/40">
-          {triggered && (
-            <CapabilityComplianceContent capabilityId={capability.id} />
-          )}
-        </div>
-      )}
-    </div>
+    <ExpandableRow
+      header={
+        <>
+          <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
+            {capability.name}
+          </span>
+          <Badge variant={capabilityStatusVariant(capability.status)} className="text-[10px] shrink-0 hidden sm:inline-flex">
+            {capability.status}
+          </Badge>
+        </>
+      }
+    >
+      <CapabilityComplianceContent capabilityId={capability.id} />
+    </ExpandableRow>
   );
 }
 
@@ -149,27 +119,26 @@ export default function AdminCompliancePage() {
       </div>
 
       {/* List */}
-      <div className="space-y-2">
-        {!isFetched ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="border border-card rounded-[8px] p-4">
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-4 w-48 flex-1" />
-                <Skeleton className="h-5 w-16 rounded-full" />
-                <Skeleton className="h-4 w-4 rounded" />
-              </div>
-            </div>
-          ))
-        ) : caps.length === 0 ? (
-          <EmptyState>
-            {search ? "No capabilities match your search." : "No capabilities found."}
-          </EmptyState>
-        ) : (
-          caps.map((cap: any) => (
-            <CapabilityRow key={cap.id} capability={cap} />
-          ))
+      <ListPageContent
+        isFetched={isFetched}
+        items={caps}
+        renderItem={(cap: any) => (
+          <CapabilityRow key={cap.id} capability={cap} />
         )}
-      </div>
+        skeletonCount={6}
+        renderSkeleton={(i) => (
+          <div key={i} className="border border-card rounded-[8px] p-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-4 w-48 flex-1" />
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-4 w-4 rounded" />
+            </div>
+          </div>
+        )}
+        emptyMessage={
+          search ? "No capabilities match your search." : "No capabilities found."
+        }
+      />
     </div>
   );
 }

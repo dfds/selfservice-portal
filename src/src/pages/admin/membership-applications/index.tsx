@@ -1,23 +1,18 @@
 import React, { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { queryClient } from "@/state/remote/client";
 import {
   useMembershipApplications,
   useSubmitMembershipApplicationApproval,
   useDeleteMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
 import { useToast } from "@/context/ToastContext";
+import { queryClient } from "@/state/remote/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ListPageContent } from "@/components/ui/ListPageContent";
 
 const EXPIRY_MS = 15 * 24 * 60 * 60 * 1000;
 
@@ -106,9 +101,9 @@ function ApplicationCard({
 
 export default function MembershipApplicationsAdminPage() {
   const toast = useToast();
-  const { data: applications, isFetched } = useMembershipApplications();
   const approveMutation = useSubmitMembershipApplicationApproval();
   const rejectMutation = useDeleteMembershipApplicationApproval();
+  const { data: applications, isFetched } = useMembershipApplications();
 
   const [rejectTarget, setRejectTarget] = useState<any>(null);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
@@ -191,50 +186,46 @@ export default function MembershipApplicationsAdminPage() {
       />
 
       {/* List */}
-      <div className="space-y-2">
-        {!isFetched ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="border border-card rounded-[8px] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="space-y-1.5 flex-1">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-3 w-64" />
-                </div>
-                <div className="flex gap-2">
-                  <Skeleton className="h-8 w-20 rounded-[6px]" />
-                  <Skeleton className="h-8 w-16 rounded-[6px]" />
-                </div>
+      <ListPageContent
+        isFetched={isFetched}
+        items={apps}
+        renderItem={(app: any) => (
+          <ApplicationCard
+            key={app.id}
+            app={app}
+            onApprove={handleApprove}
+            onReject={setRejectTarget}
+            isPending={processingIds.has(app.id)}
+          />
+        )}
+        skeletonCount={3}
+        renderSkeleton={(i) => (
+          <div key={i} className="border border-card rounded-[8px] p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-20 rounded-[6px]" />
+                <Skeleton className="h-8 w-16 rounded-[6px]" />
               </div>
             </div>
-          ))
-        ) : apps.length === 0 ? (
-          <div className="flex flex-col items-center py-12 text-center gap-3">
-            <CheckCircle2 size={32} strokeWidth={1.5} className="text-muted" />
-            <EmptyState>No pending membership applications.</EmptyState>
           </div>
-        ) : (
-          apps.map((app: any) => (
-            <ApplicationCard
-              key={app.id}
-              app={app}
-              onApprove={handleApprove}
-              onReject={setRejectTarget}
-              isPending={processingIds.has(app.id)}
-            />
-          ))
         )}
-      </div>
+        emptyMessage="No pending membership applications."
+        emptyIcon={
+          <CheckCircle2 size={32} strokeWidth={1.5} className="text-muted" />
+        }
+      />
 
       {/* Reject confirmation dialog */}
-      <Dialog
+      <ConfirmDialog
         open={!!rejectTarget}
         onOpenChange={(open) => !open && setRejectTarget(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reject application?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Reject application?"
+        description={
+          <p>
             Reject the membership application from{" "}
             <span className="font-medium text-primary">
               {rejectTarget?.applicant}
@@ -245,24 +236,13 @@ export default function MembershipApplicationsAdminPage() {
             </span>
             ?
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setRejectTarget(null)}
-              disabled={rejectMutation.isPending}
-            >
-              Keep Pending
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmReject}
-              disabled={rejectMutation.isPending}
-            >
-              {rejectMutation.isPending ? "Rejecting…" : "Reject"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Reject"
+        confirmLoadingLabel="Rejecting…"
+        cancelLabel="Keep Pending"
+        isPending={rejectMutation.isPending}
+        onConfirm={handleConfirmReject}
+      />
     </div>
   );
 }

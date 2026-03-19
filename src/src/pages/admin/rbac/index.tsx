@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, Lock, Shield, Users, Plus, Trash2, X } from "lucide-react";
+import { Lock, Shield, Users, Plus, Trash2, X } from "lucide-react";
 import { queryClient } from "@/state/remote/client";
 import {
   useGetRoles,
@@ -21,18 +21,15 @@ import {
 import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
-import { useExpandable } from "@/hooks/useExpandable";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ExpandableRow } from "@/components/ui/ExpandableRow";
+import { ListPageContent } from "@/components/ui/ListPageContent";
+import { useMutationToast } from "@/hooks/useMutationToast";
 import { cn } from "@/lib/utils";
 
 // API returns direct arrays, not wrapped in { items: [] }
@@ -59,7 +56,6 @@ function groupPermsByNamespace(
 
 function RolePermissions({ roleId }: { roleId: string }) {
   const { data, isFetched } = useRolePermissions(roleId);
-  // API returns a direct array of permission grant objects
   const items: any[] = (data as any[]) ?? [];
 
   if (!isFetched) {
@@ -80,7 +76,6 @@ function RolePermissions({ roleId }: { roleId: string }) {
     );
   }
 
-  // Group by namespace, display the permission name
   const grouped = groupPermsByNamespace(items, "permission");
   const namespaces = Object.keys(grouped).sort();
 
@@ -113,16 +108,10 @@ function RoleRow({
   role: any;
   onDelete: (r: any) => void;
 }) {
-  const { expanded, triggered, toggle } = useExpandable();
-
   return (
-    <div className="border border-card rounded-[8px] overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3">
-        <button
-          type="button"
-          onClick={toggle}
-          className="flex-1 flex items-center gap-3 text-left bg-transparent border-0 cursor-pointer p-0 min-w-0"
-        >
+    <ExpandableRow
+      header={
+        <>
           <Lock size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
           <span className="flex-1 text-sm font-medium text-primary">
             {role.name ?? role.id}
@@ -130,15 +119,9 @@ function RoleRow({
           <Badge variant="outline" className="text-[10px] font-mono hidden sm:inline-flex shrink-0">
             {role.type}
           </Badge>
-          <ChevronDown
-            size={14}
-            strokeWidth={1.75}
-            className={cn(
-              "text-muted transition-transform duration-200 flex-shrink-0",
-              expanded && "rotate-180",
-            )}
-          />
-        </button>
+        </>
+      }
+      actions={
         <button
           type="button"
           onClick={() => onDelete(role)}
@@ -147,13 +130,10 @@ function RoleRow({
         >
           <Trash2 size={13} strokeWidth={1.75} />
         </button>
-      </div>
-      {expanded && (
-        <div className="px-4 pb-3 border-t border-card bg-surface-muted/40">
-          {triggered && <RolePermissions roleId={role.id} />}
-        </div>
-      )}
-    </div>
+      }
+    >
+      <RolePermissions roleId={role.id} />
+    </ExpandableRow>
   );
 }
 
@@ -161,7 +141,6 @@ function RoleRow({
 
 function PermissionsTab() {
   const { data, isFetched } = useAllPermissions();
-  // API returns a direct array of { name, description, namespace, accessType }
   const items: any[] = (data as any[]) ?? [];
 
   if (!isFetched) {
@@ -188,7 +167,6 @@ function PermissionsTab() {
     return <EmptyState>No permissions found.</EmptyState>;
   }
 
-  // Group by namespace field, display the name field
   const grouped = groupPermsByNamespace(items, "name");
   const namespaces = Object.keys(grouped).sort();
 
@@ -243,85 +221,69 @@ function GroupExpandedContent({
   const [grantPermName, setGrantPermName] = useState("");
   const [grantPermNamespace, setGrantPermNamespace] = useState("");
 
-  // Role grants: { roleId, type, resource, ... } — look up name from allRoles
   const roles: any[] = (rolesData as any[]) ?? [];
   const allRoles: any[] = (allRolesData as any[]) ?? [];
   const rolesNameMap: Record<string, string> = allRoles.reduce((acc, r: any) => {
     if (r.id) acc[r.id] = r.name ?? r.id;
     return acc;
   }, {});
-  // Permission grants: { permission, namespace, type, ... }
   const perms: any[] = (permsData as any[]) ?? [];
+
+  const fireAssignRole = useMutationToast(grantRole, {
+    invalidateKeys: [["rbac", "group-roles", groupId]],
+    successMessage: "Role assigned",
+    errorMessage: "Could not assign role",
+    onSuccess: () => {
+      setAssignRoleId("");
+      setShowAssignRole(false);
+    },
+  });
+
+  const fireGrantPerm = useMutationToast(grantPerm, {
+    invalidateKeys: [["rbac", "group-permissions", groupId]],
+    successMessage: "Permission granted",
+    errorMessage: "Could not grant permission",
+    onSuccess: () => {
+      setGrantPermName("");
+      setGrantPermNamespace("");
+      setShowGrantPerm(false);
+    },
+  });
+
+  const fireAddMember = useMutationToast(addMember, {
+    invalidateKeys: [["rbac", "groups"]],
+    successMessage: "Member added",
+    errorMessage: "Could not add member",
+    onSuccess: () => {
+      setAddMemberInput("");
+      setShowAddMember(false);
+      onMembersChanged();
+    },
+  });
+
+  const fireRemoveMember = useMutationToast(removeMember, {
+    invalidateKeys: [["rbac", "groups"]],
+    successMessage: "Member removed",
+    errorMessage: "Could not remove member",
+    onSuccess: () => onMembersChanged(),
+  });
 
   function handleAssignRole(e: React.FormEvent) {
     e.preventDefault();
     if (!assignRoleId.trim()) return;
-    grantRole.mutate(
-      { roleId: assignRoleId.trim(), groupId },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "group-roles", groupId] });
-          toast.success("Role assigned");
-          setAssignRoleId("");
-          setShowAssignRole(false);
-        },
-        onError: () => toast.error("Could not assign role"),
-      },
-    );
+    fireAssignRole({ roleId: assignRoleId.trim(), groupId });
   }
 
   function handleGrantPerm(e: React.FormEvent) {
     e.preventDefault();
     if (!grantPermName.trim()) return;
-    grantPerm.mutate(
-      { permissionName: grantPermName.trim(), namespace: grantPermNamespace.trim(), groupId },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "group-permissions", groupId] });
-          toast.success("Permission granted");
-          setGrantPermName("");
-          setGrantPermNamespace("");
-          setShowGrantPerm(false);
-        },
-        onError: () => toast.error("Could not grant permission"),
-      },
-    );
+    fireGrantPerm({ permissionName: grantPermName.trim(), namespace: grantPermNamespace.trim(), groupId });
   }
 
   function handleAddMember(e: React.FormEvent) {
     e.preventDefault();
     if (!addMemberInput.trim()) return;
-    addMember.mutate(
-      { groupId, userId: addMemberInput.trim() },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "groups"] });
-          toast.success("Member added");
-          setAddMemberInput("");
-          setShowAddMember(false);
-          onMembersChanged();
-        },
-        onError: () => {
-          toast.error("Could not add member");
-        },
-      },
-    );
-  }
-
-  function handleRemoveMember(memberId: string) {
-    removeMember.mutate(
-      { groupId, memberId },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "groups"] });
-          toast.success("Member removed");
-          onMembersChanged();
-        },
-        onError: () => {
-          toast.error("Could not remove member");
-        },
-      },
-    );
+    fireAddMember({ groupId, userId: addMemberInput.trim() });
   }
 
   if (!rolesFetched || !permsFetched) {
@@ -379,7 +341,7 @@ function GroupExpandedContent({
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleRemoveMember(m.id)}
+                  onClick={() => fireRemoveMember({ groupId, memberId: m.id })}
                   className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-muted hover:text-destructive transition-all cursor-pointer border-0 bg-transparent"
                   aria-label={`Remove ${m.userId}`}
                 >
@@ -521,20 +483,15 @@ function GroupRow({
   group: any;
   onDelete: (g: any) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [localMembers, setLocalMembers] = useState<any[] | null>(null);
 
   const members = localMembers ?? group.members ?? [];
   const memberCount: number = members.length;
 
   return (
-    <div className="border border-card rounded-[8px] overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3">
-        <button
-          type="button"
-          onClick={() => setExpanded((e) => !e)}
-          className="flex-1 flex items-center gap-3 text-left bg-transparent border-0 cursor-pointer p-0 min-w-0"
-        >
+    <ExpandableRow
+      header={
+        <>
           <Users size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
           <span className="flex-1 text-sm font-medium text-primary">
             {group.name ?? group.id}
@@ -542,15 +499,9 @@ function GroupRow({
           <span className="text-xs text-muted font-mono shrink-0">
             {memberCount} {memberCount === 1 ? "member" : "members"}
           </span>
-          <ChevronDown
-            size={14}
-            strokeWidth={1.75}
-            className={cn(
-              "text-muted transition-transform duration-200 flex-shrink-0",
-              expanded && "rotate-180",
-            )}
-          />
-        </button>
+        </>
+      }
+      actions={
         <button
           type="button"
           onClick={() => onDelete(group)}
@@ -559,17 +510,14 @@ function GroupRow({
         >
           <Trash2 size={13} strokeWidth={1.75} />
         </button>
-      </div>
-      {expanded && (
-        <div className="px-4 pb-3 border-t border-card bg-surface-muted/40">
-          <GroupExpandedContent
-            groupId={group.id}
-            members={members}
-            onMembersChanged={() => setLocalMembers(null)}
-          />
-        </div>
-      )}
-    </div>
+      }
+    >
+      <GroupExpandedContent
+        groupId={group.id}
+        members={members}
+        onMembersChanged={() => setLocalMembers(null)}
+      />
+    </ExpandableRow>
   );
 }
 
@@ -604,7 +552,6 @@ export default function RbacViewerPage() {
   const { data: allPermsData } = useAllPermissions();
   const allPerms: any[] = (allPermsData as any[]) ?? [];
 
-  // API returns direct arrays
   const { data: rolesData, isFetched: rolesFetched } = useGetRoles("");
   const roles: any[] = (rolesData as any[]) ?? [];
 
@@ -641,82 +588,56 @@ export default function RbacViewerPage() {
     resetCreateRoleForm();
   }
 
+  const fireCreateRole = useMutationToast(createRole, {
+    invalidateKeys: [["rbac", "roles"]],
+    successMessage: "Role created",
+    errorMessage: "Could not create role",
+    onSuccess: (response: any) => {
+      setCreatedRoleId(response?.id ?? null);
+      if (!response?.id) {
+        setNewRoleName("");
+        setNewRoleDescription("");
+        setShowCreateRole(false);
+      }
+    },
+  });
+
+  const fireDeleteRole = useMutationToast(deleteRole, {
+    invalidateKeys: [["rbac", "roles"]],
+    successMessage: "Role deleted",
+    errorMessage: "Could not delete role",
+    onSuccess: () => setDeleteRoleTarget(null),
+    onError: () => setDeleteRoleTarget(null),
+  });
+
+  const fireCreateGroup = useMutationToast(createGroup, {
+    invalidateKeys: [["rbac", "groups"]],
+    successMessage: "Group created",
+    errorMessage: "Could not create group",
+    onSuccess: () => {
+      setNewGroupName("");
+      setShowCreateGroup(false);
+    },
+  });
+
+  const fireDeleteGroup = useMutationToast(deleteGroup, {
+    invalidateKeys: [["rbac", "groups"]],
+    successMessage: "Group deleted",
+    errorMessage: "Could not delete group",
+    onSuccess: () => setDeleteTarget(null),
+    onError: () => setDeleteTarget(null),
+  });
+
   function handleCreateRole(e: React.FormEvent) {
     e.preventDefault();
     if (!newRoleName.trim()) return;
-    createRole.mutate(
-      { name: newRoleName.trim(), description: newRoleDescription.trim(), type: "global" },
-      {
-        onSuccess: (response: any) => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "roles"] });
-          toast.success("Role created");
-          setCreatedRoleId(response?.id ?? null);
-          if (!response?.id) {
-            setNewRoleName("");
-            setNewRoleDescription("");
-            setShowCreateRole(false);
-          }
-        },
-        onError: () => {
-          toast.error("Could not create role");
-        },
-      },
-    );
-  }
-
-  function handleConfirmDeleteRole() {
-    if (!deleteRoleTarget) return;
-    deleteRole.mutate(
-      { roleId: deleteRoleTarget.id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "roles"] });
-          toast.success("Role deleted");
-          setDeleteRoleTarget(null);
-        },
-        onError: () => {
-          toast.error("Could not delete role");
-          setDeleteRoleTarget(null);
-        },
-      },
-    );
+    fireCreateRole({ name: newRoleName.trim(), description: newRoleDescription.trim(), type: "global" });
   }
 
   function handleCreateGroup(e: React.FormEvent) {
     e.preventDefault();
     if (!newGroupName.trim()) return;
-    createGroup.mutate(
-      { name: newGroupName.trim() },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "groups"] });
-          toast.success("Group created");
-          setNewGroupName("");
-          setShowCreateGroup(false);
-        },
-        onError: () => {
-          toast.error("Could not create group");
-        },
-      },
-    );
-  }
-
-  function handleConfirmDelete() {
-    if (!deleteTarget) return;
-    deleteGroup.mutate(
-      { groupId: deleteTarget.id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rbac", "groups"] });
-          toast.success("Group deleted");
-          setDeleteTarget(null);
-        },
-        onError: () => {
-          toast.error("Could not delete group");
-          setDeleteTarget(null);
-        },
-      },
-    );
+    fireCreateGroup({ name: newGroupName.trim() });
   }
 
   return (
@@ -749,7 +670,6 @@ export default function RbacViewerPage() {
       {/* Roles tab */}
       {tab === "roles" && (
         <div className="animate-fade-up">
-          {/* Create role button */}
           <div className="flex justify-end mb-3">
             <Button
               variant="outline"
@@ -761,10 +681,8 @@ export default function RbacViewerPage() {
             </Button>
           </div>
 
-          {/* Create role inline form */}
           {showCreateRole && (
             <div className="flex flex-col gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40">
-              {/* Step 1: name + description */}
               {!createdRoleId && (
                 <form onSubmit={handleCreateRole} className="flex flex-col gap-2">
                   <Input
@@ -801,7 +719,6 @@ export default function RbacViewerPage() {
                 </form>
               )}
 
-              {/* Step 2: assign permissions */}
               {createdRoleId && (
                 <div className="flex flex-col gap-2">
                   <SectionLabel className="block">
@@ -870,25 +787,24 @@ export default function RbacViewerPage() {
             </div>
           )}
 
-          <div className="space-y-2">
-            {!rolesFetched ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="border border-card rounded-[8px] p-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-4 w-4 rounded" />
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-5 w-24 rounded-full ml-auto" />
-                  </div>
-                </div>
-              ))
-            ) : roles.length === 0 ? (
-              <EmptyState>No roles found.</EmptyState>
-            ) : (
-              roles.map((role: any) => (
-                <RoleRow key={role.id} role={role} onDelete={setDeleteRoleTarget} />
-              ))
+          <ListPageContent
+            isFetched={rolesFetched}
+            items={roles}
+            renderItem={(role: any) => (
+              <RoleRow key={role.id} role={role} onDelete={setDeleteRoleTarget} />
             )}
-          </div>
+            skeletonCount={4}
+            renderSkeleton={(i) => (
+              <div key={i} className="border border-card rounded-[8px] p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-5 w-24 rounded-full ml-auto" />
+                </div>
+              </div>
+            )}
+            emptyMessage="No roles found."
+          />
         </div>
       )}
 
@@ -902,7 +818,6 @@ export default function RbacViewerPage() {
       {/* Groups tab */}
       {tab === "groups" && (
         <div className="animate-fade-up">
-          {/* Create group button */}
           <div className="flex justify-end mb-3">
             <Button
               variant="outline"
@@ -914,7 +829,6 @@ export default function RbacViewerPage() {
             </Button>
           </div>
 
-          {/* Create group inline form */}
           {showCreateGroup && (
             <form
               onSubmit={handleCreateGroup}
@@ -949,100 +863,69 @@ export default function RbacViewerPage() {
             </form>
           )}
 
-          <div className="space-y-2">
-            {!groupsFetched ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="border border-card rounded-[8px] p-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-4 w-4 rounded" />
-                    <Skeleton className="h-4 w-48" />
-                  </div>
-                </div>
-              ))
-            ) : groups.length === 0 ? (
-              <EmptyState>No groups found.</EmptyState>
-            ) : (
-              groups.map((group: any) => (
-                <GroupRow
-                  key={group.id}
-                  group={group}
-                  onDelete={setDeleteTarget}
-                />
-              ))
+          <ListPageContent
+            isFetched={groupsFetched}
+            items={groups}
+            renderItem={(group: any) => (
+              <GroupRow
+                key={group.id}
+                group={group}
+                onDelete={setDeleteTarget}
+              />
             )}
-          </div>
+            skeletonCount={3}
+            renderSkeleton={(i) => (
+              <div key={i} className="border border-card rounded-[8px] p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              </div>
+            )}
+            emptyMessage="No groups found."
+          />
         </div>
       )}
 
       {/* Delete role confirmation dialog */}
-      <Dialog
+      <ConfirmDialog
         open={!!deleteRoleTarget}
         onOpenChange={(open) => !open && setDeleteRoleTarget(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete role?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Delete role?"
+        description={
+          <p>
             Permanently delete role{" "}
             <span className="font-medium text-primary">
               {deleteRoleTarget?.name ?? deleteRoleTarget?.id}
             </span>
             ? This cannot be undone.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteRoleTarget(null)}
-              disabled={deleteRole.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmDeleteRole}
-              disabled={deleteRole.isPending}
-            >
-              {deleteRole.isPending ? "Deleting…" : "Delete Role"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Delete Role"
+        confirmLoadingLabel="Deleting…"
+        isPending={deleteRole.isPending}
+        onConfirm={() => deleteRoleTarget && fireDeleteRole({ roleId: deleteRoleTarget.id })}
+      />
 
       {/* Delete group confirmation dialog */}
-      <Dialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete group?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Delete group?"
+        description={
+          <p>
             Permanently delete group{" "}
             <span className="font-medium text-primary">
               {deleteTarget?.name ?? deleteTarget?.id}
             </span>
             ? This cannot be undone.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-              disabled={deleteGroup.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmDelete}
-              disabled={deleteGroup.isPending}
-            >
-              {deleteGroup.isPending ? "Deleting…" : "Delete Group"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Delete Group"
+        confirmLoadingLabel="Deleting…"
+        isPending={deleteGroup.isPending}
+        onConfirm={() => deleteTarget && fireDeleteGroup({ groupId: deleteTarget.id })}
+      />
     </div>
   );
 }

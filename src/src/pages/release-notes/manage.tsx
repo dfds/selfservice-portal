@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import Page from "@/components/Page";
 import { TrackedButton } from "@/components/Tracking";
 import Nope from "@/components/Nope";
-import { useToast } from "@/context/ToastContext";
 
 import {
   useReleaseNotes,
@@ -10,17 +9,10 @@ import {
   useDeleteReleaseNote,
 } from "@/state/remote/queries/releaseNotes";
 import { useNavigate } from "react-router-dom";
-import { queryClient } from "@/state/remote/client";
 import PreAppContext from "@/preAppContext";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
+import { useMutationToast } from "@/hooks/useMutationToast";
 
 function formatDate(iso: string) {
   if (!iso) return "—";
@@ -31,40 +23,14 @@ function formatDate(iso: string) {
   });
 }
 
-function WarningDialog({ onCloseRequested, onAccept }) {
-  return (
-    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Release Note</DialogTitle>
-        </DialogHeader>
-        <p className="text-sm text-secondary">
-          This action will delete the release note and all its content. This
-          action cannot be undone.
-        </p>
-        <DialogFooter>
-          <Button variant="outline" onClick={onCloseRequested}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={onAccept}>
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 export function ReleaseNotesManage() {
   const { data } = useReleaseNotes({ includeDrafts: true });
   const toggleReleaseNoteActive = useToggleReleaseNoteActive();
   const deleteReleaseNote = useDeleteReleaseNote();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const toast = useToast();
 
   const [notes, setNotes] = useState(data?.items || []);
-  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-  const [noteIdUpForDeletion, setNoteIdUpForDeletion] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
 
   useEffect(() => {
     if (data?.items) {
@@ -74,47 +40,35 @@ export function ReleaseNotesManage() {
 
   const navigate = useNavigate();
 
-  const handleToggleActive = (id) => {
-    toggleReleaseNoteActive.mutate(
-      { id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
-          toast.success("Release note status updated");
-        },
-        onError: () => toast.error("Could not update release note status"),
-      },
-    );
-  };
+  const fireToggleActive = useMutationToast(toggleReleaseNoteActive, {
+    invalidateKeys: [["releasenotes", "list"]],
+    successMessage: "Release note status updated",
+    errorMessage: "Could not update release note status",
+  });
 
-  const handleDelete = () => {
-    deleteReleaseNote.mutate(
-      { id: noteIdUpForDeletion },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
-          toast.success("Release note deleted");
-        },
-        onError: () => toast.error("Could not delete release note"),
-      },
-    );
-  };
+  const fireDelete = useMutationToast(deleteReleaseNote, {
+    invalidateKeys: [["releasenotes", "list"]],
+    successMessage: "Release note deleted",
+    errorMessage: "Could not delete release note",
+    onSuccess: () => setDeleteTarget(null),
+  });
 
   return (
     <>
-      {showDeleteWarning && (
-        <WarningDialog
-          onCloseRequested={() => {
-            setNoteIdUpForDeletion(null);
-            setShowDeleteWarning(false);
-          }}
-          onAccept={() => {
-            handleDelete();
-            setNoteIdUpForDeletion(null);
-            setShowDeleteWarning(false);
-          }}
-        />
-      )}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete Release Note"
+        description={
+          <p>
+            This action will delete the release note and all its content. This
+            action cannot be undone.
+          </p>
+        }
+        confirmLabel="Delete"
+        onConfirm={() => deleteTarget && fireDelete({ id: deleteTarget.id })}
+      />
+
       {isCloudEngineerEnabled ? (
         <Page title="Release Notes archive">
           <div className="flex items-center justify-end mb-4">
@@ -177,7 +131,7 @@ export function ReleaseNotesManage() {
                     {elem._links?.toggleIsActive && (
                       <TrackedButton
                         trackName="ReleaseNote-ToggleActiveButtonClicked"
-                        onClick={() => handleToggleActive(elem.id)}
+                        onClick={() => fireToggleActive({ id: elem.id })}
                         variation={elem.isActive ? "outline" : "action"}
                         size="small"
                         trackingEvent={{
@@ -205,10 +159,7 @@ export function ReleaseNotesManage() {
                     {elem._links?.remove && (
                       <TrackedButton
                         trackName="ReleaseNote-DeleteButtonClicked"
-                        onClick={() => {
-                          setNoteIdUpForDeletion(elem.id);
-                          setShowDeleteWarning(true);
-                        }}
+                        onClick={() => setDeleteTarget(elem)}
                         variation="danger"
                         size="small"
                         trackingEvent={{

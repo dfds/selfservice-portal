@@ -5,9 +5,9 @@ import { useState } from "react";
  * `triggered` becomes true on first toggle and stays true, enabling
  * lazy data fetching that persists across open/close cycles.
  */
-export function useExpandable() {
-  const [expanded, setExpanded] = useState(false);
-  const [triggered, setTriggered] = useState(false);
+export function useExpandable(defaultExpanded = false) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [triggered, setTriggered] = useState(defaultExpanded);
 
   function toggle() {
     if (!triggered) setTriggered(true);

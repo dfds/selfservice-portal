@@ -1,26 +1,19 @@
 import React, { useState } from "react";
-import { ChevronDown, Trash2 } from "lucide-react";
-import { queryClient } from "@/state/remote/client";
+import { Trash2 } from "lucide-react";
 import {
   useAllKafkaTopics,
   useKafkaClusters,
   useTopicMessageContracts,
   useDeleteKafkaTopic,
 } from "@/state/remote/queries/kafka";
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
-import { useExpandable } from "@/hooks/useExpandable";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ExpandableRow } from "@/components/ui/ExpandableRow";
+import { ListPageContent } from "@/components/ui/ListPageContent";
+import { useMutationToast } from "@/hooks/useMutationToast";
 import { cn } from "@/lib/utils";
 
 // ── Topic expanded content ────────────────────────────────────────────────────
@@ -63,18 +56,12 @@ function TopicRow({
   topic: any;
   onDelete: (t: any) => void;
 }) {
-  const { expanded, triggered, toggle } = useExpandable();
-
   const isPublic = topic.name?.startsWith("pub.") ?? false;
 
   return (
-    <div className="border border-card rounded-[8px] overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3">
-        <button
-          type="button"
-          onClick={toggle}
-          className="flex-1 flex items-center gap-3 text-left bg-transparent border-0 cursor-pointer p-0 min-w-0"
-        >
+    <ExpandableRow
+      header={
+        <>
           <span className="flex-1 text-sm font-medium text-primary font-mono truncate">
             {topic.name}
           </span>
@@ -91,15 +78,9 @@ function TopicRow({
               {isPublic ? "Public" : "Private"}
             </Badge>
           </div>
-          <ChevronDown
-            size={14}
-            strokeWidth={1.75}
-            className={cn(
-              "text-muted transition-transform duration-200 flex-shrink-0",
-              expanded && "rotate-180",
-            )}
-          />
-        </button>
+        </>
+      }
+      actions={
         <button
           type="button"
           onClick={() => onDelete(topic)}
@@ -108,20 +89,16 @@ function TopicRow({
         >
           <Trash2 size={14} strokeWidth={1.75} />
         </button>
-      </div>
-      {expanded && (
-        <div className="px-4 pb-3 border-t border-card bg-surface-muted/40">
-          {triggered && <TopicDetails topic={topic} />}
-        </div>
-      )}
-    </div>
+      }
+    >
+      <TopicDetails topic={topic} />
+    </ExpandableRow>
   );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function TopicExplorerPage() {
-  const toast = useToast();
   const { data: topics, isFetched: topicsFetched } = useAllKafkaTopics();
   const { data: clusters } = useKafkaClusters();
   const deleteTopic = useDeleteKafkaTopic();
@@ -143,22 +120,12 @@ export default function TopicExplorerPage() {
     return true;
   });
 
-  function handleConfirmDelete() {
-    if (!deleteTarget) return;
-    deleteTopic.mutate(
-      { topicDefinition: deleteTarget },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["kafka", "all-topics"] });
-          toast.success("Topic deleted");
-          setDeleteTarget(null);
-        },
-        onError: () => {
-          toast.error("Could not delete topic");
-        },
-      },
-    );
-  }
+  const fireDelete = useMutationToast(deleteTopic, {
+    invalidateKeys: [["kafka", "all-topics"]],
+    successMessage: "Topic deleted",
+    errorMessage: "Could not delete topic",
+    onSuccess: () => setDeleteTarget(null),
+  });
 
   return (
     <div className="px-5 md:px-8 py-6">
@@ -216,69 +183,53 @@ export default function TopicExplorerPage() {
       </div>
 
       {/* List */}
-      <div className="space-y-2">
-        {!topicsFetched ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="border border-card rounded-[8px] p-4">
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-4 w-60 flex-1" />
-                <Skeleton className="h-5 w-20 rounded-full" />
-                <Skeleton className="h-5 w-14 rounded-full" />
-                <Skeleton className="h-4 w-4 rounded" />
-              </div>
-            </div>
-          ))
-        ) : filtered.length === 0 ? (
-          <EmptyState>
-            {allTopics.length === 0
-              ? "No topics found."
-              : "No topics match your filters."}
-          </EmptyState>
-        ) : (
-          filtered.map((topic: any) => (
-            <TopicRow
-              key={topic.id}
-              topic={topic}
-              onDelete={setDeleteTarget}
-            />
-          ))
+      <ListPageContent
+        isFetched={topicsFetched}
+        items={filtered}
+        renderItem={(topic: any) => (
+          <TopicRow
+            key={topic.id}
+            topic={topic}
+            onDelete={setDeleteTarget}
+          />
         )}
-      </div>
+        skeletonCount={5}
+        renderSkeleton={(i) => (
+          <div key={i} className="border border-card rounded-[8px] p-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-4 w-60 flex-1" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+              <Skeleton className="h-5 w-14 rounded-full" />
+              <Skeleton className="h-4 w-4 rounded" />
+            </div>
+          </div>
+        )}
+        emptyMessage={
+          allTopics.length === 0
+            ? "No topics found."
+            : "No topics match your filters."
+        }
+      />
 
       {/* Delete confirmation dialog */}
-      <Dialog
+      <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete topic?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Delete topic?"
+        description={
+          <p>
             Permanently delete{" "}
             <span className="font-medium text-primary font-mono text-xs">
               {deleteTarget?.name}
             </span>
             ? This cannot be undone.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-              disabled={deleteTopic.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmDelete}
-              disabled={deleteTopic.isPending}
-            >
-              {deleteTopic.isPending ? "Deleting…" : "Delete Topic"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Delete Topic"
+        confirmLoadingLabel="Deleting…"
+        isPending={deleteTopic.isPending}
+        onConfirm={() => deleteTarget && fireDelete({ topicDefinition: deleteTarget })}
+      />
     </div>
   );
 }
