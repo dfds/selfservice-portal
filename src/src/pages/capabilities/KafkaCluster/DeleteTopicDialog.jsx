@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertTriangle } from "lucide-react";
+
 import styles from "./DeleteTopicDialog.module.css";
 import { TrackedLink, TrackedButton } from "@/components/Tracking";
 
@@ -41,7 +41,7 @@ export default function DeleteTopicDialog({
               unfortunate consequences for other systems that you are not aware
               of nor have responsibility for.
             </p>
-            <Banner icon={AlertTriangle} variant="lowEmphasis">
+            <Banner variant="warning">
               <BannerParagraph>
                 It is very important that you have notified any active consumers
                 before proceeding.

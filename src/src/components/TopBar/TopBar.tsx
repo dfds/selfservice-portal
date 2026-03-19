@@ -151,8 +151,8 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
               <span
                 className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm z-10 [transition:translate_200ms_cubic-bezier(0.16,1,0.3,1)] ${
                   isCloudEngineerEnabled
-                    ? "translate-x-4 animate-switch-squish-on"
-                    : "translate-x-0.5 animate-switch-squish-off"
+                    ? "translate-x-4 animate-switch-slider-on"
+                    : "translate-x-0.5 animate-switch-slider-off"
                 }`}
               />
             </button>

@@ -11,6 +11,7 @@
   --color-success: #4caf50;
   --color-warning: #ed8800;
   --color-error: #be1e2d;
+  --color-destructive: var(--color-error);
   --color-brand-dark: #153b53;
   --color-text-primary: #002b45;
   --color-text-secondary: #666666;
@@ -226,6 +227,7 @@
   --color-success: #4caf50;
   --color-warning: #ed8800;
   --color-error: #be1e2d;
+  --color-destructive: var(--color-error);
   --color-brand-dark: #153b53;
   --color-text-primary: #002b45;
   --color-text-secondary: #666666;

@@ -324,7 +324,7 @@ export default function NewTopicDialog({
               </select>
 
               {formData.availability === "public" && (
-                <Banner variant="lowEmphasis">
+                <Banner variant="info">
                   <p className="font-bold text-sm mb-1">Please note</p>
                   <BannerParagraph>
                     All public topics will be prefixed with{" "}

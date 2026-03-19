@@ -11,6 +11,8 @@ import PageSection from "@/components/PageSection";
 import PreAppContext from "../../preAppContext";
 import { useTheme } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { PaginationControls } from "@/components/ui/PaginationControls";
 
 function calculateCriticalityLevel(availability, criticality, classification) {
   if (
@@ -79,6 +81,9 @@ export default function CapabilitiesCriticalityPage() {
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);
+  const isMobile = useIsMobile();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   useEffect(() => {
     if (isFetched) {
@@ -242,7 +247,44 @@ export default function CapabilitiesCriticalityPage() {
         <PageSection headline="Criticality">
           {!isFetched && <Spinner />}
 
-          {isFetched && (
+          {isFetched && isMobile && (() => {
+            const totalPages = Math.max(1, Math.ceil(enrichedCapabilities.length / pageSize));
+            const pageStart = (currentPage - 1) * pageSize;
+            const pageItems = enrichedCapabilities.slice(pageStart, pageStart + pageSize);
+            return (
+              <div>
+                <div className="divide-y divide-divider">
+                  {pageItems.map((cap) => (
+                    <button
+                      key={cap.id}
+                      onClick={() => clickHandler(cap.id)}
+                      className="w-full text-left px-4 py-3 hover:bg-surface-muted transition-colors"
+                    >
+                      <div className="font-medium text-sm text-primary">{truncateString(cap.name, 50)}</div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted">
+                        <span>Score: <strong className="text-primary">{cap.criticalityLevel}</strong></span>
+                        <span>Criticality: {cap.criticality}</span>
+                        <span>Availability: {cap.availability}</span>
+                        <span>Classification: {cap.classification}</span>
+                        <span>Cost Center: {cap.costCenter}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  pageStart={pageStart}
+                  pageSize={pageSize}
+                  total={enrichedCapabilities.length}
+                  onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                />
+              </div>
+            );
+          })()}
+
+          {isFetched && !isMobile && (
             <ThemeProvider theme={muiTheme}>
               <MaterialReactTable
                 columns={columns}

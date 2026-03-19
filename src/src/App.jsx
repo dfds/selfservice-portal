@@ -94,7 +94,8 @@ function Layout() {
   const { user } = useContext(AppContext);
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const userLoaded = user?.isAuthenticated === true;
+  const userLoaded =
+    user?.isAuthenticated === true && user?.roles !== undefined;
   const isCloudEngineer =
     userLoaded &&
     Array.isArray(user.roles) &&

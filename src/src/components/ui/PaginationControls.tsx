@@ -1,4 +1,12 @@
-import React from "react";
+interface PaginationControlsProps {
+  currentPage: number;
+  totalPages: number;
+  pageStart: number;
+  pageSize: number;
+  total: number;
+  onPrev: () => void;
+  onNext: () => void;
+}
 
 export function PaginationControls({
   currentPage,
@@ -8,7 +16,7 @@ export function PaginationControls({
   total,
   onPrev,
   onNext,
-}) {
+}: PaginationControlsProps) {
   if (total === 0) return null;
   return (
     <div className="flex items-center justify-between mt-4 py-2 border-t border-divider">
