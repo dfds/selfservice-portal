@@ -70,7 +70,7 @@ export default function EmailCampaignsPage() {
   };
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-5xl">
+    <div className="px-5 md:px-8 py-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-[1.25rem] font-bold text-primary">

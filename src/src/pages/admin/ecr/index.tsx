@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -65,31 +66,24 @@ export default function EcrSyncDashboardPage() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-            ECR Sync
-          </h1>
-          {syncFetched && totalOutOfSync > 0 && (
-            <Badge variant="destructive" className="text-xs">
-              {totalOutOfSync} out of sync
-            </Badge>
-          )}
-          {syncFetched && totalOutOfSync === 0 && (
-            <Badge variant="soft-success" className="text-xs">
-              All in sync
-            </Badge>
-          )}
-        </div>
-        <p className="text-sm text-muted mt-1">
-          ECR repositories sync status between AWS and the platform database.
-        </p>
-      </div>
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="ECR Sync"
+        subtitle="ECR repositories sync status between AWS and the platform database."
+        titleSuffix={
+          syncFetched && (
+            totalOutOfSync > 0 ? (
+              <Badge variant="destructive" className="text-xs">
+                {totalOutOfSync} out of sync
+              </Badge>
+            ) : (
+              <Badge variant="soft-success" className="text-xs">
+                All in sync
+              </Badge>
+            )
+          )
+        }
+      />
 
       {/* Sync status cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
@@ -100,9 +94,9 @@ export default function EcrSyncDashboardPage() {
           ) : (
             <div className="flex items-center gap-2">
               {notInDb.length > 0 ? (
-                <AlertCircle size={16} className="text-amber-500" />
+                <AlertCircle size={16} className="text-warning" />
               ) : (
-                <CheckCircle2 size={16} className="text-green-500" />
+                <CheckCircle2 size={16} className="text-success" />
               )}
               <span className="text-xl font-bold text-primary">
                 {notInDb.length}
@@ -126,9 +120,9 @@ export default function EcrSyncDashboardPage() {
           ) : (
             <div className="flex items-center gap-2">
               {notInAws.length > 0 ? (
-                <AlertCircle size={16} className="text-amber-500" />
+                <AlertCircle size={16} className="text-warning" />
               ) : (
-                <CheckCircle2 size={16} className="text-green-500" />
+                <CheckCircle2 size={16} className="text-success" />
               )}
               <span className="text-xl font-bold text-primary">
                 {notInAws.length}

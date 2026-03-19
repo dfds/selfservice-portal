@@ -10,6 +10,7 @@ import { useToast } from "@/context/ToastContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -210,20 +211,11 @@ export default function JsonSchemaEditorPage() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-          JSON Schema Editor
-        </h1>
-        <p className="text-sm text-muted mt-1">
-          View, validate, and update JSON schemas used to validate capability
-          metadata.
-        </p>
-      </div>
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="JSON Schema Editor"
+        subtitle="View, validate, and update JSON schemas used to validate capability metadata."
+      />
 
       {/* Schema ID input */}
       <div className="mb-6">

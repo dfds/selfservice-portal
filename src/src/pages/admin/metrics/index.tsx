@@ -6,29 +6,9 @@ import {
   useCapabilitiesAwsResources,
 } from "@/state/remote/queries/platformdataapi";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function StatBox({
-  label,
-  value,
-  loading,
-}: {
-  label: string;
-  value: string | number | undefined;
-  loading: boolean;
-}) {
-  return (
-    <div className="border border-card rounded-[8px] p-4 flex flex-col gap-1">
-      <p className="text-[10px] font-mono text-muted uppercase tracking-wide">{label}</p>
-      {loading ? (
-        <Skeleton className="h-7 w-16" />
-      ) : (
-        <p className="text-2xl font-bold text-primary">{value ?? "—"}</p>
-      )}
-    </div>
-  );
-}
+import { StatCard } from "@/components/ui/StatCard";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -74,42 +54,32 @@ export default function PlatformMetricsDashboardPage() {
   ).length;
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-          Platform Metrics
-        </h1>
-        <p className="text-sm text-muted mt-1">
-          Platform-wide capability, cost, and resource overview.
-        </p>
-      </div>
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="Platform Metrics"
+        subtitle="Capability stats (platform-wide) and cost/resource data (your capabilities)."
+      />
 
       {/* Capabilities stats */}
       <div className="mb-6">
-        <p className="text-[11px] font-mono font-semibold tracking-[0.1em] uppercase text-muted mb-3">
-          Capabilities
-        </p>
+        <SectionLabel as="p" className="mb-3">Capabilities</SectionLabel>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatBox
+          <StatCard
             label="Total"
             value={capsFetched ? capabilities.length : undefined}
             loading={!capsFetched}
           />
-          <StatBox
+          <StatCard
             label="Active"
             value={capsFetched ? activeCapabilities : undefined}
             loading={!capsFetched}
           />
-          <StatBox
+          <StatCard
             label="Pending Deletion"
             value={capsFetched ? pendingDeletion : undefined}
             loading={!capsFetched}
           />
-          <StatBox
+          <StatCard
             label="With Cost Data"
             value={costQuery.isFetched ? capabilitiesWithCost : undefined}
             loading={!costQuery.isFetched}
@@ -119,16 +89,14 @@ export default function PlatformMetricsDashboardPage() {
 
       {/* Cloud resources */}
       <div className="mb-6">
-        <p className="text-[11px] font-mono font-semibold tracking-[0.1em] uppercase text-muted mb-3">
-          Cloud Resources
-        </p>
+        <SectionLabel as="p" className="mb-3">Cloud Resources (Your Capabilities)</SectionLabel>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <StatBox
+          <StatCard
             label="Total AWS Resources"
             value={resourceQuery.isFetched ? totalResources : undefined}
             loading={!resourceQuery.isFetched}
           />
-          <StatBox
+          <StatCard
             label="Approx. Monthly Cost (USD)"
             value={costQuery.isFetched ? `$${totalCost.toFixed(0)}` : undefined}
             loading={!costQuery.isFetched}
@@ -139,15 +107,13 @@ export default function PlatformMetricsDashboardPage() {
       {/* Portal stats */}
       {statsFetched && typeof stats === "object" && stats !== null && (
         <div className="mb-6">
-          <p className="text-[11px] font-mono font-semibold tracking-[0.1em] uppercase text-muted mb-3">
-            Portal Stats
-          </p>
+          <SectionLabel as="p" className="mb-3">Portal Stats</SectionLabel>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Object.entries(stats)
               .filter(([k, v]) => k !== "_links" && k !== "items" && typeof v !== "object")
               .slice(0, 6)
               .map(([key, value]) => (
-                <StatBox
+                <StatCard
                   key={key}
                   label={key.replace(/([A-Z])/g, " $1").trim()}
                   value={String(value)}

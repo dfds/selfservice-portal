@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   useCapabilities,
   useCapabilityCompliance,
@@ -9,25 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { statusIcon, complianceStatusVariant } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 
 // ── Compliance row ────────────────────────────────────────────────────────────
-
-function statusIcon(status: string) {
-  const s = (status ?? "").toLowerCase();
-  if (s === "compliant" || s === "passed" || s === "ok")
-    return <CheckCircle2 size={13} strokeWidth={1.75} className="text-green-500 flex-shrink-0" />;
-  if (s === "noncompliant" || s === "failed" || s === "error")
-    return <XCircle size={13} strokeWidth={1.75} className="text-destructive flex-shrink-0" />;
-  return <AlertCircle size={13} strokeWidth={1.75} className="text-amber-500 flex-shrink-0" />;
-}
-
-function statusVariant(status: string): "soft-success" | "soft-warning" | "destructive" | "outline" {
-  const s = (status ?? "").toLowerCase();
-  if (s === "compliant" || s === "passed" || s === "ok") return "soft-success";
-  if (s === "noncompliant" || s === "failed" || s === "error") return "destructive";
-  return "soft-warning";
-}
 
 function CapabilityComplianceContent({ capabilityId }: { capabilityId: string }) {
   const { data, isFetched } = useCapabilityCompliance(capabilityId);
@@ -65,7 +51,7 @@ function CapabilityComplianceContent({ capabilityId }: { capabilityId: string })
                 <span className="text-[10px] text-muted font-mono">{cat.score}%</span>
               )}
               <Badge
-                variant={statusVariant(cat.status ?? cat.complianceStatus ?? "")}
+                variant={complianceStatusVariant(cat.status ?? cat.complianceStatus ?? "")}
                 className="text-[10px]"
               >
                 {cat.status ?? cat.complianceStatus ?? "Unknown"}
@@ -146,19 +132,11 @@ export default function AdminCompliancePage() {
   );
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-          Compliance
-        </h1>
-        <p className="text-sm text-muted mt-1">
-          Per-capability compliance breakdown. Expand to drill into categories.
-        </p>
-      </div>
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="Compliance"
+        subtitle="Per-capability compliance breakdown. Expand to drill into categories."
+      />
 
       {/* Search */}
       <div className="mb-4">

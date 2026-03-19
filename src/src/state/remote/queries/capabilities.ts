@@ -291,7 +291,7 @@ export function useCapabilityAwsAccount(capabilityId: string) {
   });
 }
 
-export function useCapabilityAzureResources(capabilityId: string) {
+export function useCapabilityAzureResourcesById(capabilityId: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   return useQuery({
     queryKey: ["capabilities", "azure-resources", capabilityId],
@@ -404,7 +404,7 @@ export function useUserProfilePicture(upn: string) {
   const [profilePicture, setProfilePicture] = useState("");
 
   useEffect(() => {
-    if (!query.data.ok) {
+    if (!query.data?.ok) {
       setProfilePicture("");
     } else {
       query.data.blob().then((data) => {

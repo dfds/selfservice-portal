@@ -307,6 +307,12 @@ html.dark {
   .text-inverse {
     color: var(--color-text-inverse);
   }
+  .text-success {
+    color: var(--color-success);
+  }
+  .text-warning {
+    color: var(--color-warning);
+  }
 
   /* Surface backgrounds */
   .bg-surface {

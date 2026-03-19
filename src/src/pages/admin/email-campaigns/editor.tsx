@@ -329,7 +329,7 @@ export default function EmailCampaignEditor() {
 
   if (isEdit && !isFetched) {
     return (
-      <div className="px-5 md:px-8 py-6 max-w-4xl space-y-4">
+      <div className="px-5 md:px-8 py-6 space-y-4">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-10 w-full" />
         <Skeleton className="h-10 w-full" />
@@ -339,7 +339,7 @@ export default function EmailCampaignEditor() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl">
+    <div className="px-5 md:px-8 py-6">
       <button
         type="button"
         onClick={() => navigate("/admin/email-campaigns")}

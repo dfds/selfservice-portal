@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ExternalLink, CheckCircle2, XCircle, AlertCircle, Plus } from "lucide-react";
+import { ExternalLink, Plus } from "lucide-react";
 import { queryClient } from "@/state/remote/client";
 import {
   useCapability,
   useCapabilityCompliance,
   useCapabilityMembers,
   useCapabilityAwsAccount,
-  useCapabilityAzureResources,
+  useCapabilityAzureResourcesById,
   useCapabilityKafkaAccess,
   useCancelCapabilityDeletion,
   useBypassJoinCapability,
@@ -23,18 +23,11 @@ import {
 } from "@/components/ui/dialog";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 
 type ResourceTab = "aws" | "azure" | "kafka";
 
-function statusIcon(status: string) {
-  const s = (status ?? "").toLowerCase();
-  if (s === "compliant" || s === "passed" || s === "ok")
-    return <CheckCircle2 size={13} strokeWidth={1.75} className="text-green-500 flex-shrink-0" />;
-  if (s === "noncompliant" || s === "failed" || s === "error")
-    return <XCircle size={13} strokeWidth={1.75} className="text-destructive flex-shrink-0" />;
-  return <AlertCircle size={13} strokeWidth={1.75} className="text-amber-500 flex-shrink-0" />;
-}
 
 function capabilityStatusVariant(status: string): "soft-success" | "soft-warning" | "destructive" | "outline" {
   if (status === "Active") return "soft-success";
@@ -208,7 +201,7 @@ function AwsSection({ capabilityId }: { capabilityId: string }) {
 }
 
 function AzureSection({ capabilityId }: { capabilityId: string }) {
-  const { data, isFetched } = useCapabilityAzureResources(capabilityId);
+  const { data, isFetched } = useCapabilityAzureResourcesById(capabilityId);
   const raw: any = data ?? {};
   const resources: any[] = raw.items ?? (Array.isArray(raw) ? raw : []);
 
@@ -300,7 +293,7 @@ export default function CapabilityAdminDetailPage() {
   ];
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
+    <div className="px-5 md:px-8 py-6">
       {/* Breadcrumb */}
       <div className="mb-4 text-xs font-mono text-muted">
         <Link to="/admin/compliance" className="hover:text-action no-underline">
@@ -316,11 +309,11 @@ export default function CapabilityAdminDetailPage() {
         </div>
       ) : (
         <div className="mb-6 animate-fade-up">
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
             // Admin
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
+            <h1 className="text-[1.75rem] font-bold text-primary">
               {cap.name}
             </h1>
             {cap.status && (

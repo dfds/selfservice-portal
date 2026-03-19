@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -140,27 +141,18 @@ export default function DeletionQueuePage() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-            Deletion Queue
-          </h1>
-          {isFetched && pendingDeletion.length > 0 && (
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="Deletion Queue"
+        subtitle="Capabilities pending deletion — 7-day grace period before permanent removal."
+        titleSuffix={
+          isFetched && pendingDeletion.length > 0 && (
             <Badge variant="destructive" className="text-xs">
               {pendingDeletion.length}
             </Badge>
-          )}
-        </div>
-        <p className="text-sm text-muted mt-1">
-          Capabilities pending deletion — 7-day grace period before permanent
-          removal.
-        </p>
-      </div>
+          )
+        }
+      />
 
       {/* List */}
       <div className="space-y-2">

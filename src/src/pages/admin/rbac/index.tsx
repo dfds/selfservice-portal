@@ -31,6 +31,8 @@ import { Input } from "@/components/ui/input";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { useExpandable } from "@/hooks/useExpandable";
 import { cn } from "@/lib/utils";
 
 // API returns direct arrays, not wrapped in { items: [] }
@@ -111,20 +113,14 @@ function RoleRow({
   role: any;
   onDelete: (r: any) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const [triggered, setTriggered] = useState(false);
-
-  function handleClick() {
-    if (!triggered) setTriggered(true);
-    setExpanded((e) => !e);
-  }
+  const { expanded, triggered, toggle } = useExpandable();
 
   return (
     <div className="border border-card rounded-[8px] overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-3">
         <button
           type="button"
-          onClick={handleClick}
+          onClick={toggle}
           className="flex-1 flex items-center gap-3 text-left bg-transparent border-0 cursor-pointer p-0 min-w-0"
         >
           <Lock size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
@@ -724,19 +720,11 @@ export default function RbacViewerPage() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-          RBAC Viewer
-        </h1>
-        <p className="text-sm text-muted mt-1">
-          View and manage roles, permissions, and groups across the platform.
-        </p>
-      </div>
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="RBAC Viewer"
+        subtitle="View and manage roles, permissions, and groups across the platform."
+      />
 
       {/* Tab bar */}
       <div className="flex gap-1 p-1 bg-surface-muted rounded-[8px] mb-6 w-fit">

@@ -93,7 +93,7 @@ export default function EmailCampaignDetail() {
 
   if (!isFetched) {
     return (
-      <div className="px-5 md:px-8 py-6 max-w-4xl">
+      <div className="px-5 md:px-8 py-6">
         <SkeletonCampaignDetail />
       </div>
     );
@@ -101,7 +101,7 @@ export default function EmailCampaignDetail() {
 
   if (!campaign) {
     return (
-      <div className="px-5 md:px-8 py-6 max-w-4xl">
+      <div className="px-5 md:px-8 py-6">
         <EmptyState>Campaign not found.</EmptyState>
       </div>
     );
@@ -129,7 +129,7 @@ export default function EmailCampaignDetail() {
   const recipientTabs: RecipientTab[] = ["all", "Pending", "Sent", "Failed"];
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-4xl">
+    <div className="px-5 md:px-8 py-6">
       <button
         type="button"
         onClick={() => navigate("/admin/email-campaigns")}
@@ -225,7 +225,7 @@ export default function EmailCampaignDetail() {
       {campaign.sentAt && (
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
-            <Clock size={14} className="text-green-500" />
+            <Clock size={14} className="text-success" />
             <span className="text-[13px] text-secondary">
               Sent at{" "}
               <strong>{new Date(campaign.sentAt).toLocaleString()}</strong>
@@ -290,7 +290,7 @@ export default function EmailCampaignDetail() {
               <span className="text-[10px] font-mono uppercase text-muted block mb-1">
                 Pending
               </span>
-              <span className="text-[18px] font-bold text-amber-500">
+              <span className="text-[18px] font-bold text-warning">
                 {recipientStats.pending}
               </span>
             </CardContent>

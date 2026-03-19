@@ -19,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { useExpandable } from "@/hooks/useExpandable";
 import { cn } from "@/lib/utils";
 
 // ── Topic expanded content ────────────────────────────────────────────────────
@@ -61,13 +63,7 @@ function TopicRow({
   topic: any;
   onDelete: (t: any) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const [triggered, setTriggered] = useState(false);
-
-  function handleClick() {
-    if (!triggered) setTriggered(true);
-    setExpanded((e) => !e);
-  }
+  const { expanded, triggered, toggle } = useExpandable();
 
   const isPublic = topic.name?.startsWith("pub.") ?? false;
 
@@ -76,7 +72,7 @@ function TopicRow({
       <div className="flex items-center gap-2 px-4 py-3">
         <button
           type="button"
-          onClick={handleClick}
+          onClick={toggle}
           className="flex-1 flex items-center gap-3 text-left bg-transparent border-0 cursor-pointer p-0 min-w-0"
         >
           <span className="flex-1 text-sm font-medium text-primary font-mono truncate">
@@ -165,26 +161,18 @@ export default function TopicExplorerPage() {
   }
 
   return (
-    <div className="px-5 md:px-8 py-6 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 animate-fade-up">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-          // Admin
-        </div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
-            Topic Explorer
-          </h1>
-          {topicsFetched && (
+    <div className="px-5 md:px-8 py-6">
+      <AdminPageHeader
+        title="Topic Explorer"
+        subtitle="All Kafka topics across all clusters, including private topics."
+        titleSuffix={
+          topicsFetched && (
             <Badge variant="outline" className="text-xs font-mono">
               {filtered.length} / {allTopics.length}
             </Badge>
-          )}
-        </div>
-        <p className="text-sm text-muted mt-1">
-          All Kafka topics across all clusters, including private topics.
-        </p>
-      </div>
+          )
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-4">

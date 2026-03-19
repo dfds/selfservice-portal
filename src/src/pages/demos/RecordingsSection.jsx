@@ -32,10 +32,10 @@ export default function RecordingsSection() {
 
   useEffect(() => {
     if (isFetchedRecordings) {
-      demosData.sort(
+      const sorted = [...demosData].sort(
         (a, b) => new Date(b.recordingDate) - new Date(a.recordingDate),
       );
-      setDemos(demosData);
+      setDemos(sorted);
     }
   }, [isFetchedRecordings, demosData]);
 
@@ -119,7 +119,6 @@ export default function RecordingsSection() {
                     setShowDeleteModal(true);
                   }}
                   onEditClick={() => {
-                    console.log("Edit clicked for demo:", demo);
                     setEditDemo(demo);
                     setShowEditModal(true);
                   }}
