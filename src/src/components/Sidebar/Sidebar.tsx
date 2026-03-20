@@ -461,7 +461,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     [user?.roles],
   );
 
-  // Auto-enable CE mode when user is a cloud engineer (mirrors Header.tsx behavior)
+  // Auto-enable CE mode when user is a cloud engineer
   useEffect(() => {
     if (user?.isAuthenticated && isCloudEngineer) {
       setIsCloudEngineerEnabled(true);

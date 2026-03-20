@@ -77,7 +77,7 @@ class ErrorBoundary extends React.Component {
 
 function NotFoundPage() {
   return (
-    <div className="px-5 md:px-8 py-16 max-w-4xl mx-auto text-center">
+    <div className="px-5 md:px-8 py-16 text-center">
       <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-3">
         // 404
       </div>

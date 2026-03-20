@@ -84,6 +84,7 @@ export default function EmailCampaignEditor() {
   }>({ active: false, query: "", from: 0, to: 0 });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const suggestionRef = useRef<HTMLDivElement>(null);
+  const stateRef = useRef({ suggestion, selectedIndex, filteredVars: [] as any[] });
 
   const handleSuggestionOpen = useCallback((query: string, from: number, to: number) => {
     setSuggestion({ active: true, query, from, to });
@@ -121,10 +122,11 @@ export default function EmailCampaignEditor() {
           "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
       },
       handleKeyDown: (_view, event) => {
-        if (!suggestion.active) return false;
+        const { suggestion: s, filteredVars: fv, selectedIndex: si } = stateRef.current;
+        if (!s.active) return false;
         if (event.key === "ArrowDown") {
           event.preventDefault();
-          setSelectedIndex((i) => Math.min(i + 1, filteredVars.length - 1));
+          setSelectedIndex((i) => Math.min(i + 1, fv.length - 1));
           return true;
         }
         if (event.key === "ArrowUp") {
@@ -133,9 +135,9 @@ export default function EmailCampaignEditor() {
           return true;
         }
         if (event.key === "Enter" || event.key === "Tab") {
-          if (filteredVars.length > 0) {
+          if (fv.length > 0) {
             event.preventDefault();
-            insertSuggestion(filteredVars[selectedIndex]?.name);
+            insertSuggestion(fv[si]?.name);
             return true;
           }
         }
@@ -152,6 +154,10 @@ export default function EmailCampaignEditor() {
   const filteredVars = (variables || []).filter((v: any) =>
     v.name.toLowerCase().includes(suggestion.query.toLowerCase()),
   );
+
+  useEffect(() => {
+    stateRef.current = { suggestion, selectedIndex, filteredVars };
+  });
 
   const insertSuggestion = useCallback(
     (varName: string) => {

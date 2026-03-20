@@ -33,7 +33,7 @@ import {
   RefreshCw,
   Copy,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type RecipientTab = "all" | "Pending" | "Sent" | "Failed";
 
@@ -51,9 +51,13 @@ export default function EmailCampaignDetail() {
   const duplicateCampaign = useDuplicateEmailCampaign(id || "");
   const [cancelOpen, setCancelOpen] = useState(false);
   const [recipientTab, setRecipientTab] = useState<RecipientTab>("all");
-  const [bodyExpanded, setBodyExpanded] = useState(
-    campaign?.status === "Sent" || campaign?.status === "Failed",
-  );
+  const [bodyExpanded, setBodyExpanded] = useState(false);
+
+  useEffect(() => {
+    if (campaign?.status === "Sent" || campaign?.status === "Failed") {
+      setBodyExpanded(true);
+    }
+  }, [campaign?.status]);
 
   const handleCancel = () => {
     cancelCampaign.mutate(undefined, {
