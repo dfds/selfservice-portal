@@ -13,6 +13,7 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
+import { checkIfCloudEngineer } from "@/lib/roleUtils";
 import {
   useRegisterDemo,
   useDeleteDemo,
@@ -250,12 +251,6 @@ function AppProvider({ children }) {
         },
       },
     );
-  }
-
-  function checkIfCloudEngineer(roles) {
-    const regex = /^\s*cloud\.engineer\s*$/i;
-    const match = roles?.some((element) => regex.test(element.toLowerCase()));
-    return match;
   }
 
   function toggleShowOnlyMyCapabilities() {

@@ -11,44 +11,9 @@ import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListPageContent } from "@/components/ui/ListPageContent";
 import { useMutationToast } from "@/hooks/useMutationToast";
+import { formatDate, formatRelative, getDeadlineStatus } from "@/lib/dateUtils";
 
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000;
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function formatRelative(dateStr: string): string {
-  const diffMs = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  return `${days} days ago`;
-}
-
-type GracePeriodStatus = {
-  label: string;
-  variant: "soft-warning" | "destructive";
-};
-
-function getGracePeriod(deletionRequestedAt: string): GracePeriodStatus {
-  const deadline =
-    new Date(deletionRequestedAt).getTime() + GRACE_PERIOD_MS;
-  const msLeft = deadline - Date.now();
-  const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
-
-  if (daysLeft <= 0) {
-    return { label: "Overdue", variant: "destructive" };
-  }
-  if (daysLeft <= 2) {
-    return { label: `${daysLeft}d left`, variant: "destructive" };
-  }
-  return { label: `${daysLeft}d left`, variant: "soft-warning" };
-}
 
 function CapabilityRow({
   capability,
@@ -58,7 +23,7 @@ function CapabilityRow({
   onCancel: (c: any) => void;
 }) {
   const grace = capability.deletionRequestedAt
-    ? getGracePeriod(capability.deletionRequestedAt)
+    ? getDeadlineStatus(capability.deletionRequestedAt, GRACE_PERIOD_MS)
     : null;
 
   return (

@@ -4,11 +4,7 @@ import { ChevronRight, Menu } from "lucide-react";
 import AppContext from "@/AppContext";
 import PreAppContext from "../../preAppContext";
 import { useTopBarActions } from "./TopBarActionsContext";
-
-function checkIfCloudEngineer(roles: string[]): boolean {
-  const regex = /^\s*cloud\.engineer\s*$/i;
-  return roles?.some((r) => regex.test(r.toLowerCase())) ?? false;
-}
+import { checkIfCloudEngineer } from "@/lib/roleUtils";
 
 const pathLabels: Record<string, string> = {
   "/": "Home",

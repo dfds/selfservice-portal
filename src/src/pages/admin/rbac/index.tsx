@@ -31,6 +31,7 @@ import { ExpandableRow } from "@/components/ui/ExpandableRow";
 import { ListPageContent } from "@/components/ui/ListPageContent";
 import { useMutationToast } from "@/hooks/useMutationToast";
 import { cn } from "@/lib/utils";
+import { groupPermsByNamespace } from "@/lib/rbacUtils";
 
 // API returns direct arrays, not wrapped in { items: [] }
 // Permission objects: { name, description, namespace, accessType }
@@ -38,19 +39,6 @@ import { cn } from "@/lib/utils";
 // Role grant objects: { roleId, type, resource, ... }
 
 type Tab = "roles" | "permissions" | "groups";
-
-function groupPermsByNamespace(
-  items: any[],
-  nameField: string,
-): Record<string, string[]> {
-  return items.reduce<Record<string, string[]>>((acc, item) => {
-    const ns = item.namespace ?? "Other";
-    const name = item[nameField] ?? "";
-    if (!acc[ns]) acc[ns] = [];
-    acc[ns].push(name);
-    return acc;
-  }, {});
-}
 
 // ── Role row ─────────────────────────────────────────────────────────────────
 

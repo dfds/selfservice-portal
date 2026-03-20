@@ -48,11 +48,7 @@ import { useTheme, type Theme } from "@/context/ThemeContext";
 import { msalInstance, selfServiceApiScopes } from "@/auth/context";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-
-function checkIfCloudEngineer(roles: string[]): boolean {
-  const regex = /^\s*cloud\.engineer\s*$/i;
-  return roles?.some((r) => regex.test(r.toLowerCase())) ?? false;
-}
+import { checkIfCloudEngineer } from "@/lib/roleUtils";
 
 function DfdsHexMark({ className }: { className?: string }) {
   return (

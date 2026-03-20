@@ -1,61 +1,31 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
-import PreAppContext from "@/preAppContext";
-import { useContext } from "react";
+import {
+  createSsuQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-export function useEcrRepositories() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["ecr", "repositories"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["ecr/repositories"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useEcrRepositories = createSsuQuery({
+  queryKey: ["ecr", "repositories"],
+  urlSegments: ["ecr/repositories"],
+});
 
-  return query;
-}
+export const useCreateEcrRepository = createSsuMutation<{ payload: any }>({
+  method: "POST",
+  urlSegments: () => ["ecr/repositories"],
+  payload: (data) => data.payload,
+});
 
-export function useCreateEcrRepository() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["ecr/repositories"],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useEcrOutOfSyncInfo = createSsuQuery({
+  queryKey: ["ecr", "out-of-sync"],
+  urlSegments: ["metrics/out-of-sync-ecr-repos"],
+  authMode: true,
+  staleTime: 30000,
+});
 
-  return mutation;
-}
-
-export function useEcrOutOfSyncInfo() {
-  return useQuery({
-    queryKey: ["ecr", "out-of-sync"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["metrics/out-of-sync-ecr-repos"],
-        payload: null,
-        isCloudEngineerEnabled: true,
-      }),
-    staleTime: 30000,
-  });
-}
-
-export function useSyncEcr() {
-  return useMutation({
-    mutationFn: async (data: { updateOnMismatch: boolean }) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [`ecr/synchronize?updateOnMismatch=${data.updateOnMismatch}`],
-        payload: null,
-        isCloudEngineerEnabled: true,
-      }),
-  });
-}
+export const useSyncEcr = createSsuMutation<{ updateOnMismatch: boolean }>({
+  method: "POST",
+  urlSegments: (data) => [
+    `ecr/synchronize?updateOnMismatch=${data.updateOnMismatch}`,
+  ],
+  payload: () => null,
+  authMode: true,
+});

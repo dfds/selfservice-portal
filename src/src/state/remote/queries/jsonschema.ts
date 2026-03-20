@@ -1,40 +1,28 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
+import {
+  createSsuParamQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-export function useJsonSchema(schemaId: string) {
-  return useQuery({
-    queryKey: ["json-schema", schemaId],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["json-schema", schemaId],
-        payload: null,
-        isCloudEngineerEnabled: true,
-      }),
-    enabled: !!schemaId,
-  });
-}
+export const useJsonSchema = createSsuParamQuery<string>({
+  queryKey: (schemaId) => ["json-schema", schemaId],
+  urlSegments: (schemaId) => ["json-schema", schemaId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
 
-export function useUpdateJsonSchema() {
-  return useMutation({
-    mutationFn: async (data: { schemaId: string; schema: any }) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["json-schema", data.schemaId],
-        payload: data.schema,
-        isCloudEngineerEnabled: true,
-      }),
-  });
-}
+export const useUpdateJsonSchema = createSsuMutation<{
+  schemaId: string;
+  schema: any;
+}>({
+  method: "POST",
+  urlSegments: (data) => ["json-schema", data.schemaId],
+  payload: (data) => data.schema,
+  authMode: true,
+});
 
-export function useValidateJsonSchema() {
-  return useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["json-schema", "validate"],
-        payload: data,
-        isCloudEngineerEnabled: true,
-      }),
-  });
-}
+export const useValidateJsonSchema = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["json-schema", "validate"],
+  payload: (data) => data,
+  authMode: true,
+});

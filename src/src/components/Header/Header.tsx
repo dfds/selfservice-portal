@@ -30,10 +30,7 @@ const navLinks: NavLink[] = [
   },
 ];
 
-function checkIfCloudEngineer(roles: string[]): boolean {
-  const regex = /^\s*cloud\.engineer\s*$/i;
-  return roles?.some((r) => regex.test(r.toLowerCase())) ?? false;
-}
+import { checkIfCloudEngineer } from "@/lib/roleUtils";
 
 function DfdsLogo({ className }: { className?: string }) {
   return (

@@ -13,32 +13,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListPageContent } from "@/components/ui/ListPageContent";
+import { formatDate, formatRelative, getDeadlineStatus } from "@/lib/dateUtils";
 
 const EXPIRY_MS = 15 * 24 * 60 * 60 * 1000;
-
-function formatRelative(dateStr: string): string {
-  const diffMs = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  return `${days} days ago`;
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function getExpiryStatus(createdAt: string): { label: string; variant: "soft-warning" | "destructive" } {
-  const deadline = new Date(createdAt).getTime() + EXPIRY_MS;
-  const daysLeft = Math.ceil((deadline - Date.now()) / (1000 * 60 * 60 * 24));
-  if (daysLeft <= 0) return { label: "Expired", variant: "destructive" };
-  if (daysLeft <= 3) return { label: `${daysLeft}d left`, variant: "destructive" };
-  return { label: `${daysLeft}d left`, variant: "soft-warning" };
-}
 
 function ApplicationCard({
   app,
@@ -51,7 +28,7 @@ function ApplicationCard({
   onReject: (app: any) => void;
   isPending: boolean;
 }) {
-  const expiry = app.createdAt ? getExpiryStatus(app.createdAt) : null;
+  const expiry = app.createdAt ? getDeadlineStatus(app.createdAt, EXPIRY_MS, 3, "Expired") : null;
 
   return (
     <div className="border border-card rounded-[8px] p-4 flex flex-col sm:flex-row sm:items-center gap-3 animate-card-enter">
