@@ -1,29 +1,22 @@
 import React, { useState } from "react";
 import { RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
-import { queryClient } from "@/state/remote/client";
 import {
   useEcrRepositories,
   useEcrOutOfSyncInfo,
   useSyncEcr,
 } from "@/state/remote/queries/ecr";
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
+import { useMutationToast } from "@/hooks/useMutationToast";
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function EcrSyncDashboardPage() {
-  const toast = useToast();
   const { data: repos, isFetched: reposFetched } = useEcrRepositories();
   const { data: outOfSyncData, isFetched: syncFetched } = useEcrOutOfSyncInfo();
   const syncEcr = useSyncEcr();
@@ -34,7 +27,7 @@ export default function EcrSyncDashboardPage() {
 
   const allRepos: any[] = Array.isArray(repos)
     ? repos
-    : (repos as any)?.items ?? [];
+    : ((repos as any)?.items ?? []);
 
   const outOfSync: any = outOfSyncData ?? {};
   const notInAws: string[] = outOfSync.repositoriesNotInAws ?? [];
@@ -43,26 +36,23 @@ export default function EcrSyncDashboardPage() {
 
   const filteredRepos = allRepos.filter(
     (r: any) =>
-      !search || (r.name ?? r.id ?? "").toLowerCase().includes(search.toLowerCase()),
+      !search ||
+      (r.name ?? r.id ?? "").toLowerCase().includes(search.toLowerCase()),
   );
 
+  const fireSync = useMutationToast(syncEcr, {
+    invalidateKeys: [["ecr"]],
+    successMessage: () =>
+      syncMode === "update"
+        ? "ECR sync complete"
+        : "Dry run complete — no changes made",
+    errorMessage: "ECR sync failed",
+    onSuccess: () => setShowSyncConfirm(false),
+    onError: () => setShowSyncConfirm(false),
+  });
+
   function handleSync() {
-    syncEcr.mutate(
-      { updateOnMismatch: syncMode === "update" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["ecr"] });
-          toast.success(
-            syncMode === "update" ? "ECR sync complete" : "Dry run complete — no changes made",
-          );
-          setShowSyncConfirm(false);
-        },
-        onError: () => {
-          toast.error("ECR sync failed");
-          setShowSyncConfirm(false);
-        },
-      },
-    );
+    fireSync({ updateOnMismatch: syncMode === "update" });
   }
 
   return (
@@ -71,17 +61,16 @@ export default function EcrSyncDashboardPage() {
         title="ECR Sync"
         subtitle="ECR repositories sync status between AWS and the platform database."
         titleSuffix={
-          syncFetched && (
-            totalOutOfSync > 0 ? (
-              <Badge variant="destructive" className="text-xs">
-                {totalOutOfSync} out of sync
-              </Badge>
-            ) : (
-              <Badge variant="soft-success" className="text-xs">
-                All in sync
-              </Badge>
-            )
-          )
+          syncFetched &&
+          (totalOutOfSync > 0 ? (
+            <Badge variant="destructive" className="text-xs">
+              {totalOutOfSync} out of sync
+            </Badge>
+          ) : (
+            <Badge variant="soft-success" className="text-xs">
+              All in sync
+            </Badge>
+          ))
         }
       />
 
@@ -106,7 +95,10 @@ export default function EcrSyncDashboardPage() {
           {notInDb.length > 0 && (
             <div className="mt-2 space-y-0.5 max-h-24 overflow-y-auto">
               {notInDb.map((name, i) => (
-                <p key={i} className="text-[10px] text-muted font-mono truncate">
+                <p
+                  key={i}
+                  className="text-[10px] text-muted font-mono truncate"
+                >
                   {name}
                 </p>
               ))}
@@ -132,7 +124,10 @@ export default function EcrSyncDashboardPage() {
           {notInAws.length > 0 && (
             <div className="mt-2 space-y-0.5 max-h-24 overflow-y-auto">
               {notInAws.map((name, i) => (
-                <p key={i} className="text-[10px] text-muted font-mono truncate">
+                <p
+                  key={i}
+                  className="text-[10px] text-muted font-mono truncate"
+                >
                   {name}
                 </p>
               ))}
@@ -146,7 +141,10 @@ export default function EcrSyncDashboardPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => { setSyncMode("dry-run"); setShowSyncConfirm(true); }}
+          onClick={() => {
+            setSyncMode("dry-run");
+            setShowSyncConfirm(true);
+          }}
         >
           <RefreshCw size={13} strokeWidth={1.75} className="mr-1.5" />
           Dry Run Sync
@@ -154,7 +152,10 @@ export default function EcrSyncDashboardPage() {
         <Button
           variant="default"
           size="sm"
-          onClick={() => { setSyncMode("update"); setShowSyncConfirm(true); }}
+          onClick={() => {
+            setSyncMode("update");
+            setShowSyncConfirm(true);
+          }}
         >
           <RefreshCw size={13} strokeWidth={1.75} className="mr-1.5" />
           Sync & Update
@@ -198,7 +199,10 @@ export default function EcrSyncDashboardPage() {
                   {repoName}
                 </span>
                 {isOutOfSync && (
-                  <Badge variant="soft-warning" className="text-[10px] shrink-0">
+                  <Badge
+                    variant="soft-warning"
+                    className="text-[10px] shrink-0"
+                  >
                     Out of sync
                   </Badge>
                 )}
@@ -209,43 +213,23 @@ export default function EcrSyncDashboardPage() {
       </div>
 
       {/* Sync confirm dialog */}
-      <Dialog
+      <ConfirmDialog
         open={showSyncConfirm}
         onOpenChange={(open) => !open && setShowSyncConfirm(false)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {syncMode === "update" ? "Sync & Update ECR?" : "Dry Run Sync?"}
-            </DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title={syncMode === "update" ? "Sync & Update ECR?" : "Dry Run Sync?"}
+        description={
+          <p>
             {syncMode === "update"
               ? "This will synchronize the platform database with AWS ECR state. Mismatched repositories will be updated."
               : "This will check sync status without making any changes."}
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowSyncConfirm(false)}
-              disabled={syncEcr.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant={syncMode === "update" ? "default" : "outline"}
-              onClick={handleSync}
-              disabled={syncEcr.isPending}
-            >
-              {syncEcr.isPending
-                ? "Running…"
-                : syncMode === "update"
-                  ? "Sync & Update"
-                  : "Run Dry Sync"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel={syncMode === "update" ? "Sync & Update" : "Run Dry Sync"}
+        confirmLoadingLabel="Running…"
+        confirmVariant={syncMode === "update" ? "default" : "outline"}
+        isPending={syncEcr.isPending}
+        onConfirm={handleSync}
+      />
     </div>
   );
 }

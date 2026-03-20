@@ -28,9 +28,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ExpandableRow } from "@/components/ui/ExpandableRow";
+import { IconButton } from "@/components/ui/IconButton";
 import { ListPageContent } from "@/components/ui/ListPageContent";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { useMutationToast } from "@/hooks/useMutationToast";
-import { cn } from "@/lib/utils";
+import { TabGroup } from "@/components/ui/TabGroup";
 import { groupPermsByNamespace } from "@/lib/rbacUtils";
 
 // API returns direct arrays, not wrapped in { items: [] }
@@ -100,24 +102,31 @@ function RoleRow({
     <ExpandableRow
       header={
         <>
-          <Lock size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
+          <Lock
+            size={14}
+            strokeWidth={1.75}
+            className="text-muted flex-shrink-0"
+          />
           <span className="flex-1 text-sm font-medium text-primary">
             {role.name ?? role.id}
           </span>
-          <Badge variant="outline" className="text-[10px] font-mono hidden sm:inline-flex shrink-0">
+          <Badge
+            variant="outline"
+            className="text-[10px] font-mono hidden sm:inline-flex shrink-0"
+          >
             {role.type}
           </Badge>
         </>
       }
       actions={
-        <button
-          type="button"
+        <IconButton
+          size="sm"
+          colorScheme="destructive"
           onClick={() => onDelete(role)}
-          className="flex-shrink-0 p-1.5 rounded-[4px] text-muted hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer border-0 bg-transparent"
           aria-label={`Delete role ${role.name ?? role.id}`}
         >
           <Trash2 size={13} strokeWidth={1.75} />
-        </button>
+        </IconButton>
       }
     >
       <RolePermissions roleId={role.id} />
@@ -211,10 +220,13 @@ function GroupExpandedContent({
 
   const roles: any[] = (rolesData as any[]) ?? [];
   const allRoles: any[] = (allRolesData as any[]) ?? [];
-  const rolesNameMap: Record<string, string> = allRoles.reduce((acc, r: any) => {
-    if (r.id) acc[r.id] = r.name ?? r.id;
-    return acc;
-  }, {});
+  const rolesNameMap: Record<string, string> = allRoles.reduce(
+    (acc, r: any) => {
+      if (r.id) acc[r.id] = r.name ?? r.id;
+      return acc;
+    },
+    {},
+  );
   const perms: any[] = (permsData as any[]) ?? [];
 
   const fireAssignRole = useMutationToast(grantRole, {
@@ -265,7 +277,11 @@ function GroupExpandedContent({
   function handleGrantPerm(e: React.FormEvent) {
     e.preventDefault();
     if (!grantPermName.trim()) return;
-    fireGrantPerm({ permissionName: grantPermName.trim(), namespace: grantPermNamespace.trim(), groupId });
+    fireGrantPerm({
+      permissionName: grantPermName.trim(),
+      namespace: grantPermNamespace.trim(),
+      groupId,
+    });
   }
 
   function handleAddMember(e: React.FormEvent) {
@@ -365,7 +381,9 @@ function GroupExpandedContent({
             >
               <option value="">Select role…</option>
               {allRoles.map((r: any) => (
-                <option key={r.id} value={r.id}>{r.name ?? r.id}</option>
+                <option key={r.id} value={r.id}>
+                  {r.name ?? r.id}
+                </option>
               ))}
             </select>
             <Button
@@ -388,24 +406,33 @@ function GroupExpandedContent({
                 ? `${r.type ? `${r.type}: ` : ""}${r.resource}`
                 : (r.type ?? "Global");
               return (
-                <div key={`${roleId}-${i}`} className="flex items-center gap-1.5">
+                <div
+                  key={`${roleId}-${i}`}
+                  className="flex items-center gap-1.5"
+                >
                   <Badge variant="secondary" className="text-[10px] font-mono">
                     {roleName}
                   </Badge>
-                  <span className="text-[10px] text-muted font-mono">{scope}</span>
+                  <span className="text-[10px] text-muted font-mono">
+                    {scope}
+                  </span>
                 </div>
               );
             })}
           </div>
         ) : (
-          !showAssignRole && <p className="text-xs text-muted font-mono">No roles</p>
+          !showAssignRole && (
+            <p className="text-xs text-muted font-mono">No roles</p>
+          )
         )}
       </div>
 
       {/* Permissions */}
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <SectionLabel className="block">Permissions ({perms.length})</SectionLabel>
+          <SectionLabel className="block">
+            Permissions ({perms.length})
+          </SectionLabel>
           <button
             type="button"
             onClick={() => setShowGrantPerm((v) => !v)}
@@ -416,7 +443,10 @@ function GroupExpandedContent({
           </button>
         </div>
         {showGrantPerm && (
-          <form onSubmit={handleGrantPerm} className="flex flex-col gap-1.5 mb-2">
+          <form
+            onSubmit={handleGrantPerm}
+            className="flex flex-col gap-1.5 mb-2"
+          >
             <div className="flex gap-1.5">
               <Input
                 placeholder="Permission name"
@@ -457,7 +487,9 @@ function GroupExpandedContent({
             ))}
           </div>
         ) : (
-          !showGrantPerm && <p className="text-xs text-muted font-mono">No permissions</p>
+          !showGrantPerm && (
+            <p className="text-xs text-muted font-mono">No permissions</p>
+          )
         )}
       </div>
     </div>
@@ -480,7 +512,11 @@ function GroupRow({
     <ExpandableRow
       header={
         <>
-          <Users size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
+          <Users
+            size={14}
+            strokeWidth={1.75}
+            className="text-muted flex-shrink-0"
+          />
           <span className="flex-1 text-sm font-medium text-primary">
             {group.name ?? group.id}
           </span>
@@ -490,14 +526,14 @@ function GroupRow({
         </>
       }
       actions={
-        <button
-          type="button"
+        <IconButton
+          size="sm"
+          colorScheme="destructive"
           onClick={() => onDelete(group)}
-          className="flex-shrink-0 p-1.5 rounded-[4px] text-muted hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer border-0 bg-transparent"
           aria-label={`Delete group ${group.name ?? group.id}`}
         >
           <Trash2 size={13} strokeWidth={1.75} />
-        </button>
+        </IconButton>
       }
     >
       <GroupExpandedContent
@@ -520,8 +556,6 @@ const TABS: { id: Tab; label: string; Icon: React.ElementType }[] = [
 export default function RbacViewerPage() {
   const toast = useToast();
   const [tab, setTab] = useState<Tab>("roles");
-  const [deleteTarget, setDeleteTarget] = useState<any>(null);
-  const [deleteRoleTarget, setDeleteRoleTarget] = useState<any>(null);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [showCreateRole, setShowCreateRole] = useState(false);
@@ -562,14 +596,20 @@ export default function RbacViewerPage() {
     for (const key of selectedPerms) {
       const [namespace, permission] = key.split("||");
       try {
-        await grantPermToRole.mutateAsync({ roleId: createdRoleId, permission, namespace });
+        await grantPermToRole.mutateAsync({
+          roleId: createdRoleId,
+          permission,
+          namespace,
+        });
       } catch {
         failed++;
       }
     }
     queryClient.invalidateQueries({ queryKey: ["rbac", "role-permissions"] });
     if (failed > 0) {
-      toast.error(`${selectedPerms.size - failed}/${selectedPerms.size} permissions granted`);
+      toast.error(
+        `${selectedPerms.size - failed}/${selectedPerms.size} permissions granted`,
+      );
     } else {
       toast.success(`Role created with ${selectedPerms.size} permissions`);
     }
@@ -590,12 +630,12 @@ export default function RbacViewerPage() {
     },
   });
 
-  const fireDeleteRole = useMutationToast(deleteRole, {
+  const deleteRoleConfirm = useConfirmAction({
+    mutation: deleteRole,
+    buildPayload: (r: any) => ({ roleId: r.id }),
     invalidateKeys: [["rbac", "roles"]],
     successMessage: "Role deleted",
     errorMessage: "Could not delete role",
-    onSuccess: () => setDeleteRoleTarget(null),
-    onError: () => setDeleteRoleTarget(null),
   });
 
   const fireCreateGroup = useMutationToast(createGroup, {
@@ -608,18 +648,22 @@ export default function RbacViewerPage() {
     },
   });
 
-  const fireDeleteGroup = useMutationToast(deleteGroup, {
+  const deleteGroupConfirm = useConfirmAction({
+    mutation: deleteGroup,
+    buildPayload: (g: any) => ({ groupId: g.id }),
     invalidateKeys: [["rbac", "groups"]],
     successMessage: "Group deleted",
     errorMessage: "Could not delete group",
-    onSuccess: () => setDeleteTarget(null),
-    onError: () => setDeleteTarget(null),
   });
 
   function handleCreateRole(e: React.FormEvent) {
     e.preventDefault();
     if (!newRoleName.trim()) return;
-    fireCreateRole({ name: newRoleName.trim(), description: newRoleDescription.trim(), type: "global" });
+    fireCreateRole({
+      name: newRoleName.trim(),
+      description: newRoleDescription.trim(),
+      type: "global",
+    });
   }
 
   function handleCreateGroup(e: React.FormEvent) {
@@ -636,24 +680,16 @@ export default function RbacViewerPage() {
       />
 
       {/* Tab bar */}
-      <div className="flex gap-1 p-1 bg-surface-muted rounded-[8px] mb-6 w-fit">
-        {TABS.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTab(id)}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium transition-colors cursor-pointer border-0",
-              tab === id
-                ? "bg-white dark:bg-slate-700 text-primary shadow-card"
-                : "text-secondary hover:text-primary bg-transparent",
-            )}
-          >
-            <Icon size={14} strokeWidth={1.75} />
-            {label}
-          </button>
-        ))}
-      </div>
+      <TabGroup
+        tabs={TABS.map(({ id, label, Icon }) => ({
+          id,
+          label,
+          icon: <Icon size={14} strokeWidth={1.75} />,
+        }))}
+        value={tab}
+        onChange={setTab}
+        className="mb-6"
+      />
 
       {/* Roles tab */}
       {tab === "roles" && (
@@ -672,7 +708,10 @@ export default function RbacViewerPage() {
           {showCreateRole && (
             <div className="flex flex-col gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40">
               {!createdRoleId && (
-                <form onSubmit={handleCreateRole} className="flex flex-col gap-2">
+                <form
+                  onSubmit={handleCreateRole}
+                  className="flex flex-col gap-2"
+                >
                   <Input
                     placeholder="Role name"
                     value={newRoleName}
@@ -713,13 +752,13 @@ export default function RbacViewerPage() {
                     Assign initial permissions (optional)
                   </SectionLabel>
                   <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
-                    {Object.entries(
-                      groupPermsByNamespace(allPerms, "name"),
-                    )
+                    {Object.entries(groupPermsByNamespace(allPerms, "name"))
                       .sort(([a], [b]) => a.localeCompare(b))
                       .map(([ns, permNames]) => (
                         <div key={ns}>
-                          <SectionLabel className="block mb-1">{ns}</SectionLabel>
+                          <SectionLabel className="block mb-1">
+                            {ns}
+                          </SectionLabel>
                           <div className="flex flex-wrap gap-1.5">
                             {permNames.map((p) => {
                               const key = `${ns}||${p}`;
@@ -779,7 +818,11 @@ export default function RbacViewerPage() {
             isFetched={rolesFetched}
             items={roles}
             renderItem={(role: any) => (
-              <RoleRow key={role.id} role={role} onDelete={setDeleteRoleTarget} />
+              <RoleRow
+                key={role.id}
+                role={role}
+                onDelete={deleteRoleConfirm.setTarget}
+              />
             )}
             skeletonCount={4}
             renderSkeleton={(i) => (
@@ -858,7 +901,7 @@ export default function RbacViewerPage() {
               <GroupRow
                 key={group.id}
                 group={group}
-                onDelete={setDeleteTarget}
+                onDelete={deleteGroupConfirm.setTarget}
               />
             )}
             skeletonCount={3}
@@ -877,42 +920,36 @@ export default function RbacViewerPage() {
 
       {/* Delete role confirmation dialog */}
       <ConfirmDialog
-        open={!!deleteRoleTarget}
-        onOpenChange={(open) => !open && setDeleteRoleTarget(null)}
+        {...deleteRoleConfirm.dialogProps}
         title="Delete role?"
         description={
           <p>
             Permanently delete role{" "}
             <span className="font-medium text-primary">
-              {deleteRoleTarget?.name ?? deleteRoleTarget?.id}
+              {deleteRoleConfirm.target?.name ?? deleteRoleConfirm.target?.id}
             </span>
             ? This cannot be undone.
           </p>
         }
         confirmLabel="Delete Role"
         confirmLoadingLabel="Deleting…"
-        isPending={deleteRole.isPending}
-        onConfirm={() => deleteRoleTarget && fireDeleteRole({ roleId: deleteRoleTarget.id })}
       />
 
       {/* Delete group confirmation dialog */}
       <ConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        {...deleteGroupConfirm.dialogProps}
         title="Delete group?"
         description={
           <p>
             Permanently delete group{" "}
             <span className="font-medium text-primary">
-              {deleteTarget?.name ?? deleteTarget?.id}
+              {deleteGroupConfirm.target?.name ?? deleteGroupConfirm.target?.id}
             </span>
             ? This cannot be undone.
           </p>
         }
         confirmLabel="Delete Group"
         confirmLoadingLabel="Deleting…"
-        isPending={deleteGroup.isPending}
-        onConfirm={() => deleteTarget && fireDeleteGroup({ groupId: deleteTarget.id })}
       />
     </div>
   );

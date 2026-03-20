@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Plus } from "lucide-react";
-import { queryClient } from "@/state/remote/client";
 import {
   useCapability,
   useCapabilityCompliance,
@@ -12,29 +11,16 @@ import {
   useCancelCapabilityDeletion,
   useBypassJoinCapability,
 } from "@/state/remote/queries/capabilities";
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { statusIcon } from "@/lib/statusUtils";
-import { cn } from "@/lib/utils";
+import { statusIcon, capabilityStatusVariant } from "@/lib/statusUtils";
+import { useMutationToast } from "@/hooks/useMutationToast";
+import { TabGroup } from "@/components/ui/TabGroup";
 
 type ResourceTab = "aws" | "azure" | "kafka";
-
-
-function capabilityStatusVariant(status: string): "soft-success" | "soft-warning" | "destructive" | "outline" {
-  if (status === "Active") return "soft-success";
-  if (status === "Pending Deletion") return "soft-warning";
-  if (status === "Deleted") return "destructive";
-  return "outline";
-}
 
 // ── Sections ──────────────────────────────────────────────────────────────────
 
@@ -58,7 +44,11 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
   }
 
   if (categories.length === 0) {
-    return <p className="text-xs text-muted font-mono">No compliance data available.</p>;
+    return (
+      <p className="text-xs text-muted font-mono">
+        No compliance data available.
+      </p>
+    );
   }
 
   return (
@@ -67,16 +57,24 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
         <div key={i} className="flex items-center gap-2">
           {statusIcon(cat.status ?? cat.complianceStatus ?? "")}
           <span className="text-sm text-secondary flex-1">
-            {cat.categoryName ?? cat.displayName ?? cat.name ?? cat.category ?? `Category ${i + 1}`}
+            {cat.categoryName ??
+              cat.displayName ??
+              cat.name ??
+              cat.category ??
+              `Category ${i + 1}`}
           </span>
           {cat.score != null && (
-            <span className="text-[10px] text-muted font-mono">{cat.score}%</span>
+            <span className="text-[10px] text-muted font-mono">
+              {cat.score}%
+            </span>
           )}
           <Badge
             variant={
-              (cat.status ?? "").toLowerCase() === "compliant" ? "soft-success" :
-              (cat.status ?? "").toLowerCase() === "noncompliant" ? "destructive" :
-              "soft-warning"
+              (cat.status ?? "").toLowerCase() === "compliant"
+                ? "soft-success"
+                : (cat.status ?? "").toLowerCase() === "noncompliant"
+                  ? "destructive"
+                  : "soft-warning"
             }
             className="text-[10px]"
           >
@@ -89,28 +87,26 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
 }
 
 function MembersSection({ capabilityId }: { capabilityId: string }) {
-  const toast = useToast();
   const { data, isFetched } = useCapabilityMembers(capabilityId);
   const members: any[] = (data as any[]) ?? [];
   const bypassJoin = useBypassJoinCapability();
   const [showBypass, setShowBypass] = useState(false);
   const [bypassUserId, setBypassUserId] = useState("");
 
+  const fireBypassJoin = useMutationToast(bypassJoin, {
+    invalidateKeys: [["capabilities", "members", capabilityId]],
+    successMessage: "Member added",
+    errorMessage: "Could not add member",
+    onSuccess: () => {
+      setBypassUserId("");
+      setShowBypass(false);
+    },
+  });
+
   function handleBypassJoin(e: React.FormEvent) {
     e.preventDefault();
     if (!bypassUserId.trim()) return;
-    bypassJoin.mutate(
-      { capabilityId, userId: bypassUserId.trim() },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["capabilities", "members", capabilityId] });
-          toast.success("Member added");
-          setBypassUserId("");
-          setShowBypass(false);
-        },
-        onError: () => toast.error("Could not add member"),
-      },
-    );
+    fireBypassJoin({ capabilityId, userId: bypassUserId.trim() });
   }
 
   if (!isFetched) {
@@ -126,7 +122,9 @@ function MembersSection({ capabilityId }: { capabilityId: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted font-mono">{members.length} {members.length === 1 ? "member" : "members"}</span>
+        <span className="text-xs text-muted font-mono">
+          {members.length} {members.length === 1 ? "member" : "members"}
+        </span>
         <button
           type="button"
           onClick={() => setShowBypass((v) => !v)}
@@ -161,7 +159,10 @@ function MembersSection({ capabilityId }: { capabilityId: string }) {
       ) : (
         <div className="flex flex-col gap-0.5">
           {members.map((m: any) => (
-            <span key={m.id ?? m.userId} className="text-sm text-secondary font-mono text-xs">
+            <span
+              key={m.id ?? m.userId}
+              className="text-sm text-secondary font-mono text-xs"
+            >
               {m.email ?? m.userId ?? m.id}
             </span>
           ))}
@@ -177,22 +178,33 @@ function AwsSection({ capabilityId }: { capabilityId: string }) {
 
   if (!isFetched) return <Skeleton className="h-4 w-48" />;
 
-  const accounts: any[] = raw.items ?? (Array.isArray(raw) ? raw : raw.id ? [raw] : []);
+  const accounts: any[] =
+    raw.items ?? (Array.isArray(raw) ? raw : raw.id ? [raw] : []);
 
   if (accounts.length === 0) {
-    return <p className="text-xs text-muted font-mono">No AWS account provisioned.</p>;
+    return (
+      <p className="text-xs text-muted font-mono">
+        No AWS account provisioned.
+      </p>
+    );
   }
 
   return (
     <div className="space-y-1.5">
       {accounts.map((acc: any, i: number) => (
         <div key={i} className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-primary font-mono text-xs">{acc.accountId ?? acc.id}</span>
+          <span className="text-sm text-primary font-mono text-xs">
+            {acc.accountId ?? acc.id}
+          </span>
           {acc.status && (
-            <Badge variant="outline" className="text-[10px]">{acc.status}</Badge>
+            <Badge variant="outline" className="text-[10px]">
+              {acc.status}
+            </Badge>
           )}
           {acc.roleArn && (
-            <span className="text-xs text-muted font-mono truncate max-w-xs">{acc.roleArn}</span>
+            <span className="text-xs text-muted font-mono truncate max-w-xs">
+              {acc.roleArn}
+            </span>
           )}
         </div>
       ))}
@@ -208,7 +220,11 @@ function AzureSection({ capabilityId }: { capabilityId: string }) {
   if (!isFetched) return <Skeleton className="h-4 w-48" />;
 
   if (resources.length === 0) {
-    return <p className="text-xs text-muted font-mono">No Azure resources provisioned.</p>;
+    return (
+      <p className="text-xs text-muted font-mono">
+        No Azure resources provisioned.
+      </p>
+    );
   }
 
   return (
@@ -219,7 +235,9 @@ function AzureSection({ capabilityId }: { capabilityId: string }) {
             {r.name ?? r.id ?? `Resource ${i + 1}`}
           </span>
           {r.environment && (
-            <Badge variant="outline" className="text-[10px]">{r.environment}</Badge>
+            <Badge variant="outline" className="text-[10px]">
+              {r.environment}
+            </Badge>
           )}
         </div>
       ))}
@@ -235,7 +253,11 @@ function KafkaSection({ capabilityId }: { capabilityId: string }) {
   if (!isFetched) return <Skeleton className="h-4 w-48" />;
 
   if (access.length === 0) {
-    return <p className="text-xs text-muted font-mono">No Kafka cluster access provisioned.</p>;
+    return (
+      <p className="text-xs text-muted font-mono">
+        No Kafka cluster access provisioned.
+      </p>
+    );
   }
 
   return (
@@ -246,7 +268,9 @@ function KafkaSection({ capabilityId }: { capabilityId: string }) {
             {a.clusterName ?? a.kafkaClusterId ?? a.id ?? `Cluster ${i + 1}`}
           </span>
           {a.status && (
-            <Badge variant="outline" className="text-[10px]">{a.status}</Badge>
+            <Badge variant="outline" className="text-[10px]">
+              {a.status}
+            </Badge>
           )}
         </div>
       ))}
@@ -258,7 +282,6 @@ function KafkaSection({ capabilityId }: { capabilityId: string }) {
 
 export default function CapabilityAdminDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const toast = useToast();
   const { data: capability, isFetched } = useCapability(id ?? "");
   const cancelDeletion = useCancelCapabilityDeletion();
   const [resourceTab, setResourceTab] = useState<ResourceTab>("aws");
@@ -267,24 +290,15 @@ export default function CapabilityAdminDetailPage() {
   const cap: any = capability ?? {};
   const isPendingDeletion = cap.status === "Pending Deletion";
 
-  function handleCancelDeletion() {
-    cancelDeletion.mutate(
-      { capabilityId: id! },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
-          queryClient.invalidateQueries({
-            queryKey: ["capabilities", "details", id],
-          });
-          toast.success("Deletion cancelled");
-          setShowCancelConfirm(false);
-        },
-        onError: () => {
-          toast.error("Could not cancel deletion");
-        },
-      },
-    );
-  }
+  const fireCancelDeletion = useMutationToast(cancelDeletion, {
+    invalidateKeys: [
+      ["capabilities", "list"],
+      ["capabilities", "details", id],
+    ],
+    successMessage: "Deletion cancelled",
+    errorMessage: "Could not cancel deletion",
+    onSuccess: () => setShowCancelConfirm(false),
+  });
 
   const RESOURCE_TABS: { id: ResourceTab; label: string }[] = [
     { id: "aws", label: "AWS" },
@@ -354,28 +368,20 @@ export default function CapabilityAdminDetailPage() {
         <div className="border border-card rounded-[8px] overflow-hidden">
           <div className="px-4 pt-4 pb-0">
             <SectionLabel className="block mb-3">Cloud Resources</SectionLabel>
-            <div className="flex gap-1 p-1 bg-surface-muted rounded-[6px] w-fit">
-              {RESOURCE_TABS.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setResourceTab(t.id)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-[4px] text-xs font-medium transition-colors cursor-pointer border-0",
-                    resourceTab === t.id
-                      ? "bg-white dark:bg-slate-700 text-primary shadow-card"
-                      : "text-secondary hover:text-primary bg-transparent",
-                  )}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            <TabGroup
+              tabs={RESOURCE_TABS}
+              value={resourceTab}
+              onChange={setResourceTab}
+            />
           </div>
           <div className="p-4">
             {id && resourceTab === "aws" && <AwsSection capabilityId={id} />}
-            {id && resourceTab === "azure" && <AzureSection capabilityId={id} />}
-            {id && resourceTab === "kafka" && <KafkaSection capabilityId={id} />}
+            {id && resourceTab === "azure" && (
+              <AzureSection capabilityId={id} />
+            )}
+            {id && resourceTab === "kafka" && (
+              <KafkaSection capabilityId={id} />
+            )}
           </div>
         </div>
 
@@ -404,37 +410,24 @@ export default function CapabilityAdminDetailPage() {
       </div>
 
       {/* Cancel deletion dialog */}
-      <Dialog
+      <ConfirmDialog
         open={showCancelConfirm}
         onOpenChange={(open) => !open && setShowCancelConfirm(false)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cancel deletion?</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-secondary">
+        title="Cancel deletion?"
+        description={
+          <p>
             Cancel the deletion request for{" "}
             <span className="font-medium text-primary">{cap.name}</span>? This
             will restore the capability to Active status.
           </p>
-          <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowCancelConfirm(false)}
-              disabled={cancelDeletion.isPending}
-            >
-              Keep Pending
-            </Button>
-            <Button
-              variant="default"
-              onClick={handleCancelDeletion}
-              disabled={cancelDeletion.isPending}
-            >
-              {cancelDeletion.isPending ? "Cancelling…" : "Cancel Deletion"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        }
+        confirmLabel="Cancel Deletion"
+        confirmLoadingLabel="Cancelling…"
+        cancelLabel="Keep Pending"
+        confirmVariant="default"
+        isPending={cancelDeletion.isPending}
+        onConfirm={() => fireCancelDeletion({ capabilityId: id! })}
+      />
     </div>
   );
 }

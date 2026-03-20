@@ -14,10 +14,19 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListPageContent } from "@/components/ui/ListPageContent";
 import { SkeletonCampaignRow } from "@/components/ui/skeleton";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { useMutationToast } from "@/hooks/useMutationToast";
+import { TabGroup } from "@/components/ui/TabGroup";
+import { IconButton } from "@/components/ui/IconButton";
 import { Plus, Trash2, Pencil, Send, Eye, Ban, Copy } from "lucide-react";
 
-type StatusTab = "all" | "Draft" | "Scheduled" | "Sent" | "Failed" | "Cancelled";
+type StatusTab =
+  | "all"
+  | "Draft"
+  | "Scheduled"
+  | "Sent"
+  | "Failed"
+  | "Cancelled";
 
 let _savedTab: StatusTab = "all";
 
@@ -27,7 +36,6 @@ export default function EmailCampaignsPage() {
   const { data, isFetched } = useEmailCampaigns(statusFilter);
   const deleteCampaign = useDeleteEmailCampaign();
   const navigate = useNavigate();
-  const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [sendTarget, setSendTarget] = useState<any>(null);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
 
@@ -50,11 +58,12 @@ export default function EmailCampaignsPage() {
     setActiveTab(tab);
   };
 
-  const fireDelete = useMutationToast(deleteCampaign, {
+  const deleteConfirm = useConfirmAction({
+    mutation: deleteCampaign,
+    buildPayload: (b: any) => ({ id: b.id }),
     invalidateKeys: [["emailCampaigns"]],
     successMessage: "Campaign deleted",
     errorMessage: "Could not delete campaign",
-    onSuccess: () => setDeleteTarget(null),
   });
 
   return (
@@ -78,22 +87,13 @@ export default function EmailCampaignsPage() {
         </Button>
       </div>
 
-      <div className="flex gap-1 mb-4 border-b border-card">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => handleTabChange(tab)}
-            className={`px-3 py-2 text-[12px] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors ${
-              activeTab === tab
-                ? "border-action text-action"
-                : "border-transparent text-muted hover:text-secondary"
-            }`}
-          >
-            {tab === "all" ? "All" : tab}
-          </button>
-        ))}
-      </div>
+      <TabGroup
+        variant="underline"
+        tabs={tabs.map((t) => ({ id: t, label: t === "all" ? "All" : t }))}
+        value={activeTab}
+        onChange={handleTabChange}
+        className="mb-4"
+      />
 
       <ListPageContent
         isFetched={isFetched}
@@ -104,7 +104,7 @@ export default function EmailCampaignsPage() {
             campaign={b}
             index={i}
             onEdit={() => navigate(`/admin/email-campaigns/edit/${b.id}`)}
-            onDelete={() => setDeleteTarget(b)}
+            onDelete={() => deleteConfirm.setTarget(b)}
             onSend={() => setSendTarget(b)}
             onCancel={() => setCancelTarget(b)}
             onView={() => navigate(`/admin/email-campaigns/${b.id}`)}
@@ -116,17 +116,16 @@ export default function EmailCampaignsPage() {
       />
 
       <ConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={() => setDeleteTarget(null)}
+        {...deleteConfirm.dialogProps}
         title="Delete campaign?"
         description={
           <p>
             Are you sure you want to delete{" "}
-            <strong>{deleteTarget?.name}</strong>? This cannot be undone.
+            <strong>{deleteConfirm.target?.name}</strong>? This cannot be
+            undone.
           </p>
         }
         confirmLabel="Delete"
-        onConfirm={() => deleteTarget && fireDelete({ id: deleteTarget.id })}
       />
 
       {sendTarget && (
@@ -214,89 +213,89 @@ function CampaignRow({
       <div className="flex gap-1">
         {campaign.status === "Draft" && (
           <>
-            <button
-              type="button"
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={onEdit}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Edit"
             >
               <Pencil size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={onSend}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Send Now"
             >
               <Send size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={() => fireDuplicate(undefined)}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
               disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="destructive"
               onClick={onDelete}
-              className="p-1.5 text-muted hover:text-red-500 cursor-pointer bg-transparent border-0 transition-colors"
               title="Delete"
             >
               <Trash2 size={14} />
-            </button>
+            </IconButton>
           </>
         )}
         {campaign.status === "Scheduled" && (
           <>
-            <button
-              type="button"
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={onView}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="View Details"
             >
               <Eye size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={() => fireDuplicate(undefined)}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate"
               disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="destructive"
               onClick={onCancel}
-              className="p-1.5 text-muted hover:text-red-500 cursor-pointer bg-transparent border-0 transition-colors"
               title="Cancel"
             >
               <Ban size={14} />
-            </button>
+            </IconButton>
           </>
         )}
         {(campaign.status === "Sent" || campaign.status === "Failed") && (
           <>
-            <button
-              type="button"
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={onView}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="View Details"
             >
               <Eye size={14} />
-            </button>
-            <button
-              type="button"
+            </IconButton>
+            <IconButton
+              size="sm"
+              colorScheme="action"
               onClick={() => fireDuplicate(undefined)}
-              className="p-1.5 text-muted hover:text-action cursor-pointer bg-transparent border-0 transition-colors"
               title="Duplicate as new draft"
               disabled={duplicateCampaign.isPending}
             >
               <Copy size={14} />
-            </button>
+            </IconButton>
           </>
         )}
       </div>

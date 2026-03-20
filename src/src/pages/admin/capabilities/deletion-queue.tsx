@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListPageContent } from "@/components/ui/ListPageContent";
-import { useMutationToast } from "@/hooks/useMutationToast";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { formatDate, formatRelative, getDeadlineStatus } from "@/lib/dateUtils";
 
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000;
@@ -66,7 +66,6 @@ function CapabilityRow({
 export default function DeletionQueuePage() {
   const { data: capabilities, isFetched } = useCapabilities();
   const cancelDeletion = useCancelCapabilityDeletion();
-  const [confirmTarget, setConfirmTarget] = useState<any>(null);
 
   const pendingDeletion = ((capabilities as any[]) ?? [])
     .filter((c: any) => c.status === "Pending Deletion")
@@ -79,11 +78,12 @@ export default function DeletionQueuePage() {
       );
     });
 
-  const fireCancelDeletion = useMutationToast(cancelDeletion, {
+  const cancelConfirm = useConfirmAction({
+    mutation: cancelDeletion,
+    buildPayload: (c: any) => ({ capabilityId: c.id }),
     invalidateKeys: [["capabilities", "list"]],
     successMessage: "Deletion cancelled",
     errorMessage: "Could not cancel deletion",
-    onSuccess: () => setConfirmTarget(null),
   });
 
   return (
@@ -92,7 +92,8 @@ export default function DeletionQueuePage() {
         title="Deletion Queue"
         subtitle="Capabilities pending deletion — 7-day grace period before permanent removal."
         titleSuffix={
-          isFetched && pendingDeletion.length > 0 && (
+          isFetched &&
+          pendingDeletion.length > 0 && (
             <Badge variant="destructive" className="text-xs">
               {pendingDeletion.length}
             </Badge>
@@ -108,7 +109,7 @@ export default function DeletionQueuePage() {
           <CapabilityRow
             key={c.id}
             capability={c}
-            onCancel={setConfirmTarget}
+            onCancel={cancelConfirm.setTarget}
           />
         )}
         skeletonCount={3}
@@ -125,24 +126,19 @@ export default function DeletionQueuePage() {
         )}
         emptyMessage="No capabilities are pending deletion."
         emptyIcon={
-          <CheckCircle2
-            size={32}
-            strokeWidth={1.5}
-            className="text-muted"
-          />
+          <CheckCircle2 size={32} strokeWidth={1.5} className="text-muted" />
         }
       />
 
       {/* Confirmation dialog */}
       <ConfirmDialog
-        open={!!confirmTarget}
-        onOpenChange={(open) => !open && setConfirmTarget(null)}
+        {...cancelConfirm.dialogProps}
         title="Cancel deletion?"
         description={
           <p>
             Cancel the deletion request for{" "}
             <span className="font-medium text-primary">
-              {confirmTarget?.name}
+              {cancelConfirm.target?.name}
             </span>
             ? This will restore the capability to Active status.
           </p>
@@ -151,8 +147,6 @@ export default function DeletionQueuePage() {
         confirmLoadingLabel="Cancelling…"
         cancelLabel="Keep Pending"
         confirmVariant="default"
-        isPending={cancelDeletion.isPending}
-        onConfirm={() => confirmTarget && fireCancelDeletion({ capabilityId: confirmTarget.id })}
       />
     </div>
   );

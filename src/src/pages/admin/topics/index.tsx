@@ -12,9 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ExpandableRow } from "@/components/ui/ExpandableRow";
+import { IconButton } from "@/components/ui/IconButton";
 import { ListPageContent } from "@/components/ui/ListPageContent";
-import { useMutationToast } from "@/hooks/useMutationToast";
-import { cn } from "@/lib/utils";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
+import { TabGroup } from "@/components/ui/TabGroup";
 
 // ── Topic expanded content ────────────────────────────────────────────────────
 
@@ -26,13 +27,22 @@ function TopicDetails({ topic }: { topic: any }) {
     <div className="pt-2 space-y-2 text-xs text-secondary font-mono">
       <div className="flex flex-wrap gap-x-6 gap-y-1">
         {topic.partitions != null && (
-          <span>Partitions: <span className="text-primary">{topic.partitions}</span></span>
+          <span>
+            Partitions: <span className="text-primary">{topic.partitions}</span>
+          </span>
         )}
         {topic.retention != null && (
-          <span>Retention: <span className="text-primary">{topic.retention}</span></span>
+          <span>
+            Retention: <span className="text-primary">{topic.retention}</span>
+          </span>
         )}
         {topic.retentionInMs != null && (
-          <span>Retention: <span className="text-primary">{Math.round(topic.retentionInMs / (1000 * 60 * 60 * 24))}d</span></span>
+          <span>
+            Retention:{" "}
+            <span className="text-primary">
+              {Math.round(topic.retentionInMs / (1000 * 60 * 60 * 24))}d
+            </span>
+          </span>
         )}
       </div>
       {!isFetched ? (
@@ -67,7 +77,10 @@ function TopicRow({
           </span>
           <div className="flex items-center gap-1.5 shrink-0">
             {topic.kafkaClusterName && (
-              <Badge variant="secondary" className="text-[10px] font-mono hidden sm:inline-flex">
+              <Badge
+                variant="secondary"
+                className="text-[10px] font-mono hidden sm:inline-flex"
+              >
                 {topic.kafkaClusterName}
               </Badge>
             )}
@@ -81,14 +94,14 @@ function TopicRow({
         </>
       }
       actions={
-        <button
-          type="button"
+        <IconButton
+          size="sm"
+          colorScheme="destructive"
           onClick={() => onDelete(topic)}
-          className="flex-shrink-0 p-1.5 rounded-[4px] text-muted hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer border-0 bg-transparent"
           aria-label={`Delete topic ${topic.name}`}
         >
           <Trash2 size={14} strokeWidth={1.75} />
-        </button>
+        </IconButton>
       }
     >
       <TopicDetails topic={topic} />
@@ -105,26 +118,29 @@ export default function TopicExplorerPage() {
 
   const [search, setSearch] = useState("");
   const [clusterFilter, setClusterFilter] = useState("all");
-  const [visibilityFilter, setVisibilityFilter] = useState<"all" | "public" | "private">("all");
-  const [deleteTarget, setDeleteTarget] = useState<any>(null);
-
+  const [visibilityFilter, setVisibilityFilter] = useState<
+    "all" | "public" | "private"
+  >("all");
   const allTopics: any[] = (topics as any[]) ?? [];
   const allClusters: any[] = (clusters as any[]) ?? [];
 
   const filtered = allTopics.filter((t: any) => {
-    if (search && !t.name?.toLowerCase().includes(search.toLowerCase())) return false;
-    if (clusterFilter !== "all" && t.kafkaClusterId !== clusterFilter) return false;
+    if (search && !t.name?.toLowerCase().includes(search.toLowerCase()))
+      return false;
+    if (clusterFilter !== "all" && t.kafkaClusterId !== clusterFilter)
+      return false;
     const isPublic = t.name?.startsWith("pub.") ?? false;
     if (visibilityFilter === "public" && !isPublic) return false;
     if (visibilityFilter === "private" && isPublic) return false;
     return true;
   });
 
-  const fireDelete = useMutationToast(deleteTopic, {
+  const deleteConfirm = useConfirmAction({
+    mutation: deleteTopic,
+    buildPayload: (t: any) => ({ topicDefinition: t }),
     invalidateKeys: [["kafka", "all-topics"]],
     successMessage: "Topic deleted",
     errorMessage: "Could not delete topic",
-    onSuccess: () => setDeleteTarget(null),
   });
 
   return (
@@ -163,23 +179,15 @@ export default function TopicExplorerPage() {
             ))}
           </select>
         )}
-        <div className="flex gap-1 p-1 bg-surface-muted rounded-[6px]">
-          {(["all", "public", "private"] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => setVisibilityFilter(v)}
-              className={cn(
-                "px-3 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer border-0",
-                visibilityFilter === v
-                  ? "bg-white dark:bg-slate-700 text-primary shadow-card"
-                  : "text-secondary hover:text-primary bg-transparent",
-              )}
-            >
-              {v.charAt(0).toUpperCase() + v.slice(1)}
-            </button>
-          ))}
-        </div>
+        <TabGroup
+          tabs={[
+            { id: "all" as const, label: "All" },
+            { id: "public" as const, label: "Public" },
+            { id: "private" as const, label: "Private" },
+          ]}
+          value={visibilityFilter}
+          onChange={setVisibilityFilter}
+        />
       </div>
 
       {/* List */}
@@ -190,7 +198,7 @@ export default function TopicExplorerPage() {
           <TopicRow
             key={topic.id}
             topic={topic}
-            onDelete={setDeleteTarget}
+            onDelete={deleteConfirm.setTarget}
           />
         )}
         skeletonCount={5}
@@ -213,22 +221,19 @@ export default function TopicExplorerPage() {
 
       {/* Delete confirmation dialog */}
       <ConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        {...deleteConfirm.dialogProps}
         title="Delete topic?"
         description={
           <p>
             Permanently delete{" "}
             <span className="font-medium text-primary font-mono text-xs">
-              {deleteTarget?.name}
+              {deleteConfirm.target?.name}
             </span>
             ? This cannot be undone.
           </p>
         }
         confirmLabel="Delete Topic"
         confirmLoadingLabel="Deleting…"
-        isPending={deleteTopic.isPending}
-        onConfirm={() => deleteTarget && fireDelete({ topicDefinition: deleteTarget })}
       />
     </div>
   );

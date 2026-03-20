@@ -7,6 +7,7 @@ import {
 } from "@/state/remote/queries/membershipApplications";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,7 +29,9 @@ function ApplicationCard({
   onReject: (app: any) => void;
   isPending: boolean;
 }) {
-  const expiry = app.createdAt ? getDeadlineStatus(app.createdAt, EXPIRY_MS, 3, "Expired") : null;
+  const expiry = app.createdAt
+    ? getDeadlineStatus(app.createdAt, EXPIRY_MS, 3, "Expired")
+    : null;
 
   return (
     <div className="border border-card rounded-[8px] p-4 flex flex-col sm:flex-row sm:items-center gap-3 animate-card-enter">
@@ -82,7 +85,6 @@ export default function MembershipApplicationsAdminPage() {
   const rejectMutation = useDeleteMembershipApplicationApproval();
   const { data: applications, isFetched } = useMembershipApplications();
 
-  const [rejectTarget, setRejectTarget] = useState<any>(null);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
 
   const apps: any[] = ((applications as any[]) ?? [])
@@ -125,28 +127,13 @@ export default function MembershipApplicationsAdminPage() {
     );
   }
 
-  function handleConfirmReject() {
-    if (!rejectTarget) return;
-    markProcessing(rejectTarget.id);
-    rejectMutation.mutate(
-      { membershipApplicationDefinition: rejectTarget },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["membershipapplications/eligible-for-approval"],
-          });
-          toast.success("Application rejected");
-          unmarkProcessing(rejectTarget.id);
-          setRejectTarget(null);
-        },
-        onError: () => {
-          toast.error("Could not reject application");
-          unmarkProcessing(rejectTarget.id);
-          setRejectTarget(null);
-        },
-      },
-    );
-  }
+  const rejectConfirm = useConfirmAction({
+    mutation: rejectMutation,
+    buildPayload: (app: any) => ({ membershipApplicationDefinition: app }),
+    invalidateKeys: [["membershipapplications/eligible-for-approval"]],
+    successMessage: "Application rejected",
+    errorMessage: "Could not reject application",
+  });
 
   return (
     <div className="px-5 md:px-8 py-6">
@@ -154,7 +141,8 @@ export default function MembershipApplicationsAdminPage() {
         title="Membership Queue"
         subtitle="Pending membership applications across all capabilities."
         titleSuffix={
-          isFetched && apps.length > 0 && (
+          isFetched &&
+          apps.length > 0 && (
             <Badge variant="destructive" className="text-xs">
               {apps.length}
             </Badge>
@@ -171,7 +159,7 @@ export default function MembershipApplicationsAdminPage() {
             key={app.id}
             app={app}
             onApprove={handleApprove}
-            onReject={setRejectTarget}
+            onReject={rejectConfirm.setTarget}
             isPending={processingIds.has(app.id)}
           />
         )}
@@ -198,18 +186,17 @@ export default function MembershipApplicationsAdminPage() {
 
       {/* Reject confirmation dialog */}
       <ConfirmDialog
-        open={!!rejectTarget}
-        onOpenChange={(open) => !open && setRejectTarget(null)}
+        {...rejectConfirm.dialogProps}
         title="Reject application?"
         description={
           <p>
             Reject the membership application from{" "}
             <span className="font-medium text-primary">
-              {rejectTarget?.applicant}
+              {rejectConfirm.target?.applicant}
             </span>{" "}
             for capability{" "}
             <span className="font-medium text-primary font-mono text-xs">
-              {rejectTarget?.capabilityId}
+              {rejectConfirm.target?.capabilityId}
             </span>
             ?
           </p>
@@ -217,8 +204,6 @@ export default function MembershipApplicationsAdminPage() {
         confirmLabel="Reject"
         confirmLoadingLabel="Rejecting…"
         cancelLabel="Keep Pending"
-        isPending={rejectMutation.isPending}
-        onConfirm={handleConfirmReject}
       />
     </div>
   );
