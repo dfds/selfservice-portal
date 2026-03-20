@@ -260,9 +260,9 @@ export function SkeletonCampaignRow() {
       <div className="flex-1 min-w-0 flex flex-col gap-1.5">
         <Skeleton className="h-3.5 w-[200px]" />
         <Skeleton className="h-2.5 w-[140px]" />
+        <Skeleton className="h-2 w-[180px]" />
       </div>
       <Skeleton className="h-5 w-[60px] rounded-full flex-shrink-0" />
-      <Skeleton className="h-3 w-[80px] flex-shrink-0" />
       <div className="flex gap-1">
         <Skeleton className="h-7 w-7 rounded flex-shrink-0" />
         <Skeleton className="h-7 w-7 rounded flex-shrink-0" />

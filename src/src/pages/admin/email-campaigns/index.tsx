@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
@@ -18,7 +18,20 @@ import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { useMutationToast } from "@/hooks/useMutationToast";
 import { TabGroup } from "@/components/ui/TabGroup";
 import { IconButton } from "@/components/ui/IconButton";
-import { Plus, Trash2, Pencil, Send, Eye, Ban, Copy } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PaginationControls } from "@/components/ui/PaginationControls";
+import {
+  Plus,
+  Trash2,
+  Pencil,
+  Send,
+  Eye,
+  Ban,
+  Copy,
+  Search,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 type StatusTab =
   | "all"
@@ -28,10 +41,17 @@ type StatusTab =
   | "Failed"
   | "Cancelled";
 
+type SortField = "name" | "createdBy" | "createdAt" | "modifiedAt";
+
 let _savedTab: StatusTab = "all";
+const PAGE_SIZE = 15;
 
 export default function EmailCampaignsPage() {
   const [activeTab, setActiveTab] = useState<StatusTab>(_savedTab);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortField>("modifiedAt");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [currentPage, setCurrentPage] = useState(1);
   const statusFilter = activeTab === "all" ? undefined : activeTab;
   const { data, isFetched } = useEmailCampaigns(statusFilter);
   const deleteCampaign = useDeleteEmailCampaign();
@@ -43,6 +63,49 @@ export default function EmailCampaignsPage() {
   const campaigns = statusFilter
     ? allCampaigns.filter((b: any) => b.status === statusFilter)
     : allCampaigns;
+
+  const searchedCampaigns = useMemo(() => {
+    if (!searchQuery.trim()) return campaigns;
+    const q = searchQuery.toLowerCase().trim();
+    return campaigns.filter((c: any) => {
+      if (c.name?.toLowerCase().includes(q)) return true;
+      if (c.subject?.toLowerCase().includes(q)) return true;
+      const bodyText =
+        c.contentHtml?.replace(/<[^>]*>/g, "")?.toLowerCase() ?? "";
+      if (bodyText.includes(q)) return true;
+      if (c.createdBy?.toLowerCase().includes(q)) return true;
+      return false;
+    });
+  }, [campaigns, searchQuery]);
+
+  const sortedCampaigns = useMemo(() => {
+    const arr = [...searchedCampaigns];
+    const dir = sortDir === "asc" ? 1 : -1;
+    if (sortBy === "name") {
+      arr.sort((a, b) => dir * (a.name ?? "").localeCompare(b.name ?? ""));
+    } else if (sortBy === "createdBy") {
+      arr.sort(
+        (a, b) => dir * (a.createdBy ?? "").localeCompare(b.createdBy ?? ""),
+      );
+    } else if (sortBy === "createdAt") {
+      arr.sort(
+        (a, b) =>
+          dir *
+          (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+      );
+    } else if (sortBy === "modifiedAt") {
+      arr.sort(
+        (a, b) =>
+          dir *
+          (new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime()),
+      );
+    }
+    return arr;
+  }, [searchedCampaigns, sortBy, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedCampaigns.length / PAGE_SIZE));
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = sortedCampaigns.slice(pageStart, pageStart + PAGE_SIZE);
 
   const tabs: StatusTab[] = [
     "all",
@@ -56,6 +119,22 @@ export default function EmailCampaignsPage() {
   const handleTabChange = (tab: StatusTab) => {
     _savedTab = tab;
     setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value: SortField) => {
+    setSortBy(value);
+    setCurrentPage(1);
+  };
+
+  const handleSortDirToggle = () => {
+    setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    setCurrentPage(1);
   };
 
   const deleteConfirm = useConfirmAction({
@@ -95,9 +174,55 @@ export default function EmailCampaignsPage() {
         className="mb-4"
       />
 
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+          />
+          <Input
+            placeholder="Search campaigns..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-8 text-sm"
+          />
+        </div>
+        <div className="flex gap-2 items-center">
+          <select
+            value={sortBy}
+            onChange={(e) => handleSortChange(e.target.value as SortField)}
+            className="px-2 py-2 text-sm border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="modifiedAt">Last Modified</option>
+            <option value="createdAt">Created</option>
+            <option value="name">Title</option>
+            <option value="createdBy">Created By</option>
+          </select>
+          <button
+            onClick={handleSortDirToggle}
+            className="shrink-0 flex items-center justify-center px-3 py-2 border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+            aria-label={
+              sortDir === "asc" ? "Sort descending" : "Sort ascending"
+            }
+          >
+            {sortDir === "asc" ? (
+              <ArrowUp size={14} />
+            ) : (
+              <ArrowDown size={14} />
+            )}
+          </button>
+          {isFetched && (
+            <span className="text-[11px] text-muted font-mono whitespace-nowrap ml-1">
+              {sortedCampaigns.length} campaign
+              {sortedCampaigns.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+      </div>
+
       <ListPageContent
         isFetched={isFetched}
-        items={campaigns}
+        items={pageItems}
         renderItem={(b: any, i: number) => (
           <CampaignRow
             key={b.id}
@@ -112,8 +237,24 @@ export default function EmailCampaignsPage() {
         )}
         skeletonCount={4}
         renderSkeleton={(i) => <SkeletonCampaignRow key={i} />}
-        emptyMessage="No campaigns found. Create your first campaign to get started."
+        emptyMessage={
+          searchQuery.trim()
+            ? "No campaigns match your search."
+            : "No campaigns found. Create your first campaign to get started."
+        }
       />
+
+      {isFetched && sortedCampaigns.length > PAGE_SIZE && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageStart={pageStart}
+          pageSize={PAGE_SIZE}
+          total={sortedCampaigns.length}
+          onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+        />
+      )}
 
       <ConfirmDialog
         {...deleteConfirm.dialogProps}
@@ -182,8 +323,8 @@ function CampaignRow({
     campaign.scheduleType === "Scheduled" && campaign.scheduledAt
       ? `Scheduled: ${new Date(campaign.scheduledAt).toLocaleString()}`
       : campaign.scheduleType === "Recurring" && campaign.cronExpression
-        ? `Cron: ${campaign.cronExpression}`
-        : null;
+      ? `Cron: ${campaign.cronExpression}`
+      : null;
 
   return (
     <div
@@ -205,11 +346,25 @@ function CampaignRow({
             {scheduleInfo}
           </span>
         )}
+        <span className="text-[10px] text-muted block mt-0.5">
+          {campaign.createdBy && (
+            <>
+              <span className="font-mono">
+                {campaign.createdBy.split("@")[0]}
+              </span>
+              {" \u00B7 "}
+            </>
+          )}
+          Created {new Date(campaign.createdAt).toLocaleDateString()}
+          {campaign.modifiedAt !== campaign.createdAt && (
+            <>
+              {" \u00B7 "}
+              Modified {new Date(campaign.modifiedAt).toLocaleDateString()}
+            </>
+          )}
+        </span>
       </div>
       <CampaignStatusBadge status={campaign.status} />
-      <span className="text-[11px] text-muted whitespace-nowrap">
-        {new Date(campaign.modifiedAt).toLocaleDateString()}
-      </span>
       <div className="flex gap-1">
         {campaign.status === "Draft" && (
           <>
