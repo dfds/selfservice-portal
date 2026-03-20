@@ -206,35 +206,53 @@ export default function EmailCampaignEditor() {
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
 
-  const handleSave = () => {
-    if (!editor) return;
-    if (!name.trim() || !subject.trim()) {
-      toast.error("Name and subject are required");
-      return;
-    }
+  const doSave = (): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      if (!editor) return reject(new Error("Editor not ready"));
+      if (!name.trim() || !subject.trim()) {
+        toast.error("Name and subject are required");
+        return reject(new Error("Validation failed"));
+      }
 
-    const payload = {
-      name: name.trim(),
-      subject: subject.trim(),
-      contentJson: JSON.stringify(editor.getJSON()),
-      contentHtml: editor.getHTML(),
-      audienceJson: JSON.stringify(audience),
-      recipientFilter: recipientFilter || null,
-    };
+      const payload = {
+        name: name.trim(),
+        subject: subject.trim(),
+        contentJson: JSON.stringify(editor.getJSON()),
+        contentHtml: editor.getHTML(),
+        audienceJson: JSON.stringify(audience),
+        recipientFilter: recipientFilter || null,
+        scheduleType,
+        scheduledAt:
+          scheduleType === "Scheduled" && scheduledAt
+            ? new Date(scheduledAt).toISOString()
+            : null,
+        cronExpression:
+          scheduleType === "Recurring" ? cronExpression.trim() || null : null,
+      };
 
-    const mutation = isEdit ? updateCampaign : createCampaign;
+      const mutation = isEdit ? updateCampaign : createCampaign;
 
-    mutation.mutate(
-      { payload },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-          toast.success(isEdit ? "Campaign updated" : "Campaign created");
-          navigate("/admin/email-campaigns");
+      mutation.mutate(
+        { payload },
+        {
+          onSuccess: (data: any) => {
+            queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+            resolve(data);
+          },
+          onError: (err: any) => {
+            toast.error("Could not save campaign");
+            reject(err);
+          },
         },
-        onError: () => toast.error("Could not save campaign"),
-      },
-    );
+      );
+    });
+  };
+
+  const handleSave = () => {
+    doSave().then(() => {
+      toast.success(isEdit ? "Campaign updated" : "Campaign created");
+      navigate("/admin/email-campaigns");
+    });
   };
 
   const handlePreview = () => {
@@ -293,42 +311,50 @@ export default function EmailCampaignEditor() {
       return;
     }
 
-    const payload: any = { scheduleType };
-    if (scheduleType === "Scheduled") {
-      payload.scheduledAt = new Date(scheduledAt).toISOString();
-    }
-    if (scheduleType === "Recurring") {
-      payload.cronExpression = cronExpression.trim();
-    }
+    doSave().then(() => {
+      const payload: any = { scheduleType };
+      if (scheduleType === "Scheduled") {
+        payload.scheduledAt = new Date(scheduledAt).toISOString();
+      }
+      if (scheduleType === "Recurring") {
+        payload.cronExpression = cronExpression.trim();
+      }
 
-    scheduleCampaign.mutate(
-      { payload },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-          toast.success("Campaign scheduled");
-          navigate("/admin/email-campaigns");
+      scheduleCampaign.mutate(
+        { payload },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+            toast.success("Campaign scheduled");
+            navigate("/admin/email-campaigns");
+          },
+          onError: () => toast.error("Could not schedule campaign"),
         },
-        onError: () => toast.error("Could not schedule campaign"),
-      },
-    );
+      );
+    });
   };
 
   const handleSend = () => {
-    sendCampaign.mutate(undefined, {
-      onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
-        toast.success(
-          `Campaign sent to ${data?.totalRecipients || 0} recipients`,
-        );
+    doSave()
+      .then(() => {
+        sendCampaign.mutate(undefined, {
+          onSuccess: (data: any) => {
+            queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+            toast.success(
+              `Campaign sent to ${data?.totalRecipients || 0} recipients`,
+            );
+            setSendConfirmOpen(false);
+            navigate("/admin/email-campaigns");
+          },
+          onError: () => {
+            toast.error("Could not send campaign");
+            setSendConfirmOpen(false);
+          },
+        });
+      })
+      .catch(() => {
         setSendConfirmOpen(false);
-        navigate("/admin/email-campaigns");
-      },
-      onError: () => {
-        toast.error("Could not send campaign");
-        setSendConfirmOpen(false);
-      },
-    });
+      });
   };
 
   const isDraft = !isEdit || existingCampaign?.status === "Draft";
@@ -490,17 +516,18 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSchedule}
-              disabled={scheduleCampaign.isPending}
+              disabled={scheduleCampaign.isPending || updateCampaign.isPending}
               className="gap-1.5"
             >
               <CalendarClock size={14} />
-              {scheduleCampaign.isPending ? "Scheduling..." : "Schedule"}
+              {updateCampaign.isPending ? "Saving..." : scheduleCampaign.isPending ? "Scheduling..." : "Schedule"}
             </Button>
           )}
           {isEdit && isDraft && scheduleType === "Immediate" && (
             <Button
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
+              disabled={updateCampaign.isPending}
               className="gap-1.5"
             >
               <Send size={14} />
@@ -536,11 +563,11 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={handleSend}
-              disabled={sendCampaign.isPending}
+              disabled={updateCampaign.isPending || sendCampaign.isPending}
               className="gap-1.5"
             >
               <Send size={14} />
-              {sendCampaign.isPending ? "Sending..." : "Send Now"}
+              {updateCampaign.isPending ? "Saving..." : sendCampaign.isPending ? "Sending..." : "Send Now"}
             </Button>
           </div>
         </DialogContent>
