@@ -1,8 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
-import { ButtonStack } from "@dfds-ui/react-components";
-import { SideSheet, SideSheetContent } from "@dfds-ui/react-components";
-import { TextField } from "@dfds-ui/react-components";
-import AppContext from "AppContext";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import AppContext from "@/AppContext";
 import { TrackedButton } from "@/components/Tracking";
 
 export default function NewRepositoryDialog({ onClose }) {
@@ -108,56 +113,69 @@ export default function NewRepositoryDialog({ onClose }) {
 
   return (
     <>
-      <SideSheet
-        header={`Add new Repository`}
-        onRequestClose={handleClose}
-        isOpen={true}
-        width="30%"
-        alignSideSheet="right"
-        variant="elevated"
-        backdrop
-      >
-        <SideSheetContent>
-          <TextField
-            label="Name"
-            placeholder="Enter name of repository"
-            required
-            value={formData.name}
-            errorMessage={nameErrorMessage ? nameErrorMessage : nameError}
-            onChange={changeName}
-            maxLength={255}
-          />
+      <Sheet open={true} onOpenChange={(open) => !open && handleClose()}>
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>Add new Repository</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="repo-name">
+                Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="repo-name"
+                placeholder="Enter name of repository"
+                required
+                value={formData.name}
+                onChange={changeName}
+                maxLength={255}
+              />
+              {(nameErrorMessage || nameError) && (
+                <p className="text-xs text-red-500">
+                  {nameErrorMessage || nameError}
+                </p>
+              )}
+            </div>
 
-          <TextField
-            label="Description"
-            placeholder="Enter a description"
-            required
-            value={formData.description}
-            onChange={changeDescription}
-            errorMessage={descriptionError}
-          />
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="repo-description">
+                Description <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="repo-description"
+                placeholder="Enter a description"
+                required
+                value={formData.description}
+                onChange={changeDescription}
+              />
+              {descriptionError && (
+                <p className="text-xs text-red-500">{descriptionError}</p>
+              )}
+            </div>
 
-          <ButtonStack>
-            <TrackedButton
-              trackName="ECRRepositoryCreate-Confirm"
-              size="small"
-              variation="primary"
-              onClick={handleAddRepositoryClicked}
-              submitting={isCreatingNewRepository}
-            >
-              Add
-            </TrackedButton>
-            <TrackedButton
-              trackName="ECRRepositoryCreate-Cancel"
-              size="small"
-              variation="outlined"
-              onClick={handleClose}
-            >
-              Cancel
-            </TrackedButton>
-          </ButtonStack>
-        </SideSheetContent>
-      </SideSheet>
+            <div className="flex gap-2 flex-wrap items-center">
+              <TrackedButton
+                trackName="ECRRepositoryCreate-Confirm"
+                size="sm"
+                variant="default"
+                onClick={handleAddRepositoryClicked}
+                disabled={isCreatingNewRepository}
+              >
+                Add
+              </TrackedButton>
+              <TrackedButton
+                trackName="ECRRepositoryCreate-Cancel"
+                size="sm"
+                variant="outline"
+                onClick={handleClose}
+              >
+                Cancel
+              </TrackedButton>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

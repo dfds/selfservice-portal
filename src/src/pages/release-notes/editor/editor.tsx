@@ -63,7 +63,6 @@ import { LinkIcon } from "./tiptap/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
 import { useMobile } from "./tiptap/hooks/use-mobile";
-import { useWindowSize } from "./tiptap/hooks/use-window-size";
 import { useCursorVisibility } from "./tiptap/hooks/use-cursor-visibility";
 
 // --- Components ---
@@ -88,8 +87,15 @@ import {
 import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
 import { TrackedButton } from "@/components/Tracking";
-import { Modal, ModalAction } from "@dfds-ui/modal";
-import { Text } from "@dfds-ui/typography";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button as UiButton } from "@/components/ui/button";
+import { Text } from "@/components/ui/Text";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -210,51 +216,30 @@ export interface EditorProps {
 }
 
 function WarningDialog({ onCloseRequested, onAccept }) {
-  const actions = (
-    <>
-      {/*ModalActions does not support danger/warning variations currently*/}
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="primary"
-        onClick={onAccept}
-      >
-        Accept
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Cancel
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`Cancel edits`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel edits</DialogTitle>
+        </DialogHeader>
         <div>
-          <div>
-            <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
-            <span>All changes will be discarded and cannot be restored.</span>
-          </div>
+          <Text styledAs={"smallHeadline"}>Are you certain?</Text>{" "}
+          <span>All changes will be discarded and cannot be restored.</span>
         </div>
-      </Modal>
-    </>
+        <DialogFooter>
+          <UiButton variant="outline" onClick={onCloseRequested}>
+            Cancel
+          </UiButton>
+          <UiButton onClick={onAccept}>Accept</UiButton>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const navigate = useNavigate();
   const isMobile = useMobile();
-  const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
@@ -302,7 +287,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
     content: editorContent,
   });
 
-  const bodyRect = useCursorVisibility({
+  useCursorVisibility({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
@@ -391,10 +376,9 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
       <div className="editor-primary">
         <EditorContext.Provider value={{ editor }}>
           {mode !== EditorMode.View && (
-            <div className="editor-menu">
+            <div className="flex flex-row justify-end gap-2 mb-2.5">
               <TrackedButton
                 trackName="ReleaseNotes-Save"
-                style={{ marginRight: "5px" }}
                 onClick={
                   mode === EditorMode.Create ? handleOnSaveDraft : handleOnSave
                 }
@@ -408,7 +392,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
               </TrackedButton>
               <TrackedButton
                 trackName="ReleaseNotes-Discard"
-                style={{ backgroundColor: "#dd6868" }}
+                variation="danger"
                 onClick={() => setShowDiscardWarning(true)}
                 trackingEvent={{
                   category: "ReleaseNotes",
@@ -437,18 +421,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                   inputOverride={releaseDate}
                 />
               </div>
-              <Toolbar
-                ref={toolbarRef}
-                style={
-                  isMobile
-                    ? {
-                        bottom: `calc(100% - ${
-                          windowSize.height - bodyRect.y
-                        }px)`,
-                      }
-                    : {}
-                }
-              >
+              <Toolbar ref={toolbarRef}>
                 {mobileView === "main" ? (
                   <MainToolbarContent
                     onHighlighterClick={() => setMobileView("highlighter")}

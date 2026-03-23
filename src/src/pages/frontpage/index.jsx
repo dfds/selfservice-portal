@@ -1,218 +1,245 @@
-import AppContext from "AppContext";
-import React, { useContext, useState } from "react";
-
-import {
-  Column,
-  Container,
-  Hero as DfdsHero,
-  IconButton,
-  LinkButton,
-  Text,
-} from "@dfds-ui/react-components";
+import AppContext from "@/AppContext";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-
-import PageSection, { SectionContent } from "components/PageSection";
-import Page from "components/Page";
-import StatsCounter from "components/StatsCounter";
-import styles from "./frontpage.module.css";
-import HeroImage from "./hero.jpg";
+import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
-import { TextBlock } from "components/Text";
 import QuickLinks from "./QuickLinks";
-import { ExternalLink } from "@dfds-ui/icons/system";
 import { useStats } from "@/state/remote/queries/stats";
-import { TrackedLink, TrackedLinkButton } from "@/components/Tracking";
-import GrafanaWarning from "../GrafanaWarning";
+import { TrackedLink } from "@/components/Tracking";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { Code } from "@/components/ui/Code";
+import {
+  Layers,
+  Cloud,
+  Server,
+  Database,
+  Globe,
+  Lock,
+  List,
+} from "lucide-react";
 
-function Section({ children }) {
-  return <div className={styles.section}>{children}</div>;
-}
+const STAT_CONFIG = [
+  { icon: <Layers size={16} />, bg: "#e8f4fb", color: "#0e7cc1" },
+  { icon: <Cloud size={16} />, bg: "rgba(237,136,0,0.1)", color: "#ed8800" },
+  { icon: <Server size={16} />, bg: "rgba(76,175,80,0.1)", color: "#4caf50" },
+  { icon: <Database size={16} />, bg: "#ede9fe", color: "#6d28d9" },
+  { icon: <Globe size={16} />, bg: "rgba(14,124,193,0.1)", color: "#0e7cc1" },
+  { icon: <Lock size={16} />, bg: "#eef0f1", color: "#666666" },
+];
 
-function Hero() {
+function HeroRow({ name }) {
+  const { data: stats, isFetched } = useStats();
+  const firstName = name.split(" ")[0] || name;
+
   return (
-    <div className={styles.herowrapper}>
-      <DfdsHero
-        title="Welcome to the"
-        headline="Developer Portal"
-        imageSrc={HeroImage}
-      />
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
+      <div>
+        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
+          // Developer Portal
+        </div>
+        <h1 className="text-[1.75rem] font-bold text-primary font-mono tracking-[-0.02em] leading-[1.2] mb-1.5">
+          Hello, {firstName}
+        </h1>
+        {isFetched && stats && stats.length > 0 ? (
+          <div className="font-mono text-[12px] text-muted tracking-[0.03em]">
+            Welcome back
+          </div>
+        ) : (
+          <p className="font-mono text-[12px] text-muted tracking-[0.03em]">
+            Welcome to the DFDS Self Service Developer Portal
+          </p>
+        )}
+      </div>
+      {isFetched && stats && stats.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
+          {stats.map((stat, i) => {
+            const cfg = STAT_CONFIG[i] || STAT_CONFIG[0];
+            return (
+              <div
+                key={i}
+                className="bg-surface border border-card rounded-[8px] flex items-center gap-2.5 px-3 py-2.5 min-w-[110px] animate-fade-up"
+                style={{ animationDelay: `${i * 60}ms` }}
+              >
+                <div
+                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center flex-shrink-0"
+                  style={{ background: cfg.bg, color: cfg.color }}
+                >
+                  {cfg.icon}
+                </div>
+                <div>
+                  <span
+                    className="block font-mono text-[1.125rem] font-bold leading-none mb-[3px]"
+                    style={{ color: cfg.color }}
+                  >
+                    {stat.value}
+                  </span>
+                  <span className="block font-mono text-[9px] tracking-[0.08em] uppercase text-muted">
+                    {stat.title}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
 
-function FunStats() {
-  const { data, isFetched } = useStats();
-
-  if (!isFetched || !data) {
-    return <></>;
-  }
-
-  if (data.length === 0) {
-    return <></>;
-  }
-
-  return (
-    <PageSection>
-      <div className={styles.statscontainer}>
-        {data.map((x, i) => (
-          <StatsCounter key={i} count={x.value} title={x.title} />
-        ))}
+function NavCard({ to, href, iconBg, icon, name, description }) {
+  const inner = (
+    <>
+      <div
+        className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center flex-shrink-0"
+        style={{ background: iconBg }}
+      >
+        {icon}
       </div>
-    </PageSection>
+      <div>
+        <div className="text-[14px] font-semibold text-primary mb-[3px]">
+          {name}
+        </div>
+        <div className="text-[12px] text-muted leading-[1.5]">
+          {description}
+        </div>
+      </div>
+    </>
+  );
+
+  const cardClass =
+    "flex items-start gap-[0.875rem] bg-surface border border-card rounded-[10px] p-[1.125rem] mb-3 last:mb-0 no-underline transition-[box-shadow,transform] duration-200 ease-out-expo hover:shadow-[0_4px_12px_rgba(0,0,0,0.09)] hover:-translate-y-[2px]";
+
+  if (to) {
+    return (
+      <Link to={to} className={cardClass}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} className={cardClass} target="_blank" rel="noreferrer">
+      {inner}
+    </a>
   );
 }
 
 export default function FrontPage() {
   const { user } = useContext(AppContext);
-  const [chatInput, setChatInput] = useState("");
-
-  const name = user ? user.name : "there";
+  const name = user?.name ?? "there";
 
   return (
-    <>
-      <Page>
-        <Section>
-          <Hero />
-        </Section>
+    <div className="p-4 sm:p-8">
+      <HeroRow name={name} />
 
-        <Section>
-          <FunStats />
-        </Section>
-      </Page>
+      {/* Notice */}
+      <div
+        className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up"
+        style={{ animationDelay: "40ms" }}
+      >
+        <span className="font-bold tracking-[0.05em]">NOTE — </span>
+        Invitations to capabilities have been <strong>removed</strong>. Having
+        multiple ways to join a capability made it harder for people to know
+        what the process was — we've gone back to having just one way to join a
+        capability.
+      </div>
 
-      {/*<Section>
-          <GrafanaWarning />
-        </Section>*/}
-
-      <Container>
-        <Column m={3} l={3} xl={3} xxl={3}>
+      {/* 3-column grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
+        {/* LEFT: Latest News + Need Help */}
+        <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">
+            // latest news
+          </SectionLabel>
           <PageSection>
-            <SectionContent title="Whats happening...?">
-              <LatestNews />
-            </SectionContent>
+            <LatestNews />
           </PageSection>
 
-          <br />
-
+          <SectionLabel as="h2" className="mb-2 block">
+            // need help?
+          </SectionLabel>
           <PageSection>
-            <SectionContent title="Need Help...?">
-              <i>Did you know</i> that there is a <strong>Slack</strong> channel
-              where you can ask your peers a question and/or answer some of them
-              yourself?
-              <br />
-              <br />
-              <TrackedLinkButton
-                trackName="SlackArchive-DevPeerSupport"
-                title="Click to head on over to Slack..."
-                size="small"
-                href="slack://dfds.slack.com/archives/C9948TVRC"
-                variation="outlined"
-              >
-                #dev-peer-support
-              </TrackedLinkButton>
-            </SectionContent>
+            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
+              <em>Did you know</em> there's a Slack channel for peer Q&amp;A?
+            </p>
+            <TrackedLink
+              trackName="SlackArchive-DevPeerSupport"
+              href="slack://dfds.slack.com/archives/C9948TVRC"
+              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
+            >
+              #dev-peer-support
+            </TrackedLink>
           </PageSection>
-        </Column>
+        </div>
 
-        <Column>
+        {/* CENTER: Platform nav cards */}
+        <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">
+            // platform
+          </SectionLabel>
+          <NavCard
+            to="/capabilities"
+            iconBg="#e8f4fb"
+            icon={<Layers size={18} color="#0e7cc1" />}
+            name="Capabilities"
+            description="Create or join capabilities. Manage your team's cloud resources, AWS accounts, members, and onboarding steps."
+          />
+          <NavCard
+            to="/topics"
+            iconBg="#ede9fe"
+            icon={<List size={18} color="#6d28d9" />}
+            name="Kafka Topics"
+            description="Browse all platform topics. Building in .NET? Check out dafda — you're welcome!"
+          />
+          <NavCard
+            href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
+            iconBg="#dcfce7"
+            icon={<span className="text-[18px] text-[#16a34a]">☸</span>}
+            name="Kubernetes"
+            description="First visit? Start with the Kubernetes Getting Started guide. Then download your cluster config from Quick Links."
+          />
+          <NavCard
+            to="/ecr"
+            iconBg="#fef3c7"
+            icon={<span className="text-[18px] text-[#ed8800]">□</span>}
+            name="ECR Repositories"
+            description="Browse and manage your team's container image repositories across AWS accounts."
+          />
+        </div>
+
+        {/* RIGHT: Quick Links + KubeConfig + Top Visitors */}
+        <div className="animate-fade-up" style={{ animationDelay: "160ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">
+            // quick links
+          </SectionLabel>
           <PageSection>
-            <SectionContent title="Welcome">
-              <div id="welcome-content">
-                Hello {name}, and welcome to the Developer Portal.
-              </div>
-              <div
-                style={{
-                  marginTop: "1em",
-                  background: "#fffbe6",
-                  border: "1px solid #ffe58f",
-                  borderRadius: 4,
-                  padding: "1em",
-                }}
-              >
-                <strong>Note:</strong> Invitations to capabilities have been{" "}
-                <strong>removed</strong>.<br />
-                Having multiple ways to join a capability made it harder for
-                people to know what the process was, leading to confusion and
-                misunderstandings. Therefore, we have gone back to having just
-                one way to join a capability.
-              </div>
-            </SectionContent>
-
-            <SectionContent title="Capabilities">
-              To get started creating a capability, or joining an existing
-              please go to <Link to={"/capabilities"}>Capabilities</Link>.
-            </SectionContent>
-
-            <SectionContent title="Kafka Topics">
-              Want to find an awesome Kafka Topic to consume from? Head on over
-              to <Link to={"/topics"}>Topics</Link> and browse amongst all our
-              wonderful topics.
-              <br />
-              <br />
-              <i>Hey</i>, are you <strong>.NET'ing</strong> by any chance and
-              want to play with Kafka? If so, go check out{" "}
-              <TrackedLink
-                trackName="Dafda"
-                href="https://tniconf.dfds.cloud/dafda/"
-              >
-                <strong>dafda</strong>
-              </TrackedLink>{" "}
-              ...you're welcome!
-            </SectionContent>
-
-            <SectionContent title="Kubernetes">
-              If this is your first visit, please go to{" "}
-              <TrackedLink
-                trackName="Wiki-KubernetesGettingStarted"
-                href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
-              >
-                Kubernetes Getting Started
-              </TrackedLink>
-              , for information about what to do to get started.
-              <br />
-              <br />
-              Then grab the default Kubernetes config file from the column on
-              your right.
-            </SectionContent>
-          </PageSection>
-        </Column>
-
-        <Column m={3} l={3} xl={3} xxl={3}>
-          <PageSection>
-            <SectionContent title="Quick links">
-              <QuickLinks />
-            </SectionContent>
+            <QuickLinks />
           </PageSection>
 
-          <br />
-
+          <SectionLabel as="h2" className="mb-2 block">
+            // kubeconfig
+          </SectionLabel>
           <PageSection>
-            <SectionContent title="KubeConfig..?">
-              Are you looking for a fresh config for your{" "}
-              <TextBlock>KubeCtl</TextBlock> ?
-              <br />
-              <br />
-              <TrackedLinkButton
-                trackName="DownloadKubeConfig"
-                size="small"
-                href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
-                variation="outlined"
-              >
-                Download
-              </TrackedLinkButton>
-            </SectionContent>
+            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
+              Looking for a fresh config for your <Code>kubectl</Code>?
+            </p>
+            <TrackedLink
+              trackName="DownloadKubeConfig"
+              href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
+              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
+            >
+              ↓ hellman-saml.config
+            </TrackedLink>
           </PageSection>
 
-          <br />
-
+          <SectionLabel as="h2" className="mb-2 block">
+            // top visitors this week
+          </SectionLabel>
           <PageSection>
-            <SectionContent title="Top visitors this week">
-              <TopVisitors />
-            </SectionContent>
+            <TopVisitors />
           </PageSection>
-        </Column>
-      </Container>
-    </>
+        </div>
+      </div>
+    </div>
   );
 }

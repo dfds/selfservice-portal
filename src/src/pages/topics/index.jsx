@@ -1,314 +1,149 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
-import {
-  Container,
-  Column,
-  Card,
-  CardMedia,
-  CardTitle,
-  CardContent,
-} from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import styles from "./topic.module.css";
-import { Spinner } from "@dfds-ui/react-components";
-import { H1 } from "@dfds-ui/react-components";
-import PageSection from "components/PageSection";
-import topicImage from "./topicImage.jpeg";
+import { SkeletonTopicRow } from "@/components/ui/skeleton";
+import { ChevronRight } from "lucide-react";
+import { InfoAlert } from "@/components/ui/InfoAlert";
 import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { usePublicTopics } from "@/state/remote/queries/kafka";
-import { MaterialReactTable } from "material-react-table";
 import { RowDetails } from "./rowDetails";
-import { Badge } from "@dfds-ui/react-components";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+
+const CLUSTER_COLORS = ["#ED8800", "#4caf50", "#49a2df", "#F1A7AE", "purple"];
 
 function Topics() {
   const { selfServiceApiClient } = useContext(AppContext);
   const { isFetched, data } = usePublicTopics();
 
-  const [filteredData, setfilteredData] = useState([]);
-  const [isLoadingTopics, setIsLoadingTopics] = useState(true);
-  const colors = ["#ED8800", "#4caf50", "#49a2df", "#F1A7AE", "purple"];
-  const [clustersMap, setClustersMap] = useState(new Map());
-  const updateClustersMap = (k, v) => {
-    setClustersMap(new Map(clustersMap.set(k, v)));
-  };
-
-  const linkStyle = {
-    color: "#1874bc",
-    textDecoration: "none",
-  };
-
-  const fetchKafkaclusters = async () => {
-    const result = await selfServiceApiClient.getKafkaClusters();
-    const clustersWithColor = result.map((cluster, index) => {
-      const color = colors[index % colors.length];
-      updateClustersMap(cluster.id, true);
-      return { ...cluster, color };
-    });
-
-    return clustersWithColor;
-  };
+  const [topics, setTopics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [expandedIds, setExpandedIds] = useState(new Set());
 
   useEffect(() => {
-    if (isFetched) {
-      fetchKafkaclusters().then((c) => {
-        const finalTopics = data.map((topic) => {
-          const copy = { ...topic };
-          const color = c.find((cluster) => cluster.id === copy.kafkaClusterId);
-          if (color != null) {
-            copy.clusterColor = color.color;
-          }
-          return copy;
-        });
-
-        setfilteredData(finalTopics);
-        setIsLoadingTopics(false);
+    if (!isFetched) return;
+    selfServiceApiClient.getKafkaClusters().then((clusters) => {
+      const colored = clusters.map((c, i) => ({
+        ...c,
+        color: CLUSTER_COLORS[i % CLUSTER_COLORS.length],
+      }));
+      const final = data.map((topic) => {
+        const cluster = colored.find((c) => c.id === topic.kafkaClusterId);
+        return { ...topic, clusterColor: cluster?.color };
       });
-    }
+      setTopics(final);
+      setIsLoading(false);
+    });
   }, [isFetched, data]);
 
-  const columns = useMemo(() => [
-    {
-      accessorFn: (row) => row.name,
-      header: "name",
-      id: "name",
-      size: "50",
-      enableColumnFilterModes: true,
-      disableFilters: false,
-      enableGlobalFilter: true,
-      enableFilterMatchHighlighting: true,
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return topics;
+    return topics.filter((t) => t.name?.toLowerCase().includes(q));
+  }, [topics, search]);
 
-      Cell: ({ cell, renderedCellValue }) => {
-        return (
-          <div
-            onClick={() => cell.row.toggleExpanded()}
-            className={styles.pointyCursor}
-          >
-            <div className={styles.topicheader}>
-              <div className={styles.row}>
-                <h3 style={{ fontSize: "1.3em", marginRight: "1rem" }}>
-                  {renderedCellValue}
-                </h3>
-                <Badge
-                  className={styles.badgecluster}
-                  style={{ backgroundColor: cell.row.original.clusterColor }}
-                >
-                  {cell.row.original.kafkaClusterName}
-                </Badge>
-              </div>
-            </div>
-            {!cell.row.getIsExpanded() ? (
-              <div className={styles.infocontainer}>
-                <p>{cell.row.original.description}</p>
-              </div>
-            ) : null}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "arrow",
-      header: "arrow",
-      id: "arrow",
-      size: "1",
-      enableColumnFilterModes: false,
-      muiTableBodyCellProps: {
-        align: "center",
-      },
-      Cell: ({ cell }) => {
-        return (
-          <div
-            className={styles.pointyCursor}
-            onClick={() => cell.row.toggleExpanded()}
-          >
-            <div className={styles.chevronBox}>
-              {cell.row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
-            </div>
-          </div>
-        );
-      },
-    },
-  ]);
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <>
-      <br />
-      <br />
+      <div className="mb-5">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search topics..."
+          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[16px] md:text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
+        />
+      </div>
 
-      <PageSection headline={`Public Topics`}>
-        {isLoadingTopics ? (
-          <Spinner instant />
-        ) : (
-          <>
-            <MaterialReactTable
-              columns={columns}
-              data={filteredData}
-              displayColumnDefOptions={{
-                "mrt-row-expand": {
-                  muiTableHeadCellProps: {
-                    sx: {
-                      fontWeight: "400",
-                      fontSize: "16px",
-                      fontFamily: "DFDS",
-                      color: "#4d4e4c",
-                      padding: "0",
-                      width: "1%",
-                      align: "centre",
-                    },
-                  },
-                  muiTableBodyCellProps: {
-                    sx: {
-                      fontWeight: "400",
-                      fontSize: "16px",
-                      fontFamily: "DFDS",
-                      color: "#4d4e4c",
-                      padding: "0",
-                      width: "1%",
-                      align: "centre",
-                    },
-                  },
-                },
-              }}
-              muiTableHeadCellProps={{
-                sx: {
-                  fontWeight: "700",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#002b45",
-                  align: "centre",
-                },
-              }}
-              filterFns={{
-                customFilterFn: (row, id, filterValue) => {
-                  return true;
-                },
-              }}
-              muiTableBodyCellProps={{
-                sx: {
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  fontFamily: "DFDS",
-                  color: "#4d4e4c",
-                  padding: "0",
-                },
-              }}
-              muiTableDetailPanelProps={{
-                sx: {
-                  padding: "0",
-                },
-              }}
-              muiTablePaperProps={{
-                elevation: 0,
-                sx: {
-                  borderRadius: "0",
-                },
-              }}
-              enableGlobalFilterModes={true}
-              initialState={{
-                showGlobalFilter: true,
-                columnOrder: ["name", "arrow"],
-              }}
-              positionGlobalFilter="left"
-              muiSearchTextFieldProps={{
-                placeholder: `Search`,
-                sx: {
-                  minWidth: "1120px",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  padding: "0",
-                },
-                size: "small",
-                variant: "outlined",
-              }}
-              enableTableHead={false}
-              globalFilterFn="contains"
-              enableFilterMatchHighlighting={true}
-              enableFullScreenToggle={false}
-              enableDensityToggle={false}
-              enableHiding={false}
-              enableFilters={true}
-              enableGlobalFilter={true}
-              enableTopToolbar={true}
-              enableBottomToolbar={true}
-              enableColumnActions={false}
-              muiTableBodyRowProps={({ row }) => ({
-                sx: {
-                  padding: 0,
-                  margin: 0,
-                  minHeight: 0,
-                },
-              })}
-              enablePagination={true}
-              renderDetailPanel={({ row }) => (
-                <Card
-                  sx={{
-                    display: "flex",
-                    gridTemplateColumns: "1fr 1fr",
-                    width: "100%",
-                  }}
+      {isLoading ? (
+        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonTopicRow key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
+          {filtered.length === 0 && (
+            <div className="px-[1.125rem] py-4 font-mono text-[12px] text-[#afafaf] dark:text-[#64748b]">
+              No topics found.
+            </div>
+          )}
+          {filtered.map((topic) => {
+            const isExpanded = expandedIds.has(topic.id);
+            return (
+              <div
+                key={topic.id}
+                className="border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0"
+              >
+                <div
+                  className="flex items-center gap-[0.875rem] px-[1.125rem] py-[0.875rem] cursor-pointer hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
+                  onClick={() => toggleExpand(topic.id)}
                 >
-                  <RowDetails data={row.original}></RowDetails>
-                </Card>
-              )}
-            />
-          </>
-        )}
-      </PageSection>
+                  <span className="font-mono text-[13px] font-semibold text-[#002b45] dark:text-[#e2e8f0] flex-1 tracking-[-0.01em]">
+                    {topic.name}
+                  </span>
+                  {topic.kafkaClusterName && (
+                    <span
+                      className="font-mono text-[10px] font-semibold tracking-[0.06em] px-2 py-[3px] rounded-[20px] text-white flex-shrink-0"
+                      style={{
+                        backgroundColor: topic.clusterColor ?? "#afafaf",
+                      }}
+                    >
+                      {topic.kafkaClusterName}
+                    </span>
+                  )}
+                  <ChevronRight
+                    size={14}
+                    className="flex-shrink-0 text-[#afafaf] transition-transform duration-150"
+                    style={{
+                      transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </div>
+
+                {isExpanded && (
+                  <div className="border-t border-[#eeeeee] dark:border-[#1e2d3d] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] pb-[1.125rem]">
+                    <RowDetails data={topic} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }
 
 export default function TopicsPage() {
-  const splash = (
-    <CardMedia
-      aspectRatio="3:2"
-      media={<img src={topicImage} alt="" className={styles.cardMediaImage} />}
-      className={styles.cardMedia}
-    />
-  );
-
   return (
-    <>
-      <br />
-      <br />
+    <TopicsProvider>
+      <div className="p-8">
+        <div className="animate-fade-up">
+          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
+            // Kafka Topics
+          </div>
+          <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2] mb-6">
+            Public Topics
+          </h1>
+        </div>
 
-      <TopicsProvider>
-        <Container>
-          <Column m={12} l={12} xl={12} xxl={12}>
-            <Text as={H1} styledAs="heroHeadline">
-              Public Topics
-            </Text>
-            <Card
-              variant="fill"
-              surface="main"
-              size="xl"
-              reverse={true}
-              media={splash}
-            >
-              <CardTitle largeTitle>Information</CardTitle>
-              <CardContent>
-                <p>
-                  Here, you can find a comprehensive list of Kafka topics that
-                  have been made available for development teams to discover and
-                  utilize in their projects. Every capability has read access to
-                  all public topics.
-                </p>
-                <p>
-                  When producing messages to a public topic, please be aware of
-                  sensitive information and treat it responsibly - and as a
-                  consumer of messages that might contain sensitive information
-                  please also treat the information responsibly.
-                </p>
-                <p>
-                  Browse the list of public Kafka topics and get started on your
-                  next project today!
-                </p>
-              </CardContent>
-            </Card>
-            <Topics />
-          </Column>
-        </Container>
-      </TopicsProvider>
-    </>
+        <InfoAlert className="mb-5 animate-fade-up animate-stagger-1">
+          A comprehensive list of Kafka topics available for development teams.
+          Every capability has read access to all public topics. Handle
+          sensitive data responsibly — both when producing and consuming.
+        </InfoAlert>
+
+        <div className="animate-fade-up animate-stagger-2">
+          <Topics />
+        </div>
+      </div>
+    </TopicsProvider>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Page from "components/Page";
-import styles from "./releasenotes.module.css";
+import Page from "@/components/Page";
 import "./style.scss";
 
 import { Editor, EditorMode } from "./editor/editor";
@@ -24,15 +23,11 @@ export function ReleaseNotesView() {
   }, [isFetched]);
 
   return (
-    <>
-      <Page title="">
-        <div className={styles.buffer}></div>
-
-        {contentReady && (
-          <Editor defaultContent={content} mode={EditorMode.View} doc={doc} />
-        )}
-      </Page>
-    </>
+    <Page title="">
+      {contentReady && (
+        <Editor defaultContent={content} mode={EditorMode.View} doc={doc} />
+      )}
+    </Page>
   );
 }
 

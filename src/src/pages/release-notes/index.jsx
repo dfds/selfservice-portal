@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import { CardMedia, Spinner } from "@dfds-ui/react-components";
-import Page from "components/Page";
-import PageSection from "components/PageSection";
-import SplashImage from "./repository.jpg";
+import { SkeletonReleaseNoteRow } from "@/components/ui/skeleton";
+import Page from "@/components/Page";
 import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
 import { TrackedButton } from "@/components/Tracking";
-import styles from "./releasenotes.module.css";
-import PreAppContext from "preAppContext";
+import PreAppContext from "@/preAppContext";
 import DateFlag from "../../components/DateFlag/DateFlag";
 import { useNavigate } from "react-router-dom";
-
-import "./style.scss";
+import { Badge } from "@/components/ui/badge";
 
 function ManageButton({ onClick }) {
   return (
     <TrackedButton
       onClick={onClick}
+      variation="action"
       trackName="ReleaseNotes-ManageContentClicked"
       trackingEvent={{
         category: "ReleaseNotes",
@@ -39,99 +36,83 @@ function ReleaseNotesList() {
     }
   }, [data]);
 
-  // todo: REDO this, make it use a <a> tag instead.......
   const navigate = useNavigate();
-  const clickHandler = (id) => navigate(`/release-notes/v/${id}`);
+
+  const visibleNotes = notes.filter(
+    (note) => note.isActive || isCloudEngineerEnabled,
+  );
 
   return (
-    <PageSection headline={``}>
+    <div className="bg-surface border border-card rounded-[8px] overflow-hidden animate-fade-up">
       {isFetched ? (
         <>
-          {notes.length === 0 ? (
-            <span>No release notes found</span>
+          {visibleNotes.length === 0 ? (
+            <div className="px-5 py-8 text-center text-muted text-sm font-mono">
+              No release notes found
+            </div>
           ) : (
-            notes.map((note, index) =>
-              note.isActive || isCloudEngineerEnabled ? (
-                <>
-                  <a
-                    href={`/release-notes/v/${note.id}`}
-                    onClick={(event) => {
-                      // Allow ctrl/cmd + click to open in new tab
-                      if (
-                        event.defaultPrevented ||
-                        event.button !== 0 || // not left click
-                        event.metaKey ||
-                        event.ctrlKey ||
-                        event.altKey ||
-                        event.shiftKey
-                      ) {
-                        return;
-                      }
-
-                      event.preventDefault();
-                      clickHandler(note.id);
-                    }}
-                    key={note.id}
-                    className={styles.rowLink}
-                  >
-                    <div className={styles.notePreview} key={note.id}>
-                      <div className={styles.row}>
-                        <DateFlag date={note.releaseDate} />
-                        <h3 className={styles.title}>{note.title}</h3>
-                      </div>
-                    </div>
-                  </a>
-                  {/* Render <hr> if not the last item */}
-                  {index !== notes.length - 1 && <hr />}
-                </>
-              ) : null,
-            )
+            visibleNotes.map((note, index) => (
+              <a
+                href={`/release-notes/v/${note.id}`}
+                onClick={(event) => {
+                  if (
+                    event.defaultPrevented ||
+                    event.button !== 0 ||
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.altKey ||
+                    event.shiftKey
+                  ) {
+                    return;
+                  }
+                  event.preventDefault();
+                  navigate(`/release-notes/v/${note.id}`);
+                }}
+                key={note.id}
+                className={`group flex items-center gap-4 px-5 py-4 no-underline hover:bg-surface-muted transition-colors ease-out-expo duration-150 ${
+                  index !== visibleNotes.length - 1
+                    ? "border-b border-divider"
+                    : ""
+                }`}
+              >
+                <DateFlag date={note.releaseDate} />
+                <span className="font-mono text-[14px] font-semibold text-primary flex-1">
+                  {note.title}
+                </span>
+                {!note.isActive && isCloudEngineerEnabled && (
+                  <Badge variant="outline" className="text-[10px] shrink-0">
+                    Draft
+                  </Badge>
+                )}
+              </a>
+            ))
           )}
         </>
       ) : (
-        <Spinner />
+        <div className="divide-y divide-divider">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="px-5 py-4">
+              <SkeletonReleaseNoteRow />
+            </div>
+          ))}
+        </div>
       )}
-    </PageSection>
+    </div>
   );
 }
 
 export default function ReleaseNotes() {
   const navigate = useNavigate();
-  const [showNewReleaseNoteDialog, setShowNewReleaseNoteDialog] =
-    useState(false);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
-  const splash = (
-    <CardMedia
-      aspectRatio="3:2"
-      media={<img src={SplashImage} className={styles.cardMediaImage} alt="" />}
-      className={styles.cardMedia}
-    />
-  );
-
   return (
-    <>
-      <Page
-        title={
-          <>
-            Release notes
-            {isCloudEngineerEnabled && (
-              <div style={{ float: "right" }}>
-                <ManageButton
-                  onClick={() => navigate("/release-notes/manage")}
-                />
-              </div>
-            )}
-          </>
-        }
-      >
-        {showNewReleaseNoteDialog && (
-          <NewReleaseNoteDialog
-            onClose={() => setShowNewReleaseNoteDialog(false)}
-          />
-        )}
-        <ReleaseNotesList />
-      </Page>
-    </>
+    <Page title="Release Notes">
+      {isCloudEngineerEnabled && (
+        <div className="flex items-center justify-end mb-4">
+          <ManageButton onClick={() => navigate("/release-notes/manage")} />
+        </div>
+      )}
+      <ReleaseNotesList />
+    </Page>
   );
 }
