@@ -43,6 +43,11 @@ jobs:
           token: ${{ secrets.SSU_APPS_GH_TOKEN }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+      - name: Set outputs
+        id: vars
+        run: |
+          cd ./src
+          echo "commit_id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - uses: ./ssu-apps/.github/actions/build_push_container_ecr
         name: Build & push container
         id: build_push_container
@@ -54,10 +59,11 @@ jobs:
           aws_region: eu-central-1
           sha_tag_prefix: rework-preview
           args: |
-            REACT_APP_API_BASE_URL=https://build-preview.dfds.cloud/api
-            REACT_APP_AUTH_REDIRECT_URL=https://build-preview.dfds.cloud
-            REACT_APP_PUBLIC_URL=https://build-preview.dfds.cloud
+            REACT_APP_API_BASE_URL=https://ssu-preview.hellman.oxygen.dfds.cloud/api
+            REACT_APP_AUTH_REDIRECT_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
+            REACT_APP_PUBLIC_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
             PUBLIC_URL=/
+            REACT_APP_COMMIT_HASH=${{ steps.vars.outputs.commit_id }}
       - shell: bash
         name: "Update image tag"
         env:
