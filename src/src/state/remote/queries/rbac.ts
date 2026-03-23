@@ -1,68 +1,200 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
+import {
+  createSsuQuery,
+  createSsuParamQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-export function useGetRoles(capabilityId: string) {
-  const query = useQuery({
-    queryKey: ["rbac", "roles"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["rbac/get-assignable-roles"],
-        payload: null,
-        isCloudEngineerEnabled: false,
-      }),
-  });
+// ── Queries ──────────────────────────────────────────────────────────────────
 
-  return query;
+const _useGetRoles = createSsuQuery({
+  queryKey: ["rbac", "roles"],
+  urlSegments: ["rbac/get-assignable-roles"],
+  authMode: false,
+});
+
+// capabilityId param is unused but kept for backward compatibility
+export function useGetRoles(_capabilityId: string) {
+  return _useGetRoles();
 }
 
-export function useUserRoles(capabilityId: string) {
-  const query = useQuery({
-    queryKey: ["rbac", "user-roles", capabilityId],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["capabilities", capabilityId, "rolegrants"],
-        payload: null,
-        isCloudEngineerEnabled: false,
-      }),
-  });
+export const useUserRoles = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["rbac", "user-roles", capabilityId],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "rolegrants",
+  ],
+  authMode: false,
+});
 
-  return query;
-}
+export const useAllPermissions = createSsuQuery({
+  queryKey: ["rbac", "permissions"],
+  urlSegments: ["rbac/get-assignable-permissions"],
+  authMode: true,
+});
 
-export function useGrantRole() {
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["capabilities", data.payload.resource, "roles", "grant"],
-        payload: data.payload,
-        isCloudEngineerEnabled: false,
-      });
-    },
-  });
+export const useRolePermissions = createSsuParamQuery<string>({
+  queryKey: (roleId) => ["rbac", "role-permissions", roleId],
+  urlSegments: (roleId) => ["rbac", "permission", "role", roleId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
 
-  return mutation;
-}
+export const useRbacGroups = createSsuQuery({
+  queryKey: ["rbac", "groups"],
+  urlSegments: ["rbac", "groups"],
+  authMode: true,
+});
 
-export function useRevokeRole() {
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      ssuRequest({
-        method: "DELETE",
-        urlSegments: [
-          "capabilities",
-          data.payload.resource,
-          "roles",
-          "revoke",
-          data.payload.roleGrantId,
-        ],
-        payload: null,
-        isCloudEngineerEnabled: false,
-      });
-    },
-  });
+export const useGroupRoles = createSsuParamQuery<string>({
+  queryKey: (groupId) => ["rbac", "group-roles", groupId],
+  urlSegments: (groupId) => ["rbac", "role", "groups", groupId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
 
-  return mutation;
-}
+export const useGroupPermissions = createSsuParamQuery<string>({
+  queryKey: (groupId) => ["rbac", "group-permissions", groupId],
+  urlSegments: (groupId) => ["rbac", "permission", "group", groupId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+export const useUserPermissions = createSsuParamQuery<string>({
+  queryKey: (userId) => ["rbac", "user-permissions", userId],
+  urlSegments: (userId) => ["rbac", "permission", "user", userId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+export const useUserRbacRoles = createSsuParamQuery<string>({
+  queryKey: (userId) => ["rbac", "user-roles", userId],
+  urlSegments: (userId) => ["rbac", "role", "user", userId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+// ── Mutations ────────────────────────────────────────────────────────────────
+
+export const useGrantRole = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    "capabilities",
+    data.payload.resource,
+    "roles",
+    "grant",
+  ],
+  authMode: false,
+});
+
+export const useRevokeRole = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "capabilities",
+    data.payload.resource,
+    "roles",
+    "revoke",
+    data.payload.roleGrantId,
+  ],
+  payload: () => null,
+  authMode: false,
+});
+
+export const useCanThey = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "can-they"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useCreateRbacGroup = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "groups"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useDeleteRbacGroup = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => ["rbac", "groups", data.groupId],
+  payload: () => null,
+  authMode: true,
+});
+
+export const useAddRbacGroupMember = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => ["rbac", "groups", data.groupId, "members"],
+  payload: (data) => ({ userId: data.userId }),
+  authMode: true,
+});
+
+export const useRemoveRbacGroupMember = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "rbac",
+    "groups",
+    data.groupId,
+    "members",
+    data.memberId,
+  ],
+  payload: () => null,
+  authMode: true,
+});
+
+export const useGrantPermissionToGroup = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "permission", "grant"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useCreateRole = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "role"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useDeleteRole = createSsuMutation<{ roleId: string }>({
+  method: "DELETE",
+  urlSegments: (data) => ["rbac", "role", data.roleId],
+  payload: () => null,
+  authMode: true,
+});
+
+export const useRevokeRbacPermission = createSsuMutation<{
+  grantId: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => ["rbac", "permission", "revoke", data.grantId],
+  payload: () => null,
+  authMode: true,
+});
+
+export const useGrantRoleToGroup = createSsuMutation<{
+  roleId: string;
+  groupId: string;
+}>({
+  method: "POST",
+  urlSegments: () => ["rbac", "role", "grant"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useGrantPermissionToRole = createSsuMutation<{
+  roleId: string;
+  permission: string;
+  namespace: string;
+}>({
+  method: "POST",
+  urlSegments: () => ["rbac", "permission", "grant"],
+  payload: (data) => ({
+    assignedEntityType: "Role",
+    assignedEntityId: data.roleId,
+    namespace: data.namespace,
+    permission: data.permission,
+    type: "Allow",
+    resource: "",
+  }),
+  authMode: true,
+});
