@@ -83,6 +83,7 @@ const FERRY_BUSINESS_CAPABILITIES = [
   { label: "Order Intake", value: "order-intake" },
   { label: "Order Tracking", value: "order-tracking" },
   { label: "Payment Processing", value: "payment-processing" },
+  { label: "Research & Development", value: "research-development" },
   { label: "Rail Booking", value: "rail-booking" },
   { label: "Rail Scheduling", value: "rail-scheduling" },
   { label: "Reporting", value: "reporting" },

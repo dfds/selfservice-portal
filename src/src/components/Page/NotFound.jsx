@@ -1,34 +1,28 @@
-import { Container, Column } from "@dfds-ui/react-components";
 import styles from "./NotFound.module.css";
-import { Text } from "@dfds-ui/typography";
 import image from "./404.gif";
 
 export default function NotFound() {
   return (
     <>
-      <br />
-      <br />
-      <Container>
-        <Column m={12} l={12} xl={12} xxl={12}>
-          <div className={styles.notfound}>
-            <div className={styles.column}>
-              <Text
-                as={"div"}
-                style={{ fontSize: "10rem" }}
-                styledAs="heroHeadline"
-              >
-                404
-              </Text>
-              <Text as={"div"} styledAs="subHeadline">
-                Page Not Found!
-              </Text>
+      <div className="h-8" />
+      <div className="container mx-auto px-4 max-w-screen-xl">
+        <div className={styles.notfound}>
+          <div className={styles.column}>
+            <div
+              style={{ fontSize: "10rem" }}
+              className="font-bold text-[#002b45] dark:text-white leading-none"
+            >
+              404
             </div>
-            <div className={styles.column}>
-              <img src={image} alt={""} />
+            <div className="text-xl text-[#002b45] dark:text-white">
+              Page Not Found!
             </div>
           </div>
-        </Column>
-      </Container>
+          <div className={styles.column}>
+            <img src={image} alt="" />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

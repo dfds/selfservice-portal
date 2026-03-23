@@ -1,4 +1,4 @@
-import ErrorDisplay from "ErrorDisplay";
+import ErrorDisplay from "./ErrorDisplay";
 import React, { createContext, useState } from "react";
 
 class ErrorContent {
