@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import ErrorContext from "ErrorContext";
+import ErrorContext from "@/ErrorContext";
 
 export function useError(opts) {
   const [options, setOptions] = useState(opts);

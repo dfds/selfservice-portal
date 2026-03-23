@@ -1,6 +1,6 @@
-import { callApi, getSelfServiceAccessToken } from "AuthService";
+import { callApi, getSelfServiceAccessToken } from "@/AuthService";
 import { useContext, useState } from "react";
-import { composeSegmentsUrl } from "Utils";
+import { composeSegmentsUrl } from "@/Utils";
 import { useError } from "./Error";
 import { useTracking } from "./Tracking";
 import PreAppContext from "../preAppContext";
