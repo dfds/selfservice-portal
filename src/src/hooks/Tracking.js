@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import TrackingContext from "TrackingContext";
+import TrackingContext from "@/TrackingContext";
 
 export function useTracking(opts) {
   const { trackingIsEnabled } = useContext(TrackingContext);
