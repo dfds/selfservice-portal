@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import AppContext from "../../AppContext";
-import { Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
 import MessageContracts from "../capabilities/KafkaCluster/MessageContracts";
 import { useError } from "../../hooks/Error";
-import ConsumerLink from "@/components/ConsumerLink";
 
 export function RowDetails(data) {
   const [isLoadingContracts, setIsLoadingContracts] = useState(false);
@@ -53,15 +50,10 @@ export function RowDetails(data) {
   const handleMessageHeaderClicked = (messageType) => {
     setSelectedMessageContractType((prev) => {
       if (messageType === prev) {
-        return null; // deselect already selected (toggling)
+        return null;
       }
       return messageType;
     });
-  };
-
-  const linkStyle = {
-    color: "#1874bc",
-    textDecoration: "none",
   };
 
   const handleRetryClicked = async (messageContract) => {
@@ -76,12 +68,14 @@ export function RowDetails(data) {
 
   function MessageContractTypeRow({ messageType, messageContracts }) {
     return (
-      <div>
-        <h4>{messageType}</h4>
+      <div className="mt-3">
+        <div className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b] mb-1">
+          {messageType}
+        </div>
         <div>
-          {messageContracts.map((contract) => (
+          {messageContracts.map((contract, i) => (
             <MessageContracts
-              key={contract.schema.id}
+              key={contract.schema?.id ?? i}
               schema={contract.schema}
               isSelected={messageType === selectedMessageContractType}
               onHeaderClicked={(messageType) =>
@@ -95,25 +89,60 @@ export function RowDetails(data) {
   }
 
   return (
-    <Card variant="fill" surface="secondary">
-      <CardContent>
-        <Text styledAs="actionBold">Description</Text>
-        <p>{data.data.description}</p>
-        <br />
+    <div className="pt-[0.875rem]">
+      {data.data.description && (
+        <p className="text-[13px] text-[#666666] dark:text-[#94a3b8] leading-[1.6] mb-[0.875rem]">
+          {data.data.description}
+        </p>
+      )}
 
-        <Text styledAs="actionBold">Capability </Text>
-        <Link style={linkStyle} to={`/capabilities/${data.data.capabilityId}`}>
-          {data.data.capabilityId}
-        </Link>
-        {/*<br />
+      <div className="flex flex-wrap gap-5">
+        {data.data.partitions != null && (
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+              Partitions
+            </span>
+            <span className="font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0]">
+              {data.data.partitions}
+            </span>
+          </div>
+        )}
+        {data.data.retention && (
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+              Retention
+            </span>
+            <span className="font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0]">
+              {data.data.retention}
+            </span>
+          </div>
+        )}
+        {data.data.capabilityId && (
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+              Capability
+            </span>
+            <Link
+              className="font-mono text-[12px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              to={`/capabilities/${data.data.capabilityId}`}
+            >
+              {data.data.capabilityId}
+            </Link>
+          </div>
+        )}
+      </div>
 
-        <Text styledAs="actionBold">Consumer Statistics</Text>
-        <ConsumerLink
-          capabilityId={data.data.capabilityId}
-          topicName={data.data.name}
-          linkTitle="Open consumer dashboard in Grafana"
-        />*/}
-      </CardContent>
-    </Card>
+      {isLoadingContracts && <Spinner size="sm" className="mt-3" />}
+
+      {Object.entries(contractsGroupedByVersion).map(
+        ([messageType, messageContracts]) => (
+          <MessageContractTypeRow
+            key={messageType}
+            messageType={messageType}
+            messageContracts={messageContracts}
+          />
+        ),
+      )}
+    </div>
   );
 }
