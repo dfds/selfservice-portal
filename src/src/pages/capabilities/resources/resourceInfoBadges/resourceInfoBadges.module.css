@@ -138,3 +138,21 @@ hr.divider {
   margin-left: 10px;
   border: 1px solid #ccc;
 }
+
+@media (max-width: 768px) {
+  .indent20 {
+    margin-left: 0;
+  }
+
+  .environmentselect {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .catalogueId {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
+  }
+}

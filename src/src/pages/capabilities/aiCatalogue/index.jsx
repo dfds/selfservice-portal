@@ -1,14 +1,16 @@
 import React, { useEffect, useContext, useState } from "react";
-import PageSection from "components/PageSection";
-import { Text } from "@dfds-ui/react-components";
+import PageSection from "@/components/PageSection";
+import { Text } from "@/components/ui/Text";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/context/ToastContext";
 import { TrackedLink } from "@/components/Tracking";
-import { TextField } from "@dfds-ui/react-components";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { TrackedButton } from "@/components/Tracking";
 import styles from "./aiCatalogue.module.css";
-import { set } from "date-fns";
 
 export function AICatalogueSection({ anchorId }) {
   return (
@@ -22,6 +24,8 @@ export function AICatalogue() {
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
+  const queryClient = useQueryClient();
+  const toast = useToast();
   const [canEditTags, setCanEditTags] = useState(false);
   const [aiCatalogueEntries, setAICatalogueEntries] = useState([]);
   const [aiEntryInput, setAIEntryInput] = useState("");
@@ -62,7 +66,9 @@ export function AICatalogue() {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "metadata", details?.id],
           });
+          toast.success("Catalogue updated");
         },
+        onError: () => toast.error("Could not save catalogue entries"),
       },
     );
   };
@@ -112,16 +118,19 @@ export function AICatalogue() {
         traceability:
       </Text>
 
-      <TextField
-        label="AI Catalogue IDs"
-        placeholder="Enter AI Catalogue ID"
-        value={aiEntryInput}
-        onChange={(e) => {
-          setAIEntryInput(e.target.value);
-        }}
-        onKeyDown={OnKeyEnter}
-        className={styles.input_field}
-      ></TextField>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="ai-catalogue-input">AI Catalogue IDs</Label>
+        <Input
+          id="ai-catalogue-input"
+          placeholder="Enter AI Catalogue ID"
+          value={aiEntryInput}
+          onChange={(e) => {
+            setAIEntryInput(e.target.value);
+          }}
+          onKeyDown={OnKeyEnter}
+          className={styles.input_field}
+        />
+      </div>
       <Text className={styles.entries_label}>
         Registered entries:
         {aiCatalogueEntries.length === 0 && " None"}

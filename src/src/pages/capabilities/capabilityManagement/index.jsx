@@ -1,50 +1,27 @@
 import React, { useContext } from "react";
-import PageSection from "components/PageSection";
-import { Text } from "@dfds-ui/typography";
-import { Modal, ModalAction } from "@dfds-ui/modal";
-import { Card, CardContent, ButtonStack } from "@dfds-ui/react-components";
+import PageSection from "@/components/PageSection";
+import { Text } from "@/components/ui/Text";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
-import { css } from "@emotion/react";
 import AppContext from "../../../AppContext";
 import { TrackedButton } from "@/components/Tracking";
 
 function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
-  const actions = (
-    <>
-      {/*ModalActions does not support danger/warning variations currently*/}
-      <ModalAction
-        onClick={onDeleteClicked}
-        css={css`
-          color: #be1e2d;
-          :hover {
-            background-color: #f1a7ae;
-            color: #be1e2d;
-          }
-        `}
-      >
-        Delete
-      </ModalAction>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Cancel
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`Are you certain you wish to delete this capability?`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(open) => !open && onCloseRequested()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            Are you certain you wish to delete this capability?
+          </DialogTitle>
+        </DialogHeader>
         <Text>
           <strong>Warning:</strong> You are about to request deletion of this
           capability. Deletion will commence after a 7 day period, during which
@@ -52,8 +29,16 @@ function DeleteDialog({ onCloseRequested, onDeleteClicked }) {
           resources related to this capability will be removed permanently, once
           deletion begins.
         </Text>
-      </Modal>
-    </>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end mt-2">
+          <Button variant="outline" onClick={onCloseRequested}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={onDeleteClicked}>
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -92,41 +77,30 @@ export default function CapabilityManagement({ anchorId }) {
               onDeleteClicked={handleDeleteClicked}
             />
           )}
-          <Card>
-            {/*Show deletion option only if deletion is not already pending*/}
+          <div className="border border-[rgba(217,48,37,0.2)] dark:border-[rgba(217,48,37,0.4)] rounded-[6px] p-4 bg-[rgba(217,48,37,0.04)] dark:bg-[rgba(217,48,37,0.1)]">
             {!isPendingDeletion && (
-              <CardContent>
-                <p>
-                  Requesting the deletion of a capability will not immediately
-                  delete neither the capability itself nor its related
-                  resources. Deletion will commence after a 7 day period, during
-                  which it is possible to cancel the deletion request.
+              <>
+                <TrackedButton
+                  trackName="CapabilityDelete-ShowDialog"
+                  variation="danger"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  Request deletion
+                </TrackedButton>
+                <p className="text-[12px] text-[#b91c1c] leading-[1.55] mt-3">
+                  Requesting deletion will not immediately remove the capability
+                  or its resources. Deletion commences after a 7 day period,
+                  during which the request can be cancelled.
                 </p>
-                <div style={{ paddingTop: "2rem" }}>
-                  <ButtonStack align="right">
-                    {
-                      <TrackedButton
-                        trackName="CapabilityDelete-ShowDialog"
-                        variation="danger"
-                        onClick={() => setShowDeleteDialog(true)}
-                      >
-                        Delete Capability
-                      </TrackedButton>
-                    }
-                  </ButtonStack>
-                </div>
-              </CardContent>
+              </>
             )}
-            {/*..otherwise show information around this*/}
             {isPendingDeletion && (
-              <CardContent>
-                <p>
-                  Deletion of this capability is pending. No other management
-                  actions are available at this time.
-                </p>
-              </CardContent>
+              <p className="text-[13px] text-[#666666] dark:text-slate-400">
+                Deletion of this capability is pending. No other management
+                actions are available at this time.
+              </p>
             )}
-          </Card>
+          </div>
         </PageSection>
       )}
     </>

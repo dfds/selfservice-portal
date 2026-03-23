@@ -1,54 +1,82 @@
-import { Badge, ButtonStack, Button, Spinner } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { TextBlock } from "components/Text";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/Text";
+import { TextBlock } from "@/components/Text";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useContext, useState, useEffect } from "react";
-import { theme } from "@dfds-ui/theme";
 import awsLogo from "./aws-logo.svg";
 import k8sLogo from "./k8s-logo.svg";
-import styles from "./resourceInfoBadges.module.css";
-import { DetailedAwsCountSummary } from "pages/capabilities/AwsResourceCount";
+import { DetailedAwsCountSummary } from "@/pages/capabilities/AwsResourceCount";
 import SelectedCapabilityContext from "../../SelectedCapabilityContext";
 import azureLogo from "./azure-logo.svg";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Select from "react-select";
 import AzureResourceGroupRequestWizard from "./resourceGroupRequestWizard";
 
-function VPCInformation(id, region, cidrBlock) {
+const statusBadgeVariant = (status) =>
+  status === "active" ? "soft-success" : "soft-warning";
+
+function ResourceRow({
+  label,
+  value,
+  sub,
+  status,
+  statusLabel,
+  action,
+  children,
+}) {
   return (
-    <div>
-      VPC id: <span className={styles.informationtext}>{id}</span>, Region:{" "}
-      <span className={styles.informationtext}>{region}</span>, CIDR:{" "}
-      <span className={styles.informationtext}>
-        {(cidrBlock !== "" && cidrBlock) || "unknown"}
-      </span>
+    <div className="flex items-center justify-between py-2.5 border-b border-divider last:border-0 gap-4">
+      <div className="min-w-0">
+        <div className="text-[12px] text-muted mb-[2px]">{label}</div>
+        <div className="font-mono text-[13px] text-primary font-semibold leading-none">
+          {value}
+        </div>
+        {sub && (
+          <div className="font-mono text-[11px] text-muted mt-[2px]">{sub}</div>
+        )}
+        {children}
+      </div>
+      <div className="flex items-center gap-3 flex-shrink-0">
+        {action}
+        {statusLabel && (
+          <Badge
+            variant={statusBadgeVariant(status)}
+            className="flex-shrink-0 text-[10px] px-2 py-[3px]"
+          >
+            {statusLabel}
+          </Badge>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ResourceSectionLabel({ logo, alt, children }) {
+  return (
+    <div className="flex items-center gap-2 pt-4 pb-2 border-b border-divider">
+      {logo && <img src={logo} alt={alt ?? ""} style={{ height: "14px" }} />}
+      <SectionLabel>{children}</SectionLabel>
     </div>
   );
 }
 
 function AzureTagsWarning({ onClose, missingTags }) {
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onClose}
-      >
-        Close
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`Azure Resource Groups Tags Required`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onClose}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Azure Resource Groups Tags Required</DialogTitle>
+        </DialogHeader>
         <Text>
           Your capability are missing needed tags (see:{" "}
           <TrackedLink
@@ -67,42 +95,23 @@ function AzureTagsWarning({ onClose, missingTags }) {
             ))}
           </ul>
         </div>
-      </Modal>
-    </>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 function RequestDialog({ isRequesting, onClose, onSubmit }) {
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        disabled={isRequesting}
-        actionVariation="secondary"
-        onClick={onClose}
-      >
-        Cancel
-      </ModalAction>
-      <ModalAction
-        actionVariation="primary"
-        submitting={isRequesting}
-        onClick={onSubmit}
-      >
-        Request
-      </ModalAction>
-    </>
-  );
-
   return (
-    <>
-      <Modal
-        heading={`AWS Account & Kubernetes Namespace`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onClose}
-        actions={actions}
-      >
+    <Dialog open={true} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>AWS Account &amp; Kubernetes Namespace</DialogTitle>
+        </DialogHeader>
         <Text>
           Please familiarize yourself with the{" "}
           <TrackedLink
@@ -127,95 +136,45 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
             business day.
           </i>
         </Text>
-      </Modal>
+        <DialogFooter>
+          <Button variant="outline" disabled={isRequesting} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button disabled={isRequesting} onClick={onSubmit}>
+            Request
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function VPCPeerings({ awsAccountInformation }) {
+  const vpcs = awsAccountInformation?.vpcs;
+  if (!vpcs || vpcs.length === 0) return null;
+  return (
+    <>
+      {vpcs.map((vpc, index) => (
+        <ResourceRow
+          key={index}
+          label="Peering VPC"
+          value={vpc.vpcId}
+          sub={`${vpc.region} · ${vpc.cidrBlock || "unknown CIDR"}`}
+          status="active"
+          statusLabel="Peered"
+        />
+      ))}
     </>
   );
 }
 
-const Requested = function () {
-  return (
-    <strong>
-      <em style={{ color: theme.colors.text.secondary.primary }}>
-        An AWS Account & a Kubernetes Namespace has already been requested...
-      </em>
-    </strong>
-  );
-};
-
-const Pending = function () {
-  return (
-    <div className={styles.pending}>
-      <div className={styles.items}>
-        <strong>
-          <em style={{ color: theme.colors.status.warning }}>
-            The AWS Account & Kubernetes Namespace are under way... Please wait
-          </em>
-        </strong>
-      </div>
-      <div className={styles.items}>
-        <Spinner instant />
-      </div>
-    </div>
-  );
-};
-
-const Completed = function ({ accountId, namespace, id }) {
-  return (
-    <>
-      <div className={styles.completed}>
-        <div className={styles.items}>
-          <p>
-            <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
-          </p>
-          <div>AWS Account ready:</div>
-          <Badge>
-            <strong>{accountId} </strong>
-          </Badge>
-          <br />
-          <DetailedAwsCountSummary capabilityId={id}></DetailedAwsCountSummary>
-        </div>
-        <div className={styles.items}>
-          <p>
-            <img src={k8sLogo} alt="K8s icon" style={{ height: "2.5rem" }} />
-          </p>
-          <div>Kubernetes Namespace ready:</div>
-          <Badge>
-            <strong>{namespace}</strong>
-          </Badge>
-        </div>
-      </div>
-    </>
-  );
-};
-
-const VPCPeerings = function ({ awsAccountInformation }) {
-  return (
-    <div className={styles.awsaccountinformationbox}>
-      <span className={styles.subheader}>Peering VPCs</span>
-      &emsp;
-      <TrackedLink
-        trackName="Wiki-VPCPeering"
-        href="https://wiki.dfds.cloud/en/documentation/aws/vpc-peering#using-the-vpc-peering-connection"
-        className={styles.link}
-      >
-        (learn more)
-      </TrackedLink>
-      {awsAccountInformation?.vpcs &&
-      awsAccountInformation?.vpcs?.length > 0 ? (
-        awsAccountInformation.vpcs.map((vpc, index) => (
-          <div key={index}>
-            {VPCInformation(vpc.vpcId, vpc.region, vpc.cidrBlock)}
-          </div>
-        ))
-      ) : (
-        <div>No peering VPCs found</div>
-      )}
-    </div>
-  );
-};
+const REQUIRED_TAGS = [
+  "dfds.cost.centre",
+  "dfds.service.availability",
+  "dfds.azure.purpose",
+];
 
 export function ResourceInfoBadges() {
-  // if user cannot see: return <> </>
   const {
     id,
     awsAccount,
@@ -229,28 +188,20 @@ export function ResourceInfoBadges() {
     metadataFetched,
     addNewAzure,
   } = useContext(SelectedCapabilityContext);
+
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const canRequest = (links?.awsAccount?.allow || []).includes("POST");
-  const requiredTags = [
-    "dfds.cost.centre",
-    "dfds.service.availability",
-    "dfds.azure.purpose",
-  ];
   const [missingTags, setMissingTags] = useState([]);
   const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
   const [showNewAzureResourcePopup, setShowNewAzureResourcePopup] =
     useState(false);
-
   const [showLogModal, setLogModal] = useState(false);
-  const handleApplicationLogShow = async () => {
-    setLogModal(true);
-  };
   const [metaParsed, setMetaParsed] = useState(undefined);
+
   useEffect(() => {
     if (metadataFetched && metadata != null) {
-      const meta = JSON.parse(metadata);
-      setMetaParsed(meta);
+      setMetaParsed(JSON.parse(metadata));
     } else {
       setMetaParsed(undefined);
     }
@@ -265,31 +216,27 @@ export function ResourceInfoBadges() {
   };
 
   const closeDialog = () => {
-    if (!isSubmitting) {
-      setShowDialog(false);
-    }
+    if (!isSubmitting) setShowDialog(false);
   };
 
   useEffect(() => {
-    if (metaParsed !== undefined && requiredTags.length > 0) {
-      const missing = requiredTags.filter(
+    if (metaParsed !== undefined && REQUIRED_TAGS.length > 0) {
+      const missing = REQUIRED_TAGS.filter(
         (tag) => !metaParsed.hasOwnProperty(tag),
       );
-
-      // Only update state if the missing tags array has changed
-      setMissingTags((prevMissingTags) => {
+      setMissingTags((prev) => {
         if (
-          prevMissingTags.length !== missing.length ||
-          !prevMissingTags.every((tag, index) => tag === missing[index])
+          prev.length !== missing.length ||
+          !prev.every((tag, i) => tag === missing[i])
         ) {
           return missing;
         }
-        return prevMissingTags; // No need to update if the array is the same
+        return prev;
       });
     } else {
-      setMissingTags([]); // Reset to empty array if metadata is null or requiredTags is empty
+      setMissingTags([]);
     }
-  }, [metaParsed, requiredTags]);
+  }, [metaParsed]);
 
   const handleNewAzureResource = () => {
     if (missingTags.length === 0) {
@@ -309,11 +256,10 @@ export function ResourceInfoBadges() {
     return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
   };
 
-  // a temporary hack to fix a stupid issue
   const processNewResourceGroupData = (formData) => {
-    const output = {
+    return {
       environment: formData["environment"].value || "dev",
-      purpose: metaParsed?.["dfds.azure.purpose"] || "unknown", // should always be defined here
+      purpose: metaParsed?.["dfds.azure.purpose"] || "unknown",
       catalogueId: formData["catalogueId"]
         ? formData["catalogueId"]
         : "unknown",
@@ -324,243 +270,225 @@ export function ResourceInfoBadges() {
         ? formData["gdprData"].value === "yes"
         : false,
     };
-    return output;
   };
 
   return (
     <>
-      <hr className={styles.divider} />
-
-      {awsAccount != null ? (
-        <>
-          {awsAccount.status === "Completed" && (
-            <>
-              <Completed
-                accountId={awsAccount.accountId}
-                namespace={awsAccount.namespace}
-                id={id}
-              />
-              {awsAccountInformation !== null && (
-                <VPCPeerings awsAccountInformation={awsAccountInformation} />
-              )}
-            </>
-          )}
-          {awsAccount.status === "Requested" && <Requested />}
-          {awsAccount.status === "Pending" && <Pending />}
-        </>
-      ) : (
-        <>
-          {showDialog && (
-            <>
-              <RequestDialog
-                isRequesting={isSubmitting}
-                onClose={closeDialog}
-                onSubmit={handleSubmitClicked}
-              />
-            </>
-          )}
-
-          <p style={{ textAlign: "center" }}>
-            <img src={awsLogo} alt="AWS icon" style={{ height: "2.5rem" }} />
-            &nbsp;&nbsp;&nbsp;
-            <img src={k8sLogo} alt="K8S icon" style={{ height: "2.5rem" }} />
-          </p>
-          <div className={styles.pending}>
-            <div className={styles.items}>
-              <strong>
-                <em style={{ color: theme.colors.text.secondary.primary }}>
-                  No AWS Account or Kubernetes Namespace linked with this
-                  Capability.
-                </em>
-              </strong>
-            </div>
-            <div className={styles.items}>
-              <ButtonStack align="right">
-                {canRequest && (
-                  <TrackedButton
-                    trackName="RequestAWSAccountAndK8SNamespace"
-                    onClick={() => setShowDialog(true)}
-                  >
-                    Request AWS Account & Kubernetes Namespace
-                  </TrackedButton>
-                )}
-              </ButtonStack>
-            </div>
-          </div>
-        </>
+      {/* Dialogs */}
+      {showDialog && (
+        <RequestDialog
+          isRequesting={isSubmitting}
+          onClose={closeDialog}
+          onSubmit={handleSubmitClicked}
+        />
       )}
-      {awsAccount && awsAccount.status === "Completed" && (
-        <>
-          <br />
-
-          <ButtonStack
-            align="center"
-            style={{ margin: "auto", marginTop: "15px", width: "400px" }}
-          >
-            <TrackedButton
-              trackName="ApplicationLogs-ShowDialog"
-              size="small"
-              variation="outlined"
-              onClick={handleApplicationLogShow}
-            >
-              How to see application logs?
-            </TrackedButton>
-          </ButtonStack>
-        </>
-      )}
-
-      <Modal
-        heading={"How do I see my application logs?"}
-        isOpen={showLogModal}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={() => {
-          setLogModal(false);
-        }}
-        sizes={{
-          s: "50%",
-          m: "50%",
-          l: "50%",
-          xl: "50%",
-          xxl: "50%",
-        }}
-      >
-        <Text>
-          <Text as="span" styledAs={"smallHeadline"}>
-            For applications running in Kubernetes
-          </Text>
-        </Text>
-        <Text>
-          1. Sign into the <i>dfds-logs</i> account using the{" "}
-          <i>CapabilityLog</i> role at{" "}
-          <TrackedLink
-            trackName="AWSConsole-Start"
-            target="_blank"
-            rel="noreferrer"
-            href="https://dfds.awsapps.com/start/"
-          >
-            https://dfds.awsapps.com/start/
-          </TrackedLink>
-          <br />
-          2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
-          <br />
-          3. Navigate to the CloudWatch service either using the navigation menu
-          or{" "}
-          <TrackedLink
-            trackName="AWSConsole-CloudWatch"
-            target="_blank"
-            rel="noreferrer"
-            href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
-          >
-            this link
-          </TrackedLink>
-          <br />
-          4. Once there, select "Logs" in the menu on your left, and then "Logs
-          Insights"
-          <br />
-          5. From this view, you can query logs in Kubernetes. For example
-          queries, please check our wiki article at{" "}
-          <TrackedButton
-            trackName="AWSConsole-CloudWatchLogging"
-            target="_blank"
-            rel="noreferrer"
-            href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
-          >
-            https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
-          </TrackedButton>
-        </Text>
-      </Modal>
-
-      <hr className={styles.divider} />
-
       {showAzureTagsWarning && (
         <AzureTagsWarning
           onClose={() => setShowAzureTagsWarning(false)}
           missingTags={missingTags}
         />
       )}
-
       {showNewAzureResourcePopup && (
+        <AzureResourceGroupRequestWizard
+          onCloseClicked={() => setShowNewAzureResourcePopup(false)}
+          onRequestResourceGroupClicked={(formData) => {
+            addNewAzure(processNewResourceGroupData(formData));
+            setShowNewAzureResourcePopup(false);
+          }}
+          inProgress={false}
+          azurePurpose={metaParsed?.["dfds.azure.purpose"] || "unknown"}
+          azureResourcesList={azureResourcesList}
+        />
+      )}
+      <Dialog
+        open={showLogModal}
+        onOpenChange={(o) => !o && setLogModal(false)}
+      >
+        <DialogContent className="max-w-[95vw] sm:max-w-[50%]">
+          <DialogHeader>
+            <DialogTitle>How do I see my application logs?</DialogTitle>
+          </DialogHeader>
+          <Text>
+            <Text as="span" styledAs={"smallHeadline"}>
+              For applications running in Kubernetes
+            </Text>
+          </Text>
+          <Text>
+            1. Sign into the <i>dfds-logs</i> account using the{" "}
+            <i>CapabilityLog</i> role at{" "}
+            <TrackedLink
+              trackName="AWSConsole-Start"
+              target="_blank"
+              rel="noreferrer"
+              href="https://dfds.awsapps.com/start/"
+            >
+              https://dfds.awsapps.com/start/
+            </TrackedLink>
+            <br />
+            2. Once signed in, make sure your region is set to <i>eu-west-1</i>.
+            <br />
+            3. Navigate to the CloudWatch service either using the navigation
+            menu or{" "}
+            <TrackedLink
+              trackName="AWSConsole-CloudWatch"
+              target="_blank"
+              rel="noreferrer"
+              href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
+            >
+              this link
+            </TrackedLink>
+            <br />
+            4. Once there, select "Logs" in the menu on your left, and then
+            "Logs Insights"
+            <br />
+            5. From this view, you can query logs in Kubernetes. For example
+            queries, please check our wiki article at{" "}
+            <TrackedButton
+              trackName="AWSConsole-CloudWatchLogging"
+              target="_blank"
+              rel="noreferrer"
+              href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
+              className="break-all whitespace-normal h-auto"
+            >
+              https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch
+            </TrackedButton>
+          </Text>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLogModal(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AWS / Kubernetes section */}
+      <ResourceSectionLabel logo={awsLogo} alt="AWS">
+        AWS &amp; Kubernetes
+      </ResourceSectionLabel>
+
+      {awsAccount == null && (
+        <ResourceRow
+          label="AWS Account &amp; Kubernetes Namespace"
+          value="Not provisioned"
+          action={
+            canRequest ? (
+              <TrackedButton
+                trackName="RequestAWSAccountAndK8SNamespace"
+                size="small"
+                onClick={() => setShowDialog(true)}
+              >
+                Request
+              </TrackedButton>
+            ) : null
+          }
+        />
+      )}
+
+      {awsAccount?.status === "Requested" && (
+        <ResourceRow
+          label="AWS Account &amp; Kubernetes Namespace"
+          value="Request submitted"
+          status="requested"
+          statusLabel="Requested"
+        />
+      )}
+
+      {awsAccount?.status === "Pending" && (
+        <ResourceRow
+          label="AWS Account &amp; Kubernetes Namespace"
+          value="Provisioning"
+          status="pending"
+          statusLabel="Pending"
+          action={<Spinner size="sm" />}
+        />
+      )}
+
+      {awsAccount?.status === "Completed" && (
         <>
-          <AzureResourceGroupRequestWizard
-            onCloseClicked={() => setShowNewAzureResourcePopup(false)}
-            onRequestResourceGroupClicked={(formData) => {
-              addNewAzure(processNewResourceGroupData(formData));
-              setShowNewAzureResourcePopup(false);
-            }}
-            inProgress={false}
-            azurePurpose={metaParsed?.["dfds.azure.purpose"] || "unknown"}
-            azureResourcesList={azureResourcesList}
+          <ResourceRow
+            label="AWS Account"
+            value={awsAccount.accountId}
+            status="active"
+            statusLabel="Active"
           />
+          <ResourceRow
+            label="Kubernetes Namespace"
+            value={awsAccount.namespace}
+            status="active"
+            statusLabel="Active"
+          />
+          {awsAccountInformation && (
+            <VPCPeerings awsAccountInformation={awsAccountInformation} />
+          )}
+          <DetailedAwsCountSummary capabilityId={id} />
+          <div className="pt-3">
+            <TrackedButton
+              trackName="ApplicationLogs-ShowDialog"
+              size="small"
+              variation="outlined"
+              onClick={() => setLogModal(true)}
+            >
+              How to see application logs?
+            </TrackedButton>
+          </div>
         </>
       )}
 
-      <div style={{ textAlign: "center" }}>
-        <img src={azureLogo} alt="Azure icon" style={{ height: "2.5rem" }} />
-        <Text>
-          Please refer to the{" "}
-          <TrackedLink
-            trackName="Wiki-AzureCapabilityDeveloperGuide"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://wiki.dfds.cloud/en/documentation/azure/azure-capability-developer"
-          >
-            Azure Capability Developer Guide
-          </TrackedLink>
-        </Text>
+      {/* Azure section */}
+      <ResourceSectionLabel logo={azureLogo} alt="Azure">
+        Azure Resource Groups
+      </ResourceSectionLabel>
+
+      {isLoadedAzure && azureResourcesList && azureResourcesList.length > 0 ? (
+        azureResourcesList.map((resource) => (
+          <ResourceRow
+            key={resource.id}
+            label="Azure Resource Group"
+            value={`rg-dfds_ssu_${resource.environment}_${id}`}
+            sub={resource.environment}
+            status="active"
+            statusLabel="Active"
+            action={
+              <TrackedLink
+                trackName={`AzureResourceGroup-${resource.environment}`}
+                href={generateResourceGroupLink(resource.environment)}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="font-mono text-[11px] text-action no-underline hover:underline"
+              >
+                Open ↗
+              </TrackedLink>
+            }
+          />
+        ))
+      ) : (
+        <EmptyState>
+          No Azure Resource Groups linked with this capability.
+        </EmptyState>
+      )}
+
+      <div className="pt-3">
+        <TrackedButton
+          trackName="AzureResourceGroup-ShowRequestDialog"
+          size="small"
+          onClick={() => handleNewAzureResource()}
+        >
+          Request New Azure Resource Group
+        </TrackedButton>
       </div>
 
-      <div className={styles.azure}>
-        <div className={styles.items}>
-          {azureResourcesList &&
-          azureResourcesList.length !== 0 &&
-          isLoadedAzure ? (
-            <>
-              <Text>
-                The following Azure Resource Groups have been created for this
-                capability:
-              </Text>
-              {azureResourcesList.map((resource) => (
-                <div key={resource.id} className={styles.environmentlist}>
-                  <TrackedLink
-                    trackName={`AzureResourceGroup-${resource.environment}`}
-                    className={styles.environmentlink}
-                    href={generateResourceGroupLink(resource.environment)}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <div className={styles.environmentbadge}>
-                      {resource.environment}
-                    </div>
-                  </TrackedLink>
-                </div>
-              ))}
-            </>
-          ) : (
-            <div>
-              {" "}
-              <strong>
-                <em style={{ color: theme.colors.text.secondary.primary }}>
-                  No Azure resources linked with this Capability.
-                </em>
-              </strong>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.items}>
-          <div className={styles.envsection}>
-            <ButtonStack align="right">
-              <TrackedButton
-                trackName="AzureResourceGroup-ShowRequestDialog"
-                style={{ marginTop: "1rem" }}
-                onClick={() => handleNewAzureResource()}
-              >
-                Request New Azure Resource Group
-              </TrackedButton>
-            </ButtonStack>
-          </div>
-        </div>
+      <div className="mt-3 text-[12px] text-muted">
+        Refer to the{" "}
+        <TrackedLink
+          trackName="Wiki-AzureCapabilityDeveloperGuide"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://wiki.dfds.cloud/en/documentation/azure/azure-capability-developer"
+          className="text-action no-underline hover:underline"
+        >
+          Azure Capability Developer Guide
+        </TrackedLink>{" "}
+        for setup instructions.
       </div>
     </>
   );

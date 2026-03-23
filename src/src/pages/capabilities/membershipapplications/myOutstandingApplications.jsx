@@ -1,10 +1,11 @@
 import { useDeleteMembershipApplicationApproval } from "@/state/remote/queries/membershipApplications";
 import { useQueryClient } from "@tanstack/react-query";
-import PageSection from "components/PageSection";
+import PageSection from "@/components/PageSection";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 import { sleep } from "../../../Utils";
+import { SkeletonMembershipApplicationRow } from "@/components/ui/skeleton";
 
 export function MyOutstandingMembershipApplicationsPageSection() {
   return (
@@ -95,21 +96,44 @@ export function MyOutstandingMembershipApplications({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "details", def.capabilityId],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [
+              "capabilities",
+              "members",
+              "membership-applications",
+              def.capabilityId,
+            ],
+          });
         },
       },
     );
   };
 
+  if (!isFetched) {
+    return (
+      <div>
+        {[0, 1, 2].map((i) => (
+          <SkeletonMembershipApplicationRow key={i} isLast={i === 2} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <>
-      {isFetched && tableData.length > 0 ? (
+      {tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
           handleRejectClicked={handleDeleteClicked}
           rejectButtonLabel={"Cancel"}
         />
       ) : (
-        <>You have no outstanding membership applications</>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">
+          No outstanding membership applications
+        </p>
       )}
     </>
   );

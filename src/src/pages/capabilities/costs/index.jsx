@@ -1,14 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
-import AppContext from "../../../AppContext";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
-import { Text } from "@dfds-ui/typography";
-import { LargeCapabilityCostSummary } from "../../../components/BasicCapabilityCost";
-import { Spinner } from "@dfds-ui/react-components";
-import styles from "./costs.module.css";
 import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { TrackedButton } from "@/components/Tracking";
+import { StatCard } from "@/components/ui/StatCard";
 
 export default function Costs({ anchorId, costCentre }) {
   const { query, getCostsForCapability } = useCapabilitiesCost();
@@ -22,11 +18,30 @@ export default function Costs({ anchorId, costCentre }) {
 
   return (
     <PageSection id={anchorId} headline="Costs">
-      <span>
+      <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
         Use Finout to explore the costs for this capability or its entire cost
         centre, if a cost centre is set.
-      </span>
-      <p>
+      </p>
+
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        {dayWindows.map((days, index) => {
+          const dataValue = getCostsForCapability(id, days);
+          const totalCost = dataValue.reduce((acc, x) => acc + x.pv, 0);
+          const hasData = dataValue.length > 0;
+
+          return (
+            <StatCard
+              key={index}
+              loading={showCostsSpinner}
+              value={`$${totalCost}`}
+              hasData={hasData}
+              label={`Last ${days} days`}
+            />
+          );
+        })}
+      </div>
+
+      <div className="flex gap-2 flex-wrap">
         <a
           target="_blank"
           rel="noreferrer"
@@ -41,8 +56,6 @@ export default function Costs({ anchorId, costCentre }) {
             Entire cost center {costCentre && `(${costCentre})`}
           </TrackedButton>
         </a>
-      </p>
-      <p>
         <a
           target="_blank"
           rel="noreferrer"
@@ -56,41 +69,7 @@ export default function Costs({ anchorId, costCentre }) {
             This Capability
           </TrackedButton>
         </a>
-      </p>
-
-      <div className={styles.container}>
-        {dayWindows.map((days, index) => {
-          const dataValue = getCostsForCapability(id, days);
-
-          return (
-            <div key={index} className={styles.column} align="center">
-              <Text styledAs={"smallHeadline"}>{days} Days</Text>
-              {showCostsSpinner ? (
-                <Spinner instant />
-              ) : !query.isFetched ? (
-                <Text styledAs="caption" as={"div"}>
-                  No data available
-                </Text>
-              ) : (
-                <>
-                  {dataValue.length === 0 ? (
-                    <Text>No data</Text>
-                  ) : (
-                    <>
-                      <LargeCapabilityCostSummary
-                        data={dataValue}
-                        capabilityId={id}
-                      />
-                      <span>Last {days} days for this capability</span>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          );
-        })}
       </div>
-      <br />
     </PageSection>
   );
 }

@@ -3,16 +3,14 @@ import {
   useMembershipApplications,
   useSubmitMembershipApplicationApproval,
 } from "@/state/remote/queries/membershipApplications";
-import { StatusSuccess } from "@dfds-ui/icons/system";
-import {
-  Badge,
-  Banner,
-  BannerHeadline,
-  BannerParagraph,
-} from "@dfds-ui/react-components";
+import { useToast } from "@/context/ToastContext";
+import { CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { SkeletonMembershipApplicationRow } from "@/components/ui/skeleton";
+import { useGetRoles } from "@/state/remote/queries/rbac";
 import { useQueryClient } from "@tanstack/react-query";
-import AppContext from "AppContext";
-import PageSection from "components/PageSection";
+import AppContext from "@/AppContext";
+import PageSection from "@/components/PageSection";
 import { differenceInCalendarDays, format, intlFormatDistance } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
@@ -32,17 +30,25 @@ export function MyMembershipApplication() {
 
   return (
     <div>
-      <Banner variant={"lowEmphasis"} icon={StatusSuccess}>
-        <BannerHeadline>Membership Application Received</BannerHeadline>
-        <BannerParagraph>
-          Your request to join this capability has been received and it's
-          waiting approval from existing members.
-          <br />
-          <br />
-          <strong>Please note:</strong> this application expires{" "}
-          <ExpirationDate date={application.expiresOn} />!
-        </BannerParagraph>
-      </Banner>
+      <div className="flex gap-3 items-start rounded-md border border-[#c8e6c9] dark:border-green-800 bg-[#e8f5e9] dark:bg-green-950 p-4">
+        <CheckCircle
+          className="mt-0.5 shrink-0 text-[#388e3c] dark:text-green-400"
+          size={20}
+        />
+        <div>
+          <p className="font-semibold text-[#1b5e20] dark:text-green-300">
+            Membership Application Received
+          </p>
+          <p className="text-sm text-[#2e7d32] dark:text-green-300">
+            Your request to join this capability has been received and it&apos;s
+            waiting approval from existing members.
+            <br />
+            <br />
+            <strong>Please note:</strong> this application expires{" "}
+            <ExpirationDate date={application.expiresOn} />!
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -52,7 +58,7 @@ function ExpirationDate({ date }) {
   const label = intlFormatDistance(new Date(date), new Date());
 
   return daysUntil < 3 ? (
-    <Badge intent="critical">{label}</Badge>
+    <Badge variant="destructive">{label}</Badge>
   ) : (
     <span>{label}</span>
   );
@@ -72,9 +78,11 @@ export function MembershipApplicationsUserCanApprove({
   isRefetching,
 }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { truncateString } = useContext(AppContext);
   const [tableData, setTableData] = useState([]);
   const [removalTracker, setRemovalTracker] = useState(new Set());
+  const { data: availableRolesData } = useGetRoles(null);
   const submitMembershipApplicationApproval =
     useSubmitMembershipApplicationApproval();
   const deleteMembershipApplicationApproval =
@@ -121,9 +129,6 @@ export function MembershipApplicationsUserCanApprove({
   const addApplicationToRemovalTracker = (id) => {
     setRemovalTracker((prev) => {
       prev.add(id);
-      queryClient.invalidateQueries({
-        queryKey: ["membershipapplications/eligible-for-approval"],
-      });
       return prev;
     });
   };
@@ -141,16 +146,30 @@ export function MembershipApplicationsUserCanApprove({
     });
   };
 
-  const handleApproveClicked = async (def) => {
+  const handleApproveClicked = (def, roleId) => {
     setActiveCrudOpOnTableDataItem(def);
     submitMembershipApplicationApproval.mutate(
       {
         membershipApplicationDefinition: def,
+        roleId,
       },
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          sleep(2000).then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/eligible-for-approval"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/my-outstanding-applications"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "members"],
+            });
+          });
+          toast.success("Access granted. Welcome to the team");
         },
+        onError: () => toast.error("Could not approve membership"),
       },
     );
   };
@@ -164,21 +183,49 @@ export function MembershipApplicationsUserCanApprove({
       {
         onSuccess: () => {
           addApplicationToRemovalTracker(def.id);
+          sleep(2000).then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/eligible-for-approval"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["membershipapplications/my-outstanding-applications"],
+            });
+          });
+          toast.success("Application declined");
         },
+        onError: () => toast.error("Could not decline membership"),
       },
     );
   };
 
+  if (!isFetched) {
+    return (
+      <div>
+        {[0, 1, 2].map((i) => (
+          <SkeletonMembershipApplicationRow key={i} isLast={i === 2} />
+        ))}
+      </div>
+    );
+  }
+
+  const roleOptions = (availableRolesData || []).map((role) => ({
+    value: role.id,
+    label: role.name,
+  }));
+
   return (
     <>
-      {isFetched && tableData.length > 0 ? (
+      {tableData.length > 0 ? (
         <MembershipApplicationTable
           tableData={tableData}
+          roleOptions={roleOptions}
           handleApproveClicked={handleApproveClicked}
           handleRejectClicked={handleRejectClicked}
         />
       ) : (
-        <>You have no membership applications to consider</>
+        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">
+          No pending membership applications
+        </p>
       )}
     </>
   );

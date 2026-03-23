@@ -1,25 +1,22 @@
 import { TabbedPageSection } from "@/components/PageSection";
-import { useContext, useEffect } from "react";
 import { MyOutstandingMembershipApplications } from "../membershipapplications/myOutstandingApplications";
 import { MembershipApplicationsUserCanApprove } from "../membershipapplications";
-import { Text } from "@dfds-ui/typography";
 import {
   useMyOutstandingMembershipApplications,
   useMembershipApplications,
 } from "@/state/remote/queries/membershipApplications";
-import { StatusAlert } from "@dfds-ui/icons/system";
-import styles from "./capabilityMembershipManagement.module.css";
 
 const HeaderWithWarning = ({ text, data }) => {
+  const count = (data || []).length;
   return (
-    <>
-      <Text styledAs="action" as={"div"}>
-        {(data || []).length > 0 && (
-          <StatusAlert className={styles.attentionIcon} />
-        )}
-        {text} {(data || []).length > 0 && `(${(data || []).length})`}
-      </Text>
-    </>
+    <span className="flex items-center gap-1.5">
+      {text}
+      {count > 0 && (
+        <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[10px] font-bold leading-none text-white">
+          {count}
+        </span>
+      )}
+    </span>
   );
 };
 
@@ -31,7 +28,7 @@ export function TabbedCapabilityMembershipManagement() {
   } = useMyOutstandingMembershipApplications();
   const {
     isFetched: fetchedOtherApplications,
-    isRefetchting: refetchingOtherApplications,
+    isRefetching: refetchingOtherApplications,
     data: otherApplicationsData,
   } = useMembershipApplications();
 
