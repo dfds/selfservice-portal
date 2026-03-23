@@ -2,7 +2,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { GlobalStyles } from "@dfds-ui/react-components";
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
@@ -10,10 +9,12 @@ import { msalInstance } from "./auth/context";
 import { ErrorProvider } from "./ErrorContext";
 import { TrackingProvider } from "./TrackingContext";
 import { PreAppProvider } from "./preAppContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { Provider } from "react-redux";
 import store from "./state/local/store";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./state/remote/client";
+import { ToastProvider } from "./context/ToastContext";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -26,16 +27,19 @@ root.render(
     <Provider store={store}>
       <MsalProvider instance={msalInstance}>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
-          <GlobalStyles />
           <QueryClientProvider client={queryClient}>
             <ErrorProvider>
-              <TrackingProvider>
-                <PreAppProvider>
-                  <AppProvider>
-                    <App />
-                  </AppProvider>
-                </PreAppProvider>
-              </TrackingProvider>
+              <ToastProvider>
+                <TrackingProvider>
+                  <PreAppProvider>
+                    <ThemeProvider>
+                      <AppProvider>
+                        <App />
+                      </AppProvider>
+                    </ThemeProvider>
+                  </PreAppProvider>
+                </TrackingProvider>
+              </ToastProvider>
             </ErrorProvider>
           </QueryClientProvider>
         </BrowserRouter>
