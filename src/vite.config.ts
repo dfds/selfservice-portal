@@ -1,15 +1,11 @@
 import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
-import {
-  defineConfig,
-  loadEnv,
-  createFilter,
-  transformWithEsbuild,
-} from "vite";
+import { execSync } from "node:child_process";
+import { defineConfig, loadEnv, createFilter, transformWithOxc } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import commonjs from "vite-plugin-commonjs";
 import { fileURLToPath, URL } from "node:url";
 // https://vitejs.dev/config/
 // TODO: fix mode type
@@ -17,8 +13,8 @@ export default defineConfig(({ mode }) => {
   setEnv(mode);
   return {
     plugins: [
+      tailwindcss(),
       react(),
-      tsconfigPaths(),
       envPlugin(),
       devServerPlugin(),
       sourcemapPlugin(),
@@ -28,22 +24,27 @@ export default defineConfig(({ mode }) => {
       htmlPlugin(mode),
       svgrPlugin(),
       nodePolyfills(),
-      commonjs(),
     ],
-    build: {
-      commonjsOptions: { transformMixedEsModules: true },
-    },
-    esbuild: {
-      supported: {
-        "top-level-await": true,
-      },
-    },
     define: {
-      global: {},
+      global: "globalThis",
+      "process.env.REACT_APP_COMMIT_HASH": JSON.stringify(
+        process.env.REACT_APP_COMMIT_HASH ||
+          (() => {
+            try {
+              return execSync("git rev-parse --short HEAD").toString().trim();
+            } catch {
+              return "";
+            }
+          })(),
+      ),
     },
     resolve: {
+      tsconfigPaths: true,
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
+        // Rolldown (Vite 8) drops the `default` export from the CJS version of this
+        // package when bundling for production. Alias to the ESM version to fix it.
+        "@mui/system/createStyled": fileURLToPath(new URL("./node_modules/@mui/system/esm/createStyled.js", import.meta.url)),
       },
     },
   };
@@ -195,8 +196,13 @@ function svgrPlugin() {
             defaultPlugins: [jsx],
           },
         });
-        const res = await transformWithEsbuild(componentCode, id, {
-          loader: "jsx",
+        const res = await transformWithOxc(componentCode, id, {
+          lang: "jsx",
+          inject: {
+            Buffer: ["vite-plugin-node-polyfills/shims/buffer", "default"],
+            global: ["vite-plugin-node-polyfills/shims/global", "default"],
+            process: ["vite-plugin-node-polyfills/shims/process", "default"],
+          },
         });
         return {
           code: res.code,
