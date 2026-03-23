@@ -1,9 +1,48 @@
 import React, { useState, useEffect } from "react";
 import CreationWizard from "@/CreationWizard";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/ui/Text";
 import { TrackedLink } from "@/components/Tracking";
 import Select from "react-select";
 import styles from "./resourceInfoBadges.module.css";
+
+const selectStyles = {
+  control: (base, state) => ({
+    ...base,
+    backgroundColor: "var(--color-surface)",
+    borderColor: state.isFocused
+      ? "var(--color-action)"
+      : "var(--color-border)",
+    boxShadow: state.isFocused ? "0 0 0 1px var(--color-action)" : "none",
+    "&:hover": { borderColor: "var(--color-action)" },
+  }),
+  menu: (base) => ({
+    ...base,
+    backgroundColor: "var(--color-surface)",
+    border: "1px solid var(--color-border)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "var(--color-action)"
+      : state.isFocused
+      ? "var(--color-surface-muted)"
+      : "transparent",
+    color: state.isSelected
+      ? "var(--color-text-inverse)"
+      : "var(--color-text-primary)",
+    cursor: state.isDisabled ? "not-allowed" : "pointer",
+    opacity: state.isDisabled ? 0.5 : 1,
+  }),
+  singleValue: (base) => ({ ...base, color: "var(--color-text-primary)" }),
+  input: (base) => ({ ...base, color: "var(--color-text-primary)" }),
+  placeholder: (base) => ({ ...base, color: "var(--color-text-muted)" }),
+  dropdownIndicator: (base) => ({ ...base, color: "var(--color-text-muted)" }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    backgroundColor: "var(--color-border)",
+  }),
+};
 
 export default function AzureResourceGroupRequestWizard({
   inProgress,
@@ -200,6 +239,7 @@ const BasicInformationStep = ({
             <Select
               id="environment-select"
               className={styles.environmentselect}
+              styles={selectStyles}
               options={envAvailability.map((env) => ({
                 value: env.env.value,
                 label: env.env.label,
@@ -432,6 +472,7 @@ const MandatoryAITagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           <Select
             id="risk-category-select"
             className={styles.environmentselect}
+            styles={selectStyles}
             options={riskCategories.map((risk) => ({
               value: risk.value,
               label: risk.label,
@@ -453,6 +494,7 @@ const MandatoryAITagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           <Select
             id="gdpr-select"
             className={styles.environmentselect}
+            styles={selectStyles}
             options={gdprOptions.map((opt) => ({
               value: opt.value,
               label: opt.label,

@@ -1,12 +1,12 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
-import { Card, CardContent } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function CommunicationChannels() {
   return (
     <>
       <Text styledAs="sectionHeadline">Communication Channels</Text>
-      <Card variant="fill" surface="main">
+      <Card>
         <CardContent>
           <p>???</p>
         </CardContent>

@@ -1,23 +1,21 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Text } from "@dfds-ui/typography";
-import { Card, CardContent, IconButton } from "@dfds-ui/react-components";
-import { Accordion, Spinner } from "@dfds-ui/react-components";
 import {
   ChevronDown,
   ChevronUp,
-  StatusAlert,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from "@dfds-ui/icons/system";
+  AlertCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
-import styles from "./Topics.module.css";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import Poles from "components/Poles";
 import EditTopicDialog from "./EditTopicDialog";
 import DeleteTopicDialog from "./DeleteTopicDialog";
 import MessageContracts from "./MessageContracts";
 import ConsumerLink from "@/components/ConsumerLink";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { IconButton } from "@/components/ui/IconButton";
 
 function TopicHeader({
   name,
@@ -28,64 +26,45 @@ function TopicHeader({
   isOpen,
   onClicked,
 }) {
-  const handleClick = () => {
-    if (onClicked) {
-      onClicked();
-    }
-  };
-
-  const TopicStatus = {
-    PROVISIONED: "Provisioned",
-  };
-
-  const provisioned = status === TopicStatus.PROVISIONED;
+  const provisioned = status === "Provisioned";
   const notProvisioned = !provisioned;
 
   return (
     <div
-      className={`${styles.topicheader} ${
-        isOpen ? styles.topicheaderselected : null
-      } ${provisioned ? styles.cursorPointer : null}`}
-      onClick={notProvisioned ? null : handleClick}
+      className={`flex items-center gap-3 py-2.5 border-b border-divider transition-colors ${
+        provisioned ? "cursor-pointer" : ""
+      } ${
+        isOpen
+          ? "bg-[#f2f2f2] dark:bg-slate-700"
+          : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
+      }`}
+      onClick={notProvisioned ? null : onClicked}
     >
-      <div style={{ flexGrow: "1" }}>
-        <Text
-          className={notProvisioned ? styles.notprovisioned : null}
-          styledAs={isOpen ? "actionBold" : "action"}
-          style={{ display: "inline-block" }}
+      <div className="flex-1 min-w-0">
+        <span
+          className={`font-mono text-[12px] font-medium ${
+            notProvisioned ? "text-muted" : "text-primary"
+          }`}
         >
           {notProvisioned && (
-            <>
-              <StatusAlert />
-              <span>&nbsp;</span>
-            </>
+            <AlertCircle className="inline h-3 w-3 mr-1 flex-shrink-0" />
           )}
-
           {name}
-
-          {notProvisioned && <span>&nbsp;({status?.toLowerCase()})</span>}
-        </Text>
+          {notProvisioned && (
+            <span className="ml-1 text-[11px]">({status?.toLowerCase()})</span>
+          )}
+        </span>
       </div>
-
-      <div style={{ width: "20rem" }}>
-        <Text styledAs="caption">
-          Partitions: {partitions} - Retention: {retention}
-        </Text>
+      <div className="font-mono text-[11px] text-muted flex-shrink-0">
+        {partitions} partitions · {retention}
       </div>
-
-      <div style={{ width: "5rem", textAlign: "right" }}>
-        {provisioned && isOpen ? (
-          <IconButton
-            icon={ChevronUp}
-            disableTooltip
-            disableOverlay
-            style={{ color: "white" }}
-          />
-        ) : (
-          provisioned && (
-            <IconButton icon={ChevronDown} disableTooltip disableOverlay />
-          )
-        )}
+      <div className="flex-shrink-0 w-4 flex justify-center">
+        {provisioned &&
+          (isOpen ? (
+            <ChevronUp className="h-3.5 w-3.5 text-muted" />
+          ) : (
+            <ChevronDown className="h-3.5 w-3.5 text-muted" />
+          ))}
       </div>
     </div>
   );
@@ -96,11 +75,8 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
     SelectedCapabilityContext,
   );
   const [filteredSchemas, setFilteredSchemas] = useState({});
-
   const [schemasCount, setSchemasCount] = useState(0);
-
   const [selectedSchemaId, setSelectedSchemaId] = useState(null);
-
   const [showEditTopicDialog, setShowEditTopicDialog] = useState(false);
   const [showDeleteTopicDialog, setShowDeleteTopicDialog] = useState(false);
   const [isEditInProgress, setIsEditInProgress] = useState(false);
@@ -115,7 +91,6 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
       setFilteredSchemas({});
       return;
     }
-
     fetchSchemasAndSetState(name, schemas);
   }, [topic, isSelected]);
 
@@ -126,19 +101,13 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
   };
 
   const handleMessageHeaderClicked = (id) => {
-    setSelectedSchemaId((prev) => {
-      if (id === prev) {
-        return null; // deselect already selected (toggling)
-      }
-
-      return id;
-    });
+    setSelectedSchemaId((prev) => (id === prev ? null : id));
   };
 
   const fetchSchemasAndSetState = async (topicName, schemas) => {
-    var filteredSchemas = schemas.filter((schema) => {
-      return schema.subject.includes(topicName);
-    });
+    var filteredSchemas = schemas.filter((schema) =>
+      schema.subject.includes(topicName),
+    );
     setFilteredSchemas(filteredSchemas);
     setSchemasCount(filteredSchemas.length);
   };
@@ -148,7 +117,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
       setIsEditInProgress(true);
       await updateKafkaTopic(topic.id, formValues);
       setShowEditTopicDialog(false);
-      setIsEditInProgress(false); // probably not needed
+      setIsEditInProgress(false);
     },
     [topic],
   );
@@ -158,104 +127,97 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
     await deleteKafkaTopic(topic.id);
   }, [topic]);
 
-  const header = (
-    <TopicHeader
-      name={name}
-      description={description}
-      partitions={partitions}
-      retention={retention}
-      status={status}
-      isOpen={isSelected}
-      onClicked={handleHeaderClicked}
-    />
-  );
-
   return (
-    <Accordion
-      header={header}
-      isOpen={isSelected}
-      onToggle={handleHeaderClicked}
-    >
-      <Card variant="fill" surface="secondary">
-        <CardContent>
-          <Poles
-            leftContent={<Text styledAs="actionBold">Description</Text>}
-            rightContent={
-              <>
-                {allowedToUpdate && (
-                  <IconButton
-                    title="Edit"
-                    icon={EditIcon}
-                    onClick={() => setShowEditTopicDialog(true)}
-                  />
-                )}
-                {allowedToDelete && (
-                  <IconButton
-                    title="Delete"
-                    icon={DeleteIcon}
-                    onClick={() => setShowDeleteTopicDialog(true)}
-                  />
-                )}
+    <div>
+      <TopicHeader
+        name={name}
+        description={description}
+        partitions={partitions}
+        retention={retention}
+        status={status}
+        isOpen={isSelected}
+        onClicked={handleHeaderClicked}
+      />
 
-                {showEditTopicDialog && (
-                  <EditTopicDialog
-                    originalTopic={topic}
-                    inProgress={isEditInProgress}
-                    allowedToUpdate={allowedToUpdate}
-                    allowedToDelete={allowedToDelete}
-                    onCloseClicked={() => setShowEditTopicDialog(false)}
-                    onUpdateClicked={handleUpdateTopic}
-                    onDeleteClicked={handleDeleteTopic}
-                  />
-                )}
-
-                {showDeleteTopicDialog && (
-                  <DeleteTopicDialog
-                    topicName={topic.name}
-                    inProgress={isEditInProgress}
-                    allowedToDelete={allowedToDelete}
-                    onDeleteClicked={handleDeleteTopic}
-                    onCancelClicked={() => setShowDeleteTopicDialog(false)}
-                  />
-                )}
-              </>
-            }
-          />
-
-          <Text>{description}</Text>
-
-          {
-            <>
-              <br />
-
-              <div className={styles.messagecontractsheader}>
-                <Text styledAs="actionBold">Schemas ({schemasCount})</Text>
-              </div>
-              {schemasCount === 0 && (
-                <div>No schemas are defined for this topic</div>
+      {isSelected && (
+        <div className="bg-[#f8f9fa] dark:bg-[#1e293b] border-b border-divider px-4 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <SectionLabel>Description</SectionLabel>
+            <div className="flex items-center gap-1">
+              {allowedToUpdate && (
+                <IconButton
+                  title="Edit"
+                  onClick={() => setShowEditTopicDialog(true)}
+                >
+                  <Pencil className="h-3.5 w-3.5 text-secondary" />
+                </IconButton>
+              )}
+              {allowedToDelete && (
+                <IconButton
+                  title="Delete"
+                  onClick={() => setShowDeleteTopicDialog(true)}
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-secondary" />
+                </IconButton>
               )}
 
-              {Object.entries(filteredSchemas).map(([elem, schema]) => (
-                <MessageContracts
-                  key={schema.id}
-                  schema={schema}
-                  isSelected={schema.id === selectedSchemaId}
-                  onHeaderClicked={(type) => handleMessageHeaderClicked(type)}
+              {showEditTopicDialog && (
+                <EditTopicDialog
+                  originalTopic={topic}
+                  inProgress={isEditInProgress}
+                  allowedToUpdate={allowedToUpdate}
+                  allowedToDelete={allowedToDelete}
+                  onCloseClicked={() => setShowEditTopicDialog(false)}
+                  onUpdateClicked={handleUpdateTopic}
+                  onDeleteClicked={handleDeleteTopic}
                 />
-              ))}
+              )}
 
-              <br />
-            </>
-          }
+              {showDeleteTopicDialog && (
+                <DeleteTopicDialog
+                  topicName={topic.name}
+                  inProgress={isEditInProgress}
+                  allowedToDelete={allowedToDelete}
+                  onDeleteClicked={handleDeleteTopic}
+                  onCancelClicked={() => setShowDeleteTopicDialog(false)}
+                />
+              )}
+            </div>
+          </div>
 
-          <Text styledAs="actionBold">Consumer Statistics</Text>
-          <ConsumerLink
-            capabilityId={topic.capabilityId}
-            topicName={topic.name}
-            linkTitle="Open consumer dashboard in Grafana"
-          />
-        </CardContent>
-      </Card>
-    </Accordion>
+          <p className="text-[13px] text-secondary leading-[1.6] mb-4">
+            {description}
+          </p>
+
+          <div className="flex items-center justify-between mb-2 mt-4">
+            <SectionLabel>Schemas ({schemasCount})</SectionLabel>
+          </div>
+          {schemasCount === 0 && (
+            <EmptyState className="mb-3">
+              No schemas are defined for this topic
+            </EmptyState>
+          )}
+          {Object.entries(filteredSchemas).map(([elem, schema]) => (
+            <MessageContracts
+              key={schema.id}
+              schema={schema}
+              isSelected={schema.id === selectedSchemaId}
+              onHeaderClicked={(type) => handleMessageHeaderClicked(type)}
+            />
+          ))}
+
+          <div className="mt-4">
+            <SectionLabel>Consumer Statistics</SectionLabel>
+            <div className="mt-1">
+              <ConsumerLink
+                capabilityId={topic.capabilityId}
+                topicName={topic.name}
+                linkTitle="Open consumer dashboard in Grafana"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

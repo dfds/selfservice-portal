@@ -1,18 +1,14 @@
 import React, { useContext, useEffect } from "react";
 import PageSection from "components/PageSection";
 import styles from "./selfAssessment.module.css";
-import { Card, CardContent, Button } from "@dfds-ui/react-components";
+import { Card, CardContent } from "@/components/ui/card";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { useState } from "react";
-import {
-  StatusSuccess,
-  StatusAlert,
-  Information,
-  Help,
-} from "@dfds-ui/icons/system";
+import { CheckCircle, AlertCircle, Info, HelpCircle } from "lucide-react";
 import { useTracking } from "../../../hooks/Tracking";
 import { useSelfServiceRequest } from "../../../hooks/SelfServiceApi";
 import { TrackedButton } from "@/components/Tracking";
+import { SkeletonSelfAssessmentRow } from "@/components/ui/skeleton";
 
 export default function SelfAssessments() {
   const { responseData, sendRequest } = useSelfServiceRequest();
@@ -88,26 +84,26 @@ export default function SelfAssessments() {
   };
 
   function StatusIcon({ status }) {
-    var statusIcon = <Help className={styles.levelIndicatorIcon} />;
+    var statusIcon = <HelpCircle className={styles.levelIndicatorIcon} />;
     if (status != undefined) {
       switch (status.toUpperCase()) {
         case SelfAssessmentLevel.VIOLATED:
           statusIcon = (
-            <StatusAlert
+            <AlertCircle
               className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
             />
           );
           break;
         case SelfAssessmentLevel.NOT_APPLICABLE:
           statusIcon = (
-            <Information
+            <Info
               className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
             />
           );
           break;
         case SelfAssessmentLevel.SATISFIED:
           statusIcon = (
-            <StatusSuccess
+            <CheckCircle
               className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
             />
           );
@@ -137,7 +133,7 @@ export default function SelfAssessments() {
     <>
       <PageSection headline="Capability Self Assessments">
         <Card>
-          <CardContent>
+          <CardContent className="pt-4">
             <p>
               Self Assessments are a way to simply indicate if a capability is
               following a specific guideline or not. This is a way to keep track
@@ -145,7 +141,13 @@ export default function SelfAssessments() {
               capabilities.
             </p>
 
-            {(assessments || []).length > 0 ? (
+            {!responseData ? (
+              <div className="mt-4">
+                {[0, 1, 2, 3].map((i) => (
+                  <SkeletonSelfAssessmentRow key={i} />
+                ))}
+              </div>
+            ) : (assessments || []).length > 0 ? (
               <>
                 <p>
                   The following self assessments are available for this

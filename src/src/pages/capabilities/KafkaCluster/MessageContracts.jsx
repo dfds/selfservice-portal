@@ -1,9 +1,9 @@
 import styles from "./MessageContract.module.css";
 import Expandable from "../../../components/Expandable";
-import { Text } from "@dfds-ui/typography";
+import { Text } from "@/components/ui/Text";
 import React from "react";
-import { Divider } from "@dfds-ui/react-components/divider";
-import { ChevronDown, ChevronUp } from "@dfds-ui/icons/system";
+import { Separator } from "@/components/ui/separator";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 function MessageHeader({ schema, isOpen }) {
   return (
@@ -33,7 +33,7 @@ export default function MessageContracts({
   const getHeader = () => (
     <>
       <MessageHeader schema={schema} isOpen={isSelected} />
-      <Divider />
+      <Separator />
     </>
   );
 
@@ -49,7 +49,11 @@ export default function MessageContracts({
           {schema !== undefined && (
             <div>
               <Text styledAs="label">Schema ({schema.schemaType})</Text>
-              <JsonViewer json={schema.schema} />
+              <pre className="mt-2 bg-[#f2f2f2] dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[4px] p-3 font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] overflow-auto whitespace-pre-wrap">
+                {typeof schema.schema === "string"
+                  ? schema.schema
+                  : JSON.stringify(schema.schema, null, 2)}
+              </pre>
             </div>
           )}
         </div>

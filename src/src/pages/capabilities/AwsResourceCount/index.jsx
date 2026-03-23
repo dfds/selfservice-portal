@@ -1,12 +1,20 @@
 import React, { useContext, useMemo } from "react";
 import awsLogo from "./aws-logo.svg";
-import AppContext from "AppContext";
+import AppContext from "@/AppContext";
 import styles from "./AwsCount.module.css";
-import { Modal, ModalAction } from "@dfds-ui/modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
 import { MaterialReactTable } from "material-react-table";
 import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdataapi";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export function InlineAwsCountSummary({ data }) {
   return (
@@ -109,22 +117,12 @@ function AwsCountCard({ title, subtitle, count }) {
 function ResourcesWindow({ onCloseRequested, capabilityId }) {
   const { getAwsResourceCountsForCapability } = useCapabilitiesAwsResources();
   const counts = getAwsResourceCountsForCapability(capabilityId);
+  const isMobile = useIsMobile();
 
   const countsArray = [...counts].map((val) => ({
     name: val.resourceId,
     count: val.resourceCount,
   }));
-  const actions = (
-    <>
-      <ModalAction
-        style={{ marginRight: "1rem" }}
-        actionVariation="secondary"
-        onClick={onCloseRequested}
-      >
-        Close
-      </ModalAction>
-    </>
-  );
 
   const columns = useMemo(
     () => [
@@ -161,55 +159,60 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
   );
 
   return (
-    <>
-      <Modal
-        heading={`Complete list of resources in AWS`}
-        isOpen={true}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={onCloseRequested}
-        actions={actions}
-        sizes={{
-          s: "60%",
-          m: "60%",
-          l: "60%",
-          xl: "60%",
-          xxl: "60%",
-        }}
-      >
-        <MaterialReactTable
-          columns={columns}
-          data={countsArray}
-          muiTableHeadCellProps={{
-            sx: {
-              fontWeight: "700",
-              fontSize: "16px",
-              fontFamily: "DFDS",
-              color: "#002b45",
-            },
-          }}
-          muiTableBodyCellProps={{
-            sx: {
-              fontWeight: "400",
-              fontSize: "16px",
-              fontFamily: "DFDS",
-              color: "#4d4e4c",
-              padding: "5px",
-            },
-          }}
-          muiTablePaperProps={{
-            elevation: 0,
-            sx: {
-              borderRadius: "0",
-            },
-          }}
-          enablePagination={false}
-          enableTopToolbar={false}
-          enableBottomToolbar={false}
-          enableColumnActions={false}
-          enableColumnFilters={false}
-        />
-      </Modal>
-    </>
+    <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
+      <DialogContent className={isMobile ? "max-w-[95%]" : "max-w-[60%]"}>
+        <DialogHeader>
+          <DialogTitle>Complete list of resources in AWS</DialogTitle>
+        </DialogHeader>
+        {isMobile ? (
+          <div className="divide-y divide-divider max-h-[60vh] overflow-y-auto">
+            {countsArray.map((item) => (
+              <div key={item.name} className="flex items-center justify-between px-3 py-2.5">
+                <span className="text-sm text-primary">{item.name}</span>
+                <span className="text-sm font-medium text-primary tabular-nums">{item.count}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <MaterialReactTable
+            columns={columns}
+            data={countsArray}
+            muiTableHeadCellProps={{
+              sx: {
+                fontWeight: "700",
+                fontSize: "16px",
+                fontFamily: "DFDS",
+                color: "#002b45",
+              },
+            }}
+            muiTableBodyCellProps={{
+              sx: {
+                fontWeight: "400",
+                fontSize: "16px",
+                fontFamily: "DFDS",
+                color: "#4d4e4c",
+                padding: "5px",
+              },
+            }}
+            muiTablePaperProps={{
+              elevation: 0,
+              sx: {
+                borderRadius: "0",
+              },
+            }}
+            enablePagination={false}
+            enableTopToolbar={false}
+            enableBottomToolbar={false}
+            enableColumnActions={false}
+            enableColumnFilters={false}
+          />
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={onCloseRequested}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

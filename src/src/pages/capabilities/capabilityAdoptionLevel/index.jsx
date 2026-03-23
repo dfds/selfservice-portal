@@ -1,13 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
 import PageSection from "../../../components/PageSection";
 import styles from "./capabilityAdoptionLevel.module.css";
-import { Text } from "@dfds-ui/typography";
-import {
-  StatusSuccess,
-  StatusAlert,
-  Information,
-  Help,
-} from "@dfds-ui/icons/system";
+import { Text } from "@/components/ui/Text";
+import { CheckCircle, AlertCircle, Info, HelpCircle } from "lucide-react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import SelfAssessments from "../selfAssessment";
 import { TabbedPageSection } from "../../../components/PageSection";
@@ -31,25 +26,25 @@ const ConfigurationLevel = {
 };
 
 function MetricRow({ description, level }) {
-  var statusIcon = <Help className={styles.levelIndicatorIcon} />;
+  var statusIcon = <HelpCircle className={styles.levelIndicatorIcon} />;
   switch (level.toUpperCase()) {
     case ConfigurationLevel.NONE:
       statusIcon = (
-        <StatusAlert
+        <AlertCircle
           className={`${styles.levelIndicatorIcon} ${styles.noAdoption}`}
         />
       );
       break;
     case ConfigurationLevel.PARTIAL:
       statusIcon = (
-        <Information
+        <Info
           className={`${styles.levelIndicatorIcon} ${styles.partialAdoption}`}
         />
       );
       break;
     case ConfigurationLevel.COMPLETE:
       statusIcon = (
-        <StatusSuccess
+        <CheckCircle
           className={`${styles.levelIndicatorIcon} ${styles.completeAdoption}`}
         />
       );
