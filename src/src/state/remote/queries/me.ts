@@ -1,69 +1,37 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
-import PreAppContext from "@/preAppContext";
-import { useContext } from "react";
+import { createSsuQuery, createSsuMutation } from "../queryFactory";
 
-export function useMe() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["me"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["me"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    staleTime: 30000,
-  });
+export const useMe = createSsuQuery({
+  queryKey: ["me"],
+  urlSegments: ["me"],
+  staleTime: 30000,
+});
 
-  return query;
-}
+export const useUpdateMyPersonalInformation = createSsuMutation<{
+  profileDefinition: any;
+  user: { name: string; email: string };
+}>({
+  method: "PUT",
+  urlSegments: (data) => [
+    data.profileDefinition?._links?.personalInformation.href,
+  ],
+  payload: (data) => ({
+    name: data.user.name,
+    email: data.user.email,
+  }),
+});
 
-export function useUpdateMyPersonalInformation() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "PUT",
-        urlSegments: [data.profileDefinition?._links?.personalInformation.href],
-        payload: {
-          name: data.user.name,
-          email: data.user.email,
-        },
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useUpdateUserSettingsInformation = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["me", "settings"],
+  payload: (data) => data,
+});
 
-  return mutation;
-}
-
-export function useUpdateUserSettingsInformation() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["me", "settings"],
-        payload: data,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useRegisterMyVisit() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.profileDefinition?._links?.portalVisits.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
+export const useRegisterMyVisit = createSsuMutation<{
+  profileDefinition: any;
+}>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.profileDefinition?._links?.portalVisits.href,
+  ],
+  payload: () => null,
+});

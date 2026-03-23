@@ -1,91 +1,34 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
-import { useContext } from "react";
-import PreAppContext from "@/preAppContext";
+import {
+  createSsuQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-export function useDemoSignups() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["demosignups"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["demos/signups"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => {
-      let list = data.items || [];
-      return list;
-    },
-  });
+export const useDemoSignups = createSsuQuery({
+  queryKey: ["demosignups"],
+  urlSegments: ["demos/signups"],
+  select: (data: any) => data.items || [],
+});
 
-  return query;
-}
+export const useDemos = createSsuQuery({
+  queryKey: ["demos"],
+  urlSegments: ["demos"],
+  select: (data: any) => data.demos || [],
+});
 
-export function useDemos() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["demos"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["demos"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => {
-      let list = data.demos || [];
-      return list;
-    },
-  });
+export const useRegisterDemo = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["demos"],
+  payload: (data) => data,
+});
 
-  return query;
-}
+export const useDeleteDemo = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => ["demos", data.demoId],
+  payload: () => null,
+});
 
-export function useRegisterDemo() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["demos"],
-        payload: data,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      });
-    },
-  });
-
-  return mutation;
-}
-
-export function useDeleteDemo() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      ssuRequest({
-        method: "DELETE",
-        urlSegments: ["demos", data.demoId],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      });
-    },
-  });
-
-  return mutation;
-}
-
-export function useUpdateDemo() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["demos", data.id],
-        payload: data,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      });
-    },
-  });
-  return mutation;
-}
+export const useUpdateDemo = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => ["demos", data.id],
+  payload: (data) => data,
+});

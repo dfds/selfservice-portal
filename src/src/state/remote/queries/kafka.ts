@@ -1,133 +1,88 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
-import PreAppContext from "@/preAppContext";
-import { useContext } from "react";
+import {
+  createSsuQuery,
+  createSsuParamQuery,
+  createSsuLinkQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-export function useKafkaClustersAccessList(capabilityDefinition) {
-  const link = capabilityDefinition?._links?.clusters;
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: [
-      "capabilities",
-      "kafka",
-      "clusters-list",
-      capabilityDefinition?.id,
-    ],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: [link.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => data.items,
-    enabled: link != null,
+function enrichTopicsWithClusterName(data: any): any[] {
+  return (data.items || []).map((topic: any) => {
+    const found = (data._embedded?.kafkaClusters?.items || []).find(
+      (cluster: any) => cluster.id === topic.kafkaClusterId,
+    );
+    return { ...topic, kafkaClusterName: found?.name || "" };
   });
-
-  return query;
 }
 
-export function useKafkaClusters() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["kafka", "clusters"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["kafkaclusters"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => data.items,
-  });
+export const useKafkaClustersAccessList = createSsuLinkQuery<any>({
+  queryKey: (def) => [
+    "capabilities",
+    "kafka",
+    "clusters-list",
+    def?.id,
+  ],
+  linkHref: (def) => def?._links?.clusters?.href,
+  select: (data: any) => data.items,
+});
 
-  return query;
-}
+export const useKafkaClusters = createSsuQuery({
+  queryKey: ["kafka", "clusters"],
+  urlSegments: ["kafkaclusters"],
+  select: (data: any) => data.items,
+});
 
-export function usePublicTopics() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["public-kafkatopics"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["kafkatopics"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => {
-      const finalTopics = (data.items || []).map((topic) => {
-        const copy = { ...topic };
-        const found = (data._embedded?.kafkaClusters?.items || []).find(
-          (cluster) => cluster.id === topic.kafkaClusterId,
-        );
-        copy.kafkaClusterName = found?.name || "";
-        return copy;
-      });
+export const usePublicTopics = createSsuQuery({
+  queryKey: ["public-kafkatopics"],
+  urlSegments: ["kafkatopics"],
+  select: enrichTopicsWithClusterName,
+});
 
-      return finalTopics;
-    },
-  });
+export const useUpdateKafkaTopic = createSsuMutation<any>({
+  method: (data) => data.topicDefinition?._links?.updateDescription.method,
+  urlSegments: (data) => [
+    data.topicDefinition?._links?.updateDescription.href,
+  ],
+});
 
-  return query;
-}
+export const useDeleteKafkaTopic = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => [data.topicDefinition?._links?.self?.href],
+  payload: () => null,
+});
 
-export function useUpdateKafkaTopic() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: data.topicDefinition?._links?.updateDescription.method,
-        urlSegments: [data.topicDefinition?._links?.updateDescription.href],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useAddKafkaTopic = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.clusterDefinition?._links?.createTopic.href,
+  ],
+});
 
-  return mutation;
-}
+export const useAllKafkaTopics = createSsuQuery({
+  queryKey: ["kafka", "all-topics"],
+  urlSegments: ["kafkatopics"],
+  authMode: true,
+  select: enrichTopicsWithClusterName,
+});
 
-export function useDeleteKafkaTopic() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "DELETE",
-        urlSegments: [data.topicDefinition?._links?.self?.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useTopicMessageContracts = createSsuParamQuery<string>({
+  queryKey: (topicId) => ["kafka", "topic-message-contracts", topicId],
+  urlSegments: (topicId) => ["kafkatopics", topicId, "messagecontracts"],
+  authMode: true,
+  enabled: (id) => !!id,
+  select: (data: any) => data.items || [],
+});
 
-  return mutation;
-}
+export const useKafkaSchemas = createSsuParamQuery<string>({
+  queryKey: (clusterId) => ["kafka", "schemas", clusterId],
+  urlSegments: (clusterId) => ["kafkaschemas", clusterId],
+  authMode: true,
+  enabled: (id) => !!id,
+});
 
-export function useAddKafkaTopic() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.clusterDefinition?._links?.createTopic.href],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useRequestAccessToCluster() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.clusterDefinition?._links?.requestAccess.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
+export const useRequestAccessToCluster = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.clusterDefinition?._links?.requestAccess.href,
+  ],
+  payload: () => null,
+});
