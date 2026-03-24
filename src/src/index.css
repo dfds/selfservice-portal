@@ -427,11 +427,19 @@ code {
   font-size: 12px;
   font-family: "SFMono-Regular", "Fira Code", monospace;
   font-weight: 500;
-  user-select: none;
   vertical-align: baseline;
 }
 
 .dark .template-variable-chip {
   background: rgba(59, 130, 246, 0.1);
   color: #60a5fa;
+}
+
+.template-variable-chip.ProseMirror-selectednode {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.dark .template-variable-chip.ProseMirror-selectednode {
+  outline-color: #60a5fa;
 }
