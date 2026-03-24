@@ -6,6 +6,7 @@ import { Underline } from "@tiptap/extension-underline";
 import { TextAlign } from "@tiptap/extension-text-align";
 import { Highlight } from "@tiptap/extension-highlight";
 import { Typography } from "@tiptap/extension-typography";
+import { Link } from "@/pages/release-notes/editor/tiptap/components/tiptap-extension/link-extension";
 import { useToast } from "@/context/ToastContext";
 import { queryClient } from "@/state/remote/client";
 import {
@@ -21,6 +22,7 @@ import {
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
 import { VariableInserter } from "./components/variable-inserter";
+import { FormattingToolbar } from "./components/formatting-toolbar";
 import { AudienceBuilder } from "./components/audience-builder";
 import { PreviewDialog } from "./components/preview-dialog";
 import { SchedulePicker } from "./components/schedule-picker";
@@ -28,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -84,21 +87,31 @@ export default function EmailCampaignEditor() {
   }>({ active: false, query: "", from: 0, to: 0 });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const suggestionRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef({ suggestion, selectedIndex, filteredVars: [] as any[] });
+  const stateRef = useRef({
+    suggestion,
+    selectedIndex,
+    filteredVars: [] as any[],
+  });
 
-  const handleSuggestionOpen = useCallback((query: string, from: number, to: number) => {
-    setSuggestion({ active: true, query, from, to });
-    setSelectedIndex(0);
-  }, []);
+  const handleSuggestionOpen = useCallback(
+    (query: string, from: number, to: number) => {
+      setSuggestion({ active: true, query, from, to });
+      setSelectedIndex(0);
+    },
+    [],
+  );
 
   const handleSuggestionClose = useCallback(() => {
     setSuggestion({ active: false, query: "", from: 0, to: 0 });
   }, []);
 
-  const handleSuggestionUpdate = useCallback((query: string, from: number, to: number) => {
-    setSuggestion({ active: true, query, from, to });
-    setSelectedIndex(0);
-  }, []);
+  const handleSuggestionUpdate = useCallback(
+    (query: string, from: number, to: number) => {
+      setSuggestion({ active: true, query, from, to });
+      setSelectedIndex(0);
+    },
+    [],
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -108,6 +121,7 @@ export default function EmailCampaignEditor() {
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Highlight.configure({ multicolor: true }),
       Typography,
+      Link.configure({ openOnClick: false }),
       TemplateVariableNode,
       VariableSuggestion.configure({
         onOpen: handleSuggestionOpen,
@@ -122,7 +136,11 @@ export default function EmailCampaignEditor() {
           "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
       },
       handleKeyDown: (_view, event) => {
-        const { suggestion: s, filteredVars: fv, selectedIndex: si } = stateRef.current;
+        const {
+          suggestion: s,
+          filteredVars: fv,
+          selectedIndex: si,
+        } = stateRef.current;
         if (!s.active) return false;
         if (event.key === "ArrowDown") {
           event.preventDefault();
@@ -400,10 +418,7 @@ export default function EmailCampaignEditor() {
         </div>
 
         <div>
-          <Label
-            htmlFor="campaign-subject"
-            className="text-[12px] mb-1 block"
-          >
+          <Label htmlFor="campaign-subject" className="text-[12px] mb-1 block">
             Email Subject Line
           </Label>
           <Input
@@ -421,10 +436,16 @@ export default function EmailCampaignEditor() {
         <div>
           <Label className="text-[12px] mb-2 block">Email Body</Label>
           <div className="border border-card rounded-lg overflow-hidden bg-surface relative">
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-card bg-surface-subtle">
+            <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle">
+              <FormattingToolbar editor={editor} variables={variables || []} />
+              <Separator orientation="vertical" className="mx-1.5 h-5" />
               <VariableInserter editor={editor} />
               <span className="text-[10px] text-muted ml-auto">
-                Type <code className="bg-surface px-1 rounded text-[10px]">{"{{"}</code> to autocomplete
+                Type{" "}
+                <code className="bg-surface px-1 rounded text-[10px]">
+                  {"{{"}
+                </code>{" "}
+                to autocomplete
               </span>
             </div>
             <EditorContent editor={editor} />
@@ -475,7 +496,11 @@ export default function EmailCampaignEditor() {
           scheduleType={scheduleType}
           scheduledAt={scheduledAt}
           cronExpression={cronExpression}
-          onChange={({ scheduleType: st, scheduledAt: sa, cronExpression: ce }) => {
+          onChange={({
+            scheduleType: st,
+            scheduledAt: sa,
+            cronExpression: ce,
+          }) => {
             setScheduleType(st);
             setScheduledAt(sa);
             setCronExpression(ce);
@@ -494,9 +519,7 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSave}
-              disabled={
-                createCampaign.isPending || updateCampaign.isPending
-              }
+              disabled={createCampaign.isPending || updateCampaign.isPending}
               className="gap-1.5"
             >
               <Save size={14} />
@@ -520,7 +543,11 @@ export default function EmailCampaignEditor() {
               className="gap-1.5"
             >
               <CalendarClock size={14} />
-              {updateCampaign.isPending ? "Saving..." : scheduleCampaign.isPending ? "Scheduling..." : "Schedule"}
+              {updateCampaign.isPending
+                ? "Saving..."
+                : scheduleCampaign.isPending
+                ? "Scheduling..."
+                : "Schedule"}
             </Button>
           )}
           {isEdit && isDraft && scheduleType === "Immediate" && (
@@ -554,10 +581,7 @@ export default function EmailCampaignEditor() {
             immediately. This action cannot be undone.
           </p>
           <div className="flex gap-2 justify-end pt-2">
-            <Button
-              variant="outline"
-              onClick={() => setSendConfirmOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setSendConfirmOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -567,7 +591,11 @@ export default function EmailCampaignEditor() {
               className="gap-1.5"
             >
               <Send size={14} />
-              {updateCampaign.isPending ? "Saving..." : sendCampaign.isPending ? "Sending..." : "Send Now"}
+              {updateCampaign.isPending
+                ? "Saving..."
+                : sendCampaign.isPending
+                ? "Sending..."
+                : "Send Now"}
             </Button>
           </div>
         </DialogContent>

@@ -18,6 +18,7 @@ export const TemplateVariableNode = Node.create<TemplateVariableOptions>({
   inline: true,
   atom: true,
   selectable: true,
+  marks: "_",
 
   addOptions() {
     return {
