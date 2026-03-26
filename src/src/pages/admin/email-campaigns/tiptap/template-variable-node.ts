@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { Node, mergeAttributes, InputRule } from "@tiptap/core";
 
 export interface TemplateVariableOptions {
   HTMLAttributes: Record<string, any>;
@@ -55,6 +55,18 @@ export const TemplateVariableNode = Node.create<TemplateVariableOptions>({
         contenteditable: "false",
       }),
       `{{${node.attrs.variableName}}}`,
+    ];
+  },
+
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /\{\{([A-Za-z.]+)\}\}$/,
+        handler: ({ state, range, match }) => {
+          const node = this.type.create({ variableName: match[1] });
+          state.tr.replaceWith(range.from, range.to, node);
+        },
+      }),
     ];
   },
 
