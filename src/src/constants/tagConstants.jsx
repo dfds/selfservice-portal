@@ -190,7 +190,8 @@ export const getBusinessCapabilitiesOptions = (costCenter) => {
     return [
       {
         value: "no-available-business-capabilities",
-        label: "No configured Business Capabilities -- contact your enterprise architect to get yours added",
+        label:
+          "No configured Business Capabilities -- contact your enterprise architect to get yours added",
       },
     ];
   }
