@@ -426,9 +426,11 @@ export default function CompliancePage() {
 
   const { costCentres, untaggedCount } = useMemo(() => {
     const caps: any[] = capabilities ?? [];
+    // Filter out deleted capabilities
+    const activeCaps = caps.filter((cap) => cap.status !== "Deleted");
     const map = new Map<string, number>();
     let untagged = 0;
-    for (const cap of caps) {
+    for (const cap of activeCaps) {
       const cc = parseCostCentre(cap);
       if (!cc) {
         untagged++;
