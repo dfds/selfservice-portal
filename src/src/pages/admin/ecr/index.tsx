@@ -27,7 +27,7 @@ export default function EcrSyncDashboardPage() {
 
   const allRepos: any[] = Array.isArray(repos)
     ? repos
-    : ((repos as any)?.items ?? []);
+    : (repos as any)?.items ?? [];
 
   const outOfSync: any = outOfSyncData ?? {};
   const notInAws: string[] = outOfSync.repositoriesNotInAws ?? [];

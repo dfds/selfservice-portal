@@ -4,14 +4,14 @@ import { SkeletonDemoAction } from "@/components/ui/skeleton";
 import { CheckCircle } from "lucide-react";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import Page from "@/components/Page";
-import styles from "./demos.module.css";
+import styles from "./events.module.css";
 import { TrackedButton } from "@/components/Tracking";
 import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
 import RecordingsSection from "./RecordingsSection";
-import DemoSignupModal from "./DemoSignupModal";
+import EventSignupModal from "./EventSignupModal";
 
-export default function DemosPage() {
+export default function EventsPage() {
   const [isSignedUp, setIsSignedUp] = useState(true);
   const { myUserSettings } = useContext(AppContext);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
@@ -22,13 +22,13 @@ export default function DemosPage() {
 
   useEffect(() => {
     if (myUserSettings) {
-      const signedUpForDemos = myUserSettings?.signedUpForDemos === true;
-      setIsSignedUp(signedUpForDemos);
+      const signedUpForEvents = myUserSettings?.signedUpForDemos === true;
+      setIsSignedUp(signedUpForEvents);
       setIsLoading(false);
     }
   }, [myUserSettings]);
 
-  const toggleSignedUpForDemos = () => {
+  const toggleSignedUpForEvents = () => {
     const newValue = !isSignedUp;
     setIsLoading(true);
     myUserSettings.signedUpForDemos = newValue;
@@ -48,9 +48,9 @@ export default function DemosPage() {
 
   return (
     <>
-      <Page title="Cloud Engineering Demos">
+      <Page title="Cloud Engineering Events">
         {showSignupModal && (
-          <DemoSignupModal
+          <EventSignupModal
             isOpen={showSignupModal}
             onClose={() => setShowSignupModal(false)}
           />
@@ -58,12 +58,12 @@ export default function DemosPage() {
         <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
           <p className="font-semibold mb-1">Stay in the loop</p>
           <p className="mb-1">
-            The cloud engineering team hosts demo sessions on a regular basis to
-            showcase new features, tools, and best practices. All demos are
+            The cloud engineering team hosts events on a regular basis to
+            showcase new features, tools, and best practices. All events are
             recorded and available on this page.
           </p>
           <p className="mb-3">
-            Sign up below to receive invitations for future demo sessions.
+            Sign up below to receive invitations for future events.
           </p>
           <div className="flex gap-2 flex-wrap items-center">
             {isLoading ? (
@@ -72,25 +72,25 @@ export default function DemosPage() {
               <>
                 {!isSignedUp ? (
                   <TrackedButton
-                    trackName="SignUpForDemos"
+                    trackName="SignUpForEvents"
                     size="small"
-                    onClick={() => toggleSignedUpForDemos()}
+                    onClick={() => toggleSignedUpForEvents()}
                   >
-                    Sign Up For Future Demos
+                    Sign Up For Future Events
                   </TrackedButton>
                 ) : (
                   <>
                     <span className="flex items-center gap-1.5 text-[#4caf50] text-[13px]">
                       <CheckCircle size={16} />
-                      You're signed up for demo invitations
+                      You're signed up for event invitations
                     </span>
                     <TrackedButton
-                      trackName="CancelSignUpForDemos"
+                      trackName="CancelSignUpForEvents"
                       variation="outlined"
                       size="small"
-                      onClick={() => toggleSignedUpForDemos()}
+                      onClick={() => toggleSignedUpForEvents()}
                     >
-                      Stop Receiving Demo Invites
+                      Stop Receiving Event Invites
                     </TrackedButton>
                   </>
                 )}
@@ -100,12 +100,12 @@ export default function DemosPage() {
           {isCloudEngineerEnabled && (
             <div className="mt-3 pt-3 border-t border-[rgba(14,124,193,0.2)] dark:border-[rgba(14,124,193,0.3)]">
               <TrackedButton
-                trackName="ViewDemoSignups"
+                trackName="ViewEventSignups"
                 variation="outlined"
                 size="small"
                 onClick={() => setShowSignupModal(true)}
               >
-                View Demo Signups
+                View Event Signups
               </TrackedButton>
             </div>
           )}

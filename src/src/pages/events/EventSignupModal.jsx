@@ -7,17 +7,17 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useDemoSignups } from "@/state/remote/queries/demos";
+import { useEventSignups } from "@/state/remote/queries/events";
 import { Text } from "@/components/ui/Text";
 
-export default function DemoSignupModal({ isOpen, onClose }) {
-  const { isFetched: isFetchedSignups, data: signups } = useDemoSignups();
+export default function EventSignupModal({ isOpen, onClose }) {
+  const { isFetched: isFetchedSignups, data: signups } = useEventSignups();
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Demo signups</DialogTitle>
+          <DialogTitle>Event signups</DialogTitle>
         </DialogHeader>
         {!isFetchedSignups ? (
           <Text>Loading...</Text>

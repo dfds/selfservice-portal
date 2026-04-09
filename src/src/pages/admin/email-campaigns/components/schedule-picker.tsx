@@ -65,7 +65,11 @@ export function SchedulePicker({
             type="button"
             disabled={disabled}
             onClick={() =>
-              onChange({ scheduleType: mode.value, scheduledAt, cronExpression })
+              onChange({
+                scheduleType: mode.value,
+                scheduledAt,
+                cronExpression,
+              })
             }
             className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md border cursor-pointer transition-colors ${
               scheduleType === mode.value
@@ -89,7 +93,11 @@ export function SchedulePicker({
             type="datetime-local"
             value={scheduledAt}
             onChange={(e) =>
-              onChange({ scheduleType, scheduledAt: e.target.value, cronExpression })
+              onChange({
+                scheduleType,
+                scheduledAt: e.target.value,
+                cronExpression,
+              })
             }
             disabled={disabled}
           />
@@ -153,7 +161,10 @@ export function SchedulePicker({
                   }}
                   className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded-md border border-card bg-surface text-secondary hover:border-action hover:text-action cursor-pointer transition-colors"
                 >
-                  <Badge variant="outline" className="text-[10px] font-mono px-1.5">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] font-mono px-1.5"
+                  >
                     {preset.value}
                   </Badge>
                   {preset.label}

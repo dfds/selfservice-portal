@@ -15,10 +15,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
 import {
-  useRegisterDemo,
-  useDeleteDemo,
-  useUpdateDemo,
-} from "@/state/remote/queries/demos";
+  useRegisterEvent,
+  useDeleteEvent,
+  useUpdateEvent,
+} from "@/state/remote/queries/events";
 import {
   useCreateReleaseNote,
   useToggleNoteActivity,
@@ -109,9 +109,9 @@ function AppProvider({ children }) {
   const createEcrRepository = useCreateEcrRepository();
   const createReleaseNote = useCreateReleaseNote();
   const toggleNoteActivity = useToggleNoteActivity();
-  const registerDemoRecording = useRegisterDemo();
-  const deleteDemoRecording = useDeleteDemo();
-  const updateDemoRecording = useUpdateDemo();
+  const registerEvent = useRegisterEvent();
+  const deleteEvent = useDeleteEvent();
+  const updateEvent = useUpdateEvent();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -193,44 +193,44 @@ function AppProvider({ children }) {
     );
   }
 
-  async function addNewDemoRecording(payload) {
-    registerDemoRecording.mutate(payload, {
+  async function addNewEvent(payload) {
+    registerEvent.mutate(payload, {
       onSuccess: async () => {
         await sleep(200).then(() => {
-          queryClient.invalidateQueries({ queryKey: ["demos"] });
-          toast.success("Demo registered. DFDS management thanks you");
+          queryClient.invalidateQueries({ queryKey: ["events"] });
+          toast.success("Event registered. DFDS management thanks you");
         });
       },
-      onError: () => toast.error("Could not register demo"),
+      onError: () => toast.error("Could not register event"),
     });
   }
 
-  async function removeDemoRecording(id) {
-    deleteDemoRecording.mutate(
+  async function removeEvent(id) {
+    deleteEvent.mutate(
       {
-        demoId: id,
+        eventId: id,
       },
       {
         onSuccess: async () => {
           await sleep(200).then(() => {
-            queryClient.invalidateQueries({ queryKey: ["demos"] });
-            toast.success("Demo deleted.");
+            queryClient.invalidateQueries({ queryKey: ["events"] });
+            toast.success("Event deleted.");
           });
         },
-        onError: () => toast.error("Could not delete demo"),
+        onError: () => toast.error("Could not delete event"),
       },
     );
   }
 
-  async function editDemoRecording(payload) {
-    updateDemoRecording.mutate(payload, {
+  async function editEvent(payload) {
+    updateEvent.mutate(payload, {
       onSuccess: async () => {
         await sleep(200).then(() => {
-          queryClient.invalidateQueries({ queryKey: ["demos"] });
-          toast.success("Demo updated.");
+          queryClient.invalidateQueries({ queryKey: ["events"] });
+          toast.success("Event updated.");
         });
       },
-      onError: () => toast.error("Could not update demo"),
+      onError: () => toast.error("Could not update event"),
     });
   }
 
@@ -331,9 +331,9 @@ function AppProvider({ children }) {
     showDeletedCapabilities,
     setShowDeletedCapabilities,
     toggleShowDeletedCapabilities,
-    addNewDemoRecording,
-    removeDemoRecording,
-    editDemoRecording,
+    addNewEvent,
+    removeEvent,
+    editEvent,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

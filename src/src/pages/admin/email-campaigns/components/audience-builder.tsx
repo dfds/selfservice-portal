@@ -36,7 +36,10 @@ const FIELD_OPTIONS = [
   { value: "metadataKeyValue", label: "Metadata Key = Value" },
   { value: "awsAccountCount", label: "AWS Account Count" },
   { value: "azureResourceGroupCount", label: "Azure Resource Count" },
-  { value: "activeMembershipApplicationCount", label: "Active Membership Applications" },
+  {
+    value: "activeMembershipApplicationCount",
+    label: "Active Membership Applications",
+  },
   { value: "cost", label: "Monthly Cost (USD)" },
 ];
 
@@ -81,7 +84,9 @@ export function AudienceBuilder({
 }: AudienceBuilderProps) {
   const resolveAudience = useResolveAudience();
   const [resolved, setResolved] = useState<any>(null);
-  const [expandedCapabilities, setExpandedCapabilities] = useState<Set<string>>(new Set());
+  const [expandedCapabilities, setExpandedCapabilities] = useState<Set<string>>(
+    new Set(),
+  );
   const [capIdsRaw, setCapIdsRaw] = useState(() =>
     (value.capabilityIds || []).join(", "),
   );
@@ -155,8 +160,8 @@ export function AudienceBuilder({
             {mode === "all"
               ? "All Capabilities"
               : mode === "specific"
-                ? "Specific"
-                : "Filter"}
+              ? "Specific"
+              : "Filter"}
           </button>
         ))}
       </div>
@@ -224,7 +229,9 @@ export function AudienceBuilder({
                     placeholder="Key"
                     className="w-[130px]"
                   />
-                  <span className="text-muted text-[12px] flex-shrink-0">=</span>
+                  <span className="text-muted text-[12px] flex-shrink-0">
+                    =
+                  </span>
                   <Input
                     value={filter.value}
                     onChange={(e) => updateFilter(i, { value: e.target.value })}
@@ -283,7 +290,8 @@ export function AudienceBuilder({
             placeholder="RBAC role name (leave empty for all members)"
           />
           <span className="text-[11px] text-muted mt-1 block">
-            Optionally limit recipients to members with a specific RBAC role. Applied during audience resolution.
+            Optionally limit recipients to members with a specific RBAC role.
+            Applied during audience resolution.
           </span>
         </div>
       )}
@@ -334,11 +342,19 @@ export function AudienceBuilder({
                       <td className="px-3 py-1.5 text-primary">
                         <div className="flex items-center gap-1.5">
                           {isExpanded ? (
-                            <ChevronDown size={12} className="text-muted flex-shrink-0" />
+                            <ChevronDown
+                              size={12}
+                              className="text-muted flex-shrink-0"
+                            />
                           ) : (
-                            <ChevronRight size={12} className="text-muted flex-shrink-0" />
+                            <ChevronRight
+                              size={12}
+                              className="text-muted flex-shrink-0"
+                            />
                           )}
-                          <span className="truncate max-w-[300px]">{cap.name}</span>
+                          <span className="truncate max-w-[300px]">
+                            {cap.name}
+                          </span>
                         </div>
                       </td>
                       <td className="px-3 py-1.5 text-right text-muted font-mono">
@@ -347,7 +363,10 @@ export function AudienceBuilder({
                     </tr>
                     {isExpanded && recipients.length === 0 && (
                       <tr className="border-b border-card last:border-0 bg-surface-subtle">
-                        <td className="pl-8 pr-3 py-1.5 text-muted italic" colSpan={2}>
+                        <td
+                          className="pl-8 pr-3 py-1.5 text-muted italic"
+                          colSpan={2}
+                        >
                           No recipients
                         </td>
                       </tr>
@@ -358,7 +377,10 @@ export function AudienceBuilder({
                           key={r.email}
                           className="border-b border-card last:border-0 bg-surface-subtle"
                         >
-                          <td className="pl-8 pr-3 py-1 text-secondary" colSpan={2}>
+                          <td
+                            className="pl-8 pr-3 py-1 text-secondary"
+                            colSpan={2}
+                          >
                             <span className="font-medium">{r.displayName}</span>
                             <span className="text-muted ml-2">{r.email}</span>
                           </td>

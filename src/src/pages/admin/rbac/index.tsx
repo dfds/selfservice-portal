@@ -404,7 +404,7 @@ function GroupExpandedContent({
               const roleName = rolesNameMap[roleId] ?? roleId;
               const scope = r.resource
                 ? `${r.type ? `${r.type}: ` : ""}${r.resource}`
-                : (r.type ?? "Global");
+                : r.type ?? "Global";
               return (
                 <div
                   key={`${roleId}-${i}`}
@@ -608,7 +608,9 @@ export default function RbacViewerPage() {
     queryClient.invalidateQueries({ queryKey: ["rbac", "role-permissions"] });
     if (failed > 0) {
       toast.error(
-        `${selectedPerms.size - failed}/${selectedPerms.size} permissions granted`,
+        `${selectedPerms.size - failed}/${
+          selectedPerms.size
+        } permissions granted`,
       );
     } else {
       toast.success(`Role created with ${selectedPerms.size} permissions`);

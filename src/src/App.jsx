@@ -15,7 +15,7 @@ import ReleaseNotesCreate from "./pages/release-notes/create";
 import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
-import DemosPage from "./pages/demos";
+import EventsPage from "./pages/events";
 import CompliancePage from "./pages/compliance";
 import RbacViewerPage from "./pages/admin/rbac";
 import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
@@ -186,7 +186,7 @@ export default function App() {
             element={<CapabilitySelfAssessmentsPage />}
           />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
-          <Route path="demos" element={<DemosPage />} />
+          <Route path="events" element={<EventsPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="admin/rbac" element={<RbacViewerPage />} />
           <Route path="admin/rbac/user" element={<UserInspectorPage />} />

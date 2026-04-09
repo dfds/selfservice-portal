@@ -63,20 +63,23 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
       return;
     }
     setTextError("");
-    validateSchema.mutate({ schema: parsed }, {
-      onSuccess: (result: any) => {
-        setValidationResult({
-          ok: true,
-          message: result?.message ?? "Schema is valid",
-        });
+    validateSchema.mutate(
+      { schema: parsed },
+      {
+        onSuccess: (result: any) => {
+          setValidationResult({
+            ok: true,
+            message: result?.message ?? "Schema is valid",
+          });
+        },
+        onError: (err: any) => {
+          setValidationResult({
+            ok: false,
+            message: err?.data?.message ?? "Validation failed",
+          });
+        },
       },
-      onError: (err: any) => {
-        setValidationResult({
-          ok: false,
-          message: err?.data?.message ?? "Validation failed",
-        });
-      },
-    });
+    );
   }
 
   function handleSave() {
@@ -93,7 +96,9 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
       { schemaId, schema: { schema: parsed } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["json-schema", schemaId] });
+          queryClient.invalidateQueries({
+            queryKey: ["json-schema", schemaId],
+          });
           toast.success("Schema saved");
           setValidationResult(null);
         },
@@ -115,8 +120,7 @@ function SchemaEditor({ schemaId }: { schemaId: string }) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <SectionLabel className="block">
-          Schema:{" "}
-          <span className="font-mono text-primary">{schemaId}</span>
+          Schema: <span className="font-mono text-primary">{schemaId}</span>
         </SectionLabel>
         <button
           type="button"

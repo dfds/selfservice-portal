@@ -7,46 +7,46 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useDemos } from "@/state/remote/queries/demos";
+import { useEvents } from "@/state/remote/queries/events";
 import { Text } from "@/components/ui/Text";
-import styles from "./demos.module.css";
+import styles from "./events.module.css";
 import { TrackedButton } from "@/components/Tracking";
 import PageSection from "@/components/PageSection";
 import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
-import DemoRecord from "./demoRecord";
-import DemoRegisterModal from "./DemoRegisterModal";
-import DemoEditModal from "./DemoEditModal";
+import EventRecord from "./eventRecord";
+import EventRegisterModal from "./EventRegisterModal";
+import EventEditModal from "./EventEditModal";
 
 export default function RecordingsSection() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const { removeDemoRecording } = useContext(AppContext);
-  const [demos, setDemos] = useState([]);
-  const [selectedDemoId, setSelectedDemoId] = useState(null);
+  const { removeEvent } = useContext(AppContext);
+  const [events, setEvents] = useState([]);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editDemo, setEditDemo] = useState(null);
+  const [editEvent, setEditEvent] = useState(null);
 
-  const { isFetched: isFetchedRecordings, data: demosData } = useDemos();
+  const { isFetched: isFetchedEvents, data: eventsData } = useEvents();
 
   useEffect(() => {
-    if (isFetchedRecordings) {
-      const sorted = [...demosData].sort(
-        (a, b) => new Date(b.recordingDate) - new Date(a.recordingDate),
+    if (isFetchedEvents) {
+      const sorted = [...eventsData].sort(
+        (a, b) => new Date(b.eventDate) - new Date(a.eventDate),
       );
-      setDemos(sorted);
+      setEvents(sorted);
     }
-  }, [isFetchedRecordings, demosData]);
+  }, [isFetchedEvents, eventsData]);
 
   return (
     <PageSection
-      id="recordings"
-      headline="Recordings"
+      id="events"
+      headline="Events"
       headlineChildren={
         isCloudEngineerEnabled && (
           <TrackedButton
-            trackName="RegisterDemoRecording"
+            trackName="RegisterEvent"
             variation="primary"
             size="small"
             style={{ marginLeft: "1rem" }}
@@ -54,25 +54,25 @@ export default function RecordingsSection() {
               setShowRegisterModal(true);
             }}
           >
-            Register Demo Recording
+            Register Event
           </TrackedButton>
         )
       }
     >
       <>
         {showRegisterModal && (
-          <DemoRegisterModal
+          <EventRegisterModal
             isOpen={showRegisterModal}
             onClose={() => setShowRegisterModal(false)}
           />
         )}
-        {showEditModal && editDemo && (
-          <DemoEditModal
+        {showEditModal && editEvent && (
+          <EventEditModal
             isOpen={showEditModal}
-            demo={editDemo}
+            event={editEvent}
             onClose={() => {
               setShowEditModal(false);
-              setEditDemo(null);
+              setEditEvent(null);
             }}
           />
         )}
@@ -85,7 +85,7 @@ export default function RecordingsSection() {
               <DialogHeader>
                 <DialogTitle>Confirm Deletion</DialogTitle>
               </DialogHeader>
-              <Text>Are you sure you want to delete this demo recording?</Text>
+              <Text>Are you sure you want to delete this event?</Text>
               <DialogFooter>
                 <Button
                   variant="outline"
@@ -96,8 +96,8 @@ export default function RecordingsSection() {
                 <Button
                   variant="destructive"
                   onClick={async () => {
-                    removeDemoRecording(selectedDemoId);
-                    setSelectedDemoId(null);
+                    removeEvent(selectedEventId);
+                    setSelectedEventId(null);
                     setShowDeleteModal(false);
                   }}
                 >
@@ -107,24 +107,24 @@ export default function RecordingsSection() {
             </DialogContent>
           </Dialog>
         )}
-        {isFetchedRecordings && demos.length > 0 ? (
+        {isFetchedEvents && events.length > 0 ? (
           <div className={styles.recordingsGrid}>
-            {demos.map((demo, index) => (
-              <div key={demo.id} className={styles.recordingCard}>
-                <DemoRecord
-                  demo={demo}
+            {events.map((event, index) => (
+              <div key={event.id} className={styles.recordingCard}>
+                <EventRecord
+                  event={event}
                   isCloudEngineerEnabled={isCloudEngineerEnabled}
                   onDeleteClick={() => {
-                    setSelectedDemoId(demo.id);
+                    setSelectedEventId(event.id);
                     setShowDeleteModal(true);
                   }}
                   onEditClick={() => {
-                    setEditDemo(demo);
+                    setEditEvent(event);
                     setShowEditModal(true);
                   }}
                 />
                 {/* Render <hr> if not the last item */}
-                {index !== demos.length - 1 && <hr />}
+                {index !== events.length - 1 && <hr />}
               </div>
             ))}
           </div>
@@ -136,9 +136,7 @@ export default function RecordingsSection() {
               alignItems: "center",
             }}
           >
-            <Text>
-              There are currently no recordings. Please check back later.
-            </Text>
+            <Text>There are currently no events. Please check back later.</Text>
           </div>
         )}
       </>
