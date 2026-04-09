@@ -53,7 +53,7 @@ export function ConfirmDialog({
             disabled={isPending}
           >
             {isPending
-              ? (confirmLoadingLabel ?? `${confirmLabel}…`)
+              ? confirmLoadingLabel ?? `${confirmLabel}…`
               : confirmLabel}
           </Button>
         </div>

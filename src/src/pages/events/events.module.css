@@ -191,3 +191,7 @@ hr {
   color: #e2e8f0;
   border-color: #334155;
 }
+
+.date {
+  margin: 0px 8px;
+}

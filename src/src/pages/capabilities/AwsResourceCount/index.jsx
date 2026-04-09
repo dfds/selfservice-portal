@@ -167,9 +167,14 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
         {isMobile ? (
           <div className="divide-y divide-divider max-h-[60vh] overflow-y-auto">
             {countsArray.map((item) => (
-              <div key={item.name} className="flex items-center justify-between px-3 py-2.5">
+              <div
+                key={item.name}
+                className="flex items-center justify-between px-3 py-2.5"
+              >
                 <span className="text-sm text-primary">{item.name}</span>
-                <span className="text-sm font-medium text-primary tabular-nums">{item.count}</span>
+                <span className="text-sm font-medium text-primary tabular-nums">
+                  {item.count}
+                </span>
               </div>
             ))}
           </div>

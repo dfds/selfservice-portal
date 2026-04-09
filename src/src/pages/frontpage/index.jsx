@@ -5,6 +5,7 @@ import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import QuickLinks from "./QuickLinks";
+import UpcomingEvents from "./UpcomingEvents";
 import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -153,6 +154,13 @@ export default function FrontPage() {
           </SectionLabel>
           <PageSection>
             <LatestNews />
+          </PageSection>
+
+          <SectionLabel as="h2" className="mb-2 block">
+            // upcoming events
+          </SectionLabel>
+          <PageSection>
+            <UpcomingEvents />
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">

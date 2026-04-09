@@ -50,8 +50,7 @@ export const VariableSuggestion = Extension.create<VariableSuggestionOptions>({
 
             if (match) {
               const query = match[1];
-              const from =
-                pos.pos - query.length - 2; // position of first {
+              const from = pos.pos - query.length - 2; // position of first {
               const to = pos.pos;
 
               if (!prev.active) {
