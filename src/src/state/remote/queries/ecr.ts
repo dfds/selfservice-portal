@@ -1,4 +1,7 @@
-import { createSsuQuery, createSsuMutation } from "../queryFactory";
+import {
+  createSsuQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
 export const useEcrRepositories = createSsuQuery({
   queryKey: ["ecr", "repositories"],

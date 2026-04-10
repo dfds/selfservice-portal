@@ -38,24 +38,16 @@ function PermissionCombobox({
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const pool = namespace
-    ? allPerms.filter((p: any) => p.namespace === namespace)
-    : allPerms;
-  const filtered =
-    value.trim().length === 0
-      ? []
-      : pool
-          .filter((p: any) =>
-            (p.name ?? "").toLowerCase().includes(value.toLowerCase()),
-          )
-          .slice(0, 10);
+  const pool = namespace ? allPerms.filter((p: any) => p.namespace === namespace) : allPerms;
+  const filtered = value.trim().length === 0
+    ? []
+    : pool
+        .filter((p: any) => (p.name ?? "").toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 10);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setShowDropdown(false);
       }
     }
@@ -68,10 +60,7 @@ function PermissionCombobox({
       <Input
         placeholder="Permission name"
         value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setShowDropdown(true);
-        }}
+        onChange={(e) => { onChange(e.target.value); setShowDropdown(true); }}
         onFocus={() => value.length > 0 && setShowDropdown(true)}
         className="text-sm font-mono"
         autoComplete="off"
@@ -83,15 +72,10 @@ function PermissionCombobox({
               key={`${p.namespace}-${p.name}`}
               type="button"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                onChange(p.name ?? p.id);
-                setShowDropdown(false);
-              }}
+              onClick={() => { onChange(p.name ?? p.id); setShowDropdown(false); }}
               className="w-full flex flex-col px-3 py-1.5 text-left hover:bg-surface-muted transition-colors cursor-pointer border-0 bg-transparent"
             >
-              <span className="text-[10px] text-muted font-mono">
-                {p.namespace}
-              </span>
+              <span className="text-[10px] text-muted font-mono">{p.namespace}</span>
               <span className="text-xs font-mono text-primary">{p.name}</span>
             </button>
           ))}
@@ -118,9 +102,7 @@ function UserPermissionsSection({ userId }: { userId: string }) {
   }
 
   if (items.length === 0) {
-    return (
-      <p className="text-xs text-muted font-mono">No direct permissions.</p>
-    );
+    return <p className="text-xs text-muted font-mono">No direct permissions.</p>;
   }
 
   const grouped = groupPermsByNamespace(items, "permission");
@@ -133,11 +115,7 @@ function UserPermissionsSection({ userId }: { userId: string }) {
           <SectionLabel className="block mb-1">{ns}</SectionLabel>
           <div className="flex flex-wrap gap-1">
             {grouped[ns].map((p, i) => (
-              <Badge
-                key={`${p}-${i}`}
-                variant="outline"
-                className="text-[10px] font-mono"
-              >
+              <Badge key={`${p}-${i}`} variant="outline" className="text-[10px] font-mono">
                 {p}
               </Badge>
             ))}
@@ -190,7 +168,7 @@ function UserRolesSection({ userId }: { userId: string }) {
         const resourceId = r.resource ?? "";
         const resolvedName =
           resourceType?.toLowerCase() === "capability"
-            ? capsMap[resourceId] ?? resourceId
+            ? (capsMap[resourceId] ?? resourceId)
             : resourceId;
 
         return (
@@ -265,11 +243,7 @@ function CanTheyTester({ userId }: { userId: string }) {
           menuPosition="fixed"
           placeholder="— namespace —"
           value={namespace ? { value: namespace, label: namespace } : null}
-          onChange={(opt: any) => {
-            setNamespace(opt?.value ?? "");
-            setPermission("");
-            setResult(null);
-          }}
+          onChange={(opt: any) => { setNamespace(opt?.value ?? ""); setPermission(""); setResult(null); }}
           options={namespaces.map((ns) => ({ value: ns, label: ns }))}
           styles={{
             control: (base: any) => ({
@@ -293,54 +267,25 @@ function CanTheyTester({ userId }: { userId: string }) {
               border: isDark ? "1px solid #334155" : undefined,
             }),
             menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
-            singleValue: (base: any) => ({
-              ...base,
-              color: isDark ? "#e2e8f0" : "#002b45",
-            }),
-            placeholder: (base: any) => ({
-              ...base,
-              color: isDark ? "#64748b" : "#afafaf",
-            }),
-            input: (base: any) => ({
-              ...base,
-              fontSize: "16px",
-              color: isDark ? "#e2e8f0" : "#002b45",
-            }),
+            singleValue: (base: any) => ({ ...base, color: isDark ? "#e2e8f0" : "#002b45" }),
+            placeholder: (base: any) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
+            input: (base: any) => ({ ...base, fontSize: "16px", color: isDark ? "#e2e8f0" : "#002b45" }),
             option: (base: any, state: any) => ({
               ...base,
               backgroundColor: state.isSelected
-                ? isDark
-                  ? "#1d4ed8"
-                  : "#0e7cc1"
+                ? isDark ? "#1d4ed8" : "#0e7cc1"
                 : state.isFocused
-                ? isDark
-                  ? "#0f172a"
-                  : "#f2f2f2"
-                : isDark
-                ? "#1e293b"
-                : "#ffffff",
-              color: state.isSelected
-                ? "#ffffff"
-                : isDark
-                ? "#e2e8f0"
-                : "#002b45",
+                ? isDark ? "#0f172a" : "#f2f2f2"
+                : isDark ? "#1e293b" : "#ffffff",
+              color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
             }),
-            indicatorSeparator: (base: any) => ({
-              ...base,
-              backgroundColor: isDark ? "#334155" : "#d9dcde",
-            }),
-            dropdownIndicator: (base: any) => ({
-              ...base,
-              color: isDark ? "#64748b" : "#afafaf",
-            }),
+            indicatorSeparator: (base: any) => ({ ...base, backgroundColor: isDark ? "#334155" : "#d9dcde" }),
+            dropdownIndicator: (base: any) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
           }}
         />
         <PermissionCombobox
           value={permission}
-          onChange={(v) => {
-            setPermission(v);
-            setResult(null);
-          }}
+          onChange={(v) => { setPermission(v); setResult(null); }}
           allPerms={allPerms}
           namespace={namespace}
         />
@@ -362,9 +307,7 @@ function CanTheyTester({ userId }: { userId: string }) {
           type="submit"
           variant="outline"
           size="sm"
-          disabled={
-            !namespace || !permission.trim() || canTheyMutation.isPending
-          }
+          disabled={!namespace || !permission.trim() || canTheyMutation.isPending}
           className="shrink-0"
         >
           {canTheyMutation.isPending ? "Checking…" : "Check"}
@@ -411,14 +354,8 @@ export default function UserInspectorPage() {
       <div className="mb-6">
         {searchedUserId ? (
           <div className="flex items-center gap-2 px-3 py-2 border border-input rounded-[6px] bg-background">
-            <Search
-              size={14}
-              strokeWidth={1.75}
-              className="text-muted flex-shrink-0"
-            />
-            <span className="text-sm font-mono flex-1 truncate">
-              {selectedLabel}
-            </span>
+            <Search size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
+            <span className="text-sm font-mono flex-1 truncate">{selectedLabel}</span>
             <button
               type="button"
               onClick={handleClear}
@@ -438,9 +375,7 @@ export default function UserInspectorPage() {
           {/* Permissions + Roles side by side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border border-card rounded-[8px] p-4">
-              <SectionLabel className="block mb-3">
-                Direct Permissions
-              </SectionLabel>
+              <SectionLabel className="block mb-3">Direct Permissions</SectionLabel>
               <UserPermissionsSection userId={searchedUserId} />
             </div>
             <div className="border border-card rounded-[8px] p-4">

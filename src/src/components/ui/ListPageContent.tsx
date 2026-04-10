@@ -54,8 +54,6 @@ export function ListPageContent<T>({
   }
 
   return (
-    <div className={className}>
-      {items.map((item, i) => renderItem(item, i))}
-    </div>
+    <div className={className}>{items.map((item, i) => renderItem(item, i))}</div>
   );
 }

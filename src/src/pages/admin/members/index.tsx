@@ -14,8 +14,7 @@ export default function MemberSearchPage() {
   const [selectedLabel, setSelectedLabel] = useState("");
   const [searchActive, setSearchActive] = useState(false);
 
-  const { data: allCapabilities = [], isFetched } =
-    useAllCapabilitiesWithMembers();
+  const { data: allCapabilities = [], isFetched } = useAllCapabilitiesWithMembers();
 
   const matched: any[] = searchActive
     ? (allCapabilities as any[]).filter((cap: any) =>
@@ -49,14 +48,8 @@ export default function MemberSearchPage() {
       <div className="mb-6">
         {searchActive ? (
           <div className="flex items-center gap-2 px-3 py-2 border border-input rounded-[6px] bg-background">
-            <Search
-              size={14}
-              strokeWidth={1.75}
-              className="text-muted flex-shrink-0"
-            />
-            <span className="text-sm font-mono flex-1 truncate">
-              {selectedLabel}
-            </span>
+            <Search size={14} strokeWidth={1.75} className="text-muted flex-shrink-0" />
+            <span className="text-sm font-mono flex-1 truncate">{selectedLabel}</span>
             <button
               type="button"
               onClick={handleClear}
@@ -90,15 +83,12 @@ export default function MemberSearchPage() {
                 </p>
                 {matched.length > 0 && (
                   <Badge variant="soft-success" className="text-xs">
-                    {matched.length}{" "}
-                    {matched.length === 1 ? "capability" : "capabilities"}
+                    {matched.length} {matched.length === 1 ? "capability" : "capabilities"}
                   </Badge>
                 )}
               </div>
               {matched.length === 0 ? (
-                <EmptyState>
-                  No capability memberships found for this user.
-                </EmptyState>
+                <EmptyState>No capability memberships found for this user.</EmptyState>
               ) : (
                 <div className="space-y-2">
                   {matched.map((cap: any) => (
@@ -106,9 +96,7 @@ export default function MemberSearchPage() {
                       key={cap.id}
                       className="border border-card rounded-[8px] px-4 py-3 flex items-center gap-3"
                     >
-                      <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
-                        {cap.name}
-                      </span>
+                      <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">{cap.name}</span>
                     </div>
                   ))}
                 </div>

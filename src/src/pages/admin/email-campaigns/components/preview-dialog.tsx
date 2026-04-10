@@ -89,7 +89,9 @@ export function PreviewDialog({
             </div>
 
             <div className="py-2">
-              <span className="text-[11px] text-muted font-mono">Subject:</span>
+              <span className="text-[11px] text-muted font-mono">
+                Subject:
+              </span>
               <span className="text-[13px] text-primary ml-2">
                 {current.subject}
               </span>

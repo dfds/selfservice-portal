@@ -30,6 +30,8 @@ export const useRegisterMyVisit = createSsuMutation<{
   profileDefinition: any;
 }>({
   method: "POST",
-  urlSegments: (data) => [data.profileDefinition?._links?.portalVisits.href],
+  urlSegments: (data) => [
+    data.profileDefinition?._links?.portalVisits.href,
+  ],
   payload: () => null,
 });

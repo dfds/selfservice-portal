@@ -21,7 +21,9 @@ export function AdminPageHeader({
         // Admin
       </div>
       <div className={cn(titleSuffix && "flex items-center gap-3 flex-wrap")}>
-        <h1 className="text-[1.75rem] font-bold text-primary">{title}</h1>
+        <h1 className="text-[1.75rem] font-bold text-primary">
+          {title}
+        </h1>
         {titleSuffix}
       </div>
       {subtitle && <p className="text-sm text-muted mt-1">{subtitle}</p>}

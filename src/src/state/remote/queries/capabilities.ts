@@ -46,7 +46,11 @@ export const useCostCentreCompliance = createSsuParamQuery<string | null>({
 
 export const useCapabilityCompliance = createSsuParamQuery<string | null>({
   queryKey: (capabilityId) => ["capabilities", "compliance", capabilityId],
-  urlSegments: (capabilityId) => ["compliance", "capabilities", capabilityId!],
+  urlSegments: (capabilityId) => [
+    "compliance",
+    "capabilities",
+    capabilityId!,
+  ],
   enabled: (id) => !!id,
   staleTime: 60000,
 });
@@ -58,7 +62,9 @@ export const useCapabilityMetadata = createSsuLinkQuery<any>({
 
 export const useUpdateCapabilityMetadata = createSsuMutation<any>({
   method: "POST",
-  urlSegments: (data) => [data.capabilityDefinition?._links.metadata.href],
+  urlSegments: (data) => [
+    data.capabilityDefinition?._links.metadata.href,
+  ],
 });
 
 export const useUpdateRequiredCapabilityMetadata = createSsuMutation<any>({
@@ -87,23 +93,40 @@ export const useCancelCapabilityDeletion = createSsuMutation<any>({
 });
 
 export const useCapabilityAwsAccount = createSsuParamQuery<string>({
-  queryKey: (capabilityId) => ["capabilities", "aws-account", capabilityId],
-  urlSegments: (capabilityId) => ["capabilities", capabilityId, "awsaccount"],
-  enabled: (id) => !!id,
-});
-
-export const useCapabilityAzureResourcesById = createSsuParamQuery<string>({
-  queryKey: (capabilityId) => ["capabilities", "azure-resources", capabilityId],
+  queryKey: (capabilityId) => [
+    "capabilities",
+    "aws-account",
+    capabilityId,
+  ],
   urlSegments: (capabilityId) => [
     "capabilities",
     capabilityId,
-    "azureresources",
+    "awsaccount",
   ],
   enabled: (id) => !!id,
 });
 
+export const useCapabilityAzureResourcesById =
+  createSsuParamQuery<string>({
+    queryKey: (capabilityId) => [
+      "capabilities",
+      "azure-resources",
+      capabilityId,
+    ],
+    urlSegments: (capabilityId) => [
+      "capabilities",
+      capabilityId,
+      "azureresources",
+    ],
+    enabled: (id) => !!id,
+  });
+
 export const useCapabilityKafkaAccess = createSsuParamQuery<string>({
-  queryKey: (capabilityId) => ["capabilities", "kafka-access", capabilityId],
+  queryKey: (capabilityId) => [
+    "capabilities",
+    "kafka-access",
+    capabilityId,
+  ],
   urlSegments: (capabilityId) => [
     "capabilities",
     capabilityId,
@@ -114,14 +137,26 @@ export const useCapabilityKafkaAccess = createSsuParamQuery<string>({
 
 export const useCapabilityMembers = createSsuParamQuery<string>({
   queryKey: (capabilityId) => ["capabilities", "members", capabilityId],
-  urlSegments: (capabilityId) => ["capabilities", capabilityId, "members"],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "members",
+  ],
   enabled: (id) => !!id,
   select: (data: any) => data.items || [],
 });
 
 export const useCapabilityMetadataById = createSsuParamQuery<string>({
-  queryKey: (capabilityId) => ["capabilities", "metadata-raw", capabilityId],
-  urlSegments: (capabilityId) => ["capabilities", capabilityId, "metadata"],
+  queryKey: (capabilityId) => [
+    "capabilities",
+    "metadata-raw",
+    capabilityId,
+  ],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "metadata",
+  ],
   authMode: true,
   enabled: (id) => !!id,
 });
@@ -176,7 +211,12 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   return useQuery({
-    queryKey: ["capabilities", "members", "detailed", capabilityDefinition?.id],
+    queryKey: [
+      "capabilities",
+      "members",
+      "detailed",
+      capabilityDefinition?.id,
+    ],
     queryFn: async () => {
       const membersResp = await ssuRequest({
         method: "GET",
@@ -198,7 +238,9 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   });
 }
 
-export function useCapabilityMembersApplications(capabilityDefinition: any) {
+export function useCapabilityMembersApplications(
+  capabilityDefinition: any,
+) {
   const link = capabilityDefinition?._links?.membershipApplications;
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
