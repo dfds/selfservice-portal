@@ -113,7 +113,8 @@ export default function EmailCampaignDetail() {
 
   const isScheduled = campaign.status === "Scheduled";
   const isRecurring = campaign.scheduleType === "Recurring";
-  const hasSent = campaign.status === "Sent" || campaign.status === "Failed";
+  const hasSent =
+    campaign.status === "Sent" || campaign.status === "Failed";
   const executionList = (executions || []) as any[];
   const recipientList = (recipients || []) as any[];
 
@@ -342,8 +343,8 @@ export default function EmailCampaignDetail() {
                       tab === "Sent"
                         ? recipientStats.sent
                         : tab === "Failed"
-                        ? recipientStats.failed
-                        : recipientStats.pending
+                          ? recipientStats.failed
+                          : recipientStats.pending
                     })`}
               </button>
             ))}
@@ -385,8 +386,8 @@ export default function EmailCampaignDetail() {
                       r.status === "Sent"
                         ? "success"
                         : r.status === "Failed"
-                        ? "destructive"
-                        : "secondary"
+                          ? "destructive"
+                          : "secondary"
                     }
                     className="text-[10px]"
                   >
@@ -446,8 +447,8 @@ export default function EmailCampaignDetail() {
                       exec.status === "Completed"
                         ? "success"
                         : exec.status === "PartialFailure"
-                        ? "warning"
-                        : "destructive"
+                          ? "warning"
+                          : "destructive"
                     }
                     className="text-[10px]"
                   >

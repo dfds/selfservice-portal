@@ -291,10 +291,7 @@ export function SkeletonCampaignDetail() {
       </div>
       <div className="grid grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-lg border border-card p-3 text-center"
-          >
+          <div key={i} className="rounded-lg border border-card p-3 text-center">
             <Skeleton className="h-2.5 w-[40px] mx-auto mb-2" />
             <Skeleton className="h-5 w-[30px] mx-auto" />
           </div>

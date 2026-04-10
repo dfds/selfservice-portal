@@ -19,7 +19,11 @@ export function useGetRoles(_capabilityId: string) {
 
 export const useUserRoles = createSsuParamQuery<string>({
   queryKey: (capabilityId) => ["rbac", "user-roles", capabilityId],
-  urlSegments: (capabilityId) => ["capabilities", capabilityId, "rolegrants"],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "rolegrants",
+  ],
   authMode: false,
 });
 

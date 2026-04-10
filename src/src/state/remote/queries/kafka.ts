@@ -15,7 +15,12 @@ function enrichTopicsWithClusterName(data: any): any[] {
 }
 
 export const useKafkaClustersAccessList = createSsuLinkQuery<any>({
-  queryKey: (def) => ["capabilities", "kafka", "clusters-list", def?.id],
+  queryKey: (def) => [
+    "capabilities",
+    "kafka",
+    "clusters-list",
+    def?.id,
+  ],
   linkHref: (def) => def?._links?.clusters?.href,
   select: (data: any) => data.items,
 });
@@ -34,7 +39,9 @@ export const usePublicTopics = createSsuQuery({
 
 export const useUpdateKafkaTopic = createSsuMutation<any>({
   method: (data) => data.topicDefinition?._links?.updateDescription.method,
-  urlSegments: (data) => [data.topicDefinition?._links?.updateDescription.href],
+  urlSegments: (data) => [
+    data.topicDefinition?._links?.updateDescription.href,
+  ],
 });
 
 export const useDeleteKafkaTopic = createSsuMutation<any>({
@@ -45,7 +52,9 @@ export const useDeleteKafkaTopic = createSsuMutation<any>({
 
 export const useAddKafkaTopic = createSsuMutation<any>({
   method: "POST",
-  urlSegments: (data) => [data.clusterDefinition?._links?.createTopic.href],
+  urlSegments: (data) => [
+    data.clusterDefinition?._links?.createTopic.href,
+  ],
 });
 
 export const useAllKafkaTopics = createSsuQuery({
@@ -72,6 +81,8 @@ export const useKafkaSchemas = createSsuParamQuery<string>({
 
 export const useRequestAccessToCluster = createSsuMutation<any>({
   method: "POST",
-  urlSegments: (data) => [data.clusterDefinition?._links?.requestAccess.href],
+  urlSegments: (data) => [
+    data.clusterDefinition?._links?.requestAccess.href,
+  ],
   payload: () => null,
 });

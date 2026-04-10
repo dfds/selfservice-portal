@@ -1,4 +1,7 @@
-import { createSsuParamQuery, createSsuMutation } from "../queryFactory";
+import {
+  createSsuParamQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
 export const useJsonSchema = createSsuParamQuery<string>({
   queryKey: (schemaId) => ["json-schema", schemaId],
