@@ -10,8 +10,7 @@ import {
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Check from "@mui/icons-material/Check";
-import Circle from "@mui/icons-material/Circle";
+import { Check, Circle } from "lucide-react";
 import { TrackedButton } from "@/components/Tracking";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useTheme } from "@/context/ThemeContext";
