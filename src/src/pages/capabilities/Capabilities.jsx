@@ -279,7 +279,7 @@ export default function CapabilitiesList() {
             },
             Cell: ({ cell }) => {
               const cellValue = cell.getValue();
-              let requirementsScore = cellValue.requirementsScore;
+              let requirementsScore = cellValue.requirementsScore ?? 0;
               const modifiedAt = cellValue.modifiedAt;
               const capabilityId = cellValue.id;
 
