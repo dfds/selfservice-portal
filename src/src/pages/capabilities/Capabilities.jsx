@@ -283,48 +283,6 @@ export default function CapabilitiesList() {
               const modifiedAt = cellValue.modifiedAt;
               const capabilityId = cellValue.id;
 
-              // Check if data is stale (older than 2 weeks or score is missing)
-              const isStale = (() => {
-                if (!modifiedAt) return true;
-                if (
-                  requirementsScore === null ||
-                  requirementsScore === undefined
-                )
-                  return true;
-                const twoWeeksAgo = new Date();
-                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-                const modifiedDate = new Date(modifiedAt);
-                return modifiedDate < twoWeeksAgo;
-              })();
-
-              if (isStale) {
-                return (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <LightBulb score={-1} size={20} />
-                    <span
-                      style={{
-                        fontFamily: "monospace",
-                        width: "70px",
-                        textAlign: "center",
-                        fontSize: "10px",
-                        paddingLeft: "20px",
-                      }}
-                    >
-                      click to
-                      <br />
-                      reload
-                    </span>
-                  </div>
-                );
-              }
-
               return (
                 <div
                   style={{
