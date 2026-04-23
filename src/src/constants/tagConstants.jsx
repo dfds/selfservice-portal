@@ -47,6 +47,8 @@ const COMPETENCE_ENGINEERING_BUSINESS_CAPABILITIES = [
     value: "platform-infrastructure-orchestration",
   },
   { label: "Research & Development", value: "research-development" },
+  { label: "Compliance, Risk & Audit", value: "compliance-risk-audit" },
+  { label: "Container and Cloud platform Security & Access Governance", value: "container-cloud-platform-security-access-governance" },
 ];
 
 const FERRY_BUSINESS_CAPABILITIES = [
@@ -63,6 +65,7 @@ const FERRY_BUSINESS_CAPABILITIES = [
   { label: "Ferry Booking", value: "ferry-booking" },
   { label: "Ferry Scheduling", value: "ferry-scheduling" },
   { label: "Handle finance operations", value: "handle-finance-operations" },
+  { label: "Handle onboard operations", value: "handle-onboard-operations" },
   { label: "Imaging", value: "imaging" },
   { label: "Invoicing", value: "invoicing" },
   { label: "Labour Planning", value: "labour-planning" },
