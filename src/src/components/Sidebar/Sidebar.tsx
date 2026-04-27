@@ -14,6 +14,7 @@ import {
   Package,
   FileText,
   Play,
+  Newspaper,
   BookOpen,
   Activity,
   ExternalLink,
@@ -84,6 +85,7 @@ const platformNav: NavItemDef[] = [
 const contentNav: NavItemDef[] = [
   { title: "Release Notes", url: "/release-notes", icon: FileText },
   { title: "Events", url: "/events", icon: Play },
+  { title: "News", url: "/news", icon: Newspaper },
 ];
 
 const externalNav: NavItemDef[] = [
