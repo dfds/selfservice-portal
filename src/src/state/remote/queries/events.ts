@@ -18,6 +18,8 @@ export const useFrontpageEvents = createSsuQuery({
   select: (data: any) => data || { upcomingEvents: [], latestHeldEvent: null },
 });
 
+export const useUpcomingEvents = useFrontpageEvents;
+
 export const useRegisterEvent = createSsuMutation<any>({
   method: "POST",
   urlSegments: () => ["events"],

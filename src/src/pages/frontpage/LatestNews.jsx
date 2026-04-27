@@ -47,6 +47,16 @@ export default function LatestNews() {
       {news.slice(0, 4).map((x, i) => (
         <NewsItem key={x.id} index={i} {...x} />
       ))}
+      <div className="pt-[0.625rem]">
+        <a
+          href="https://dfdsit.statuspage.io"
+          target="_blank"
+          rel="noreferrer"
+          className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+        >
+          View all news →
+        </a>
+      </div>
     </div>
   );
 }
