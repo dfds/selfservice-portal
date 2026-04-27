@@ -3,10 +3,10 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
-import TopVisitors from "./TopVisitors";
 import QuickLinks from "./QuickLinks";
 import UpcomingEvents from "./UpcomingEvents";
 import MyCapabilities from "./MyCapabilities";
+import PlatformStatus from "./PlatformStatus";
 import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -89,16 +89,23 @@ function HeroRow({ name }) {
   );
 }
 
-function NavCard({ to, href, iconBg, icon, name, description }) {
-  const inner = (
-    <>
+function NavCard({ to, href, iconBg, icon, name, description, action }) {
+  const stretchedLink = to ? (
+    <Link to={to} className="absolute inset-0 rounded-[10px]" aria-label={name} />
+  ) : (
+    <a href={href} target="_blank" rel="noreferrer" className="absolute inset-0 rounded-[10px]" aria-label={name} />
+  );
+
+  return (
+    <div className="relative flex items-center gap-[0.875rem] bg-surface border border-card rounded-[10px] p-[1.125rem] mb-3 last:mb-0 transition-[box-shadow,transform] duration-200 ease-out-expo hover:shadow-[0_4px_12px_rgba(0,0,0,0.09)] hover:-translate-y-[2px]">
+      {stretchedLink}
       <div
         className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center flex-shrink-0"
         style={{ background: iconBg }}
       >
         {icon}
       </div>
-      <div>
+      <div className="flex-1 min-w-0">
         <div className="text-[14px] font-semibold text-primary mb-[3px]">
           {name}
         </div>
@@ -106,23 +113,12 @@ function NavCard({ to, href, iconBg, icon, name, description }) {
           {description}
         </div>
       </div>
-    </>
-  );
-
-  const cardClass =
-    "flex items-start gap-[0.875rem] bg-surface border border-card rounded-[10px] p-[1.125rem] mb-3 last:mb-0 no-underline transition-[box-shadow,transform] duration-200 ease-out-expo hover:shadow-[0_4px_12px_rgba(0,0,0,0.09)] hover:-translate-y-[2px]";
-
-  if (to) {
-    return (
-      <Link to={to} className={cardClass}>
-        {inner}
-      </Link>
-    );
-  }
-  return (
-    <a href={href} className={cardClass} target="_blank" rel="noreferrer">
-      {inner}
-    </a>
+      {action && (
+        <div className="relative z-10 flex-shrink-0">
+          {action}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -165,20 +161,12 @@ export default function FrontPage() {
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
-            // need help?
+            // platform status
           </SectionLabel>
           <PageSection>
-            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              <em>Did you know</em> there's a Slack channel for peer Q&amp;A?
-            </p>
-            <TrackedLink
-              trackName="SlackArchive-DevPeerSupport"
-              href="slack://dfds.slack.com/archives/C9948TVRC"
-              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
-            >
-              #dev-peer-support
-            </TrackedLink>
+            <PlatformStatus />
           </PageSection>
+
         </div>
 
         {/* CENTER: My Capabilities + Platform nav cards */}
@@ -199,6 +187,14 @@ export default function FrontPage() {
             icon={<Layers size={18} color="#0e7cc1" />}
             name="Capabilities"
             description="Create or join capabilities. Manage your team's cloud resources, AWS accounts, members, and onboarding steps."
+            action={
+              <Link
+                to="/capabilities?new=true"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+              >
+                + New
+              </Link>
+            }
           />
           <NavCard
             to="/topics"
@@ -220,6 +216,14 @@ export default function FrontPage() {
             icon={<span className="text-[18px] text-[#ed8800]">□</span>}
             name="ECR Repositories"
             description="Browse and manage your team's container image repositories across AWS accounts."
+            action={
+              <Link
+                to="/ecr?new=true"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+              >
+                + New
+              </Link>
+            }
           />
         </div>
 
@@ -249,10 +253,26 @@ export default function FrontPage() {
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
-            // top visitors this week
+            // need help?
           </SectionLabel>
           <PageSection>
-            <TopVisitors />
+            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
+              Cloud Engineering provides the platform on a <strong>best-effort</strong> basis.
+              We're here to help, but response times may vary.
+            </p>
+            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
+              Check the <a href="https://wiki.dfds.cloud/en/playbooks" target="_blank" rel="noreferrer" className="text-action hover:underline">playbooks</a> first — most common tasks are documented there.
+            </p>
+            <p className="text-[13px] text-secondary leading-[1.6] mb-2">
+              Still stuck? Ask the community on Slack:
+            </p>
+            <TrackedLink
+              trackName="SlackArchive-DevPeerSupport"
+              href="slack://dfds.slack.com/archives/C9948TVRC"
+              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
+            >
+              #dev-peer-support
+            </TrackedLink>
           </PageSection>
         </div>
       </div>
