@@ -83,7 +83,7 @@ const platformNav: NavItemDef[] = [
 
 const contentNav: NavItemDef[] = [
   { title: "Release Notes", url: "/release-notes", icon: FileText },
-  { title: "Demos", url: "/demos", icon: Play },
+  { title: "Events", url: "/events", icon: Play },
 ];
 
 const externalNav: NavItemDef[] = [

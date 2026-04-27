@@ -12,7 +12,7 @@ const pathLabels: Record<string, string> = {
   "/topics": "Topics",
   "/ecr": "ECR Repositories",
   "/release-notes": "Release Notes",
-  "/demos": "Demos",
+  "/events": "Events",
   "/capabilities/criticality": "Criticality",
   "/capabilities/selfassessments": "Self Assessments",
 };
