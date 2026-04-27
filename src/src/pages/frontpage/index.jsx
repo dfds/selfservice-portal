@@ -6,6 +6,7 @@ import LatestNews from "./LatestNews";
 import TopVisitors from "./TopVisitors";
 import QuickLinks from "./QuickLinks";
 import UpcomingEvents from "./UpcomingEvents";
+import MyCapabilities from "./MyCapabilities";
 import { useStats } from "@/state/remote/queries/stats";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -147,7 +148,7 @@ export default function FrontPage() {
 
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
-        {/* LEFT: Latest News + Need Help */}
+        {/* LEFT: Latest News + Upcoming Events + Need Help */}
         <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
           <SectionLabel as="h2" className="mb-2 block">
             // latest news
@@ -180,8 +181,15 @@ export default function FrontPage() {
           </PageSection>
         </div>
 
-        {/* CENTER: Platform nav cards */}
+        {/* CENTER: My Capabilities + Platform nav cards */}
         <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">
+            // my capabilities
+          </SectionLabel>
+          <PageSection>
+            <MyCapabilities />
+          </PageSection>
+
           <SectionLabel as="h2" className="mb-2 block">
             // platform
           </SectionLabel>
