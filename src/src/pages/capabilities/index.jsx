@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import styles from "./capabilities.module.css";
 import AppContext from "@/AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
@@ -11,7 +12,8 @@ import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
-  const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(() => searchParams.get("new") === "true");
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
   const { reloadUser } = useContext(AppContext);
   const { setActions } = useTopBarActions();

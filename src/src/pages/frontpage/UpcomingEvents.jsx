@@ -97,7 +97,7 @@ export default function UpcomingEvents() {
           to="/events"
           className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
-          View all events ?
+          View all events →
         </Link>
       </div>
     </div>

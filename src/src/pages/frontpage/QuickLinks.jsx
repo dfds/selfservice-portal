@@ -30,7 +30,6 @@ export default function QuickLinks() {
       <Link title="GitHub" url="https://github.com/dfds" />
       <Link title="Snyk" url="https://app.snyk.io/login/sso" />
       <Link title="1Password" url="https://dfds.1password.com/signin" />
-      <Link title="Mural" url="https://app.mural.co/t/dfds9874/home" />
       <Link title="Self Service API Documentation" url={swaggerUrl} />
     </div>
   );
