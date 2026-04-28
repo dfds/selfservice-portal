@@ -33,6 +33,12 @@ export const useAllPermissions = createSsuQuery({
   authMode: true,
 });
 
+export const usePermissionMatrix = createSsuQuery({
+  queryKey: ["rbac", "permission-matrix"],
+  urlSegments: ["rbac/permission-matrix"],
+  authMode: true,
+});
+
 export const useRolePermissions = createSsuParamQuery<string>({
   queryKey: (roleId) => ["rbac", "role-permissions", roleId],
   urlSegments: (roleId) => ["rbac", "permission", "role", roleId],
