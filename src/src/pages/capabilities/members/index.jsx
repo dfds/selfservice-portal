@@ -10,6 +10,9 @@ import { useTheme } from "@/context/ThemeContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { Banner } from "@/components/ui/banner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRemoveCapabilityMember } from "@/state/remote/queries/capabilities";
+import { useConfirmAction } from "@/hooks/useConfirmAction";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 function MemberRow({ member, roleTypes }) {
   const { id: capabilityId, userIsOwner } = useContext(
@@ -21,6 +24,15 @@ function MemberRow({ member, roleTypes }) {
   const [selectedRole, setSelectedRole] = useState(member.role);
   const [showSuccess, setShowSuccess] = useState(false);
   const { isDark } = useTheme();
+
+  const removeMemberMutation = useRemoveCapabilityMember();
+  const removeConfirm = useConfirmAction({
+    mutation: removeMemberMutation,
+    buildPayload: (m) => ({ capabilityId, memberId: m.id }),
+    invalidateKeys: [["capabilities", "members", "detailed", capabilityId], ["capabilities", "details", capabilityId]],
+    successMessage: "Member removed",
+    errorMessage: "Could not remove member",
+  });
 
   useEffect(() => {
     setSelectedRole(member.role);
@@ -69,6 +81,14 @@ function MemberRow({ member, roleTypes }) {
             {member.email}
           </div>
         </div>
+        {userIsOwner && member.email !== user.id && (
+          <button
+            onClick={() => removeConfirm.setTarget(member)}
+            className="font-mono text-[11px] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
+          >
+            remove
+          </button>
+        )}
         <div className="flex-shrink-0">
           <Select
             menuPortalTarget={document.body}
@@ -125,17 +145,17 @@ function MemberRow({ member, roleTypes }) {
                     ? "#1d4ed8"
                     : "#0e7cc1"
                   : state.isFocused
-                  ? isDark
-                    ? "#0f172a"
-                    : "#f2f2f2"
-                  : isDark
-                  ? "#1e293b"
-                  : "#ffffff",
+                    ? isDark
+                      ? "#0f172a"
+                      : "#f2f2f2"
+                    : isDark
+                      ? "#1e293b"
+                      : "#ffffff",
                 color: state.isSelected
                   ? "#ffffff"
                   : isDark
-                  ? "#e2e8f0"
-                  : "#002b45",
+                    ? "#e2e8f0"
+                    : "#002b45",
               }),
               indicatorSeparator: (base) => ({
                 ...base,
@@ -154,6 +174,18 @@ function MemberRow({ member, roleTypes }) {
           Role updated successfully.
         </Banner>
       )}
+      <ConfirmDialog
+        {...removeConfirm.dialogProps}
+        title="Remove member"
+        description={
+          <>
+            Are you sure you want to remove <strong>{removeConfirm.target?.name}</strong> from this capability?
+          </>
+        }
+        confirmLabel="Remove"
+        confirmLoadingLabel="Removing…"
+        onConfirm={removeConfirm.confirm}
+      />
     </div>
   );
 }
