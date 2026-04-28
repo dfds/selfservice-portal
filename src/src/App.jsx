@@ -19,6 +19,7 @@ import EventsPage from "./pages/events";
 import NewsPage from "./pages/news";
 import CompliancePage from "./pages/compliance";
 import RbacViewerPage from "./pages/admin/rbac";
+import PermissionMatrixPage from "./pages/rbac";
 import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
 import MembershipApplicationsAdminPage from "./pages/admin/membership-applications";
 import UserInspectorPage from "./pages/admin/rbac/user";
@@ -121,9 +122,8 @@ function Layout() {
           </a>
           {/* Mobile backdrop */}
           <div
-            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
-              mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
@@ -190,6 +190,7 @@ export default function App() {
           <Route path="events" element={<EventsPage />} />
           <Route path="news" element={<NewsPage />} />
           <Route path="compliance" element={<CompliancePage />} />
+          <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
           <Route path="admin/rbac" element={<RbacViewerPage />} />
           <Route path="admin/rbac/user" element={<UserInspectorPage />} />
           <Route

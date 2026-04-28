@@ -40,6 +40,7 @@ import {
   LineChart,
   Database,
   Mail,
+  Table2,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -80,6 +81,7 @@ const platformNav: NavItemDef[] = [
   { title: "Capabilities", url: "/capabilities", icon: Layers },
   { title: "Topics", url: "/topics", icon: List },
   { title: "ECR", url: "/ecr", icon: Package },
+  { title: "Permission Matrix", url: "/rbac/permissions", icon: Table2 },
 ];
 
 const contentNav: NavItemDef[] = [
@@ -271,10 +273,10 @@ const THEME_OPTIONS: {
   icon: React.ElementType;
   label: string;
 }[] = [
-  { value: "light", icon: Sun, label: "Light" },
-  { value: "dark", icon: Moon, label: "Dark" },
-  { value: "system", icon: Monitor, label: "Auto" },
-];
+    { value: "light", icon: Sun, label: "Light" },
+    { value: "dark", icon: Moon, label: "Dark" },
+    { value: "system", icon: Monitor, label: "Auto" },
+  ];
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -501,9 +503,9 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       style={
         isMobile
           ? {
-              transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
-              transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
-            }
+            transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+            transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
+          }
           : undefined
       }
     >
