@@ -29,6 +29,8 @@ function NewsItem({ date, title, link, index = 0 }) {
   );
 }
 
+const ONE_MONTH_AGO = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
 export default function LatestNews() {
   const { news, isLoading } = useLatestNews();
 
@@ -42,9 +44,19 @@ export default function LatestNews() {
     );
   }
 
+  const recent = news.filter((x) => x.date >= ONE_MONTH_AGO).slice(0, 4);
+
+  if (!recent.length) {
+    return (
+      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+        No incidents in the past month.
+      </p>
+    );
+  }
+
   return (
     <div>
-      {news.slice(0, 4).map((x, i) => (
+      {recent.map((x, i) => (
         <NewsItem key={x.id} index={i} {...x} />
       ))}
       <div className="pt-[0.625rem]">
@@ -54,7 +66,7 @@ export default function LatestNews() {
           rel="noreferrer"
           className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
-          View all news →
+          View all incidents →
         </a>
       </div>
     </div>
