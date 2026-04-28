@@ -23,14 +23,14 @@ const swaggerUrl = process.env.REACT_APP_API_BASE_URL + "/swagger";
 export default function QuickLinks() {
   return (
     <div>
-      <Link title="AWS Login" url="https://dfds.awsapps.com/start" />
-      <Link title="Azure DevOps" url="https://dev.azure.com/dfds" />
-      <Link title="Finout" url="https://app.finout.io/" />
-      <Link title="Grafana read stack" url="https://view.grafana.dfds.cloud/" />
-      <Link title="GitHub" url="https://github.com/dfds" />
-      <Link title="Snyk" url="https://app.snyk.io/login/sso" />
       <Link title="1Password" url="https://dfds.1password.com/signin" />
+      <Link title="AWS Login" url="https://dfds.awsapps.com/start" />
+      <Link title="CodeScene" url="https://codescene.io/login" />
+      <Link title="Finout" url="https://app.finout.io/" />
+      <Link title="GitHub" url="https://github.com/dfds" />
+      <Link title="Grafana read stack" url="https://view.grafana.dfds.cloud/" />
       <Link title="Self Service API Documentation" url={swaggerUrl} />
+      <Link title="Snyk" url="https://app.snyk.io/login/sso" />
     </div>
   );
 }
