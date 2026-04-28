@@ -1,8 +1,15 @@
-import React from "react";
-import { Check } from "lucide-react";
-import { usePermissionMatrix } from "@/state/remote/queries/rbac";
+import React, { useContext, useEffect, useState } from "react";
+import { Check, Save } from "lucide-react";
+import {
+    usePermissionMatrix,
+    useSetRolePermissions,
+} from "@/state/remote/queries/rbac";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import PreAppContext from "@/preAppContext";
+import { useToast } from "@/context/ToastContext";
 
 type RbacRoleDTO = {
     id: string;
@@ -32,16 +39,82 @@ type PermissionMatrixResponse = {
 
 export default function PermissionMatrixPage() {
     const { data, isFetching, isFetched } = usePermissionMatrix();
-    const matrix = data as PermissionMatrixResponse | undefined;
+    const { mutate: setRolePermissions } = useSetRolePermissions();
+    const { isCloudEngineerEnabled } = useContext(PreAppContext);
+    const toast = useToast();
 
+    const matrix = data as PermissionMatrixResponse | undefined;
     const roles: RbacRoleDTO[] = matrix?.roles ?? [];
     const permissions: PermissionDto[] = matrix?.permissions ?? [];
     const grants: PermissionMatrixGrantDto[] = matrix?.grants ?? [];
 
-    // Build a lookup set: "roleId|namespace|permission" → true
-    const grantSet = new Set<string>(
-        grants.map((g) => `${g.roleId}|${g.namespace}|${g.permission}`),
+    // Local draft state: "roleId|ns|perm" → boolean
+    const [localGrantSet, setLocalGrantSet] = useState<Record<string, boolean>>(
+        {},
     );
+    // Baseline that tracks what's persisted on the server (used for dirty-checking)
+    const [savedGrantSet, setSavedGrantSet] = useState<Record<string, boolean>>(
+        {},
+    );
+    // Which role is currently being saved
+    const [savingRoleId, setSavingRoleId] = useState<string | null>(null);
+
+    // Initialise both states once when data first arrives
+    useEffect(() => {
+        if (!isFetched) return;
+        const map: Record<string, boolean> = {};
+        grants.forEach((g) => {
+            map[`${g.roleId}|${g.namespace}|${g.permission}`] = true;
+        });
+        setLocalGrantSet(map);
+        setSavedGrantSet(map);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isFetched]);
+
+    // Original grant set for dirty checking
+    const isDirty = (roleId: string) =>
+        permissions.some((p) => {
+            const key = `${roleId}|${p.namespace}|${p.name}`;
+            return (localGrantSet[key] ?? false) !== (savedGrantSet[key] ?? false);
+        });
+
+    const handleToggle = (roleId: string, namespace: string, name: string) => {
+        const key = `${roleId}|${namespace}|${name}`;
+        setLocalGrantSet((prev: Record<string, boolean>) => ({
+            ...prev,
+            [key]: !(prev[key] ?? false),
+        }));
+    };
+
+    const handleSave = (roleId: string) => {
+        setSavingRoleId(roleId);
+        const permsToSave = permissions
+            .filter((p) => localGrantSet[`${roleId}|${p.namespace}|${p.name}`])
+            .map((p) => ({ namespace: p.namespace, name: p.name }));
+        setRolePermissions(
+            { roleId, permissions: permsToSave },
+            {
+                onSuccess: () => {
+                    // Advance the saved baseline to match what was just persisted,
+                    // so dirty-checking is correct without needing a refetch.
+                    setSavedGrantSet((prev: Record<string, boolean>) => {
+                        const updated = { ...prev };
+                        permissions.forEach((p) => {
+                            const key = `${roleId}|${p.namespace}|${p.name}`;
+                            updated[key] = localGrantSet[key] ?? false;
+                        });
+                        return updated;
+                    });
+                    toast.success("Permissions saved.");
+                    setSavingRoleId(null);
+                },
+                onError: () => {
+                    toast.error("Failed to save permissions.");
+                    setSavingRoleId(null);
+                },
+            },
+        );
+    };
 
     // Group permissions by namespace
     const namespaces = Array.from(
@@ -57,7 +130,7 @@ export default function PermissionMatrixPage() {
         <div className="px-5 md:px-8 py-6 max-w-[1400px] mx-auto">
             <div className="mb-6">
                 <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1">
-          // RBAC
+                    // RBAC
                 </div>
                 <h1 className="text-[1.6rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
                     Permission Matrix
@@ -65,6 +138,11 @@ export default function PermissionMatrixPage() {
                 <p className="mt-1 text-[13px] text-[#6b7280] dark:text-slate-400">
                     An overview of which permissions are granted to each role in the
                     system.
+                    {isCloudEngineerEnabled && (
+                        <span className="ml-1 text-amber-600 dark:text-amber-400">
+                            Toggle switches to edit, then save per column.
+                        </span>
+                    )}
                 </p>
             </div>
 
@@ -91,15 +169,33 @@ export default function PermissionMatrixPage() {
                                     <th className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] px-4 py-3 text-left font-mono text-[11px] text-[#afafaf] dark:text-slate-500 min-w-[220px] border-r border-[#eeeeee] dark:border-[#1e2d3d]">
                                         Permission
                                     </th>
-                                    {roles.map((role) => (
-                                        <th
-                                            key={role.id}
-                                            title={role.description ?? role.name}
-                                            className="px-3 py-3 text-center font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
-                                        >
-                                            {role.name}
-                                        </th>
-                                    ))}
+                                    {roles.map((role) => {
+                                        const dirty = isDirty(role.id);
+                                        const saving = savingRoleId === role.id;
+                                        return (
+                                            <th
+                                                key={role.id}
+                                                title={role.description ?? role.name}
+                                                className="px-3 py-2 text-center font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
+                                            >
+                                                <div className="flex flex-col items-center gap-1.5">
+                                                    <span>{role.name}</span>
+                                                    {isCloudEngineerEnabled && (
+                                                        <Button
+                                                            size="sm"
+                                                            variant="action"
+                                                            onClick={() => handleSave(role.id)}
+                                                            disabled={!dirty || saving}
+                                                            className="h-6 px-2 text-[10px]"
+                                                        >
+                                                            <Save size={10} />
+                                                            {saving ? "Saving…" : "Save"}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </th>
+                                        );
+                                    })}
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,21 +230,33 @@ export default function PermissionMatrixPage() {
                                                     )}
                                                 </td>
                                                 {roles.map((role) => {
-                                                    const hasGrant = grantSet.has(
-                                                        `${role.id}|${perm.namespace}|${perm.name}`,
-                                                    );
+                                                    const key = `${role.id}|${perm.namespace}|${perm.name}`;
+                                                    const checked = localGrantSet[key] ?? false;
+                                                    const saving = savingRoleId === role.id;
                                                     return (
-                                                        <td
-                                                            key={role.id}
-                                                            className="px-3 py-2 text-center"
-                                                        >
-                                                            {hasGrant && (
-                                                                <Check
-                                                                    size={14}
-                                                                    strokeWidth={2.5}
-                                                                    className="inline text-[#0e7cc1] dark:text-[#60a5fa]"
-                                                                    aria-label="Granted"
+                                                        <td key={role.id} className="px-3 py-2 text-center">
+                                                            {isCloudEngineerEnabled ? (
+                                                                <Switch
+                                                                    checked={checked}
+                                                                    onCheckedChange={() =>
+                                                                        handleToggle(
+                                                                            role.id,
+                                                                            perm.namespace,
+                                                                            perm.name,
+                                                                        )
+                                                                    }
+                                                                    disabled={saving}
+                                                                    aria-label={`${perm.name} for ${role.name}`}
                                                                 />
+                                                            ) : (
+                                                                checked && (
+                                                                    <Check
+                                                                        size={14}
+                                                                        strokeWidth={2.5}
+                                                                        className="inline text-[#0e7cc1] dark:text-[#60a5fa]"
+                                                                        aria-label="Granted"
+                                                                    />
+                                                                )
                                                             )}
                                                         </td>
                                                     );

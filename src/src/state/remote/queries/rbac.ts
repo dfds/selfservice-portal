@@ -39,6 +39,16 @@ export const usePermissionMatrix = createSsuQuery({
   authMode: true,
 });
 
+export const useSetRolePermissions = createSsuMutation<{
+  roleId: string;
+  permissions: Array<{ namespace: string; name: string }>;
+}>({
+  method: "PUT",
+  urlSegments: (data) => ["rbac", "permission-matrix", "role", data.roleId],
+  payload: (data) => ({ permissions: data.permissions }),
+  authMode: true,
+});
+
 export const useRolePermissions = createSsuParamQuery<string>({
   queryKey: (roleId) => ["rbac", "role-permissions", roleId],
   urlSegments: (roleId) => ["rbac", "permission", "role", roleId],
