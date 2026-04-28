@@ -56,7 +56,7 @@ function HeroRow({ name }) {
         )}
       </div>
       {isFetched && stats && stats.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
+        <div className="hidden lg:grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
           {stats.map((stat, i) => {
             const cfg = STAT_CONFIG[i] || STAT_CONFIG[0];
             return (
@@ -148,8 +148,75 @@ export default function FrontPage() {
 
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
-        {/* LEFT: Latest News + Upcoming Events + Need Help */}
-        <div className="animate-fade-up" style={{ animationDelay: "0ms" }}>
+        {/* CENTER: My Capabilities + Platform nav cards — first in DOM so it appears at top on mobile */}
+        <div className="animate-fade-up lg:order-2" style={{ animationDelay: "80ms" }}>
+          <SectionLabel as="h2" className="mb-2 block">
+            // my capabilities — top outstanding actions
+          </SectionLabel>
+          <PageSection>
+            <MyCapabilities />
+          </PageSection>
+
+          <SectionLabel as="h2" className="mb-2 block">
+            // platform
+          </SectionLabel>
+          <NavCard
+            to="/capabilities"
+            iconBg="#e8f4fb"
+            icon={<Layers size={18} color="#0e7cc1" />}
+            name="Capabilities"
+            description="Create or join capabilities. Manage your team's cloud resources, AWS accounts, members, and onboarding steps."
+            action={
+              <Link
+                to="/capabilities?new=true"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+              >
+                + New Capability
+              </Link>
+            }
+          />
+          <NavCard
+            to="/topics"
+            iconBg="#ede9fe"
+            icon={<List size={18} color="#6d28d9" />}
+            name="Kafka Topics"
+            description="Browse all platform topics. Building in .NET? Check out dafda — you're welcome!"
+          />
+          <NavCard
+            href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
+            iconBg="#dcfce7"
+            icon={<span className="text-[18px] text-[#16a34a]">☸</span>}
+            name="Kubernetes"
+            description="First visit? Start with the Kubernetes Getting Started guide."
+            action={
+              <TrackedLink
+                trackName="DownloadKubeConfig"
+                href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+              >
+                ↓ Download kubeconfig
+              </TrackedLink>
+            }
+          />
+          <NavCard
+            to="/ecr"
+            iconBg="#fef3c7"
+            icon={<span className="text-[18px] text-[#ed8800]">□</span>}
+            name="ECR Repositories"
+            description="Browse and manage your team's container image repositories across AWS accounts."
+            action={
+              <Link
+                to="/ecr?new=true"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+              >
+                + New repository
+              </Link>
+            }
+          />
+        </div>
+
+        {/* LEFT: Latest News + Upcoming Events + Platform Status */}
+        <div className="animate-fade-up lg:order-1" style={{ animationDelay: "0ms" }}>
           <SectionLabel as="h2" className="mb-2 block">
             // latest news
           </SectionLabel>
@@ -180,66 +247,8 @@ export default function FrontPage() {
 
         </div>
 
-        {/* CENTER: My Capabilities + Platform nav cards */}
-        <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
-          <SectionLabel as="h2" className="mb-2 block">
-            // my capabilities — top outstanding actions
-          </SectionLabel>
-          <PageSection>
-            <MyCapabilities />
-          </PageSection>
-
-          <SectionLabel as="h2" className="mb-2 block">
-            // platform
-          </SectionLabel>
-          <NavCard
-            to="/capabilities"
-            iconBg="#e8f4fb"
-            icon={<Layers size={18} color="#0e7cc1" />}
-            name="Capabilities"
-            description="Create or join capabilities. Manage your team's cloud resources, AWS accounts, members, and onboarding steps."
-            action={
-              <Link
-                to="/capabilities?new=true"
-                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
-              >
-                + New
-              </Link>
-            }
-          />
-          <NavCard
-            to="/topics"
-            iconBg="#ede9fe"
-            icon={<List size={18} color="#6d28d9" />}
-            name="Kafka Topics"
-            description="Browse all platform topics. Building in .NET? Check out dafda — you're welcome!"
-          />
-          <NavCard
-            href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
-            iconBg="#dcfce7"
-            icon={<span className="text-[18px] text-[#16a34a]">☸</span>}
-            name="Kubernetes"
-            description="First visit? Start with the Kubernetes Getting Started guide. Then download your cluster config from Quick Links."
-          />
-          <NavCard
-            to="/ecr"
-            iconBg="#fef3c7"
-            icon={<span className="text-[18px] text-[#ed8800]">□</span>}
-            name="ECR Repositories"
-            description="Browse and manage your team's container image repositories across AWS accounts."
-            action={
-              <Link
-                to="/ecr?new=true"
-                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
-              >
-                + New
-              </Link>
-            }
-          />
-        </div>
-
         {/* RIGHT: Quick Links + KubeConfig + Top Visitors */}
-        <div className="animate-fade-up" style={{ animationDelay: "160ms" }}>
+        <div className="animate-fade-up lg:order-3" style={{ animationDelay: "160ms" }}>
           <SectionLabel as="h2" className="mb-2 block">
             // quick links
           </SectionLabel>
@@ -248,34 +257,14 @@ export default function FrontPage() {
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
-            // kubeconfig
-          </SectionLabel>
-          <PageSection>
-            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              Looking for a fresh config for your <Code>kubectl</Code>?
-            </p>
-            <TrackedLink
-              trackName="DownloadKubeConfig"
-              href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
-              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
-            >
-              ↓ hellman-saml.config
-            </TrackedLink>
-          </PageSection>
-
-          <SectionLabel as="h2" className="mb-2 block">
             // need help?
           </SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              Cloud Engineering provides the platform on a <strong>best-effort</strong> basis.
-              We're here to help, but response times may vary.
-            </p>
-            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              Check the <a href="https://wiki.dfds.cloud/en/playbooks" target="_blank" rel="noreferrer" className="text-action hover:underline">playbooks</a> first — most common tasks are documented there.
+              Most things you need are already documented. The <a href="https://wiki.dfds.cloud/en/playbooks" target="_blank" rel="noreferrer" className="text-action hover:underline">playbooks</a> cover the most common tasks — start there.
             </p>
             <p className="text-[13px] text-secondary leading-[1.6] mb-2">
-              Still stuck? Ask the community on Slack:
+              Got a question the docs don't answer? The community on Slack is the fastest way to get unblocked:
             </p>
             <TrackedLink
               trackName="SlackArchive-DevPeerSupport"
