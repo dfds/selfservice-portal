@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
@@ -125,17 +126,17 @@ function MemberRow({ member, roleTypes }) {
                     ? "#1d4ed8"
                     : "#0e7cc1"
                   : state.isFocused
-                  ? isDark
-                    ? "#0f172a"
-                    : "#f2f2f2"
-                  : isDark
-                  ? "#1e293b"
-                  : "#ffffff",
+                    ? isDark
+                      ? "#0f172a"
+                      : "#f2f2f2"
+                    : isDark
+                      ? "#1e293b"
+                      : "#ffffff",
                 color: state.isSelected
                   ? "#ffffff"
                   : isDark
-                  ? "#e2e8f0"
-                  : "#002b45",
+                    ? "#e2e8f0"
+                    : "#002b45",
               }),
               indicatorSeparator: (base) => ({
                 ...base,
@@ -198,6 +199,15 @@ export function TabbedMembersView({ anchorId }) {
   const header = <></>;
   const footer = <></>;
 
+  const headlineChildren = (
+    <Link
+      to="/rbac/permissions"
+      className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+    >
+      View permission matrix →
+    </Link>
+  );
+
   const applicationCount = (capabilityApplications || []).length;
 
   const tabs = {
@@ -229,6 +239,7 @@ export function TabbedMembersView({ anchorId }) {
     <TabbedPageSection
       id={anchorId}
       headline="Capability Member Management"
+      headlineChildren={headlineChildren}
       tabs={tabs}
       tabsContent={tabsContent}
       header={header}
