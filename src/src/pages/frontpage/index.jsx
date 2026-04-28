@@ -3,11 +3,13 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
+import RelevantNews from "./RelevantNews";
 import QuickLinks from "./QuickLinks";
 import UpcomingEvents from "./UpcomingEvents";
 import MyCapabilities from "./MyCapabilities";
 import PlatformStatus from "./PlatformStatus";
 import { useStats } from "@/state/remote/queries/stats";
+import { useRelevantNews } from "@/state/remote/queries/news";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Code } from "@/components/ui/Code";
@@ -125,22 +127,24 @@ function NavCard({ to, href, iconBg, icon, name, description, action }) {
 export default function FrontPage() {
   const { user } = useContext(AppContext);
   const name = user?.name ?? "there";
+  const { data: newsData } = useRelevantNews();
+  const highlighted = newsData?.newsItems?.filter((item) => item.isHighlighted) ?? [];
 
   return (
     <div className="p-4 sm:p-8">
       <HeroRow name={name} />
 
-      {/* Notice */}
-      <div
-        className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up"
-        style={{ animationDelay: "40ms" }}
-      >
-        <span className="font-bold tracking-[0.05em]">NOTE — </span>
-        Invitations to capabilities have been <strong>removed</strong>. Having
-        multiple ways to join a capability made it harder for people to know
-        what the process was — we've gone back to having just one way to join a
-        capability.
-      </div>
+      {/* Highlighted notices from relevant news */}
+      {highlighted.map((item, i) => (
+        <div
+          key={item.id}
+          className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up"
+          style={{ animationDelay: `${40 + i * 40}ms` }}
+        >
+          <span className="font-bold tracking-[0.05em]">{item.title} — </span>
+          {item.body ?? ""}
+        </div>
+      ))}
 
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
@@ -150,7 +154,7 @@ export default function FrontPage() {
             // latest news
           </SectionLabel>
           <PageSection>
-            <LatestNews />
+            <RelevantNews />
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
@@ -158,6 +162,13 @@ export default function FrontPage() {
           </SectionLabel>
           <PageSection>
             <UpcomingEvents />
+          </PageSection>
+
+          <SectionLabel as="h2" className="mb-2 block">
+            // recent incidents
+          </SectionLabel>
+          <PageSection>
+            <LatestNews />
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
@@ -172,7 +183,7 @@ export default function FrontPage() {
         {/* CENTER: My Capabilities + Platform nav cards */}
         <div className="animate-fade-up" style={{ animationDelay: "80ms" }}>
           <SectionLabel as="h2" className="mb-2 block">
-            // my capabilities
+            // my capabilities — top outstanding actions
           </SectionLabel>
           <PageSection>
             <MyCapabilities />

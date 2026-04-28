@@ -158,7 +158,7 @@ export default function MyCapabilities() {
           to="/capabilities"
           className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
-          bilities →
+          View all capabilities →
         </Link>
       </div>
     </div>
