@@ -196,6 +196,20 @@ export const useBypassJoinCapability = createSsuMutation<{
   authMode: true,
 });
 
+export const useRemoveCapabilityMember = createSsuMutation<{
+  capabilityId: string;
+  memberId: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "capabilities",
+    data.capabilityId,
+    "members",
+    data.memberId,
+  ],
+  payload: () => null,
+});
+
 export const useAllCapabilitiesWithMembers = createSsuQuery({
   queryKey: ["capabilities", "all-with-members"],
   urlSegments: ["system", "legacy", "aad-aws-sync"],
