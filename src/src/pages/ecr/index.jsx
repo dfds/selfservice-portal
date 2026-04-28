@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -232,7 +233,8 @@ function Repositories({ onNewRepository }) {
 }
 
 export default function ECRPage() {
-  const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(() => searchParams.get("new") === "true");
 
   return (
     <div className="p-8">
