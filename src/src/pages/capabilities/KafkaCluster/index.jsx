@@ -10,7 +10,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import PageSection from "@/components/PageSection";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
 import { useContext } from "react";
@@ -91,15 +90,15 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   );
 
   return (
-    <PageSection
-      id={anchorId}
-      headline="Kafka"
-      headlineChildren={
-        <span className="font-mono text-[10px] font-semibold tracking-[0.04em] bg-[rgba(237,136,0,0.1)] text-[#ed8800] px-2 py-[2px] rounded-full ml-2">
+    <div id={anchorId}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-sm font-semibold text-[#002b45] dark:text-[#e2e8f0]">
+          Kafka
+        </span>
+        <span className="font-mono text-[10px] font-semibold tracking-[0.04em] bg-[rgba(237,136,0,0.1)] text-[#ed8800] px-2 py-[2px] rounded-full">
           {cluster.name}
         </span>
-      }
-    >
+      </div>
       {cluster.description && (
         <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-3 whitespace-pre-wrap">
           {cluster.description}
@@ -327,6 +326,6 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
           </TrackedButton>
         </div>
       )}
-    </PageSection>
+    </div>
   );
 }
