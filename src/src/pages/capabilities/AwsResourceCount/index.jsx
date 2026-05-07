@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from "react";
 import awsLogo from "./aws-logo.svg";
 import AppContext from "@/AppContext";
 import styles from "./AwsCount.module.css";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -160,12 +161,12 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
 
   return (
     <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
-      <DialogContent className={isMobile ? "max-w-[95%]" : "max-w-[60%]"}>
+      <DialogContent className={cn(isMobile ? "max-w-[95%]" : "max-w-[60%]", "flex flex-col max-h-[90vh]")}>
         <DialogHeader>
           <DialogTitle>Complete list of resources in AWS</DialogTitle>
         </DialogHeader>
         {isMobile ? (
-          <div className="divide-y divide-divider max-h-[60vh] overflow-y-auto">
+          <div className="divide-y divide-divider overflow-y-auto">
             {countsArray.map((item) => (
               <div key={item.name} className="flex items-center justify-between px-3 py-2.5">
                 <span className="text-sm text-primary">{item.name}</span>
@@ -174,6 +175,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
             ))}
           </div>
         ) : (
+          <div className="overflow-y-auto flex-1">
           <MaterialReactTable
             columns={columns}
             data={countsArray}
@@ -206,6 +208,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
             enableColumnActions={false}
             enableColumnFilters={false}
           />
+          </div>
         )}
         <DialogFooter>
           <Button variant="outline" onClick={onCloseRequested}>
