@@ -1,17 +1,14 @@
 import React from "react";
 import PageSection from "@/components/PageSection";
-import { ResourceInfoBadges } from "./resourceInfoBadges";
+import { AwsResourceInfoBadges } from "./resourceInfoBadges";
 import { TrackedLink } from "@/components/Tracking";
 
-export default function Resources({ anchorId, capabilityId }) {
+export default function AwsResources({ anchorId }) {
   return (
-    <PageSection id={anchorId} headline="Resources">
+    <PageSection id={anchorId} headline="AWS &amp; Kubernetes">
       <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
-        A capability is the container for your cloud resources. Currently we
-        support 1 AWS Account (sandbox), 1 Kubernetes namespace, and several
-        Azure Resource Groups per capability. These are not added by default and
-        must be requested below. Manual processing is involved in getting an AWS
-        account attached.{" "}
+        Request an AWS account and Kubernetes namespace for this capability.
+        Manual processing is involved in getting an AWS account attached.{" "}
         <TrackedLink
           trackName="Wiki-CloudResourcesGuide"
           target="_blank"
@@ -21,7 +18,7 @@ export default function Resources({ anchorId, capabilityId }) {
           DFDS Cloud Usage Guidelines
         </TrackedLink>
       </p>
-      <ResourceInfoBadges />
+      <AwsResourceInfoBadges />
     </PageSection>
   );
 }
