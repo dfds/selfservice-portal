@@ -174,7 +174,7 @@ const REQUIRED_TAGS = [
   "dfds.azure.purpose",
 ];
 
-export function ResourceInfoBadges() {
+export function AwsResourceInfoBadges() {
   const {
     id,
     awsAccount,
@@ -361,11 +361,6 @@ export function ResourceInfoBadges() {
         </DialogContent>
       </Dialog>
 
-      {/* AWS / Kubernetes section */}
-      <ResourceSectionLabel logo={awsLogo} alt="AWS">
-        AWS &amp; Kubernetes
-      </ResourceSectionLabel>
-
       {awsAccount == null && (
         <ResourceRow
           label="AWS Account &amp; Kubernetes Namespace"
@@ -433,11 +428,108 @@ export function ResourceInfoBadges() {
           </div>
         </>
       )}
+    </>
+  );
+}
 
-      {/* Azure section */}
-      <ResourceSectionLabel logo={azureLogo} alt="Azure">
-        Azure Resource Groups
-      </ResourceSectionLabel>
+export function AzureResourceInfoBadges() {
+  const {
+    id,
+    links,
+    azureResourcesList,
+    isLoadedAzure,
+    metadata,
+    metadataFetched,
+    addNewAzure,
+  } = useContext(SelectedCapabilityContext);
+
+  const [missingTags, setMissingTags] = useState([]);
+  const [showAzureTagsWarning, setShowAzureTagsWarning] = useState(false);
+  const [showNewAzureResourcePopup, setShowNewAzureResourcePopup] =
+    useState(false);
+  const [metaParsed, setMetaParsed] = useState(undefined);
+
+  useEffect(() => {
+    if (metadataFetched && metadata != null) {
+      setMetaParsed(JSON.parse(metadata));
+    } else {
+      setMetaParsed(undefined);
+    }
+  }, [metadataFetched, metadata]);
+
+  useEffect(() => {
+    if (metaParsed !== undefined && REQUIRED_TAGS.length > 0) {
+      const missing = REQUIRED_TAGS.filter(
+        (tag) => !metaParsed.hasOwnProperty(tag),
+      );
+      setMissingTags((prev) => {
+        if (
+          prev.length !== missing.length ||
+          !prev.every((tag, i) => tag === missing[i])
+        ) {
+          return missing;
+        }
+        return prev;
+      });
+    } else {
+      setMissingTags([]);
+    }
+  }, [metaParsed]);
+
+  const handleNewAzureResource = () => {
+    if (missingTags.length === 0) {
+      setShowNewAzureResourcePopup(true);
+    } else {
+      setShowAzureTagsWarning(true);
+    }
+  };
+
+  const generateResourceGroupLink = (environment) => {
+    const urlmap = {
+      dev: "9a68caae-8d74-4289-9f3c-31e96120aef9",
+      test: "bad472ab-19cd-4654-9657-8c91ab59f248",
+      uat: "6be18e97-e76a-4a58-8a31-5628be3efeeb",
+      prod: "60773f07-9b34-4256-968b-c07d5abe447a",
+    };
+    return `https://portal.azure.com/#@DFDS.onmicrosoft.com/resource/subscriptions/${urlmap[environment]}/resourceGroups/rg-dfds_ssu_${environment}_${id}/overview`;
+  };
+
+  const processNewResourceGroupData = (formData) => {
+    return {
+      environment: formData["environment"].value || "dev",
+      purpose: metaParsed?.["dfds.azure.purpose"] || "unknown",
+      catalogueId: formData["catalogueId"]
+        ? formData["catalogueId"]
+        : "unknown",
+      risk: formData["riskCategory"]?.value
+        ? formData["riskCategory"].value
+        : "unknown",
+      gdpr: formData["gdprData"]?.value
+        ? formData["gdprData"].value === "yes"
+        : false,
+    };
+  };
+
+  return (
+    <>
+      {showAzureTagsWarning && (
+        <AzureTagsWarning
+          onClose={() => setShowAzureTagsWarning(false)}
+          missingTags={missingTags}
+        />
+      )}
+      {showNewAzureResourcePopup && (
+        <AzureResourceGroupRequestWizard
+          onCloseClicked={() => setShowNewAzureResourcePopup(false)}
+          onRequestResourceGroupClicked={(formData) => {
+            addNewAzure(processNewResourceGroupData(formData));
+            setShowNewAzureResourcePopup(false);
+          }}
+          inProgress={false}
+          azurePurpose={metaParsed?.["dfds.azure.purpose"] || "unknown"}
+          azureResourcesList={azureResourcesList}
+        />
+      )}
 
       {isLoadedAzure && azureResourcesList && azureResourcesList.length > 0 ? (
         azureResourcesList.map((resource) => (
