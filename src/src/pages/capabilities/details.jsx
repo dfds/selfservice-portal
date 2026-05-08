@@ -92,7 +92,8 @@ function CapabilityDetailsPageContent() {
     ...(showAICatalogueSection
       ? [{ href: "#ai-catalogue", label: "AI Catalogue" }]
       : []),
-    { href: "#resources", label: "Resources" },
+    { href: "#resources", label: "AWS & Kubernetes" },
+    { href: "#azure-resources", label: "Azure" },
     { href: "#kafka", label: "Kafka" },
     ...(showCosts && awsAccount ? [{ href: "#costs", label: "Costs" }] : []),
     ...(!isDeleted ? [{ href: "#management", label: "Management" }] : []),
