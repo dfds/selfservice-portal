@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { Text } from "@/components/ui/Text";
 import { Link } from "react-router-dom";
 import { ChevronRight, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
@@ -128,13 +128,13 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
 
   const visibleCapabilities = globalFilter
     ? filteredCapabilities.filter((cap) => {
-        const q = globalFilter.toLowerCase();
-        return (
-          cap.name?.toLowerCase().includes(q) ||
-          cap.description?.toLowerCase().includes(q) ||
-          cap.awsAccountId?.toLowerCase().includes(q)
-        );
-      })
+      const q = globalFilter.toLowerCase();
+      return (
+        cap.name?.toLowerCase().includes(q) ||
+        cap.description?.toLowerCase().includes(q) ||
+        cap.awsAccountId?.toLowerCase().includes(q)
+      );
+    })
     : filteredCapabilities;
 
   const sortedCapabilities = useMemo(() => {
@@ -267,15 +267,9 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const { isDark } = useTheme();
 
-  const bg = isDark ? "#1e293b" : "#ffffff";
-  const bgMuted = isDark ? "#0f172a" : "#f2f2f2";
+  const { bg, bgMuted, textPrimary, textMuted, borderColor, inputBorder, inputText } = useMuiTableColors();
   const bgDeleted = isDark ? "#3b1a1a" : "#dd8888";
   const bgDeletedHover = isDark ? "#4a2020" : "rgba(187, 221, 243, 0.1)";
-  const textPrimary = isDark ? "#e2e8f0" : "#002b45";
-  const textMuted = isDark ? "#64748b" : "#afafaf";
-  const borderColor = isDark ? "#334155" : "#eeeeee";
-  const inputBorder = isDark ? "#334155" : undefined;
-  const inputText = isDark ? "#e2e8f0" : undefined;
 
   return (
     <MaterialReactTable
@@ -613,11 +607,11 @@ export default function CapabilitiesList() {
             sortingFn: (rowA, rowB) => {
               const ac =
                 JSON.parse(rowA.original.jsonMetadata ?? "{}")[
-                  "dfds.cost.centre"
+                "dfds.cost.centre"
                 ] ?? "";
               const bc =
                 JSON.parse(rowB.original.jsonMetadata ?? "{}")[
-                  "dfds.cost.centre"
+                "dfds.cost.centre"
                 ] ?? "";
               return (
                 ac.localeCompare(bc) ||
@@ -749,13 +743,11 @@ export default function CapabilitiesList() {
   return (
     <>
       <PageSection
-        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
-          isLoading
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading
             ? ""
-            : `(${(filteredCapabilities || []).length} / ${
-                (capabilities || []).length
-              })`
-        }`}
+            : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
+            })`
+          }`}
         headlineChildren={
           isLoading ? null : (
             <div className={styles.myCapabilitiesToggleContainer}>
