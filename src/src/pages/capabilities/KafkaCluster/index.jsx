@@ -91,20 +91,6 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
 
   return (
     <div id={anchorId}>
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-sm font-semibold text-[#002b45] dark:text-[#e2e8f0]">
-          Kafka
-        </span>
-        <span className="font-mono text-[10px] font-semibold tracking-[0.04em] bg-[rgba(237,136,0,0.1)] text-[#ed8800] px-2 py-[2px] rounded-full">
-          {cluster.name}
-        </span>
-      </div>
-      {cluster.description && (
-        <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-3 whitespace-pre-wrap">
-          {cluster.description}
-        </p>
-      )}
-
       <Dialog
         open={showAccess}
         onOpenChange={(o) => !o && setShowAccess(false)}
@@ -294,14 +280,16 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
         </div>
       )}
 
-      <TopicList
-        name="Public Topics"
-        topics={publicTopics}
-        clusterId={cluster.id}
-        selectedTopic={selectedKafkaTopic}
-        onTopicClicked={handleTopicClicked}
-        schemas={schemas}
-      />
+      {hasWriteAccess && (
+        <TopicList
+          name="Public Topics"
+          topics={publicTopics}
+          clusterId={cluster.id}
+          selectedTopic={selectedKafkaTopic}
+          onTopicClicked={handleTopicClicked}
+          schemas={schemas}
+        />
+      )}
 
       {hasWriteAccess && (
         <TopicList
@@ -315,15 +303,21 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
       )}
 
       {canRequestAccess && (
-        <div className="flex gap-2 flex-wrap items-center mt-3">
-          <TrackedButton
-            trackName="KafkaCluster-RequestClusterAccess"
-            size="small"
-            submitting={isRequestingAccess}
-            onClick={handleRequestAccess}
-          >
-            Request Access
-          </TrackedButton>
+        <div className="flex flex-col gap-2 mt-3">
+          <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6]">
+            You don&apos;t currently have access to this Kafka cluster. Request
+            access to view topics and connect to the cluster.
+          </p>
+          <div>
+            <TrackedButton
+              trackName="KafkaCluster-RequestClusterAccess"
+              size="small"
+              submitting={isRequestingAccess}
+              onClick={handleRequestAccess}
+            >
+              Request Access
+            </TrackedButton>
+          </div>
         </div>
       )}
     </div>
