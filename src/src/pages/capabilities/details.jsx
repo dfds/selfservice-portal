@@ -7,7 +7,8 @@ import SelectedCapabilityContext from "./SelectedCapabilityContext";
 import { TabbedMembersView } from "./members";
 import Summary from "./summary";
 import Costs from "./costs";
-import Resources from "./resources";
+import AwsResources from "./resources/aws";
+import AzureResources from "./resources/azure";
 import KafkaCluster from "./KafkaCluster";
 import PageSection from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
@@ -92,7 +93,7 @@ function CapabilityDetailsPageContent() {
     ...(showAICatalogueSection
       ? [{ href: "#ai-catalogue", label: "AI Catalogue" }]
       : []),
-    { href: "#resources", label: "AWS & Kubernetes" },
+    { href: "#aws-resources", label: "AWS & Kubernetes" },
     { href: "#azure-resources", label: "Azure" },
     { href: "#kafka", label: "Kafka" },
     ...(showCosts && awsAccount ? [{ href: "#costs", label: "Costs" }] : []),
@@ -224,7 +225,14 @@ function CapabilityDetailsPageContent() {
             className="animate-section-enter"
             style={{ animationDelay: "270ms" }}
           >
-            <Resources anchorId="resources" capabilityId={id} />
+            <AwsResources anchorId="aws-resources" />
+          </div>
+
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "300ms" }}
+          >
+            <AzureResources anchorId="azure-resources" />
           </div>
 
           {!awsAccount && (
@@ -295,11 +303,10 @@ function CapabilityDetailsPageContent() {
                 <a
                   key={href}
                   href={href}
-                  className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[11px] no-underline tracking-[0.03em] transition-colors border-l-2 ${
-                    isActive
+                  className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[11px] no-underline tracking-[0.03em] transition-colors border-l-2 ${isActive
                       ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
                       : "text-[#666666] dark:text-slate-400 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] hover:bg-[#f2f2f2] dark:hover:bg-slate-700 border-transparent"
-                  }`}
+                    }`}
                 >
                   {label}
                 </a>
