@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { MaterialReactTable } from "material-react-table";
 import PageSection from "@/components/PageSection";
 import PreAppContext from "../../preAppContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { PaginationControls } from "@/components/ui/PaginationControls";
@@ -70,14 +70,7 @@ export default function CapabilitiesCriticalityPage() {
     [isDark],
   );
 
-  const bg = isDark ? "#1e293b" : "#ffffff";
-  const bgMuted = isDark ? "#0f172a" : "#f2f2f2";
-  const textPrimary = isDark ? "#e2e8f0" : "#002b45";
-  const textBody = isDark ? "#e2e8f0" : "#4d4e4c";
-  const textMuted = isDark ? "#64748b" : "#afafaf";
-  const borderColor = isDark ? "#334155" : "#eeeeee";
-  const inputBorder = isDark ? "#334155" : undefined;
-  const inputText = isDark ? "#e2e8f0" : undefined;
+  const { bg, bgMuted, textPrimary, textBody, textMuted, borderColor, inputBorder, inputText } = useMuiTableColors();
 
   const navigate = useNavigate();
   const clickHandler = (id) => navigate(`/capabilities/${id}`);

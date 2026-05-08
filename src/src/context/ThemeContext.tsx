@@ -10,12 +10,26 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: "system",
-  setTheme: () => {},
+  setTheme: () => { },
   isDark: false,
 });
 
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);
+}
+
+export function useMuiTableColors() {
+  const { isDark } = useContext(ThemeContext);
+  return {
+    bg: isDark ? "#1e293b" : "#ffffff",
+    bgMuted: isDark ? "#0f172a" : "#f2f2f2",
+    textPrimary: isDark ? "#e2e8f0" : "#002b45",
+    textBody: isDark ? "#e2e8f0" : "#4d4e4c",
+    textMuted: isDark ? "#64748b" : "#afafaf",
+    borderColor: isDark ? "#334155" : "#eeeeee",
+    inputBorder: isDark ? "#334155" : undefined,
+    inputText: isDark ? "#e2e8f0" : undefined,
+  };
 }
 
 function resolveIsDark(theme: Theme): boolean {
