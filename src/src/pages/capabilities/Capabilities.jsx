@@ -79,7 +79,7 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
         <CardContent className="p-3">
           <div className="flex items-start gap-2 mb-1">
             {isPendingDeletion && (
-              <AlertCircle size={14} className="text-red-500 shrink-0 mt-0.5" />
+              <AlertCircle size={12} className="text-red-500 shrink-0 mt-0.5" />
             )}
             <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
               {truncateString(capability.name, 80)}
@@ -485,7 +485,7 @@ export default function CapabilitiesList() {
                 <div>
                   {cell.getValue().status === "Pending Deletion" ? (
                     <Text styledAs="action" as={"div"}>
-                      <AlertCircle className={styles.warningIcon} />
+                      <AlertCircle size={14} className={styles.warningIcon} />
                     </Text>
                   ) : null}
                   <Text

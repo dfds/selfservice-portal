@@ -1,10 +1,4 @@
-import { useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { ssuRequest } from "../query";
-import { createSsuMutation } from "../queryFactory";
-import PreAppContext from "@/preAppContext";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
+import { createSsuQuery, createSsuMutation } from "../queryFactory";
 
 export interface NewsItem {
   id: string;
@@ -15,29 +9,26 @@ export interface NewsItem {
   isRelevant: boolean;
   createdBy: string;
   createdAt: string;
-  modifiedAt?: string | null;
+  modifiedAt: string | null;
+  _links: Record<string, unknown>;
 }
 
-// ── Queries ───────────────────────────────────────────────────────────────────
-
-export function useNews() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-
-  return useQuery<NewsItem[]>({
-    queryKey: ["news", "list"],
-    queryFn: async () => {
-      const res = await ssuRequest({
-        method: "GET",
-        urlSegments: isCloudEngineerEnabled ? ["news"] : ["news", "relevant"],
-        payload: null,
-        isCloudEngineerEnabled,
-      });
-      return res?.newsItems ?? [];
-    },
-  });
+interface RelevantNewsResponse {
+  newsItems: NewsItem[];
+  _links: Record<string, unknown>;
 }
 
-// ── Mutations ─────────────────────────────────────────────────────────────────
+export const useRelevantNews = createSsuQuery<RelevantNewsResponse>({
+  queryKey: ["news", "relevant"],
+  urlSegments: ["news", "relevant"],
+  staleTime: 60000,
+});
+
+export const useNews = createSsuQuery<RelevantNewsResponse, NewsItem[]>({
+  queryKey: ["news", "list"],
+  urlSegments: ["news"],
+  select: (data) => data.newsItems,
+});
 
 export const useCreateNews = createSsuMutation<{
   payload: { title: string; body: string; dueDate: string };
@@ -50,14 +41,6 @@ export const useDeleteNews = createSsuMutation<{ id: string }>({
   method: "DELETE",
   urlSegments: (data) => ["news", data.id],
   payload: () => null,
-});
-
-export const useUpdateNews = createSsuMutation<{
-  id: string;
-  payload: { title?: string; body?: string; dueDate?: string };
-}>({
-  method: "POST",
-  urlSegments: (data) => ["news", data.id],
 });
 
 export const useHighlightNews = createSsuMutation<{ id: string }>({
