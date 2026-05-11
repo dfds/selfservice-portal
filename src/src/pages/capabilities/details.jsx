@@ -244,7 +244,7 @@ function CapabilityDetailsPageContent() {
                 id="kafka"
                 headline="Kafka Clusters"
                 tabs={Object.fromEntries(
-                  (kafkaClusters || []).map((cluster, i) => [String(i), cluster.name]),
+                  (kafkaClusters || []).map((cluster, i) => [String(i), `${cluster.name} (${(cluster.topics || []).length})`]),
                 )}
                 tabsContent={Object.fromEntries(
                   (kafkaClusters || []).map((cluster, i) => [
