@@ -244,7 +244,7 @@ function CapabilityDetailsPageContent() {
                 id="kafka"
                 headline="Kafka Clusters"
                 tabs={Object.fromEntries(
-                  (kafkaClusters || []).map((cluster, i) => [String(i), cluster.name]),
+                  (kafkaClusters || []).map((cluster, i) => [String(i), `${cluster.name} (${(cluster.topics || []).length})`]),
                 )}
                 tabsContent={Object.fromEntries(
                   (kafkaClusters || []).map((cluster, i) => [
@@ -308,8 +308,8 @@ function CapabilityDetailsPageContent() {
                   key={href}
                   href={href}
                   className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[11px] no-underline tracking-[0.03em] transition-colors border-l-2 ${isActive
-                      ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
-                      : "text-[#666666] dark:text-slate-400 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] hover:bg-[#f2f2f2] dark:hover:bg-slate-700 border-transparent"
+                    ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
+                    : "text-[#666666] dark:text-slate-400 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] hover:bg-[#f2f2f2] dark:hover:bg-slate-700 border-transparent"
                     }`}
                 >
                   {label}
