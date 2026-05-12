@@ -3,6 +3,30 @@ import { ssuRequest } from "../query";
 import { useContext } from "react";
 import PreAppContext from "@/preAppContext";
 
+let useDummyData = true;
+
+/** Generates deterministic dummy cost data for development when the API returns nothing. */
+function generateDummyCosts(capabilityId: string, days: number) {
+  // Seed a simple LCG from the capability ID so each capability looks different
+  // but renders consistently across re-renders.
+  let seed = capabilityId
+    .split("")
+    .reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+    return (seed >>> 0) / 0xffffffff;
+  };
+  const baseValue = 20 + rand() * 80; // $20–$100 / day base
+  return Array.from({ length: days }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (days - 1 - i));
+    return {
+      name: date.toISOString().split("T")[0],
+      pv: Math.max(1, Math.floor(baseValue + (rand() - 0.5) * baseValue * 0.4)),
+    };
+  });
+}
+
 export function useCapabilitiesCost() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
@@ -32,32 +56,57 @@ export function useCapabilitiesCost() {
   });
 
   var getCostsForCapability = (capabilityId, daysWindow) => {
-    if (daysWindow > 30) {
+    if (daysWindow > 60) {
       throw new Error("Days window size is too large");
     }
 
-    if (!query.isFetched) {
+    const realData =
+      query.isFetched &&
+        query.data != null &&
+        query.data.has(capabilityId)
+        ? query.data.get(capabilityId)
+        : null;
+
+    if (realData == null) {
+      if (useDummyData) {
+        // Always generate from a fixed 60-day pool so that any two windows
+        // (e.g. getCostsForCapability(id, 7) and getCostsForCapability(id, 14))
+        // are consistent slices of the same underlying series.
+        return generateDummyCosts(capabilityId, 60).slice(-daysWindow);
+      }
       return [];
     }
 
-    if (query.data == null) {
-      return [];
+    if (realData.length <= daysWindow) {
+      return realData;
     }
+    return realData.slice(-daysWindow);
+  };
 
-    if (!query.data.has(capabilityId)) {
-      return [];
-    }
+  /**
+   * Returns { current, previous } where each is up to 30 days.
+   * current = the most recent 30 days (rendered in chart).
+   * previous = the 30 days before that (used only for trend calculation).
+   */
+  var getCostComparisonForCapability = (capabilityId) => {
+    // Fetch 60 days of raw data internally so we can compute both windows,
+    // but only the last 30 are ever passed to the chart.
+    const rawAll: { name: string; pv: number }[] =
+      query.isFetched && query.data != null && query.data.has(capabilityId)
+        ? query.data.get(capabilityId)
+        : useDummyData
+          ? generateDummyCosts(capabilityId, 60)
+          : [];
 
-    let these_costs = query.data.get(capabilityId);
-    if (these_costs.length <= daysWindow) {
-      return these_costs;
-    }
-    return these_costs.slice(-daysWindow);
+    const current = rawAll.slice(-30); // ← chart always shows exactly 30 days
+    const previous = rawAll.length > 30 ? rawAll.slice(-60, -30) : [];
+    return { current, previous };
   };
 
   return {
     query: query,
     getCostsForCapability: getCostsForCapability,
+    getCostComparisonForCapability: getCostComparisonForCapability,
   };
 }
 
