@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { TabbedPageSection } from "../../../components/PageSection";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import AppContext from "../../../AppContext";
@@ -230,6 +231,15 @@ export function TabbedMembersView({ anchorId }) {
   const header = <></>;
   const footer = <></>;
 
+  const headlineChildren = (
+    <Link
+      to="/rbac/permissions"
+      className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+    >
+      View permission matrix →
+    </Link>
+  );
+
   const applicationCount = (capabilityApplications || []).length;
 
   const tabs = {
@@ -261,6 +271,7 @@ export function TabbedMembersView({ anchorId }) {
     <TabbedPageSection
       id={anchorId}
       headline="Capability Member Management"
+      headlineChildren={headlineChildren}
       tabs={tabs}
       tabsContent={tabsContent}
       header={header}
