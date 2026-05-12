@@ -10,7 +10,7 @@ import Costs from "./costs";
 import AwsResources from "./resources/aws";
 import AzureResources from "./resources/azure";
 import KafkaCluster from "./KafkaCluster";
-import PageSection from "@/components/PageSection";
+import PageSection, { TabbedPageSection } from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
 import {
   SkeletonCapabilityHeader,
@@ -235,34 +235,38 @@ function CapabilityDetailsPageContent() {
             <AzureResources anchorId="azure-resources" />
           </div>
 
-          {!awsAccount && (
-            <div
-              className="animate-section-enter"
-              style={{ animationDelay: "340ms" }}
-            >
-              <PageSection id="kafka" headline="Kafka Clusters">
-                <Text>
-                  No AWS account is linked to this capability. Please link an
-                  AWS account to view Kafka clusters.
-                </Text>
-              </PageSection>
-            </div>
-          )}
           <div
             className="animate-section-enter"
             style={{ animationDelay: "340ms" }}
           >
-            <section id="kafka">
-              {awsAccount !== undefined &&
-                awsAccount &&
-                (kafkaClusters || []).map((cluster) => (
-                  <KafkaCluster
-                    key={cluster.id}
-                    cluster={cluster}
-                    capabilityId={id}
-                  />
-                ))}
-            </section>
+            {awsAccount && (kafkaClusters || []).length > 1 ? (
+              <TabbedPageSection
+                id="kafka"
+                headline="Kafka Clusters"
+                tabs={Object.fromEntries(
+                  (kafkaClusters || []).map((cluster, i) => [String(i), `${cluster.name} (${(cluster.topics || []).length})`]),
+                )}
+                tabsContent={Object.fromEntries(
+                  (kafkaClusters || []).map((cluster, i) => [
+                    String(i),
+                    <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />,
+                  ]),
+                )}
+              />
+            ) : (
+              <PageSection id="kafka" headline="Kafka Clusters">
+                {!awsAccount && (
+                  <Text>
+                    No AWS account is linked to this capability. Please link an
+                    AWS account to view Kafka clusters.
+                  </Text>
+                )}
+                {awsAccount &&
+                  (kafkaClusters || []).map((cluster) => (
+                    <KafkaCluster key={cluster.id} cluster={cluster} capabilityId={id} />
+                  ))}
+              </PageSection>
+            )}
           </div>
 
           {showCosts && (
