@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useMe } from "@/state/remote/queries/me";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import { LightBulb } from "@/pages/capabilities/RequirementsStatus";
 import { AlertCircle, Users } from "lucide-react";
+import CapabilityCostSummary from "@/components/BasicCapabilityCost";
 
 const MAX_SHOWN = 5;
 
@@ -14,36 +14,6 @@ function isStaleScore(cap) {
     !cap.modifiedAt ||
     cap.requirementScore == null ||
     new Date(cap.modifiedAt) < new Date(Date.now() - 14 * 86400000)
-  );
-}
-
-function CostSparkline({ costs }) {
-  const hasCosts = costs && costs.length > 0;
-  const avg = hasCosts
-    ? Math.floor(costs.reduce((s, x) => s + x.pv, 0) / costs.length)
-    : null;
-  const avgText = avg == null ? "No data" : avg < 1 ? "<$1/d" : `$${avg}/d`;
-
-  return (
-    <div className="flex items-center gap-1.5 shrink-0">
-      {hasCosts && (
-        <div style={{ width: 48, height: 20 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={costs}>
-              <Line
-                type="monotone"
-                dataKey="pv"
-                stroke="#0e7cc1"
-                strokeWidth={1.5}
-                dot={false}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-      <span className="font-mono text-[10px] text-muted">{avgText}</span>
-    </div>
   );
 }
 
@@ -57,9 +27,8 @@ function CapabilityItem({ cap, index }) {
 
   return (
     <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${
-        isPendingDeletion ? " opacity-70" : ""
-      }`}
+      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${isPendingDeletion ? " opacity-70" : ""
+        }`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Name row */}
@@ -108,7 +77,7 @@ function CapabilityItem({ cap, index }) {
             </span>
           )}
 
-          <CostSparkline costs={cap.costs} />
+          <CapabilityCostSummary data={cap.costs} previousData={cap.previousCosts} previousDataIsFull={cap.costsComparisonIsFull} />
         </div>
       </div>
     </div>
@@ -117,14 +86,17 @@ function CapabilityItem({ cap, index }) {
 
 export default function MyCapabilities() {
   const { isFetched: meFetched, data: meData } = useMe();
-  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
+  const { query: costsQuery, getCostComparisonForCapability } = useCapabilitiesCost();
 
   const mine = useMemo(() => {
     if (!meFetched || !meData?.capabilities) return [];
     return [...meData.capabilities]
       .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
       .slice(0, MAX_SHOWN)
-      .map((cap) => ({ ...cap, costs: getCostsForCapability(cap.id, 14) }));
+      .map((cap) => {
+        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
+        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
+      });
   }, [meFetched, meData, costsQuery.isFetched]);
 
   if (!meFetched) {

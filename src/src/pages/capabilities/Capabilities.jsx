@@ -400,7 +400,7 @@ export default function CapabilitiesList() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
-  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
+  const { query: costsQuery, getCostComparisonForCapability } = useCapabilitiesCost();
 
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
@@ -411,10 +411,10 @@ export default function CapabilitiesList() {
 
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
-      const capsWithCosts = capabilitiesData.map((cap) => ({
-        ...cap,
-        costs: getCostsForCapability(cap.id, 7),
-      }));
+      const capsWithCosts = capabilitiesData.map((cap) => {
+        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
+        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
+      });
       setCapabilities(capsWithCosts);
 
       const myCapabilities = capsWithCosts.filter((capability) => {
@@ -660,7 +660,7 @@ export default function CapabilitiesList() {
 
           {
             accessorFn: (row) => row.costs,
-            header: "Costs",
+            header: "Cost (last 30 days)",
             size: 150,
             enableColumnFilterModes: false,
             sortingFn: (rowA, rowB) => {
@@ -685,11 +685,13 @@ export default function CapabilitiesList() {
             muiTableBodyCellProps: {
               align: "right",
             },
-            Cell: ({ cell }) => {
+            Cell: ({ cell, row }) => {
               let data = cell.getValue() != null ? cell.getValue() : [];
+              let previousData = row.original.previousCosts ?? [];
+              let previousDataIsFull = row.original.costsComparisonIsFull ?? true;
               return (
                 <div className={styles.costs}>
-                  <CapabilityCostSummary data={data} />
+                  <CapabilityCostSummary data={data} previousData={previousData} previousDataIsFull={previousDataIsFull} />
                 </div>
               );
             },
@@ -744,9 +746,9 @@ export default function CapabilitiesList() {
     <>
       <PageSection
         headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading
-            ? ""
-            : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
-            })`
+          ? ""
+          : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
+          })`
           }`}
         headlineChildren={
           isLoading ? null : (

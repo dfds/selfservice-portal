@@ -1,3 +1,10 @@
+.costInline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .chartContainer {
   display: flex;
   align-items: center;
@@ -9,6 +16,7 @@
   width: 150px;
   height: 35px;
 }
+
 .costDataSummaryCostContainer {
   display: flex;
   flex-direction: column;
@@ -25,9 +33,31 @@
 }
 
 .costDataSummaryCost {
-  color: #595959;
+  display: inline-block;
+  min-width: 72px;
+  font-size: 13px;
+  text-align: right;
+}
+
+.costTrend {
+  display: inline-block;
+  min-width: 48px;
   font-size: 11px;
-  text-align: center;
+  font-weight: 600;
+  text-align: left;
+}
+
+.trendUnknown {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.trendGood {
+  color: #1a7f3c;
+}
+
+.trendBad {
+  color: #c0392b;
 }
 
 .largeCostDataSummary {

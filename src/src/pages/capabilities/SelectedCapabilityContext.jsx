@@ -77,7 +77,7 @@ function SelectedCapabilityProvider({ children }) {
     useCapabilityMembersDetailed(details); // NEW
   const [isPendingDeletion, setPendingDeletion] = useState(null);
   const [isDeleted, setIsDeleted] = useState(null);
-  const [showCosts, setShowCosts] = useState(false);
+  const [showCosts, setShowCosts] = useState(true);
   const { isFetched: isClustersListFetched, data: clustersList } =
     useKafkaClustersAccessList(details); // NEW
   const { data: awsAccountDetails, isFetched: isLoadedAccount } =
@@ -601,13 +601,16 @@ function SelectedCapabilityProvider({ children }) {
 
   //--------------------------------------------------------------------
 
+  /*
   useEffect(() => {
     if (meData) {
-      let capabilityJoined =
+      const capabilityJoined =
         meData.capabilities.find((x) => x.id === capabilityId) !== undefined;
       setShowCosts(capabilityJoined);
     }
+    // Only hide once meData has confirmed non-membership; default (true) shows it immediately.
   }, [details, meData]);
+  */
 
   useEffect(() => {
     if (isFetched && capability != null) {
