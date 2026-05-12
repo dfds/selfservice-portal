@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
-import { getFinoutLinkForCostCentre } from "./finoutCostCentreLink";
+import { getFinoutLinkForCostCentre, getFinoutLinkForCapability } from "./finoutCostCentreLink";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { TrackedButton } from "@/components/Tracking";
 import { LargeCapabilityCostSummary } from "@/components/BasicCapabilityCost";
@@ -85,7 +85,7 @@ export default function Costs({ anchorId, costCentre }) {
         <a
           target="_blank"
           rel="noreferrer"
-          href={`https://app.finout.io/app/total-cost?accountId=e071c3ed-1e3c-46f7-9830-71951712d791&date={"relativeRange":"last30Days","type":"day","range":30}&filters={"costCenter":"virtualTag","key":"52c02d7e-093a-42b7-bf06-eb13050a8687","path":"Virtual Tags🔥/capability","operator":"is","value":"${id}"}&groupBy={"costCenter":"virtualTag","key":"1ee86223-0cf1-4eb4-9ea9-fb4616f358e6","path":"Virtual Tags🔥/Services Level Breakdown"}&xAxisGroupBy={"type":"time","value":"day","path":null}&drilldown=[]&metrics=cost&groupByChartType=1&tableTransposed=1&showTableDates=1&costType=amortizedCost&calculationMethod=sum`}
+          href={getFinoutLinkForCapability({ capabilityId: id })}
         >
           <TrackedButton
             trackName="FinOutButtonForCostCenter"
