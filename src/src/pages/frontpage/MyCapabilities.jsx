@@ -77,7 +77,7 @@ function CapabilityItem({ cap, index }) {
             </span>
           )}
 
-          <CapabilityCostSummary data={cap.costs} previousData={cap.previousCosts} />
+          <CapabilityCostSummary data={cap.costs} previousData={cap.previousCosts} previousDataIsFull={cap.costsComparisonIsFull} />
         </div>
       </div>
     </div>
@@ -94,8 +94,8 @@ export default function MyCapabilities() {
       .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
       .slice(0, MAX_SHOWN)
       .map((cap) => {
-        const { current, previous } = getCostComparisonForCapability(cap.id);
-        return { ...cap, costs: current, previousCosts: previous };
+        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
+        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
       });
   }, [meFetched, meData, costsQuery.isFetched]);
 

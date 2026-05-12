@@ -413,8 +413,8 @@ export default function CapabilitiesList() {
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
       const capsWithCosts = capabilitiesData.map((cap) => {
-        const { current, previous } = getCostComparisonForCapability(cap.id);
-        return { ...cap, costs: current, previousCosts: previous };
+        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
+        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
       });
       setCapabilities(capsWithCosts);
 
@@ -710,9 +710,10 @@ export default function CapabilitiesList() {
             Cell: ({ cell, row }) => {
               let data = cell.getValue() != null ? cell.getValue() : [];
               let previousData = row.original.previousCosts ?? [];
+              let previousDataIsFull = row.original.costsComparisonIsFull ?? true;
               return (
                 <div className={styles.costs}>
-                  <CapabilityCostSummary data={data} previousData={previousData} />
+                  <CapabilityCostSummary data={data} previousData={previousData} previousDataIsFull={previousDataIsFull} />
                 </div>
               );
             },
