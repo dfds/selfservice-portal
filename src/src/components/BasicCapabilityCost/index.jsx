@@ -11,13 +11,13 @@ import {
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 
-export function CapabilityCostSummary({ data, previousData, previousDataIsFull = true }) {
-  const has_data = data.length > 0;
+export function CapabilityCostSummary({ data: current_data, previousData, previousDataIsFull = true }) {
+  const has_current_data = current_data.length > 0;
 
-  const totalCost = has_data
-    ? data.reduce((acc, x) => acc + x.pv, 0)
+  const currentTotal = has_current_data
+    ? current_data.reduce((acc, x) => acc + x.pv, 0)
     : null;
-  const avgCost = totalCost != null ? totalCost / data.length : null;
+  const avgCost = currentTotal != null ? currentTotal / current_data.length : null;
 
   const prevTotal =
     previousData && previousData.length > 0
@@ -34,7 +34,7 @@ export function CapabilityCostSummary({ data, previousData, previousDataIsFull =
   const trendClass = isLower ? styles.trendGood : styles.trendBad;
 
   const displayedCost =
-    totalCost == null ? "No data" : totalCost < 1 ? "<$1" : `$${Math.floor(totalCost)}`;
+    currentTotal == null ? "No data" : currentTotal < 1 ? "<$1" : `$${Math.floor(currentTotal)}`;
 
   return (
     <div className={styles.costInline}>
