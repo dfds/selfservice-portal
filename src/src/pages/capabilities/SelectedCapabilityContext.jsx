@@ -601,14 +601,16 @@ function SelectedCapabilityProvider({ children }) {
 
   //--------------------------------------------------------------------
 
+  /*
   useEffect(() => {
     if (meData) {
       const capabilityJoined =
         meData.capabilities.find((x) => x.id === capabilityId) !== undefined;
-      setShowCosts(capabilityJoined || import.meta.env.DEV);
+      setShowCosts(capabilityJoined);
     }
     // Only hide once meData has confirmed non-membership; default (true) shows it immediately.
   }, [details, meData]);
+  */
 
   useEffect(() => {
     if (isFetched && capability != null) {

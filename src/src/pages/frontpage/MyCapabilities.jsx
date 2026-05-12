@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { useMe } from "@/state/remote/queries/me";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import { LightBulb } from "@/pages/capabilities/RequirementsStatus";
-import { AlertCircle, Users, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertCircle, Users } from "lucide-react";
+import CapabilityCostSummary from "@/components/BasicCapabilityCost";
 
 const MAX_SHOWN = 5;
 
@@ -14,60 +14,6 @@ function isStaleScore(cap) {
     !cap.modifiedAt ||
     cap.requirementScore == null ||
     new Date(cap.modifiedAt) < new Date(Date.now() - 14 * 86400000)
-  );
-}
-
-function CostSparkline({ costs, previousCosts }) {
-  const hasCosts = costs && costs.length > 0;
-  const avg = hasCosts
-    ? Math.floor(costs.reduce((s, x) => s + x.pv, 0) / costs.length)
-    : null;
-  const avgText = avg == null ? "No data" : avg < 1 ? "<$1/d" : `$${avg}/d`;
-
-  const prevAvg =
-    previousCosts && previousCosts.length > 0
-      ? previousCosts.reduce((s, x) => s + x.pv, 0) / previousCosts.length
-      : null;
-  const trendPct =
-    avg != null && prevAvg != null && prevAvg > 0
-      ? ((avg - prevAvg) / prevAvg) * 100
-      : null;
-  const isLower = trendPct != null && trendPct < 0;
-
-  return (
-    <div className="flex items-center gap-1.5 shrink-0">
-      {hasCosts && (
-        <div style={{ width: 48, height: 20 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={costs}>
-              <Line
-                type="monotone"
-                dataKey="pv"
-                stroke="#0e7cc1"
-                strokeWidth={1.5}
-                dot={false}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-      <span className="font-mono text-[10px] text-muted">{avgText}</span>
-      {trendPct != null && (
-        <span
-          className="font-mono text-[10px] font-semibold"
-          style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
-          title={`vs. previous 30 days`}
-        >
-          {isLower ? (
-            <TrendingDown size={11} style={{ display: "inline", marginRight: 2 }} />
-          ) : (
-            <TrendingUp size={11} style={{ display: "inline", marginRight: 2 }} />
-          )}
-          {Math.abs(Math.round(trendPct))}%
-        </span>
-      )}
-    </div>
   );
 }
 
@@ -131,7 +77,7 @@ function CapabilityItem({ cap, index }) {
             </span>
           )}
 
-          <CostSparkline costs={cap.costs} previousCosts={cap.previousCosts} />
+          <CapabilityCostSummary data={cap.costs} previousData={cap.previousCosts} />
         </div>
       </div>
     </div>

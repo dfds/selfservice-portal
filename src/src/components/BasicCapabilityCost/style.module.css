@@ -33,8 +33,10 @@
 }
 
 .costDataSummaryCost {
+  display: inline-block;
+  min-width: 72px;
   font-size: 13px;
-  text-align: center;
+  text-align: right;
 }
 
 .costTrend {
