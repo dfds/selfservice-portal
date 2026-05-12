@@ -59,6 +59,20 @@ export function LargeCapabilityCostSummary({ data }) {
   const { isDark } = useTheme();
   const lineColor = isDark ? "#38bdf8" : "#055874";
 
+  // Pad data to always fill 30 days so the X-axis span is consistent.
+  // Missing leading days get pv: null (recharts skips nulls).
+  const paddedData = React.useMemo(() => {
+    const DAYS = 30;
+    if (data.length >= DAYS) return data;
+    const today = new Date();
+    const leading = Array.from({ length: DAYS - data.length }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (DAYS - 1 - i));
+      return { name: d.toISOString().split("T")[0], pv: null };
+    });
+    return [...leading, ...data];
+  }, [data]);
+
   const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
   const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
 
@@ -66,7 +80,7 @@ export function LargeCapabilityCostSummary({ data }) {
   return (
     <div className={styles.largeCostDataSummary}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
+        <LineChart data={paddedData} margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
           <XAxis
             dataKey="name"
             tickFormatter={(val) =>
