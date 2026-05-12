@@ -10,45 +10,37 @@ import {
 } from "recharts";
 import React from "react";
 
-export function CapabilityCostSummary({ data }) {
-  const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
-  const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
-
+export function CapabilityCostSummary({ data, previousData }) {
   const has_data = data.length > 0;
 
-  const averageCost = Math.floor(
-    data.reduce((acc, x) => acc + x.pv, 0) / data.length,
-  );
+  const totalCost = has_data
+    ? data.reduce((acc, x) => acc + x.pv, 0)
+    : null;
 
-  let displayedCost = averageCost < 1 ? "<$1/d" : `$${averageCost}/d`;
+  const prevTotal =
+    previousData && previousData.length > 0
+      ? previousData.reduce((acc, x) => acc + x.pv, 0)
+      : null;
 
-  const domain = [d1, d2];
+  const trendPct =
+    totalCost != null && prevTotal != null && prevTotal > 0
+      ? ((totalCost - prevTotal) / prevTotal) * 100
+      : null;
+
+  const isLower = trendPct != null && trendPct < 0;
+  const trendClass = isLower ? styles.trendGood : styles.trendBad;
+
+  const displayedCost =
+    totalCost == null ? "No data" : totalCost < 1 ? "<$1" : `$${Math.floor(totalCost)}`;
+
   return (
-    <div className={styles.chartContainer}>
-      <div className={styles.costDataSummary}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <XAxis dataKey="timestamp" hide />
-            <YAxis type="number" domain={domain} hide></YAxis>
-            <Tooltip content={CostTooltip} />
-            <CartesianGrid strokeDasharray="1" />
-            <Line
-              type="monotone"
-              dataKey="pv"
-              stroke="#014874"
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className={styles.costDataSummaryCostContainer}>
-        <div className={styles.costDataSummaryCostAvg}>Average</div>
-        <div className={styles.costDataSummaryCost}>
-          {has_data ? displayedCost : "No data"}
-        </div>
-      </div>
+    <div className={styles.costInline}>
+      <span className={styles.costDataSummaryCost}>{displayedCost}</span>
+      {trendPct != null && (
+        <span className={`${styles.costTrend} ${trendClass}`}>
+          {isLower ? "↓" : "↑"} {Math.abs(Math.round(trendPct))}%
+        </span>
+      )}
     </div>
   );
 }
@@ -61,9 +53,26 @@ export function LargeCapabilityCostSummary({ data }) {
   return (
     <div className={styles.largeCostDataSummary}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <XAxis hide />
-          <YAxis type="number" scale="linear" domain={domain} unit={"$"} />
+        <LineChart data={data} margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
+          <XAxis
+            dataKey="name"
+            tickFormatter={(val) =>
+              new Date(val).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              })
+            }
+            tick={{ fontSize: 11 }}
+            interval="preserveStartEnd"
+          />
+          <YAxis
+            type="number"
+            scale="linear"
+            domain={domain}
+            tickFormatter={(val) => `$${val}`}
+            tick={{ fontSize: 11 }}
+            width={55}
+          />
           <Tooltip content={CostTooltip} />
           <CartesianGrid strokeDasharray="1 1" />
           <Line

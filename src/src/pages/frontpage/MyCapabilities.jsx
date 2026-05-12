@@ -5,7 +5,7 @@ import { useMe } from "@/state/remote/queries/me";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import { LightBulb } from "@/pages/capabilities/RequirementsStatus";
-import { AlertCircle, Users } from "lucide-react";
+import { AlertCircle, Users, TrendingDown, TrendingUp } from "lucide-react";
 
 const MAX_SHOWN = 5;
 
@@ -17,12 +17,22 @@ function isStaleScore(cap) {
   );
 }
 
-function CostSparkline({ costs }) {
+function CostSparkline({ costs, previousCosts }) {
   const hasCosts = costs && costs.length > 0;
   const avg = hasCosts
     ? Math.floor(costs.reduce((s, x) => s + x.pv, 0) / costs.length)
     : null;
   const avgText = avg == null ? "No data" : avg < 1 ? "<$1/d" : `$${avg}/d`;
+
+  const prevAvg =
+    previousCosts && previousCosts.length > 0
+      ? previousCosts.reduce((s, x) => s + x.pv, 0) / previousCosts.length
+      : null;
+  const trendPct =
+    avg != null && prevAvg != null && prevAvg > 0
+      ? ((avg - prevAvg) / prevAvg) * 100
+      : null;
+  const isLower = trendPct != null && trendPct < 0;
 
   return (
     <div className="flex items-center gap-1.5 shrink-0">
@@ -43,6 +53,20 @@ function CostSparkline({ costs }) {
         </div>
       )}
       <span className="font-mono text-[10px] text-muted">{avgText}</span>
+      {trendPct != null && (
+        <span
+          className="font-mono text-[10px] font-semibold"
+          style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
+          title={`vs. previous 30 days`}
+        >
+          {isLower ? (
+            <TrendingDown size={11} style={{ display: "inline", marginRight: 2 }} />
+          ) : (
+            <TrendingUp size={11} style={{ display: "inline", marginRight: 2 }} />
+          )}
+          {Math.abs(Math.round(trendPct))}%
+        </span>
+      )}
     </div>
   );
 }
@@ -57,9 +81,8 @@ function CapabilityItem({ cap, index }) {
 
   return (
     <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${
-        isPendingDeletion ? " opacity-70" : ""
-      }`}
+      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${isPendingDeletion ? " opacity-70" : ""
+        }`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Name row */}
@@ -108,7 +131,7 @@ function CapabilityItem({ cap, index }) {
             </span>
           )}
 
-          <CostSparkline costs={cap.costs} />
+          <CostSparkline costs={cap.costs} previousCosts={cap.previousCosts} />
         </div>
       </div>
     </div>
@@ -117,14 +140,17 @@ function CapabilityItem({ cap, index }) {
 
 export default function MyCapabilities() {
   const { isFetched: meFetched, data: meData } = useMe();
-  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
+  const { query: costsQuery, getCostComparisonForCapability } = useCapabilitiesCost();
 
   const mine = useMemo(() => {
     if (!meFetched || !meData?.capabilities) return [];
     return [...meData.capabilities]
       .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
       .slice(0, MAX_SHOWN)
-      .map((cap) => ({ ...cap, costs: getCostsForCapability(cap.id, 14) }));
+      .map((cap) => {
+        const { current, previous } = getCostComparisonForCapability(cap.id);
+        return { ...cap, costs: current, previousCosts: previous };
+      });
   }, [meFetched, meData, costsQuery.isFetched]);
 
   if (!meFetched) {
