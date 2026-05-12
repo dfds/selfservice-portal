@@ -11,21 +11,23 @@ import {
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 
-export function CapabilityCostSummary({ data, previousData }) {
+export function CapabilityCostSummary({ data, previousData, previousDataIsFull = true }) {
   const has_data = data.length > 0;
 
   const totalCost = has_data
     ? data.reduce((acc, x) => acc + x.pv, 0)
     : null;
+  const avgCost = totalCost != null ? totalCost / data.length : null;
 
   const prevTotal =
     previousData && previousData.length > 0
       ? previousData.reduce((acc, x) => acc + x.pv, 0)
       : null;
+  const prevAvg = prevTotal != null ? prevTotal / previousData.length : null;
 
   const trendPct =
-    totalCost != null && prevTotal != null && prevTotal > 0
-      ? ((totalCost - prevTotal) / prevTotal) * 100
+    avgCost != null && prevAvg != null && prevAvg > 0
+      ? ((avgCost - prevAvg) / prevAvg) * 100
       : null;
 
   const isLower = trendPct != null && trendPct < 0;
@@ -37,9 +39,16 @@ export function CapabilityCostSummary({ data, previousData }) {
   return (
     <div className={styles.costInline}>
       <span className={styles.costDataSummaryCost}>{displayedCost}</span>
-      {trendPct != null && (
-        <span className={`${styles.costTrend} ${trendClass}`}>
-          {isLower ? "↓" : "↑"} {Math.abs(Math.round(trendPct))}%
+      {trendPct != null ? (
+        <span
+          className={`${styles.costTrend} ${trendClass}`}
+          title={!previousDataIsFull ? "Approximate \u2014 less than 60 days of history available" : undefined}
+        >
+          {isLower ? "\u2193" : "\u2191"} {!previousDataIsFull ? "~" : ""}{Math.abs(Math.round(trendPct))}%
+        </span>
+      ) : (
+        <span className={`${styles.costTrend} ${styles.trendUnknown}`} title="Not enough history to calculate trend">
+          ?%
         </span>
       )}
     </div>
