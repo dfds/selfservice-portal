@@ -3,7 +3,7 @@ import { ssuRequest } from "../query";
 import { useContext } from "react";
 import PreAppContext from "@/preAppContext";
 
-let useDummyData = true;
+let useDummyData = false;
 
 /** Generates deterministic dummy cost data for development when the API returns nothing. */
 function generateDummyCosts(capabilityId: string, days: number) {
@@ -96,13 +96,13 @@ export function useCapabilitiesCost() {
         ? query.data.get(capabilityId)
         : useDummyData
           ? (() => {
-              // Vary history length per capability so we can test partial-history behaviour:
-              // ~⅓ get 60 days (full comparison), ~⅓ get 45 days, ~⅓ get 20 days.
-              const bucket =
-                capabilityId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 3;
-              const dummyDays = bucket === 0 ? 60 : bucket === 1 ? 45 : 20;
-              return generateDummyCosts(capabilityId, dummyDays);
-            })()
+            // Vary history length per capability so we can test partial-history behaviour:
+            // ~⅓ get 60 days (full comparison), ~⅓ get 45 days, ~⅓ get 20 days.
+            const bucket =
+              capabilityId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 3;
+            const dummyDays = bucket === 0 ? 60 : bucket === 1 ? 45 : 20;
+            return generateDummyCosts(capabilityId, dummyDays);
+          })()
           : [];
 
     const current = rawAll.slice(-30); // ← chart always shows exactly 30 days
