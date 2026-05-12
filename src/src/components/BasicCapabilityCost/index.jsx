@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import React from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 export function CapabilityCostSummary({ data, previousData }) {
   const has_data = data.length > 0;
@@ -46,6 +47,9 @@ export function CapabilityCostSummary({ data, previousData }) {
 }
 
 export function LargeCapabilityCostSummary({ data }) {
+  const { isDark } = useTheme();
+  const lineColor = isDark ? "#38bdf8" : "#055874";
+
   const d1 = Math.min(...data.map((x) => x.pv)) * 0.95;
   const d2 = Math.max(...data.map((x) => x.pv)) * 1.05;
 
@@ -78,7 +82,7 @@ export function LargeCapabilityCostSummary({ data }) {
           <Line
             type="monotone"
             dataKey="pv"
-            stroke="#055874"
+            stroke={lineColor}
             strokeWidth={2}
             dot={false}
             isAnimationActive={false}
