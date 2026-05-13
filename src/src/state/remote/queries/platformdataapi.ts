@@ -3,7 +3,7 @@ import { ssuRequest } from "../query";
 import { useContext } from "react";
 import PreAppContext from "@/preAppContext";
 
-let useDummyData = false;
+let useDummyData = true;
 
 /** Generates deterministic dummy cost data for development when the API returns nothing. */
 function generateDummyCosts(capabilityId: string, days: number) {

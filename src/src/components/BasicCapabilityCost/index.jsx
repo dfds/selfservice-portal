@@ -1,4 +1,5 @@
 import styles from "./style.module.css";
+import { computeCostTrendPct } from "@/lib/costUtils";
 import {
   LineChart,
   Line,
@@ -17,18 +18,8 @@ export function CapabilityCostSummary({ data: current_data, previousData, previo
   const currentTotal = has_current_data
     ? current_data.reduce((acc, x) => acc + x.pv, 0)
     : null;
-  const avgCost = currentTotal != null ? currentTotal / current_data.length : null;
 
-  const prevTotal =
-    previousData && previousData.length > 0
-      ? previousData.reduce((acc, x) => acc + x.pv, 0)
-      : null;
-  const prevAvg = prevTotal != null ? prevTotal / previousData.length : null;
-
-  const trendPct =
-    avgCost != null && prevAvg != null && prevAvg > 0
-      ? ((avgCost - prevAvg) / prevAvg) * 100
-      : null;
+  const trendPct = computeCostTrendPct(current_data, previousData ?? []);
 
   const isLower = trendPct != null && trendPct < 0;
   const trendClass = isLower ? styles.trendGood : styles.trendBad;

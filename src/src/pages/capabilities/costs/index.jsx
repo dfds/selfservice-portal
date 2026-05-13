@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
 import { getFinoutLinkForCostCentre, getFinoutLinkForCapability } from "./finoutCostCentreLink";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
+import { computeCostTrendPct } from "@/lib/costUtils";
 import { TrackedButton } from "@/components/Tracking";
 import { LargeCapabilityCostSummary } from "@/components/BasicCapabilityCost";
 
@@ -12,16 +13,9 @@ export default function Costs({ anchorId, costCentre }) {
 
   const { current, previous, hasFullComparison } = getCostComparisonForCapability(id);
   const totalCost = current.reduce((acc, x) => acc + x.pv, 0);
-  const previousTotal = previous.reduce((acc, x) => acc + x.pv, 0);
   const hasData = current.length > 0;
 
-  const avgCost = hasData ? totalCost / current.length : 0;
-  const previousAvg = previous.length > 0 ? previousTotal / previous.length : 0;
-
-  const trendPct =
-    hasData && previous.length > 0 && previousAvg > 0
-      ? ((avgCost - previousAvg) / previousAvg) * 100
-      : null;
+  const trendPct = computeCostTrendPct(current, previous);
   const isLower = trendPct != null && trendPct < 0;
 
   return (

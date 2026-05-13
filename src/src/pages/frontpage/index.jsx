@@ -151,7 +151,7 @@ export default function FrontPage() {
         {/* CENTER: My Capabilities + Platform nav cards — first in DOM so it appears at top on mobile */}
         <div className="animate-fade-up lg:order-2" style={{ animationDelay: "80ms" }}>
           <SectionLabel as="h2" className="mb-2 block">
-            // my capabilities — top outstanding actions
+            // my top actionable capabilities
           </SectionLabel>
           <PageSection>
             <MyCapabilities />
