@@ -145,8 +145,7 @@ export function DropdownMenu({ children, ...options }: DropdownMenuProps) {
   );
 }
 
-interface DropdownMenuTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface DropdownMenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
 }
 
@@ -197,8 +196,7 @@ export const DropdownMenuTrigger = React.forwardRef<
 
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
 
-interface DropdownMenuContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DropdownMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "vertical" | "horizontal";
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
