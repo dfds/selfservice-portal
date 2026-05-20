@@ -117,6 +117,26 @@ export default function FrontPage() {
 
         <Column>
           <PageSection>
+            <SectionContent title="Try the new frontpage layout">
+              Explore the updated frontpage experience in the demo environment
+              before it rolls out here.
+              <br />
+              <br />
+              <TrackedLinkButton
+                trackName="FrontpagePreview"
+                href="https://ssu-preview.hellman.oxygen.dfds.cloud/"
+                size="small"
+                variation="primary"
+                style={{ width: "100%", justifyContent: "center" }}
+              >
+                Open preview environment
+              </TrackedLinkButton>
+            </SectionContent>
+          </PageSection>
+
+          <br />
+
+          <PageSection>
             <SectionContent title="Welcome">
               <div id="welcome-content">
                 Hello {name}, and welcome to the Developer Portal.
