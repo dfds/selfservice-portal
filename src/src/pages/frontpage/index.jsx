@@ -127,7 +127,7 @@ export default function FrontPage() {
                 href="https://ssu-preview.hellman.oxygen.dfds.cloud/"
                 size="small"
                 variation="primary"
-                style={{ width: "100%", justifyContent: "center" }}
+                className={styles.fullwidthbutton}
               >
                 Open preview environment
               </TrackedLinkButton>
