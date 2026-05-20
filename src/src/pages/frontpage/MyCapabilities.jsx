@@ -5,9 +5,9 @@ import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import { LightBulb } from "@/pages/capabilities/RequirementsStatus";
 import { AlertCircle, Users } from "lucide-react";
-import CapabilityCostSummary from "@/components/BasicCapabilityCost";
+import { computeCostTrendPct } from "@/lib/costUtils";
 
-const MAX_SHOWN = 5;
+const MAX_SHOWN = 3;
 
 function isStaleScore(cap) {
   return (
@@ -17,7 +17,49 @@ function isStaleScore(cap) {
   );
 }
 
-function CapabilityItem({ cap, index }) {
+function CostCell({ costs, previousCosts, costsComparisonIsFull }) {
+  const hasData = costs && costs.length > 0;
+  const total = hasData ? costs.reduce((acc, x) => acc + x.pv, 0) : null;
+  const displayedCost =
+    total == null ? "—" : total < 1 ? "<$1" : `$${Math.floor(total)}`;
+  return (
+    <span className="font-mono text-[11px] text-foreground">
+      {displayedCost}
+    </span>
+  );
+}
+
+function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
+  const trendPct = computeCostTrendPct(costs ?? [], previousCosts ?? []);
+
+  if (trendPct == null) {
+    return (
+      <span
+        className="font-mono text-[11px] text-muted"
+        title="Not enough history to calculate a trend"
+      >
+        —
+      </span>
+    );
+  }
+
+  const isLower = trendPct < 0;
+  return (
+    <span
+      className="font-mono text-[11px] font-semibold"
+      style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
+      title={
+        costsComparisonIsFull
+          ? "Average daily cost vs. the prior 30-day period"
+          : `Approximate — only ${previousCosts.length + costs.length} days of history available`
+      }
+    >
+      {isLower ? "↓" : "↑"} {!costsComparisonIsFull ? "~" : ""}{Math.abs(Math.round(trendPct))}%
+    </span>
+  );
+}
+
+function CapabilityRow({ cap, index }) {
   const isPendingDeletion =
     cap.outstandingActions?.isPendingDeletion === true ||
     cap.status === "Pending Deletion";
@@ -26,32 +68,41 @@ function CapabilityItem({ cap, index }) {
   const stale = isStaleScore(cap);
 
   return (
-    <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${isPendingDeletion ? " opacity-70" : ""
-        }`}
+    <tr
+      className={`border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 animate-fade-up${isPendingDeletion ? " opacity-70" : ""}`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      {/* Name row */}
-      <div className="flex items-start gap-1.5 mb-[4px]">
-        {isPendingDeletion && (
-          <AlertCircle size={13} className="text-red-500 shrink-0 mt-[2px]" />
-        )}
-        <Link
-          to={`/capabilities/${cap.id}`}
-          className="text-[13px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline leading-[1.35] flex-1 min-w-0 truncate"
-        >
-          {cap.name}
-        </Link>
-      </div>
+      {/* Capability name */}
+      <td className="py-[0.5rem] pr-3 min-w-0">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {isPendingDeletion && (
+            <AlertCircle size={12} className="text-red-500 shrink-0" title="Pending deletion" />
+          )}
+          <Link
+            to={`/capabilities/${cap.id}`}
+            className="text-[12px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline truncate"
+          >
+            {cap.name}
+          </Link>
+          {pendingMembers > 0 && (
+            <span
+              className="inline-flex items-center gap-[3px] font-mono text-[9px] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(237,136,0,0.1)] text-[#ed8800] shrink-0"
+              title={`${pendingMembers} membership application${pendingMembers > 1 ? "s" : ""} awaiting approval`}
+            >
+              <Users size={9} />
+              {pendingMembers}
+            </span>
+          )}
+        </div>
+      </td>
 
-      {/* Metrics row */}
-      <div className="flex items-center justify-between gap-2">
-        {/* Left: requirement score */}
-        <span className="inline-flex items-center gap-[4px] font-mono text-[10px] text-muted shrink-0">
+      {/* Compliance score */}
+      <td className="py-[0.5rem] pr-3 text-right whitespace-nowrap">
+        <span className="inline-flex items-center gap-[4px] font-mono text-[11px] text-muted">
           {stale ? (
             <>
               <LightBulb score={-1} size={9} />
-              stale
+              <span title="Score not updated in the last 14 days">stale</span>
             </>
           ) : (
             <>
@@ -60,27 +111,18 @@ function CapabilityItem({ cap, index }) {
             </>
           )}
         </span>
+      </td>
 
-        {/* Right: badges + cost */}
-        <div className="flex items-center gap-2 shrink-0">
-          {isPendingDeletion && (
-            <span className="inline-flex items-center gap-[3px] font-mono text-[9px] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(220,38,38,0.1)] text-[#dc2626]">
-              <AlertCircle size={9} />
-              Pending deletion
-            </span>
-          )}
+      {/* Cost */}
+      <td className="py-[0.5rem] pr-3 text-right whitespace-nowrap">
+        <CostCell costs={cap.costs} previousCosts={cap.previousCosts} costsComparisonIsFull={cap.costsComparisonIsFull} />
+      </td>
 
-          {pendingMembers > 0 && (
-            <span className="inline-flex items-center gap-[3px] font-mono text-[9px] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(237,136,0,0.1)] text-[#ed8800]">
-              <Users size={9} />
-              {pendingMembers} pending
-            </span>
-          )}
-
-          <CapabilityCostSummary data={cap.costs} previousData={cap.previousCosts} previousDataIsFull={cap.costsComparisonIsFull} />
-        </div>
-      </div>
-    </div>
+      {/* Trend */}
+      <td className="py-[0.5rem] text-right whitespace-nowrap">
+        <TrendCell costs={cap.costs} previousCosts={cap.previousCosts} costsComparisonIsFull={cap.costsComparisonIsFull} />
+      </td>
+    </tr>
   );
 }
 
@@ -102,7 +144,7 @@ export default function MyCapabilities() {
   if (!meFetched) {
     return (
       <div>
-        {[0, 1, 2, 3, 4].map((i) => (
+        {[0, 1, 2].map((i) => (
           <SkeletonCapabilityTableRow key={i} />
         ))}
       </div>
@@ -122,9 +164,38 @@ export default function MyCapabilities() {
 
   return (
     <div>
-      {mine.map((cap, i) => (
-        <CapabilityItem key={cap.id} cap={cap} index={i} />
-      ))}
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="border-b border-[#eeeeee] dark:border-[#1e2d3d]">
+            <th className="pb-[0.375rem] pr-3 text-left font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase">
+              Capability
+            </th>
+            <th
+              className="pb-[0.375rem] pr-3 text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              title="How well this capability satisfies platform requirements. Shown as stale if requirements haven't been reviewed in over 14 days."
+            >
+              Compliance
+            </th>
+            <th
+              className="pb-[0.375rem] pr-3 text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              title="Total AWS cost over the last 30 days."
+            >
+              Cost (30d)
+            </th>
+            <th
+              className="pb-[0.375rem] text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              title="Change in average daily cost compared to the prior 30-day period. ~ means the comparison is based on partial history."
+            >
+              Trend
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {mine.map((cap, i) => (
+            <CapabilityRow key={cap.id} cap={cap} index={i} />
+          ))}
+        </tbody>
+      </table>
       <div className="pt-[0.625rem]">
         <Link
           to="/capabilities"
