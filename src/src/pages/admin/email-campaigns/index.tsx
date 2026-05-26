@@ -8,6 +8,7 @@ import {
   useSendEmailCampaign,
   useCancelEmailCampaign,
   useDuplicateEmailCampaign,
+  useRevertToDraftEmailCampaign,
 } from "@/state/remote/queries/emailCampaigns";
 import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ import {
   Search,
   ArrowUp,
   ArrowDown,
+  Undo2,
 } from "lucide-react";
 
 type StatusTab =
@@ -58,6 +60,7 @@ export default function EmailCampaignsPage() {
   const navigate = useNavigate();
   const [sendTarget, setSendTarget] = useState<any>(null);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
+  const [revertTarget, setRevertTarget] = useState<any>(null);
 
   const allCampaigns = (data || []) as any[];
   const campaigns = statusFilter
@@ -232,6 +235,7 @@ export default function EmailCampaignsPage() {
             onDelete={() => deleteConfirm.setTarget(b)}
             onSend={() => setSendTarget(b)}
             onCancel={() => setCancelTarget(b)}
+            onRevert={() => setRevertTarget(b)}
             onView={() => navigate(`/admin/email-campaigns/${b.id}`)}
           />
         )}
@@ -284,6 +288,14 @@ export default function EmailCampaignsPage() {
           onOpenChange={() => setCancelTarget(null)}
         />
       )}
+
+      {revertTarget && (
+        <RevertConfirmDialog
+          campaign={revertTarget}
+          open={!!revertTarget}
+          onOpenChange={() => setRevertTarget(null)}
+        />
+      )}
     </div>
   );
 }
@@ -295,6 +307,7 @@ function CampaignRow({
   onDelete,
   onSend,
   onCancel,
+  onRevert,
   onView,
 }: {
   campaign: any;
@@ -303,6 +316,7 @@ function CampaignRow({
   onDelete: () => void;
   onSend: () => void;
   onCancel: () => void;
+  onRevert: () => void;
   onView: () => void;
 }) {
   const duplicateCampaign = useDuplicateEmailCampaign(campaign.id);
@@ -424,6 +438,14 @@ function CampaignRow({
             </IconButton>
             <IconButton
               size="sm"
+              colorScheme="action"
+              onClick={onRevert}
+              title="Move to Draft"
+            >
+              <Undo2 size={14} />
+            </IconButton>
+            <IconButton
+              size="sm"
               colorScheme="destructive"
               onClick={onCancel}
               title="Cancel"
@@ -534,6 +556,50 @@ function CancelConfirmDialog({
       cancelLabel="Keep"
       isPending={cancelCampaign.isPending}
       onConfirm={() => fireCancel(undefined)}
+    />
+  );
+}
+
+function RevertConfirmDialog({
+  campaign,
+  open,
+  onOpenChange,
+}: {
+  campaign: any;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const revertToDraft = useRevertToDraftEmailCampaign(campaign.id);
+
+  const fireRevert = useMutationToast(revertToDraft, {
+    invalidateKeys: [["emailCampaigns"]],
+    successMessage: "Campaign moved back to draft",
+    errorMessage: "Could not move campaign to draft",
+    onSuccess: () => onOpenChange(false),
+    onError: () => onOpenChange(false),
+  });
+
+  return (
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Move campaign back to draft?"
+      description={
+        <p>
+          This will move <strong>{campaign.name}</strong> back to draft so you
+          can edit it.{" "}
+          {campaign.scheduleType === "Recurring"
+            ? "No further recurring executions will run until it is scheduled again."
+            : "It will not be sent until you schedule it again."}{" "}
+          The existing schedule is kept and pre-filled in the editor.
+        </p>
+      }
+      confirmLabel="Move to Draft"
+      confirmLoadingLabel="Moving…"
+      confirmVariant="default"
+      cancelLabel="Keep Scheduled"
+      isPending={revertToDraft.isPending}
+      onConfirm={() => fireRevert(undefined)}
     />
   );
 }
