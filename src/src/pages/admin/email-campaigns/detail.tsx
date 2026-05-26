@@ -9,6 +9,7 @@ import {
   useCancelEmailCampaign,
   useRetryFailedRecipients,
   useDuplicateEmailCampaign,
+  useRevertToDraftEmailCampaign,
 } from "@/state/remote/queries/emailCampaigns";
 import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import {
   Calendar,
   RefreshCw,
   Copy,
+  Undo2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -49,7 +51,9 @@ export default function EmailCampaignDetail() {
   const cancelCampaign = useCancelEmailCampaign(id || "");
   const retryFailed = useRetryFailedRecipients(id || "");
   const duplicateCampaign = useDuplicateEmailCampaign(id || "");
+  const revertToDraft = useRevertToDraftEmailCampaign(id || "");
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [revertOpen, setRevertOpen] = useState(false);
   const [recipientTab, setRecipientTab] = useState<RecipientTab>("all");
   const [bodyExpanded, setBodyExpanded] = useState(false);
 
@@ -67,6 +71,17 @@ export default function EmailCampaignDetail() {
         setCancelOpen(false);
       },
       onError: () => toast.error("Could not cancel campaign"),
+    });
+  };
+
+  const handleRevertToDraft = () => {
+    revertToDraft.mutate(undefined, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+        toast.success("Campaign moved back to draft");
+        setRevertOpen(false);
+      },
+      onError: () => toast.error("Could not move campaign to draft"),
     });
   };
 
@@ -113,8 +128,7 @@ export default function EmailCampaignDetail() {
 
   const isScheduled = campaign.status === "Scheduled";
   const isRecurring = campaign.scheduleType === "Recurring";
-  const hasSent =
-    campaign.status === "Sent" || campaign.status === "Failed";
+  const hasSent = campaign.status === "Sent" || campaign.status === "Failed";
   const executionList = (executions || []) as any[];
   const recipientList = (recipients || []) as any[];
 
@@ -175,6 +189,16 @@ export default function EmailCampaignDetail() {
             <Copy size={14} />
             {duplicateCampaign.isPending ? "Duplicating..." : "Duplicate"}
           </Button>
+          {isScheduled && (
+            <Button
+              variant="outline"
+              className="gap-1.5"
+              onClick={() => setRevertOpen(true)}
+            >
+              <Undo2 size={14} />
+              Move to Draft
+            </Button>
+          )}
           {isScheduled && (
             <Button
               variant="destructive"
@@ -343,8 +367,8 @@ export default function EmailCampaignDetail() {
                       tab === "Sent"
                         ? recipientStats.sent
                         : tab === "Failed"
-                          ? recipientStats.failed
-                          : recipientStats.pending
+                        ? recipientStats.failed
+                        : recipientStats.pending
                     })`}
               </button>
             ))}
@@ -386,8 +410,8 @@ export default function EmailCampaignDetail() {
                       r.status === "Sent"
                         ? "success"
                         : r.status === "Failed"
-                          ? "destructive"
-                          : "secondary"
+                        ? "destructive"
+                        : "secondary"
                     }
                     className="text-[10px]"
                   >
@@ -447,8 +471,8 @@ export default function EmailCampaignDetail() {
                       exec.status === "Completed"
                         ? "success"
                         : exec.status === "PartialFailure"
-                          ? "warning"
-                          : "destructive"
+                        ? "warning"
+                        : "destructive"
                     }
                     className="text-[10px]"
                   >
@@ -492,6 +516,36 @@ export default function EmailCampaignDetail() {
             >
               <Ban size={14} />
               {cancelCampaign.isPending ? "Cancelling..." : "Cancel Campaign"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={revertOpen} onOpenChange={setRevertOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Move campaign back to draft?</DialogTitle>
+          </DialogHeader>
+          <p className="text-[13px] text-secondary">
+            This will move <strong>{campaign.name}</strong> back to draft so you
+            can edit it.{" "}
+            {isRecurring
+              ? "No further recurring executions will run until it is scheduled again."
+              : "It will not be sent until you schedule it again."}{" "}
+            The existing schedule is kept and pre-filled in the editor.
+          </p>
+          <div className="flex gap-2 justify-end pt-2">
+            <Button variant="outline" onClick={() => setRevertOpen(false)}>
+              Keep Scheduled
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleRevertToDraft}
+              disabled={revertToDraft.isPending}
+              className="gap-1.5"
+            >
+              <Undo2 size={14} />
+              {revertToDraft.isPending ? "Moving..." : "Move to Draft"}
             </Button>
           </div>
         </DialogContent>

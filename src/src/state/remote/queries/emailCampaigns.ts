@@ -144,6 +144,19 @@ export function useCancelEmailCampaign(id: string) {
   });
 }
 
+export function useRevertToDraftEmailCampaign(id: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  return useMutation({
+    mutationFn: async () =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["email-campaigns", id, "revert-to-draft"],
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+  });
+}
+
 export function useScheduleEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   return useMutation({
