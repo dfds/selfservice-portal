@@ -93,9 +93,19 @@ function HeroRow({ name }) {
 
 function NavCard({ to, href, iconBg, icon, name, description, action }) {
   const stretchedLink = to ? (
-    <Link to={to} className="absolute inset-0 rounded-[10px]" aria-label={name} />
+    <Link
+      to={to}
+      className="absolute inset-0 rounded-[10px]"
+      aria-label={name}
+    />
   ) : (
-    <a href={href} target="_blank" rel="noreferrer" className="absolute inset-0 rounded-[10px]" aria-label={name} />
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="absolute inset-0 rounded-[10px]"
+      aria-label={name}
+    />
   );
 
   return (
@@ -115,11 +125,7 @@ function NavCard({ to, href, iconBg, icon, name, description, action }) {
           {description}
         </div>
       </div>
-      {action && (
-        <div className="relative z-10 flex-shrink-0">
-          {action}
-        </div>
-      )}
+      {action && <div className="relative z-10 flex-shrink-0">{action}</div>}
     </div>
   );
 }
@@ -128,7 +134,8 @@ export default function FrontPage() {
   const { user } = useContext(AppContext);
   const name = user?.name ?? "there";
   const { data: newsData } = useRelevantNews();
-  const highlighted = newsData?.newsItems?.filter((item) => item.isHighlighted) ?? [];
+  const highlighted =
+    newsData?.newsItems?.filter((item) => item.isHighlighted) ?? [];
 
   return (
     <div className="p-4 sm:p-8">
@@ -149,7 +156,10 @@ export default function FrontPage() {
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
         {/* CENTER: My Capabilities + Platform nav cards — first in DOM so it appears at top on mobile */}
-        <div className="animate-fade-up lg:order-2" style={{ animationDelay: "80ms" }}>
+        <div
+          className="animate-fade-up lg:order-2"
+          style={{ animationDelay: "80ms" }}
+        >
           <SectionLabel as="h2" className="mb-2 block">
             // my top actionable capabilities
           </SectionLabel>
@@ -216,7 +226,10 @@ export default function FrontPage() {
         </div>
 
         {/* LEFT: Latest News + Upcoming Events + Platform Status */}
-        <div className="animate-fade-up lg:order-1" style={{ animationDelay: "0ms" }}>
+        <div
+          className="animate-fade-up lg:order-1"
+          style={{ animationDelay: "0ms" }}
+        >
           <SectionLabel as="h2" className="mb-2 block">
             // latest news
           </SectionLabel>
@@ -244,11 +257,13 @@ export default function FrontPage() {
           <PageSection>
             <PlatformStatus />
           </PageSection>
-
         </div>
 
         {/* RIGHT: Quick Links + KubeConfig + Top Visitors */}
-        <div className="animate-fade-up lg:order-3" style={{ animationDelay: "160ms" }}>
+        <div
+          className="animate-fade-up lg:order-3"
+          style={{ animationDelay: "160ms" }}
+        >
           <SectionLabel as="h2" className="mb-2 block">
             // quick links
           </SectionLabel>
@@ -261,10 +276,20 @@ export default function FrontPage() {
           </SectionLabel>
           <PageSection>
             <p className="text-[13px] text-secondary leading-[1.6] mb-3">
-              Most things you need are already documented. The <a href="https://wiki.dfds.cloud/en/playbooks" target="_blank" rel="noreferrer" className="text-action hover:underline">playbooks</a> cover the most common tasks — start there.
+              Most things you need are already documented. The{" "}
+              <a
+                href="https://wiki.dfds.cloud/en/playbooks"
+                target="_blank"
+                rel="noreferrer"
+                className="text-action hover:underline"
+              >
+                playbooks
+              </a>{" "}
+              cover the most common tasks — start there.
             </p>
             <p className="text-[13px] text-secondary leading-[1.6] mb-2">
-              Got a question the docs don't answer? The community on Slack is the fastest way to get unblocked:
+              Got a question the docs don't answer? The community on Slack is
+              the fastest way to get unblocked:
             </p>
             <TrackedLink
               trackName="SlackArchive-DevPeerSupport"

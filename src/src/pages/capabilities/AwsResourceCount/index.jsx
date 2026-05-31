@@ -18,7 +18,6 @@ import { useCapabilitiesAwsResources } from "@/state/remote/queries/platformdata
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 
-
 const USE_MOCK = false;
 
 const MOCK_DATA = new Map([
@@ -70,7 +69,8 @@ function useMockResources() {
       get(id).reduce((s, r) => s + r.resourceCount, 0),
     getAwsResourceCountsForCapability: (id) => get(id),
     getAwsResourceCountsForCapabilityAndType: (id, type) =>
-      get(id).filter((r) => r.resourceId.includes(type))
+      get(id)
+        .filter((r) => r.resourceId.includes(type))
         .reduce((s, r) => s + r.resourceCount, 0),
   };
 }
@@ -79,8 +79,6 @@ function useResources() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return USE_MOCK ? useMockResources() : useCapabilitiesAwsResources();
 }
-
-
 
 export function InlineAwsCountSummary({ data }) {
   return (
@@ -190,7 +188,8 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
   const counts = getAwsResourceCountsForCapability(capabilityId);
   const isMobile = useIsMobile();
   const { isDark } = useTheme();
-  const { bg, bgMuted, textPrimary, textBody, borderColor } = useMuiTableColors();
+  const { bg, bgMuted, textPrimary, textBody, borderColor } =
+    useMuiTableColors();
 
   const muiTheme = useMemo(
     () => createTheme({ palette: { mode: isDark ? "dark" : "light" } }),
@@ -208,14 +207,18 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
         accessorKey: "name",
         header: "Name",
         Cell: ({ renderedCellValue }) => (
-          <Text styledAs="action" as="div">{renderedCellValue}</Text>
+          <Text styledAs="action" as="div">
+            {renderedCellValue}
+          </Text>
         ),
       },
       {
         accessorKey: "count",
         header: "Count",
         Cell: ({ renderedCellValue }) => (
-          <Text styledAs="action" as="div">{renderedCellValue}</Text>
+          <Text styledAs="action" as="div">
+            {renderedCellValue}
+          </Text>
         ),
         muiTableHeadCellProps: { align: "center" },
         muiTableBodyCellProps: { align: "center" },
@@ -226,7 +229,12 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
 
   return (
     <Dialog open={true} onOpenChange={(o) => !o && onCloseRequested()}>
-      <DialogContent className={cn(isMobile ? "max-w-[95%]" : "max-w-[60%]", "flex flex-col max-h-[90vh]")}>
+      <DialogContent
+        className={cn(
+          isMobile ? "max-w-[95%]" : "max-w-[60%]",
+          "flex flex-col max-h-[90vh]",
+        )}
+      >
         <DialogHeader>
           <DialogTitle>Complete list of resources in AWS</DialogTitle>
         </DialogHeader>

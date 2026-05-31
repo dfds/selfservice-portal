@@ -273,10 +273,10 @@ const THEME_OPTIONS: {
   icon: React.ElementType;
   label: string;
 }[] = [
-    { value: "light", icon: Sun, label: "Light" },
-    { value: "dark", icon: Moon, label: "Dark" },
-    { value: "system", icon: Monitor, label: "Auto" },
-  ];
+  { value: "light", icon: Sun, label: "Light" },
+  { value: "dark", icon: Moon, label: "Dark" },
+  { value: "system", icon: Monitor, label: "Auto" },
+];
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -503,9 +503,9 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       style={
         isMobile
           ? {
-            transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
-            transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
-          }
+              transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }
           : undefined
       }
     >

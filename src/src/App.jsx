@@ -122,8 +122,9 @@ function Layout() {
           </a>
           {/* Mobile backdrop */}
           <div
-            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
+            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
+              mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />

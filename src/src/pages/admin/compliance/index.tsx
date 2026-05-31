@@ -10,11 +10,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { ExpandableRow } from "@/components/ui/ExpandableRow";
 import { ListPageContent } from "@/components/ui/ListPageContent";
-import { statusIcon, complianceStatusVariant, capabilityStatusVariant } from "@/lib/statusUtils";
+import {
+  statusIcon,
+  complianceStatusVariant,
+  capabilityStatusVariant,
+} from "@/lib/statusUtils";
 
 // ── Compliance row ────────────────────────────────────────────────────────────
 
-function CapabilityComplianceContent({ capabilityId }: { capabilityId: string }) {
+function CapabilityComplianceContent({
+  capabilityId,
+}: {
+  capabilityId: string;
+}) {
   const { data, isFetched } = useCapabilityCompliance(capabilityId);
   const navigate = useNavigate();
 
@@ -43,13 +51,21 @@ function CapabilityComplianceContent({ capabilityId }: { capabilityId: string })
             <div key={i} className="flex items-center gap-2">
               {statusIcon(cat.status ?? cat.complianceStatus ?? "")}
               <span className="text-xs text-secondary flex-1">
-                {cat.categoryName ?? cat.displayName ?? cat.name ?? cat.category ?? `Category ${i + 1}`}
+                {cat.categoryName ??
+                  cat.displayName ??
+                  cat.name ??
+                  cat.category ??
+                  `Category ${i + 1}`}
               </span>
               {cat.score != null && (
-                <span className="text-[10px] text-muted font-mono">{cat.score}%</span>
+                <span className="text-[10px] text-muted font-mono">
+                  {cat.score}%
+                </span>
               )}
               <Badge
-                variant={complianceStatusVariant(cat.status ?? cat.complianceStatus ?? "")}
+                variant={complianceStatusVariant(
+                  cat.status ?? cat.complianceStatus ?? "",
+                )}
                 className="text-[10px]"
               >
                 {cat.status ?? cat.complianceStatus ?? "Unknown"}
@@ -58,7 +74,9 @@ function CapabilityComplianceContent({ capabilityId }: { capabilityId: string })
           ))}
         </div>
       ) : (
-        <p className="text-xs text-muted font-mono">No compliance data available.</p>
+        <p className="text-xs text-muted font-mono">
+          No compliance data available.
+        </p>
       )}
       <button
         type="button"
@@ -79,7 +97,10 @@ function CapabilityRow({ capability }: { capability: any }) {
           <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
             {capability.name}
           </span>
-          <Badge variant={capabilityStatusVariant(capability.status)} className="text-[10px] shrink-0 hidden sm:inline-flex">
+          <Badge
+            variant={capabilityStatusVariant(capability.status)}
+            className="text-[10px] shrink-0 hidden sm:inline-flex"
+          >
             {capability.status}
           </Badge>
         </>
@@ -97,8 +118,7 @@ export default function AdminCompliancePage() {
   const [search, setSearch] = useState("");
 
   const caps: any[] = ((capabilities as any[]) ?? []).filter(
-    (c: any) =>
-      !search || c.name?.toLowerCase().includes(search.toLowerCase()),
+    (c: any) => !search || c.name?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -136,7 +156,9 @@ export default function AdminCompliancePage() {
           </div>
         )}
         emptyMessage={
-          search ? "No capabilities match your search." : "No capabilities found."
+          search
+            ? "No capabilities match your search."
+            : "No capabilities found."
         }
       />
     </div>

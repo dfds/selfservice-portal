@@ -37,29 +37,26 @@ export const useBypassMembershipApproval = createSsuMutation<any>({
   payload: () => null,
 });
 
-export const useSubmitMembershipApplicationApproval =
-  createSsuMutation<any>({
-    method: "POST",
-    urlSegments: (data) => [
-      data.membershipApplicationDefinition?.approvals?._links?.self.href,
-    ],
-    payload: (data) =>
-      data.roleId
-        ? {
-            roleId: data.roleId,
-            assignedEntityId:
-              data.membershipApplicationDefinition?.applicant,
-            type: "capability",
-            resource: data.membershipApplicationDefinition?.capabilityId,
-          }
-        : null,
-  });
+export const useSubmitMembershipApplicationApproval = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.membershipApplicationDefinition?.approvals?._links?.self.href,
+  ],
+  payload: (data) =>
+    data.roleId
+      ? {
+          roleId: data.roleId,
+          assignedEntityId: data.membershipApplicationDefinition?.applicant,
+          type: "capability",
+          resource: data.membershipApplicationDefinition?.capabilityId,
+        }
+      : null,
+});
 
-export const useDeleteMembershipApplicationApproval =
-  createSsuMutation<any>({
-    method: "DELETE",
-    urlSegments: (data) => [
-      data.membershipApplicationDefinition?.approvals?._links?.self.href,
-    ],
-    payload: () => null,
-  });
+export const useDeleteMembershipApplicationApproval = createSsuMutation<any>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    data.membershipApplicationDefinition?.approvals?._links?.self.href,
+  ],
+  payload: () => null,
+});

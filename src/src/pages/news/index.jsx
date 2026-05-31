@@ -110,10 +110,7 @@ function CreateNewsModal({ onClose }) {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={!isValid || createNews.isPending}
-            >
+            <Button type="submit" disabled={!isValid || createNews.isPending}>
               {createNews.isPending ? "Creating…" : "Create"}
             </Button>
           </DialogFooter>
@@ -137,7 +134,9 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
   const highlightNews = useHighlightNews();
   const toggleHighlight = useMutationToast(highlightNews, {
     invalidateKeys: [["news", "list"]],
-    successMessage: item.isHighlighted ? "Highlight removed" : "News item highlighted",
+    successMessage: item.isHighlighted
+      ? "Highlight removed"
+      : "News item highlighted",
     errorMessage: "Failed to update highlight",
   });
 
@@ -172,7 +171,11 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
       {isCloudEngineerEnabled && (
         <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
           <button
-            aria-label={item.isHighlighted ? `Remove highlight from "${item.title}"` : `Highlight "${item.title}"`}
+            aria-label={
+              item.isHighlighted
+                ? `Remove highlight from "${item.title}"`
+                : `Highlight "${item.title}"`
+            }
             onClick={() => toggleHighlight({ id: item.id })}
             disabled={highlightNews.isPending}
             className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${
@@ -181,7 +184,10 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
                 : "text-muted hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20"
             }`}
           >
-            <Star size={14} fill={item.isHighlighted ? "currentColor" : "none"} />
+            <Star
+              size={14}
+              fill={item.isHighlighted ? "currentColor" : "none"}
+            />
           </button>
           <button
             aria-label={`Delete "${item.title}"`}
@@ -250,9 +256,7 @@ export default function NewsPage() {
 
   return (
     <Page title="News">
-      {showCreate && (
-        <CreateNewsModal onClose={() => setShowCreate(false)} />
-      )}
+      {showCreate && <CreateNewsModal onClose={() => setShowCreate(false)} />}
 
       <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
         <p className="font-semibold mb-1">Platform news</p>

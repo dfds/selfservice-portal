@@ -39,7 +39,12 @@ const SERVICES = [
   {
     id: "kdq6r15420d8",
     label: "Confluent Cloud",
-    componentIds: ["kdq6r15420d8", "kwc6g4nhm4qs", "pxxv9fwjx3k8", "yg910dtp6pcm"],
+    componentIds: [
+      "kdq6r15420d8",
+      "kwc6g4nhm4qs",
+      "pxxv9fwjx3k8",
+      "yg910dtp6pcm",
+    ],
   },
   {
     id: "vc80n7vqvmx7",
@@ -134,7 +139,13 @@ export function useStatuspageStatus(): ServiceStatusItem[] {
       return { id, label, status: "degraded" };
     }
 
-    const hadRecentIncident = componentIds.some((cid) => recentlyAffected.has(cid));
-    return { id, label, status: hadRecentIncident ? "recently_resolved" : "operational" };
+    const hadRecentIncident = componentIds.some((cid) =>
+      recentlyAffected.has(cid),
+    );
+    return {
+      id,
+      label,
+      status: hadRecentIncident ? "recently_resolved" : "operational",
+    };
   });
 }

@@ -21,7 +21,8 @@ export default function PlatformMetricsDashboardPage() {
   const stats: any = statsData ?? {};
   const capabilities: any[] = (capsData as any[]) ?? [];
 
-  const costMap: Map<any, any> = costQuery.data instanceof Map ? costQuery.data : new Map();
+  const costMap: Map<any, any> =
+    costQuery.data instanceof Map ? costQuery.data : new Map();
   const resourceMap: Map<any, any> =
     resourceQuery.data instanceof Map ? resourceQuery.data : new Map();
 
@@ -62,7 +63,9 @@ export default function PlatformMetricsDashboardPage() {
 
       {/* Capabilities stats */}
       <div className="mb-6">
-        <SectionLabel as="p" className="mb-3">Capabilities</SectionLabel>
+        <SectionLabel as="p" className="mb-3">
+          Capabilities
+        </SectionLabel>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard
             label="Total"
@@ -89,7 +92,9 @@ export default function PlatformMetricsDashboardPage() {
 
       {/* Cloud resources */}
       <div className="mb-6">
-        <SectionLabel as="p" className="mb-3">Cloud Resources (Your Capabilities)</SectionLabel>
+        <SectionLabel as="p" className="mb-3">
+          Cloud Resources (Your Capabilities)
+        </SectionLabel>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <StatCard
             label="Total AWS Resources"
@@ -107,10 +112,15 @@ export default function PlatformMetricsDashboardPage() {
       {/* Portal stats */}
       {statsFetched && typeof stats === "object" && stats !== null && (
         <div className="mb-6">
-          <SectionLabel as="p" className="mb-3">Portal Stats</SectionLabel>
+          <SectionLabel as="p" className="mb-3">
+            Portal Stats
+          </SectionLabel>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Object.entries(stats)
-              .filter(([k, v]) => k !== "_links" && k !== "items" && typeof v !== "object")
+              .filter(
+                ([k, v]) =>
+                  k !== "_links" && k !== "items" && typeof v !== "object",
+              )
               .slice(0, 6)
               .map(([key, value]) => (
                 <StatCard
