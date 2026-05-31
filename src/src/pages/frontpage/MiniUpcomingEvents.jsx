@@ -1,8 +1,8 @@
 import React from "react";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { useUpcomingEvents } from "@/state/remote/queries/events";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatEventDateTimeShort } from "@/pages/events/eventDateTime";
 
 const EVENT_TYPE_LABELS = {
   demo: "Demo",
@@ -19,7 +19,6 @@ const EVENT_TYPE_COLORS = {
 };
 
 function EventRow({ event, past = false }) {
-  const date = new Date(event.eventDate);
   const colors = EVENT_TYPE_COLORS[event.type] ?? EVENT_TYPE_COLORS.other;
   const label = EVENT_TYPE_LABELS[event.type] ?? "Event";
 
@@ -39,7 +38,7 @@ function EventRow({ event, past = false }) {
           </span>
         )}
         <span className="font-mono text-[9px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
-          {format(date, "d MMM")}
+          {formatEventDateTimeShort(event.eventDate)}
         </span>
       </div>
       <Link
