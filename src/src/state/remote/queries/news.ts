@@ -46,6 +46,15 @@ export const useCreateNews = createSsuMutation<{
   urlSegments: () => ["news"],
 });
 
+export const useUpdateNews = createSsuMutation<{
+  id: string;
+  payload: { title: string; body: string; dueDate: string };
+}>({
+  method: "POST",
+  urlSegments: (data) => ["news", data.id],
+  payload: (data) => data.payload,
+});
+
 export const useDeleteNews = createSsuMutation<{ id: string }>({
   method: "DELETE",
   urlSegments: (data) => ["news", data.id],

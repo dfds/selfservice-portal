@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { intlFormatDistance } from "date-fns";
 import Page from "@/components/Page";
@@ -15,11 +15,12 @@ import PreAppContext from "@/preAppContext";
 import {
   useNews,
   useCreateNews,
+  useUpdateNews,
   useDeleteNews,
   useHighlightNews,
 } from "@/state/remote/queries/news";
 import { useMutationToast } from "@/hooks/useMutationToast";
-import { Trash2, Plus, Newspaper, Star } from "lucide-react";
+import { Trash2, Plus, Newspaper, Star, Pencil } from "lucide-react";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 import { TrackedButton } from "@/components/Tracking";
 
@@ -121,9 +122,117 @@ function CreateNewsModal({ onClose }) {
   );
 }
 
+// ── Edit modal ────────────────────────────────────────────────────────────────
+
+function EditNewsModal({ item, onClose }) {
+  const initialDueDate = item.dueDate ? item.dueDate.slice(0, 10) : "";
+  const [title, setTitle] = useState(item.title ?? "");
+  const [body, setBody] = useState(item.body ?? "");
+  const [dueDate, setDueDate] = useState(initialDueDate);
+
+  useEffect(() => {
+    setTitle(item.title ?? "");
+    setBody(item.body ?? "");
+    setDueDate(item.dueDate ? item.dueDate.slice(0, 10) : "");
+  }, [item]);
+
+  const updateNews = useUpdateNews();
+  const submit = useMutationToast(updateNews, {
+    invalidateKeys: [
+      ["news", "list"],
+      ["news", "relevant"],
+      ["news", "details", item.id],
+    ],
+    successMessage: "News item updated",
+    errorMessage: "Failed to update news item",
+    onSuccess: onClose,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title.trim() || !body.trim()) return;
+    submit({
+      id: item.id,
+      payload: {
+        title: title.trim(),
+        body: body.trim(),
+        dueDate: new Date(dueDate).toISOString(),
+      },
+    });
+  };
+
+  const isValid = title.trim().length > 0 && body.trim().length > 0;
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit news item</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-[12px] font-semibold text-secondary mb-1">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter a title"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
+              required
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-semibold text-secondary mb-1">
+              Content <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Write the news item content…"
+              rows={6}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-semibold text-secondary mb-1">
+              Relevant until
+            </label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary focus:outline-none focus:ring-2 focus:ring-action"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={updateNews.isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!isValid || updateNews.isPending}>
+              {updateNews.isPending ? "Saving…" : "Save changes"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ── News item row ─────────────────────────────────────────────────────────────
 
-function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
+function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
   const deleteNews = useDeleteNews();
   const remove = useMutationToast(deleteNews, {
     invalidateKeys: [["news", "list"]],
@@ -213,6 +322,17 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
             />
           </button>
           <button
+            aria-label={`Edit "${item.title}"`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit(item);
+            }}
+            className="p-1.5 rounded-[5px] text-muted hover:text-action hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+          >
+            <Pencil size={14} />
+          </button>
+          <button
             aria-label={`Delete "${item.title}"`}
             onClick={(e) => {
               e.preventDefault();
@@ -255,6 +375,7 @@ export default function NewsPage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { setActions } = useTopBarActions();
   const [showCreate, setShowCreate] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
 
   const { data, isFetched } = useNews();
 
@@ -284,6 +405,9 @@ export default function NewsPage() {
   return (
     <Page title="News">
       {showCreate && <CreateNewsModal onClose={() => setShowCreate(false)} />}
+      {editTarget && (
+        <EditNewsModal item={editTarget} onClose={() => setEditTarget(null)} />
+      )}
 
       <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
         <p className="font-semibold mb-1">Platform news</p>
@@ -308,6 +432,7 @@ export default function NewsPage() {
               item={item}
               isCloudEngineerEnabled={isCloudEngineerEnabled}
               onDeleted={() => {}}
+              onEdit={setEditTarget}
             />
           ))}
         </div>
