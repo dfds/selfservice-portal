@@ -82,6 +82,7 @@ function AzureTagsWarning({ onClose, missingTags }) {
           <TrackedLink
             trackName="Wiki-TaggingPolicy"
             href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+            className="text-action underline underline-offset-2 hover:no-underline"
           >
             tagging guideline
           </TrackedLink>
@@ -117,6 +118,7 @@ function RequestDialog({ isRequesting, onClose, onSubmit }) {
           <TrackedLink
             trackName="Wiki-TaggingPolicy"
             href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+            className="text-action underline underline-offset-2 hover:no-underline"
           >
             DFDS tagging policy
           </TrackedLink>{" "}
@@ -321,6 +323,7 @@ export function AwsResourceInfoBadges() {
               target="_blank"
               rel="noreferrer"
               href="https://dfds.awsapps.com/start/"
+              className="text-action underline underline-offset-2 hover:no-underline"
             >
               https://dfds.awsapps.com/start/
             </TrackedLink>
@@ -334,6 +337,7 @@ export function AwsResourceInfoBadges() {
               target="_blank"
               rel="noreferrer"
               href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
+              className="text-action underline underline-offset-2 hover:no-underline"
             >
               this link
             </TrackedLink>

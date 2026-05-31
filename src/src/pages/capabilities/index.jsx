@@ -74,6 +74,7 @@ export default function CapabilitiesPage() {
             <TrackedLink
               trackName="Wiki-Playbooks"
               href="https://wiki.dfds.cloud/playbooks"
+              className="text-action underline underline-offset-2 hover:no-underline"
             >
               head on over to the Playbooks.
             </TrackedLink>
@@ -84,6 +85,7 @@ export default function CapabilitiesPage() {
             <TrackedLink
               trackName="Wiki-SecurityKnowledgeBase"
               href="https://wiki.dfds.cloud/en/documentation/security/security-knowledge-base-documents"
+              className="text-action underline underline-offset-2 hover:no-underline"
             >
               Please visit our security documentation.
             </TrackedLink>

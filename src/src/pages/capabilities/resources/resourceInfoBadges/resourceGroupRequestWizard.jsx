@@ -181,13 +181,16 @@ const BasicInformationStep = ({
 
   return (
     <>
-      <h1>Basic Information</h1>
+      <h1 className="text-lg font-bold text-primary mt-6 mb-3">
+        Basic Information
+      </h1>
 
       <Text>
         Please familiarize yourself with the{" "}
         <TrackedLink
           trackName="Wiki-TaggingPolicy"
           href="https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           DFDS tagging policy
         </TrackedLink>{" "}
@@ -201,6 +204,7 @@ const BasicInformationStep = ({
           target="_blank"
           rel="noopener noreferrer"
           href="https://dfds.sharepoint.com/sites/GroupIT_Architecture/Lists/TEST%20%20Architecture%20Decision%20Record/DispForm.aspx?ID=5&e=M0gIY9"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           the DFDS Cloud Usage Guidelines
         </TrackedLink>
@@ -210,11 +214,10 @@ const BasicInformationStep = ({
         This document outlines what use cases are permitted for Azure, for
         Vercel, and for AWS.
       </Text>
-      <div className={styles.indent20}>
+      <div className="flex items-center gap-2 mt-3">
         <input
           type="checkbox"
           checked={acceptedCloudUsageGuidelines}
-          style={{ marginRight: "5px" }}
           onChange={() => {
             setAcceptedCloudUsageGuidelines(!acceptedCloudUsageGuidelines);
           }}
@@ -232,13 +235,15 @@ const BasicInformationStep = ({
         already have one.
       </Text>
 
-      <div className={styles.indent20}>
+      <div className="flex flex-col gap-1.5 mt-3 max-w-sm">
         {envAvailability != null ? (
           <>
-            <label htmlFor="environment-select">Choose an environment:</label>
+            <label htmlFor="environment-select" className="text-sm font-medium">
+              Choose an environment:
+            </label>
             <Select
               id="environment-select"
-              className={styles.environmentselect}
+              className="w-full"
               styles={selectStyles}
               options={envAvailability.map((env) => ({
                 value: env.env.value,
@@ -308,7 +313,9 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <h1>DFDS AI Catalogue</h1>
+      <h1 className="text-lg font-bold text-primary mt-6 mb-3">
+        DFDS AI Catalogue
+      </h1>
       <Text>
         You have selected to create an Azure resource group for AI purposes.
       </Text>
@@ -317,11 +324,10 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
         policies:
       </Text>
 
-      <div className={styles.indent20}>
+      <div className="flex items-center gap-2 mt-3">
         <input
           type="checkbox"
           checked={aiPolicyAccepted}
-          style={{ marginRight: "5px" }}
           onChange={() => {
             setAiPolicyAccepted(!aiPolicyAccepted);
           }}
@@ -333,6 +339,7 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
             target="_blank"
             rel="noopener noreferrer"
             href="https://dfds.sharepoint.com/sites/AI/SitePages/AI_Policy.aspx"
+            className="text-action underline underline-offset-2 hover:no-underline"
           >
             DFDS AI Policy
           </TrackedLink>
@@ -349,6 +356,7 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
           target="_blank"
           rel="noopener noreferrer"
           href="https://dfds.sharepoint.com/sites/DataAnalyticsCommunity/Lists/AI%20Catalogue/AllItems.aspx?sortField=DFDSDeveloped&isAscending=true&viewid=5b58d3e2%2Deaa7%2D4021%2D931a%2D2ab9c8ee3685&ovuser=73a99466%2Dad05%2D4221%2D9f90%2De7142aa2f6c1%2Cshiypen%40dfds%2Ecom&OR=Teams%2DHL&CT=1753261542079&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNTA3MDMxODgwNiIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           here
         </TrackedLink>
@@ -359,12 +367,11 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
         matching your requirements before creating a new one.
       </Text>
 
-      <div className={styles.indent20}>
+      <div className="flex items-center gap-2 mt-3">
         <input
           id="existing-catalogue-checkbox"
           type="checkbox"
           checked={existingCatalogueChecked}
-          style={{ marginRight: "5px" }}
           onChange={() => {
             setExistingCatalogueChecked(!existingCatalogueChecked);
           }}
@@ -383,17 +390,20 @@ const AICatalogueStep = ({ formValues, setFormValues, setCanContinue }) => {
           target="_blank"
           rel="noopener noreferrer"
           href="https://dfds.sharepoint.com/sites/DataAnalyticsCommunity/Lists/AI%20Catalogue/AllItems.aspx?sortField=DFDSDeveloped&isAscending=true&viewid=5b58d3e2%2Deaa7%2D4021%2D931a%2D2ab9c8ee3685&ovuser=73a99466%2Dad05%2D4221%2D9f90%2De7142aa2f6c1%2Cshiypen%40dfds%2Ecom&OR=Teams%2DHL&CT=1753261542079&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNTA3MDMxODgwNiIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           AI Catalogue
         </TrackedLink>
         .
       </Text>
       <Text>Then provide the Catalogue ID below.</Text>
-      <div className={styles.indent20}>
-        <label htmlFor="catalogue-id-input">Catalogue ID:</label>
+      <div className="flex flex-col gap-1.5 mt-3 max-w-sm">
+        <label htmlFor="catalogue-id-input" className="text-sm font-medium">
+          Catalogue ID:
+        </label>
         <input
           id="catalogue-id-input"
-          className={styles.catalogueId}
+          className="w-full border border-[color:var(--color-border)] rounded-[5px] px-2 py-1.5 bg-[color:var(--color-surface)] text-[color:var(--color-text-primary)]"
           type="text"
           placeholder="AI Catalogue Item ID"
           value={catalogueId || ""}
@@ -446,7 +456,9 @@ const MandatoryAITagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 
   return (
     <>
-      <h1>Required AI Tags</h1>
+      <h1 className="text-lg font-bold text-primary mt-6 mb-3">
+        Required AI Tags
+      </h1>
       <Text>
         Azure resource groups meant for AI purposes must be tagged with the
         following tags:
@@ -461,50 +473,51 @@ const MandatoryAITagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           target="_blank"
           rel="noopener noreferrer"
           href="https://forms.office.com/pages/responsepage.aspx?id=ZpSpcwWtIUKfkOcUKqL2wRhXoqzx_FRMrf1WtWERJbpUOUxUSTZQMFEwRE9TSTJVM09NRlNVWlRJUy4u&route=shorturl"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           this questionnaire
         </TrackedLink>{" "}
         to determine the risk category of your AI resource.
       </Text>
-      <div className={styles.envsection}>
-        <div className={styles.indent20}>
-          <label htmlFor="risk-category-select">Risk Category:</label>
-          <Select
-            id="risk-category-select"
-            className={styles.environmentselect}
-            styles={selectStyles}
-            options={riskCategories.map((risk) => ({
-              value: risk.value,
-              label: risk.label,
-            }))}
-            value={riskCategory}
-            onChange={(selection) => {
-              setRiskCategory(selection);
-            }}
-          ></Select>
-        </div>
+      <div className="flex flex-col gap-1.5 mt-3 max-w-sm">
+        <label htmlFor="risk-category-select" className="text-sm font-medium">
+          Risk Category:
+        </label>
+        <Select
+          id="risk-category-select"
+          className="w-full"
+          styles={selectStyles}
+          options={riskCategories.map((risk) => ({
+            value: risk.value,
+            label: risk.label,
+          }))}
+          value={riskCategory}
+          onChange={(selection) => {
+            setRiskCategory(selection);
+          }}
+        ></Select>
       </div>
 
       <div className={styles.separator} />
 
       <Text>Does this AI use Personal Data in Processing?</Text>
-      <div className={styles.envsection}>
-        <div className={styles.indent20}>
-          <label htmlFor="gdpr-select">GDPR Data will be processed:</label>
-          <Select
-            id="gdpr-select"
-            className={styles.environmentselect}
-            styles={selectStyles}
-            options={gdprOptions.map((opt) => ({
-              value: opt.value,
-              label: opt.label,
-            }))}
-            value={gdprData}
-            onChange={(selection) => {
-              setGdprData(selection);
-            }}
-          ></Select>
-        </div>
+      <div className="flex flex-col gap-1.5 mt-3 max-w-sm">
+        <label htmlFor="gdpr-select" className="text-sm font-medium">
+          GDPR Data will be processed:
+        </label>
+        <Select
+          id="gdpr-select"
+          className="w-full"
+          styles={selectStyles}
+          options={gdprOptions.map((opt) => ({
+            value: opt.value,
+            label: opt.label,
+          }))}
+          value={gdprData}
+          onChange={(selection) => {
+            setGdprData(selection);
+          }}
+        ></Select>
       </div>
     </>
   );
@@ -513,7 +526,7 @@ const MandatoryAITagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 const SummaryStep = ({ formValues, setFormValues }) => {
   return (
     <>
-      <h1>Summary</h1>
+      <h1 className="text-lg font-bold text-primary mt-6 mb-3">Summary</h1>
       {/* Display the summary of the form values */}
       <pre>{JSON.stringify(formValues, null, 2)}</pre>
     </>
