@@ -3,38 +3,18 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import PageSection from "@/components/PageSection";
 import LatestNews from "./LatestNews";
-import RelevantNews from "./RelevantNews";
 import QuickLinks from "./QuickLinks";
-import UpcomingEvents from "./UpcomingEvents";
 import MyCapabilities from "./MyCapabilities";
 import PlatformStatus from "./PlatformStatus";
-import { useStats } from "@/state/remote/queries/stats";
+import MiniUpcomingEvents from "./MiniUpcomingEvents";
+import MiniLatestNews from "./MiniLatestNews";
 import { useRelevantNews } from "@/state/remote/queries/news";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Separator } from "@/components/ui/separator";
-import { Code } from "@/components/ui/Code";
-import {
-  Layers,
-  Cloud,
-  Server,
-  Database,
-  Globe,
-  Lock,
-  List,
-} from "lucide-react";
-
-const STAT_CONFIG = [
-  { icon: <Layers size={16} />, bg: "#e8f4fb", color: "#0e7cc1" },
-  { icon: <Cloud size={16} />, bg: "rgba(237,136,0,0.1)", color: "#ed8800" },
-  { icon: <Server size={16} />, bg: "rgba(76,175,80,0.1)", color: "#4caf50" },
-  { icon: <Database size={16} />, bg: "#ede9fe", color: "#6d28d9" },
-  { icon: <Globe size={16} />, bg: "rgba(14,124,193,0.1)", color: "#0e7cc1" },
-  { icon: <Lock size={16} />, bg: "#eef0f1", color: "#666666" },
-];
+import { Layers, List } from "lucide-react";
 
 function HeroRow({ name }) {
-  const { data: stats, isFetched } = useStats();
   const firstName = name.split(" ")[0] || name;
 
   return (
@@ -46,48 +26,14 @@ function HeroRow({ name }) {
         <h1 className="text-[1.75rem] font-bold text-primary font-mono tracking-[-0.02em] leading-[1.2] mb-1.5">
           Hello, {firstName}
         </h1>
-        {isFetched && stats && stats.length > 0 ? (
-          <div className="font-mono text-[12px] text-muted tracking-[0.03em]">
-            Welcome back
-          </div>
-        ) : (
-          <p className="font-mono text-[12px] text-muted tracking-[0.03em]">
-            Welcome to the DFDS Self Service Developer Portal
-          </p>
-        )}
-      </div>
-      {isFetched && stats && stats.length > 0 && (
-        <div className="hidden lg:grid grid-cols-2 sm:grid-cols-3 gap-2 flex-shrink-0">
-          {stats.map((stat, i) => {
-            const cfg = STAT_CONFIG[i] || STAT_CONFIG[0];
-            return (
-              <div
-                key={i}
-                className="bg-surface border border-card rounded-[8px] flex items-center gap-2.5 px-3 py-2.5 min-w-[110px] animate-fade-up"
-                style={{ animationDelay: `${i * 60}ms` }}
-              >
-                <div
-                  className="w-[30px] h-[30px] rounded-[6px] flex items-center justify-center flex-shrink-0"
-                  style={{ background: cfg.bg, color: cfg.color }}
-                >
-                  {cfg.icon}
-                </div>
-                <div>
-                  <span
-                    className="block font-mono text-[1.125rem] font-bold leading-none mb-[3px]"
-                    style={{ color: cfg.color }}
-                  >
-                    {stat.value}
-                  </span>
-                  <span className="block font-mono text-[9px] tracking-[0.08em] uppercase text-muted">
-                    {stat.title}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+        <div className="font-mono text-[12px] text-muted tracking-[0.03em]">
+          Welcome back
         </div>
-      )}
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:w-[546px] flex-shrink-0">
+        <MiniUpcomingEvents />
+        <MiniLatestNews />
+      </div>
     </div>
   );
 }
@@ -226,25 +172,11 @@ export default function FrontPage() {
           />
         </div>
 
-        {/* LEFT: Latest News + Upcoming Events + Platform Status */}
+        {/* LEFT: Platform Status */}
         <div
           className="animate-fade-up lg:order-1"
           style={{ animationDelay: "0ms" }}
         >
-          <SectionLabel as="h2" className="mb-2 block">
-            // latest news
-          </SectionLabel>
-          <PageSection>
-            <RelevantNews />
-          </PageSection>
-
-          <SectionLabel as="h2" className="mb-2 block">
-            // upcoming events
-          </SectionLabel>
-          <PageSection>
-            <UpcomingEvents />
-          </PageSection>
-
           <SectionLabel as="h2" className="mb-2 block">
             // platform status
           </SectionLabel>

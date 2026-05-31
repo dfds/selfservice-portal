@@ -81,6 +81,7 @@ const platformNav: NavItemDef[] = [
   { title: "Capabilities", url: "/capabilities", icon: Layers },
   { title: "Topics", url: "/topics", icon: List },
   { title: "ECR", url: "/ecr", icon: Package },
+  { title: "Statistics", url: "/statistics", icon: BarChart2 },
   { title: "Permission Matrix", url: "/rbac/permissions", icon: Table2 },
 ];
 

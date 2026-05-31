@@ -9,6 +9,7 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
+import StatisticsPage from "./pages/statistics";
 import ReleaseNotes from "./pages/release-notes";
 import AuthTemplate from "./auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
@@ -16,7 +17,9 @@ import ReleaseNotesManage from "./pages/release-notes/manage";
 import ReleaseNotesEdit from "./pages/release-notes/edit";
 import ReleaseNotesView from "./pages/release-notes/view";
 import EventsPage from "./pages/events";
+import EventView from "./pages/events/view";
 import NewsPage from "./pages/news";
+import NewsView from "./pages/news/view";
 import CompliancePage from "./pages/compliance";
 import RbacViewerPage from "./pages/admin/rbac";
 import PermissionMatrixPage from "./pages/rbac";
@@ -174,6 +177,7 @@ export default function App() {
           <Route path="topics" element={<TopicsPage />} />
           <Route path="capabilities" element={<CapabilitiesPage />} />
           <Route path="ecr" element={<ECRPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
           <Route path="release-notes" element={<ReleaseNotes />} />
           <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
           <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
@@ -189,7 +193,9 @@ export default function App() {
           />
           <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
           <Route path="events" element={<EventsPage />} />
+          <Route path="events/v/:id" element={<EventView />} />
           <Route path="news" element={<NewsPage />} />
+          <Route path="news/v/:id" element={<NewsView />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
           <Route path="admin/rbac" element={<RbacViewerPage />} />

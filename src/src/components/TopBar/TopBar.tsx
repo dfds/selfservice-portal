@@ -11,6 +11,7 @@ const pathLabels: Record<string, string> = {
   "/capabilities": "Capabilities",
   "/topics": "Topics",
   "/ecr": "ECR Repositories",
+  "/statistics": "Statistics",
   "/release-notes": "Release Notes",
   "/events": "Events",
   "/capabilities/criticality": "Criticality",
