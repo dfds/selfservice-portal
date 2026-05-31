@@ -12,6 +12,7 @@ import { useStats } from "@/state/remote/queries/stats";
 import { useRelevantNews } from "@/state/remote/queries/news";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { Separator } from "@/components/ui/separator";
 import { Code } from "@/components/ui/Code";
 import {
   Layers,
@@ -245,17 +246,12 @@ export default function FrontPage() {
           </PageSection>
 
           <SectionLabel as="h2" className="mb-2 block">
-            // recent incidents
-          </SectionLabel>
-          <PageSection>
-            <LatestNews />
-          </PageSection>
-
-          <SectionLabel as="h2" className="mb-2 block">
             // platform status
           </SectionLabel>
           <PageSection>
             <PlatformStatus />
+            <Separator className="my-4" />
+            <LatestNews />
           </PageSection>
         </div>
 
