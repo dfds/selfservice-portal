@@ -2,7 +2,7 @@ import { createSsuQuery, createSsuMutation } from "../queryFactory";
 
 export const useEventSignups = createSsuQuery({
   queryKey: ["eventsignups"],
-  urlSegments: ["events/signups"],
+  urlSegments: ["demos/signups"],
   select: (data: any) => data.items || [],
 });
 
