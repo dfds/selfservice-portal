@@ -62,7 +62,7 @@ export default function MiniUpcomingEvents() {
   const next = upcoming[0] ?? null;
 
   return (
-    <div className="bg-surface border border-card rounded-[8px] px-3 py-2.5 flex flex-col">
+    <div className="bg-surface border border-card rounded-[8px] px-3 py-2.5 flex flex-col sm:w-[267px] sm:flex-shrink-0">
       <div className="font-mono text-[9px] font-semibold tracking-[0.08em] uppercase text-muted mb-2">
         Upcoming Events
       </div>

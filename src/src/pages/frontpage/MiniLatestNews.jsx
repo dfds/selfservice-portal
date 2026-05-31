@@ -13,7 +13,7 @@ function NewsRow({ item }) {
       </div>
       <Link
         to={`/news/v/${item.id}`}
-        className="block text-[12px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.3] line-clamp-1 no-underline hover:underline"
+        className="text-[12px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.3] line-clamp-2 no-underline hover:underline"
       >
         {item.title}
       </Link>
@@ -29,7 +29,7 @@ export default function MiniLatestNews() {
     .slice(0, 2);
 
   return (
-    <div className="bg-surface border border-card rounded-[8px] px-3 py-2.5 flex flex-col">
+    <div className="bg-surface border border-card rounded-[8px] px-3 py-2.5 flex flex-col sm:w-max sm:min-w-[267px] sm:max-w-[calc((100vw_-_284px)*0.75_-_289px)]">
       <div className="font-mono text-[9px] font-semibold tracking-[0.08em] uppercase text-muted mb-2">
         Latest News
       </div>

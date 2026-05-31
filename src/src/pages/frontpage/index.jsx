@@ -30,9 +30,9 @@ function HeroRow({ name }) {
           Welcome back
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:w-[546px] flex-shrink-0">
-        <MiniUpcomingEvents />
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:w-auto sm:items-stretch flex-shrink-0">
         <MiniLatestNews />
+        <MiniUpcomingEvents />
       </div>
     </div>
   );
