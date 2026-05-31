@@ -95,15 +95,18 @@ function MetadataEditor({ capabilityId }: { capabilityId: string }) {
                   (cat.status ?? "").toLowerCase() === "compliant"
                     ? "soft-success"
                     : (cat.status ?? "").toLowerCase() === "noncompliant"
-                      ? "destructive"
-                      : "soft-warning"
+                    ? "destructive"
+                    : "soft-warning"
                 }
                 className="text-[10px]"
               >
                 {cat.status ?? "Unknown"}
               </Badge>
               <span className="text-secondary font-mono">
-                {cat.categoryName ?? cat.displayName ?? cat.name ?? `Category ${i + 1}`}
+                {cat.categoryName ??
+                  cat.displayName ??
+                  cat.name ??
+                  `Category ${i + 1}`}
               </span>
             </div>
           ))}
@@ -161,8 +164,8 @@ function CapabilityRow({ capability }: { capability: any }) {
     capability.status === "Active"
       ? "soft-success"
       : capability.status === "Pending Deletion"
-        ? "soft-warning"
-        : "outline";
+      ? "soft-warning"
+      : "outline";
 
   return (
     <div className="border border-card rounded-[8px] overflow-hidden">
@@ -174,7 +177,10 @@ function CapabilityRow({ capability }: { capability: any }) {
         <span className="flex-1 min-w-0 text-sm font-medium text-primary truncate">
           {capability.name}
         </span>
-        <Badge variant={statusVariant} className="text-[10px] shrink-0 hidden sm:inline-flex">
+        <Badge
+          variant={statusVariant}
+          className="text-[10px] shrink-0 hidden sm:inline-flex"
+        >
           {capability.status}
         </Badge>
         <ChevronDown
@@ -236,7 +242,9 @@ export default function BulkMetadataPage() {
           ))
         ) : filtered.length === 0 ? (
           <EmptyState>
-            {search ? "No capabilities match your search." : "No capabilities found."}
+            {search
+              ? "No capabilities match your search."
+              : "No capabilities found."}
           </EmptyState>
         ) : (
           filtered.map((cap: any) => (

@@ -12,7 +12,11 @@ import {
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 
-export function CapabilityCostSummary({ data: current_data, previousData, previousDataIsFull = true }) {
+export function CapabilityCostSummary({
+  data: current_data,
+  previousData,
+  previousDataIsFull = true,
+}) {
   const has_current_data = current_data.length > 0;
 
   const currentTotal = has_current_data
@@ -25,7 +29,11 @@ export function CapabilityCostSummary({ data: current_data, previousData, previo
   const trendClass = isLower ? styles.trendGood : styles.trendBad;
 
   const displayedCost =
-    currentTotal == null ? "No data" : currentTotal < 1 ? "<$1" : `$${Math.floor(currentTotal)}`;
+    currentTotal == null
+      ? "No data"
+      : currentTotal < 1
+      ? "<$1"
+      : `$${Math.floor(currentTotal)}`;
 
   return (
     <div className={styles.costInline}>
@@ -33,12 +41,20 @@ export function CapabilityCostSummary({ data: current_data, previousData, previo
       {trendPct != null ? (
         <span
           className={`${styles.costTrend} ${trendClass}`}
-          title={!previousDataIsFull ? "Approximate \u2014 less than 60 days of history available" : undefined}
+          title={
+            !previousDataIsFull
+              ? "Approximate \u2014 less than 60 days of history available"
+              : undefined
+          }
         >
-          {isLower ? "\u2193" : "\u2191"} {!previousDataIsFull ? "~" : ""}{Math.abs(Math.round(trendPct))}%
+          {isLower ? "\u2193" : "\u2191"} {!previousDataIsFull ? "~" : ""}
+          {Math.abs(Math.round(trendPct))}%
         </span>
       ) : (
-        <span className={`${styles.costTrend} ${styles.trendUnknown}`} title="Not enough history to calculate trend">
+        <span
+          className={`${styles.costTrend} ${styles.trendUnknown}`}
+          title="Not enough history to calculate trend"
+        >
           ?%
         </span>
       )}
@@ -71,7 +87,10 @@ export function LargeCapabilityCostSummary({ data }) {
   return (
     <div className={styles.largeCostDataSummary}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={paddedData} margin={{ top: 4, right: 16, bottom: 4, left: 16 }}>
+        <LineChart
+          data={paddedData}
+          margin={{ top: 4, right: 16, bottom: 4, left: 16 }}
+        >
           <XAxis
             dataKey="name"
             tickFormatter={(val) =>

@@ -30,7 +30,9 @@ export function createSsuQuery<TData = any, TSelected = TData>(
   config: SsuQueryConfig<TData, TSelected>,
 ) {
   return function useSsuQuery() {
-    const isCloudEngineerEnabled = useResolvedAuth(config.authMode ?? "context");
+    const isCloudEngineerEnabled = useResolvedAuth(
+      config.authMode ?? "context",
+    );
 
     return useQuery<TData, Error, TSelected>({
       queryKey: config.queryKey,
@@ -64,7 +66,9 @@ export function createSsuParamQuery<TArgs, TData = any, TSelected = TData>(
   config: SsuParamQueryConfig<TArgs, TData, TSelected>,
 ) {
   return function useSsuParamQuery(args: TArgs) {
-    const isCloudEngineerEnabled = useResolvedAuth(config.authMode ?? "context");
+    const isCloudEngineerEnabled = useResolvedAuth(
+      config.authMode ?? "context",
+    );
 
     return useQuery<TData, Error, TSelected>({
       queryKey: config.queryKey(args),
@@ -97,7 +101,9 @@ export function createSsuLinkQuery<TDef, TData = any, TSelected = TData>(
   config: SsuLinkQueryConfig<TDef, TData, TSelected>,
 ) {
   return function useSsuLinkQuery(def: TDef) {
-    const isCloudEngineerEnabled = useResolvedAuth(config.authMode ?? "context");
+    const isCloudEngineerEnabled = useResolvedAuth(
+      config.authMode ?? "context",
+    );
     const href = config.linkHref(def);
 
     return useQuery<TData, Error, TSelected>({
@@ -129,7 +135,9 @@ export function createSsuMutation<TPayload = any>(
   config: SsuMutationConfig<TPayload>,
 ) {
   return function useSsuMutation() {
-    const isCloudEngineerEnabled = useResolvedAuth(config.authMode ?? "context");
+    const isCloudEngineerEnabled = useResolvedAuth(
+      config.authMode ?? "context",
+    );
 
     return useMutation({
       mutationFn: async (data: TPayload) =>

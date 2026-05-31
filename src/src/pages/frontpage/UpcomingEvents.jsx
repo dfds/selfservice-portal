@@ -26,7 +26,9 @@ function EventItem({ event, index = 0, dimmed = false }) {
 
   return (
     <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up ${dimmed ? "opacity-60" : ""}`}
+      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up ${
+        dimmed ? "opacity-60" : ""
+      }`}
       style={{ animationDelay: `${index * 60}ms` }}
     >
       <div className="flex items-center gap-1.5 mb-[3px]">

@@ -61,9 +61,7 @@ export function useCapabilitiesCost() {
     }
 
     const realData =
-      query.isFetched &&
-        query.data != null &&
-        query.data.has(capabilityId)
+      query.isFetched && query.data != null && query.data.has(capabilityId)
         ? query.data.get(capabilityId)
         : null;
 
@@ -95,15 +93,17 @@ export function useCapabilitiesCost() {
       query.isFetched && query.data != null && query.data.has(capabilityId)
         ? query.data.get(capabilityId)
         : useDummyData
-          ? (() => {
+        ? (() => {
             // Vary history length per capability so we can test partial-history behaviour:
             // ~⅓ get 60 days (full comparison), ~⅓ get 45 days, ~⅓ get 20 days.
             const bucket =
-              capabilityId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 3;
+              capabilityId
+                .split("")
+                .reduce((acc, c) => acc + c.charCodeAt(0), 0) % 3;
             const dummyDays = bucket === 0 ? 60 : bucket === 1 ? 45 : 20;
             return generateDummyCosts(capabilityId, dummyDays);
           })()
-          : [];
+        : [];
 
     const current = rawAll.slice(-30); // ← chart always shows exactly 30 days
     const previous = rawAll.length > 30 ? rawAll.slice(-60, -30) : [];

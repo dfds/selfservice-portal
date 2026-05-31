@@ -30,7 +30,10 @@ function MemberRow({ member, roleTypes }) {
   const removeConfirm = useConfirmAction({
     mutation: removeMemberMutation,
     buildPayload: (m) => ({ capabilityId, memberId: m.id }),
-    invalidateKeys: [["capabilities", "members", "detailed", capabilityId], ["capabilities", "details", capabilityId]],
+    invalidateKeys: [
+      ["capabilities", "members", "detailed", capabilityId],
+      ["capabilities", "details", capabilityId],
+    ],
     successMessage: "Member removed",
     errorMessage: "Could not remove member",
   });
@@ -146,17 +149,17 @@ function MemberRow({ member, roleTypes }) {
                     ? "#1d4ed8"
                     : "#0e7cc1"
                   : state.isFocused
-                    ? isDark
-                      ? "#0f172a"
-                      : "#f2f2f2"
-                    : isDark
-                      ? "#1e293b"
-                      : "#ffffff",
+                  ? isDark
+                    ? "#0f172a"
+                    : "#f2f2f2"
+                  : isDark
+                  ? "#1e293b"
+                  : "#ffffff",
                 color: state.isSelected
                   ? "#ffffff"
                   : isDark
-                    ? "#e2e8f0"
-                    : "#002b45",
+                  ? "#e2e8f0"
+                  : "#002b45",
               }),
               indicatorSeparator: (base) => ({
                 ...base,
@@ -180,7 +183,8 @@ function MemberRow({ member, roleTypes }) {
         title="Remove member"
         description={
           <>
-            Are you sure you want to remove <strong>{removeConfirm.target?.name}</strong> from this capability?
+            Are you sure you want to remove{" "}
+            <strong>{removeConfirm.target?.name}</strong> from this capability?
           </>
         }
         confirmLabel="Remove"

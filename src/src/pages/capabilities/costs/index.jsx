@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PageSection from "../../../components/PageSection";
-import { getFinoutLinkForCostCentre, getFinoutLinkForCapability } from "./finoutCostCentreLink";
+import {
+  getFinoutLinkForCostCentre,
+  getFinoutLinkForCapability,
+} from "./finoutCostCentreLink";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { computeCostTrendPct } from "@/lib/costUtils";
 import { TrackedButton } from "@/components/Tracking";
@@ -11,7 +14,8 @@ export default function Costs({ anchorId, costCentre }) {
   const { getCostComparisonForCapability } = useCapabilitiesCost();
   const { id } = useParams();
 
-  const { current, previous, hasFullComparison } = getCostComparisonForCapability(id);
+  const { current, previous, hasFullComparison } =
+    getCostComparisonForCapability(id);
   const totalCost = current.reduce((acc, x) => acc + x.pv, 0);
   const hasData = current.length > 0;
 
@@ -24,19 +28,25 @@ export default function Costs({ anchorId, costCentre }) {
         <span className="font-mono text-[1.5rem] font-bold text-action">
           {hasData ? `$${Math.floor(totalCost)}` : "No data"}
         </span>
-        <span className="font-mono text-[11px] text-muted ml-2">total last 30 days</span>
+        <span className="font-mono text-[11px] text-muted ml-2">
+          total last 30 days
+        </span>
         {trendPct != null ? (
           <div className="mt-1">
             <div
               className="font-mono text-[12px] font-semibold"
               style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
             >
-              {isLower ? "\u2193" : "\u2191"} {!hasFullComparison ? "~" : ""}{Math.abs(Math.round(trendPct))}% vs previous {previous.length} days
+              {isLower ? "\u2193" : "\u2191"} {!hasFullComparison ? "~" : ""}
+              {Math.abs(Math.round(trendPct))}% vs previous {previous.length}{" "}
+              days
             </div>
             <div className="font-mono text-[10px] text-muted mt-0.5">
               {hasFullComparison
                 ? "Based on average daily cost over the prior 30-day period."
-                : `Based on average daily cost \u2014 only ${previous.length + current.length} days of history available.`}
+                : `Based on average daily cost \u2014 only ${
+                    previous.length + current.length
+                  } days of history available.`}
             </div>
           </div>
         ) : (
@@ -65,7 +75,11 @@ export default function Costs({ anchorId, costCentre }) {
         <a
           target="_blank"
           rel="noreferrer"
-          href={costCentre ? `${getFinoutLinkForCostCentre({ costCentre })}` : undefined}
+          href={
+            costCentre
+              ? `${getFinoutLinkForCostCentre({ costCentre })}`
+              : undefined
+          }
         >
           <TrackedButton
             trackName="FinOutButtonForCostCenter"
@@ -73,7 +87,9 @@ export default function Costs({ anchorId, costCentre }) {
             variation="primary"
             disabled={!costCentre}
           >
-            {costCentre ? `Cost centre: ${costCentre}` : "Cost centre: not available"}
+            {costCentre
+              ? `Cost centre: ${costCentre}`
+              : "Cost centre: not available"}
           </TrackedButton>
         </a>
         <a

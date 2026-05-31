@@ -13,7 +13,9 @@ import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(() => searchParams.get("new") === "true");
+  const [showNewCapabilityWizard, setShowNewCapabilityWizard] = useState(
+    () => searchParams.get("new") === "true",
+  );
   const [isCreatingNewCapability, setIsCreatingNewCapability] = useState(false);
   const { reloadUser } = useContext(AppContext);
   const { setActions } = useTopBarActions();

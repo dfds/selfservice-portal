@@ -51,10 +51,13 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
       title={
         costsComparisonIsFull
           ? "Average daily cost vs. the prior 30-day period"
-          : `Approximate — only ${previousCosts.length + costs.length} days of history available`
+          : `Approximate — only ${
+              previousCosts.length + costs.length
+            } days of history available`
       }
     >
-      {isLower ? "↓" : "↑"} {!costsComparisonIsFull ? "~" : ""}{Math.abs(Math.round(trendPct))}%
+      {isLower ? "↓" : "↑"} {!costsComparisonIsFull ? "~" : ""}
+      {Math.abs(Math.round(trendPct))}%
     </span>
   );
 }
@@ -69,14 +72,20 @@ function CapabilityRow({ cap, index }) {
 
   return (
     <tr
-      className={`border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 animate-fade-up${isPendingDeletion ? " opacity-70" : ""}`}
+      className={`border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 animate-fade-up${
+        isPendingDeletion ? " opacity-70" : ""
+      }`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Capability name */}
       <td className="py-[0.5rem] pr-3 min-w-0">
         <div className="flex items-center gap-1.5 min-w-0">
           {isPendingDeletion && (
-            <AlertCircle size={12} className="text-red-500 shrink-0" title="Pending deletion" />
+            <AlertCircle
+              size={12}
+              className="text-red-500 shrink-0"
+              title="Pending deletion"
+            />
           )}
           <Link
             to={`/capabilities/${cap.id}`}
@@ -87,7 +96,9 @@ function CapabilityRow({ cap, index }) {
           {pendingMembers > 0 && (
             <span
               className="inline-flex items-center gap-[3px] font-mono text-[9px] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(237,136,0,0.1)] text-[#ed8800] shrink-0"
-              title={`${pendingMembers} membership application${pendingMembers > 1 ? "s" : ""} awaiting approval`}
+              title={`${pendingMembers} membership application${
+                pendingMembers > 1 ? "s" : ""
+              } awaiting approval`}
             >
               <Users size={9} />
               {pendingMembers}
@@ -99,28 +110,27 @@ function CapabilityRow({ cap, index }) {
       {/* Compliance score */}
       <td className="py-[0.5rem] pr-3 text-right whitespace-nowrap">
         <span className="inline-flex items-center gap-[4px] font-mono text-[11px] text-muted">
-          {stale ? (
-            <>
-              <LightBulb score={-1} size={9} />
-              <span title="Score not updated in the last 14 days">stale</span>
-            </>
-          ) : (
-            <>
-              <LightBulb score={cap.requirementScore} size={9} />
-              {cap.requirementScore?.toFixed(1)}%
-            </>
-          )}
+          <LightBulb score={cap.requirementScore} size={9} />
+          {cap.requirementScore?.toFixed(1)}%
         </span>
       </td>
 
       {/* Cost */}
       <td className="py-[0.5rem] pr-3 text-right whitespace-nowrap">
-        <CostCell costs={cap.costs} previousCosts={cap.previousCosts} costsComparisonIsFull={cap.costsComparisonIsFull} />
+        <CostCell
+          costs={cap.costs}
+          previousCosts={cap.previousCosts}
+          costsComparisonIsFull={cap.costsComparisonIsFull}
+        />
       </td>
 
       {/* Trend */}
       <td className="py-[0.5rem] text-right whitespace-nowrap">
-        <TrendCell costs={cap.costs} previousCosts={cap.previousCosts} costsComparisonIsFull={cap.costsComparisonIsFull} />
+        <TrendCell
+          costs={cap.costs}
+          previousCosts={cap.previousCosts}
+          costsComparisonIsFull={cap.costsComparisonIsFull}
+        />
       </td>
     </tr>
   );
@@ -128,7 +138,8 @@ function CapabilityRow({ cap, index }) {
 
 export default function MyCapabilities() {
   const { isFetched: meFetched, data: meData } = useMe();
-  const { query: costsQuery, getCostComparisonForCapability } = useCapabilitiesCost();
+  const { query: costsQuery, getCostComparisonForCapability } =
+    useCapabilitiesCost();
 
   const mine = useMemo(() => {
     if (!meFetched || !meData?.capabilities) return [];
@@ -136,8 +147,14 @@ export default function MyCapabilities() {
       .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
       .slice(0, MAX_SHOWN)
       .map((cap) => {
-        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
-        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
+        const { current, previous, hasFullComparison } =
+          getCostComparisonForCapability(cap.id);
+        return {
+          ...cap,
+          costs: current,
+          previousCosts: previous,
+          costsComparisonIsFull: hasFullComparison,
+        };
       });
   }, [meFetched, meData, costsQuery.isFetched]);
 

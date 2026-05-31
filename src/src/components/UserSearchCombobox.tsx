@@ -37,7 +37,9 @@ export function UserSearchCombobox({
       if (debouncedQuery.length < 2) return [];
       const safe = debouncedQuery.replace(/'/g, "''");
       const filter = `startswith(mail,'${safe}') or startswith(displayName,'${safe}')`;
-      const url = `https://graph.microsoft.com/v1.0/users?$filter=${encodeURIComponent(filter)}&$select=id,displayName,mail,userPrincipalName&$top=8`;
+      const url = `https://graph.microsoft.com/v1.0/users?$filter=${encodeURIComponent(
+        filter,
+      )}&$select=id,displayName,mail,userPrincipalName&$top=8`;
       const resp = await msGraphRequest({ method: "GET", url, payload: null });
       if (!resp.ok) return [];
       const data = await resp.json();

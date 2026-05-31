@@ -73,8 +73,8 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
               (cat.status ?? "").toLowerCase() === "compliant"
                 ? "soft-success"
                 : (cat.status ?? "").toLowerCase() === "noncompliant"
-                  ? "destructive"
-                  : "soft-warning"
+                ? "destructive"
+                : "soft-warning"
             }
             className="text-[10px]"
           >

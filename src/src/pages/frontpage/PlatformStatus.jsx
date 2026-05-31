@@ -40,7 +40,10 @@ export default function PlatformStatus() {
           >
             <Lightbulb
               size={13}
-              style={{ color: STATUS_COLOR[status], fill: STATUS_COLOR[status] }}
+              style={{
+                color: STATUS_COLOR[status],
+                fill: STATUS_COLOR[status],
+              }}
               className="flex-shrink-0"
             />
             <span className="text-[12px] text-secondary leading-none truncate">

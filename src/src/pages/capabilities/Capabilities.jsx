@@ -128,13 +128,13 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
 
   const visibleCapabilities = globalFilter
     ? filteredCapabilities.filter((cap) => {
-      const q = globalFilter.toLowerCase();
-      return (
-        cap.name?.toLowerCase().includes(q) ||
-        cap.description?.toLowerCase().includes(q) ||
-        cap.awsAccountId?.toLowerCase().includes(q)
-      );
-    })
+        const q = globalFilter.toLowerCase();
+        return (
+          cap.name?.toLowerCase().includes(q) ||
+          cap.description?.toLowerCase().includes(q) ||
+          cap.awsAccountId?.toLowerCase().includes(q)
+        );
+      })
     : filteredCapabilities;
 
   const sortedCapabilities = useMemo(() => {
@@ -267,7 +267,15 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const { isDark } = useTheme();
 
-  const { bg, bgMuted, textPrimary, textMuted, borderColor, inputBorder, inputText } = useMuiTableColors();
+  const {
+    bg,
+    bgMuted,
+    textPrimary,
+    textMuted,
+    borderColor,
+    inputBorder,
+    inputText,
+  } = useMuiTableColors();
   const bgDeleted = isDark ? "#3b1a1a" : "#dd8888";
   const bgDeletedHover = isDark ? "#4a2020" : "rgba(187, 221, 243, 0.1)";
 
@@ -400,7 +408,8 @@ export default function CapabilitiesList() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
-  const { query: costsQuery, getCostComparisonForCapability } = useCapabilitiesCost();
+  const { query: costsQuery, getCostComparisonForCapability } =
+    useCapabilitiesCost();
 
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
@@ -412,8 +421,14 @@ export default function CapabilitiesList() {
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
       const capsWithCosts = capabilitiesData.map((cap) => {
-        const { current, previous, hasFullComparison } = getCostComparisonForCapability(cap.id);
-        return { ...cap, costs: current, previousCosts: previous, costsComparisonIsFull: hasFullComparison };
+        const { current, previous, hasFullComparison } =
+          getCostComparisonForCapability(cap.id);
+        return {
+          ...cap,
+          costs: current,
+          previousCosts: previous,
+          costsComparisonIsFull: hasFullComparison,
+        };
       });
       setCapabilities(capsWithCosts);
 
@@ -550,33 +565,6 @@ export default function CapabilitiesList() {
                 return modifiedDate < twoWeeksAgo;
               })();
 
-              if (isStale) {
-                return (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <LightBulb score={-1} size={20} />
-                    <span
-                      style={{
-                        fontFamily: "monospace",
-                        width: "70px",
-                        textAlign: "center",
-                        fontSize: "10px",
-                      }}
-                    >
-                      click to
-                      <br />
-                      reload
-                    </span>
-                  </div>
-                );
-              }
-
               return (
                 <div
                   style={{
@@ -607,11 +595,11 @@ export default function CapabilitiesList() {
             sortingFn: (rowA, rowB) => {
               const ac =
                 JSON.parse(rowA.original.jsonMetadata ?? "{}")[
-                "dfds.cost.centre"
+                  "dfds.cost.centre"
                 ] ?? "";
               const bc =
                 JSON.parse(rowB.original.jsonMetadata ?? "{}")[
-                "dfds.cost.centre"
+                  "dfds.cost.centre"
                 ] ?? "";
               return (
                 ac.localeCompare(bc) ||
@@ -688,10 +676,15 @@ export default function CapabilitiesList() {
             Cell: ({ cell, row }) => {
               let data = cell.getValue() != null ? cell.getValue() : [];
               let previousData = row.original.previousCosts ?? [];
-              let previousDataIsFull = row.original.costsComparisonIsFull ?? true;
+              let previousDataIsFull =
+                row.original.costsComparisonIsFull ?? true;
               return (
                 <div className={styles.costs}>
-                  <CapabilityCostSummary data={data} previousData={previousData} previousDataIsFull={previousDataIsFull} />
+                  <CapabilityCostSummary
+                    data={data}
+                    previousData={previousData}
+                    previousDataIsFull={previousDataIsFull}
+                  />
                 </div>
               );
             },
@@ -745,11 +738,13 @@ export default function CapabilitiesList() {
   return (
     <>
       <PageSection
-        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading
-          ? ""
-          : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
-          })`
-          }`}
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
+          isLoading
+            ? ""
+            : `(${(filteredCapabilities || []).length} / ${
+                (capabilities || []).length
+              })`
+        }`}
         headlineChildren={
           isLoading ? null : (
             <div className={styles.myCapabilitiesToggleContainer}>

@@ -234,7 +234,9 @@ function Repositories({ onNewRepository }) {
 
 export default function ECRPage() {
   const [searchParams] = useSearchParams();
-  const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(() => searchParams.get("new") === "true");
+  const [showNewRepositoryDialog, setShowNewRepositoryDialog] = useState(
+    () => searchParams.get("new") === "true",
+  );
 
   return (
     <div className="p-8">

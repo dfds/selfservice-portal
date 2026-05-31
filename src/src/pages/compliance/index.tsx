@@ -43,7 +43,10 @@ const SORT_OPTIONS: { key: SortMode; label: string }[] = [
 // ─── Cost Centre Labels ───────────────────────────────────────────────────────
 
 const COST_CENTRE_LABEL_MAP = new Map<string, string>(
-  (ENUM_COSTCENTER as { value: string; label: string }[]).map((cc) => [cc.value, cc.label]),
+  (ENUM_COSTCENTER as { value: string; label: string }[]).map((cc) => [
+    cc.value,
+    cc.label,
+  ]),
 );
 
 function getCostCentreLabel(value: string): string {
@@ -510,7 +513,12 @@ export default function CompliancePage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = costCentres.filter((cc) => {
-      if (q && !cc.name.toLowerCase().includes(q) && !getCostCentreLabel(cc.name).toLowerCase().includes(q)) return false;
+      if (
+        q &&
+        !cc.name.toLowerCase().includes(q) &&
+        !getCostCentreLabel(cc.name).toLowerCase().includes(q)
+      )
+        return false;
       const entry = complianceMap.get(cc.name);
       if (!entry?.isFetched || entry.tier === null) return true;
       return activeFilters.has(entry.tier);
@@ -768,8 +776,18 @@ export default function CompliancePage() {
           <div className="flex gap-1.5 flex-wrap">
             {(
               [
-                { key: "green", label: "≥80%", color: "#22c55e", count: nGreen },
-                { key: "orange", label: "50–79%", color: "#f59e0b", count: nOrange },
+                {
+                  key: "green",
+                  label: "≥80%",
+                  color: "#22c55e",
+                  count: nGreen,
+                },
+                {
+                  key: "orange",
+                  label: "50–79%",
+                  color: "#f59e0b",
+                  count: nOrange,
+                },
                 { key: "red", label: "<50%", color: "#ef4444", count: nRed },
               ] as const
             ).map(({ key, label, color, count }) => (
@@ -794,7 +812,9 @@ export default function CompliancePage() {
               >
                 <div
                   className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ background: activeFilters.has(key) ? color : "#afafaf" }}
+                  style={{
+                    background: activeFilters.has(key) ? color : "#afafaf",
+                  }}
                 />
                 {label}
                 <span className="font-mono">{count}</span>
@@ -840,7 +860,9 @@ export default function CompliancePage() {
             <button
               type="button"
               onClick={() => {
-                const allExpanded = filtered.every(({ name }) => expandedCards.has(name));
+                const allExpanded = filtered.every(({ name }) =>
+                  expandedCards.has(name),
+                );
                 if (allExpanded) {
                   setExpandedCards(new Set());
                 } else {
