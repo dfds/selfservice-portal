@@ -112,7 +112,10 @@ export default function EventRegisterModal({ isOpen, onClose }) {
     const payload = {
       title: formData.title,
       description: formData.description,
-      eventDate: combineLocalDateTimeToUtc(formData.eventDate, formData.eventTime),
+      eventDate: combineLocalDateTimeToUtc(
+        formData.eventDate,
+        formData.eventTime,
+      ),
       type: formData.type,
       attachments: formData.attachments.filter((a) => a.url.trim() !== ""),
     };
@@ -192,9 +195,7 @@ export default function EventRegisterModal({ isOpen, onClose }) {
                 required
                 className={`${styles.recordingDateInput} border rounded px-3 py-2 text-sm`}
               />
-              {timeError && (
-                <p className="text-xs text-red-500">{timeError}</p>
-              )}
+              {timeError && <p className="text-xs text-red-500">{timeError}</p>}
             </div>
           </div>
           <div className="flex flex-col gap-2">

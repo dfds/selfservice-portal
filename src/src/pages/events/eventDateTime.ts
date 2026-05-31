@@ -1,9 +1,14 @@
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export function splitLocalDateAndTime(iso: string): { date: string; time: string } {
+export function splitLocalDateAndTime(iso: string): {
+  date: string;
+  time: string;
+} {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return { date: "", time: "" };
-  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate(),
+  )}`;
   const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
   return { date, time };
 }
