@@ -68,7 +68,7 @@ export default function EventEditModal({ isOpen, onClose, event }) {
       ...formData,
       attachments: [
         ...formData.attachments,
-        { url: "", attachmentType: "Recording", description: "" },
+        { url: "", type: "Recording", description: "" },
       ],
     });
   };
@@ -213,9 +213,9 @@ export default function EventEditModal({ isOpen, onClose, event }) {
                   </div>
                   <select
                     id={`attachment-type-${index}`}
-                    value={attachment.attachmentType}
+                    value={attachment.type}
                     onChange={(e) =>
-                      updateAttachment(index, "attachmentType", e.target.value)
+                      updateAttachment(index, "type", e.target.value)
                     }
                     className="border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800"
                   >
