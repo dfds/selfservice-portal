@@ -14,8 +14,41 @@ import { useEcrRepositories } from "@/state/remote/queries/ecr";
 import { TrackedLink } from "@/components/Tracking";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { InfoAlert } from "@/components/ui/InfoAlert";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const PAGE_SIZE = 20;
+
+function getPageItems(currentPage, totalPages, compact = false) {
+  if (compact) {
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, i) => i);
+    }
+    const last = totalPages - 1;
+    if (currentPage === 0) return [0, 1, "ellipsis-end", last];
+    if (currentPage === last) return [0, "ellipsis-start", last - 1, last];
+    return [0, "ellipsis-start", currentPage, "ellipsis-end", last];
+  }
+  const SLOTS = 7;
+  if (totalPages <= SLOTS) {
+    return Array.from({ length: totalPages }, (_, i) => i);
+  }
+  const last = totalPages - 1;
+  if (currentPage <= 3) {
+    return [0, 1, 2, 3, 4, "ellipsis-end", last];
+  }
+  if (currentPage >= last - 3) {
+    return [0, "ellipsis-start", last - 4, last - 3, last - 2, last - 1, last];
+  }
+  return [
+    0,
+    "ellipsis-start",
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    "ellipsis-end",
+    last,
+  ];
+}
 
 const asDate = (dateString) => {
   let millis = Date.parse(dateString);
@@ -91,6 +124,7 @@ function Repositories({ onNewRepository }) {
   const [selectedRepository, setSelectedRepository] = useState(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const isMobile = useIsMobile();
 
   const filtered = useMemo(() => {
     const repos = data ?? [];
@@ -201,19 +235,28 @@ function Repositories({ onNewRepository }) {
                 >
                   <ChevronLeft size={12} />
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i)}
-                    className={`w-7 h-7 flex items-center justify-center border rounded-[4px] font-mono text-[11px] transition-colors ${
-                      i === currentPage
-                        ? "bg-[#0e7cc1] border-[#0e7cc1] text-white"
-                        : "bg-white dark:bg-[#1e293b] border-[#d9dcde] dark:border-[#334155] text-[#666666] dark:text-[#94a3b8] hover:bg-[#eef0f1] dark:hover:bg-[#334155]"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                {getPageItems(currentPage, totalPages, isMobile).map((item) =>
+                  typeof item === "string" ? (
+                    <span
+                      key={item}
+                      className="w-5 h-7 flex items-center justify-center font-mono text-[11px] text-[#afafaf]"
+                    >
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={item}
+                      onClick={() => setPage(item)}
+                      className={`w-7 h-7 flex items-center justify-center border rounded-[4px] font-mono text-[11px] transition-colors ${
+                        item === currentPage
+                          ? "bg-[#0e7cc1] border-[#0e7cc1] text-white"
+                          : "bg-white dark:bg-[#1e293b] border-[#d9dcde] dark:border-[#334155] text-[#666666] dark:text-[#94a3b8] hover:bg-[#eef0f1] dark:hover:bg-[#334155]"
+                      }`}
+                    >
+                      {item + 1}
+                    </button>
+                  ),
+                )}
                 <button
                   onClick={() =>
                     setPage((p) => Math.min(totalPages - 1, p + 1))
