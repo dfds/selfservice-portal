@@ -110,8 +110,17 @@ export default function RequirementsScore() {
           />
           <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
             {totalCount > 0
-              ? `${metCount} of ${totalCount} requirements met`
+              ? `${metCount} of ${totalCount} applicable requirements met`
               : `${overallScore.toFixed(1)}% overall score`}
+            {" — Read more about requirements "}
+            <a
+              href="https://wiki.dfds.cloud/en/playbooks/requirements"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-action hover:underline"
+            >
+              here
+            </a>
           </span>
         </div>
       )}
