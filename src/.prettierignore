@@ -1,0 +1,9 @@
+build
+coverage
+.package-lock.json
+*.min.*
+
+charts
+k8s
+*.yml
+*.yaml
