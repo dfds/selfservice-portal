@@ -35,7 +35,7 @@ export function useCapabilitiesCost() {
     queryFn: async () =>
       ssuRequest({
         method: "GET",
-        urlSegments: ["metrics", "my-capabilities-costs"],
+        urlSegments: ["metrics", "all-capabilities-costs"],
         payload: null,
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
