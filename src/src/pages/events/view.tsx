@@ -3,11 +3,8 @@ import Page from "@/components/Page";
 import { useEvent } from "@/state/remote/queries/events";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays } from "lucide-react";
-import {
-  renderDate,
-  getAttachmentIcon,
-  getAttachmentLabel,
-} from "./eventRecord";
+import { getAttachmentIcon, getAttachmentLabel } from "./eventRecord";
+import { formatEventDateTime } from "./eventDateTime";
 
 export function EventView() {
   const { id } = useParams();
@@ -42,7 +39,7 @@ export function EventView() {
         <article className="bg-surface border border-card rounded-[8px] px-6 py-6 animate-fade-up">
           <div className="flex items-center gap-2 mb-2">
             <h1 className="text-[22px] font-semibold text-primary leading-tight">
-              {event.title || event.description || renderDate(event.eventDate)}
+              {event.title || event.description || formatEventDateTime(event.eventDate)}
             </h1>
             {event.type && event.type !== "Demo" && (
               <span className="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shrink-0">
@@ -52,7 +49,7 @@ export function EventView() {
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted mb-6">
             <CalendarDays size={13} />
-            {renderDate(event.eventDate)}
+            {formatEventDateTime(event.eventDate)}
           </div>
 
           {event.description && event.title && (

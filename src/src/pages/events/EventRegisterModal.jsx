@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import styles from "./events.module.css";
 import AppContext from "@/AppContext";
+import { combineLocalDateTimeToUtc } from "./eventDateTime";
 import {
   X,
   Plus,
@@ -28,10 +29,12 @@ export default function EventRegisterModal({ isOpen, onClose }) {
     title: "",
     description: "",
     eventDate: new Date().toISOString().split("T")[0],
+    eventTime: "09:00",
     type: "Demo",
     attachments: [],
   });
   const [descriptionError, setDescriptionError] = useState("");
+  const [timeError, setTimeError] = useState("");
 
   // Reset form data when modal opens
   useEffect(() => {
@@ -40,10 +43,12 @@ export default function EventRegisterModal({ isOpen, onClose }) {
         title: "",
         description: "",
         eventDate: new Date().toISOString().split("T")[0],
+        eventTime: "09:00",
         type: "Demo",
         attachments: [],
       });
       setDescriptionError("");
+      setTimeError("");
     }
   }, [isOpen]);
 
@@ -58,6 +63,12 @@ export default function EventRegisterModal({ isOpen, onClose }) {
 
   const handleEventDateChange = (evt) => {
     setFormData({ ...formData, eventDate: evt.target.value });
+  };
+
+  const handleEventTimeChange = (evt) => {
+    const value = evt.target.value;
+    setFormData({ ...formData, eventTime: value });
+    setTimeError(value ? "" : "Time is required.");
   };
 
   const addAttachment = () => {
@@ -91,13 +102,17 @@ export default function EventRegisterModal({ isOpen, onClose }) {
       setDescriptionError("Description is required.");
       valid = false;
     }
+    if (!formData.eventTime) {
+      setTimeError("Time is required.");
+      valid = false;
+    }
 
     if (!valid) return;
 
     const payload = {
       title: formData.title,
       description: formData.description,
-      eventDate: formData.eventDate,
+      eventDate: combineLocalDateTimeToUtc(formData.eventDate, formData.eventTime),
       type: formData.type,
       attachments: formData.attachments.filter((a) => a.url.trim() !== ""),
     };
@@ -156,15 +171,31 @@ export default function EventRegisterModal({ isOpen, onClose }) {
               ))}
             </select>
           </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="register-event-date">Event Date</Label>
-            <input
-              id="register-event-date"
-              type="date"
-              onChange={handleEventDateChange}
-              value={formData.eventDate}
-              className={`${styles.recordingDateInput} border rounded px-3 py-2 text-sm`}
-            />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-1 flex-1">
+              <Label htmlFor="register-event-date">Event Date</Label>
+              <input
+                id="register-event-date"
+                type="date"
+                onChange={handleEventDateChange}
+                value={formData.eventDate}
+                className={`${styles.recordingDateInput} border rounded px-3 py-2 text-sm`}
+              />
+            </div>
+            <div className="flex flex-col gap-1 flex-1">
+              <Label htmlFor="register-event-time">Event Time</Label>
+              <input
+                id="register-event-time"
+                type="time"
+                onChange={handleEventTimeChange}
+                value={formData.eventTime}
+                required
+                className={`${styles.recordingDateInput} border rounded px-3 py-2 text-sm`}
+              />
+              {timeError && (
+                <p className="text-xs text-red-500">{timeError}</p>
+              )}
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">

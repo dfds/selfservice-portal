@@ -1,9 +1,9 @@
 import React from "react";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { useUpcomingEvents } from "@/state/remote/queries/events";
 import { SkeletonNewsItem } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
+import { formatEventDateTime } from "@/pages/events/eventDateTime";
 
 const EVENT_TYPE_LABELS = {
   demo: "Demo",
@@ -20,7 +20,6 @@ const EVENT_TYPE_COLORS = {
 };
 
 function EventItem({ event, index = 0, dimmed = false }) {
-  const date = new Date(event.eventDate);
   const colors = EVENT_TYPE_COLORS[event.type] ?? EVENT_TYPE_COLORS.other;
   const label = EVENT_TYPE_LABELS[event.type] ?? "Event";
 
@@ -40,7 +39,7 @@ function EventItem({ event, index = 0, dimmed = false }) {
           {label}
         </span>
         <span className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
-          {format(date, "d MMM yyyy")}
+          {formatEventDateTime(event.eventDate)}
         </span>
       </div>
       <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4]">

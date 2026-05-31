@@ -8,12 +8,7 @@ import {
   Image as ImageIcon,
   Link as LinkIcon,
 } from "lucide-react";
-
-export function renderDate(dateString) {
-  const date = new Date(dateString);
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return date.toLocaleDateString(undefined, options);
-}
+import { formatEventDateTime } from "./eventDateTime";
 
 export function getAttachmentIcon(type) {
   switch (type) {
@@ -89,7 +84,7 @@ export default function EventRecord({
             }}
             className="no-underline text-[14px] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
           >
-            {title || description || renderDate(eventDate)}
+            {title || description || formatEventDateTime(eventDate)}
           </a>
           {type && type !== "Demo" && (
             <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[10px] tracking-[0.04em]">
@@ -103,7 +98,7 @@ export default function EventRecord({
           </p>
         )}
         <div className="font-mono text-[11px] text-muted">
-          {renderDate(eventDate)}
+          {formatEventDateTime(eventDate)}
         </div>
         {attachments.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
@@ -127,7 +122,7 @@ export default function EventRecord({
       {isCloudEngineerEnabled && (
         <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
           <button
-            aria-label={`Edit "${title || renderDate(eventDate)}"`}
+            aria-label={`Edit "${title || formatEventDateTime(eventDate)}"`}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -138,7 +133,7 @@ export default function EventRecord({
             <Pencil size={14} />
           </button>
           <button
-            aria-label={`Delete "${title || renderDate(eventDate)}"`}
+            aria-label={`Delete "${title || formatEventDateTime(eventDate)}"`}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
