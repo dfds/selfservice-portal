@@ -30,11 +30,6 @@ function RelevantNewsItem({ item, index }) {
           {item.body}
         </p>
       )}
-      {item.dueDate && (
-        <div className="mt-[3px] font-mono text-[10px] text-muted tracking-[0.03em]">
-          Due: {new Date(item.dueDate).toLocaleDateString()}
-        </div>
-      )}
     </div>
   );
 }
