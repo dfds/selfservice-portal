@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from "react";
+import React, { useContext, useEffect, useState, useMemo, useRef } from "react";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { Text } from "@/components/ui/Text";
 import { Link } from "react-router-dom";
@@ -263,9 +263,13 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
   );
 }
 
-function CapabilitiesTable({ columns, filteredCapabilities }) {
+function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const { isDark } = useTheme();
+  const [sorting, setSorting] = useState([]);
+  // Keep ref in sync during render so column sortingFns see the latest
+  // direction on the same render that MRT applies it.
+  if (sortingRef) sortingRef.current = sorting;
 
   const {
     bg,
@@ -290,10 +294,12 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       }}
       state={{
         globalFilter: globalFilter,
+        sorting: sorting,
       }}
       onGlobalFilterChange={(value) => {
         setGlobalFilter(value);
       }}
+      onSortingChange={setSorting}
       muiTableHeadCellProps={{
         sx: {
           fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
@@ -417,6 +423,11 @@ export default function CapabilitiesList() {
   const [capabilities, setCapabilities] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
+
+  // Synced with MRT's sorting state inside <CapabilitiesTable> so column
+  // sortingFns can keep "No data" rows pinned to the bottom in both
+  // directions (TanStack v8 otherwise flips the comparator return on desc).
+  const tableSortingRef = useRef([]);
 
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
@@ -651,7 +662,7 @@ export default function CapabilitiesList() {
             header: "Cost (last 30 days)",
             size: 150,
             enableColumnFilterModes: false,
-            sortingFn: (rowA, rowB) => {
+            sortingFn: (rowA, rowB, columnId) => {
               const aCosts = rowA.original.costs ?? [];
               const bCosts = rowB.original.costs ?? [];
               const aAvg =
@@ -663,8 +674,15 @@ export default function CapabilitiesList() {
                   ? bCosts.reduce((s, x) => s + x.pv, 0) / bCosts.length
                   : null;
               if (aAvg == null && bAvg == null) return 0;
-              if (aAvg == null) return 1;
-              if (bAvg == null) return -1;
+              if (aAvg == null || bAvg == null) {
+                // Always send "No data" rows to the bottom. TanStack flips
+                // the comparator return for desc, so pre-invert to cancel.
+                const isDesc =
+                  tableSortingRef.current.find((s) => s.id === columnId)
+                    ?.desc ?? false;
+                const sign = aAvg == null ? 1 : -1;
+                return isDesc ? -sign : sign;
+              }
               return aAvg - bAvg;
             },
             muiTableHeadCellProps: {
@@ -791,6 +809,7 @@ export default function CapabilitiesList() {
               <CapabilitiesTable
                 columns={columns}
                 filteredCapabilities={filteredCapabilities}
+                sortingRef={tableSortingRef}
               />
             </div>
           ))}
