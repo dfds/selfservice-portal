@@ -397,6 +397,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           DFDS Tagging Policy.
         </TrackedLink>
@@ -623,6 +624,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           See DFDS Tagging Policy.
         </TrackedLink>
@@ -770,6 +772,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://internal.hellman.oxygen.dfds.cloud/aicatalogue/"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           AI Catalogue.
         </TrackedLink>
@@ -789,6 +792,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
           }
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           AI guiding practices.
         </TrackedLink>
