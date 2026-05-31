@@ -311,11 +311,11 @@ function ThemeToggle() {
       ref={containerRef}
       role="group"
       aria-label="Color theme"
-      className="relative flex items-center bg-[#dde0e2] dark:bg-[#1e2d3d] rounded-[6px] p-0.5 gap-0.5"
+      className="relative flex items-center bg-[#dde0e2] dark:bg-[#1e2d3d] rounded-[6px] py-0.5 gap-0.5 overflow-hidden"
     >
       {/* Sliding active pill */}
       <div
-        className="absolute top-0.5 bottom-0.5 rounded-[4px] bg-white dark:bg-slate-600 shadow-sm pointer-events-none"
+        className="absolute top-0.5 bottom-0.5 left-0 rounded-[4px] bg-[#002b45]/8 dark:bg-slate-600 shadow-sm pointer-events-none"
         style={{
           width: pill.width || undefined,
           transform: `translateX(${pill.x}px)`,
@@ -333,7 +333,7 @@ function ThemeToggle() {
           aria-pressed={theme === value}
           onClick={() => setTheme(value)}
           className={cn(
-            "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[10px] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10",
+            "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[10px] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
             theme === value
               ? "text-[#002b45] dark:text-white"
               : "text-muted hover:text-secondary",
