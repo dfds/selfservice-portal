@@ -1,4 +1,8 @@
-import { createSsuQuery, createSsuMutation } from "../queryFactory";
+import {
+  createSsuQuery,
+  createSsuMutation,
+  createSsuParamQuery,
+} from "../queryFactory";
 
 export interface NewsItem {
   id: string;
@@ -28,6 +32,11 @@ export const useNews = createSsuQuery<RelevantNewsResponse, NewsItem[]>({
   queryKey: ["news", "list"],
   urlSegments: ["news"],
   select: (data) => data.newsItems,
+});
+
+export const useNewsItem = createSsuParamQuery<string, NewsItem>({
+  queryKey: (id) => ["news", "details", id],
+  urlSegments: (id) => ["news", id],
 });
 
 export const useCreateNews = createSsuMutation<{

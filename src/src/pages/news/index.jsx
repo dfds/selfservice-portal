@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { intlFormatDistance } from "date-fns";
 import Page from "@/components/Page";
 import { Button } from "@/components/ui/button";
@@ -140,10 +141,28 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
     errorMessage: "Failed to update highlight",
   });
 
+  const navigate = useNavigate();
   const timeAgo = intlFormatDistance(new Date(item.createdAt), new Date());
 
   return (
-    <div className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group">
+    <a
+      href={`/news/v/${item.id}`}
+      onClick={(event) => {
+        if (
+          event.defaultPrevented ||
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.altKey ||
+          event.shiftKey
+        ) {
+          return;
+        }
+        event.preventDefault();
+        navigate(`/news/v/${item.id}`);
+      }}
+      className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group no-underline text-inherit hover:bg-surface-muted transition-colors cursor-pointer"
+    >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-[14px] font-semibold text-primary leading-snug">
@@ -176,7 +195,11 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
                 ? `Remove highlight from "${item.title}"`
                 : `Highlight "${item.title}"`
             }
-            onClick={() => toggleHighlight({ id: item.id })}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleHighlight({ id: item.id });
+            }}
             disabled={highlightNews.isPending}
             className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${
               item.isHighlighted
@@ -191,7 +214,11 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
           </button>
           <button
             aria-label={`Delete "${item.title}"`}
-            onClick={() => remove({ id: item.id })}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              remove({ id: item.id });
+            }}
             disabled={deleteNews.isPending}
             className="p-1.5 rounded-[5px] text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-40"
           >
@@ -199,7 +226,7 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted }) {
           </button>
         </div>
       )}
-    </div>
+    </a>
   );
 }
 

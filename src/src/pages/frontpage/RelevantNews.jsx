@@ -9,8 +9,9 @@ function RelevantNewsItem({ item, index }) {
   const timeAgo = intlFormatDistance(new Date(item.createdAt), new Date());
 
   return (
-    <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up${
+    <Link
+      to={`/news/v/${item.id}`}
+      className={`block no-underline text-inherit py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up hover:bg-surface-muted transition-colors${
         item.isHighlighted
           ? " bg-[rgba(237,136,0,0.04)] dark:bg-[rgba(237,136,0,0.04)] rounded-[4px] px-[6px] -mx-[6px]"
           : ""
@@ -30,7 +31,7 @@ function RelevantNewsItem({ item, index }) {
           {item.body}
         </p>
       )}
-    </div>
+    </Link>
   );
 }
 

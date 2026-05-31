@@ -1,4 +1,8 @@
-import { createSsuQuery, createSsuMutation } from "../queryFactory";
+import {
+  createSsuQuery,
+  createSsuMutation,
+  createSsuParamQuery,
+} from "../queryFactory";
 
 export const useEventSignups = createSsuQuery({
   queryKey: ["eventsignups"],
@@ -10,6 +14,11 @@ export const useEvents = createSsuQuery({
   queryKey: ["events"],
   urlSegments: ["events"],
   select: (data: any) => data.events || [],
+});
+
+export const useEvent = createSsuParamQuery<string>({
+  queryKey: (id) => ["events", "details", id],
+  urlSegments: (id) => ["events", id],
 });
 
 export const useFrontpageEvents = createSsuQuery({

@@ -25,8 +25,9 @@ function EventItem({ event, index = 0, dimmed = false }) {
   const label = EVENT_TYPE_LABELS[event.type] ?? "Event";
 
   return (
-    <div
-      className={`py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up ${
+    <Link
+      to={`/events/v/${event.id}`}
+      className={`block no-underline text-inherit py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up hover:bg-surface-muted transition-colors ${
         dimmed ? "opacity-60" : ""
       }`}
       style={{ animationDelay: `${index * 60}ms` }}
@@ -45,7 +46,7 @@ function EventItem({ event, index = 0, dimmed = false }) {
       <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4]">
         {event.title}
       </div>
-    </div>
+    </Link>
   );
 }
 
