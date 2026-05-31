@@ -585,7 +585,7 @@ export default function CompliancePage() {
           {/* Overall Health */}
           <div className="mb-5">
             <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#afafaf] dark:text-[#64748b] mb-3">
-              Overall Health
+              Overall Compliance
             </div>
             {fetchedCount === 0 ? (
               <div className="flex flex-col items-center gap-2 mb-4">
@@ -685,7 +685,7 @@ export default function CompliancePage() {
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-[11px] text-[#4a6278] dark:text-[#94a3b8]">
-                  Compliant
+                  Capabilities compliant
                 </span>
                 <span
                   className="text-[13px] font-bold font-mono"
@@ -758,6 +758,18 @@ export default function CompliancePage() {
               </span>
             )}
           </div>
+          <p className="text-description mt-2">
+            This page shows requirement compliance by cost center. Read more
+            about requirements{" "}
+            <a
+              href="https://wiki.dfds.cloud/en/playbooks/requirements"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-action hover:underline"
+            >
+              here
+            </a>
+          </p>
         </div>
 
         {/* Mobile-only: compact stats + filter chips */}
