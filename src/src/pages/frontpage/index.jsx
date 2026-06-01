@@ -117,6 +117,30 @@ export default function FrontPage() {
 
         <Column>
           <PageSection>
+            <SectionContent title="New developer portal coming soon!">
+              Try out the new developer portal (Beta) already today! Read the
+              full announcement{" "}
+              <TrackedLink href="https://wiki.dfds.cloud/en/announcements/new-developer-portal">
+                here
+              </TrackedLink>
+              .
+              <br />
+              <br />
+              <TrackedLinkButton
+                trackName="FrontpagePreview"
+                href="https://ssu-preview.hellman.oxygen.dfds.cloud/"
+                size="small"
+                variation="primary"
+                className={styles.fullwidthbutton}
+              >
+                Go to new developer portal (Beta)
+              </TrackedLinkButton>
+            </SectionContent>
+          </PageSection>
+
+          <br />
+
+          <PageSection>
             <SectionContent title="Welcome">
               <div id="welcome-content">
                 Hello {name}, and welcome to the Developer Portal.
