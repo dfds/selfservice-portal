@@ -126,41 +126,39 @@ function ArcGauge({ pct, color }: { pct: number; color: string }) {
   const circ = 2 * Math.PI * r;
   const filled = circ * (pct / 100);
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="relative w-24 h-24">
-        <svg width="96" height="96" viewBox="0 0 96 96">
-          <circle
-            cx="48"
-            cy="48"
-            r={r}
-            fill="none"
-            stroke="var(--color-border-card)"
-            strokeWidth="9"
-          />
-          <circle
-            cx="48"
-            cy="48"
-            r={r}
-            fill="none"
-            stroke={color}
-            strokeWidth="9"
-            strokeLinecap="round"
-            strokeDasharray={`${filled} ${circ}`}
-            transform="rotate(-90 48 48)"
-            style={{
-              transition:
-                "stroke-dasharray 0.8s cubic-bezier(0.22,1,0.36,1), stroke 0.4s",
-            }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[22px] font-bold tracking-[-0.03em] text-[#002b45] dark:text-[#e2e8f0]">
-            {pct}%
-          </span>
-        </div>
+    <div className="relative w-24 h-24">
+      <svg width="96" height="96" viewBox="0 0 96 96">
+        <circle
+          cx="48"
+          cy="48"
+          r={r}
+          fill="none"
+          stroke="var(--color-border-card)"
+          strokeWidth="9"
+        />
+        <circle
+          cx="48"
+          cy="48"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="9"
+          strokeLinecap="round"
+          strokeDasharray={`${filled} ${circ}`}
+          transform="rotate(-90 48 48)"
+          style={{
+            transition:
+              "stroke-dasharray 0.8s cubic-bezier(0.22,1,0.36,1), stroke 0.4s",
+          }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-[22px] font-bold tracking-[-0.03em] text-[#002b45] dark:text-[#e2e8f0]">
+          {pct}%
+        </span>
       </div>
-      <span className="text-[11px] text-[#afafaf] dark:text-[#64748b]">
-        compliant
+      <span className="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 whitespace-nowrap text-[11px] text-[#afafaf] dark:text-[#64748b]">
+        compliant capabilities
       </span>
     </div>
   );
@@ -578,198 +576,94 @@ export default function CompliancePage() {
   const gaugeColor = complianceColor(overallPct);
 
   return (
-    <div className="flex min-h-full">
-      {/* ─── Side Panel ──────────────────────────────────────────────── */}
-      <aside className="hidden md:block sticky top-[52px] h-[calc(100dvh-52px)] w-[240px] flex-shrink-0 overflow-y-auto bg-surface border-r border-card">
-        <div className="p-5">
-          {/* Overall Health */}
-          <div className="mb-5">
-            <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#afafaf] dark:text-[#64748b] mb-3">
-              Overall Compliance
+    <div className="min-h-full">
+      {/* ─── Main Content ─────────────────────────────────────────────── */}
+      <div className="min-w-0 p-4 md:p-8 @container">
+        {/* Header */}
+        <div className="mb-6 animate-fade-up flex flex-col @[900px]:flex-row @[900px]:items-start @[900px]:justify-between gap-4 @[900px]:gap-8">
+          <div className="min-w-0 flex-1">
+            <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+              // Cost Centres
             </div>
-            {fetchedCount === 0 ? (
-              <div className="flex flex-col items-center gap-2 mb-4">
-                <Skeleton className="w-24 h-24 rounded-full" />
-                <Skeleton className="h-3 w-[60px]" />
-              </div>
-            ) : (
-              <div className="mb-4">
-                <ArcGauge pct={overallPct} color={gaugeColor} />
-              </div>
-            )}
-
-            {/* Distribution bar */}
-            <div
-              className="h-2 rounded-full overflow-hidden flex mb-2"
-              style={{ background: "var(--color-border-card)" }}
-            >
-              {n > 0 && (
-                <>
-                  <div
-                    className="h-full"
-                    style={{
-                      width: `${(nGreen / n) * 100}%`,
-                      background: "#22c55e",
-                      transition: "width 0.7s cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                  />
-                  <div
-                    className="h-full"
-                    style={{
-                      width: `${(nOrange / n) * 100}%`,
-                      background: "#f59e0b",
-                      transition: "width 0.7s cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                  />
-                  <div
-                    className="h-full"
-                    style={{
-                      width: `${(nRed / n) * 100}%`,
-                      background: "#ef4444",
-                      transition: "width 0.7s cubic-bezier(0.22,1,0.36,1)",
-                    }}
-                  />
-                </>
+            <div className="flex items-center gap-3">
+              <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
+                Compliance
+              </h1>
+              {isFetched && (
+                <span className="relative top-[2px] text-[12px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
+                  {filtered.length}{" "}
+                  {filtered.length === 1 ? "centre" : "centres"}
+                </span>
               )}
             </div>
-
-            {/* Distribution legend */}
-            <div className="flex gap-3 flex-wrap">
-              <div className="flex items-center gap-1.5 text-[10.5px] text-[#4a6278] dark:text-[#94a3b8]">
-                <div
-                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ background: "#22c55e" }}
-                />
-                <span>{nGreen} good</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] text-[#4a6278] dark:text-[#94a3b8]">
-                <div
-                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ background: "#f59e0b" }}
-                />
-                <span>{nOrange} warn</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] text-[#4a6278] dark:text-[#94a3b8]">
-                <div
-                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ background: "#ef4444" }}
-                />
-                <span>{nRed} crit</span>
-              </div>
-            </div>
+            <p className="text-description mt-2">
+              This page shows requirement compliance by cost center. Read more
+              about requirements{" "}
+              <a
+                href="https://wiki.dfds.cloud/en/playbooks/requirements"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-action hover:underline"
+              >
+                here
+              </a>
+            </p>
           </div>
 
-          <div className="border-t border-card mb-5" />
-
-          {/* Summary */}
-          <div className="mb-5">
-            <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#afafaf] dark:text-[#64748b] mb-3">
-              Summary
+          {/* Overall Compliance + Summary panel — horizontal */}
+          <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-9">
+            <div className="-ml-3 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
+              // Overall Compliance
             </div>
-            <div className="flex flex-col gap-2.5">
-              <div className="flex justify-between items-baseline">
-                <span className="text-[11px] text-[#4a6278] dark:text-[#94a3b8]">
-                  Cost Centres
-                </span>
-                <span className="text-[13px] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono">
-                  {isFetched ? n : "—"}
-                </span>
-              </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-[11px] text-[#4a6278] dark:text-[#94a3b8]">
-                  Total Capabilities
-                </span>
-                <span className="text-[13px] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono">
-                  {fetchedCount > 0 ? totalCaps : "—"}
-                </span>
-              </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-[11px] text-[#4a6278] dark:text-[#94a3b8]">
-                  Capabilities compliant
-                </span>
-                <span
-                  className="text-[13px] font-bold font-mono"
-                  style={{ color: fetchedCount > 0 ? "#16a34a" : undefined }}
-                >
-                  {fetchedCount > 0 ? totalCompliant : "—"}
-                </span>
-              </div>
-              {untaggedCount > 0 && (
-                <div className="flex justify-between items-baseline">
-                  <span className="text-[11px] text-[#4a6278] dark:text-[#94a3b8]">
-                    Untagged
-                  </span>
-                  <span className="text-[13px] font-bold text-[#afafaf] font-mono">
-                    {untaggedCount}
-                  </span>
+            <div className="flex items-center gap-5">
+              {/* Gauge */}
+              {fetchedCount === 0 ? (
+                <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                  <Skeleton className="w-24 h-24 rounded-full" />
+                  <Skeleton className="h-3 w-[60px]" />
+                </div>
+              ) : (
+                <div className="flex-shrink-0">
+                  <ArcGauge pct={overallPct} color={gaugeColor} />
                 </div>
               )}
+
+              {/* Summary stats — horizontal cells */}
+              <div className="flex items-center gap-5">
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Total Caps
+                  </span>
+                  <span className="text-[18px] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
+                    {fetchedCount > 0 ? totalCaps : "—"}
+                  </span>
+                </div>
+                {untaggedCount > 0 && (
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                      Untagged
+                    </span>
+                    <span className="text-[18px] font-bold text-[#afafaf] font-mono leading-none">
+                      {untaggedCount}
+                    </span>
+                  </div>
+                )}
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Compliant
+                  </span>
+                  <span
+                    className="text-[18px] font-bold font-mono leading-none"
+                    style={{
+                      color: fetchedCount > 0 ? "#16a34a" : undefined,
+                    }}
+                  >
+                    {fetchedCount > 0 ? totalCompliant : "—"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="border-t border-card mb-5" />
-
-          {/* Filter by Status */}
-          <div>
-            <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#afafaf] dark:text-[#64748b] mb-2">
-              Filter by Status
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <FilterCheckbox
-                label="Compliant ≥80%"
-                dotColor="#22c55e"
-                count={nGreen}
-                checked={activeFilters.has("green")}
-                onToggle={() => toggleFilter("green")}
-              />
-              <FilterCheckbox
-                label="Warning 50–79%"
-                dotColor="#f59e0b"
-                count={nOrange}
-                checked={activeFilters.has("orange")}
-                onToggle={() => toggleFilter("orange")}
-              />
-              <FilterCheckbox
-                label="Critical <50%"
-                dotColor="#ef4444"
-                count={nRed}
-                checked={activeFilters.has("red")}
-                onToggle={() => toggleFilter("red")}
-              />
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* ─── Main Content ─────────────────────────────────────────────── */}
-      <div className="flex-1 min-w-0 p-4 md:p-8">
-        {/* Header */}
-        <div className="mb-6 animate-fade-up">
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Cost Centres
-          </div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
-              Compliance
-            </h1>
-            {isFetched && (
-              <span className="text-[12px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
-                {filtered.length} {filtered.length === 1 ? "centre" : "centres"}
-              </span>
-            )}
-          </div>
-          <p className="text-description mt-2">
-            This page shows requirement compliance by cost center. Read more
-            about requirements{" "}
-            <a
-              href="https://wiki.dfds.cloud/en/playbooks/requirements"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-action hover:underline"
-            >
-              here
-            </a>
-          </p>
         </div>
 
         {/* Mobile-only: compact stats + filter chips */}
