@@ -48,7 +48,10 @@ const COMPETENCE_ENGINEERING_BUSINESS_CAPABILITIES = [
   },
   { label: "Research & Development", value: "research-development" },
   { label: "Compliance, Risk & Audit", value: "compliance-risk-audit" },
-  { label: "Container and Cloud platform Security & Access Governance", value: "container-cloud-platform-security-access-governance" },
+  {
+    label: "Container and Cloud platform Security & Access Governance",
+    value: "container-cloud-platform-security-access-governance",
+  },
 ];
 
 const FERRY_BUSINESS_CAPABILITIES = [

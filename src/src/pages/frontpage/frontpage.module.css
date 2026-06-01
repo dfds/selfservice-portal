@@ -23,3 +23,8 @@
 .chatinput {
   width: 100%;
 }
+
+.fullwidthbutton {
+  width: 100%;
+  justify-content: center;
+}
