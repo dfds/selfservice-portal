@@ -44,9 +44,21 @@ export const useCostCentreCompliance = createSsuParamQuery<string | null>({
   staleTime: 60000,
 });
 
-export const useCostCentreComplianceDetails = createSsuParamQuery<string | null>({
-  queryKey: (costCentre) => ["compliance", "cost-centres", costCentre, "details"],
-  urlSegments: (costCentre) => ["compliance", "cost-centres", costCentre!, "details"],
+export const useCostCentreComplianceDetails = createSsuParamQuery<
+  string | null
+>({
+  queryKey: (costCentre) => [
+    "compliance",
+    "cost-centres",
+    costCentre,
+    "details",
+  ],
+  urlSegments: (costCentre) => [
+    "compliance",
+    "cost-centres",
+    costCentre!,
+    "details",
+  ],
   enabled: (cc) => !!cc,
   staleTime: 60000,
 });

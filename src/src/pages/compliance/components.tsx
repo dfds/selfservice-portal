@@ -70,7 +70,8 @@ export function CategoryBreakdownList({
     <div className={className}>
       {categories.map((cat, i) => {
         const total = cat.compliantCount + cat.nonCompliantCount;
-        const pct = total > 0 ? Math.round((cat.compliantCount / total) * 100) : 0;
+        const pct =
+          total > 0 ? Math.round((cat.compliantCount / total) * 100) : 0;
         const color = complianceColor(pct);
         return (
           <div

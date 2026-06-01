@@ -1,19 +1,28 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Plus, X } from "lucide-react";
-import { MaterialReactTable, type MRT_ColumnDef, type MRT_SortingState } from "material-react-table";
-import { Skeleton, SkeletonComplianceCapabilityRow } from "@/components/ui/skeleton";
+import { ArrowLeft, ChevronDown, Plus, X } from "lucide-react";
+import {
+  MaterialReactTable,
+  type MRT_ColumnDef,
+  type MRT_SortingState,
+} from "material-react-table";
+import {
+  Skeleton,
+  SkeletonComplianceCapabilityRow,
+} from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useCostCentreComplianceDetails } from "@/state/remote/queries/capabilities";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
-import {
-  getCostCentreLabel,
-  complianceColor,
-  parseMetadata,
-} from "./utils";
+import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -48,13 +57,19 @@ type CostCentreDetailsData = {
   compliantCount: number;
   nonCompliantCount: number;
   unknownCount: number;
-  categories: { categoryName: string; compliantCount: number; nonCompliantCount: number }[];
+  categories: {
+    categoryName: string;
+    compliantCount: number;
+    nonCompliantCount: number;
+  }[];
   capabilities: CapabilityCompliance[];
 };
 
 type StatusFilter = "all" | "Compliant" | "NonCompliant" | "Unknown";
 
 type MetadataFilter = { key: string; value: string };
+
+type MetadataMode = "and" | "or";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -95,7 +110,10 @@ function statusToken(s: string): string {
   return "unknown";
 }
 
-function findCategory(cap: CapabilityCompliance, name: string): ComplianceCategory | undefined {
+function findCategory(
+  cap: CapabilityCompliance,
+  name: string,
+): ComplianceCategory | undefined {
   return cap.categories.find((c) => c.categoryName === name);
 }
 
@@ -118,7 +136,9 @@ function categoryRatio(
   }
 
   if (cat.categoryName === "External Secrets") {
-    const total = Number(items.find((i) => i.name === "secrets")?.status ?? "0");
+    const total = Number(
+      items.find((i) => i.name === "secrets")?.status ?? "0",
+    );
     const compliant = Number(
       items.find((i) => i.name === "external_secrets")?.status ?? "0",
     );
@@ -126,7 +146,9 @@ function categoryRatio(
   }
 
   const compliantItem = items.find((i) => i.name.startsWith("compliant_"));
-  const nonCompliantItem = items.find((i) => i.name.startsWith("non_compliant_"));
+  const nonCompliantItem = items.find((i) =>
+    i.name.startsWith("non_compliant_"),
+  );
   const compliant = Number(compliantItem?.status ?? "0");
   const nonCompliant = Number(nonCompliantItem?.status ?? "0");
   return { compliant, total: compliant + nonCompliant };
@@ -144,6 +166,112 @@ function overallPctFromCategories(cap: CapabilityCompliance): number {
   if (evaluated.length === 0) return 0;
   const compliant = evaluated.filter((c) => c.status === "Compliant").length;
   return Math.round((compliant / evaluated.length) * 100);
+}
+
+// ─── Metadata combobox ───────────────────────────────────────────────────────
+// Free-text input + click-to-open suggestion dropdown. Native <datalist> only
+// surfaces options while the user is typing; this gives a discoverable list on
+// focus/chevron click and still accepts arbitrary typed input.
+
+function MetadataCombobox({
+  value,
+  onChange,
+  options,
+  placeholder,
+  ariaLabel,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  options: string[];
+  placeholder: string;
+  ariaLabel: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [open]);
+
+  const filtered = useMemo(() => {
+    const q = value.trim().toLowerCase();
+    if (!q) return options;
+    return options.filter((o) => o.toLowerCase().includes(q));
+  }, [options, value]);
+
+  return (
+    <div ref={containerRef} className="relative flex-1 min-w-[140px]">
+      <input
+        ref={inputRef}
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setOpen(false);
+        }}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
+        autoComplete="off"
+        className="w-full h-[28px] pl-2 pr-7 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+      />
+      <button
+        type="button"
+        onMouseDown={(e) => {
+          // Prevent input blur so toggling stays predictable while focused.
+          e.preventDefault();
+        }}
+        onClick={() => {
+          setOpen((prev) => !prev);
+          inputRef.current?.focus();
+        }}
+        aria-label={`Toggle ${ariaLabel} suggestions`}
+        className="absolute right-0 top-0 h-[28px] w-7 flex items-center justify-center text-muted hover:text-action transition-colors"
+      >
+        <ChevronDown
+          size={12}
+          strokeWidth={2}
+          className={cn("transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open && filtered.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 border border-card rounded-[6px] bg-surface shadow-card z-50 overflow-hidden max-h-52 overflow-y-auto">
+          {filtered.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                onChange(opt);
+                setOpen(false);
+              }}
+              className={cn(
+                "w-full text-left px-2.5 py-1 font-mono text-[12px] hover:bg-surface-muted transition-colors border-0 bg-transparent",
+                opt === value
+                  ? "text-action"
+                  : "text-[#002b45] dark:text-[#e2e8f0]",
+              )}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── URL state codec ─────────────────────────────────────────────────────────
@@ -165,6 +293,10 @@ function readMetadataFilters(p: URLSearchParams): MetadataFilter[] {
   });
 }
 
+function readMetadataMode(p: URLSearchParams): MetadataMode {
+  return p.get("tagmode") === "or" ? "or" : "and";
+}
+
 function readSorting(p: URLSearchParams): MRT_SortingState {
   const s = p.get("sort");
   if (!s) return [];
@@ -178,6 +310,7 @@ function writeUrl(
   patch: {
     status?: StatusFilter;
     tags?: MetadataFilter[];
+    tagMode?: MetadataMode;
     sorting?: MRT_SortingState;
   },
 ): URLSearchParams {
@@ -193,6 +326,11 @@ function writeUrl(
       // query time but the row needs to remain visible.
       next.append("tag", f.value ? `${f.key}=${f.value}` : f.key);
     }
+  }
+  if (patch.tagMode !== undefined) {
+    // "and" is the default — omit it from the URL.
+    if (patch.tagMode === "or") next.set("tagmode", "or");
+    else next.delete("tagmode");
   }
   if (patch.sorting !== undefined) {
     if (patch.sorting.length === 0) next.delete("sort");
@@ -215,9 +353,16 @@ export default function CostCentreComplianceDetailPage() {
   };
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const statusFilter = useMemo(() => readStatusFilter(searchParams), [searchParams]);
+  const statusFilter = useMemo(
+    () => readStatusFilter(searchParams),
+    [searchParams],
+  );
   const metadataFilters = useMemo(
     () => readMetadataFilters(searchParams),
+    [searchParams],
+  );
+  const metadataMode = useMemo(
+    () => readMetadataMode(searchParams),
     [searchParams],
   );
   const sorting = useMemo(() => readSorting(searchParams), [searchParams]);
@@ -237,10 +382,17 @@ export default function CostCentreComplianceDetailPage() {
     [updateUrl],
   );
 
+  const setMetadataMode = useCallback(
+    (mode: MetadataMode) => updateUrl({ tagMode: mode }),
+    [updateUrl],
+  );
+
   // MRT can call onSortingChange with either a value or an updater function.
   // Resolve against the URL-derived current value before writing.
   const setSorting = useCallback(
-    (updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState)) => {
+    (
+      updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState),
+    ) => {
       const next =
         typeof updater === "function"
           ? (updater as (old: MRT_SortingState) => MRT_SortingState)(sorting)
@@ -259,42 +411,67 @@ export default function CostCentreComplianceDetailPage() {
     return out;
   }, [data]);
 
-  // Aggregate every metadata key seen across the cost centre's capabilities for the key combobox.
-  const metadataKeySuggestions = useMemo(() => {
-    const keys = new Set<string>();
+  // Aggregate every metadata key + per-key value set seen across the cost centre's
+  // capabilities. Drives both the key combobox and the per-key value suggestions.
+  const metadataIndex = useMemo(() => {
+    const valuesByKey = new Map<string, Set<string>>();
     metadataByCap.forEach((meta) => {
-      Object.keys(meta).forEach((k) => keys.add(k));
+      for (const [k, v] of Object.entries(meta)) {
+        let set = valuesByKey.get(k);
+        if (!set) {
+          set = new Set();
+          valuesByKey.set(k, set);
+        }
+        set.add(v);
+      }
     });
-    return Array.from(keys).sort();
+    const keys = Array.from(valuesByKey.keys()).sort();
+    const values: Record<string, string[]> = {};
+    for (const k of keys) values[k] = Array.from(valuesByKey.get(k)!).sort();
+    return { keys, values };
   }, [metadataByCap]);
 
   // Metadata-filtered set: drives the stats panel above.
+  // AND: every non-empty filter must match. OR: at least one must match.
+  // Empty rows (no key) are skipped in either mode — they're mid-edit, not active.
   const metadataFilteredCapabilities = useMemo<CapabilityCompliance[]>(() => {
     const all = data?.capabilities ?? [];
+    const active = metadataFilters.filter((f) => f.key);
+    if (active.length === 0) return all;
     return all.filter((cap) => {
       const meta = metadataByCap.get(cap.capabilityId) ?? {};
-      for (const f of metadataFilters) {
-        if (!f.key) continue;
+      const matches = (f: MetadataFilter) => {
         const v = meta[f.key];
         if (v === undefined) return false;
         if (f.value && v !== f.value) return false;
-      }
-      return true;
+        return true;
+      };
+      return metadataMode === "or"
+        ? active.some(matches)
+        : active.every(matches);
     });
-  }, [data, metadataFilters, metadataByCap]);
+  }, [data, metadataFilters, metadataMode, metadataByCap]);
 
   // Table set: metadata + status. Status filter is table-only.
   const filteredCapabilities = useMemo<CapabilityCompliance[]>(() => {
     if (statusFilter === "all") return metadataFilteredCapabilities;
-    return metadataFilteredCapabilities.filter((c) => c.overallStatus === statusFilter);
+    return metadataFilteredCapabilities.filter(
+      (c) => c.overallStatus === statusFilter,
+    );
   }, [metadataFilteredCapabilities, statusFilter]);
 
   // Aggregates ignore the status filter on purpose — only the matrix narrows.
   const aggregates = useMemo(() => {
     const total = metadataFilteredCapabilities.length;
-    const compliant = metadataFilteredCapabilities.filter((c) => c.overallStatus === "Compliant").length;
-    const nonCompliant = metadataFilteredCapabilities.filter((c) => c.overallStatus === "NonCompliant").length;
-    const unknown = metadataFilteredCapabilities.filter((c) => c.overallStatus === "Unknown").length;
+    const compliant = metadataFilteredCapabilities.filter(
+      (c) => c.overallStatus === "Compliant",
+    ).length;
+    const nonCompliant = metadataFilteredCapabilities.filter(
+      (c) => c.overallStatus === "NonCompliant",
+    ).length;
+    const unknown = metadataFilteredCapabilities.filter(
+      (c) => c.overallStatus === "Unknown",
+    ).length;
     const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
     const categories = CATEGORY_COLUMNS.map(({ key }) => {
       let c = 0;
@@ -315,7 +492,9 @@ export default function CostCentreComplianceDetailPage() {
 
   const updateFilter = (index: number, patch: Partial<MetadataFilter>) =>
     updateUrl({
-      tags: metadataFilters.map((f, i) => (i === index ? { ...f, ...patch } : f)),
+      tags: metadataFilters.map((f, i) =>
+        i === index ? { ...f, ...patch } : f,
+      ),
     });
 
   const removeFilter = (index: number) =>
@@ -340,7 +519,11 @@ export default function CostCentreComplianceDetailPage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
-              {isFetched ? costCentreLabel : <Skeleton className="h-8 w-[260px]" />}
+              {isFetched ? (
+                costCentreLabel
+              ) : (
+                <Skeleton className="h-8 w-[260px]" />
+              )}
             </h1>
             {costCentreId && (
               <span className="font-mono text-[11px] text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
@@ -349,7 +532,8 @@ export default function CostCentreComplianceDetailPage() {
             )}
             {isFetched && data && (
               <span className="text-[12px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
-                {data.totalCapabilities} {data.totalCapabilities === 1 ? "capability" : "capabilities"}
+                {data.totalCapabilities}{" "}
+                {data.totalCapabilities === 1 ? "capability" : "capabilities"}
               </span>
             )}
           </div>
@@ -360,13 +544,19 @@ export default function CostCentreComplianceDetailPage() {
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex-shrink-0">
               {isFetched ? (
-                <ArcGauge pct={aggregates.pct} color={complianceColor(aggregates.pct)} />
+                <ArcGauge
+                  pct={aggregates.pct}
+                  color={complianceColor(aggregates.pct)}
+                />
               ) : (
                 <Skeleton className="w-24 h-24 rounded-full" />
               )}
             </div>
             <div className="flex items-center gap-5 flex-shrink-0">
-              <SummaryCell label="Total" value={isFetched ? aggregates.total : null} />
+              <SummaryCell
+                label="Total"
+                value={isFetched ? aggregates.total : null}
+              />
               <SummaryCell
                 label="Compliant"
                 value={isFetched ? aggregates.compliant : null}
@@ -399,13 +589,17 @@ export default function CostCentreComplianceDetailPage() {
           </div>
           {metadataFilters.length > 0 && isFetched && (
             <div className="text-[10.5px] font-mono text-muted mt-4">
-              Showing aggregates for the metadata-filtered set ({aggregates.total} of {data?.totalCapabilities}).
+              Showing aggregates for the metadata-filtered set (
+              {aggregates.total} of {data?.totalCapabilities}).
             </div>
           )}
         </div>
 
         {/* Filter bar */}
-        <div className="mb-4 flex flex-col gap-3 animate-fade-up animate-stagger-2">
+        {/* relative + z-30 lifts this whole block (and any open combobox
+            dropdown inside it) above the matrix below, whose entrance animation
+            establishes a sibling stacking context. */}
+        <div className="relative z-30 mb-4 flex flex-col gap-3 animate-fade-up animate-stagger-2">
           <div className="flex items-center gap-1.5 flex-wrap">
             {STATUS_FILTERS.map(({ key, label }) => (
               <button
@@ -435,30 +629,63 @@ export default function CostCentreComplianceDetailPage() {
 
           {metadataFilters.length > 0 && (
             <div className="flex flex-col gap-2">
-              <datalist id="cost-centre-metadata-keys">
-                {metadataKeySuggestions.map((k) => (
-                  <option key={k} value={k} />
-                ))}
-              </datalist>
+              {metadataFilters.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted">
+                    match
+                  </span>
+                  <div
+                    role="radiogroup"
+                    aria-label="Combine metadata filters with AND or OR"
+                    className="inline-flex border border-[#d9dcde] dark:border-[#334155] rounded-full overflow-hidden h-[24px]"
+                  >
+                    {(["and", "or"] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        role="radio"
+                        aria-checked={metadataMode === mode}
+                        onClick={() => setMetadataMode(mode)}
+                        className={cn(
+                          "px-2.5 text-[10px] font-mono font-semibold uppercase tracking-[0.1em] transition-colors",
+                          metadataMode === mode
+                            ? "bg-[#0e7cc1] dark:bg-[#60a5fa] text-white"
+                            : "bg-white dark:bg-[#0f172a] text-[#4a6278] dark:text-[#94a3b8] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
+                        )}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-[10.5px] font-mono text-muted">
+                    {metadataMode === "and"
+                      ? "all tags must match"
+                      : "any tag may match"}
+                  </span>
+                </div>
+              )}
               {metadataFilters.map((f, i) => (
                 <div
                   key={i}
                   className="flex items-center gap-2 bg-surface-muted/40 border border-card rounded-[6px] px-2.5 py-1.5"
                 >
-                  <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted">tag</span>
-                  <input
-                    list="cost-centre-metadata-keys"
+                  <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted w-[28px]">
+                    {i === 0 ? "tag" : metadataMode === "or" ? "or" : "and"}
+                  </span>
+                  <MetadataCombobox
                     value={f.key}
-                    onChange={(e) => updateFilter(i, { key: e.target.value })}
+                    onChange={(next) => updateFilter(i, { key: next })}
+                    options={metadataIndex.keys}
                     placeholder="key (e.g. dfds.env)"
-                    className="flex-1 min-w-[140px] h-[28px] px-2 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+                    ariaLabel="Metadata key"
                   />
                   <span className="text-muted text-[12px]">=</span>
-                  <input
+                  <MetadataCombobox
                     value={f.value}
-                    onChange={(e) => updateFilter(i, { value: e.target.value })}
+                    onChange={(next) => updateFilter(i, { value: next })}
+                    options={f.key ? metadataIndex.values[f.key] ?? [] : []}
                     placeholder="value (blank = any)"
-                    className="flex-1 min-w-[140px] h-[28px] px-2 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+                    ariaLabel="Metadata value"
                   />
                   <button
                     type="button"
@@ -546,8 +773,15 @@ function CapabilityMatrix({
   ) => void;
 }) {
   const { isDark } = useTheme();
-  const { bg, bgMuted, textPrimary, textMuted, borderColor, inputBorder, inputText } =
-    useMuiTableColors();
+  const {
+    bg,
+    bgMuted,
+    textPrimary,
+    textMuted,
+    borderColor,
+    inputBorder,
+    inputText,
+  } = useMuiTableColors();
 
   // Mirror sorting into a ref so sortingFns can pin "no data" rows to the
   // bottom in both directions (TanStack v8 otherwise flips the comparator's
@@ -564,7 +798,8 @@ function CapabilityMatrix({
   ): number => {
     if (aVal == null && bVal == null) return 0;
     if (aVal != null && bVal != null) return aVal - bVal;
-    const isDesc = sortingRef.current.find((s) => s.id === columnId)?.desc ?? false;
+    const isDesc =
+      sortingRef.current.find((s) => s.id === columnId)?.desc ?? false;
     const sign = aVal == null ? 1 : -1;
     return isDesc ? -sign : sign;
   };
@@ -623,7 +858,9 @@ function CapabilityMatrix({
         header: "Overall",
         size: 100,
         accessorFn: (row) =>
-          row.overallStatus === "Unknown" ? null : overallPctFromCategories(row),
+          row.overallStatus === "Unknown"
+            ? null
+            : overallPctFromCategories(row),
         sortingFn: (rowA, rowB, columnId) =>
           pinNullsLast(
             columnId,
@@ -635,7 +872,8 @@ function CapabilityMatrix({
         Cell: ({ row }) => {
           const cap = row.original;
           const pct = overallPctFromCategories(cap);
-          const color = cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
+          const color =
+            cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
           return (
             <span
               className="font-mono text-[13px] font-semibold"
@@ -821,10 +1059,15 @@ function ExpandedDetail({
           ) : (
             <div className="flex flex-col gap-1 rounded-[6px] border border-card bg-surface px-3 py-2">
               {metadataEntries.map(([k, v]) => (
-                <div key={k} className="flex items-center gap-2 text-[11px] font-mono">
+                <div
+                  key={k}
+                  className="flex items-center gap-2 text-[11px] font-mono"
+                >
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
-                  <span className="text-primary truncate flex-1">{v || "—"}</span>
+                  <span className="text-primary truncate flex-1">
+                    {v || "—"}
+                  </span>
                 </div>
               ))}
             </div>
@@ -837,12 +1080,17 @@ function ExpandedDetail({
 
 // ─── Mobile card list ────────────────────────────────────────────────────────
 
-function MobileCapabilityList({ capabilities }: { capabilities: CapabilityCompliance[] }) {
+function MobileCapabilityList({
+  capabilities,
+}: {
+  capabilities: CapabilityCompliance[];
+}) {
   return (
     <div className="flex flex-col gap-2">
       {capabilities.map((cap) => {
         const pct = overallPctFromCategories(cap);
-        const overallColor = cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
+        const overallColor =
+          cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
         return (
           <div
             key={cap.capabilityId}
