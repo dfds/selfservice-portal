@@ -156,7 +156,8 @@ export default function EmailCampaignsPage() {
             Email Campaigns
           </h1>
           <p className="text-[13px] text-muted mt-1">
-            Create and manage email campaigns to capability members.
+            Create and manage email campaigns to capability members or
+            individual users.
           </p>
         </div>
         <Button
@@ -378,6 +379,16 @@ function CampaignRow({
           )}
         </span>
       </div>
+      <span
+        className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border border-card text-secondary bg-surface-subtle"
+        title={
+          campaign.targetType === "User"
+            ? "Targets individual users"
+            : "Targets capabilities"
+        }
+      >
+        {campaign.targetType === "User" ? "Users" : "Capabilities"}
+      </span>
       <CampaignStatusBadge status={campaign.status} />
       <div className="flex gap-1">
         {campaign.status === "Draft" && (

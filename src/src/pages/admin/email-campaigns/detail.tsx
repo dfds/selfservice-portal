@@ -402,7 +402,9 @@ export default function EmailCampaignDetail() {
                       {r.email}
                     </span>
                     <span className="text-[10px] text-muted font-mono">
-                      {r.capabilityName}
+                      {r.capabilityName || (
+                        <span className="italic">User-targeted</span>
+                      )}
                     </span>
                   </div>
                   <Badge
