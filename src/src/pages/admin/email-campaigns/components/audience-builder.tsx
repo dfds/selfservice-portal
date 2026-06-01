@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useResolveAudience } from "@/state/remote/queries/emailCampaigns";
+import { useGetRoles } from "@/state/remote/queries/rbac";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ChevronDown, ChevronRight, Plus, Trash2, Users } from "lucide-react";
+import { ENUM_COSTCENTER } from "@/constants/tagConstants";
 
 interface FilterCondition {
   field: string;
@@ -16,17 +18,21 @@ interface FilterCondition {
 interface AudienceConfig {
   mode: "all" | "specific" | "filter";
   capabilityIds?: string[];
+  userEmails?: string[];
   filters?: FilterCondition[];
 }
+
+type TargetType = "Capability" | "User";
 
 interface AudienceBuilderProps {
   value: AudienceConfig;
   onChange: (value: AudienceConfig) => void;
+  targetType?: TargetType;
   recipientFilter?: string;
   onRecipientFilterChange?: (v: string) => void;
 }
 
-const FIELD_OPTIONS = [
+const CAPABILITY_FIELD_OPTIONS = [
   { value: "status", label: "Status" },
   { value: "name", label: "Capability Name" },
   { value: "memberCount", label: "Member Count" },
@@ -43,8 +49,22 @@ const FIELD_OPTIONS = [
   { value: "cost", label: "Monthly Cost (USD)" },
 ];
 
+const USER_FIELD_OPTIONS = [
+  { value: "email", label: "Email" },
+  { value: "displayName", label: "Display Name" },
+  { value: "lastSeen", label: "Last Seen" },
+  { value: "capabilityCostCentre", label: "Capability Cost Centre" },
+];
+
 const NUMERIC_OPS = [
   { value: "eq", label: "=" },
+  { value: "gte", label: ">=" },
+  { value: "lte", label: "<=" },
+  { value: "gt", label: ">" },
+  { value: "lt", label: "<" },
+];
+
+const DATE_OPS = [
   { value: "gte", label: ">=" },
   { value: "lte", label: "<=" },
   { value: "gt", label: ">" },
@@ -61,12 +81,7 @@ const OPERATOR_OPTIONS: Record<string, { value: string; label: string }[]> = {
     { value: "contains", label: "contains" },
   ],
   memberCount: NUMERIC_OPS,
-  createdAt: [
-    { value: "gte", label: ">=" },
-    { value: "lte", label: "<=" },
-    { value: "gt", label: ">" },
-    { value: "lt", label: "<" },
-  ],
+  createdAt: DATE_OPS,
   requirementScore: NUMERIC_OPS,
   metadataKeyExists: [{ value: "eq", label: "equals" }],
   metadataKeyValue: [{ value: "eq", label: "=" }],
@@ -74,14 +89,33 @@ const OPERATOR_OPTIONS: Record<string, { value: string; label: string }[]> = {
   azureResourceGroupCount: NUMERIC_OPS,
   activeMembershipApplicationCount: NUMERIC_OPS,
   cost: NUMERIC_OPS,
+  // User-targeted fields
+  email: [
+    { value: "eq", label: "equals" },
+    { value: "contains", label: "contains" },
+  ],
+  displayName: [
+    { value: "eq", label: "equals" },
+    { value: "contains", label: "contains" },
+  ],
+  lastSeen: DATE_OPS,
+  capabilityCostCentre: [{ value: "in", label: "is one of" }],
 };
 
 export function AudienceBuilder({
   value,
   onChange,
+  targetType = "Capability",
   recipientFilter,
   onRecipientFilterChange,
 }: AudienceBuilderProps) {
+  const isUserTarget = targetType === "User";
+  const FIELD_OPTIONS = isUserTarget
+    ? USER_FIELD_OPTIONS
+    : CAPABILITY_FIELD_OPTIONS;
+  const defaultField = isUserTarget ? "email" : "status";
+  const defaultOperator = isUserTarget ? "contains" : "eq";
+
   const resolveAudience = useResolveAudience();
   const [resolved, setResolved] = useState<any>(null);
   const [expandedCapabilities, setExpandedCapabilities] = useState<Set<string>>(
@@ -90,10 +124,17 @@ export function AudienceBuilder({
   const [capIdsRaw, setCapIdsRaw] = useState(() =>
     (value.capabilityIds || []).join(", "),
   );
+  const [emailsRaw, setEmailsRaw] = useState(() =>
+    (value.userEmails || []).join(", "),
+  );
 
   useEffect(() => {
     setCapIdsRaw((value.capabilityIds || []).join(", "));
   }, [(value.capabilityIds || []).join(",")]);
+
+  useEffect(() => {
+    setEmailsRaw((value.userEmails || []).join(", "));
+  }, [(value.userEmails || []).join(",")]);
 
   const toggleCapability = (id: string) => {
     setExpandedCapabilities((prev) => {
@@ -106,7 +147,7 @@ export function AudienceBuilder({
   const addFilter = () => {
     const filters = [
       ...(value.filters || []),
-      { field: "status", operator: "eq", value: "" },
+      { field: defaultField, operator: defaultOperator, value: "" },
     ];
     onChange({ ...value, filters });
   };
@@ -129,6 +170,7 @@ export function AudienceBuilder({
         payload: {
           audienceJson: JSON.stringify(value),
           recipientFilter: recipientFilter || undefined,
+          targetType,
         },
       },
       {
@@ -158,7 +200,9 @@ export function AudienceBuilder({
             }`}
           >
             {mode === "all"
-              ? "All Capabilities"
+              ? isUserTarget
+                ? "All Users"
+                : "All Capabilities"
               : mode === "specific"
               ? "Specific"
               : "Filter"}
@@ -166,7 +210,7 @@ export function AudienceBuilder({
         ))}
       </div>
 
-      {value.mode === "specific" && (
+      {value.mode === "specific" && !isUserTarget && (
         <div>
           <Label className="text-[12px] text-muted mb-1 block">
             Capability IDs (comma-separated)
@@ -184,6 +228,30 @@ export function AudienceBuilder({
               })
             }
             placeholder="cap-id-1, cap-id-2"
+          />
+        </div>
+      )}
+
+      {value.mode === "specific" && isUserTarget && (
+        <div>
+          <Label className="text-[12px] text-muted mb-1 block">
+            Email addresses (comma or newline separated)
+          </Label>
+          <textarea
+            value={emailsRaw}
+            onChange={(e) => setEmailsRaw(e.target.value)}
+            onBlur={() =>
+              onChange({
+                ...value,
+                userEmails: emailsRaw
+                  .split(/[,\n]/)
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              })
+            }
+            placeholder="alice@dfds.com, bob@dfds.com"
+            rows={4}
+            className="w-full rounded-md border border-card bg-surface px-3 py-2 text-[12px] text-primary font-mono placeholder:text-muted"
           />
         </div>
       )}
@@ -250,6 +318,11 @@ export function AudienceBuilder({
                   <option value="Pending Deletion">Pending Deletion</option>
                   <option value="Deleted">Deleted</option>
                 </select>
+              ) : filter.field === "capabilityCostCentre" ? (
+                <CostCentrePicker
+                  value={filter.value}
+                  onChange={(v) => updateFilter(i, { value: v })}
+                />
               ) : (
                 <Input
                   value={filter.value}
@@ -280,20 +353,10 @@ export function AudienceBuilder({
       )}
 
       {onRecipientFilterChange !== undefined && (
-        <div>
-          <Label className="text-[12px] mb-1 block">
-            Recipient Filter (optional)
-          </Label>
-          <Input
-            value={recipientFilter || ""}
-            onChange={(e) => onRecipientFilterChange(e.target.value)}
-            placeholder="RBAC role name (leave empty for all members)"
-          />
-          <span className="text-[11px] text-muted mt-1 block">
-            Optionally limit recipients to members with a specific RBAC role.
-            Applied during audience resolution.
-          </span>
-        </div>
+        <RoleFilterPicker
+          value={recipientFilter || ""}
+          onChange={onRecipientFilterChange}
+        />
       )}
 
       <div className="flex items-center gap-3">
@@ -310,13 +373,73 @@ export function AudienceBuilder({
 
         {resolved && (
           <span className="text-[12px] text-secondary">
-            <strong>{resolved.totalCapabilities}</strong> capabilities,{" "}
-            <strong>{resolved.totalRecipients}</strong> recipients
+            {isUserTarget ? (
+              <>
+                <strong>{resolved.totalRecipients}</strong> users
+                {resolved.unmatchedEmails &&
+                  resolved.unmatchedEmails.length > 0 && (
+                    <span className="text-warning ml-2">
+                      ({resolved.unmatchedEmails.length} unmatched email
+                      {resolved.unmatchedEmails.length === 1 ? "" : "s"})
+                    </span>
+                  )}
+              </>
+            ) : (
+              <>
+                <strong>{resolved.totalCapabilities}</strong> capabilities,{" "}
+                <strong>{resolved.totalRecipients}</strong> recipients
+              </>
+            )}
           </span>
         )}
       </div>
 
-      {resolved && resolved.capabilities?.length > 0 && (
+      {resolved && isUserTarget && resolved.users?.length > 0 && (
+        <div className="max-h-96 overflow-auto border border-card rounded-lg">
+          <table className="w-full text-[12px]">
+            <thead>
+              <tr className="border-b border-card bg-surface-subtle">
+                <th className="text-left px-3 py-1.5 font-medium text-muted">
+                  Email
+                </th>
+                <th className="text-left px-3 py-1.5 font-medium text-muted">
+                  Display Name
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {resolved.users.map((u: any) => (
+                <tr
+                  key={u.userId}
+                  className="border-b border-card last:border-0"
+                >
+                  <td className="px-3 py-1.5 text-primary font-mono">
+                    {u.email}
+                  </td>
+                  <td className="px-3 py-1.5 text-secondary">
+                    {u.displayName || (
+                      <span className="text-muted italic">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {resolved &&
+        isUserTarget &&
+        (resolved.unmatchedEmails || []).length > 0 && (
+          <div className="text-[11px] text-warning border border-warning/40 bg-warning/5 rounded-md px-3 py-2">
+            The following emails did not match any user:{" "}
+            <span className="font-mono">
+              {(resolved.unmatchedEmails || []).join(", ")}
+            </span>
+          </div>
+        )}
+
+      {resolved && !isUserTarget && resolved.capabilities?.length > 0 && (
         <div className="max-h-96 overflow-auto border border-card rounded-lg">
           <table className="w-full text-[12px]">
             <thead>
@@ -393,6 +516,122 @@ export function AudienceBuilder({
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+interface RoleFilterPickerProps {
+  value: string;
+  onChange: (v: string) => void;
+}
+
+function RoleFilterPicker({ value, onChange }: RoleFilterPickerProps) {
+  const { data } = useGetRoles("");
+  const roles: Array<{ id: string; name: string }> = (data as any[]) ?? [];
+
+  const selected = useMemo(() => {
+    return new Set(
+      value
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+        .map((s) => s.toLowerCase()),
+    );
+  }, [value]);
+
+  const toggle = (roleName: string) => {
+    const lower = roleName.toLowerCase();
+    const next = new Set(selected);
+    if (next.has(lower)) next.delete(lower);
+    else next.add(lower);
+    const ordered = roles
+      .map((r) => r.name)
+      .filter((n) => next.has(n.toLowerCase()));
+    onChange(ordered.join(","));
+  };
+
+  return (
+    <div>
+      <Label className="text-[12px] mb-1 block">
+        Recipient Filter (optional)
+      </Label>
+      <div className="flex flex-wrap gap-1.5">
+        {roles.length === 0 ? (
+          <span className="text-[11px] text-muted">Loading roles…</span>
+        ) : (
+          roles.map((r) => {
+            const isSelected = selected.has(r.name.toLowerCase());
+            return (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => toggle(r.name)}
+                className={`px-2.5 py-1 rounded-md text-[12px] font-medium border transition-colors cursor-pointer ${
+                  isSelected
+                    ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
+                    : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
+                }`}
+              >
+                {r.name}
+              </button>
+            );
+          })
+        )}
+      </div>
+      <span className="text-[11px] text-muted mt-1 block">
+        Optionally limit recipients to members holding any of the selected RBAC
+        roles. Leave empty to include everyone.
+      </span>
+    </div>
+  );
+}
+
+interface CostCentrePickerProps {
+  value: string;
+  onChange: (v: string) => void;
+}
+
+function CostCentrePicker({ value, onChange }: CostCentrePickerProps) {
+  const selected = useMemo(() => {
+    return new Set(
+      value
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+        .map((s) => s.toLowerCase()),
+    );
+  }, [value]);
+
+  const toggle = (slug: string) => {
+    const lower = slug.toLowerCase();
+    const next = new Set(selected);
+    if (next.has(lower)) next.delete(lower);
+    else next.add(lower);
+    const ordered = ENUM_COSTCENTER.map((c) => c.value).filter((s) =>
+      next.has(s.toLowerCase()),
+    );
+    onChange(ordered.join(","));
+  };
+
+  return (
+    <div className="flex-1 flex flex-wrap gap-1.5 py-1">
+      {ENUM_COSTCENTER.map((c) => {
+        const isSelected = selected.has(c.value.toLowerCase());
+        return (
+          <button
+            key={c.value}
+            type="button"
+            onClick={() => toggle(c.value)}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors cursor-pointer ${
+              isSelected
+                ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
+                : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
+            }`}
+          >
+            {c.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

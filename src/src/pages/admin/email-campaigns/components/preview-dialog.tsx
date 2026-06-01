@@ -10,8 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PreviewItem {
-  capabilityId: string;
-  capabilityName: string;
+  // Capability-targeted
+  capabilityId?: string;
+  capabilityName?: string;
+  // User-targeted
+  userId?: string;
+  email?: string;
+  displayName?: string | null;
+
   subject: string;
   html: string;
 }
@@ -21,6 +27,7 @@ interface PreviewDialogProps {
   onOpenChange: (open: boolean) => void;
   previews: PreviewItem[];
   loading: boolean;
+  targetType?: "Capability" | "User";
 }
 
 export function PreviewDialog({
@@ -28,12 +35,24 @@ export function PreviewDialog({
   onOpenChange,
   previews,
   loading,
+  targetType = "Capability",
 }: PreviewDialogProps) {
   const [index, setIndex] = useState(0);
 
   const current = previews[index];
   const hasPrev = index > 0;
   const hasNext = index < previews.length - 1;
+  const isUser = targetType === "User";
+  const headerSubLabel = current
+    ? isUser
+      ? current.email || ""
+      : current.capabilityId || ""
+    : "";
+  const headerTitle = current
+    ? isUser
+      ? current.displayName || current.email || ""
+      : current.capabilityName || ""
+    : "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -50,17 +69,19 @@ export function PreviewDialog({
           </div>
         ) : previews.length === 0 ? (
           <p className="text-[13px] text-muted py-4">
-            No matching capabilities found for preview.
+            {isUser
+              ? "No matching users found for preview."
+              : "No matching capabilities found for preview."}
           </p>
         ) : (
           <>
             <div className="flex items-center justify-between py-2 border-b border-card">
               <div className="min-w-0">
                 <span className="text-[11px] text-muted font-mono block truncate">
-                  {current.capabilityId}
+                  {headerSubLabel}
                 </span>
                 <span className="text-[13px] font-medium text-primary block truncate">
-                  {current.capabilityName}
+                  {headerTitle}
                 </span>
               </div>
               <div className="flex items-center gap-1 shrink-0">

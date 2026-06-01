@@ -39,9 +39,13 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowLeft, Save, Eye, Send, CalendarClock } from "lucide-react";
 
+type TargetType = "Capability" | "User";
+
 interface AudienceConfig {
   mode: "all" | "specific" | "filter";
+  // capabilityIds is used for Capability target; userEmails for User target.
   capabilityIds?: string[];
+  userEmails?: string[];
   filters?: any[];
 }
 
@@ -52,7 +56,8 @@ export default function EmailCampaignEditor() {
   const toast = useToast();
 
   const { data: existingCampaign, isFetched } = useEmailCampaign(id || "");
-  const { data: variables } = useTemplateVariables();
+  const [targetType, setTargetType] = useState<TargetType>("Capability");
+  const { data: variables } = useTemplateVariables(targetType);
   const createCampaign = useCreateEmailCampaign();
   const updateCampaign = useUpdateEmailCampaign(id || "");
   const previewCampaign = usePreviewEmailCampaign(id || "");
@@ -199,6 +204,9 @@ export default function EmailCampaignEditor() {
       setName(existingCampaign.name || "");
       setSubject(existingCampaign.subject || "");
       setRecipientFilter(existingCampaign.recipientFilter || "");
+      setTargetType(
+        existingCampaign.targetType === "User" ? "User" : "Capability",
+      );
       setScheduleType(existingCampaign.scheduleType || "Immediate");
       if (existingCampaign.scheduledAt) {
         const dt = new Date(existingCampaign.scheduledAt);
@@ -239,6 +247,7 @@ export default function EmailCampaignEditor() {
         contentHtml: editor.getHTML(),
         audienceJson: JSON.stringify(audience),
         recipientFilter: recipientFilter || null,
+        targetType,
         scheduleType,
         scheduledAt:
           scheduleType === "Scheduled" && scheduledAt
@@ -405,6 +414,41 @@ export default function EmailCampaignEditor() {
 
       <div className="space-y-5">
         <div>
+          <Label className="text-[12px] mb-1 block">Target Type</Label>
+          <div className="flex gap-2">
+            {(["Capability", "User"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => {
+                  if (!isEdit && t !== targetType) {
+                    setTargetType(t);
+                    // Resetting the audience avoids carrying a filter shape
+                    // that doesn't apply to the new target type.
+                    setAudience({ mode: "all" });
+                    setRecipientFilter("");
+                  }
+                }}
+                disabled={isEdit}
+                className={`px-3 py-1.5 rounded-md text-[12px] font-medium border transition-colors ${
+                  targetType === t
+                    ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
+                    : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
+                } ${
+                  isEdit ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+                }`}
+              >
+                {t === "Capability" ? "Capabilities" : "Users"}
+              </button>
+            ))}
+          </div>
+          <span className="text-[11px] text-muted mt-1 block">
+            Determines who receives the email and which template variables are
+            available. Cannot be changed after the campaign is created.
+          </span>
+        </div>
+
+        <div>
           <Label htmlFor="campaign-name" className="text-[12px] mb-1 block">
             Campaign Name
           </Label>
@@ -425,16 +469,33 @@ export default function EmailCampaignEditor() {
             id="campaign-subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            placeholder="e.g., Action Required: {{Capability.Name}} migration"
+            placeholder={
+              targetType === "User"
+                ? "e.g., Hi {{User.DisplayName}}, an update on your capabilities"
+                : "e.g., Action Required: {{Capability.Name}} migration"
+            }
             disabled={!isDraft}
           />
           <span className="text-[11px] text-muted mt-1 block">
-            Supports template variables like {"{{Capability.Name}}"}
+            Supports template variables like{" "}
+            {targetType === "User"
+              ? "{{User.DisplayName}}"
+              : "{{Capability.Name}}"}
           </span>
         </div>
 
         <div>
           <Label className="text-[12px] mb-2 block">Email Body</Label>
+          {targetType === "User" && (
+            <span className="text-[11px] text-muted mb-2 block">
+              For iterating capabilities the recipient belongs to, use{" "}
+              <code className="bg-surface-subtle px-1 rounded text-[10px]">
+                {
+                  "{{#each User.Capabilities}} ... {{Capability.Name}} ... {{/each}}"
+                }
+              </code>
+            </span>
+          )}
           <div className="border border-card rounded-lg overflow-hidden bg-surface relative">
             <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle">
               <FormattingToolbar editor={editor} variables={variables || []} />
@@ -488,6 +549,7 @@ export default function EmailCampaignEditor() {
         <AudienceBuilder
           value={audience}
           onChange={setAudience}
+          targetType={targetType}
           recipientFilter={recipientFilter}
           onRecipientFilterChange={isDraft ? setRecipientFilter : undefined}
         />
@@ -569,6 +631,7 @@ export default function EmailCampaignEditor() {
         onOpenChange={setPreviewOpen}
         previews={previews}
         loading={previewLoading}
+        targetType={targetType}
       />
 
       <Dialog open={sendConfirmOpen} onOpenChange={setSendConfirmOpen}>

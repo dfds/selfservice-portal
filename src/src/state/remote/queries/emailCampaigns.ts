@@ -1,10 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
-import {
-  createSsuParamQuery,
-  createSsuQuery,
-  createSsuMutation,
-} from "../queryFactory";
+import { createSsuParamQuery, createSsuMutation } from "../queryFactory";
 import PreAppContext from "@/preAppContext";
 import { useContext } from "react";
 
@@ -16,11 +12,28 @@ export const useEmailCampaign = createSsuParamQuery<string>({
   enabled: (id) => !!id,
 });
 
-export const useTemplateVariables = createSsuQuery({
-  queryKey: ["emailCampaigns", "variables"],
-  urlSegments: ["email-campaigns/variables"],
-  staleTime: 300_000,
-});
+export function useTemplateVariables(targetType?: string) {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+
+  const segments = ["email-campaigns/variables"];
+  if (targetType) {
+    segments[0] = `email-campaigns/variables?targetType=${encodeURIComponent(
+      targetType,
+    )}`;
+  }
+
+  return useQuery({
+    queryKey: ["emailCampaigns", "variables", targetType || "Capability"],
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: segments,
+        payload: null,
+        isCloudEngineerEnabled: isCloudEngineerEnabled,
+      }),
+    staleTime: 300_000,
+  });
+}
 
 export const useEmailCampaignExecutions = createSsuParamQuery<string>({
   queryKey: (id) => ["emailCampaigns", "executions", id],
