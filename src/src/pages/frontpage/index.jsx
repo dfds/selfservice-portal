@@ -117,9 +117,9 @@ export default function FrontPage() {
 
         <Column>
           <PageSection>
-            <SectionContent title="Try the new frontpage layout">
-              Explore the updated frontpage experience in the demo environment
-              before it rolls out here.
+            <SectionContent title="New developer portal coming soon!">
+              Try out the new developer portal (Beta) already today!
+              Read the full announcement <TrackedLink href="https://wiki.dfds.cloud/en/announcements/new-developer-portal">here</TrackedLink>.
               <br />
               <br />
               <TrackedLinkButton
@@ -129,7 +129,7 @@ export default function FrontPage() {
                 variation="primary"
                 className={styles.fullwidthbutton}
               >
-                Open preview environment
+                Go to new developer portal (Beta)
               </TrackedLinkButton>
             </SectionContent>
           </PageSection>
