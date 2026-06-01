@@ -23,7 +23,9 @@ export function parseCostCentre(cap: any): string | null {
   }
 }
 
-export function parseMetadata(jsonMetadata: string | null | undefined): Record<string, string> {
+export function parseMetadata(
+  jsonMetadata: string | null | undefined,
+): Record<string, string> {
   if (!jsonMetadata) return {};
   try {
     const parsed = JSON.parse(jsonMetadata);

@@ -221,10 +221,7 @@ function CostCentreCard({
           )}
         </div>
 
-        <ChevronRight
-          size={14}
-          className="flex-shrink-0 text-[#afafaf]"
-        />
+        <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
       </div>
 
       {/* Progress strip */}
@@ -280,7 +277,6 @@ function CostCentreCard({
           </>
         )}
       </div>
-
     </Link>
   );
 }
@@ -473,7 +469,7 @@ export default function CompliancePage() {
           </div>
 
           {/* Overall Compliance + Summary panel — horizontal */}
-          <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-9">
+          <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
             <div className="-ml-3 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
               // Overall Compliance
             </div>
