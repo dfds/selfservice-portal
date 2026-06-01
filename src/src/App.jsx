@@ -21,6 +21,7 @@ import EventView from "./pages/events/view";
 import NewsPage from "./pages/news";
 import NewsView from "./pages/news/view";
 import CompliancePage from "./pages/compliance";
+import CostCentreComplianceDetailPage from "./pages/compliance/cost-centre-detail";
 import RbacViewerPage from "./pages/admin/rbac";
 import PermissionMatrixPage from "./pages/rbac";
 import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
@@ -197,6 +198,10 @@ export default function App() {
           <Route path="news" element={<NewsPage />} />
           <Route path="news/v/:id" element={<NewsView />} />
           <Route path="compliance" element={<CompliancePage />} />
+          <Route
+            path="compliance/cost-centres/:id"
+            element={<CostCentreComplianceDetailPage />}
+          />
           <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
           <Route path="admin/rbac" element={<RbacViewerPage />} />
           <Route path="admin/rbac/user" element={<UserInspectorPage />} />

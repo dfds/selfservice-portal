@@ -1,14 +1,20 @@
 import React, { useContext, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { Search, ChevronRight } from "lucide-react";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { cn } from "@/lib/utils";
-import { ENUM_COSTCENTER } from "@/constants/tagConstants";
+import {
+  getCostCentreLabel,
+  parseCostCentre,
+  complianceTier,
+  complianceColor,
+} from "./utils";
+import { ArcGauge } from "./components";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -39,41 +45,6 @@ const SORT_OPTIONS: { key: SortMode; label: string }[] = [
   { key: "pct-desc", label: "Best first" },
   { key: "caps", label: "Largest first" },
 ];
-
-// ─── Cost Centre Labels ───────────────────────────────────────────────────────
-
-const COST_CENTRE_LABEL_MAP = new Map<string, string>(
-  (ENUM_COSTCENTER as { value: string; label: string }[]).map((cc) => [
-    cc.value,
-    cc.label,
-  ]),
-);
-
-function getCostCentreLabel(value: string): string {
-  const raw = COST_CENTRE_LABEL_MAP.get(value);
-  if (!raw) return value;
-  return raw.replace(/\s*\[.*?\]\s*$/, "").trim();
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function parseCostCentre(cap: any): string | null {
-  if (!cap.jsonMetadata) return null;
-  try {
-    const meta = JSON.parse(cap.jsonMetadata);
-    return meta["dfds.cost.centre"] || null;
-  } catch {
-    return null;
-  }
-}
-
-function complianceTier(pct: number): "green" | "orange" | "red" {
-  return pct >= 80 ? "green" : pct >= 50 ? "orange" : "red";
-}
-
-function complianceColor(pct: number): string {
-  return pct >= 80 ? "#22c55e" : pct >= 50 ? "#f59e0b" : "#ef4444";
-}
 
 // ─── DonutChart ──────────────────────────────────────────────────────────────
 
@@ -116,51 +87,6 @@ function DonutChart({
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
       />
     </svg>
-  );
-}
-
-// ─── ArcGauge ────────────────────────────────────────────────────────────────
-
-function ArcGauge({ pct, color }: { pct: number; color: string }) {
-  const r = 36;
-  const circ = 2 * Math.PI * r;
-  const filled = circ * (pct / 100);
-  return (
-    <div className="relative w-24 h-24">
-      <svg width="96" height="96" viewBox="0 0 96 96">
-        <circle
-          cx="48"
-          cy="48"
-          r={r}
-          fill="none"
-          stroke="var(--color-border-card)"
-          strokeWidth="9"
-        />
-        <circle
-          cx="48"
-          cy="48"
-          r={r}
-          fill="none"
-          stroke={color}
-          strokeWidth="9"
-          strokeLinecap="round"
-          strokeDasharray={`${filled} ${circ}`}
-          transform="rotate(-90 48 48)"
-          style={{
-            transition:
-              "stroke-dasharray 0.8s cubic-bezier(0.22,1,0.36,1), stroke 0.4s",
-          }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-[22px] font-bold tracking-[-0.03em] text-[#002b45] dark:text-[#e2e8f0]">
-          {pct}%
-        </span>
-      </div>
-      <span className="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 whitespace-nowrap text-[11px] text-[#afafaf] dark:text-[#64748b]">
-        compliant capabilities
-      </span>
-    </div>
   );
 }
 
@@ -227,8 +153,6 @@ function CostCentreCard({
   capCount,
   data,
   isFetched,
-  expanded,
-  onToggle,
   className,
   style,
 }: {
@@ -236,8 +160,6 @@ function CostCentreCard({
   capCount: number;
   data: ComplianceData | undefined;
   isFetched: boolean;
-  expanded: boolean;
-  onToggle: () => void;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -248,23 +170,18 @@ function CostCentreCard({
   const categories = data?.categories ?? [];
 
   return (
-    <div
+    <Link
+      to={`/compliance/cost-centres/${encodeURIComponent(name)}`}
       className={cn(
-        "bg-surface border border-card rounded-[10px] overflow-hidden",
+        "block bg-surface border border-card rounded-[10px] overflow-hidden no-underline text-inherit",
         "transition-[box-shadow,border-color] duration-200",
         "hover:shadow-[0_4px_16px_rgba(0,0,0,.08)] hover:border-[#c5d3df] dark:hover:border-[#4a6278]",
-        expanded &&
-          "border-[#0e7cc1] dark:border-[#60a5fa] shadow-[0_0_0_3px_rgba(14,124,193,.08)]",
         className,
       )}
       style={style}
     >
       {/* Card header */}
-      <button
-        type="button"
-        onClick={onToggle}
-        className="w-full flex items-center gap-3 p-4 text-left cursor-pointer"
-      >
+      <div className="w-full flex items-center gap-3 p-4 text-left">
         {isFetched ? (
           <DonutChart pct={pct} color={color} />
         ) : (
@@ -306,12 +223,9 @@ function CostCentreCard({
 
         <ChevronRight
           size={14}
-          className={cn(
-            "flex-shrink-0 text-[#afafaf] transition-transform duration-200",
-            expanded && "rotate-90",
-          )}
+          className="flex-shrink-0 text-[#afafaf]"
         />
-      </button>
+      </div>
 
       {/* Progress strip */}
       <div className="h-1 w-full bg-[#f0f2f4] dark:bg-[#0f172a]">
@@ -367,49 +281,7 @@ function CostCentreCard({
         )}
       </div>
 
-      {/* Expanded: category breakdown */}
-      {expanded && isFetched && categories.length > 0 && (
-        <div className="border-t border-divider bg-[#fafbfc] dark:bg-[#0f172a] px-4 py-2">
-          {categories.map((cat, i) => {
-            const catTotal = cat.compliantCount + cat.nonCompliantCount;
-            const catPct =
-              catTotal > 0
-                ? Math.round((cat.compliantCount / catTotal) * 100)
-                : 0;
-            const catColor = complianceColor(catPct);
-            return (
-              <div
-                key={cat.categoryName}
-                className={cn(
-                  "flex items-center gap-3 py-2.5",
-                  i < categories.length - 1 && "border-b border-divider",
-                )}
-              >
-                <span className="text-[12px] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate">
-                  {cat.categoryName}
-                </span>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <ProgressBar
-                    value={catPct}
-                    color={catColor}
-                    className="w-[80px]"
-                  />
-                  <span
-                    className="font-mono text-[10.5px] w-[28px] text-right font-semibold"
-                    style={{ color: catColor }}
-                  >
-                    {catPct}%
-                  </span>
-                  <span className="font-mono text-[10.5px] text-[#afafaf] w-[40px] text-right">
-                    {cat.compliantCount}/{catTotal}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+    </Link>
   );
 }
 
@@ -423,7 +295,6 @@ export default function CompliancePage() {
   const [activeFilters, setActiveFilters] = useState<Set<string>>(
     () => new Set(["green", "orange", "red"]),
   );
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
   const { costCentres, untaggedCount } = useMemo(() => {
     const caps: any[] = capabilities ?? [];
@@ -550,15 +421,6 @@ export default function CompliancePage() {
       } else {
         next.add(t);
       }
-      return next;
-    });
-  }
-
-  function toggleCard(name: string) {
-    setExpandedCards((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
       return next;
     });
   }
@@ -761,27 +623,6 @@ export default function CompliancePage() {
               {label}
             </button>
           ))}
-          <div className="flex-1" />
-          {isFetched && filtered.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                const allExpanded = filtered.every(({ name }) =>
-                  expandedCards.has(name),
-                );
-                if (allExpanded) {
-                  setExpandedCards(new Set());
-                } else {
-                  setExpandedCards(new Set(filtered.map(({ name }) => name)));
-                }
-              }}
-              className="h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]"
-            >
-              {filtered.every(({ name }) => expandedCards.has(name))
-                ? "Collapse all"
-                : "Expand all"}
-            </button>
-          )}
         </div>
 
         {/* Card grid */}
@@ -808,8 +649,6 @@ export default function CompliancePage() {
                   capCount={count}
                   data={entry?.data}
                   isFetched={entry?.isFetched ?? false}
-                  expanded={expandedCards.has(name)}
-                  onToggle={() => toggleCard(name)}
                   className="animate-card-enter"
                   style={{ animationDelay: `${i * 25}ms` }}
                 />

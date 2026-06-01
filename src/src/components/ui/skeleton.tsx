@@ -253,6 +253,26 @@ export function SkeletonComplianceCard() {
   );
 }
 
+// Cost-centre compliance detail: capability matrix row
+export function SkeletonComplianceCapabilityRow() {
+  return (
+    <div className="flex items-center gap-4 px-4 py-3 border-b border-divider">
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <Skeleton className="h-3.5 w-[140px]" />
+        <Skeleton className="h-2.5 w-[90px]" />
+      </div>
+      <div className="hidden md:flex items-center gap-6 flex-shrink-0">
+        <Skeleton className="w-4 h-4 rounded-full" />
+        <Skeleton className="w-4 h-4 rounded-full" />
+        <Skeleton className="w-4 h-4 rounded-full" />
+        <Skeleton className="w-4 h-4 rounded-full" />
+        <Skeleton className="w-4 h-4 rounded-full" />
+      </div>
+      <Skeleton className="h-4 w-[44px] flex-shrink-0" />
+    </div>
+  );
+}
+
 // Email campaign list row: name + subject + status badge + date + action buttons
 export function SkeletonCampaignRow() {
   return (
