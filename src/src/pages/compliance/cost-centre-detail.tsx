@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Plus, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, ExternalLink, Plus, X } from "lucide-react";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -812,13 +812,29 @@ function CapabilityMatrix({
         accessorFn: (row) => row.capabilityName,
         size: 320,
         Cell: ({ row }) => (
-          <div className="min-w-0">
-            <div className="text-[13px] font-medium text-primary truncate">
-              {row.original.capabilityName}
+          <div className="min-w-0 flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <Link
+                to={`/capabilities/${row.original.capabilityId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-[13px] font-medium text-primary hover:text-action hover:underline truncate block"
+                aria-label={`Open ${row.original.capabilityName}`}
+              >
+                {row.original.capabilityName}
+              </Link>
+              <div className="text-[10.5px] font-mono text-muted truncate">
+                {row.original.capabilityId}
+              </div>
             </div>
-            <div className="text-[10.5px] font-mono text-muted truncate">
-              {row.original.capabilityId}
-            </div>
+            <Link
+              to={`/capabilities/${row.original.capabilityId}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex-shrink-0 p-1 rounded-[5px] text-muted hover:text-action hover:bg-surface-muted transition-colors"
+              aria-label={`Open ${row.original.capabilityName}`}
+              title="Open capability"
+            >
+              <ExternalLink size={12} strokeWidth={2} />
+            </Link>
           </div>
         ),
       },
@@ -1104,14 +1120,25 @@ function MobileCapabilityList({
             className="rounded-[8px] border border-card bg-surface p-3"
           >
             <div className="flex items-start gap-2 mb-2">
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-medium text-primary truncate">
-                  {cap.capabilityName}
+              <Link
+                to={`/capabilities/${cap.capabilityId}`}
+                className="flex-1 min-w-0 group"
+                aria-label={`Open ${cap.capabilityName}`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[13px] font-medium text-primary group-hover:text-action group-hover:underline truncate">
+                    {cap.capabilityName}
+                  </span>
+                  <ExternalLink
+                    size={11}
+                    strokeWidth={2}
+                    className="flex-shrink-0 text-muted group-hover:text-action"
+                  />
                 </div>
                 <div className="text-[10.5px] font-mono text-muted truncate">
                   {cap.capabilityId}
                 </div>
-              </div>
+              </Link>
               <div
                 className="text-[16px] font-bold font-mono flex-shrink-0"
                 style={{ color: overallColor }}
