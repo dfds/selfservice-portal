@@ -460,6 +460,9 @@ export default function CompliancePage() {
                 here
               </a>
             </p>
+            <p className="text-description mt-2">
+              Click on individual cost centres for more details
+            </p>
           </div>
 
           {/* Overall Compliance + Summary panel — horizontal */}
