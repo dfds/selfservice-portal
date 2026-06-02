@@ -974,7 +974,10 @@ function CapabilityMatrix({
         },
       }}
       muiTableBodyRowProps={({ row }) => ({
-        onClick: () => row.toggleExpanded(),
+        onClick: () => {
+          if (window.getSelection()?.toString()) return;
+          row.toggleExpanded();
+        },
         sx: { cursor: "pointer", "&:hover td": { backgroundColor: bgMuted } },
       })}
       renderEmptyRowsFallback={() => (
@@ -1005,7 +1008,8 @@ function ExpandedDetail({
             {cap.categories.map((cat) => (
               <div
                 key={cat.categoryName}
-                className="rounded-[6px] border border-card bg-surface px-3 py-2"
+                onClick={(e) => e.stopPropagation()}
+                className="rounded-[6px] border border-card bg-surface px-3 py-2 cursor-auto"
               >
                 <div className="flex items-center gap-2">
                   {statusIcon(statusToken(cat.status))}
@@ -1057,7 +1061,10 @@ function ExpandedDetail({
           {metadataEntries.length === 0 ? (
             <span className="text-[11px] italic text-muted">No metadata.</span>
           ) : (
-            <div className="flex flex-col gap-1 rounded-[6px] border border-card bg-surface px-3 py-2">
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex flex-col gap-1 rounded-[6px] border border-card bg-surface px-3 py-2 cursor-auto"
+            >
               {metadataEntries.map(([k, v]) => (
                 <div
                   key={k}
