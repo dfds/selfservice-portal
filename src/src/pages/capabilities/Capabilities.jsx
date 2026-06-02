@@ -94,16 +94,8 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
           </p>
           <div className="flex items-center gap-3 flex-wrap">
             <span className="flex items-center gap-1 text-xs font-mono text-muted">
-              {isStale ? (
-                <>
-                  <LightBulb score={-1} size={10} /> stale
-                </>
-              ) : (
-                <>
-                  <LightBulb score={capability.requirementScore} size={10} />{" "}
-                  {capability.requirementScore?.toFixed(1)}%
-                </>
-              )}
+              <LightBulb score={capability.requirementScore} size={10} />{" "}
+              {capability.requirementScore?.toFixed(1)}%
             </span>
             {costCentre && (
               <span className="text-xs font-mono text-muted">{costCentre}</span>
