@@ -144,16 +144,6 @@ function categoryRatio(
     return { compliant, total };
   }
 
-  if (cat.categoryName === "External Secrets") {
-    const total = Number(
-      items.find((i) => i.name === "secrets")?.status ?? "0",
-    );
-    const compliant = Number(
-      items.find((i) => i.name === "external_secrets")?.status ?? "0",
-    );
-    return { compliant, total };
-  }
-
   const compliantItem = items.find((i) => i.name.startsWith("compliant_"));
   const nonCompliantItem = items.find((i) =>
     i.name.startsWith("non_compliant_"),
