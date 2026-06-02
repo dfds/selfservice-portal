@@ -6,7 +6,15 @@ import React, {
   useState,
 } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, ExternalLink, Plus, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  ChevronDown,
+  ExternalLink,
+  Plus,
+  X,
+} from "lucide-react";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -21,6 +29,7 @@ import { useCostCentreComplianceDetails } from "@/state/remote/queries/capabilit
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useExpandable } from "@/hooks/useExpandable";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
@@ -166,6 +175,47 @@ function overallPctFromCategories(cap: CapabilityCompliance): number {
   if (evaluated.length === 0) return 0;
   const compliant = evaluated.filter((c) => c.status === "Compliant").length;
   return Math.round((compliant / evaluated.length) * 100);
+}
+
+// Sort key for one capability under a given column id. Mirrors the desktop
+// matrix's accessorFn so the two views stay aligned. Returns null when the
+// row has no data for the column — sort treats nulls as bottom regardless
+// of direction.
+function sortKeyFor(
+  cap: CapabilityCompliance,
+  columnId: string,
+): number | string | null {
+  if (columnId === "capability") return cap.capabilityName.toLowerCase();
+  if (columnId === "overall") {
+    return cap.overallStatus === "Unknown"
+      ? null
+      : overallPctFromCategories(cap);
+  }
+  const ratio = categoryRatio(findCategory(cap, columnId));
+  if (!ratio || ratio.total === 0) return null;
+  return ratio.compliant / ratio.total;
+}
+
+// Sort the mobile capability list. Nulls always pinned to the bottom (asc or
+// desc) so "—" rows don't crowd the top when the user flips direction.
+function sortCapabilities(
+  capabilities: CapabilityCompliance[],
+  sorting: MRT_SortingState,
+): CapabilityCompliance[] {
+  if (sorting.length === 0) return capabilities;
+  const { id, desc } = sorting[0];
+  const sign = desc ? -1 : 1;
+  return [...capabilities].sort((a, b) => {
+    const av = sortKeyFor(a, id);
+    const bv = sortKeyFor(b, id);
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    if (typeof av === "string" && typeof bv === "string") {
+      return sign * av.localeCompare(bv);
+    }
+    return sign * ((av as number) - (bv as number));
+  });
 }
 
 // ─── Metadata combobox ───────────────────────────────────────────────────────
@@ -541,41 +591,43 @@ export default function CostCentreComplianceDetailPage() {
 
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="flex-shrink-0">
-              {isFetched ? (
-                <ArcGauge
-                  pct={aggregates.pct}
-                  color={complianceColor(aggregates.pct)}
-                />
-              ) : (
-                <Skeleton className="w-24 h-24 rounded-full" />
-              )}
-            </div>
-            <div className="flex items-center gap-5 flex-shrink-0">
-              <SummaryCell
-                label="Total"
-                value={isFetched ? aggregates.total : null}
-              />
-              <SummaryCell
-                label="Compliant"
-                value={isFetched ? aggregates.compliant : null}
-                color="#16a34a"
-              />
-              <SummaryCell
-                label="Non-compliant"
-                value={isFetched ? aggregates.nonCompliant : null}
-                color="#dc2626"
-              />
-              {(isFetched ? aggregates.unknown > 0 : true) && (
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-6">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 w-full sm:w-auto">
+              <div className="flex-shrink-0">
+                {isFetched ? (
+                  <ArcGauge
+                    pct={aggregates.pct}
+                    color={complianceColor(aggregates.pct)}
+                  />
+                ) : (
+                  <Skeleton className="w-24 h-24 rounded-full" />
+                )}
+              </div>
+              <div className="flex items-center justify-around sm:justify-start gap-5 sm:gap-5 w-full sm:w-auto sm:flex-shrink-0">
                 <SummaryCell
-                  label="Unknown"
-                  value={isFetched ? aggregates.unknown : null}
-                  color="#94a3b8"
+                  label="Total"
+                  value={isFetched ? aggregates.total : null}
                 />
-              )}
+                <SummaryCell
+                  label="Compliant"
+                  value={isFetched ? aggregates.compliant : null}
+                  color="#16a34a"
+                />
+                <SummaryCell
+                  label="Non-compliant"
+                  value={isFetched ? aggregates.nonCompliant : null}
+                  color="#dc2626"
+                />
+                {(isFetched ? aggregates.unknown > 0 : true) && (
+                  <SummaryCell
+                    label="Unknown"
+                    value={isFetched ? aggregates.unknown : null}
+                    color="#94a3b8"
+                  />
+                )}
+              </div>
             </div>
-            <div className="flex-1 min-w-[280px]">
+            <div className="w-full sm:flex-1 sm:min-w-[280px]">
               {isFetched ? (
                 <CategoryBreakdownList categories={aggregates.categories} />
               ) : (
@@ -716,7 +768,12 @@ export default function CostCentreComplianceDetailPage() {
                 : "No capabilities match the active filters."}
             </EmptyState>
           ) : isMobile ? (
-            <MobileCapabilityList capabilities={filteredCapabilities} />
+            <MobileCapabilityList
+              capabilities={filteredCapabilities}
+              metadataByCap={metadataByCap}
+              sorting={sorting}
+              setSorting={setSorting}
+            />
           ) : (
             <CapabilityMatrix
               capabilities={filteredCapabilities}
@@ -1105,73 +1162,163 @@ function ExpandedDetail({
 
 function MobileCapabilityList({
   capabilities,
+  metadataByCap,
+  sorting,
+  setSorting,
 }: {
   capabilities: CapabilityCompliance[];
+  metadataByCap: Map<string, Record<string, string>>;
+  sorting: MRT_SortingState;
+  setSorting: (
+    updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState),
+  ) => void;
 }) {
+  const sortId = sorting[0]?.id ?? "capability";
+  const sortDesc = sorting[0]?.desc ?? false;
+  const sorted = useMemo(
+    () => sortCapabilities(capabilities, sorting),
+    [capabilities, sorting],
+  );
+
+  const sortOptions: { id: string; label: string }[] = [
+    { id: "capability", label: "Capability" },
+    ...CATEGORY_COLUMNS.map((c) => ({ id: c.key, label: c.short })),
+    { id: "overall", label: "Overall" },
+  ];
+
   return (
     <div className="flex flex-col gap-2">
-      {capabilities.map((cap) => {
-        const pct = overallPctFromCategories(cap);
-        const overallColor =
-          cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
-        return (
-          <div
-            key={cap.capabilityId}
-            className="rounded-[8px] border border-card bg-surface p-3"
+      <div className="flex items-center gap-2 px-1">
+        <label
+          htmlFor="mobile-compliance-sort"
+          className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted"
+        >
+          Sort by
+        </label>
+        <select
+          id="mobile-compliance-sort"
+          value={sortId}
+          onChange={(e) => setSorting([{ id: e.target.value, desc: sortDesc }])}
+          className="flex-1 h-[28px] pl-2 pr-7 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+        >
+          {sortOptions.map((opt) => (
+            <option key={opt.id} value={opt.id}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setSorting([{ id: sortId, desc: !sortDesc }])}
+          aria-label={sortDesc ? "Sort ascending" : "Sort descending"}
+          title={sortDesc ? "Descending" : "Ascending"}
+          className="h-[28px] w-[28px] inline-flex items-center justify-center border border-[#d9dcde] dark:border-[#334155] rounded-[5px] bg-white dark:bg-[#0f172a] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] transition-colors"
+        >
+          {sortDesc ? (
+            <ArrowDown size={12} strokeWidth={2} />
+          ) : (
+            <ArrowUp size={12} strokeWidth={2} />
+          )}
+        </button>
+      </div>
+      {sorted.map((cap) => (
+        <MobileCapabilityCard
+          key={cap.capabilityId}
+          cap={cap}
+          metadata={metadataByCap.get(cap.capabilityId) ?? {}}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MobileCapabilityCard({
+  cap,
+  metadata,
+}: {
+  cap: CapabilityCompliance;
+  metadata: Record<string, string>;
+}) {
+  const { expanded, triggered, toggle } = useExpandable();
+  const pct = overallPctFromCategories(cap);
+  const overallColor =
+    cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
+  const panelId = `compliance-card-${cap.capabilityId}`;
+
+  return (
+    <div className="rounded-[8px] border border-card bg-surface overflow-hidden">
+      <button
+        type="button"
+        onClick={toggle}
+        aria-expanded={expanded}
+        aria-controls={panelId}
+        className="w-full text-left bg-transparent border-0 p-3 cursor-pointer"
+      >
+        <div className="flex items-start gap-2 mb-2">
+          <Link
+            to={`/capabilities/${cap.capabilityId}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 min-w-0 group"
+            aria-label={`Open ${cap.capabilityName}`}
           >
-            <div className="flex items-start gap-2 mb-2">
-              <Link
-                to={`/capabilities/${cap.capabilityId}`}
-                className="flex-1 min-w-0 group"
-                aria-label={`Open ${cap.capabilityName}`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[13px] font-medium text-primary group-hover:text-action group-hover:underline truncate">
-                    {cap.capabilityName}
-                  </span>
-                  <ExternalLink
-                    size={11}
-                    strokeWidth={2}
-                    className="flex-shrink-0 text-muted group-hover:text-action"
-                  />
-                </div>
-                <div className="text-[10.5px] font-mono text-muted truncate">
-                  {cap.capabilityId}
-                </div>
-              </Link>
-              <div
-                className="text-[16px] font-bold font-mono flex-shrink-0"
-                style={{ color: overallColor }}
-              >
-                {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
-              </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[13px] font-medium text-primary group-hover:text-action group-hover:underline truncate">
+                {cap.capabilityName}
+              </span>
+              <ExternalLink
+                size={11}
+                strokeWidth={2}
+                className="flex-shrink-0 text-muted group-hover:text-action"
+              />
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              {CATEGORY_COLUMNS.map((c) => {
-                const cat = findCategory(cap, c.key);
-                const ratio = categoryRatio(cat);
-                return (
-                  <div key={c.key} className="flex flex-col items-center gap-1">
-                    {ratio ? (
-                      <span
-                        className="font-mono text-[11px] tabular-nums font-semibold"
-                        style={{ color: ratioColor(ratio) }}
-                      >
-                        {ratio.compliant} / {ratio.total}
-                      </span>
-                    ) : (
-                      <span className="text-muted text-[12px]">—</span>
-                    )}
-                    <span className="text-[9px] font-mono uppercase tracking-[0.08em] text-muted">
-                      {c.short}
-                    </span>
-                  </div>
-                );
-              })}
+            <div className="text-[10.5px] font-mono text-muted truncate">
+              {cap.capabilityId}
             </div>
+          </Link>
+          <div
+            className="text-[16px] font-bold font-mono flex-shrink-0"
+            style={{ color: overallColor }}
+          >
+            {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
           </div>
-        );
-      })}
+          <ChevronDown
+            size={14}
+            strokeWidth={2}
+            className={cn(
+              "flex-shrink-0 text-muted transition-transform duration-200 mt-1",
+              expanded && "rotate-180",
+            )}
+          />
+        </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          {CATEGORY_COLUMNS.map((c) => {
+            const cat = findCategory(cap, c.key);
+            const ratio = categoryRatio(cat);
+            return (
+              <div key={c.key} className="flex flex-col items-center gap-1">
+                {ratio ? (
+                  <span
+                    className="font-mono text-[11px] tabular-nums font-semibold"
+                    style={{ color: ratioColor(ratio) }}
+                  >
+                    {ratio.compliant} / {ratio.total}
+                  </span>
+                ) : (
+                  <span className="text-muted text-[12px]">—</span>
+                )}
+                <span className="text-[9px] font-mono uppercase tracking-[0.08em] text-muted">
+                  {c.short}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </button>
+      {expanded && triggered && (
+        <div id={panelId}>
+          <ExpandedDetail cap={cap} metadata={metadata} />
+        </div>
+      )}
     </div>
   );
 }
