@@ -14,7 +14,6 @@ import {
   complianceTier,
   complianceColor,
 } from "./utils";
-import { ArcGauge } from "./components";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -292,24 +291,19 @@ export default function CompliancePage() {
     () => new Set(["green", "orange", "red"]),
   );
 
-  const { costCentres, untaggedCount } = useMemo(() => {
+  const costCentres = useMemo(() => {
     const caps: any[] = capabilities ?? [];
     // Filter out deleted capabilities
     const activeCaps = caps.filter((cap) => cap.status !== "Deleted");
     const map = new Map<string, number>();
-    let untagged = 0;
     for (const cap of activeCaps) {
       const cc = parseCostCentre(cap);
-      if (!cc) {
-        untagged++;
-        continue;
-      }
+      if (!cc) continue;
       map.set(cc, (map.get(cc) ?? 0) + 1);
     }
-    const list = Array.from(map.entries())
+    return Array.from(map.entries())
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => a.name.localeCompare(b.name));
-    return { costCentres: list, untaggedCount: untagged };
   }, [capabilities]);
 
   const complianceResults = useQueries({
@@ -471,44 +465,25 @@ export default function CompliancePage() {
           {/* Overall Compliance + Summary panel — horizontal */}
           <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
             <div className="-ml-3 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
-              // Overall Compliance
+              // Overall Compliance{" "}
+              <span className="font-normal tracking-[0.1em] text-muted">
+                (all capabilities)
+              </span>
             </div>
-            <div className="flex items-center gap-5">
-              {/* Gauge */}
-              {fetchedCount === 0 ? (
-                <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                  <Skeleton className="w-24 h-24 rounded-full" />
-                  <Skeleton className="h-3 w-[60px]" />
-                </div>
-              ) : (
-                <div className="flex-shrink-0">
-                  <ArcGauge pct={overallPct} color={gaugeColor} />
-                </div>
-              )}
-
+            <div className="flex items-center gap-8">
               {/* Summary stats — horizontal cells */}
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-8">
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    Total Caps
+                    Total Count
                   </span>
                   <span className="text-[18px] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
                     {fetchedCount > 0 ? totalCaps : "—"}
                   </span>
                 </div>
-                {untaggedCount > 0 && (
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                      Untagged
-                    </span>
-                    <span className="text-[18px] font-bold text-[#afafaf] font-mono leading-none">
-                      {untaggedCount}
-                    </span>
-                  </div>
-                )}
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    Compliant
+                    100% Compliant
                   </span>
                   <span
                     className="text-[18px] font-bold font-mono leading-none"
@@ -517,6 +492,19 @@ export default function CompliancePage() {
                     }}
                   >
                     {fetchedCount > 0 ? totalCompliant : "—"}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Compliant rate
+                  </span>
+                  <span
+                    className="text-[18px] font-bold font-mono leading-none"
+                    style={{
+                      color: fetchedCount > 0 ? gaugeColor : undefined,
+                    }}
+                  >
+                    {fetchedCount > 0 ? `${overallPct}%` : "—"}
                   </span>
                 </div>
               </div>
