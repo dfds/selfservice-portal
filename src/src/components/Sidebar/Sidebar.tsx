@@ -294,8 +294,14 @@ const THEME_OPTIONS: {
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const { trackEvent, setTraits } = useRybbit();
   const containerRef = useRef<HTMLDivElement>(null);
   const [pill, setPill] = useState({ x: 0, width: 0, ready: false });
+
+  function reportThemePreference(next: Theme) {
+    trackEvent("user:preference:theme", { theme: next });
+    setTraits({ theme: next });
+  }
 
   useLayoutEffect(() => {
     function measure() {
@@ -345,7 +351,10 @@ function ThemeToggle() {
           type="button"
           aria-label={label}
           aria-pressed={theme === value}
-          onClick={() => setTheme(value)}
+          onClick={() => {
+            setTheme(value);
+            reportThemePreference(value);
+          }}
           className={cn(
             "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[0.625rem] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
             theme === value
@@ -782,71 +791,71 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
 
       {/* Nav */}
       <div className="relative flex-1 min-h-0">
-      <nav
-        ref={navRef}
-        id="sidebar-nav"
-        aria-label="Main navigation"
-        className="h-full px-3 py-4 flex flex-col gap-5 overflow-y-auto"
-        style={{
-          maskImage: navMask,
-          WebkitMaskImage: navMask,
-          transition: "mask-image 160ms ease, -webkit-mask-image 160ms ease",
-        }}
-      >
-        {/* PLATFORM */}
-        <div>
-          <SectionLabel className="px-3 pb-1.5 block">Platform</SectionLabel>
-          <div className="flex flex-col gap-1 md:gap-0.5">
-            {platformNav.map((item) => (
-              <NavItemLink
-                key={item.url}
-                item={item}
-                isActive={isActive(item.url)}
-              />
-            ))}
-            {isCloudEngineerEnabled &&
-              ceNav.map((item) => (
+        <nav
+          ref={navRef}
+          id="sidebar-nav"
+          aria-label="Main navigation"
+          className="h-full px-3 py-4 flex flex-col gap-5 overflow-y-auto"
+          style={{
+            maskImage: navMask,
+            WebkitMaskImage: navMask,
+            transition: "mask-image 160ms ease, -webkit-mask-image 160ms ease",
+          }}
+        >
+          {/* PLATFORM */}
+          <div>
+            <SectionLabel className="px-3 pb-1.5 block">Platform</SectionLabel>
+            <div className="flex flex-col gap-1 md:gap-0.5">
+              {platformNav.map((item) => (
                 <NavItemLink
                   key={item.url}
                   item={item}
                   isActive={isActive(item.url)}
                 />
               ))}
-            <NavGroupLink group={costCentresGroup} isActive={isActive} />
-            {isCloudEngineerEnabled && (
-              <NavGroupLink group={adminNav} isActive={isActive} />
-            )}
+              {isCloudEngineerEnabled &&
+                ceNav.map((item) => (
+                  <NavItemLink
+                    key={item.url}
+                    item={item}
+                    isActive={isActive(item.url)}
+                  />
+                ))}
+              <NavGroupLink group={costCentresGroup} isActive={isActive} />
+              {isCloudEngineerEnabled && (
+                <NavGroupLink group={adminNav} isActive={isActive} />
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* CONTENT */}
-        <div>
-          <SectionLabel className="px-3 pb-1.5 block">Content</SectionLabel>
-          <div className="flex flex-col gap-1 md:gap-0.5">
-            {contentNav.map((item) => (
-              <NavItemLink
-                key={item.url}
-                item={item}
-                isActive={isActive(item.url)}
-              />
-            ))}
+          {/* CONTENT */}
+          <div>
+            <SectionLabel className="px-3 pb-1.5 block">Content</SectionLabel>
+            <div className="flex flex-col gap-1 md:gap-0.5">
+              {contentNav.map((item) => (
+                <NavItemLink
+                  key={item.url}
+                  item={item}
+                  isActive={isActive(item.url)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* EXTERNAL */}
-        <div>
-          <SectionLabel className="px-3 pb-1.5 block">External</SectionLabel>
-          <div className="flex flex-col gap-1 md:gap-0.5">
-            {externalNav.map((item) => (
-              <NavItemLink
-                key={item.url}
-                item={item}
-                isActive={isActive(item.url)}
-              />
-            ))}
+          {/* EXTERNAL */}
+          <div>
+            <SectionLabel className="px-3 pb-1.5 block">External</SectionLabel>
+            <div className="flex flex-col gap-1 md:gap-0.5">
+              {externalNav.map((item) => (
+                <NavItemLink
+                  key={item.url}
+                  item={item}
+                  isActive={isActive(item.url)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
         {/* Scroll-overflow chevron indicators */}
         <div
           aria-hidden="true"
