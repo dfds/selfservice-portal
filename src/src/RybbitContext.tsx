@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 
 const RYBBIT_SCRIPT_URL =
@@ -11,13 +18,34 @@ const RYBBIT_SITE_ID = "2f8dd0f249df";
 let scriptLoaded = false;
 const onScriptLoad: Array<() => void> = [];
 
+type RybbitEventProperties = Record<string, unknown>;
+type RybbitTraitMap = Record<string, unknown>;
+
 type RybbitState = {
   rybbitIsEnabled: boolean;
+  /**
+   * Send a custom event to Rybbit. Calls made before the Rybbit script has
+   * finished loading are queued and replayed on load. No-ops on hosts where
+   * Rybbit is disabled. Never throws.
+   */
+  trackEvent: (name: string, properties?: RybbitEventProperties) => void;
+  /**
+   * Persist per-user traits via window.rybbit.setTraits(). Traits attach to
+   * subsequent events. Queued until the script loads, no-op when disabled.
+   * See https://rybbit.com/docs/identify-users#windowrybbitsettraitstraits
+   */
+  setTraits: (traits: RybbitTraitMap) => void;
 };
 
 const RybbitContext = React.createContext<RybbitState>({
   rybbitIsEnabled: false,
+  trackEvent: () => {},
+  setTraits: () => {},
 });
+
+export function useRybbit(): RybbitState {
+  return useContext(RybbitContext);
+}
 
 function isRybbitHost(hostname: string): boolean {
   if (hostname === "localhost" || hostname === "127.0.0.1") return true;
@@ -156,7 +184,46 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isEnabled, identityKey]);
 
-  const [state] = useState<RybbitState>({ rybbitIsEnabled: isEnabled });
+  const trackEvent = useCallback(
+    (name: string, properties?: RybbitEventProperties) => {
+      if (!isEnabled) return;
+      const apply = () => {
+        const rb = (window as any).rybbit;
+        if (!rb || typeof rb.event !== "function") return;
+        try {
+          rb.event(name, properties);
+        } catch (e) {
+          // analytics must never break the UI
+        }
+      };
+      if (scriptLoaded) apply();
+      else onScriptLoad.push(apply);
+    },
+    [isEnabled],
+  );
+
+  const setTraits = useCallback(
+    (traits: RybbitTraitMap) => {
+      if (!isEnabled) return;
+      const apply = () => {
+        const rb = (window as any).rybbit;
+        if (!rb || typeof rb.setTraits !== "function") return;
+        try {
+          rb.setTraits(traits);
+        } catch (e) {
+          // analytics must never break the UI
+        }
+      };
+      if (scriptLoaded) apply();
+      else onScriptLoad.push(apply);
+    },
+    [isEnabled],
+  );
+
+  const state = useMemo<RybbitState>(
+    () => ({ rybbitIsEnabled: isEnabled, trackEvent, setTraits }),
+    [isEnabled, trackEvent, setTraits],
+  );
 
   return (
     <RybbitContext.Provider value={state}>{children}</RybbitContext.Provider>

@@ -54,6 +54,7 @@ import {
   FONT_SCALE_MIN,
   FONT_SCALE_MAX,
 } from "@/context/FontScaleContext";
+import { useRybbit } from "@/RybbitContext";
 import { msalInstance, selfServiceApiScopes } from "@/auth/context";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -362,6 +363,7 @@ function ThemeToggle() {
 
 function FontScaleToggle() {
   const { factor, setFactor } = useFontScale();
+  const { trackEvent, setTraits } = useRybbit();
   const containerRef = useRef<HTMLDivElement>(null);
   const [pill, setPill] = useState({ x: 0, width: 0, ready: false });
   const [customInput, setCustomInput] = useState(() =>
@@ -371,6 +373,17 @@ function FontScaleToggle() {
   const activePresetIndex = FONT_SCALE_PRESETS.findIndex(
     (p) => Math.abs(p.factor - factor) < 0.0005,
   );
+
+  function reportPreference(nextFactor: number) {
+    const matchesPreset = FONT_SCALE_PRESETS.some(
+      (p) => Math.abs(p.factor - nextFactor) < 0.0005,
+    );
+    trackEvent("user:preference:ui-size", {
+      ratio: nextFactor,
+      custom: !matchesPreset,
+    });
+    setTraits({ uiSize: nextFactor });
+  }
 
   useEffect(() => {
     setCustomInput(String(Math.round(factor * 100)));
@@ -413,8 +426,16 @@ function FontScaleToggle() {
 
   function commitCustom(raw: string) {
     const n = parseFloat(raw);
-    if (Number.isFinite(n)) setFactor(n / 100);
-    else setCustomInput(String(Math.round(factor * 100)));
+    if (Number.isFinite(n)) {
+      const clamped = Math.min(
+        FONT_SCALE_MAX,
+        Math.max(FONT_SCALE_MIN, n / 100),
+      );
+      setFactor(clamped);
+      reportPreference(clamped);
+    } else {
+      setCustomInput(String(Math.round(factor * 100)));
+    }
   }
 
   const minPct = Math.round(FONT_SCALE_MIN * 100);
@@ -449,7 +470,10 @@ function FontScaleToggle() {
               type="button"
               aria-label={label}
               aria-pressed={isActive}
-              onClick={() => setFactor(presetFactor)}
+              onClick={() => {
+                setFactor(presetFactor);
+                reportPreference(presetFactor);
+              }}
               className={cn(
                 "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[0.625rem] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
                 isActive
@@ -636,12 +660,49 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
+const NAV_FADE = "20px";
+
 export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
   const isMobile = useIsMobile();
   const { user } = useContext(AppContext);
   const { isCloudEngineerEnabled, setIsCloudEngineerEnabled } =
     useContext(PreAppContext);
   const location = useLocation();
+
+  const navRef = useRef<HTMLElement>(null);
+  const [navEdges, setNavEdges] = useState({ top: false, bottom: false });
+
+  useLayoutEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+
+    function update() {
+      if (!el) return;
+      const top = el.scrollTop > 2;
+      const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
+      setNavEdges((prev) =>
+        prev.top === top && prev.bottom === bottom ? prev : { top, bottom },
+      );
+    }
+
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    const mo = new MutationObserver(update);
+    mo.observe(el, { childList: true, subtree: true });
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, []);
+
+  const navMask = `linear-gradient(to bottom, ${
+    navEdges.top ? "transparent" : "black"
+  } 0, black ${NAV_FADE}, black calc(100% - ${NAV_FADE}), ${
+    navEdges.bottom ? "transparent" : "black"
+  } 100%)`;
 
   const isCloudEngineer = useMemo(
     () => checkIfCloudEngineer(user?.roles ?? []),
@@ -720,10 +781,17 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       </Link>
 
       {/* Nav */}
+      <div className="relative flex-1 min-h-0">
       <nav
+        ref={navRef}
         id="sidebar-nav"
         aria-label="Main navigation"
-        className="flex-1 min-h-0 px-3 py-4 flex flex-col gap-5 overflow-y-auto"
+        className="h-full px-3 py-4 flex flex-col gap-5 overflow-y-auto"
+        style={{
+          maskImage: navMask,
+          WebkitMaskImage: navMask,
+          transition: "mask-image 160ms ease, -webkit-mask-image 160ms ease",
+        }}
       >
         {/* PLATFORM */}
         <div>
@@ -779,6 +847,46 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
           </div>
         </div>
       </nav>
+        {/* Scroll-overflow chevron indicators */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
+          style={{
+            top: "0.25em",
+            width: "1.5em",
+            height: "1.5em",
+            opacity: navEdges.top ? 1 : 0,
+            transform: `translateY(${navEdges.top ? "0" : "-0.25em"})`,
+            transition:
+              "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
+          <ChevronUp
+            className="w-[0.9em] h-[0.9em]"
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
+          style={{
+            bottom: "0.25em",
+            width: "1.5em",
+            height: "1.5em",
+            opacity: navEdges.bottom ? 1 : 0,
+            transform: `translateY(${navEdges.bottom ? "0" : "0.25em"})`,
+            transition:
+              "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
+          <ChevronDown
+            className="w-[0.9em] h-[0.9em]"
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+        </div>
+      </div>
 
       {/* Commit hash */}
       {process.env.REACT_APP_COMMIT_HASH && (
