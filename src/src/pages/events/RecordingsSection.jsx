@@ -46,6 +46,7 @@ export default function RecordingsSection() {
     setActions(
       <TrackedButton
         trackName="RegisterEvent"
+        rybbitEvent={{ name: "event:registration:submitted" }}
         size="sm"
         onClick={() => setShowRegisterModal(true)}
       >

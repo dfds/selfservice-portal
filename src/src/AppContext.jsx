@@ -26,6 +26,7 @@ import {
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
 import { sleep } from "./Utils";
 import { useToast } from "@/context/ToastContext";
+import { useRybbit } from "./RybbitContext";
 
 const AppContext = React.createContext(null);
 
@@ -57,6 +58,7 @@ function truncateString(str, maxLength) {
 function AppProvider({ children }) {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { trackEvent } = useRybbit();
   const user = useCurrentUser();
   const validAuthSession = useSelector((s) => s.auth.isSessionActive);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
@@ -144,12 +146,20 @@ function AppProvider({ children }) {
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
           queryClient.invalidateQueries({ queryKey: ["me"] });
           toast.success("Capability created. Time to spend 💰");
+          trackEvent("capability:create:succeeded", {
+            capability_id: data?.id,
+          });
         },
-        onError: () => toast.error("Could not create capability"),
+        onError: (err) => {
+          toast.error("Could not create capability");
+          trackEvent("capability:create:failed", {
+            error_kind: err?.name || "unknown",
+          });
+        },
       },
     );
   }

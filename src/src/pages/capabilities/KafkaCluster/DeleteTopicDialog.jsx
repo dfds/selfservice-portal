@@ -53,6 +53,7 @@ export default function DeleteTopicDialog({
               You need to request the deletion by creating a ticket via email to{" "}
               <TrackedLink
                 trackName="TopDeskEmail"
+                rybbitEvent={{ name: "kafka:topdesk-email:opened" }}
                 href="mailto:cloud.engineering@dfds.com"
               >
                 cloud.engineering@dfds.com
@@ -93,6 +94,10 @@ export default function DeleteTopicDialog({
             <div className={styles.confirmdialogbuttonscontainer}>
               <TrackedButton
                 trackName="TopicDelete-Confirm"
+                rybbitEvent={{
+                  name: "kafka:topic:delete-submitted",
+                  properties: { is_public: isPublic },
+                }}
                 className={styles.dangerbutton}
                 variation="danger"
                 disabled={!canDelete}
@@ -103,6 +108,7 @@ export default function DeleteTopicDialog({
               </TrackedButton>
               <TrackedButton
                 trackName="TopicDelete-Cancel"
+                rybbitEvent={{ name: "kafka:topic:delete-cancelled" }}
                 variation="outlined"
                 submitting={inProgress}
                 onClick={onCancelClicked}

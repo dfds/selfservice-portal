@@ -322,6 +322,10 @@ export function AwsResourceInfoBadges() {
             <i>CapabilityLog</i> role at{" "}
             <TrackedLink
               trackName="AWSConsole-Start"
+              rybbitEvent={{
+                name: "resource:aws-console:opened",
+                properties: { target: "start" },
+              }}
               target="_blank"
               rel="noreferrer"
               href="https://dfds.awsapps.com/start/"
@@ -336,6 +340,10 @@ export function AwsResourceInfoBadges() {
             menu or{" "}
             <TrackedLink
               trackName="AWSConsole-CloudWatch"
+              rybbitEvent={{
+                name: "resource:aws-console:opened",
+                properties: { target: "cloudwatch" },
+              }}
               target="_blank"
               rel="noreferrer"
               href="https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#home:"
@@ -351,6 +359,10 @@ export function AwsResourceInfoBadges() {
             queries, please check our wiki article at{" "}
             <TrackedButton
               trackName="AWSConsole-CloudWatchLogging"
+              rybbitEvent={{
+                name: "resource:aws-console:opened",
+                properties: { target: "cloudwatch-logging" },
+              }}
               target="_blank"
               rel="noreferrer"
               href="https://wiki.dfds.cloud/en/playbooks/observability/logging_cloudwatch"
@@ -375,6 +387,10 @@ export function AwsResourceInfoBadges() {
             canRequest ? (
               <TrackedButton
                 trackName="RequestAWSAccountAndK8SNamespace"
+                rybbitEvent={{
+                  name: "resource:aws-account:requested",
+                  properties: { capability_id: id },
+                }}
                 size="small"
                 onClick={() => setShowDialog(true)}
               >
@@ -425,6 +441,10 @@ export function AwsResourceInfoBadges() {
           <div className="pt-3">
             <TrackedButton
               trackName="ApplicationLogs-ShowDialog"
+              rybbitEvent={{
+                name: "resource:logs:dialog-opened",
+                properties: { capability_id: id },
+              }}
               size="small"
               variation="outlined"
               onClick={() => setLogModal(true)}
@@ -568,6 +588,10 @@ export function AzureResourceInfoBadges() {
       <div className="pt-3">
         <TrackedButton
           trackName="AzureResourceGroup-ShowRequestDialog"
+          rybbitEvent={{
+            name: "resource:azure-rg:dialog-opened",
+            properties: { capability_id: id },
+          }}
           size="small"
           onClick={() => handleNewAzureResource()}
         >

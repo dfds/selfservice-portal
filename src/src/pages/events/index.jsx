@@ -73,6 +73,10 @@ export default function EventsPage() {
                 {!isSignedUp ? (
                   <TrackedButton
                     trackName="SignUpForEvents"
+                    rybbitEvent={{
+                      name: "event:signups:toggled",
+                      properties: { enabled: true },
+                    }}
                     size="small"
                     onClick={() => toggleSignedUpForEvents()}
                   >
@@ -86,6 +90,10 @@ export default function EventsPage() {
                     </span>
                     <TrackedButton
                       trackName="CancelSignUpForEvents"
+                      rybbitEvent={{
+                        name: "event:signups:toggled",
+                        properties: { enabled: false },
+                      }}
                       variation="outlined"
                       size="small"
                       onClick={() => toggleSignedUpForEvents()}
@@ -101,6 +109,7 @@ export default function EventsPage() {
             <div className="mt-3 pt-3 border-t border-[rgba(14,124,193,0.2)] dark:border-[rgba(14,124,193,0.3)]">
               <TrackedButton
                 trackName="ViewEventSignups"
+                rybbitEvent={{ name: "event:signups:viewed" }}
                 variation="outlined"
                 size="small"
                 onClick={() => setShowSignupModal(true)}

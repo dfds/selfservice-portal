@@ -40,6 +40,7 @@ import {
 import { sleep } from "../../Utils";
 import { de } from "date-fns/locale";
 import { useToast } from "@/context/ToastContext";
+import { useRybbit } from "@/RybbitContext";
 
 const SelectedCapabilityContext = createContext();
 
@@ -57,6 +58,7 @@ function adjustRetention(kafkaTopic) {
 function SelectedCapabilityProvider({ children }) {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { trackEvent } = useRybbit();
   const { shouldAutoReloadTopics, selfServiceApiClient, user } =
     useContext(AppContext);
 
@@ -230,6 +232,10 @@ function SelectedCapabilityProvider({ children }) {
       {
         onSuccess: (data) => {
           toast.success("Topic created. May your consumers never fall behind");
+          trackEvent("kafka:topic:create-succeeded", {
+            topic_id: data?.id,
+            cluster_id: kafkaCluster.id,
+          });
           const newTopic = data;
 
           adjustRetention(newTopic);
@@ -256,7 +262,13 @@ function SelectedCapabilityProvider({ children }) {
             queryKey: ["capabilities", "kafka"],
           });
         },
-        onError: () => toast.error("Could not create topic"),
+        onError: (err) => {
+          toast.error("Could not create topic");
+          trackEvent("kafka:topic:create-failed", {
+            cluster_id: kafkaCluster.id,
+            error_kind: err?.name || "unknown",
+          });
+        },
       },
     );
   };
@@ -484,8 +496,17 @@ function SelectedCapabilityProvider({ children }) {
         payload: { ...topicDescriptor },
       },
       {
-        onSuccess: () => toast.success("Topic updated"),
-        onError: () => toast.error("Could not update topic"),
+        onSuccess: () => {
+          toast.success("Topic updated");
+          trackEvent("kafka:topic:update-succeeded", { topic_id: topicId });
+        },
+        onError: (err) => {
+          toast.error("Could not update topic");
+          trackEvent("kafka:topic:update-failed", {
+            topic_id: topicId,
+            error_kind: err?.name || "unknown",
+          });
+        },
       },
     );
 
@@ -522,8 +543,17 @@ function SelectedCapabilityProvider({ children }) {
         topicDefinition: found,
       },
       {
-        onSuccess: () => toast.success("Topic deleted. The partition is gone"),
-        onError: () => toast.error("Could not delete topic"),
+        onSuccess: () => {
+          toast.success("Topic deleted. The partition is gone");
+          trackEvent("kafka:topic:delete-succeeded", { topic_id: topicId });
+        },
+        onError: (err) => {
+          toast.error("Could not delete topic");
+          trackEvent("kafka:topic:delete-failed", {
+            topic_id: topicId,
+            error_kind: err?.name || "unknown",
+          });
+        },
       },
     );
 

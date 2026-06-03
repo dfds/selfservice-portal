@@ -109,6 +109,7 @@ export default function AzureResourceGroupRequestWizard({
       emptyFormValues={emptyFormValues}
       completeInProgress={inProgress}
       completeName={"Request Azure Resource Group"}
+      rybbitDomain="resource:azure-rg"
     />
   );
 }

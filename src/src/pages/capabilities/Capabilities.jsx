@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { PaginationControls } from "@/components/ui/PaginationControls";
+import { useRybbit } from "@/RybbitContext";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function RowLink({ to }) {
@@ -117,6 +118,7 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
+  const { trackEvent } = useRybbit();
 
   const visibleCapabilities = globalFilter
     ? filteredCapabilities.filter((cap) => {
@@ -203,6 +205,11 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
             onChange={(e) => {
               setSortBy(e.target.value);
               setCurrentPage(1);
+              trackEvent("capability:list:sorted", {
+                column: e.target.value,
+                direction: sortDir,
+                view: "cards",
+              });
             }}
             className="flex-1 px-2 py-2 text-base md:text-sm border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
@@ -213,8 +220,14 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
           </select>
           <button
             onClick={() => {
-              setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+              const next = sortDir === "asc" ? "desc" : "asc";
+              setSortDir(next);
               setCurrentPage(1);
+              trackEvent("capability:list:sorted", {
+                column: sortBy,
+                direction: next,
+                view: "cards",
+              });
             }}
             className="shrink-0 flex items-center justify-center px-3 py-2 border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
             aria-label={
@@ -259,6 +272,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const { isDark } = useTheme();
   const [sorting, setSorting] = useState([]);
+  const { trackEvent } = useRybbit();
   // Keep ref in sync during render so column sortingFns see the latest
   // direction on the same render that MRT applies it.
   if (sortingRef) sortingRef.current = sorting;
@@ -291,7 +305,20 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
       onGlobalFilterChange={(value) => {
         setGlobalFilter(value);
       }}
-      onSortingChange={setSorting}
+      onSortingChange={(updater) => {
+        setSorting((prev) => {
+          const next = typeof updater === "function" ? updater(prev) : updater;
+          const first = Array.isArray(next) && next.length > 0 ? next[0] : null;
+          if (first) {
+            trackEvent("capability:list:sorted", {
+              column: first.id,
+              direction: first.desc ? "desc" : "asc",
+              view: "table",
+            });
+          }
+          return next;
+        });
+      }}
       muiTableHeadCellProps={{
         sx: {
           fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
@@ -411,6 +438,7 @@ export default function CapabilitiesList() {
 
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
+  const { trackEvent } = useRybbit();
 
   const [capabilities, setCapabilities] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
@@ -764,7 +792,13 @@ export default function CapabilitiesList() {
                 </span>
                 <Switch
                   checked={showOnlyMyCapabilities}
-                  onCheckedChange={toggleShowOnlyMyCapabilities}
+                  onCheckedChange={(checked) => {
+                    toggleShowOnlyMyCapabilities(checked);
+                    trackEvent("capability:list:filter-toggled", {
+                      filter: "mine",
+                      on: !showOnlyMyCapabilities,
+                    });
+                  }}
                 />
               </div>
               {isCloudEngineerEnabled && (
@@ -774,7 +808,13 @@ export default function CapabilitiesList() {
                   </span>
                   <Switch
                     checked={showDeletedCapabilities}
-                    onCheckedChange={toggleShowDeletedCapabilities}
+                    onCheckedChange={(checked) => {
+                      toggleShowDeletedCapabilities(checked);
+                      trackEvent("capability:list:filter-toggled", {
+                        filter: "deleted",
+                        on: !showDeletedCapabilities,
+                      });
+                    }}
                   />
                 </div>
               )}

@@ -14,6 +14,7 @@ import {
   complianceTier,
   complianceColor,
 } from "./utils";
+import { useRybbit } from "@/RybbitContext";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -167,10 +168,14 @@ function CostCentreCard({
   const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
+  const { trackEvent } = useRybbit();
 
   return (
     <Link
       to={`/compliance/cost-centres/${encodeURIComponent(name)}`}
+      onClick={() =>
+        trackEvent("compliance:cost-center:expanded", { cost_centre: name })
+      }
       className={cn(
         "block bg-surface border border-card rounded-[10px] overflow-hidden no-underline text-inherit",
         "transition-[box-shadow,border-color] duration-200",
@@ -290,6 +295,8 @@ export default function CompliancePage() {
   const [activeFilters, setActiveFilters] = useState<Set<string>>(
     () => new Set(["green", "orange", "red"]),
   );
+  const { trackEvent } = useRybbit();
+  const searchTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const costCentres = useMemo(() => {
     const caps: any[] = capabilities ?? [];
@@ -405,14 +412,35 @@ export default function CompliancePage() {
   function toggleFilter(t: string) {
     setActiveFilters((prev) => {
       const next = new Set(prev);
+      let on: boolean;
       if (next.has(t)) {
         if (next.size === 1) return prev;
         next.delete(t);
+        on = false;
       } else {
         next.add(t);
+        on = true;
       }
+      trackEvent("compliance:filter-toggled", { tier: t, on });
       return next;
     });
+  }
+
+  function handleSearchChange(value: string) {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      if (value.trim().length > 0) {
+        trackEvent("compliance:list:searched", {
+          query_length: value.trim().length,
+        });
+      }
+    }, 500);
+  }
+
+  function handleSortChange(key: SortMode) {
+    setSort(key);
+    trackEvent("compliance:list:sorted", { sort: key });
   }
 
   const n = costCentres.length;
@@ -587,7 +615,7 @@ export default function CompliancePage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search cost centres..."
             className="w-full h-[36px] pl-8 pr-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] font-mono text-[1rem] md:text-[12.5px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] focus:shadow-[0_0_0_3px_rgba(14,124,193,.1)] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] transition-[border-color,box-shadow]"
           />
@@ -599,7 +627,7 @@ export default function CompliancePage() {
             <button
               key={key}
               type="button"
-              onClick={() => setSort(key)}
+              onClick={() => handleSortChange(key)}
               className={cn(
                 "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                 sort === key

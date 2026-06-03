@@ -5,6 +5,8 @@ import AppContext from "@/AppContext";
 import PreAppContext from "../../preAppContext";
 import { useTopBarActions } from "./TopBarActionsContext";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import WhatsNewBell from "./WhatsNewBell";
 
 const pathLabels: Record<string, string> = {
   "/": "Home",
@@ -55,6 +57,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
     useContext(PreAppContext);
   const location = useLocation();
   const { actions } = useTopBarActions();
+  const isMobile = useIsMobile();
 
   const isCloudEngineer = useMemo(
     () => checkIfCloudEngineer(user?.roles ?? []),
@@ -122,8 +125,9 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
       {/* Right side */}
       <div className="flex items-center gap-4">
         {actions}
-        {/* CE Mode toggle */}
-        {isCloudEngineer && (
+        {/* What's New + CE Mode are desktop-only; on mobile they live in the Sidebar so the cramped top bar has room for breadcrumb + page action. */}
+        {!isMobile && <WhatsNewBell />}
+        {!isMobile && isCloudEngineer && (
           <div className="flex items-center gap-2 select-none">
             <span
               id="ce-mode-label"

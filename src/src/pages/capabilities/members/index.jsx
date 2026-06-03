@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRemoveCapabilityMember } from "@/state/remote/queries/capabilities";
 import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useRybbit } from "@/RybbitContext";
 
 function MemberRow({ member, roleTypes }) {
   const { id: capabilityId, userIsOwner } = useContext(
@@ -27,6 +28,7 @@ function MemberRow({ member, roleTypes }) {
   const { isDark } = useTheme();
 
   const removeMemberMutation = useRemoveCapabilityMember();
+  const { trackEvent } = useRybbit();
   const removeConfirm = useConfirmAction({
     mutation: removeMemberMutation,
     buildPayload: (m) => ({ capabilityId, memberId: m.id }),
@@ -36,6 +38,11 @@ function MemberRow({ member, roleTypes }) {
     ],
     successMessage: "Member removed",
     errorMessage: "Could not remove member",
+    onSuccess: () => {
+      trackEvent("membership:member:removed", {
+        capability_id: capabilityId,
+      });
+    },
   });
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import { formatEventDateTime } from "./eventDateTime";
+import { useRybbit } from "@/RybbitContext";
 
 export function getAttachmentIcon(type) {
   switch (type) {
@@ -45,6 +46,7 @@ export default function EventRecord({
 }) {
   const { title, description, eventDate, type, attachments = [] } = event;
   const navigate = useNavigate();
+  const { trackEvent } = useRybbit();
   const handleRowClick = (e) => {
     if (
       e.defaultPrevented ||
@@ -57,6 +59,7 @@ export default function EventRecord({
       return;
     }
     if (e.target.closest("a, button, [role='button']")) return;
+    trackEvent("event:detail:opened", { event_id: event.id });
     navigate(`/events/v/${event.id}`);
   };
   return (
@@ -80,6 +83,7 @@ export default function EventRecord({
                 return;
               }
               e.preventDefault();
+              trackEvent("event:detail:opened", { event_id: event.id });
               navigate(`/events/v/${event.id}`);
             }}
             className="no-underline text-[0.875rem] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
@@ -108,7 +112,16 @@ export default function EventRecord({
                 href={attachment.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (
+                    (attachment.type || "").toLowerCase() === "recording"
+                  ) {
+                    trackEvent("event:recording:opened", {
+                      event_id: event.id,
+                    });
+                  }
+                }}
                 className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium text-action hover:underline"
                 title={attachment.description || attachment.type}
               >

@@ -16,6 +16,7 @@ import { MyMembershipApplication } from "../membershipapplications";
 import AppContext from "@/AppContext";
 import { TrackedButton } from "@/components/Tracking";
 import { sleep } from "../../../Utils";
+import { useRybbit } from "@/RybbitContext";
 
 function JoinDialog({
   name,
@@ -119,6 +120,7 @@ export default function Summary({ anchorId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const { trackEvent } = useRybbit();
 
   var canJoin = (links?.membershipApplications?.allow || []).includes("POST");
   var canLeave = (links?.leaveCapability?.allow || []).includes("POST");
@@ -133,13 +135,25 @@ export default function Summary({ anchorId }) {
 
   const handleSubmitClicked = async () => {
     setIsSubmitting(true);
-    await submitMembershipApplication();
-    setIsSubmitting(false);
-    setShowJoinDialog(false);
+    trackEvent("membership:application:submitted", { capability_id: id });
+    try {
+      await submitMembershipApplication();
+      trackEvent("membership:application:succeeded", { capability_id: id });
+    } catch (err) {
+      trackEvent("membership:application:failed", {
+        capability_id: id,
+        error_kind: err?.name || "unknown",
+      });
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+      setShowJoinDialog(false);
+    }
   };
 
   const handleLeaveClicked = async () => {
     setIsLeaving(true);
+    trackEvent("membership:left", { capability_id: id });
     await submitLeaveCapability();
     await sleep(200);
     reloadUser();
@@ -155,6 +169,7 @@ export default function Summary({ anchorId }) {
   };
 
   const handleBypassClicked = async () => {
+    trackEvent("membership:force-join:submitted", { capability_id: id });
     await bypassMembershipApproval();
     await sleep(200);
     reloadUser();

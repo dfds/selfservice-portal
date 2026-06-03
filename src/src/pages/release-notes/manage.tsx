@@ -13,6 +13,7 @@ import PreAppContext from "@/preAppContext";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 import { useMutationToast } from "@/hooks/useMutationToast";
+import { useRybbit } from "@/RybbitContext";
 
 function formatDate(iso: string) {
   if (!iso) return "—";
@@ -31,6 +32,7 @@ export function ReleaseNotesManage() {
 
   const [notes, setNotes] = useState(data?.items || []);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const { trackEvent } = useRybbit();
 
   useEffect(() => {
     if (data?.items) {
@@ -44,13 +46,29 @@ export function ReleaseNotesManage() {
     invalidateKeys: [["releasenotes", "list"]],
     successMessage: "Release note status updated",
     errorMessage: "Could not update release note status",
+    onSuccess: () => {
+      if (togglingIdRef.current) {
+        const note = notes.find((n: any) => n.id === togglingIdRef.current);
+        trackEvent("release-note:active-toggled", {
+          note_id: togglingIdRef.current,
+          active: note ? !note.isActive : undefined,
+        });
+        togglingIdRef.current = null;
+      }
+    },
   });
 
+  const deletingIdRef = React.useRef<string | null>(null);
+  const togglingIdRef = React.useRef<string | null>(null);
   const fireDelete = useMutationToast(deleteReleaseNote, {
     invalidateKeys: [["releasenotes", "list"]],
     successMessage: "Release note deleted",
     errorMessage: "Could not delete release note",
-    onSuccess: () => setDeleteTarget(null),
+    onSuccess: () => {
+      trackEvent("release-note:deleted", { note_id: deletingIdRef.current });
+      deletingIdRef.current = null;
+      setDeleteTarget(null);
+    },
   });
 
   return (
@@ -66,7 +84,12 @@ export function ReleaseNotesManage() {
           </p>
         }
         confirmLabel="Delete"
-        onConfirm={() => deleteTarget && fireDelete({ id: deleteTarget.id })}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deletingIdRef.current = deleteTarget.id;
+            fireDelete({ id: deleteTarget.id });
+          }
+        }}
       />
 
       {isCloudEngineerEnabled ? (
@@ -76,6 +99,7 @@ export function ReleaseNotesManage() {
               onClick={() => navigate("/release-notes/create")}
               variation="action"
               trackName="ReleaseNote-CreateButtonClicked"
+              rybbitEvent={{ name: "release-note:create:opened" }}
               trackingEvent={{
                 category: "ReleaseNotes",
                 action: "CreateNew",
@@ -131,7 +155,10 @@ export function ReleaseNotesManage() {
                     {elem._links?.toggleIsActive && (
                       <TrackedButton
                         trackName="ReleaseNote-ToggleActiveButtonClicked"
-                        onClick={() => fireToggleActive({ id: elem.id })}
+                        onClick={() => {
+                          togglingIdRef.current = elem.id;
+                          fireToggleActive({ id: elem.id });
+                        }}
                         variation={elem.isActive ? "outline" : "action"}
                         size="small"
                         trackingEvent={{
@@ -145,6 +172,10 @@ export function ReleaseNotesManage() {
                     )}
                     <TrackedButton
                       trackName="ReleaseNote-EditButtonClicked"
+                      rybbitEvent={{
+                        name: "release-note:edit:opened",
+                        properties: { note_id: elem.id },
+                      }}
                       onClick={() => navigate(`/release-notes/edit/${elem.id}`)}
                       variation="outline"
                       size="small"

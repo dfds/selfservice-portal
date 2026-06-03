@@ -401,8 +401,25 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply user font-scale to direct children of <body> (the React #root and any
+   Radix portals) — not to <body> itself. driver.js appends its overlay/popover
+   directly under <body>; if those siblings inherit zoom too, the popover's
+   `top`/`left` (already in the visually-zoomed coord space from the target's
+   getBoundingClientRect) get displaced by the zoom factor and the popover lands
+   in the wrong spot. Excluding the driver elements keeps tour positioning correct
+   while the rest of the UI still scales. */
+body > *:not(.driver-overlay):not(.driver-popover) {
   zoom: var(--ssu-font-scale, 1);
 }
+
+/* Scale the driver.js popover with the user font-scale by inflating the
+   actual padding/font-sizes/etc. rather than `transform: scale` (which mis-
+   aligns when driver uses `style.right`/`style.bottom` to anchor) or `zoom`
+   (which would re-displace the popover by the zoom factor). Driver's layout
+   math reads getBoundingClientRect, so a naturally-larger popover positions
+   correctly without any coordinate-space tricks. */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
@@ -450,4 +467,125 @@ code {
 
 .dark .template-variable-chip.ProseMirror-selectednode {
   outline-color: #60a5fa;
+}
+
+/* driver.js theming — driver's stylesheet is dynamically imported AFTER our
+ * index.css, so its defaults win at equal specificity. We scope every
+ * override under .ssu-driver-popover (set via popoverClass in useDriverTour)
+ * to make selectors more specific than driver.js's defaults. */
+.driver-popover.ssu-driver-popover {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-card);
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  font-family: inherit;
+  /* Scale the popover with the user's UI size preference. */
+  padding: calc(15px * var(--ssu-font-scale, 1));
+  min-width: calc(250px * var(--ssu-font-scale, 1));
+  max-width: calc(300px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: calc(0.9rem * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-description {
+  color: var(--color-text-secondary);
+  font-size: calc(0.8125rem * var(--ssu-font-scale, 1));
+  line-height: 1.5;
+}
+
+.ssu-driver-popover .driver-popover-footer {
+  margin-top: calc(15px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn,
+.ssu-driver-popover .driver-popover-footer .driver-popover-next-btn,
+.ssu-driver-popover .driver-popover-footer .driver-popover-close-btn {
+  background-color: var(--color-action);
+  color: #ffffff;
+  border: 1px solid var(--color-action);
+  border-radius: 5px;
+  padding: calc(6px * var(--ssu-font-scale, 1))
+    calc(12px * var(--ssu-font-scale, 1));
+  font-size: calc(0.75rem * var(--ssu-font-scale, 1));
+  font-weight: 500;
+  text-shadow: none;
+  cursor: pointer;
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-next-btn:hover,
+.ssu-driver-popover .driver-popover-footer .driver-popover-close-btn:hover {
+  background-color: #0a6aaa;
+  border-color: #0a6aaa;
+  color: #ffffff;
+}
+
+html.dark
+  .ssu-driver-popover
+  .driver-popover-footer
+  .driver-popover-next-btn:hover,
+html.dark
+  .ssu-driver-popover
+  .driver-popover-footer
+  .driver-popover-close-btn:hover {
+  background-color: #1a5e8f;
+  border-color: #1a5e8f;
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-card);
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn:hover {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-card);
+}
+
+.ssu-driver-popover .driver-popover-close-btn {
+  color: var(--color-text-secondary);
+  font-size: calc(1.25rem * var(--ssu-font-scale, 1));
+  width: calc(32px * var(--ssu-font-scale, 1));
+  height: calc(28px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-close-btn:hover,
+.ssu-driver-popover .driver-popover-close-btn:focus {
+  color: var(--color-text-primary);
+}
+
+.ssu-driver-popover .driver-popover-progress-text {
+  color: var(--color-text-muted);
+  font-family: "SFMono-Regular", "Fira Code", "Consolas", monospace;
+  font-size: calc(0.6875rem * var(--ssu-font-scale, 1));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Scale the arrow with UI size so it stays proportional to the popover. */
+.ssu-driver-popover .driver-popover-arrow {
+  border-width: calc(5px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover.driver-popover-arrow-side-top .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: var(--color-surface);
+}
+.ssu-driver-popover.driver-popover-arrow-side-bottom .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: var(--color-surface);
+}
+.ssu-driver-popover.driver-popover-arrow-side-left .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: var(--color-surface);
+}
+.ssu-driver-popover.driver-popover-arrow-side-right .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: var(--color-surface);
 }
