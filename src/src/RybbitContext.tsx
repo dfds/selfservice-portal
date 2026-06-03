@@ -99,10 +99,16 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const tag =
+      hostname === "ssu-preview.hellman.oxygen.dfds.cloud"
+        ? "production"
+        : "dev";
+
     const s = document.createElement("script");
     s.src = RYBBIT_SCRIPT_URL;
     s.async = true;
     s.setAttribute("data-site-id", RYBBIT_SITE_ID);
+    s.setAttribute("data-tag", tag);
     s.addEventListener("load", () => {
       scriptLoaded = true;
       while (onScriptLoad.length) {
