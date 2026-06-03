@@ -1,7 +1,7 @@
 import type { TourDefinition } from "../types";
 
 export const tour_2026_q2_customisation: TourDefinition = {
-  id: "2026-q2-customisation",
+  id: "2026-q2-customisationnnn",
   release: "2026-Q2",
   releaseDate: "2026-06-15",
   title: "Make the portal yours",
