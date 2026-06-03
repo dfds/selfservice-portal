@@ -8,6 +8,8 @@ import { MsalProvider } from "@azure/msal-react";
 import { msalInstance } from "./auth/context";
 import { ErrorProvider } from "./ErrorContext";
 import { TrackingProvider } from "./TrackingContext";
+import { SwetrixProvider } from "./SwetrixContext";
+import { RybbitProvider } from "./RybbitContext";
 import { PreAppProvider } from "./preAppContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Provider } from "react-redux";
@@ -31,13 +33,17 @@ root.render(
             <ErrorProvider>
               <ToastProvider>
                 <TrackingProvider>
-                  <PreAppProvider>
-                    <ThemeProvider>
-                      <AppProvider>
-                        <App />
-                      </AppProvider>
-                    </ThemeProvider>
-                  </PreAppProvider>
+                  <SwetrixProvider>
+                    <RybbitProvider>
+                      <PreAppProvider>
+                        <ThemeProvider>
+                          <AppProvider>
+                            <App />
+                          </AppProvider>
+                        </ThemeProvider>
+                      </PreAppProvider>
+                    </RybbitProvider>
+                  </SwetrixProvider>
                 </TrackingProvider>
               </ToastProvider>
             </ErrorProvider>
