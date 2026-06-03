@@ -25,10 +25,12 @@ export interface TourState {
   seenIds: string[];
   dismissedIds: string[];
   completedIds: string[];
+  seenReleaseNoteIds: string[];
 }
 
 export const EMPTY_TOUR_STATE: TourState = {
   seenIds: [],
   dismissedIds: [],
   completedIds: [],
+  seenReleaseNoteIds: [],
 };
