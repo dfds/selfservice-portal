@@ -358,9 +358,7 @@ export default function NewTopicDialog({
                   cluster: clusterName,
                   partitions: formData.partitions,
                   retention_days:
-                    formData.retention === "forever"
-                      ? -1
-                      : formData.retention,
+                    formData.retention === "forever" ? -1 : formData.retention,
                   is_public: formData.availability === "public",
                 },
               }}

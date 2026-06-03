@@ -61,7 +61,9 @@ function Topics() {
     if (searchTimer.current) clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(() => {
       if (value.trim().length > 0) {
-        trackEvent("topics:list:searched", { query_length: value.trim().length });
+        trackEvent("topics:list:searched", {
+          query_length: value.trim().length,
+        });
       }
     }, 500);
   };

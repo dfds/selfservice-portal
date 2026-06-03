@@ -612,7 +612,12 @@ export default function CapabilitiesList() {
                       width: "70px",
                       textAlign: "right",
                     }}
-                  >{`${requirementsScore.toFixed(1)}%`}</span>
+                  >
+                    {requirementsScore === null ||
+                    requirementsScore === undefined
+                      ? "—"
+                      : `${requirementsScore.toFixed(1)}%`}
+                  </span>
                 </div>
               );
             },

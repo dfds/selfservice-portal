@@ -38,7 +38,12 @@ export default function CreationWizard({
 
   useEffect(() => {
     if (isOpen) wasOpenRef.current = true;
-    if (!isOpen && wasOpenRef.current && !completedRef.current && rybbitDomain) {
+    if (
+      !isOpen &&
+      wasOpenRef.current &&
+      !completedRef.current &&
+      rybbitDomain
+    ) {
       trackEvent(`${rybbitDomain}:wizard:abandoned`, {
         last_step: lastStepRef.current,
       });
@@ -54,9 +59,7 @@ export default function CreationWizard({
         </DialogHeader>
         <Wizard
           startIndex={0}
-          header={
-            <Header steps={steps} lastStepRef={lastStepRef} />
-          }
+          header={<Header steps={steps} lastStepRef={lastStepRef} />}
           footer={
             <Footer
               onComplete={(values) => {
