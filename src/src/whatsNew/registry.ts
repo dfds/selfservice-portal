@@ -1,11 +1,11 @@
 import type { TourDefinition } from "./types";
 import {
-  tour_2026_q2_customisation,
+  // tour_2026_q2_customisation,
   tour_2026_q2_topbar,
 } from "./releases/2026-q2";
 
 const ALL_TOURS: TourDefinition[] = [
-  // tour_2026_q2_customisation,
+  tour_2026_q2_customisation,
   // tour_2026_q2_topbar,
 ];
 

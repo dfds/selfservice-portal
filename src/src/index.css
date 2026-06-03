@@ -215,6 +215,29 @@
       filter: hue-rotate(360deg);
     }
   }
+
+  /* What's New bell — rainbow color cycle on the small badge dot */
+  --animate-rainbow-text: rainbow-text 4s linear infinite;
+  @keyframes rainbow-text {
+    0% {
+      color: hsl(0, 85%, 55%);
+    }
+    20% {
+      color: hsl(45, 90%, 55%);
+    }
+    40% {
+      color: hsl(140, 70%, 50%);
+    }
+    60% {
+      color: hsl(200, 85%, 55%);
+    }
+    80% {
+      color: hsl(280, 70%, 60%);
+    }
+    100% {
+      color: hsl(360, 85%, 55%);
+    }
+  }
 }
 
 :root {
