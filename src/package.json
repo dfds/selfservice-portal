@@ -67,6 +67,7 @@
     "react-use-wizard": "^2.3.0",
     "recharts": "^2.7.2",
     "serve": "^14.2.4",
+    "swetrix": "^4.2.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
     "to-json-schema": "^0.2.5",
