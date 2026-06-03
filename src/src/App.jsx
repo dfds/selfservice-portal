@@ -191,52 +191,52 @@ function Layout() {
       <AuthTemplate>
         <WhatsNewProvider>
           <TopBarActionsProvider>
-          <div className="flex min-h-[var(--ssu-vh)] bg-surface-muted">
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#002b45] focus:text-white focus:rounded-[5px] focus:text-sm focus:no-underline"
-            >
-              Skip to main content
-            </a>
-            {/* Mobile backdrop */}
-            <div
-              className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
-                mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-              onClick={closeMobileDrawer}
-              aria-hidden="true"
-            />
-            <Sidebar mobileOpen={mobileOpen} onClose={closeMobileDrawer} />
-            <div className="flex flex-col flex-1 min-w-0">
-              <TopBar onMenuOpen={openMobileDrawer} menuOpen={mobileOpen} />
-              <main
-                id="main-content"
-                className="flex-1 bg-surface-muted overflow-x-clip"
+            <div className="flex min-h-[var(--ssu-vh)] bg-surface-muted">
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#002b45] focus:text-white focus:rounded-[5px] focus:text-sm focus:no-underline"
               >
-                <WhatsNewBanner />
-                {isAdminRoute && isCloudEngineer && (
-                  <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[0.75rem] font-mono font-semibold tracking-[0.12em]">
-                    <span aria-hidden="true">⚠</span>
-                    WORK IN PROGRESS — This section is under active development
-                    and may change without notice.
-                  </div>
-                )}
-                {showAdminLoader ? null : showAdminGuard ? (
-                  <NotFoundPage />
-                ) : (
-                  <ErrorBoundary
-                    key={location.pathname}
-                    route={location.pathname}
-                  >
-                    <PageTransition>
-                      <Outlet />
-                    </PageTransition>
-                  </ErrorBoundary>
-                )}
-              </main>
+                Skip to main content
+              </a>
+              {/* Mobile backdrop */}
+              <div
+                className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
+                  mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+                onClick={closeMobileDrawer}
+                aria-hidden="true"
+              />
+              <Sidebar mobileOpen={mobileOpen} onClose={closeMobileDrawer} />
+              <div className="flex flex-col flex-1 min-w-0">
+                <TopBar onMenuOpen={openMobileDrawer} menuOpen={mobileOpen} />
+                <main
+                  id="main-content"
+                  className="flex-1 bg-surface-muted overflow-x-clip"
+                >
+                  <WhatsNewBanner />
+                  {isAdminRoute && isCloudEngineer && (
+                    <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[0.75rem] font-mono font-semibold tracking-[0.12em]">
+                      <span aria-hidden="true">⚠</span>
+                      WORK IN PROGRESS — This section is under active
+                      development and may change without notice.
+                    </div>
+                  )}
+                  {showAdminLoader ? null : showAdminGuard ? (
+                    <NotFoundPage />
+                  ) : (
+                    <ErrorBoundary
+                      key={location.pathname}
+                      route={location.pathname}
+                    >
+                      <PageTransition>
+                        <Outlet />
+                      </PageTransition>
+                    </ErrorBoundary>
+                  )}
+                </main>
+              </div>
             </div>
-          </div>
-          <WhatsNewListModal />
+            <WhatsNewListModal />
           </TopBarActionsProvider>
         </WhatsNewProvider>
       </AuthTemplate>

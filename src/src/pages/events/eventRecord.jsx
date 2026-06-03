@@ -114,9 +114,7 @@ export default function EventRecord({
                 rel="noopener noreferrer"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (
-                    (attachment.type || "").toLowerCase() === "recording"
-                  ) {
+                  if ((attachment.type || "").toLowerCase() === "recording") {
                     trackEvent("event:recording:opened", {
                       event_id: event.id,
                     });

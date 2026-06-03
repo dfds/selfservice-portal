@@ -7,7 +7,11 @@ function fireRybbitEvent(trackEvent, rybbitEvent) {
   if (!rybbitEvent) return;
   if (typeof rybbitEvent === "string") {
     trackEvent(rybbitEvent);
-  } else if (rybbitEvent && typeof rybbitEvent === "object" && rybbitEvent.name) {
+  } else if (
+    rybbitEvent &&
+    typeof rybbitEvent === "object" &&
+    rybbitEvent.name
+  ) {
     trackEvent(rybbitEvent.name, rybbitEvent.properties);
   }
 }
