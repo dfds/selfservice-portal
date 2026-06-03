@@ -9,6 +9,7 @@ import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
 import { Banner } from "@/components/ui/banner";
+import { useRybbit } from "@/RybbitContext";
 import {
   ENUM_COSTCENTER_OPTIONS,
   getBusinessCapabilitiesOptions,
@@ -503,6 +504,7 @@ export function CapabilityTags() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { trackEvent } = useRybbit();
 
   const [canEditTags, setCanEditTags] = useState(false);
   const [existingTags, setExistingTags] = useState({});
@@ -521,6 +523,9 @@ export function CapabilityTags() {
   }, [metadata]);
 
   const handleSubmit = (data) => {
+    trackEvent("capability:metadata:submitted", {
+      capability_id: details?.id,
+    });
     updateCapabilityMetadata.mutate(
       {
         capabilityDefinition: details,
@@ -536,8 +541,17 @@ export function CapabilityTags() {
           });
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 3000);
+          trackEvent("capability:metadata:succeeded", {
+            capability_id: details?.id,
+          });
         },
-        onError: () => toast.error("Could not save tags"),
+        onError: (err) => {
+          toast.error("Could not save tags");
+          trackEvent("capability:metadata:failed", {
+            capability_id: details?.id,
+            error_kind: err?.name || "unknown",
+          });
+        },
       },
     );
   };

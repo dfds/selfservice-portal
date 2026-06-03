@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import styles from "@/pages/capabilities/capabilities.module.css";
 import { Wizard, useWizard } from "react-use-wizard";
 import {
@@ -15,6 +15,7 @@ import { TrackedButton } from "@/components/Tracking";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useTheme } from "@/context/ThemeContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useRybbit } from "@/RybbitContext";
 
 export default function CreationWizard({
   isOpen,
@@ -25,9 +26,25 @@ export default function CreationWizard({
   emptyFormValues,
   completeInProgress,
   completeName,
+  rybbitDomain,
+  rybbitSubmitProperties,
 }) {
   const [canContinue, setCanContinue] = useState(true);
   const [formValues, setFormValues] = useState(emptyFormValues);
+  const { trackEvent } = useRybbit();
+  const completedRef = useRef(false);
+  const wasOpenRef = useRef(false);
+  const lastStepRef = useRef(0);
+
+  useEffect(() => {
+    if (isOpen) wasOpenRef.current = true;
+    if (!isOpen && wasOpenRef.current && !completedRef.current && rybbitDomain) {
+      trackEvent(`${rybbitDomain}:wizard:abandoned`, {
+        last_step: lastStepRef.current,
+      });
+      wasOpenRef.current = false;
+    }
+  }, [isOpen, rybbitDomain, trackEvent]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -37,15 +54,27 @@ export default function CreationWizard({
         </DialogHeader>
         <Wizard
           startIndex={0}
-          header={<Header steps={steps} />}
+          header={
+            <Header steps={steps} lastStepRef={lastStepRef} />
+          }
           footer={
             <Footer
-              onComplete={onComplete}
+              onComplete={(values) => {
+                completedRef.current = true;
+                if (rybbitDomain) {
+                  trackEvent(
+                    `${rybbitDomain}:wizard:submitted`,
+                    rybbitSubmitProperties || {},
+                  );
+                }
+                onComplete(values);
+              }}
               steps={steps}
               canContinue={canContinue}
               formValues={formValues}
               completeInProgress={completeInProgress}
               completeName={completeName}
+              rybbitDomain={rybbitDomain}
             />
           }
         >
@@ -162,7 +191,7 @@ function SnakeStepper({ steps, activeStep, stepsPerRow = 3 }) {
   );
 }
 
-const Header = ({ steps }) => {
+const Header = ({ steps, lastStepRef }) => {
   const { activeStep } = useWizard();
   const { isDark } = useTheme();
   const isMobile = useIsMobile();
@@ -170,6 +199,9 @@ const Header = ({ steps }) => {
     () => createTheme({ palette: { mode: isDark ? "dark" : "light" } }),
     [isDark],
   );
+  useEffect(() => {
+    if (lastStepRef) lastStepRef.current = activeStep;
+  }, [activeStep, lastStepRef]);
 
   if (isMobile) {
     return <SnakeStepper steps={steps} activeStep={activeStep} />;
@@ -218,14 +250,33 @@ const Footer = ({
   formValues,
   completeInProgress,
   completeName,
+  rybbitDomain,
 }) => {
   const { previousStep, nextStep, activeStep, stepCount } = useWizard();
+
+  const backRybbit = rybbitDomain
+    ? {
+        name: `${rybbitDomain}:wizard:step-back`,
+        properties: { from_step: activeStep, to_step: activeStep - 1 },
+      }
+    : undefined;
+  const nextRybbit = rybbitDomain
+    ? {
+        name: `${rybbitDomain}:wizard:step-advanced`,
+        properties: {
+          from_step: activeStep,
+          to_step: activeStep + 1,
+          step_name: steps[activeStep]?.title,
+        },
+      }
+    : undefined;
 
   return (
     <div>
       {activeStep > 0 && (
         <TrackedButton
           trackName="CapabilityWizard-Back"
+          rybbitEvent={backRybbit}
           className={styles.backButton}
           onClick={() => {
             steps[activeStep - 1].skipped = false;
@@ -244,6 +295,7 @@ const Footer = ({
       {activeStep + 1 < stepCount && (
         <TrackedButton
           trackName="CapabilityWizard-Next"
+          rybbitEvent={nextRybbit}
           className={styles.nextButton}
           disabled={!canContinue}
           onClick={() => {

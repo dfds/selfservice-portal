@@ -7,6 +7,7 @@ import PreAppContext from "@/preAppContext";
 import DateFlag from "../../components/DateFlag/DateFlag";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { useRybbit } from "@/RybbitContext";
 
 function ManageButton({ onClick }) {
   return (
@@ -14,6 +15,7 @@ function ManageButton({ onClick }) {
       onClick={onClick}
       variation="action"
       trackName="ReleaseNotes-ManageContentClicked"
+      rybbitEvent={{ name: "release-note:manage:opened" }}
       trackingEvent={{
         category: "ReleaseNotes",
         action: "ManageContent",
@@ -28,6 +30,7 @@ function ManageButton({ onClick }) {
 function ReleaseNotesList() {
   const { isFetched, data } = useReleaseNotes({});
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const { trackEvent } = useRybbit();
 
   const [notes, setNotes] = useState(data?.items || []);
   useEffect(() => {
@@ -66,6 +69,7 @@ function ReleaseNotesList() {
                     return;
                   }
                   event.preventDefault();
+                  trackEvent("release-note:view:opened", { note_id: note.id });
                   navigate(`/release-notes/v/${note.id}`);
                 }}
                 key={note.id}

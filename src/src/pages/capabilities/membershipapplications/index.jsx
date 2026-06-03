@@ -16,6 +16,7 @@ import { useContext, useEffect, useState } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import { MembershipApplicationTable } from "./membershipApplicationTable";
 import { sleep } from "../../../Utils";
+import { useRybbit } from "@/RybbitContext";
 
 export function MyMembershipApplication() {
   const { membershipApplications } = useContext(SelectedCapabilityContext);
@@ -87,6 +88,7 @@ export function MembershipApplicationsUserCanApprove({
     useSubmitMembershipApplicationApproval();
   const deleteMembershipApplicationApproval =
     useDeleteMembershipApplicationApproval();
+  const { trackEvent } = useRybbit();
 
   useEffect(() => {
     if (data) {
@@ -168,6 +170,10 @@ export function MembershipApplicationsUserCanApprove({
             });
           });
           toast.success("Access granted. Welcome to the team");
+          trackEvent("membership:application:approved", {
+            application_id: def?.id,
+            capability_id: def?.capabilityId,
+          });
         },
         onError: () => toast.error("Could not approve membership"),
       },
@@ -192,6 +198,10 @@ export function MembershipApplicationsUserCanApprove({
             });
           });
           toast.success("Application declined");
+          trackEvent("membership:application:rejected", {
+            application_id: def?.id,
+            capability_id: def?.capabilityId,
+          });
         },
         onError: () => toast.error("Could not decline membership"),
       },

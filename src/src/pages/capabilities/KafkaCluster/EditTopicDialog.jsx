@@ -71,6 +71,7 @@ export default function EditTopicDialog({
 
           <TrackedButton
             trackName="TopicEdit-Confirm"
+            rybbitEvent={{ name: "kafka:topic:update-submitted" }}
             variation="primary"
             type="button"
             disabled={!allowedToUpdate && !canUpdate}

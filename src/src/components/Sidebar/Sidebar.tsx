@@ -65,6 +65,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
+import WhatsNewBell from "@/components/TopBar/WhatsNewBell";
 
 function DfdsHexMark({ className }: { className?: string }) {
   return (
@@ -165,6 +166,11 @@ const adminNav: NavGroupDef = {
   ],
 };
 
+function navItemTourId(item: NavItemDef): string {
+  const slug = item.url.replace(/^\//, "").replace(/\//g, "-") || "home";
+  return `nav-${slug}`;
+}
+
 function NavItemLink({
   item,
   isActive,
@@ -173,6 +179,8 @@ function NavItemLink({
   isActive: boolean;
 }) {
   const Icon = item.icon;
+  const tourId = navItemTourId(item);
+  const { trackEvent } = useRybbit();
   const cls = cn(
     "flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] no-underline transition duration-150 ease-out-expo border-l-2",
     isActive
@@ -180,13 +188,22 @@ function NavItemLink({
       : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
   );
 
+  const handleNavClick = () => {
+    trackEvent("nav:sidebar:clicked", {
+      target: item.url,
+      external: !!item.external,
+    });
+  };
+
   if (item.external) {
     return (
       <a
         href={item.url}
+        data-tour={tourId}
         className={cls}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleNavClick}
       >
         <Icon
           size={15}
@@ -206,7 +223,12 @@ function NavItemLink({
   }
 
   return (
-    <Link to={item.url} className={cls}>
+    <Link
+      to={item.url}
+      data-tour={tourId}
+      className={cls}
+      onClick={handleNavClick}
+    >
       <Icon size={15} strokeWidth={1.75} className="flex-shrink-0" />
       <span>{item.title}</span>
     </Link>
@@ -331,6 +353,7 @@ function ThemeToggle() {
       ref={containerRef}
       role="group"
       aria-label="Color theme"
+      data-tour="theme-toggle"
       className="relative flex items-center bg-[#dde0e2] dark:bg-[#1e2d3d] rounded-[6px] py-0.5 gap-0.5 overflow-hidden"
     >
       {/* Sliding active pill */}
@@ -456,6 +479,7 @@ function FontScaleToggle() {
         ref={containerRef}
         role="group"
         aria-label="Font size"
+        data-tour="font-scale-toggle"
         className="relative flex items-center bg-[#dde0e2] dark:bg-[#1e2d3d] rounded-[6px] py-0.5 gap-0.5 overflow-hidden"
       >
         {/* Sliding active pill */}
@@ -540,6 +564,7 @@ function UserMenu({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { trackEvent } = useRybbit();
 
   useEffect(() => {
     if (!open) return;
@@ -553,6 +578,7 @@ function UserMenu({
   }, [open]);
 
   const signOut = () => {
+    trackEvent("auth:session:signed-out");
     msalInstance.logoutRedirect();
   };
 
@@ -567,7 +593,7 @@ function UserMenu({
     <div ref={ref} className="relative -mx-3 -mb-3">
       {open && (
         <div className="absolute bottom-full left-3 right-3 mb-1.5 z-20 rounded-[8px] border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter">
-          <div className="px-3 py-3">
+          <div data-tour="ui-size-section" className="px-3 py-3">
             <div className="flex items-center gap-1 mb-2">
               <span className="text-[0.625rem] font-mono uppercase tracking-wider text-muted">
                 UI size
@@ -629,6 +655,7 @@ function UserMenu({
 
       <button
         type="button"
+        data-tour="user-menu-trigger"
         onClick={() => setOpen(!open)}
         className={cn(
           "w-full flex items-center gap-2.5 px-5 pt-2 pb-5 cursor-pointer border-0 bg-transparent text-left transition-colors",
@@ -906,6 +933,48 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
 
       {/* Footer */}
       <div className="px-3 py-3 border-t border-card flex-shrink-0 flex flex-col gap-2">
+        {/* Mobile-only: What's New + CE Mode (hidden in TopBar on small screens) */}
+        {isMobile && (
+          <div className="flex items-center justify-between gap-2">
+            {/* Close the drawer when the bell is tapped — the list modal opens on top of the page, the sidebar shouldn't linger. */}
+            <div onClick={onClose}>
+              <WhatsNewBell />
+            </div>
+            {isCloudEngineer && (
+              <div className="flex items-center gap-2 select-none">
+                <span
+                  id="ce-mode-label-mobile"
+                  className="text-[0.625rem] font-semibold tracking-[0.08em] uppercase text-muted font-mono"
+                >
+                  CE Mode
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isCloudEngineerEnabled}
+                  aria-labelledby="ce-mode-label-mobile"
+                  onClick={() =>
+                    setIsCloudEngineerEnabled((prev: boolean) => !prev)
+                  }
+                  className={`relative inline-flex h-5 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#002b45] cursor-pointer before:content-[''] before:absolute before:-inset-[10px] [transition:background-color_200ms_50ms_cubic-bezier(0.16,1,0.3,1)] ${
+                    isCloudEngineerEnabled
+                      ? "bg-[#1b63c1]"
+                      : "bg-[#d9dcde] dark:bg-[#334155]"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm z-10 [transition:translate_200ms_cubic-bezier(0.16,1,0.3,1)] ${
+                      isCloudEngineerEnabled
+                        ? "translate-x-4 animate-switch-slider-on"
+                        : "translate-x-0.5 animate-switch-slider-off"
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Theme toggle */}
         <ThemeToggle />
 

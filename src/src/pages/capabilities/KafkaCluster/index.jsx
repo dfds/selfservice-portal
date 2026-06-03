@@ -148,6 +148,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
                   See{" "}
                   <TrackedLink
                     trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
                     href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -164,6 +168,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
                   See{" "}
                   <TrackedLink
                     trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
                     href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -230,6 +238,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
                   <TextBlock>username:password</TextBlock> (See{" "}
                   <TrackedLink
                     trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
                     href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -263,6 +275,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
         <div className="flex gap-2 flex-wrap items-center mb-4">
           <TrackedButton
             trackName="TopicCreate-ShowDialog"
+            rybbitEvent={{
+              name: "kafka:topic:create-dialog-opened",
+              properties: { capability_id: id, cluster_id: cluster.id },
+            }}
             size="small"
             onClick={handleAddTopicToClusterClicked}
           >
@@ -270,6 +286,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
           </TrackedButton>
           <TrackedButton
             trackName="Topic-HowToConnect"
+            rybbitEvent={{
+              name: "kafka:how-to-connect:opened",
+              properties: { cluster_id: cluster.id },
+            }}
             size="small"
             variation="outlined"
             submitting={isLoadingCredentials}
@@ -311,6 +331,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
           <div>
             <TrackedButton
               trackName="KafkaCluster-RequestClusterAccess"
+              rybbitEvent={{
+                name: "kafka:cluster-access:requested",
+                properties: { capability_id: id, cluster_id: cluster.id },
+              }}
               size="small"
               submitting={isRequestingAccess}
               onClick={handleRequestAccess}

@@ -351,6 +351,19 @@ export default function NewTopicDialog({
 
             <TrackedButton
               trackName="TopicCreate-Confirm"
+              rybbitEvent={{
+                name: "kafka:topic:create-submitted",
+                properties: {
+                  capability_id: capabilityId,
+                  cluster: clusterName,
+                  partitions: formData.partitions,
+                  retention_days:
+                    formData.retention === "forever"
+                      ? -1
+                      : formData.retention,
+                  is_public: formData.availability === "public",
+                },
+              }}
               size="small"
               type="button"
               submitting={inProgress}

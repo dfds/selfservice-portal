@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { statusIcon, capabilityStatusVariant } from "@/lib/statusUtils";
 import { useMutationToast } from "@/hooks/useMutationToast";
 import { TabGroup } from "@/components/ui/TabGroup";
+import { useRybbit } from "@/RybbitContext";
 
 type ResourceTab = "aws" | "azure" | "kafka";
 
@@ -289,6 +290,7 @@ export default function CapabilityAdminDetailPage() {
 
   const cap: any = capability ?? {};
   const isPendingDeletion = cap.status === "Pending Deletion";
+  const { trackEvent } = useRybbit();
 
   const fireCancelDeletion = useMutationToast(cancelDeletion, {
     invalidateKeys: [
@@ -297,7 +299,10 @@ export default function CapabilityAdminDetailPage() {
     ],
     successMessage: "Deletion cancelled",
     errorMessage: "Could not cancel deletion",
-    onSuccess: () => setShowCancelConfirm(false),
+    onSuccess: () => {
+      setShowCancelConfirm(false);
+      trackEvent("capability:delete:cancelled", { capability_id: id });
+    },
   });
 
   const RESOURCE_TABS: { id: ResourceTab; label: string }[] = [

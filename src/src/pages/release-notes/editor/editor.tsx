@@ -87,6 +87,7 @@ import {
 import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
 import { TrackedButton } from "@/components/Tracking";
+import { useRybbit } from "@/RybbitContext";
 import {
   Dialog,
   DialogContent,
@@ -306,6 +307,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   const createReleaseNote = useCreateReleaseNote();
   const updateReleaseNote = useUpdateReleaseNote(doc != null ? doc.id : "0");
+  const { trackEvent } = useRybbit();
 
   const handleOnSaveDraft = () => {
     createReleaseNote.mutate(
@@ -318,8 +320,9 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          trackEvent("release-note:create:saved", { note_id: data?.id });
           navigate("/release-notes/manage");
         },
       },
@@ -327,6 +330,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   };
 
   const handleDiscard = () => {
+    trackEvent("release-note:create:discarded", { mode: mode });
     navigate("/release-notes/manage");
   };
 
@@ -346,6 +350,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
           queryClient.invalidateQueries({
             queryKey: ["releasenotes", "details", doc.id],
           });
+          trackEvent("release-note:update:saved", { note_id: doc?.id });
           navigate("/release-notes/manage");
         },
       },

@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import AppContext from "./AppContext";
+import { useRybbit } from "./RybbitContext";
 
 import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
@@ -41,6 +43,9 @@ import EmailCampaignDetail from "./pages/admin/email-campaigns/detail";
 import Sidebar from "./components/Sidebar/Sidebar";
 import TopBar from "./components/TopBar/TopBar";
 import { TopBarActionsProvider } from "./components/TopBar/TopBarActionsContext";
+import { WhatsNewProvider } from "./whatsNew/WhatsNewContext";
+import { WhatsNewListModal } from "./whatsNew/WhatsNewListModal";
+import { WhatsNewBanner } from "./whatsNew/WhatsNewBanner";
 
 function PageTransition({ children }) {
   return <div className="animate-fade-up">{children}</div>;
@@ -58,6 +63,17 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error("ErrorBoundary caught:", error, info.componentStack);
+    try {
+      const rb = typeof window !== "undefined" ? window.rybbit : null;
+      if (rb && typeof rb.event === "function") {
+        rb.event("error:boundary:hit", {
+          route: this.props.route,
+          message: error && error.message ? String(error.message) : "",
+        });
+      }
+    } catch (e) {
+      // analytics must never break the UI
+    }
   }
 
   render() {
@@ -94,10 +110,58 @@ function NotFoundPage() {
   );
 }
 
+function AuthEventTracker() {
+  const { trackEvent } = useRybbit();
+  const authState = useSelector((s) => s.auth);
+  const prevRef = useRef({
+    initialLoadFinished: false,
+    isSignedIn: false,
+    isSessionActive: false,
+  });
+
+  useEffect(() => {
+    const prev = prevRef.current;
+    if (authState.initialLoadFinished) {
+      if (!prev.isSignedIn && authState.isSignedIn) {
+        trackEvent("auth:session:signed-in", { method: "msal" });
+      }
+      if (prev.isSignedIn && !authState.isSignedIn) {
+        trackEvent("auth:session:signed-out");
+      }
+      if (prev.isSessionActive && !authState.isSessionActive) {
+        trackEvent("auth:session:expired");
+      }
+    }
+    prevRef.current = {
+      initialLoadFinished: authState.initialLoadFinished,
+      isSignedIn: authState.isSignedIn,
+      isSessionActive: authState.isSessionActive,
+    };
+  }, [
+    authState.initialLoadFinished,
+    authState.isSignedIn,
+    authState.isSessionActive,
+    trackEvent,
+  ]);
+
+  return null;
+}
+
 function Layout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useContext(AppContext);
+  const { trackEvent } = useRybbit();
+
+  const openMobileDrawer = () => {
+    setMobileOpen(true);
+    trackEvent("nav:mobile-drawer:toggled", { open: true });
+  };
+
+  const closeMobileDrawer = () => {
+    setMobileOpen(false);
+    trackEvent("nav:mobile-drawer:toggled", { open: false });
+  };
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const userLoaded =
@@ -114,58 +178,69 @@ function Layout() {
     setMobileOpen(false);
   }, [location.pathname]);
 
+  // Allow tours / other components to open the mobile sidebar imperatively.
+  useEffect(() => {
+    const handler = () => setMobileOpen(true);
+    window.addEventListener("ssu:open-sidebar", handler);
+    return () => window.removeEventListener("ssu:open-sidebar", handler);
+  }, []);
+
   return (
-    <AuthTemplate>
-      <TopBarActionsProvider>
-        <div className="flex min-h-[var(--ssu-vh)] bg-surface-muted">
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#002b45] focus:text-white focus:rounded-[5px] focus:text-sm focus:no-underline"
-          >
-            Skip to main content
-          </a>
-          {/* Mobile backdrop */}
-          <div
-            className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
-              mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-            onClick={() => setMobileOpen(false)}
-            aria-hidden="true"
-          />
-          <Sidebar
-            mobileOpen={mobileOpen}
-            onClose={() => setMobileOpen(false)}
-          />
-          <div className="flex flex-col flex-1 min-w-0">
-            <TopBar
-              onMenuOpen={() => setMobileOpen(true)}
-              menuOpen={mobileOpen}
-            />
-            <main
-              id="main-content"
-              className="flex-1 bg-surface-muted overflow-x-clip"
+    <>
+      <AuthEventTracker />
+      <AuthTemplate>
+        <WhatsNewProvider>
+          <TopBarActionsProvider>
+          <div className="flex min-h-[var(--ssu-vh)] bg-surface-muted">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#002b45] focus:text-white focus:rounded-[5px] focus:text-sm focus:no-underline"
             >
-              {isAdminRoute && isCloudEngineer && (
-                <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[0.75rem] font-mono font-semibold tracking-[0.12em]">
-                  <span aria-hidden="true">⚠</span>
-                  WORK IN PROGRESS — This section is under active development
-                  and may change without notice.
-                </div>
-              )}
-              {showAdminLoader ? null : showAdminGuard ? (
-                <NotFoundPage />
-              ) : (
-                <ErrorBoundary key={location.pathname}>
-                  <PageTransition>
-                    <Outlet />
-                  </PageTransition>
-                </ErrorBoundary>
-              )}
-            </main>
+              Skip to main content
+            </a>
+            {/* Mobile backdrop */}
+            <div
+              className={`fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-200 ${
+                mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              onClick={closeMobileDrawer}
+              aria-hidden="true"
+            />
+            <Sidebar mobileOpen={mobileOpen} onClose={closeMobileDrawer} />
+            <div className="flex flex-col flex-1 min-w-0">
+              <TopBar onMenuOpen={openMobileDrawer} menuOpen={mobileOpen} />
+              <main
+                id="main-content"
+                className="flex-1 bg-surface-muted overflow-x-clip"
+              >
+                <WhatsNewBanner />
+                {isAdminRoute && isCloudEngineer && (
+                  <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[0.75rem] font-mono font-semibold tracking-[0.12em]">
+                    <span aria-hidden="true">⚠</span>
+                    WORK IN PROGRESS — This section is under active development
+                    and may change without notice.
+                  </div>
+                )}
+                {showAdminLoader ? null : showAdminGuard ? (
+                  <NotFoundPage />
+                ) : (
+                  <ErrorBoundary
+                    key={location.pathname}
+                    route={location.pathname}
+                  >
+                    <PageTransition>
+                      <Outlet />
+                    </PageTransition>
+                  </ErrorBoundary>
+                )}
+              </main>
+            </div>
           </div>
-        </div>
-      </TopBarActionsProvider>
-    </AuthTemplate>
+          <WhatsNewListModal />
+          </TopBarActionsProvider>
+        </WhatsNewProvider>
+      </AuthTemplate>
+    </>
   );
 }
 

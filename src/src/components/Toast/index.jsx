@@ -1,6 +1,6 @@
 import styles from "./toast.module.css";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TrackedButton } from "@/components/Tracking";
+import { useRybbit } from "@/RybbitContext";
 
 export default function ErrorToast({ message, title, details }) {
   const [visible, setVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const { trackEvent } = useRybbit();
+
+  useEffect(() => {
+    trackEvent("error:toast:shown", { kind: "error" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const dismiss = () => setIsExiting(true);
 
@@ -70,6 +77,7 @@ export default function ErrorToast({ message, title, details }) {
           <div className="text-center pb-3">
             <TrackedButton
               trackName="Toast-ShowDetails"
+              rybbitEvent={{ name: "error:toast:details-expanded" }}
               size="small"
               variation="link"
               onClick={() => setShowDetails(true)}

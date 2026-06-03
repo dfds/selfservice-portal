@@ -23,6 +23,7 @@ import { useMutationToast } from "@/hooks/useMutationToast";
 import { Trash2, Plus, Newspaper, Star, Pencil } from "lucide-react";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 import { TrackedButton } from "@/components/Tracking";
+import { useRybbit } from "@/RybbitContext";
 
 // ── Create modal ──────────────────────────────────────────────────────────────
 
@@ -34,11 +35,17 @@ function CreateNewsModal({ onClose }) {
   );
 
   const createNews = useCreateNews();
+  const { trackEvent } = useRybbit();
   const submit = useMutationToast(createNews, {
     invalidateKeys: [["news", "list"]],
     successMessage: "News item created",
     errorMessage: "Failed to create news item",
-    onSuccess: onClose,
+    onSuccess: (data) => {
+      trackEvent("news:create:submitted", {
+        has_due_date: true,
+      });
+      onClose();
+    },
   });
 
   const handleSubmit = (e) => {
@@ -137,6 +144,7 @@ function EditNewsModal({ item, onClose }) {
   }, [item]);
 
   const updateNews = useUpdateNews();
+  const { trackEvent } = useRybbit();
   const submit = useMutationToast(updateNews, {
     invalidateKeys: [
       ["news", "list"],
@@ -145,7 +153,10 @@ function EditNewsModal({ item, onClose }) {
     ],
     successMessage: "News item updated",
     errorMessage: "Failed to update news item",
-    onSuccess: onClose,
+    onSuccess: () => {
+      trackEvent("news:update:submitted", { news_id: item.id });
+      onClose();
+    },
   });
 
   const handleSubmit = (e) => {
@@ -234,11 +245,15 @@ function EditNewsModal({ item, onClose }) {
 
 function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
   const deleteNews = useDeleteNews();
+  const { trackEvent } = useRybbit();
   const remove = useMutationToast(deleteNews, {
     invalidateKeys: [["news", "list"]],
     successMessage: "News item deleted",
     errorMessage: "Failed to delete news item",
-    onSuccess: onDeleted,
+    onSuccess: () => {
+      trackEvent("news:deleted", { news_id: item.id });
+      onDeleted();
+    },
   });
 
   const highlightNews = useHighlightNews();
@@ -248,6 +263,12 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
       ? "Highlight removed"
       : "News item highlighted",
     errorMessage: "Failed to update highlight",
+    onSuccess: () => {
+      trackEvent("news:highlighted", {
+        news_id: item.id,
+        on: !item.isHighlighted,
+      });
+    },
   });
 
   const navigate = useNavigate();
@@ -268,6 +289,7 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
           return;
         }
         event.preventDefault();
+        trackEvent("news:detail:opened", { news_id: item.id });
         navigate(`/news/v/${item.id}`);
       }}
       className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group no-underline text-inherit hover:bg-surface-muted transition-colors cursor-pointer"
@@ -387,6 +409,7 @@ export default function NewsPage() {
     setActions(
       <TrackedButton
         trackName="News-CreateClicked"
+        rybbitEvent={{ name: "news:create:opened" }}
         size="sm"
         onClick={() => setShowCreate(true)}
       >

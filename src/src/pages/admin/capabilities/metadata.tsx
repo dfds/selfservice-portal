@@ -16,11 +16,13 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useRybbit } from "@/RybbitContext";
 
 // ── Metadata editor ───────────────────────────────────────────────────────────
 
 function MetadataEditor({ capabilityId }: { capabilityId: string }) {
   const toast = useToast();
+  const { trackEvent } = useRybbit();
   const { data: metadataData, isFetched: metaFetched } =
     useCapabilityMetadataById(capabilityId);
   const { data: complianceData, isFetched: compFetched } =
@@ -54,6 +56,9 @@ function MetadataEditor({ capabilityId }: { capabilityId: string }) {
       return;
     }
     setJsonError("");
+    trackEvent("capability:json-metadata:submitted", {
+      capability_id: capabilityId,
+    });
     setMetadata.mutate(
       { capabilityId, metadata: parsed },
       {

@@ -148,6 +148,7 @@ export default function FrontPage() {
             action={
               <TrackedLink
                 trackName="DownloadKubeConfig"
+                rybbitEvent={{ name: "frontpage:kubeconfig:downloaded" }}
                 href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
                 className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[0.6875rem] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
               >

@@ -6,6 +6,7 @@ import { TopicsProvider } from "./TopicsContext";
 import AppContext from "../../AppContext";
 import { usePublicTopics } from "@/state/remote/queries/kafka";
 import { RowDetails } from "./rowDetails";
+import { useRybbit } from "@/RybbitContext";
 
 const CLUSTER_COLORS = ["#ED8800", "#4caf50", "#49a2df", "#F1A7AE", "purple"];
 
@@ -17,6 +18,8 @@ function Topics() {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const { trackEvent } = useRybbit();
+  const searchTimer = React.useRef(null);
 
   useEffect(() => {
     if (!isFetched) return;
@@ -43,10 +46,24 @@ function Topics() {
   const toggleExpand = (id) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+        trackEvent("topics:row:expanded", { topic_id: id });
+      }
       return next;
     });
+  };
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      if (value.trim().length > 0) {
+        trackEvent("topics:list:searched", { query_length: value.trim().length });
+      }
+    }, 500);
   };
 
   return (
@@ -55,7 +72,7 @@ function Topics() {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder="Search topics..."
           className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[1rem] md:text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
         />

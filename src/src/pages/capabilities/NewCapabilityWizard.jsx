@@ -146,6 +146,7 @@ export default function NewCapabilityWizard({
       emptyFormValues={emptyFormValues}
       completeInProgress={inProgress}
       completeName={"Add Capability"}
+      rybbitDomain="capability"
     />
   );
 }

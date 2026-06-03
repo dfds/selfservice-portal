@@ -83,6 +83,10 @@ export default function Costs({ anchorId, costCentre }) {
         >
           <TrackedButton
             trackName="FinOutButtonForCostCenter"
+            rybbitEvent={{
+              name: "cost:finout:opened",
+              properties: { capability_id: id, view: "cost-centre" },
+            }}
             size="small"
             variation="primary"
             disabled={!costCentre}
@@ -99,6 +103,10 @@ export default function Costs({ anchorId, costCentre }) {
         >
           <TrackedButton
             trackName="FinOutButtonForCostCenter"
+            rybbitEvent={{
+              name: "cost:finout:opened",
+              properties: { capability_id: id, view: "capability" },
+            }}
             size="small"
             variation="outlined"
           >

@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListPageContent } from "@/components/ui/ListPageContent";
 import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { formatDate, formatRelative, getDeadlineStatus } from "@/lib/dateUtils";
+import { useRybbit } from "@/RybbitContext";
 
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -78,12 +79,23 @@ export default function DeletionQueuePage() {
       );
     });
 
+  const { trackEvent } = useRybbit();
+  const cancelTargetRef = React.useRef<any>(null);
   const cancelConfirm = useConfirmAction({
     mutation: cancelDeletion,
-    buildPayload: (c: any) => ({ capabilityId: c.id }),
+    buildPayload: (c: any) => {
+      cancelTargetRef.current = c;
+      return { capabilityId: c.id };
+    },
     invalidateKeys: [["capabilities", "list"]],
     successMessage: "Deletion cancelled",
     errorMessage: "Could not cancel deletion",
+    onSuccess: () => {
+      trackEvent("capability:delete:cancelled", {
+        capability_id: cancelTargetRef.current?.id,
+      });
+      cancelTargetRef.current = null;
+    },
   });
 
   return (
