@@ -146,10 +146,6 @@ export function WhatsNewListModal() {
         )}
 
         <div className="mt-2">
-          {tours.length === 0 && (
-            <EmptyState>Nothing new right now — check back later.</EmptyState>
-          )}
-
           {tours.length > 0 && (
             <Accordion type="multiple" defaultValue={defaultOpenReleases}>
               {groups.map(({ release, tours: releaseTours }) => (
