@@ -21,6 +21,7 @@ import { useDriverTour } from "./useDriverTour";
 import { getTours, LATEST_TOUR_ID } from "./registry";
 import type { TourDefinition, TourState } from "./types";
 import { EMPTY_TOUR_STATE } from "./types";
+import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
 
 const LOCAL_STORAGE_KEY = "ssu-whatsnew-state";
 
@@ -28,6 +29,7 @@ interface WhatsNewContextValue {
   tours: TourDefinition[];
   unseenCount: number;
   hasUnseenLatest: boolean;
+  hasUnseenReleaseNotes: boolean;
   isListOpen: boolean;
   openList: () => void;
   closeList: () => void;
@@ -51,6 +53,9 @@ function readLocalState(): TourState {
         : [],
       completedIds: Array.isArray(parsed.completedIds)
         ? parsed.completedIds
+        : [],
+      seenReleaseNoteIds: Array.isArray(parsed.seenReleaseNoteIds)
+        ? parsed.seenReleaseNoteIds
         : [],
     };
   } catch {
@@ -96,6 +101,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
       seenIds: settings.seenWhatsNewIds ?? [],
       dismissedIds: settings.dismissedWhatsNewIds ?? [],
       completedIds: settings.completedWhatsNewIds ?? [],
+      seenReleaseNoteIds: settings.seenReleaseNoteIds ?? [],
     };
     setState(next);
     writeLocalState(next);
@@ -112,6 +118,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
         seenWhatsNewIds: next.seenIds,
         dismissedWhatsNewIds: next.dismissedIds,
         completedWhatsNewIds: next.completedIds,
+        seenReleaseNoteIds: next.seenReleaseNoteIds,
       };
       updateUserSettings(payload, {
         onSuccess: () => {
@@ -139,16 +146,48 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     !state.seenIds.includes(LATEST_TOUR_ID) &&
     !state.dismissedIds.includes(LATEST_TOUR_ID);
 
+  // Mirrors the "top 3 active by releaseDate desc" rule in WhatsNewListModal —
+  // keep the two in sync.
+  const { data: releaseNotesData } = useReleaseNotes({});
+  const recentReleaseNoteIds = useMemo<string[]>(() => {
+    const items: any[] = (releaseNotesData as any)?.items ?? [];
+    return items
+      .filter((n) => n.isActive === true)
+      .sort(
+        (a, b) =>
+          new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime(),
+      )
+      .slice(0, 3)
+      .map((n) => n.id);
+  }, [releaseNotesData]);
+
+  const unseenReleaseNoteIds = useMemo(
+    () =>
+      recentReleaseNoteIds.filter(
+        (id) => !state.seenReleaseNoteIds.includes(id),
+      ),
+    [recentReleaseNoteIds, state.seenReleaseNoteIds],
+  );
+
+  const hasUnseenReleaseNotes = unseenReleaseNoteIds.length > 0;
+
   const openList = useCallback(() => {
     setIsListOpen(true);
     rybbit.trackEvent?.("whatsnew:list:open", {});
-    if (unseenTours.length === 0) return;
+    const hasNewTours = unseenTours.length > 0;
+    const hasNewNotes = unseenReleaseNoteIds.length > 0;
+    if (!hasNewTours && !hasNewNotes) return;
     const next: TourState = {
       ...state,
-      seenIds: uniq([...state.seenIds, ...unseenTours.map((t) => t.id)]),
+      seenIds: hasNewTours
+        ? uniq([...state.seenIds, ...unseenTours.map((t) => t.id)])
+        : state.seenIds,
+      seenReleaseNoteIds: hasNewNotes
+        ? uniq([...state.seenReleaseNoteIds, ...unseenReleaseNoteIds])
+        : state.seenReleaseNoteIds,
     };
     persist(next);
-  }, [persist, rybbit, state, unseenTours]);
+  }, [persist, rybbit, state, unseenTours, unseenReleaseNoteIds]);
 
   const closeList = useCallback(() => setIsListOpen(false), []);
 
@@ -209,6 +248,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     tours,
     unseenCount: unseenTours.length,
     hasUnseenLatest,
+    hasUnseenReleaseNotes,
     isListOpen,
     openList,
     closeList,

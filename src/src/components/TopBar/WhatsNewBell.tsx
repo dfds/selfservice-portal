@@ -88,8 +88,8 @@ function RainbowSparkles() {
 }
 
 export default function WhatsNewBell() {
-  const { unseenCount, openList } = useWhatsNew();
-  const hasUnseen = unseenCount > 0;
+  const { unseenCount, hasUnseenReleaseNotes, openList } = useWhatsNew();
+  const hasUnseen = unseenCount > 0 || hasUnseenReleaseNotes;
   return (
     <button
       type="button"
