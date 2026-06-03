@@ -7,7 +7,7 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
   ({ className, children, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("py-2.5 text-[13px] text-muted italic", className)}
+      className={cn("py-2.5 text-[0.8125rem] text-muted italic", className)}
       {...props}
     >
       {children}

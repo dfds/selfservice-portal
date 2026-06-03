@@ -170,7 +170,7 @@ function CapabilityDetailsPageContent() {
       <div className="mb-6 animate-fade-up">
         <Link
           to="/capabilities"
-          className="inline-flex items-center font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] no-underline hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] mb-3 transition-colors"
+          className="inline-flex items-center font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] no-underline hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] mb-3 transition-colors"
         >
           ← Capabilities
         </Link>
@@ -309,7 +309,7 @@ function CapabilityDetailsPageContent() {
           style={{ animationDelay: "100ms" }}
         >
           <div className="sticky top-[68px] bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
-            <div className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 px-4 py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
+            <div className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 px-4 py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
               On this page
             </div>
             {anchorLinks.map(({ href, label }) => {
@@ -318,7 +318,7 @@ function CapabilityDetailsPageContent() {
                 <a
                   key={href}
                   href={href}
-                  className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[11px] no-underline tracking-[0.03em] transition-colors border-l-2 ${
+                  className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[0.6875rem] no-underline tracking-[0.03em] transition-colors border-l-2 ${
                     isActive
                       ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
                       : "text-[#666666] dark:text-slate-400 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] hover:bg-[#f2f2f2] dark:hover:bg-slate-700 border-transparent"
@@ -350,7 +350,7 @@ function CapabilityDetailsPageContent() {
                       href={href}
                       onClick={() => setMobileNavOpen(false)}
                       className={cn(
-                        "flex items-center px-4 py-3 font-mono text-[12px] no-underline tracking-[0.03em] transition-colors border-l-2",
+                        "flex items-center px-4 py-3 font-mono text-[0.75rem] no-underline tracking-[0.03em] transition-colors border-l-2",
                         isActive
                           ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] bg-[#f0f9ff] dark:bg-[#0e7cc1]/10"
                           : "text-[#666666] dark:text-slate-400 border-transparent hover:bg-[#f2f2f2] dark:hover:bg-slate-700",
@@ -371,7 +371,7 @@ function CapabilityDetailsPageContent() {
             className="w-full flex items-center justify-between px-4 h-12 cursor-pointer border-0 bg-transparent text-left"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 flex-shrink-0">
+              <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf] dark:text-slate-500 flex-shrink-0">
                 On this page
               </span>
               {activeLabel && (
@@ -379,7 +379,7 @@ function CapabilityDetailsPageContent() {
                   <span className="text-[#d9dcde] dark:text-[#334155] flex-shrink-0">
                     ·
                   </span>
-                  <span className="font-mono text-[12px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] truncate">
+                  <span className="font-mono text-[0.75rem] font-medium text-[#0e7cc1] dark:text-[#60a5fa] truncate">
                     {activeLabel}
                   </span>
                 </>

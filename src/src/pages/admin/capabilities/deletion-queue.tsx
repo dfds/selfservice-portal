@@ -34,7 +34,7 @@ function CapabilityRow({
             {capability.name}
           </span>
           {grace && (
-            <Badge variant={grace.variant} className="text-[10px] shrink-0">
+            <Badge variant={grace.variant} className="text-[0.625rem] shrink-0">
               {grace.label}
             </Badge>
           )}

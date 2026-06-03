@@ -316,7 +316,7 @@ export default function CapabilitiesCriticalityPage() {
                 muiTableHeadCellProps={{
                   sx: {
                     fontWeight: "700",
-                    fontSize: "16px",
+                    fontSize: "1rem",
                     fontFamily: "DFDS",
                     color: textPrimary,
                     backgroundColor: bg,
@@ -326,7 +326,7 @@ export default function CapabilitiesCriticalityPage() {
                 muiTableBodyCellProps={{
                   sx: {
                     fontWeight: "400",
-                    fontSize: "16px",
+                    fontSize: "1rem",
                     fontFamily: "DFDS",
                     color: textBody,
                     backgroundColor: bg,
@@ -380,7 +380,7 @@ export default function CapabilitiesCriticalityPage() {
                   sx: {
                     minWidth: "1120px",
                     fontWeight: "400",
-                    fontSize: "16px",
+                    fontSize: "1rem",
                     padding: "5px",
                     "& .MuiOutlinedInput-root": {
                       color: inputText,

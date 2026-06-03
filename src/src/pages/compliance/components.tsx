@@ -9,7 +9,7 @@ export function ArcGauge({ pct, color }: { pct: number; color: string }) {
   const filled = circ * (pct / 100);
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+      <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
         Compliant capabilities
       </span>
       <div className="relative w-24 h-24">
@@ -39,7 +39,7 @@ export function ArcGauge({ pct, color }: { pct: number; color: string }) {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[22px] font-bold tracking-[-0.03em] text-[#002b45] dark:text-[#e2e8f0]">
+          <span className="text-[1.375rem] font-bold tracking-[-0.03em] text-[#002b45] dark:text-[#e2e8f0]">
             {pct}%
           </span>
         </div>
@@ -81,7 +81,7 @@ export function CategoryBreakdownList({
               i < categories.length - 1 && "border-b border-divider",
             )}
           >
-            <span className="text-[12px] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate">
+            <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate">
               {cat.categoryName}
             </span>
             <div className="flex items-center gap-2 flex-shrink-0">

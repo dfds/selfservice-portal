@@ -99,8 +99,8 @@ function RepositoryDetailDialog({ repository, onClose }) {
                 : "—",
             },
           ].map(({ label, value }) => (
-            <div key={label} className="flex gap-4 text-[13px]">
-              <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] pt-[3px] w-[100px] flex-shrink-0">
+            <div key={label} className="flex gap-4 text-[0.8125rem]">
+              <span className="font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-[#afafaf] pt-[3px] w-[100px] flex-shrink-0">
                 {label}
               </span>
               <span className="text-[#002b45] dark:text-[#e2e8f0] break-all">
@@ -164,7 +164,7 @@ function Repositories({ onNewRepository }) {
           value={search}
           onChange={handleSearch}
           placeholder="Find a repository..."
-          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[16px] md:text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
+          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[1rem] md:text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
         />
       </div>
 
@@ -174,10 +174,10 @@ function Repositories({ onNewRepository }) {
             className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
             style={{ gridTemplateColumns: "2fr 3fr" }}
           >
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+            <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
               Description
             </span>
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+            <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
               Name
             </span>
           </div>
@@ -191,16 +191,16 @@ function Repositories({ onNewRepository }) {
             className="grid border-b border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a] px-[1.125rem] py-[0.625rem]"
             style={{ gridTemplateColumns: "2fr 3fr" }}
           >
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+            <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
               Description
             </span>
-            <span className="font-mono text-[9px] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
+            <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.1em] uppercase text-[#afafaf]">
               Name
             </span>
           </div>
 
           {filtered.length === 0 && (
-            <div className="px-[1.125rem] py-4 font-mono text-[12px] text-[#afafaf]">
+            <div className="px-[1.125rem] py-4 font-mono text-[0.75rem] text-[#afafaf]">
               No repositories found.
             </div>
           )}
@@ -212,17 +212,17 @@ function Repositories({ onNewRepository }) {
               style={{ gridTemplateColumns: "2fr 3fr" }}
               onClick={() => setSelectedRepository(repo)}
             >
-              <span className="text-[13px] text-[#666666] dark:text-[#94a3b8] leading-[1.4] pr-4">
+              <span className="text-[0.8125rem] text-[#666666] dark:text-[#94a3b8] leading-[1.4] pr-4">
                 {repo.description}
               </span>
-              <span className="font-mono text-[12px] font-semibold text-[#002b45] dark:text-[#e2e8f0] tracking-[-0.01em]">
+              <span className="font-mono text-[0.75rem] font-semibold text-[#002b45] dark:text-[#e2e8f0] tracking-[-0.01em]">
                 {repo.name}
               </span>
             </div>
           ))}
 
           <div className="flex items-center justify-between px-[1.125rem] py-3 border-t border-[#d9dcde] dark:border-[#334155] bg-[#f2f2f2] dark:bg-[#0f172a]">
-            <span className="font-mono text-[11px] text-[#afafaf] tracking-[0.04em]">
+            <span className="font-mono text-[0.6875rem] text-[#afafaf] tracking-[0.04em]">
               {filtered.length}{" "}
               {filtered.length === 1 ? "repository" : "repositories"}
             </span>
@@ -239,7 +239,7 @@ function Repositories({ onNewRepository }) {
                   typeof item === "string" ? (
                     <span
                       key={item}
-                      className="w-5 h-7 flex items-center justify-center font-mono text-[11px] text-[#afafaf]"
+                      className="w-5 h-7 flex items-center justify-center font-mono text-[0.6875rem] text-[#afafaf]"
                     >
                       …
                     </span>
@@ -247,7 +247,7 @@ function Repositories({ onNewRepository }) {
                     <button
                       key={item}
                       onClick={() => setPage(item)}
-                      className={`w-7 h-7 flex items-center justify-center border rounded-[4px] font-mono text-[11px] transition-colors ${
+                      className={`w-7 h-7 flex items-center justify-center border rounded-[4px] font-mono text-[0.6875rem] transition-colors ${
                         item === currentPage
                           ? "bg-[#0e7cc1] border-[#0e7cc1] text-white"
                           : "bg-white dark:bg-[#1e293b] border-[#d9dcde] dark:border-[#334155] text-[#666666] dark:text-[#94a3b8] hover:bg-[#eef0f1] dark:hover:bg-[#334155]"
@@ -291,7 +291,7 @@ export default function ECRPage() {
 
       <div className="flex items-start justify-between mb-6 gap-8 animate-fade-up">
         <div>
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
             // Container Registries
           </div>
           <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
@@ -311,7 +311,7 @@ export default function ECRPage() {
       <InfoAlert className="mb-5 animate-fade-up animate-stagger-1">
         All AWS ECR repositories created by DFDS development teams. Naming
         convention:{" "}
-        <code className="font-mono text-[12px] bg-[rgba(14,124,193,0.08)] dark:bg-[rgba(14,124,193,0.15)] px-[5px] py-[1px] rounded-[3px]">
+        <code className="font-mono text-[0.75rem] bg-[rgba(14,124,193,0.08)] dark:bg-[rgba(14,124,193,0.15)] px-[5px] py-[1px] rounded-[3px]">
           team-name/app-name
         </code>
         . See the{" "}

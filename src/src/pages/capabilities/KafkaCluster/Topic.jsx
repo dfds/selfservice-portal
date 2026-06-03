@@ -42,7 +42,7 @@ function TopicHeader({
     >
       <div className="flex-1 min-w-0">
         <span
-          className={`font-mono text-[12px] font-medium ${
+          className={`font-mono text-[0.75rem] font-medium ${
             notProvisioned ? "text-muted" : "text-primary"
           }`}
         >
@@ -51,11 +51,13 @@ function TopicHeader({
           )}
           {name}
           {notProvisioned && (
-            <span className="ml-1 text-[11px]">({status?.toLowerCase()})</span>
+            <span className="ml-1 text-[0.6875rem]">
+              ({status?.toLowerCase()})
+            </span>
           )}
         </span>
       </div>
-      <div className="font-mono text-[11px] text-muted flex-shrink-0">
+      <div className="font-mono text-[0.6875rem] text-muted flex-shrink-0">
         {partitions} partitions · {retention}
       </div>
       <div className="flex-shrink-0 w-4 flex justify-center">
@@ -185,7 +187,7 @@ export default function Topic({ topic, isSelected, onHeaderClicked, schemas }) {
             </div>
           </div>
 
-          <p className="text-[13px] text-secondary leading-[1.6] mb-4">
+          <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-4">
             {description}
           </p>
 

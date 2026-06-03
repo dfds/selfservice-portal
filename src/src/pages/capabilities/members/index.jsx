@@ -78,17 +78,17 @@ function MemberRow({ member, roleTypes }) {
           size="md"
         />
         <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-none mb-[2px]">
+          <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-none mb-[2px]">
             {member.name}
           </div>
-          <div className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500">
+          <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500">
             {member.email}
           </div>
         </div>
         {userIsOwner && member.email !== user.id && (
           <button
             onClick={() => removeConfirm.setTarget(member)}
-            className="font-mono text-[11px] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
+            className="font-mono text-[0.6875rem] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
           >
             remove
           </button>
@@ -112,7 +112,7 @@ function MemberRow({ member, roleTypes }) {
                 ...base,
                 minHeight: "30px",
                 height: "30px",
-                fontSize: "11px",
+                fontSize: "0.6875rem",
                 fontFamily: "monospace",
                 border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
                 boxShadow: "none",
@@ -123,7 +123,7 @@ function MemberRow({ member, roleTypes }) {
               indicatorsContainer: (base) => ({ ...base, height: "30px" }),
               menu: (base) => ({
                 ...base,
-                fontSize: "11px",
+                fontSize: "0.6875rem",
                 fontFamily: "monospace",
                 backgroundColor: isDark ? "#1e293b" : "#ffffff",
                 border: isDark ? "1px solid #334155" : undefined,
@@ -139,7 +139,7 @@ function MemberRow({ member, roleTypes }) {
               }),
               input: (base) => ({
                 ...base,
-                fontSize: "16px",
+                fontSize: "1rem",
                 color: isDark ? "#e2e8f0" : "#002b45",
               }),
               option: (base, state) => ({
@@ -238,7 +238,7 @@ export function TabbedMembersView({ anchorId }) {
   const headlineChildren = (
     <Link
       to="/rbac/permissions"
-      className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+      className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
     >
       View permission matrix →
     </Link>
@@ -252,7 +252,7 @@ export function TabbedMembersView({ anchorId }) {
       <span className="flex items-center gap-1.5">
         Membership Applications
         {applicationCount > 0 && (
-          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[10px] font-bold leading-none text-white">
+          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[0.625rem] font-bold leading-none text-white">
             {applicationCount}
           </span>
         )}

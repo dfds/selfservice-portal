@@ -41,7 +41,10 @@ function ApplicationCard({
             {app.applicant ?? app.id}
           </span>
           {expiry && (
-            <Badge variant={expiry.variant} className="text-[10px] shrink-0">
+            <Badge
+              variant={expiry.variant}
+              className="text-[0.625rem] shrink-0"
+            >
               {expiry.label}
             </Badge>
           )}

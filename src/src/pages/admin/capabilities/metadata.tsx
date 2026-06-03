@@ -98,7 +98,7 @@ function MetadataEditor({ capabilityId }: { capabilityId: string }) {
                     ? "destructive"
                     : "soft-warning"
                 }
-                className="text-[10px]"
+                className="text-[0.625rem]"
               >
                 {cat.status ?? "Unknown"}
               </Badge>
@@ -179,7 +179,7 @@ function CapabilityRow({ capability }: { capability: any }) {
         </span>
         <Badge
           variant={statusVariant}
-          className="text-[10px] shrink-0 hidden sm:inline-flex"
+          className="text-[0.625rem] shrink-0 hidden sm:inline-flex"
         >
           {capability.status}
         </Badge>

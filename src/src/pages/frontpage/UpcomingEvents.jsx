@@ -33,16 +33,16 @@ function EventItem({ event, index = 0, dimmed = false }) {
     >
       <div className="flex items-center gap-1.5 mb-[3px]">
         <span
-          className="inline-block font-mono text-[9px] font-semibold tracking-[0.06em] uppercase px-1.5 py-[1px] rounded-[4px]"
+          className="inline-block font-mono text-[0.5625rem] font-semibold tracking-[0.06em] uppercase px-1.5 py-[1px] rounded-[4px]"
           style={{ background: colors.bg, color: colors.color }}
         >
           {label}
         </span>
-        <span className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
+        <span className="font-mono text-[0.625rem] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
           {formatEventDateTime(event.eventDate)}
         </span>
       </div>
-      <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4]">
+      <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4]">
         {event.title}
       </div>
     </Link>
@@ -67,7 +67,7 @@ export default function UpcomingEvents() {
 
   if (!upcoming.length && !latest) {
     return (
-      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+      <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         No events scheduled.
       </p>
     );
@@ -82,7 +82,7 @@ export default function UpcomingEvents() {
         <>
           {upcoming.length > 0 && (
             <div className="pt-[0.625rem] pb-[0.375rem]">
-              <span className="font-mono text-[9px] font-semibold tracking-[0.08em] uppercase text-muted">
+              <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.08em] uppercase text-muted">
                 Last held
               </span>
             </div>
@@ -97,7 +97,7 @@ export default function UpcomingEvents() {
       <div className="pt-[0.625rem]">
         <Link
           to="/events"
-          className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+          className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
           View all events →
         </Link>

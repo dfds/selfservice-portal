@@ -135,7 +135,7 @@ function FilterCheckbox({
         className="w-2 h-2 rounded-full flex-shrink-0"
         style={{ background: dotColor }}
       />
-      <span className="text-[12px] text-[#4a6278] dark:text-[#94a3b8] flex-1">
+      <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1">
         {label}
       </span>
       <span className="text-[10.5px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-1.5 py-0.5 rounded-full flex-shrink-0">
@@ -191,10 +191,10 @@ function CostCentreCard({
           <span className="text-[12.5px] font-bold text-[#002b45] dark:text-[#e2e8f0] block truncate">
             {getCostCentreLabel(name)}
           </span>
-          <span className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] block truncate">
+          <span className="font-mono text-[0.625rem] text-[#afafaf] dark:text-[#64748b] block truncate">
             {name}
           </span>
-          <span className="text-[11px] text-[#afafaf] dark:text-[#64748b]">
+          <span className="text-[0.6875rem] text-[#afafaf] dark:text-[#64748b]">
             {capCount} {capCount === 1 ? "capability" : "capabilities"}
           </span>
         </div>
@@ -203,12 +203,12 @@ function CostCentreCard({
           {isFetched ? (
             <>
               <div
-                className="text-[22px] font-bold tracking-[-0.03em] leading-none"
+                className="text-[1.375rem] font-bold tracking-[-0.03em] leading-none"
                 style={{ color }}
               >
                 {pct}%
               </div>
-              <div className="text-[10px] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
+              <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
                 {compliant}/{total}
               </div>
             </>
@@ -251,7 +251,7 @@ function CostCentreCard({
                 <span
                   key={cat.categoryName}
                   className={cn(
-                    "text-[10px] font-medium px-2 py-0.5 rounded-full",
+                    "text-[0.625rem] font-medium px-2 py-0.5 rounded-full",
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
@@ -264,7 +264,7 @@ function CostCentreCard({
               );
             })
           ) : (
-            <span className="text-[10px] text-[#afafaf] dark:text-[#64748b] italic">
+            <span className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] italic">
               No categories
             </span>
           )
@@ -434,7 +434,7 @@ export default function CompliancePage() {
         {/* Header */}
         <div className="mb-6 animate-fade-up flex flex-col @[900px]:flex-row @[900px]:items-start @[900px]:justify-between gap-4 @[900px]:gap-8">
           <div className="min-w-0 flex-1">
-            <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+            <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
               // Cost Centres
             </div>
             <div className="flex items-center gap-3">
@@ -442,7 +442,7 @@ export default function CompliancePage() {
                 Compliance
               </h1>
               {isFetched && (
-                <span className="relative top-[2px] text-[12px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
+                <span className="relative top-[2px] text-[0.75rem] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
                   {filtered.length}{" "}
                   {filtered.length === 1 ? "centre" : "centres"}
                 </span>
@@ -467,7 +467,7 @@ export default function CompliancePage() {
 
           {/* Overall Compliance + Summary panel — horizontal */}
           <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
-            <div className="-ml-3 font-mono text-[10px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
+            <div className="-ml-3 font-mono text-[0.625rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
               // Overall Compliance{" "}
               <span className="font-normal tracking-[0.1em] text-muted">
                 (all capabilities)
@@ -477,19 +477,19 @@ export default function CompliancePage() {
               {/* Summary stats — horizontal cells */}
               <div className="flex items-center gap-8">
                 <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     Total Count
                   </span>
-                  <span className="text-[18px] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
+                  <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
                     {fetchedCount > 0 ? totalCaps : "—"}
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     100% Compliant
                   </span>
                   <span
-                    className="text-[18px] font-bold font-mono leading-none"
+                    className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
                       color: fetchedCount > 0 ? "#16a34a" : undefined,
                     }}
@@ -498,11 +498,11 @@ export default function CompliancePage() {
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     Compliant rate
                   </span>
                   <span
-                    className="text-[18px] font-bold font-mono leading-none"
+                    className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
                       color: fetchedCount > 0 ? gaugeColor : undefined,
                     }}
@@ -518,9 +518,9 @@ export default function CompliancePage() {
         {/* Mobile-only: compact stats + filter chips */}
         <div className="md:hidden mb-4 animate-fade-up animate-stagger-1">
           {fetchedCount > 0 && (
-            <div className="flex items-center gap-3 mb-3 text-[11px] font-mono text-[#4a6278] dark:text-[#94a3b8]">
+            <div className="flex items-center gap-3 mb-3 text-[0.6875rem] font-mono text-[#4a6278] dark:text-[#94a3b8]">
               <span
-                className="text-[20px] font-bold tracking-tight leading-none"
+                className="text-[1.25rem] font-bold tracking-tight leading-none"
                 style={{ color: gaugeColor }}
               >
                 {overallPct}%
@@ -551,7 +551,7 @@ export default function CompliancePage() {
                 type="button"
                 onClick={() => toggleFilter(key)}
                 className={cn(
-                  "flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all",
+                  "flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                   !activeFilters.has(key) &&
                     "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
                 )}
@@ -589,7 +589,7 @@ export default function CompliancePage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search cost centres..."
-            className="w-full h-[36px] pl-8 pr-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] font-mono text-[16px] md:text-[12.5px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] focus:shadow-[0_0_0_3px_rgba(14,124,193,.1)] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] transition-[border-color,box-shadow]"
+            className="w-full h-[36px] pl-8 pr-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] font-mono text-[1rem] md:text-[12.5px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] focus:shadow-[0_0_0_3px_rgba(14,124,193,.1)] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] transition-[border-color,box-shadow]"
           />
         </div>
 
@@ -601,7 +601,7 @@ export default function CompliancePage() {
               type="button"
               onClick={() => setSort(key)}
               className={cn(
-                "h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all",
+                "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                 sort === key
                   ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
                   : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",

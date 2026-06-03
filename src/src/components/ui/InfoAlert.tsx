@@ -37,7 +37,7 @@ const InfoAlert = React.forwardRef<HTMLDivElement, InfoAlertProps>(
       <div
         ref={ref}
         className={cn(
-          "flex items-start gap-3 rounded-[6px] border px-4 py-3.5 text-[13px] leading-[1.65]",
+          "flex items-start gap-3 rounded-[6px] border px-4 py-3.5 text-[0.8125rem] leading-[1.65]",
           variantStyles[variant],
           className,
         )}

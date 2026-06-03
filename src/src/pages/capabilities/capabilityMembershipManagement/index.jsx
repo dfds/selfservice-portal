@@ -12,7 +12,7 @@ const HeaderWithWarning = ({ text, data }) => {
     <span className="flex items-center gap-1.5">
       {text}
       {count > 0 && (
-        <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[10px] font-bold leading-none text-white">
+        <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#be1e2d] px-1 font-mono text-[0.625rem] font-bold leading-none text-white">
           {count}
         </span>
       )}

@@ -79,7 +79,7 @@ function RolePermissions({ roleId }: { roleId: string }) {
               <Badge
                 key={`${p}-${i}`}
                 variant="outline"
-                className="text-[10px] font-mono"
+                className="text-[0.625rem] font-mono"
               >
                 {p}
               </Badge>
@@ -112,7 +112,7 @@ function RoleRow({
           </span>
           <Badge
             variant="outline"
-            className="text-[10px] font-mono hidden sm:inline-flex shrink-0"
+            className="text-[0.625rem] font-mono hidden sm:inline-flex shrink-0"
           >
             {role.type}
           </Badge>
@@ -177,7 +177,7 @@ function PermissionsTab() {
               <Badge
                 key={`${p}-${i}`}
                 variant="outline"
-                className="text-[10px] font-mono"
+                className="text-[0.625rem] font-mono"
               >
                 {p}
               </Badge>
@@ -410,10 +410,13 @@ function GroupExpandedContent({
                   key={`${roleId}-${i}`}
                   className="flex items-center gap-1.5"
                 >
-                  <Badge variant="secondary" className="text-[10px] font-mono">
+                  <Badge
+                    variant="secondary"
+                    className="text-[0.625rem] font-mono"
+                  >
                     {roleName}
                   </Badge>
-                  <span className="text-[10px] text-muted font-mono">
+                  <span className="text-[0.625rem] text-muted font-mono">
                     {scope}
                   </span>
                 </div>
@@ -480,7 +483,7 @@ function GroupExpandedContent({
               <Badge
                 key={`${p.permission}-${i}`}
                 variant="outline"
-                className="text-[10px] font-mono"
+                className="text-[0.625rem] font-mono"
               >
                 {p.permission}
               </Badge>

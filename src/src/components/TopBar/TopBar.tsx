@@ -82,7 +82,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
         {/* Breadcrumb — desktop: full trail, mobile: current page only */}
         <nav
           aria-label="Breadcrumb"
-          className="hidden md:flex items-center gap-1.5 text-[13px]"
+          className="hidden md:flex items-center gap-1.5 text-[0.8125rem]"
         >
           <Link
             to="/"
@@ -113,7 +113,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
           ))}
         </nav>
         {crumbs.length > 0 && (
-          <span className="md:hidden text-[13px] font-medium text-primary truncate max-w-[180px]">
+          <span className="md:hidden text-[0.8125rem] font-medium text-primary truncate max-w-[180px]">
             {crumbs[crumbs.length - 1].label}
           </span>
         )}
@@ -127,7 +127,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
           <div className="flex items-center gap-2 select-none">
             <span
               id="ce-mode-label"
-              className="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted font-mono"
+              className="text-[0.625rem] font-semibold tracking-[0.08em] uppercase text-muted font-mono"
             >
               CE Mode
             </span>

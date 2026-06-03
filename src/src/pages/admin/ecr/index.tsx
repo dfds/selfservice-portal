@@ -97,7 +97,7 @@ export default function EcrSyncDashboardPage() {
               {notInDb.map((name, i) => (
                 <p
                   key={i}
-                  className="text-[10px] text-muted font-mono truncate"
+                  className="text-[0.625rem] text-muted font-mono truncate"
                 >
                   {name}
                 </p>
@@ -126,7 +126,7 @@ export default function EcrSyncDashboardPage() {
               {notInAws.map((name, i) => (
                 <p
                   key={i}
-                  className="text-[10px] text-muted font-mono truncate"
+                  className="text-[0.625rem] text-muted font-mono truncate"
                 >
                   {name}
                 </p>
@@ -201,7 +201,7 @@ export default function EcrSyncDashboardPage() {
                 {isOutOfSync && (
                   <Badge
                     variant="soft-warning"
-                    className="text-[10px] shrink-0"
+                    className="text-[0.625rem] shrink-0"
                   >
                     Out of sync
                   </Badge>

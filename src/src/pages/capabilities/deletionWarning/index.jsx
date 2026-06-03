@@ -36,10 +36,10 @@ export default function DeletionWarning() {
       className="mb-6 border border-[rgba(190,30,45,0.3)] dark:border-[rgba(190,30,45,0.5)] rounded-[8px] bg-[rgba(190,30,45,0.05)] dark:bg-[rgba(190,30,45,0.12)] p-4 transition-opacity duration-500"
       style={{ opacity: visible ? 1 : 0 }}
     >
-      <div className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-[#be1e2d] mb-2">
+      <div className="font-mono text-[0.625rem] font-bold tracking-[0.1em] uppercase text-[#be1e2d] mb-2">
         Warning: Pending Deletion
       </div>
-      <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+      <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
         A member of this capability has requested that it be deleted. Deletion
         has not commenced yet and it is still possible to cancel this request.
         Once deletion commences, all resources related to this capability will

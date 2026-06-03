@@ -87,7 +87,7 @@ export default function CapabilityManagement({ anchorId }) {
                 >
                   Request deletion
                 </TrackedButton>
-                <p className="text-[12px] text-[#b91c1c] leading-[1.55] mt-3">
+                <p className="text-[0.75rem] text-[#b91c1c] leading-[1.55] mt-3">
                   Requesting deletion will not immediately remove the capability
                   or its resources. Deletion commences after a 7 day period,
                   during which the request can be cancelled.
@@ -95,7 +95,7 @@ export default function CapabilityManagement({ anchorId }) {
               </>
             )}
             {isPendingDeletion && (
-              <p className="text-[13px] text-[#666666] dark:text-slate-400">
+              <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400">
                 Deletion of this capability is pending. No other management
                 actions are available at this time.
               </p>

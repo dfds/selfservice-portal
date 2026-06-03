@@ -10,10 +10,10 @@ function NewsItem({ date, title, link, index = 0 }) {
       className="py-[0.625rem] border-b border-[#eeeeee] dark:border-[#1e2d3d] first:pt-0 last:border-0 last:pb-0 animate-fade-up"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      <div className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em] mb-[2px]">
+      <div className="font-mono text-[0.625rem] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em] mb-[2px]">
         {timeAgo}
       </div>
-      <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4] mb-[3px]">
+      <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4] mb-[3px]">
         {title}
       </div>
       <TrackedLink
@@ -21,7 +21,7 @@ function NewsItem({ date, title, link, index = 0 }) {
         href={link}
         target="_blank"
         rel="noreferrer"
-        className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline tracking-[0.03em] hover:underline"
+        className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline tracking-[0.03em] hover:underline"
       >
         read_more →<span className="sr-only"> (opens in new tab)</span>
       </TrackedLink>
@@ -48,7 +48,7 @@ export default function LatestNews() {
 
   if (!recent.length) {
     return (
-      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+      <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         No incidents in the past month.
       </p>
     );
@@ -64,7 +64,7 @@ export default function LatestNews() {
           href="https://dfdsit.statuspage.io"
           target="_blank"
           rel="noreferrer"
-          className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+          className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
           View all incidents →
         </a>

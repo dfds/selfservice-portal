@@ -230,29 +230,29 @@ export default function Summary({ anchorId }) {
         className="grid gap-x-4 gap-y-[0.625rem] items-start"
         style={{ gridTemplateColumns: "140px 1fr" }}
       >
-        <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
+        <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
           Name
         </span>
-        <span className="font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] break-all">
+        <span className="font-mono text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] break-all">
           {name}
         </span>
 
-        <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
+        <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
           Root ID
         </span>
-        <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 break-all">
+        <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 break-all">
           {id}
         </span>
 
-        <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
+        <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
           Created
         </span>
-        <span className="text-[13px] text-[#666666] dark:text-slate-400">
+        <span className="text-[0.8125rem] text-[#666666] dark:text-slate-400">
           {createdAt ? asDate(createdAt) : "—"}
           {createdBy && (
             <>
               , by{" "}
-              <span className="font-mono text-[12px] dark:text-slate-400">
+              <span className="font-mono text-[0.75rem] dark:text-slate-400">
                 {createdBy}
               </span>
             </>
@@ -261,10 +261,10 @@ export default function Summary({ anchorId }) {
 
         {description && (
           <>
-            <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
+            <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] pt-[2px]">
               Description
             </span>
-            <span className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.5] break-words">
+            <span className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.5] break-words">
               {description}
             </span>
           </>

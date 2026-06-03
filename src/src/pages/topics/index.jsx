@@ -57,7 +57,7 @@ function Topics() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search topics..."
-          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[16px] md:text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
+          className="w-full h-[38px] px-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[6px] font-mono text-[1rem] md:text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b]"
         />
       </div>
 
@@ -70,7 +70,7 @@ function Topics() {
       ) : (
         <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
           {filtered.length === 0 && (
-            <div className="px-[1.125rem] py-4 font-mono text-[12px] text-[#afafaf] dark:text-[#64748b]">
+            <div className="px-[1.125rem] py-4 font-mono text-[0.75rem] text-[#afafaf] dark:text-[#64748b]">
               No topics found.
             </div>
           )}
@@ -85,12 +85,12 @@ function Topics() {
                   className="flex items-center gap-[0.875rem] px-[1.125rem] py-[0.875rem] cursor-pointer hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
                   onClick={() => toggleExpand(topic.id)}
                 >
-                  <span className="font-mono text-[13px] font-semibold text-[#002b45] dark:text-[#e2e8f0] flex-1 tracking-[-0.01em]">
+                  <span className="font-mono text-[0.8125rem] font-semibold text-[#002b45] dark:text-[#e2e8f0] flex-1 tracking-[-0.01em]">
                     {topic.name}
                   </span>
                   {topic.kafkaClusterName && (
                     <span
-                      className="font-mono text-[10px] font-semibold tracking-[0.06em] px-2 py-[3px] rounded-[20px] text-white flex-shrink-0"
+                      className="font-mono text-[0.625rem] font-semibold tracking-[0.06em] px-2 py-[3px] rounded-[20px] text-white flex-shrink-0"
                       style={{
                         backgroundColor: topic.clusterColor ?? "#afafaf",
                       }}
@@ -126,7 +126,7 @@ export default function TopicsPage() {
     <TopicsProvider>
       <div className="p-8">
         <div className="animate-fade-up">
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
             // Kafka Topics
           </div>
           <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2] mb-6">

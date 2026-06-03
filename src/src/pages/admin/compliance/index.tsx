@@ -58,7 +58,7 @@ function CapabilityComplianceContent({
                   `Category ${i + 1}`}
               </span>
               {cat.score != null && (
-                <span className="text-[10px] text-muted font-mono">
+                <span className="text-[0.625rem] text-muted font-mono">
                   {cat.score}%
                 </span>
               )}
@@ -66,7 +66,7 @@ function CapabilityComplianceContent({
                 variant={complianceStatusVariant(
                   cat.status ?? cat.complianceStatus ?? "",
                 )}
-                className="text-[10px]"
+                className="text-[0.625rem]"
               >
                 {cat.status ?? cat.complianceStatus ?? "Unknown"}
               </Badge>
@@ -99,7 +99,7 @@ function CapabilityRow({ capability }: { capability: any }) {
           </span>
           <Badge
             variant={capabilityStatusVariant(capability.status)}
-            className="text-[10px] shrink-0 hidden sm:inline-flex"
+            className="text-[0.625rem] shrink-0 hidden sm:inline-flex"
           >
             {capability.status}
           </Badge>

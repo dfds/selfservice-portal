@@ -19,15 +19,15 @@ function RelevantNewsItem({ item, index }) {
       style={{ animationDelay: `${index * 60}ms` }}
     >
       <div className="flex items-center gap-1.5 mb-[2px]">
-        <div className="font-mono text-[10px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
+        <div className="font-mono text-[0.625rem] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
           {timeAgo}
         </div>
       </div>
-      <div className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4] mb-[3px]">
+      <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4] mb-[3px]">
         {item.title}
       </div>
       {item.body && (
-        <p className="font-mono text-[11px] text-muted leading-[1.5] line-clamp-2">
+        <p className="font-mono text-[0.6875rem] text-muted leading-[1.5] line-clamp-2">
           {item.body}
         </p>
       )}
@@ -52,7 +52,7 @@ export default function RelevantNews() {
 
   if (!items.length) {
     return (
-      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+      <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         No relevant news at this time.
       </p>
     );
@@ -66,7 +66,7 @@ export default function RelevantNews() {
       <div className="pt-[0.625rem]">
         <Link
           to="/news"
-          className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+          className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
           View all news →
         </Link>

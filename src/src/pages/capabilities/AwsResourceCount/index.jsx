@@ -246,7 +246,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
               muiTableHeadCellProps={{
                 sx: {
                   fontWeight: "700",
-                  fontSize: "16px",
+                  fontSize: "1rem",
                   fontFamily: "DFDS",
                   color: textPrimary,
                   backgroundColor: bg,
@@ -256,7 +256,7 @@ function ResourcesWindow({ onCloseRequested, capabilityId }) {
               muiTableBodyCellProps={{
                 sx: {
                   fontWeight: "400",
-                  fontSize: "16px",
+                  fontSize: "1rem",
                   fontFamily: "DFDS",
                   color: textBody,
                   backgroundColor: bg,

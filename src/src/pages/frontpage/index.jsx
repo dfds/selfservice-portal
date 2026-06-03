@@ -20,13 +20,13 @@ function HeroRow({ name }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
       <div>
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
+        <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
           // Developer Portal
         </div>
         <h1 className="text-[1.75rem] font-bold text-primary font-mono tracking-[-0.02em] leading-[1.2] mb-1.5">
           Hello, {firstName}
         </h1>
-        <div className="font-mono text-[12px] text-muted tracking-[0.03em]">
+        <div className="font-mono text-[0.75rem] text-muted tracking-[0.03em]">
           Welcome back
         </div>
       </div>
@@ -65,10 +65,10 @@ function NavCard({ to, href, iconBg, icon, name, description, action }) {
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-semibold text-primary mb-[3px]">
+        <div className="text-[0.875rem] font-semibold text-primary mb-[3px]">
           {name}
         </div>
-        <div className="text-[12px] text-muted leading-[1.5]">
+        <div className="text-[0.75rem] text-muted leading-[1.5]">
           {description}
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function FrontPage() {
       {highlighted.map((item, i) => (
         <div
           key={item.id}
-          className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[12px] text-[#ed8800] leading-[1.6] animate-fade-up"
+          className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[0.75rem] text-[#ed8800] leading-[1.6] animate-fade-up"
           style={{ animationDelay: `${40 + i * 40}ms` }}
         >
           <span className="font-bold tracking-[0.05em]">{item.title} — </span>
@@ -126,7 +126,7 @@ export default function FrontPage() {
             action={
               <Link
                 to="/capabilities?new=true"
-                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[0.6875rem] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
               >
                 + New Capability
               </Link>
@@ -142,14 +142,14 @@ export default function FrontPage() {
           <NavCard
             href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
             iconBg="#dcfce7"
-            icon={<span className="text-[18px] text-[#16a34a]">☸</span>}
+            icon={<span className="text-[1.125rem] text-[#16a34a]">☸</span>}
             name="Kubernetes"
             description="First visit? Start with the Kubernetes Getting Started guide."
             action={
               <TrackedLink
                 trackName="DownloadKubeConfig"
                 href="https://dfds-oxygen-k8s-public.s3-eu-west-1.amazonaws.com/kubeconfig/hellman-saml.config"
-                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[0.6875rem] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
               >
                 ↓ Download kubeconfig
               </TrackedLink>
@@ -158,13 +158,13 @@ export default function FrontPage() {
           <NavCard
             to="/ecr"
             iconBg="#fef3c7"
-            icon={<span className="text-[18px] text-[#ed8800]">□</span>}
+            icon={<span className="text-[1.125rem] text-[#ed8800]">□</span>}
             name="ECR Repositories"
             description="Browse and manage your team's container image repositories across AWS accounts."
             action={
               <Link
                 to="/ecr?new=true"
-                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
+                className="inline-flex items-center h-[28px] px-2.5 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[0.6875rem] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted whitespace-nowrap"
               >
                 + New repository
               </Link>
@@ -203,7 +203,7 @@ export default function FrontPage() {
             // need help?
           </SectionLabel>
           <PageSection>
-            <p className="text-[13px] text-secondary leading-[1.6] mb-3">
+            <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-3">
               Most things you need are already documented. The{" "}
               <a
                 href="https://wiki.dfds.cloud/en/playbooks"
@@ -215,14 +215,14 @@ export default function FrontPage() {
               </a>{" "}
               cover the most common tasks — start there.
             </p>
-            <p className="text-[13px] text-secondary leading-[1.6] mb-2">
+            <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
               Got a question the docs don't answer? The community on Slack is
               the fastest way to get unblocked:
             </p>
             <TrackedLink
               trackName="SlackArchive-DevPeerSupport"
               href="slack://dfds.slack.com/archives/C9948TVRC"
-              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[11px] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
+              className="inline-flex items-center h-[30px] px-3 bg-transparent text-secondary border border-card rounded-[5px] font-mono text-[0.6875rem] tracking-[0.04em] no-underline transition-colors hover:bg-surface-muted"
             >
               #dev-peer-support
             </TrackedLink>

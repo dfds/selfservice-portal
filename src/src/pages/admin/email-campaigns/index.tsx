@@ -155,7 +155,7 @@ export default function EmailCampaignsPage() {
           <h1 className="text-[1.25rem] font-bold text-primary">
             Email Campaigns
           </h1>
-          <p className="text-[13px] text-muted mt-1">
+          <p className="text-[0.8125rem] text-muted mt-1">
             Create and manage email campaigns to capability members or
             individual users.
           </p>
@@ -216,7 +216,7 @@ export default function EmailCampaignsPage() {
             )}
           </button>
           {isFetched && (
-            <span className="text-[11px] text-muted font-mono whitespace-nowrap ml-1">
+            <span className="text-[0.6875rem] text-muted font-mono whitespace-nowrap ml-1">
               {sortedCampaigns.length} campaign
               {sortedCampaigns.length !== 1 ? "s" : ""}
             </span>
@@ -349,19 +349,19 @@ function CampaignRow({
       <div className="flex-1 min-w-0">
         <Link
           to={`/admin/email-campaigns/${campaign.id}`}
-          className="text-[13px] font-medium text-primary hover:text-action no-underline truncate block"
+          className="text-[0.8125rem] font-medium text-primary hover:text-action no-underline truncate block"
         >
           {campaign.name}
         </Link>
-        <span className="text-[11px] text-muted font-mono">
+        <span className="text-[0.6875rem] text-muted font-mono">
           {campaign.subject}
         </span>
         {scheduleInfo && (
-          <span className="text-[10px] text-action font-mono block mt-0.5">
+          <span className="text-[0.625rem] text-action font-mono block mt-0.5">
             {scheduleInfo}
           </span>
         )}
-        <span className="text-[10px] text-muted block mt-0.5">
+        <span className="text-[0.625rem] text-muted block mt-0.5">
           {campaign.createdBy && (
             <>
               <span className="font-mono">
@@ -380,7 +380,7 @@ function CampaignRow({
         </span>
       </div>
       <span
-        className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border border-card text-secondary bg-surface-subtle"
+        className="inline-flex items-center px-2 py-0.5 rounded text-[0.625rem] font-mono uppercase tracking-wide border border-card text-secondary bg-surface-subtle"
         title={
           campaign.targetType === "User"
             ? "Targets individual users"

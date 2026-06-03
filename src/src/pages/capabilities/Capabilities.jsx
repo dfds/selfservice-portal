@@ -295,7 +295,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
       muiTableHeadCellProps={{
         sx: {
           fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
-          fontSize: "11px",
+          fontSize: "0.6875rem",
           fontWeight: "600",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
@@ -308,7 +308,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
         sx: {
           position: "relative",
           fontWeight: "400",
-          fontSize: "14px",
+          fontSize: "0.875rem",
           color: textPrimary,
           padding: "5px",
           backgroundColor: row.original.status === "Deleted" ? bgDeleted : bg,
@@ -329,7 +329,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
         sx: {
           minWidth: "1120px",
           fontWeight: "400",
-          fontSize: "16px",
+          fontSize: "1rem",
           padding: "5px",
           "& .MuiOutlinedInput-root": {
             color: inputText,

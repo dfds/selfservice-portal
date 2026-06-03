@@ -37,6 +37,6 @@ const warningStyle = {
 
 const headerStyle = {
   fontWeight: "bold",
-  fontSize: "16px",
+  fontSize: "1rem",
   marginBottom: "5px",
 };

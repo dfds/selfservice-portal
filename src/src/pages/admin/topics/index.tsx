@@ -79,14 +79,14 @@ function TopicRow({
             {topic.kafkaClusterName && (
               <Badge
                 variant="secondary"
-                className="text-[10px] font-mono hidden sm:inline-flex"
+                className="text-[0.625rem] font-mono hidden sm:inline-flex"
               >
                 {topic.kafkaClusterName}
               </Badge>
             )}
             <Badge
               variant={isPublic ? "soft-success" : "outline"}
-              className="text-[10px] hidden sm:inline-flex"
+              className="text-[0.625rem] hidden sm:inline-flex"
             >
               {isPublic ? "Public" : "Private"}
             </Badge>

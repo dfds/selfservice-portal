@@ -8,10 +8,10 @@ function Link({ title, url }) {
       rel="noreferrer"
       className="group flex items-center justify-between py-2 border-b border-[#eeeeee] dark:border-[#1e2d3d] no-underline first:pt-0 last:border-0 last:pb-0"
     >
-      <span className="text-[13px] text-[#666666] dark:text-[#94a3b8] group-hover:text-[#0e7cc1] dark:group-hover:text-[#60a5fa] transition-colors">
+      <span className="text-[0.8125rem] text-[#666666] dark:text-[#94a3b8] group-hover:text-[#0e7cc1] dark:group-hover:text-[#60a5fa] transition-colors">
         {title}
       </span>
-      <span className="font-mono text-[11px] text-[#afafaf] dark:text-[#64748b] transition-transform duration-150 ease-out-expo group-hover:translate-x-[2px] group-hover:-translate-y-[2px]">
+      <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-[#64748b] transition-transform duration-150 ease-out-expo group-hover:translate-x-[2px] group-hover:-translate-y-[2px]">
         ↗
       </span>
     </a>

@@ -9,9 +9,9 @@ function getInitials(name?: string): string {
 }
 
 const sizeMap = {
-  sm: "w-[26px] h-[26px] text-[10px]",
-  md: "w-7 h-7 text-[10px]",
-  lg: "w-8 h-8 text-[11px]",
+  sm: "w-[26px] h-[26px] text-[0.625rem]",
+  md: "w-7 h-7 text-[0.625rem]",
+  lg: "w-8 h-8 text-[0.6875rem]",
 };
 
 interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -129,13 +129,13 @@ export default function PermissionMatrixPage() {
   return (
     <div className="px-5 md:px-8 py-6 max-w-[1400px] mx-auto">
       <div className="mb-6">
-        <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1">
+        <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1">
           // RBAC
         </div>
         <h1 className="text-[1.6rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
           Permission Matrix
         </h1>
-        <p className="mt-1 text-[13px] text-[#6b7280] dark:text-slate-400">
+        <p className="mt-1 text-[0.8125rem] text-[#6b7280] dark:text-slate-400">
           An overview of which permissions are granted to each role in the
           system.
           {isCloudEngineerEnabled && (
@@ -155,7 +155,7 @@ export default function PermissionMatrixPage() {
       )}
 
       {isFetched && roles.length === 0 && (
-        <p className="text-[13px] text-muted font-mono">
+        <p className="text-[0.8125rem] text-muted font-mono">
           No permission matrix data available.
         </p>
       )}
@@ -163,10 +163,10 @@ export default function PermissionMatrixPage() {
       {isFetched && roles.length > 0 && (
         <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-[12px]">
+            <table className="w-full border-collapse text-[0.75rem]">
               <thead>
                 <tr className="border-b border-[#eeeeee] dark:border-[#1e2d3d]">
-                  <th className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] px-4 py-3 text-left font-mono text-[11px] text-[#afafaf] dark:text-slate-500 min-w-[220px] border-r border-[#eeeeee] dark:border-[#1e2d3d]">
+                  <th className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] px-4 py-3 text-left font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 min-w-[220px] border-r border-[#eeeeee] dark:border-[#1e2d3d]">
                     Permission
                   </th>
                   {roles.map((role) => {
@@ -176,7 +176,7 @@ export default function PermissionMatrixPage() {
                       <th
                         key={role.id}
                         title={role.description ?? role.name}
-                        className="px-3 py-2 text-center font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
+                        className="px-3 py-2 text-center font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
                       >
                         <div className="flex flex-col items-center gap-1.5">
                           <span>{role.name}</span>
@@ -186,7 +186,7 @@ export default function PermissionMatrixPage() {
                               variant="action"
                               onClick={() => handleSave(role.id)}
                               disabled={!dirty || saving}
-                              className="h-6 px-2 text-[10px]"
+                              className="h-6 px-2 text-[0.625rem]"
                             >
                               <Save size={10} />
                               {saving ? "Saving…" : "Save"}
@@ -218,13 +218,13 @@ export default function PermissionMatrixPage() {
                       >
                         <td className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] hover:bg-[#f8f9fa] dark:hover:bg-[#0f172a]/50 px-4 py-2 border-r border-[#eeeeee] dark:border-[#1e2d3d]">
                           <span
-                            className="font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0]"
+                            className="font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0]"
                             title={perm.description}
                           >
                             {perm.name}
                           </span>
                           {perm.accessType && (
-                            <span className="ml-2 inline-flex items-center rounded-full border border-[#d9dcde] dark:border-[#334155] px-1.5 py-0 font-mono text-[10px] text-[#afafaf] dark:text-slate-500">
+                            <span className="ml-2 inline-flex items-center rounded-full border border-[#d9dcde] dark:border-[#334155] px-1.5 py-0 font-mono text-[0.625rem] text-[#afafaf] dark:text-slate-500">
                               {perm.accessType}
                             </span>
                           )}

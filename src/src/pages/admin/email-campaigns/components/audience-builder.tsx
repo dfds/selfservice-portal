@@ -193,7 +193,7 @@ export function AudienceBuilder({
               onChange({ ...value, mode });
               setResolved(null);
             }}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-medium border cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border cursor-pointer transition-colors ${
               value.mode === mode
                 ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
                 : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
@@ -212,7 +212,7 @@ export function AudienceBuilder({
 
       {value.mode === "specific" && !isUserTarget && (
         <div>
-          <Label className="text-[12px] text-muted mb-1 block">
+          <Label className="text-[0.75rem] text-muted mb-1 block">
             Capability IDs (comma-separated)
           </Label>
           <Input
@@ -234,7 +234,7 @@ export function AudienceBuilder({
 
       {value.mode === "specific" && isUserTarget && (
         <div>
-          <Label className="text-[12px] text-muted mb-1 block">
+          <Label className="text-[0.75rem] text-muted mb-1 block">
             Email addresses (comma or newline separated)
           </Label>
           <textarea
@@ -251,7 +251,7 @@ export function AudienceBuilder({
             }
             placeholder="alice@dfds.com, bob@dfds.com"
             rows={4}
-            className="w-full rounded-md border border-card bg-surface px-3 py-2 text-[12px] text-primary font-mono placeholder:text-muted"
+            className="w-full rounded-md border border-card bg-surface px-3 py-2 text-[0.75rem] text-primary font-mono placeholder:text-muted"
           />
         </div>
       )}
@@ -270,7 +270,7 @@ export function AudienceBuilder({
                     key: undefined,
                   });
                 }}
-                className="h-9 rounded-md border border-card bg-surface px-2 text-[12px] text-primary"
+                className="h-9 rounded-md border border-card bg-surface px-2 text-[0.75rem] text-primary"
               >
                 {FIELD_OPTIONS.map((f) => (
                   <option key={f.value} value={f.value}>
@@ -281,7 +281,7 @@ export function AudienceBuilder({
               <select
                 value={filter.operator}
                 onChange={(e) => updateFilter(i, { operator: e.target.value })}
-                className="h-9 rounded-md border border-card bg-surface px-2 text-[12px] text-primary"
+                className="h-9 rounded-md border border-card bg-surface px-2 text-[0.75rem] text-primary"
               >
                 {(OPERATOR_OPTIONS[filter.field] || []).map((op) => (
                   <option key={op.value} value={op.value}>
@@ -297,7 +297,7 @@ export function AudienceBuilder({
                     placeholder="Key"
                     className="w-[130px]"
                   />
-                  <span className="text-muted text-[12px] flex-shrink-0">
+                  <span className="text-muted text-[0.75rem] flex-shrink-0">
                     =
                   </span>
                   <Input
@@ -311,7 +311,7 @@ export function AudienceBuilder({
                 <select
                   value={filter.value}
                   onChange={(e) => updateFilter(i, { value: e.target.value })}
-                  className="h-9 flex-1 rounded-md border border-card bg-surface px-2 text-[12px] text-primary"
+                  className="h-9 flex-1 rounded-md border border-card bg-surface px-2 text-[0.75rem] text-primary"
                 >
                   <option value="">— select —</option>
                   <option value="Active">Active</option>
@@ -372,7 +372,7 @@ export function AudienceBuilder({
         </Button>
 
         {resolved && (
-          <span className="text-[12px] text-secondary">
+          <span className="text-[0.75rem] text-secondary">
             {isUserTarget ? (
               <>
                 <strong>{resolved.totalRecipients}</strong> users
@@ -396,7 +396,7 @@ export function AudienceBuilder({
 
       {resolved && isUserTarget && resolved.users?.length > 0 && (
         <div className="max-h-96 overflow-auto border border-card rounded-lg">
-          <table className="w-full text-[12px]">
+          <table className="w-full text-[0.75rem]">
             <thead>
               <tr className="border-b border-card bg-surface-subtle">
                 <th className="text-left px-3 py-1.5 font-medium text-muted">
@@ -431,7 +431,7 @@ export function AudienceBuilder({
       {resolved &&
         isUserTarget &&
         (resolved.unmatchedEmails || []).length > 0 && (
-          <div className="text-[11px] text-warning border border-warning/40 bg-warning/5 rounded-md px-3 py-2">
+          <div className="text-[0.6875rem] text-warning border border-warning/40 bg-warning/5 rounded-md px-3 py-2">
             The following emails did not match any user:{" "}
             <span className="font-mono">
               {(resolved.unmatchedEmails || []).join(", ")}
@@ -441,7 +441,7 @@ export function AudienceBuilder({
 
       {resolved && !isUserTarget && resolved.capabilities?.length > 0 && (
         <div className="max-h-96 overflow-auto border border-card rounded-lg">
-          <table className="w-full text-[12px]">
+          <table className="w-full text-[0.75rem]">
             <thead>
               <tr className="border-b border-card bg-surface-subtle">
                 <th className="text-left px-3 py-1.5 font-medium text-muted">
@@ -552,12 +552,12 @@ function RoleFilterPicker({ value, onChange }: RoleFilterPickerProps) {
 
   return (
     <div>
-      <Label className="text-[12px] mb-1 block">
+      <Label className="text-[0.75rem] mb-1 block">
         Recipient Filter (optional)
       </Label>
       <div className="flex flex-wrap gap-1.5">
         {roles.length === 0 ? (
-          <span className="text-[11px] text-muted">Loading roles…</span>
+          <span className="text-[0.6875rem] text-muted">Loading roles…</span>
         ) : (
           roles.map((r) => {
             const isSelected = selected.has(r.name.toLowerCase());
@@ -566,7 +566,7 @@ function RoleFilterPicker({ value, onChange }: RoleFilterPickerProps) {
                 key={r.id}
                 type="button"
                 onClick={() => toggle(r.name)}
-                className={`px-2.5 py-1 rounded-md text-[12px] font-medium border transition-colors cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-[0.75rem] font-medium border transition-colors cursor-pointer ${
                   isSelected
                     ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
                     : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
@@ -578,7 +578,7 @@ function RoleFilterPicker({ value, onChange }: RoleFilterPickerProps) {
           })
         )}
       </div>
-      <span className="text-[11px] text-muted mt-1 block">
+      <span className="text-[0.6875rem] text-muted mt-1 block">
         Optionally limit recipients to members holding any of the selected RBAC
         roles. Leave empty to include everyone.
       </span>
@@ -622,7 +622,7 @@ function CostCentrePicker({ value, onChange }: CostCentrePickerProps) {
             key={c.value}
             type="button"
             onClick={() => toggle(c.value)}
-            className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors cursor-pointer ${
+            className={`px-2.5 py-1 rounded-md text-[0.6875rem] font-medium border transition-colors cursor-pointer ${
               isSelected
                 ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
                 : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
