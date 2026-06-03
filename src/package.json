@@ -8,9 +8,9 @@
   "type": "module",
   "homepage": "",
   "dependencies": {
-    "@dfds-ui/forms": "2.0.12",
-    "@dfds-ui/modal": "2.0.12",
-    "@dfds-ui/react-components": "2.0.12",
+    "@dfds-ui/forms": "3.0.0",
+    "@dfds-ui/modal": "3.0.0",
+    "@dfds-ui/react-components": "3.0.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@floating-ui/react": "^0.27.12",
