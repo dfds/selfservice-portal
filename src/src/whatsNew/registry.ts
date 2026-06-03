@@ -5,8 +5,8 @@ import {
 } from "./releases/2026-q2";
 
 const ALL_TOURS: TourDefinition[] = [
-  tour_2026_q2_customisation,
-  tour_2026_q2_topbar,
+  // tour_2026_q2_customisation,
+  // tour_2026_q2_topbar,
 ];
 
 export interface TourContext {
