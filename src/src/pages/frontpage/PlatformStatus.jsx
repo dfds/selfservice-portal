@@ -27,7 +27,7 @@ export default function PlatformStatus() {
         href="https://dfdsit.statuspage.io"
         target="_blank"
         rel="noreferrer"
-        className="font-mono text-[11px] text-muted hover:text-primary transition-colors no-underline block mb-3"
+        className="font-mono text-[0.6875rem] text-muted hover:text-primary transition-colors no-underline block mb-3"
       >
         dfdsit.statuspage.io ↗
       </a>
@@ -46,7 +46,7 @@ export default function PlatformStatus() {
               }}
               className="flex-shrink-0"
             />
-            <span className="text-[12px] text-secondary leading-none truncate">
+            <span className="text-[0.75rem] text-secondary leading-none truncate">
               {label}
             </span>
           </div>

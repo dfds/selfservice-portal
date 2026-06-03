@@ -49,7 +49,7 @@ export default function MessageContracts({
           {schema !== undefined && (
             <div>
               <Text styledAs="label">Schema ({schema.schemaType})</Text>
-              <pre className="mt-2 bg-[#f2f2f2] dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[4px] p-3 font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] overflow-auto whitespace-pre-wrap">
+              <pre className="mt-2 bg-[#f2f2f2] dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[4px] p-3 font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] overflow-auto whitespace-pre-wrap">
                 {typeof schema.schema === "string"
                   ? schema.schema
                   : JSON.stringify(schema.schema, null, 2)}

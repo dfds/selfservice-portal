@@ -37,12 +37,14 @@ function ResourceRow({
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-divider last:border-0 gap-4">
       <div className="min-w-0">
-        <div className="text-[12px] text-muted mb-[2px]">{label}</div>
-        <div className="font-mono text-[13px] text-primary font-semibold leading-none">
+        <div className="text-[0.75rem] text-muted mb-[2px]">{label}</div>
+        <div className="font-mono text-[0.8125rem] text-primary font-semibold leading-none">
           {value}
         </div>
         {sub && (
-          <div className="font-mono text-[11px] text-muted mt-[2px]">{sub}</div>
+          <div className="font-mono text-[0.6875rem] text-muted mt-[2px]">
+            {sub}
+          </div>
         )}
         {children}
       </div>
@@ -51,7 +53,7 @@ function ResourceRow({
         {statusLabel && (
           <Badge
             variant={statusBadgeVariant(status)}
-            className="flex-shrink-0 text-[10px] px-2 py-[3px]"
+            className="flex-shrink-0 text-[0.625rem] px-2 py-[3px]"
           >
             {statusLabel}
           </Badge>
@@ -550,7 +552,7 @@ export function AzureResourceInfoBadges() {
                 href={generateResourceGroupLink(resource.environment)}
                 rel="noopener noreferrer"
                 target="_blank"
-                className="font-mono text-[11px] text-action no-underline hover:underline"
+                className="font-mono text-[0.6875rem] text-action no-underline hover:underline"
               >
                 Open ↗
               </TrackedLink>
@@ -573,7 +575,7 @@ export function AzureResourceInfoBadges() {
         </TrackedButton>
       </div>
 
-      <div className="mt-3 text-[12px] text-muted">
+      <div className="mt-3 text-[0.75rem] text-muted">
         Refer to the{" "}
         <TrackedLink
           trackName="Wiki-AzureCapabilityDeveloperGuide"

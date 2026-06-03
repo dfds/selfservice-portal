@@ -6,7 +6,7 @@ import { TrackedLink } from "@/components/Tracking";
 export default function AwsResources({ anchorId }) {
   return (
     <PageSection id={anchorId} headline="AWS &amp; Kubernetes">
-      <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+      <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
         Request an AWS account and Kubernetes namespace for this capability.
         Manual processing is involved in getting an AWS account attached.{" "}
         <TrackedLink

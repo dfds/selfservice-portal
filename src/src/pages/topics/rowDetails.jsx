@@ -69,7 +69,7 @@ export function RowDetails(data) {
   function MessageContractTypeRow({ messageType, messageContracts }) {
     return (
       <div className="mt-3">
-        <div className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b] mb-1">
+        <div className="font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b] mb-1">
           {messageType}
         </div>
         <div>
@@ -91,7 +91,7 @@ export function RowDetails(data) {
   return (
     <div className="pt-[0.875rem]">
       {data.data.description && (
-        <p className="text-[13px] text-[#666666] dark:text-[#94a3b8] leading-[1.6] mb-[0.875rem]">
+        <p className="text-[0.8125rem] text-[#666666] dark:text-[#94a3b8] leading-[1.6] mb-[0.875rem]">
           {data.data.description}
         </p>
       )}
@@ -99,31 +99,31 @@ export function RowDetails(data) {
       <div className="flex flex-wrap gap-5">
         {data.data.partitions != null && (
           <div className="flex flex-col gap-[2px]">
-            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+            <span className="font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
               Partitions
             </span>
-            <span className="font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0]">
+            <span className="font-mono text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0]">
               {data.data.partitions}
             </span>
           </div>
         )}
         {data.data.retention && (
           <div className="flex flex-col gap-[2px]">
-            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+            <span className="font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
               Retention
             </span>
-            <span className="font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0]">
+            <span className="font-mono text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0]">
               {data.data.retention}
             </span>
           </div>
         )}
         {data.data.capabilityId && (
           <div className="flex flex-col gap-[2px]">
-            <span className="font-mono text-[9px] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
+            <span className="font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-[#afafaf] dark:text-[#64748b]">
               Capability
             </span>
             <Link
-              className="font-mono text-[12px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              className="font-mono text-[0.75rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
               to={`/capabilities/${data.data.capabilityId}`}
             >
               {data.data.capabilityId}

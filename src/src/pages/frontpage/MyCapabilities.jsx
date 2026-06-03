@@ -23,7 +23,7 @@ function CostCell({ costs, previousCosts, costsComparisonIsFull }) {
   const displayedCost =
     total == null ? "—" : total < 1 ? "<$1" : `$${Math.floor(total)}`;
   return (
-    <span className="font-mono text-[11px] text-foreground">
+    <span className="font-mono text-[0.6875rem] text-foreground">
       {displayedCost}
     </span>
   );
@@ -35,7 +35,7 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
   if (trendPct == null) {
     return (
       <span
-        className="font-mono text-[11px] text-muted"
+        className="font-mono text-[0.6875rem] text-muted"
         title="Not enough history to calculate a trend"
       >
         —
@@ -46,7 +46,7 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
   const isLower = trendPct < 0;
   return (
     <span
-      className="font-mono text-[11px] font-semibold"
+      className="font-mono text-[0.6875rem] font-semibold"
       style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
       title={
         costsComparisonIsFull
@@ -89,13 +89,13 @@ function CapabilityRow({ cap, index }) {
           )}
           <Link
             to={`/capabilities/${cap.id}`}
-            className="text-[12px] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline truncate"
+            className="text-[0.75rem] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline truncate"
           >
             {cap.name}
           </Link>
           {pendingMembers > 0 && (
             <span
-              className="inline-flex items-center gap-[3px] font-mono text-[9px] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(237,136,0,0.1)] text-[#ed8800] shrink-0"
+              className="inline-flex items-center gap-[3px] font-mono text-[0.5625rem] font-semibold tracking-[0.04em] px-1.5 py-[1px] rounded-[4px] bg-[rgba(237,136,0,0.1)] text-[#ed8800] shrink-0"
               title={`${pendingMembers} membership application${
                 pendingMembers > 1 ? "s" : ""
               } awaiting approval`}
@@ -109,7 +109,7 @@ function CapabilityRow({ cap, index }) {
 
       {/* Compliance score */}
       <td className="py-[0.5rem] pr-3 text-right whitespace-nowrap">
-        <span className="inline-flex items-center gap-[4px] font-mono text-[11px] text-muted">
+        <span className="inline-flex items-center gap-[4px] font-mono text-[0.6875rem] text-muted">
           <LightBulb score={cap.requirementScore} size={9} />
           {cap.requirementScore?.toFixed(1)}%
         </span>
@@ -170,7 +170,7 @@ export default function MyCapabilities() {
 
   if (!mine.length) {
     return (
-      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+      <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         You are not a member of any capabilities yet.{" "}
         <Link to="/capabilities" className="text-action hover:underline">
           Browse all capabilities →
@@ -184,23 +184,23 @@ export default function MyCapabilities() {
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-[#eeeeee] dark:border-[#1e2d3d]">
-            <th className="pb-[0.375rem] pr-3 text-left font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase">
+            <th className="pb-[0.375rem] pr-3 text-left font-mono text-[0.625rem] font-semibold text-muted tracking-[0.06em] uppercase">
               Capability
             </th>
             <th
-              className="pb-[0.375rem] pr-3 text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              className="pb-[0.375rem] pr-3 text-right font-mono text-[0.625rem] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
               title="How well this capability satisfies platform requirements. Shown as stale if requirements haven't been reviewed in over 14 days."
             >
               Compliance
             </th>
             <th
-              className="pb-[0.375rem] pr-3 text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              className="pb-[0.375rem] pr-3 text-right font-mono text-[0.625rem] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
               title="Total AWS cost over the last 30 days."
             >
               Cost (30d)
             </th>
             <th
-              className="pb-[0.375rem] text-right font-mono text-[10px] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
+              className="pb-[0.375rem] text-right font-mono text-[0.625rem] font-semibold text-muted tracking-[0.06em] uppercase cursor-help"
               title="Change in average daily cost compared to the prior 30-day period. ~ means the comparison is based on partial history."
             >
               Trend
@@ -216,7 +216,7 @@ export default function MyCapabilities() {
       <div className="pt-[0.625rem]">
         <Link
           to="/capabilities"
-          className="font-mono text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+          className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
           View all capabilities →
         </Link>

@@ -402,7 +402,7 @@ export default function EmailCampaignEditor() {
       <button
         type="button"
         onClick={() => navigate("/admin/email-campaigns")}
-        className="flex items-center gap-1.5 text-[12px] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
+        className="flex items-center gap-1.5 text-[0.75rem] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
       >
         <ArrowLeft size={14} />
         Back to campaigns
@@ -414,7 +414,7 @@ export default function EmailCampaignEditor() {
 
       <div className="space-y-5">
         <div>
-          <Label className="text-[12px] mb-1 block">Target Type</Label>
+          <Label className="text-[0.75rem] mb-1 block">Target Type</Label>
           <div className="flex gap-2">
             {(["Capability", "User"] as const).map((t) => (
               <button
@@ -430,7 +430,7 @@ export default function EmailCampaignEditor() {
                   }
                 }}
                 disabled={isEdit}
-                className={`px-3 py-1.5 rounded-md text-[12px] font-medium border transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border transition-colors ${
                   targetType === t
                     ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
                     : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
@@ -442,14 +442,14 @@ export default function EmailCampaignEditor() {
               </button>
             ))}
           </div>
-          <span className="text-[11px] text-muted mt-1 block">
+          <span className="text-[0.6875rem] text-muted mt-1 block">
             Determines who receives the email and which template variables are
             available. Cannot be changed after the campaign is created.
           </span>
         </div>
 
         <div>
-          <Label htmlFor="campaign-name" className="text-[12px] mb-1 block">
+          <Label htmlFor="campaign-name" className="text-[0.75rem] mb-1 block">
             Campaign Name
           </Label>
           <Input
@@ -462,7 +462,10 @@ export default function EmailCampaignEditor() {
         </div>
 
         <div>
-          <Label htmlFor="campaign-subject" className="text-[12px] mb-1 block">
+          <Label
+            htmlFor="campaign-subject"
+            className="text-[0.75rem] mb-1 block"
+          >
             Email Subject Line
           </Label>
           <Input
@@ -476,7 +479,7 @@ export default function EmailCampaignEditor() {
             }
             disabled={!isDraft}
           />
-          <span className="text-[11px] text-muted mt-1 block">
+          <span className="text-[0.6875rem] text-muted mt-1 block">
             Supports template variables like{" "}
             {targetType === "User"
               ? "{{User.DisplayName}}"
@@ -485,11 +488,11 @@ export default function EmailCampaignEditor() {
         </div>
 
         <div>
-          <Label className="text-[12px] mb-2 block">Email Body</Label>
+          <Label className="text-[0.75rem] mb-2 block">Email Body</Label>
           {targetType === "User" && (
-            <span className="text-[11px] text-muted mb-2 block">
+            <span className="text-[0.6875rem] text-muted mb-2 block">
               For iterating capabilities the recipient belongs to, use{" "}
-              <code className="bg-surface-subtle px-1 rounded text-[10px]">
+              <code className="bg-surface-subtle px-1 rounded text-[0.625rem]">
                 {
                   "{{#each User.Capabilities}} ... {{Capability.Name}} ... {{/each}}"
                 }
@@ -501,9 +504,9 @@ export default function EmailCampaignEditor() {
               <FormattingToolbar editor={editor} variables={variables || []} />
               <Separator orientation="vertical" className="mx-1.5 h-5" />
               <VariableInserter editor={editor} />
-              <span className="text-[10px] text-muted ml-auto">
+              <span className="text-[0.625rem] text-muted ml-auto">
                 Type{" "}
-                <code className="bg-surface px-1 rounded text-[10px]">
+                <code className="bg-surface px-1 rounded text-[0.625rem]">
                   {"{{"}
                 </code>{" "}
                 to autocomplete
@@ -532,10 +535,10 @@ export default function EmailCampaignEditor() {
                           : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
                       }`}
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[10px] font-mono font-medium">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.625rem] font-mono font-medium">
                         {v.name}
                       </span>
-                      <span className="text-[10px] text-muted truncate">
+                      <span className="text-[0.625rem] text-muted truncate">
                         {v.description}
                       </span>
                     </button>
@@ -639,7 +642,7 @@ export default function EmailCampaignEditor() {
           <DialogHeader>
             <DialogTitle>Send campaign now?</DialogTitle>
           </DialogHeader>
-          <p className="text-[13px] text-secondary">
+          <p className="text-[0.8125rem] text-secondary">
             This will send <strong>{name}</strong> to all matching recipients
             immediately. This action cannot be undone.
           </p>

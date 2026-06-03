@@ -111,7 +111,7 @@ function LinkVariablePicker({
         aria-label="Insert variable into URL"
         className="flex items-center gap-0.5 p-1.5 rounded-md transition-colors cursor-pointer border-0 bg-transparent text-secondary hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
       >
-        <span className="text-[11px] font-mono font-medium">{"{{"}</span>
+        <span className="text-[0.6875rem] font-mono font-medium">{"{{"}</span>
         <ChevronDown
           size={10}
           className={`transition-transform ${open ? "rotate-180" : ""}`}
@@ -132,19 +132,19 @@ function LinkVariablePicker({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search variables..."
-                className="w-full h-7 pl-8 pr-3 rounded-md border border-card bg-surface text-[12px] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
+                className="w-full h-7 pl-8 pr-3 rounded-md border border-card bg-surface text-[0.75rem] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
               />
             </div>
           </div>
           <div className="max-h-48 overflow-y-auto p-1">
             {Object.keys(grouped).length === 0 ? (
-              <div className="px-3 py-4 text-center text-muted text-[12px]">
+              <div className="px-3 py-4 text-center text-muted text-[0.75rem]">
                 No variables found
               </div>
             ) : (
               Object.entries(grouped).map(([entity, vars]) => (
                 <div key={entity}>
-                  <div className="px-2 py-1 text-[10px] font-semibold tracking-wider uppercase text-muted font-mono">
+                  <div className="px-2 py-1 text-[0.625rem] font-semibold tracking-wider uppercase text-muted font-mono">
                     {entity}
                   </div>
                   {vars.map((v) => (
@@ -160,10 +160,10 @@ function LinkVariablePicker({
                       }}
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[10px] font-mono font-medium whitespace-nowrap">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.625rem] font-mono font-medium whitespace-nowrap">
                         {`{{${v.name}}}`}
                       </span>
-                      <span className="text-[10px] text-muted truncate">
+                      <span className="text-[0.625rem] text-muted truncate">
                         {v.description}
                       </span>
                     </button>
@@ -299,7 +299,7 @@ function LinkPopover({
                 }
               }}
               placeholder="Paste a link..."
-              className="w-52 h-7 px-2.5 rounded-md border border-card bg-surface text-[12px] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
+              className="w-52 h-7 px-2.5 rounded-md border border-card bg-surface text-[0.75rem] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
             />
             <LinkVariablePicker
               variables={variables}

@@ -67,7 +67,7 @@ export default function SuccessToast({
           className={`${iconColor} shrink-0 mt-px`}
           strokeWidth={2}
         />
-        <p className="text-white text-[13px] leading-[1.45] flex-1">
+        <p className="text-white text-[0.8125rem] leading-[1.45] flex-1">
           {message}
         </p>
         <button

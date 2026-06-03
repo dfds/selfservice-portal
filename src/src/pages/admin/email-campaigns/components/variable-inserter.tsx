@@ -40,7 +40,7 @@ export function VariableInserter({ editor }: VariableInserterProps) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-medium border border-card bg-surface hover:bg-white dark:hover:bg-slate-700 text-secondary cursor-pointer transition-colors"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[0.75rem] font-medium border border-card bg-surface hover:bg-white dark:hover:bg-slate-700 text-secondary cursor-pointer transition-colors"
       >
         <span>{"{{"}</span>
         Insert Variable
@@ -63,24 +63,24 @@ export function VariableInserter({ editor }: VariableInserterProps) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search variables..."
-                className="w-full h-8 pl-8 pr-3 rounded-md border border-card bg-surface text-[12px] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
+                className="w-full h-8 pl-8 pr-3 rounded-md border border-card bg-surface text-[0.75rem] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
                 autoFocus
               />
             </div>
           </div>
           <div className="max-h-64 overflow-y-auto p-1">
             {!isFetched ? (
-              <div className="px-3 py-4 text-center text-muted text-[12px]">
+              <div className="px-3 py-4 text-center text-muted text-[0.75rem]">
                 Loading...
               </div>
             ) : Object.keys(grouped).length === 0 ? (
-              <div className="px-3 py-4 text-center text-muted text-[12px]">
+              <div className="px-3 py-4 text-center text-muted text-[0.75rem]">
                 No variables found
               </div>
             ) : (
               Object.entries(grouped).map(([entity, vars]) => (
                 <div key={entity}>
-                  <div className="px-2 py-1 text-[10px] font-semibold tracking-wider uppercase text-muted font-mono">
+                  <div className="px-2 py-1 text-[0.625rem] font-semibold tracking-wider uppercase text-muted font-mono">
                     {entity}
                   </div>
                   {(vars as any[]).map((v: any) => (
@@ -90,10 +90,10 @@ export function VariableInserter({ editor }: VariableInserterProps) {
                       onClick={() => insert(v.name)}
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[11px] font-mono font-medium">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
                         {`{{${v.name}}}`}
                       </span>
-                      <span className="text-[11px] text-muted truncate">
+                      <span className="text-[0.6875rem] text-muted truncate">
                         {v.description}
                       </span>
                     </button>

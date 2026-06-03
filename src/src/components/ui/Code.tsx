@@ -6,7 +6,7 @@ const Code = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
     <code
       ref={ref}
       className={cn(
-        "font-mono bg-surface-muted px-[5px] py-[1px] rounded-[3px] text-[12px]",
+        "font-mono bg-surface-muted px-[5px] py-[1px] rounded-[3px] text-[0.75rem]",
         className,
       )}
       {...props}

@@ -38,13 +38,13 @@ function Visitor({ rank, name, pictureUrl, onClicked, index = 0 }) {
       title={rank === 1 ? "Celebrate...?" : ""}
     >
       <div
-        className="font-mono text-[11px] w-4 text-right flex-shrink-0"
+        className="font-mono text-[0.6875rem] w-4 text-right flex-shrink-0"
         style={{ color: rank === 1 ? "#ed8800" : "#afafaf" }}
       >
         {rank}
       </div>
       <UserAvatar name={name} pictureUrl={pictureUrl} size="sm" />
-      <div className="text-[13px] text-secondary">{name}</div>
+      <div className="text-[0.8125rem] text-secondary">{name}</div>
     </div>
   );
 }
@@ -116,7 +116,7 @@ export default function TopVisitors() {
         />
       ))}
       {(visitors || []).length === 0 && (
-        <div className="font-mono text-[11px] text-[#afafaf] italic">
+        <div className="font-mono text-[0.6875rem] text-[#afafaf] italic">
           too early to tell...
         </div>
       )}

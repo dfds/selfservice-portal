@@ -218,6 +218,13 @@
 }
 
 :root {
+  /* User-configurable font scaling — driven by FontScaleContext */
+  --ssu-font-scale: 1;
+  /* Viewport units corrected for `body { zoom }` — keeps `h-screen`-style
+     containers from overflowing when the user scales the UI up. */
+  --ssu-vh: calc(100vh / var(--ssu-font-scale));
+  --ssu-vw: calc(100vw / var(--ssu-font-scale));
+
   /* Colors */
   --color-brand: #002b45;
   --color-action: #0e7cc1;
@@ -351,7 +358,7 @@ html.dark {
 
   /* Typography patterns */
   .text-description {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
   }
@@ -394,6 +401,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  zoom: var(--ssu-font-scale, 1);
 }
 
 code {
@@ -424,7 +432,7 @@ code {
   border-radius: 4px;
   background: #eff6ff;
   color: #2563eb;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-family: "SFMono-Regular", "Fira Code", monospace;
   font-weight: 500;
   vertical-align: baseline;

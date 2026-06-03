@@ -56,7 +56,7 @@ export function SchedulePicker({
 
   return (
     <div className="space-y-3">
-      <Label className="text-[12px] mb-2 block">Delivery Schedule</Label>
+      <Label className="text-[0.75rem] mb-2 block">Delivery Schedule</Label>
 
       <div className="flex gap-2">
         {modes.map((mode) => (
@@ -71,7 +71,7 @@ export function SchedulePicker({
                 cronExpression,
               })
             }
-            className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md border cursor-pointer transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-2 text-[0.75rem] font-medium rounded-md border cursor-pointer transition-colors ${
               scheduleType === mode.value
                 ? "border-action bg-action/10 text-action"
                 : "border-card bg-surface text-muted hover:bg-surface-subtle hover:text-primary hover:border-secondary"
@@ -85,7 +85,7 @@ export function SchedulePicker({
 
       {scheduleType === "Scheduled" && (
         <div>
-          <Label htmlFor="scheduled-at" className="text-[12px] mb-1 block">
+          <Label htmlFor="scheduled-at" className="text-[0.75rem] mb-1 block">
             Send Date & Time (UTC)
           </Label>
           <Input
@@ -101,7 +101,7 @@ export function SchedulePicker({
             }
             disabled={disabled}
           />
-          <span className="text-[11px] text-muted mt-1 block">
+          <span className="text-[0.6875rem] text-muted mt-1 block">
             The campaign will be sent at this time (UTC).
           </span>
         </div>
@@ -110,7 +110,10 @@ export function SchedulePicker({
       {scheduleType === "Recurring" && (
         <div className="space-y-2">
           <div>
-            <Label htmlFor="cron-expression" className="text-[12px] mb-1 block">
+            <Label
+              htmlFor="cron-expression"
+              className="text-[0.75rem] mb-1 block"
+            >
               Cron Expression
             </Label>
             <div className="flex gap-2">
@@ -134,12 +137,12 @@ export function SchedulePicker({
                 size="sm"
                 onClick={() => setShowPresets(!showPresets)}
                 disabled={disabled}
-                className="whitespace-nowrap text-[11px]"
+                className="whitespace-nowrap text-[0.6875rem]"
               >
                 Presets
               </Button>
             </div>
-            <span className="text-[11px] text-muted mt-1 block">
+            <span className="text-[0.6875rem] text-muted mt-1 block">
               Standard 5-field cron: minute hour day-of-month month day-of-week
             </span>
           </div>
@@ -159,11 +162,11 @@ export function SchedulePicker({
                     });
                     setShowPresets(false);
                   }}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded-md border border-card bg-surface text-secondary hover:border-action hover:text-action cursor-pointer transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-[0.6875rem] rounded-md border border-card bg-surface text-secondary hover:border-action hover:text-action cursor-pointer transition-colors"
                 >
                   <Badge
                     variant="outline"
-                    className="text-[10px] font-mono px-1.5"
+                    className="text-[0.625rem] font-mono px-1.5"
                   >
                     {preset.value}
                   </Badge>

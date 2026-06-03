@@ -30,7 +30,7 @@ function getSelectStyles(isDark) {
       ...base,
       minHeight: "30px",
       height: "30px",
-      fontSize: "12px",
+      fontSize: "0.75rem",
       fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
       border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
       boxShadow: "none",
@@ -42,7 +42,7 @@ function getSelectStyles(isDark) {
     indicatorsContainer: (base) => ({ ...base, height: "30px" }),
     menu: (base) => ({
       ...base,
-      fontSize: "12px",
+      fontSize: "0.75rem",
       fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
       backgroundColor: isDark ? "#1e293b" : "#ffffff",
       border: isDark ? "1px solid #334155" : undefined,
@@ -56,7 +56,7 @@ function getSelectStyles(isDark) {
     placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
     input: (base) => ({
       ...base,
-      fontSize: "16px",
+      fontSize: "1rem",
       color: isDark ? "#e2e8f0" : "#002b45",
     }),
     option: (base, state) => ({

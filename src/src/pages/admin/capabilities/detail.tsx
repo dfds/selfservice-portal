@@ -64,7 +64,7 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
               `Category ${i + 1}`}
           </span>
           {cat.score != null && (
-            <span className="text-[10px] text-muted font-mono">
+            <span className="text-[0.625rem] text-muted font-mono">
               {cat.score}%
             </span>
           )}
@@ -76,7 +76,7 @@ function ComplianceSection({ capabilityId }: { capabilityId: string }) {
                 ? "destructive"
                 : "soft-warning"
             }
-            className="text-[10px]"
+            className="text-[0.625rem]"
           >
             {cat.status ?? cat.complianceStatus ?? "Unknown"}
           </Badge>
@@ -197,7 +197,7 @@ function AwsSection({ capabilityId }: { capabilityId: string }) {
             {acc.accountId ?? acc.id}
           </span>
           {acc.status && (
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-[0.625rem]">
               {acc.status}
             </Badge>
           )}
@@ -235,7 +235,7 @@ function AzureSection({ capabilityId }: { capabilityId: string }) {
             {r.name ?? r.id ?? `Resource ${i + 1}`}
           </span>
           {r.environment && (
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-[0.625rem]">
               {r.environment}
             </Badge>
           )}
@@ -268,7 +268,7 @@ function KafkaSection({ capabilityId }: { capabilityId: string }) {
             {a.clusterName ?? a.kafkaClusterId ?? a.id ?? `Cluster ${i + 1}`}
           </span>
           {a.status && (
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-[0.625rem]">
               {a.status}
             </Badge>
           )}
@@ -323,7 +323,7 @@ export default function CapabilityAdminDetailPage() {
         </div>
       ) : (
         <div className="mb-6 animate-fade-up">
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
             // Admin
           </div>
           <div className="flex items-center gap-3 flex-wrap">

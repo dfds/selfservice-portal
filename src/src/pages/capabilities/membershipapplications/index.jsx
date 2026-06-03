@@ -223,7 +223,7 @@ export function MembershipApplicationsUserCanApprove({
           handleRejectClicked={handleRejectClicked}
         />
       ) : (
-        <p className="text-[13px] text-[#afafaf] dark:text-slate-500">
+        <p className="text-[0.8125rem] text-[#afafaf] dark:text-slate-500">
           No pending membership applications
         </p>
       )}

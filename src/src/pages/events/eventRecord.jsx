@@ -82,22 +82,22 @@ export default function EventRecord({
               e.preventDefault();
               navigate(`/events/v/${event.id}`);
             }}
-            className="no-underline text-[14px] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
+            className="no-underline text-[0.875rem] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
           >
             {title || description || formatEventDateTime(eventDate)}
           </a>
           {type && type !== "Demo" && (
-            <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[10px] tracking-[0.04em]">
+            <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[0.625rem] tracking-[0.04em]">
               {type}
             </span>
           )}
         </div>
         {description && title && (
-          <p className="text-[13px] text-secondary leading-relaxed line-clamp-2 mb-1.5 whitespace-pre-line">
+          <p className="text-[0.8125rem] text-secondary leading-relaxed line-clamp-2 mb-1.5 whitespace-pre-line">
             {description}
           </p>
         )}
-        <div className="font-mono text-[11px] text-muted">
+        <div className="font-mono text-[0.6875rem] text-muted">
           {formatEventDateTime(eventDate)}
         </div>
         {attachments.length > 0 && (
@@ -109,7 +109,7 @@ export default function EventRecord({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-[12px] font-medium text-action hover:underline"
+                className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium text-action hover:underline"
                 title={attachment.description || attachment.type}
               >
                 {getAttachmentIcon(attachment.type)}

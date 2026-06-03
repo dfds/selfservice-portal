@@ -39,7 +39,7 @@ export function StatCard({
           {hasData ? value : "—"}
         </span>
       )}
-      <span className="font-mono text-[9px] tracking-[0.08em] text-muted uppercase block">
+      <span className="font-mono text-[0.5625rem] tracking-[0.08em] text-muted uppercase block">
         {label}
       </span>
     </div>

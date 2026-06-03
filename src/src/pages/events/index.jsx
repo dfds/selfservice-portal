@@ -80,7 +80,7 @@ export default function EventsPage() {
                   </TrackedButton>
                 ) : (
                   <>
-                    <span className="flex items-center gap-1.5 text-[#4caf50] text-[13px]">
+                    <span className="flex items-center gap-1.5 text-[#4caf50] text-[0.8125rem]">
                       <CheckCircle size={16} />
                       You're signed up for event invitations
                     </span>

@@ -3,7 +3,7 @@
   justify-content: center;
   /* background-color: #002b45; */
   width: 100%;
-  height: 100vh;
+  height: var(--ssu-vh, 100vh);
 }
 
 .content {
@@ -33,7 +33,7 @@
   border: medium;
   padding: 7px 9px 7px 9px;
   user-select: none;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 400;
 
   &:hover {

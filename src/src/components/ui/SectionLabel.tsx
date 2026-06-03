@@ -10,7 +10,7 @@ const SectionLabel = React.forwardRef<HTMLElement, SectionLabelProps>(
     <Comp
       ref={ref}
       className={cn(
-        "font-mono text-[10px] font-semibold tracking-[0.08em] uppercase text-muted",
+        "font-mono text-[0.625rem] font-semibold tracking-[0.08em] uppercase text-muted",
         className,
       )}
       {...props}

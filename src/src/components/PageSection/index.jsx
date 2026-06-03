@@ -61,7 +61,7 @@ export function TabbedPageSection({
               key={index}
               type="button"
               onClick={() => setSelectedTab(index)}
-              className={`px-4 py-2.5 font-mono text-[11px] tracking-[0.04em] border-b-2 transition-colors bg-transparent cursor-pointer ${
+              className={`px-4 py-2.5 font-mono text-[0.6875rem] tracking-[0.04em] border-b-2 transition-colors bg-transparent cursor-pointer ${
                 selectedTab === index
                   ? "text-[#002b45] dark:text-[#e2e8f0] border-[#0e7cc1] dark:border-[#60a5fa] font-medium"
                   : "text-[#afafaf] dark:text-[#64748b] border-transparent hover:text-[#002b45] dark:hover:text-[#e2e8f0]"

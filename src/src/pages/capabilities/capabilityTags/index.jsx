@@ -26,7 +26,7 @@ function getSelectStyles(isDark) {
       ...base,
       minHeight: "30px",
       height: "30px",
-      fontSize: "12px",
+      fontSize: "0.75rem",
       fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
       border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
       boxShadow: "none",
@@ -38,7 +38,7 @@ function getSelectStyles(isDark) {
     indicatorsContainer: (base) => ({ ...base, height: "30px" }),
     menu: (base) => ({
       ...base,
-      fontSize: "12px",
+      fontSize: "0.75rem",
       fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
       backgroundColor: isDark ? "#1e293b" : "#ffffff",
       border: isDark ? "1px solid #334155" : undefined,
@@ -52,7 +52,7 @@ function getSelectStyles(isDark) {
     placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
     input: (base) => ({
       ...base,
-      fontSize: "16px",
+      fontSize: "1rem",
       color: isDark ? "#e2e8f0" : "#002b45",
     }),
     option: (base, state) => ({
@@ -90,11 +90,11 @@ function TagField({ label, description, error, children }) {
   return (
     <div className="flex flex-col @[626px]:flex-row @[626px]:items-start py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 gap-2 @[626px]:gap-4">
       <div className="@[626px]:w-[220px] @[626px]:flex-shrink-0">
-        <div className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
+        <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
           {label}
         </div>
         {description && (
-          <div className="text-[11px] text-[#afafaf] dark:text-slate-500 leading-[1.4] mt-0.5">
+          <div className="text-[0.6875rem] text-[#afafaf] dark:text-slate-500 leading-[1.4] mt-0.5">
             {description}
           </div>
         )}
@@ -103,7 +103,7 @@ function TagField({ label, description, error, children }) {
         <div className="w-full @[626px]:w-[390px]">
           {children}
           {error && (
-            <div className="font-mono text-[10px] text-[#be1e2d] mt-1">
+            <div className="font-mono text-[0.625rem] text-[#be1e2d] mt-1">
               {error}
             </div>
           )}
@@ -260,7 +260,7 @@ function TagsForm({ canEditTags, onSubmit, defaultValues, isPending = false }) {
   return (
     <>
       {canEditTags && formHasError && (
-        <div className="mb-3 font-mono text-[10px] text-[#be1e2d] tracking-[0.04em]">
+        <div className="mb-3 font-mono text-[0.625rem] text-[#be1e2d] tracking-[0.04em]">
           Some tags are not compliant. Please correct them and resubmit.
         </div>
       )}
@@ -544,7 +544,7 @@ export function CapabilityTags() {
 
   return (
     <>
-      <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+      <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
         Tagging your capability correctly helps all of us with oversight and
         incident management. However, tagging capabilities is only the first
         step — please remember to tag your cloud resources as well.{" "}

@@ -82,7 +82,7 @@ export default function RecordingsSection() {
             <DialogHeader>
               <DialogTitle>Confirm Deletion</DialogTitle>
             </DialogHeader>
-            <p className="text-[13px] text-secondary leading-relaxed">
+            <p className="text-[0.8125rem] text-secondary leading-relaxed">
               Are you sure you want to delete this event?
             </p>
             <DialogFooter>
@@ -108,7 +108,7 @@ export default function RecordingsSection() {
       )}
       {isFetchedEvents && events.length === 0 ? (
         <div className="bg-surface border border-card rounded-[8px] px-5 py-12 text-center">
-          <p className="text-[14px] text-muted font-mono">
+          <p className="text-[0.875rem] text-muted font-mono">
             There are currently no events. Please check back later.
           </p>
         </div>

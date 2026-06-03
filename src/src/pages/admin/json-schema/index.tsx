@@ -246,7 +246,7 @@ export default function JsonSchemaEditorPage() {
             Load
           </Button>
         </form>
-        <p className="text-[11px] text-muted font-mono mt-1.5">
+        <p className="text-[0.6875rem] text-muted font-mono mt-1.5">
           Known ID: {KNOWN_SCHEMA_IDS[0]}
         </p>
       </div>

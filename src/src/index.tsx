@@ -12,6 +12,7 @@ import { SwetrixProvider } from "./SwetrixContext";
 import { RybbitProvider } from "./RybbitContext";
 import { PreAppProvider } from "./preAppContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { FontScaleProvider } from "./context/FontScaleContext";
 import { Provider } from "react-redux";
 import store from "./state/local/store";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -37,9 +38,11 @@ root.render(
                     <RybbitProvider>
                       <PreAppProvider>
                         <ThemeProvider>
-                          <AppProvider>
-                            <App />
-                          </AppProvider>
+                          <FontScaleProvider>
+                            <AppProvider>
+                              <App />
+                            </AppProvider>
+                          </FontScaleProvider>
                         </ThemeProvider>
                       </PreAppProvider>
                     </RybbitProvider>

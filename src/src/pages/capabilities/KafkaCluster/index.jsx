@@ -304,7 +304,7 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
 
       {canRequestAccess && (
         <div className="flex flex-col gap-2 mt-3">
-          <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6]">
+          <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6]">
             You don&apos;t currently have access to this Kafka cluster. Request
             access to view topics and connect to the cluster.
           </p>

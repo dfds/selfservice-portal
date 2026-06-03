@@ -68,7 +68,7 @@ export function PreviewDialog({
             <Skeleton className="h-64 w-full" />
           </div>
         ) : previews.length === 0 ? (
-          <p className="text-[13px] text-muted py-4">
+          <p className="text-[0.8125rem] text-muted py-4">
             {isUser
               ? "No matching users found for preview."
               : "No matching capabilities found for preview."}
@@ -77,10 +77,10 @@ export function PreviewDialog({
           <>
             <div className="flex items-center justify-between py-2 border-b border-card">
               <div className="min-w-0">
-                <span className="text-[11px] text-muted font-mono block truncate">
+                <span className="text-[0.6875rem] text-muted font-mono block truncate">
                   {headerSubLabel}
                 </span>
-                <span className="text-[13px] font-medium text-primary block truncate">
+                <span className="text-[0.8125rem] font-medium text-primary block truncate">
                   {headerTitle}
                 </span>
               </div>
@@ -94,7 +94,7 @@ export function PreviewDialog({
                 >
                   <ChevronLeft size={14} />
                 </Button>
-                <span className="text-[11px] text-muted px-1">
+                <span className="text-[0.6875rem] text-muted px-1">
                   {index + 1} / {previews.length}
                 </span>
                 <Button
@@ -110,8 +110,10 @@ export function PreviewDialog({
             </div>
 
             <div className="py-2">
-              <span className="text-[11px] text-muted font-mono">Subject:</span>
-              <span className="text-[13px] text-primary ml-2">
+              <span className="text-[0.6875rem] text-muted font-mono">
+                Subject:
+              </span>
+              <span className="text-[0.8125rem] text-primary ml-2">
                 {current.subject}
               </span>
             </div>

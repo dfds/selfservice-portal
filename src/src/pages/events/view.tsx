@@ -17,7 +17,7 @@ export function EventView() {
     <Page title="">
       <button
         onClick={() => navigate("/events")}
-        className="inline-flex items-center gap-1.5 mb-4 font-mono text-[12px] text-muted hover:text-action transition-colors bg-transparent border-none p-0 cursor-pointer"
+        className="inline-flex items-center gap-1.5 mb-4 font-mono text-[0.75rem] text-muted hover:text-action transition-colors bg-transparent border-none p-0 cursor-pointer"
       >
         <ArrowLeft size={14} />
         Back to events
@@ -33,12 +33,14 @@ export function EventView() {
       ) : !event ? (
         <div className="bg-surface border border-card rounded-[8px] px-5 py-12 text-center">
           <CalendarDays size={32} className="text-muted mx-auto mb-3" />
-          <p className="text-[14px] text-muted font-mono">Event not found</p>
+          <p className="text-[0.875rem] text-muted font-mono">
+            Event not found
+          </p>
         </div>
       ) : (
         <article className="bg-surface border border-card rounded-[8px] px-6 py-6 animate-fade-up">
           <div className="flex items-center gap-2 mb-2">
-            <h1 className="text-[22px] font-semibold text-primary leading-tight">
+            <h1 className="text-[1.375rem] font-semibold text-primary leading-tight">
               {event.title ||
                 event.description ||
                 formatEventDateTime(event.eventDate)}
@@ -49,13 +51,13 @@ export function EventView() {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted mb-6">
+          <div className="flex items-center gap-1.5 font-mono text-[0.6875rem] text-muted mb-6">
             <CalendarDays size={13} />
             {formatEventDateTime(event.eventDate)}
           </div>
 
           {event.description && event.title && (
-            <p className="text-[14px] text-secondary leading-relaxed whitespace-pre-wrap mb-6">
+            <p className="text-[0.875rem] text-secondary leading-relaxed whitespace-pre-wrap mb-6">
               {event.description}
             </p>
           )}
@@ -68,7 +70,7 @@ export function EventView() {
                   href={attachment.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-[5px] border border-card bg-surface-muted px-3 py-2 text-[13px] text-primary no-underline hover:text-action hover:border-action transition-colors"
+                  className="inline-flex items-center gap-2 rounded-[5px] border border-card bg-surface-muted px-3 py-2 text-[0.8125rem] text-primary no-underline hover:text-action hover:border-action transition-colors"
                   title={attachment.description || attachment.type}
                 >
                   {getAttachmentIcon(attachment.type)}

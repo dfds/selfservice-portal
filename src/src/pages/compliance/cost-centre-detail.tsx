@@ -266,7 +266,7 @@ function MetadataCombobox({
         placeholder={placeholder}
         aria-label={ariaLabel}
         autoComplete="off"
-        className="w-full h-[28px] pl-2 pr-7 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[12px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+        className="w-full h-[28px] pl-2 pr-7 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
       />
       <button
         type="button"
@@ -299,7 +299,7 @@ function MetadataCombobox({
                 setOpen(false);
               }}
               className={cn(
-                "w-full text-left px-2.5 py-1 font-mono text-[12px] hover:bg-surface-muted transition-colors border-0 bg-transparent",
+                "w-full text-left px-2.5 py-1 font-mono text-[0.75rem] hover:bg-surface-muted transition-colors border-0 bg-transparent",
                 opt === value
                   ? "text-action"
                   : "text-[#002b45] dark:text-[#e2e8f0]",
@@ -549,12 +549,12 @@ export default function CostCentreComplianceDetailPage() {
         <div className="mb-6 animate-fade-up">
           <Link
             to="/compliance"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-[0.05em] text-action hover:underline mb-3"
+            className="inline-flex items-center gap-1.5 font-mono text-[0.6875rem] font-semibold tracking-[0.05em] text-action hover:underline mb-3"
           >
             <ArrowLeft size={12} strokeWidth={2} />
             Compliance
           </Link>
-          <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
             // Cost Centre
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -566,12 +566,12 @@ export default function CostCentreComplianceDetailPage() {
               )}
             </h1>
             {costCentreId && (
-              <span className="font-mono text-[11px] text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
+              <span className="font-mono text-[0.6875rem] text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
                 {costCentreId}
               </span>
             )}
             {isFetched && data && (
-              <span className="text-[12px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
+              <span className="text-[0.75rem] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
                 {data.totalCapabilities}{" "}
                 {data.totalCapabilities === 1 ? "capability" : "capabilities"}
               </span>
@@ -649,7 +649,7 @@ export default function CostCentreComplianceDetailPage() {
                 type="button"
                 onClick={() => setStatusFilter(key)}
                 className={cn(
-                  "h-[28px] px-3 border rounded-full text-[11px] font-medium transition-all",
+                  "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                   statusFilter === key
                     ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
                     : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
@@ -662,7 +662,7 @@ export default function CostCentreComplianceDetailPage() {
             <button
               type="button"
               onClick={addFilter}
-              className="inline-flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[11px] font-medium bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] transition-all"
+              className="inline-flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] transition-all"
             >
               <Plus size={12} strokeWidth={2} />
               Add metadata filter
@@ -673,7 +673,7 @@ export default function CostCentreComplianceDetailPage() {
             <div className="flex flex-col gap-2">
               {metadataFilters.length > 1 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted">
+                  <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted">
                     match
                   </span>
                   <div
@@ -689,7 +689,7 @@ export default function CostCentreComplianceDetailPage() {
                         aria-checked={metadataMode === mode}
                         onClick={() => setMetadataMode(mode)}
                         className={cn(
-                          "px-2.5 text-[10px] font-mono font-semibold uppercase tracking-[0.1em] transition-colors",
+                          "px-2.5 text-[0.625rem] font-mono font-semibold uppercase tracking-[0.1em] transition-colors",
                           metadataMode === mode
                             ? "bg-[#0e7cc1] dark:bg-[#60a5fa] text-white"
                             : "bg-white dark:bg-[#0f172a] text-[#4a6278] dark:text-[#94a3b8] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
@@ -711,7 +711,7 @@ export default function CostCentreComplianceDetailPage() {
                   key={i}
                   className="flex items-center gap-2 bg-surface-muted/40 border border-card rounded-[6px] px-2.5 py-1.5"
                 >
-                  <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted w-[28px]">
+                  <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted w-[28px]">
                     {i === 0 ? "tag" : metadataMode === "or" ? "or" : "and"}
                   </span>
                   <MetadataCombobox
@@ -721,7 +721,7 @@ export default function CostCentreComplianceDetailPage() {
                     placeholder="key (e.g. dfds.env)"
                     ariaLabel="Metadata key"
                   />
-                  <span className="text-muted text-[12px]">=</span>
+                  <span className="text-muted text-[0.75rem]">=</span>
                   <MetadataCombobox
                     value={f.value}
                     onChange={(next) => updateFilter(i, { value: next })}
@@ -791,11 +791,11 @@ function SummaryCell({
 }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+      <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
         {label}
       </span>
       <span
-        className="text-[20px] font-bold font-mono leading-none"
+        className="text-[1.25rem] font-bold font-mono leading-none"
         style={{ color: value === null ? undefined : color }}
       >
         {value === null ? "—" : value}
@@ -864,7 +864,7 @@ function CapabilityMatrix({
               <Link
                 to={`/capabilities/${row.original.capabilityId}`}
                 onClick={(e) => e.stopPropagation()}
-                className="text-[13px] font-medium text-primary hover:text-action hover:underline truncate block"
+                className="text-[0.8125rem] font-medium text-primary hover:text-action hover:underline truncate block"
                 aria-label={`Open ${row.original.capabilityName}`}
               >
                 {row.original.capabilityName}
@@ -906,13 +906,13 @@ function CapabilityMatrix({
           const ratio = categoryRatio(findCategory(row.original, c.key));
           return ratio ? (
             <span
-              className="font-mono text-[12px] tabular-nums font-semibold"
+              className="font-mono text-[0.75rem] tabular-nums font-semibold"
               style={{ color: ratioColor(ratio) }}
             >
               {ratio.compliant} / {ratio.total}
             </span>
           ) : (
-            <span className="text-muted text-[12px]">—</span>
+            <span className="text-muted text-[0.75rem]">—</span>
           );
         },
       })),
@@ -939,7 +939,7 @@ function CapabilityMatrix({
             cap.overallStatus === "Unknown" ? "#94a3b8" : complianceColor(pct);
           return (
             <span
-              className="font-mono text-[13px] font-semibold"
+              className="font-mono text-[0.8125rem] font-semibold"
               style={{ color }}
             >
               {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
@@ -983,7 +983,7 @@ function CapabilityMatrix({
       muiTableHeadCellProps={{
         sx: {
           fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
-          fontSize: "11px",
+          fontSize: "0.6875rem",
           fontWeight: "600",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
@@ -994,7 +994,7 @@ function CapabilityMatrix({
       }}
       muiTableBodyCellProps={{
         sx: {
-          fontSize: "13px",
+          fontSize: "0.8125rem",
           color: textPrimary,
           padding: "8px 12px",
           backgroundColor: bg,
@@ -1064,7 +1064,7 @@ function ExpandedDetail({
     <div className="border-t border-divider bg-surface-muted/40 px-4 py-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div>
-          <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted mb-2">
+          <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-2">
             Categories
           </div>
           <div className="flex flex-col gap-2.5">
@@ -1076,7 +1076,7 @@ function ExpandedDetail({
               >
                 <div className="flex items-center gap-2">
                   {statusIcon(statusToken(cat.status))}
-                  <span className="text-[12px] font-medium text-primary flex-1 truncate">
+                  <span className="text-[0.75rem] font-medium text-primary flex-1 truncate">
                     {cat.displayName ?? cat.categoryName}
                   </span>
                   <span
@@ -1102,7 +1102,7 @@ function ExpandedDetail({
                     {cat.items.map((item) => (
                       <div
                         key={item.name}
-                        className="flex items-center gap-2 text-[11px] font-mono text-secondary"
+                        className="flex items-center gap-2 text-[0.6875rem] font-mono text-secondary"
                       >
                         <span className="truncate flex-1">{item.name}</span>
                         <span className="text-muted">
@@ -1118,11 +1118,13 @@ function ExpandedDetail({
           </div>
         </div>
         <div>
-          <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted mb-2">
+          <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-2">
             Metadata tags
           </div>
           {metadataEntries.length === 0 ? (
-            <span className="text-[11px] italic text-muted">No metadata.</span>
+            <span className="text-[0.6875rem] italic text-muted">
+              No metadata.
+            </span>
           ) : (
             <div
               onClick={(e) => e.stopPropagation()}
@@ -1131,7 +1133,7 @@ function ExpandedDetail({
               {metadataEntries.map(([k, v]) => (
                 <div
                   key={k}
-                  className="flex items-center gap-2 text-[11px] font-mono"
+                  className="flex items-center gap-2 text-[0.6875rem] font-mono"
                 >
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
@@ -1181,7 +1183,7 @@ function MobileCapabilityList({
       <div className="flex items-center gap-2 px-1">
         <label
           htmlFor="mobile-compliance-sort"
-          className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted"
+          className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted"
         >
           Sort by
         </label>
@@ -1189,7 +1191,7 @@ function MobileCapabilityList({
           id="mobile-compliance-sort"
           value={sortId}
           onChange={(e) => setSorting([{ id: e.target.value, desc: sortDesc }])}
-          className="flex-1 h-[28px] pl-2 pr-7 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[11px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
+          className="flex-1 h-[28px] pl-2 pr-7 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
         >
           {sortOptions.map((opt) => (
             <option key={opt.id} value={opt.id}>
@@ -1252,7 +1254,7 @@ function MobileCapabilityCard({
             aria-label={`Open ${cap.capabilityName}`}
           >
             <div className="flex items-center gap-1.5">
-              <span className="text-[13px] font-medium text-primary group-hover:text-action group-hover:underline truncate">
+              <span className="text-[0.8125rem] font-medium text-primary group-hover:text-action group-hover:underline truncate">
                 {cap.capabilityName}
               </span>
               <ExternalLink
@@ -1266,7 +1268,7 @@ function MobileCapabilityCard({
             </div>
           </Link>
           <div
-            className="text-[16px] font-bold font-mono flex-shrink-0"
+            className="text-[1rem] font-bold font-mono flex-shrink-0"
             style={{ color: overallColor }}
           >
             {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
@@ -1288,15 +1290,15 @@ function MobileCapabilityCard({
               <div key={c.key} className="flex flex-col items-center gap-1">
                 {ratio ? (
                   <span
-                    className="font-mono text-[11px] tabular-nums font-semibold"
+                    className="font-mono text-[0.6875rem] tabular-nums font-semibold"
                     style={{ color: ratioColor(ratio) }}
                   >
                     {ratio.compliant} / {ratio.total}
                   </span>
                 ) : (
-                  <span className="text-muted text-[12px]">—</span>
+                  <span className="text-muted text-[0.75rem]">—</span>
                 )}
-                <span className="text-[9px] font-mono uppercase tracking-[0.08em] text-muted">
+                <span className="text-[0.5625rem] font-mono uppercase tracking-[0.08em] text-muted">
                   {c.short}
                 </span>
               </div>

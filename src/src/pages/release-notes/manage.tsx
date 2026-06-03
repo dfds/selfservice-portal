@@ -102,25 +102,25 @@ export function ReleaseNotesManage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="font-mono text-[14px] font-semibold text-primary">
+                      <span className="font-mono text-[0.875rem] font-semibold text-primary">
                         {elem.title}
                       </span>
                       <Badge
                         variant={elem.isActive ? "soft-success" : "outline"}
-                        className="text-[10px] shrink-0"
+                        className="text-[0.625rem] shrink-0"
                       >
                         {elem.isActive ? "Published" : "Draft"}
                       </Badge>
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-mono text-[11px] text-muted">
+                      <span className="font-mono text-[0.6875rem] text-muted">
                         Release: {formatDate(elem.releaseDate)}
                       </span>
-                      <span className="font-mono text-[11px] text-muted">
+                      <span className="font-mono text-[0.6875rem] text-muted">
                         Created: {formatDate(elem.createdAt)} by{" "}
                         {elem.createdBy ?? "—"}
                       </span>
-                      <span className="font-mono text-[11px] text-muted">
+                      <span className="font-mono text-[0.6875rem] text-muted">
                         Modified: {formatDate(elem.modifiedAt)}
                       </span>
                     </div>

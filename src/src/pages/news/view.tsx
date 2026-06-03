@@ -14,7 +14,7 @@ export function NewsView() {
     <Page title="">
       <button
         onClick={() => navigate("/news")}
-        className="inline-flex items-center gap-1.5 mb-4 font-mono text-[12px] text-muted hover:text-action transition-colors bg-transparent border-none p-0 cursor-pointer"
+        className="inline-flex items-center gap-1.5 mb-4 font-mono text-[0.75rem] text-muted hover:text-action transition-colors bg-transparent border-none p-0 cursor-pointer"
       >
         <ArrowLeft size={14} />
         Back to news
@@ -31,29 +31,29 @@ export function NewsView() {
       ) : !data ? (
         <div className="bg-surface border border-card rounded-[8px] px-5 py-12 text-center">
           <Newspaper size={32} className="text-muted mx-auto mb-3" />
-          <p className="text-[14px] text-muted font-mono">
+          <p className="text-[0.875rem] text-muted font-mono">
             News item not found
           </p>
         </div>
       ) : (
         <article className="bg-surface border border-card rounded-[8px] px-6 py-6 animate-fade-up">
           <div className="flex items-center gap-2 mb-2">
-            <h1 className="text-[22px] font-semibold text-primary leading-tight">
+            <h1 className="text-[1.375rem] font-semibold text-primary leading-tight">
               {data.title}
             </h1>
             {data.isHighlighted && (
-              <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[10px] tracking-[0.04em] shrink-0">
+              <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[0.625rem] tracking-[0.04em] shrink-0">
                 highlighted
               </span>
             )}
           </div>
-          <div className="font-mono text-[11px] text-muted mb-6">
+          <div className="font-mono text-[0.6875rem] text-muted mb-6">
             {intlFormatDistance(new Date(data.createdAt), new Date())}
             {data.createdBy && (
               <span className="ml-2 opacity-70">by {data.createdBy}</span>
             )}
           </div>
-          <p className="text-[14px] text-secondary leading-relaxed whitespace-pre-wrap">
+          <p className="text-[0.875rem] text-secondary leading-relaxed whitespace-pre-wrap">
             {data.body}
           </p>
         </article>

@@ -70,7 +70,7 @@ function ApproveButtonWithRoles({
         ref={buttonRef}
         type="button"
         onClick={handleOpen}
-        className="cursor-pointer rounded-[4px] bg-[#0e7cc1] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#0b6aa5]"
+        className="cursor-pointer rounded-[4px] bg-[#0e7cc1] px-3 py-1 text-[0.6875rem] font-semibold text-white transition-colors hover:bg-[#0b6aa5]"
       >
         {label ?? "Approve"}
       </button>
@@ -95,7 +95,7 @@ function ApproveButtonWithRoles({
                   setOpen(false);
                   onApproveWithRole(row, role.value);
                 }}
-                className="w-full text-left px-3 py-1.5 text-[12px] text-[#002b45] dark:text-[#e2e8f0] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
+                className="w-full text-left px-3 py-1.5 text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] transition-colors"
               >
                 {role.label}
               </button>
@@ -144,7 +144,7 @@ function MembershipApplicationCard({
             <button
               type="button"
               onClick={() => handleRejectClicked(row)}
-              className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#a1192a]"
+              className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[0.6875rem] font-semibold text-white transition-colors hover:bg-[#a1192a]"
             >
               {rejectButtonLabel ?? "Reject"}
             </button>
@@ -266,7 +266,7 @@ export function MembershipApplicationTable({
         size: 30,
         enableClickToCopy: true,
         Cell: ({ cell }) => (
-          <span className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0]">
+          <span className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0]">
             {truncateString(cell.getValue(), 70)}
           </span>
         ),
@@ -276,7 +276,7 @@ export function MembershipApplicationTable({
         header: "Applicant",
         size: 50,
         Cell: ({ cell }) => (
-          <span className="font-mono text-[11px] text-[#666666] dark:text-slate-400">
+          <span className="font-mono text-[0.6875rem] text-[#666666] dark:text-slate-400">
             {cell.getValue()}
           </span>
         ),
@@ -286,7 +286,7 @@ export function MembershipApplicationTable({
         header: "Submitted",
         size: 50,
         Cell: ({ cell }) => (
-          <span className="tabular-nums text-[12px] text-[#666666] dark:text-slate-400">
+          <span className="tabular-nums text-[0.75rem] text-[#666666] dark:text-slate-400">
             {cell.getValue()}
           </span>
         ),
@@ -296,7 +296,7 @@ export function MembershipApplicationTable({
         header: "Expires",
         size: 50,
         Cell: ({ cell }) => (
-          <span className="tabular-nums text-[12px] text-[#666666] dark:text-slate-400">
+          <span className="tabular-nums text-[0.75rem] text-[#666666] dark:text-slate-400">
             {cell.getValue()}
           </span>
         ),
@@ -329,7 +329,7 @@ export function MembershipApplicationTable({
               <button
                 type="button"
                 onClick={() => handleRejectClicked(row)}
-                className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-[#a1192a]"
+                className="cursor-pointer rounded-[4px] bg-[#be1e2d] px-3 py-1 text-[0.6875rem] font-semibold text-white transition-colors hover:bg-[#a1192a]"
               >
                 {rejectButtonLabel ?? "Reject"}
               </button>
@@ -368,7 +368,7 @@ export function MembershipApplicationTable({
         muiTableHeadCellProps={{
           sx: {
             fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
-            fontSize: "10px",
+            fontSize: "0.625rem",
             fontWeight: "600",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
@@ -381,7 +381,7 @@ export function MembershipApplicationTable({
         }}
         muiTableBodyCellProps={{
           sx: {
-            fontSize: "13px",
+            fontSize: "0.8125rem",
             color: isDark ? "#e2e8f0" : "#002b45",
             borderBottom: isDark ? "1px solid #1e2d3d" : "1px solid #eeeeee",
             background: "transparent",
@@ -403,7 +403,7 @@ export function MembershipApplicationTable({
         }}
         muiSearchTextFieldProps={{
           placeholder: "Search applications...",
-          sx: { minWidth: "260px", fontSize: "13px" },
+          sx: { minWidth: "260px", fontSize: "0.8125rem" },
           size: "small",
           variant: "outlined",
         }}

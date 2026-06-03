@@ -26,24 +26,24 @@ function EventRow({ event, past = false }) {
     <div className={past ? "opacity-65" : ""}>
       <div className="flex items-center gap-1.5">
         {past ? (
-          <span className="inline-block font-mono text-[8px] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px] bg-surface-muted text-muted border border-divider">
+          <span className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px] bg-surface-muted text-muted border border-divider">
             Past event
           </span>
         ) : (
           <span
-            className="inline-block font-mono text-[8px] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px]"
+            className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px]"
             style={{ background: colors.bg, color: colors.color }}
           >
             {label}
           </span>
         )}
-        <span className="font-mono text-[9px] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
+        <span className="font-mono text-[0.5625rem] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
           {formatEventDateTimeShort(event.eventDate)}
         </span>
       </div>
       <Link
         to={`/events/v/${event.id}`}
-        className={`block text-[12px] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline ${
+        className={`block text-[0.75rem] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline ${
           past ? "text-muted" : "text-[#002b45] dark:text-[#e2e8f0]"
         }`}
       >
@@ -62,14 +62,14 @@ export default function MiniUpcomingEvents() {
 
   return (
     <div className="bg-surface border border-card rounded-[8px] px-3 py-2.5 flex flex-col sm:w-[267px] sm:flex-shrink-0">
-      <div className="font-mono text-[9px] font-semibold tracking-[0.08em] uppercase text-muted mb-2">
+      <div className="font-mono text-[0.5625rem] font-semibold tracking-[0.08em] uppercase text-muted mb-2">
         Upcoming Events
       </div>
       <div className="flex-1 flex flex-col gap-2">
         {isLoading ? (
           <Skeleton className="h-[34px] rounded-[5px]" />
         ) : !next && !latest ? (
-          <p className="font-mono text-[10px] text-muted tracking-[0.03em]">
+          <p className="font-mono text-[0.625rem] text-muted tracking-[0.03em]">
             No events scheduled.
           </p>
         ) : (
@@ -82,7 +82,7 @@ export default function MiniUpcomingEvents() {
       <div className="pt-2">
         <Link
           to="/events"
-          className="font-mono text-[10px] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
+          className="font-mono text-[0.625rem] text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline tracking-[0.03em]"
         >
           All events →
         </Link>

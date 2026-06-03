@@ -151,7 +151,7 @@ export default function EmailCampaignDetail() {
       <button
         type="button"
         onClick={() => navigate("/admin/email-campaigns")}
-        className="flex items-center gap-1.5 text-[12px] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
+        className="flex items-center gap-1.5 text-[0.75rem] text-muted hover:text-secondary mb-4 cursor-pointer bg-transparent border-0 transition-colors"
       >
         <ArrowLeft size={14} />
         Back to campaigns
@@ -163,7 +163,7 @@ export default function EmailCampaignDetail() {
             {campaign.name}
             <CampaignStatusBadge status={campaign.status} />
           </h1>
-          <p className="text-[13px] text-muted mt-1 font-mono">
+          <p className="text-[0.8125rem] text-muted mt-1 font-mono">
             {campaign.subject}
           </p>
         </div>
@@ -226,7 +226,7 @@ export default function EmailCampaignDetail() {
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Calendar size={14} className="text-action" />
-            <span className="text-[13px] text-secondary">
+            <span className="text-[0.8125rem] text-secondary">
               Scheduled for{" "}
               <strong>
                 {new Date(campaign.scheduledAt).toLocaleString()} UTC
@@ -240,9 +240,9 @@ export default function EmailCampaignDetail() {
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Repeat size={14} className="text-action" />
-            <span className="text-[13px] text-secondary">
+            <span className="text-[0.8125rem] text-secondary">
               Recurring:{" "}
-              <code className="text-[12px] bg-surface-subtle px-1.5 py-0.5 rounded font-mono">
+              <code className="text-[0.75rem] bg-surface-subtle px-1.5 py-0.5 rounded font-mono">
                 {campaign.cronExpression}
               </code>
             </span>
@@ -254,7 +254,7 @@ export default function EmailCampaignDetail() {
         <Card className="mb-4">
           <CardContent className="py-3 px-4 flex items-center gap-2">
             <Clock size={14} className="text-success" />
-            <span className="text-[13px] text-secondary">
+            <span className="text-[0.8125rem] text-secondary">
               Sent at{" "}
               <strong>{new Date(campaign.sentAt).toLocaleString()}</strong>
             </span>
@@ -269,7 +269,7 @@ export default function EmailCampaignDetail() {
             <button
               type="button"
               onClick={() => setBodyExpanded((v) => !v)}
-              className="text-[12px] text-muted hover:text-secondary cursor-pointer bg-transparent border-0"
+              className="text-[0.75rem] text-muted hover:text-secondary cursor-pointer bg-transparent border-0"
             >
               {bodyExpanded ? "Hide" : "Show"}
             </button>
@@ -291,13 +291,13 @@ export default function EmailCampaignDetail() {
         <div className="grid grid-cols-3 gap-4 mb-6">
           <Card>
             <CardContent className="py-3 px-4 text-center">
-              <span className="text-[10px] font-mono uppercase text-muted block mb-1">
+              <span className="text-[0.625rem] font-mono uppercase text-muted block mb-1">
                 Sent
               </span>
-              <span className="text-[18px] font-bold text-green-600">
+              <span className="text-[1.125rem] font-bold text-green-600">
                 {recipientStats.sent}
               </span>
-              <span className="text-[11px] text-muted">
+              <span className="text-[0.6875rem] text-muted">
                 {" "}
                 / {recipientStats.total}
               </span>
@@ -305,20 +305,20 @@ export default function EmailCampaignDetail() {
           </Card>
           <Card>
             <CardContent className="py-3 px-4 text-center">
-              <span className="text-[10px] font-mono uppercase text-muted block mb-1">
+              <span className="text-[0.625rem] font-mono uppercase text-muted block mb-1">
                 Failed
               </span>
-              <span className="text-[18px] font-bold text-red-500">
+              <span className="text-[1.125rem] font-bold text-red-500">
                 {recipientStats.failed}
               </span>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="py-3 px-4 text-center">
-              <span className="text-[10px] font-mono uppercase text-muted block mb-1">
+              <span className="text-[0.625rem] font-mono uppercase text-muted block mb-1">
                 Pending
               </span>
-              <span className="text-[18px] font-bold text-warning">
+              <span className="text-[1.125rem] font-bold text-warning">
                 {recipientStats.pending}
               </span>
             </CardContent>
@@ -334,7 +334,7 @@ export default function EmailCampaignDetail() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-[12px]"
+                className="gap-1.5 text-[0.75rem]"
                 onClick={handleRetry}
                 disabled={retryFailed.isPending}
               >
@@ -355,7 +355,7 @@ export default function EmailCampaignDetail() {
                 key={tab}
                 type="button"
                 onClick={() => setRecipientTab(tab)}
-                className={`px-3 py-2 text-[12px] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors ${
+                className={`px-3 py-2 text-[0.75rem] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors ${
                   recipientTab === tab
                     ? "border-action text-action"
                     : "border-transparent text-muted hover:text-secondary"
@@ -398,10 +398,10 @@ export default function EmailCampaignDetail() {
                   style={{ animationDelay: `${i * 20}ms` }}
                 >
                   <div className="flex-1 min-w-0">
-                    <span className="text-[12px] text-primary block truncate">
+                    <span className="text-[0.75rem] text-primary block truncate">
                       {r.email}
                     </span>
-                    <span className="text-[10px] text-muted font-mono">
+                    <span className="text-[0.625rem] text-muted font-mono">
                       {r.capabilityName || (
                         <span className="italic">User-targeted</span>
                       )}
@@ -415,18 +415,18 @@ export default function EmailCampaignDetail() {
                         ? "destructive"
                         : "secondary"
                     }
-                    className="text-[10px]"
+                    className="text-[0.625rem]"
                   >
                     {r.status}
                   </Badge>
                   {r.sentAt && (
-                    <span className="text-[10px] text-muted whitespace-nowrap">
+                    <span className="text-[0.625rem] text-muted whitespace-nowrap">
                       {new Date(r.sentAt).toLocaleString()}
                     </span>
                   )}
                   {r.errorMessage && (
                     <span
-                      className="text-[10px] text-red-500 truncate max-w-[200px]"
+                      className="text-[0.625rem] text-red-500 truncate max-w-[200px]"
                       title={r.errorMessage}
                     >
                       {r.errorMessage}
@@ -465,7 +465,7 @@ export default function EmailCampaignDetail() {
                   className="flex items-center gap-4 p-3 rounded-lg border border-card bg-surface animate-card-enter"
                   style={{ animationDelay: `${i * 40}ms` }}
                 >
-                  <span className="text-[12px] text-secondary">
+                  <span className="text-[0.75rem] text-secondary">
                     {new Date(exec.executedAt).toLocaleString()}
                   </span>
                   <Badge
@@ -476,11 +476,11 @@ export default function EmailCampaignDetail() {
                         ? "warning"
                         : "destructive"
                     }
-                    className="text-[10px]"
+                    className="text-[0.625rem]"
                   >
                     {exec.status}
                   </Badge>
-                  <span className="text-[11px] text-muted font-mono ml-auto">
+                  <span className="text-[0.6875rem] text-muted font-mono ml-auto">
                     {exec.successCount}/{exec.totalRecipients} sent
                     {exec.failureCount > 0 && (
                       <span className="text-red-500 ml-1">
@@ -500,7 +500,7 @@ export default function EmailCampaignDetail() {
           <DialogHeader>
             <DialogTitle>Cancel scheduled campaign?</DialogTitle>
           </DialogHeader>
-          <p className="text-[13px] text-secondary">
+          <p className="text-[0.8125rem] text-secondary">
             This will cancel <strong>{campaign.name}</strong>.{" "}
             {isRecurring
               ? "No further recurring executions will run."
@@ -528,7 +528,7 @@ export default function EmailCampaignDetail() {
           <DialogHeader>
             <DialogTitle>Move campaign back to draft?</DialogTitle>
           </DialogHeader>
-          <p className="text-[13px] text-secondary">
+          <p className="text-[0.8125rem] text-secondary">
             This will move <strong>{campaign.name}</strong> back to draft so you
             can edit it.{" "}
             {isRecurring
@@ -560,10 +560,12 @@ function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <Card>
       <CardContent className="py-3 px-4">
-        <span className="text-[10px] font-mono uppercase text-muted block mb-1">
+        <span className="text-[0.625rem] font-mono uppercase text-muted block mb-1">
           {label}
         </span>
-        <span className="text-[13px] text-primary font-medium">{value}</span>
+        <span className="text-[0.8125rem] text-primary font-medium">
+          {value}
+        </span>
       </CardContent>
     </Card>
   );

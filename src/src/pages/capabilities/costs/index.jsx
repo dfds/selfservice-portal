@@ -28,20 +28,20 @@ export default function Costs({ anchorId, costCentre }) {
         <span className="font-mono text-[1.5rem] font-bold text-action">
           {hasData ? `$${Math.floor(totalCost)}` : "No data"}
         </span>
-        <span className="font-mono text-[11px] text-muted ml-2">
+        <span className="font-mono text-[0.6875rem] text-muted ml-2">
           total last 30 days
         </span>
         {trendPct != null ? (
           <div className="mt-1">
             <div
-              className="font-mono text-[12px] font-semibold"
+              className="font-mono text-[0.75rem] font-semibold"
               style={{ color: isLower ? "#1a7f3c" : "#c0392b" }}
             >
               {isLower ? "\u2193" : "\u2191"} {!hasFullComparison ? "~" : ""}
               {Math.abs(Math.round(trendPct))}% vs previous {previous.length}{" "}
               days
             </div>
-            <div className="font-mono text-[10px] text-muted mt-0.5">
+            <div className="font-mono text-[0.625rem] text-muted mt-0.5">
               {hasFullComparison
                 ? "Based on average daily cost over the prior 30-day period."
                 : `Based on average daily cost \u2014 only ${
@@ -51,7 +51,7 @@ export default function Costs({ anchorId, costCentre }) {
           </div>
         ) : (
           hasData && (
-            <div className="font-mono text-[10px] text-muted mt-1">
+            <div className="font-mono text-[0.625rem] text-muted mt-1">
               No prior period data available to calculate a trend.
             </div>
           )
@@ -64,7 +64,7 @@ export default function Costs({ anchorId, costCentre }) {
         </div>
       )}
 
-      <p className="text-[13px] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+      <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
         Use Finout to explore the costs for this capability
         {costCentre
           ? ` or its entire cost centre (${costCentre}).`

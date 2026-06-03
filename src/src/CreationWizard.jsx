@@ -130,11 +130,11 @@ function SnakeStepper({ steps, activeStep, stepsPerRow = 3 }) {
                           completed={item.completed && !item.skipped}
                           active={activeStep === item.globalIndex}
                         />
-                        <span className="text-[10px] text-center mt-1 leading-tight text-muted">
+                        <span className="text-[0.625rem] text-center mt-1 leading-tight text-muted">
                           {item.title}
                         </span>
                         {item.optional && (
-                          <span className="text-[9px] text-muted text-center block">
+                          <span className="text-[0.5625rem] text-muted text-center block">
                             (optional)
                           </span>
                         )}
@@ -189,7 +189,7 @@ const Header = ({ steps }) => {
                 StepIconComponent={SelfServiceStepIcon}
                 sx={{
                   "& .MuiStepLabel-label": {
-                    fontSize: "10px",
+                    fontSize: "0.625rem",
                     fontFamily: "inherit",
                     lineHeight: 1.3,
                   },

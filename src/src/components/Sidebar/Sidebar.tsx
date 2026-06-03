@@ -35,6 +35,7 @@ import {
   Inbox,
   Network,
   X,
+  Info,
   Users,
   Container,
   LineChart,
@@ -47,9 +48,21 @@ import AppContext from "@/AppContext";
 import PreAppContext from "../../preAppContext";
 import { cn } from "@/lib/utils";
 import { useTheme, type Theme } from "@/context/ThemeContext";
+import {
+  useFontScale,
+  FONT_SCALE_PRESETS,
+  FONT_SCALE_MIN,
+  FONT_SCALE_MAX,
+} from "@/context/FontScaleContext";
 import { msalInstance, selfServiceApiScopes } from "@/auth/context";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
 
 function DfdsHexMark({ className }: { className?: string }) {
@@ -160,7 +173,7 @@ function NavItemLink({
 }) {
   const Icon = item.icon;
   const cls = cn(
-    "flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[13px] no-underline transition duration-150 ease-out-expo border-l-2",
+    "flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] no-underline transition duration-150 ease-out-expo border-l-2",
     isActive
       ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
       : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
@@ -221,7 +234,7 @@ function NavGroupLink({
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[13px] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
+          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
           anyChildActive
             ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
             : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
@@ -333,7 +346,7 @@ function ThemeToggle() {
           aria-pressed={theme === value}
           onClick={() => setTheme(value)}
           className={cn(
-            "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[10px] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
+            "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[0.625rem] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
             theme === value
               ? "text-[#002b45] dark:text-white"
               : "text-muted hover:text-secondary",
@@ -343,6 +356,146 @@ function ThemeToggle() {
           <span aria-hidden="true">{label}</span>
         </button>
       ))}
+    </div>
+  );
+}
+
+function FontScaleToggle() {
+  const { factor, setFactor } = useFontScale();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState({ x: 0, width: 0, ready: false });
+  const [customInput, setCustomInput] = useState(() =>
+    String(Math.round(factor * 100)),
+  );
+
+  const activePresetIndex = FONT_SCALE_PRESETS.findIndex(
+    (p) => Math.abs(p.factor - factor) < 0.0005,
+  );
+
+  useEffect(() => {
+    setCustomInput(String(Math.round(factor * 100)));
+  }, [factor]);
+
+  useLayoutEffect(() => {
+    function measure() {
+      if (!containerRef.current) return;
+      if (activePresetIndex === -1) {
+        setPill((prev) => ({ ...prev, width: 0 }));
+        return;
+      }
+      const buttons =
+        containerRef.current.querySelectorAll<HTMLButtonElement>("button");
+      const btn = buttons[activePresetIndex];
+      if (btn) {
+        setPill((prev) => ({
+          x: btn.offsetLeft,
+          width: btn.offsetWidth,
+          ready: prev.ready || true,
+        }));
+      }
+    }
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [activePresetIndex]);
+
+  function applyLive(raw: string) {
+    setCustomInput(raw);
+    const n = parseFloat(raw);
+    if (!Number.isFinite(n)) return;
+    const pct = n;
+    if (pct < FONT_SCALE_MIN * 100 || pct > FONT_SCALE_MAX * 100) return;
+    setFactor(pct / 100);
+  }
+
+  function commitCustom(raw: string) {
+    const n = parseFloat(raw);
+    if (Number.isFinite(n)) setFactor(n / 100);
+    else setCustomInput(String(Math.round(factor * 100)));
+  }
+
+  const minPct = Math.round(FONT_SCALE_MIN * 100);
+  const maxPct = Math.round(FONT_SCALE_MAX * 100);
+
+  return (
+    <div>
+      <div
+        ref={containerRef}
+        role="group"
+        aria-label="Font size"
+        className="relative flex items-center bg-[#dde0e2] dark:bg-[#1e2d3d] rounded-[6px] py-0.5 gap-0.5 overflow-hidden"
+      >
+        {/* Sliding active pill */}
+        <div
+          className="absolute top-0.5 bottom-0.5 left-0 rounded-[4px] bg-[#002b45]/8 dark:bg-slate-600 shadow-sm pointer-events-none"
+          style={{
+            width: pill.width || undefined,
+            opacity: activePresetIndex === -1 ? 0 : 1,
+            transform: `translateX(${pill.x}px)`,
+            transition: pill.ready
+              ? "transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 160ms ease"
+              : "none",
+          }}
+          aria-hidden="true"
+        />
+        {FONT_SCALE_PRESETS.map(({ label, factor: presetFactor }, i) => {
+          const isActive = i === activePresetIndex;
+          return (
+            <button
+              key={label}
+              type="button"
+              aria-label={label}
+              aria-pressed={isActive}
+              onClick={() => setFactor(presetFactor)}
+              className={cn(
+                "relative flex flex-1 items-center justify-center gap-1 py-2.5 md:py-1 rounded-[4px] text-[0.625rem] font-mono transition-colors cursor-pointer border-0 bg-transparent z-10 outline-none focus-visible:ring-2 focus-visible:ring-action/50 focus-visible:ring-inset",
+                isActive
+                  ? "text-[#002b45] dark:text-white"
+                  : "text-muted hover:text-secondary",
+              )}
+            >
+              <span aria-hidden="true">{label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex items-center gap-1.5">
+        <label
+          htmlFor="ssu-font-scale-custom"
+          className="text-[0.625rem] font-mono uppercase tracking-wider text-muted"
+        >
+          Custom
+        </label>
+        <div className="relative flex-1">
+          <input
+            id="ssu-font-scale-custom"
+            type="number"
+            inputMode="numeric"
+            min={minPct}
+            max={maxPct}
+            step={5}
+            value={customInput}
+            onChange={(e) => applyLive(e.target.value)}
+            onBlur={(e) => commitCustom(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                commitCustom((e.target as HTMLInputElement).value);
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+            className="w-full pl-2 pr-5 py-1 text-[0.6875rem] font-mono bg-surface border border-card rounded-[4px] text-primary outline-none focus:ring-2 focus:ring-action/50"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[0.625rem] text-muted pointer-events-none"
+          >
+            %
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -381,13 +534,43 @@ function UserMenu({
     <div ref={ref} className="relative -mx-3 -mb-3">
       {open && (
         <div className="absolute bottom-full left-3 right-3 mb-1.5 z-20 rounded-[8px] border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter">
+          <div className="px-3 py-3">
+            <div className="flex items-center gap-1 mb-2">
+              <span className="text-[0.625rem] font-mono uppercase tracking-wider text-muted">
+                UI size
+              </span>
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="UI size help"
+                      className="inline-flex items-center justify-center text-muted hover:text-secondary transition-colors cursor-help border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-action/50 rounded-full"
+                    >
+                      <Info size={11} strokeWidth={1.75} aria-hidden="true" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="start"
+                    className="max-w-[240px] text-[0.6875rem] leading-snug"
+                  >
+                    UI scaling is only tested at M, using it at any other size
+                    is likely to introduce weird UI behaviour and bugs.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <FontScaleToggle />
+          </div>
+          <div className="h-px bg-[#eeeeee] dark:bg-[#1e2d3d]" />
           <button
             type="button"
             onClick={() => {
               refreshSession();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-3 text-[12px] text-primary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] cursor-pointer border-0 bg-transparent text-left transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-3 text-[0.75rem] text-primary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] cursor-pointer border-0 bg-transparent text-left transition-colors"
           >
             <RefreshCw
               size={13}
@@ -403,7 +586,7 @@ function UserMenu({
               signOut();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-3 text-[12px] text-[#be1e2d] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] cursor-pointer border-0 bg-transparent text-left transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-3 text-[0.75rem] text-[#be1e2d] hover:bg-[#f2f2f2] dark:hover:bg-[#334155] cursor-pointer border-0 bg-transparent text-left transition-colors"
           >
             <LogOut size={13} strokeWidth={1.75} className="flex-shrink-0" />
             Sign out
@@ -428,10 +611,10 @@ function UserMenu({
           className="dark:bg-slate-600"
         />
         <div className="flex flex-col min-w-0 flex-1">
-          <span className="text-[12px] font-medium text-primary truncate">
+          <span className="text-[0.75rem] font-medium text-primary truncate">
             {user?.name ?? ""}
           </span>
-          <span className="text-[11px] text-muted truncate">
+          <span className="text-[0.6875rem] text-muted truncate">
             {user?.title ?? ""}
           </span>
         </div>
@@ -498,7 +681,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         // Mobile: fixed overlay drawer
         "fixed inset-y-0 left-0 z-50",
         // Desktop: sticky in-flow sidebar
-        "md:sticky md:top-0 md:bottom-auto md:h-screen md:z-20",
+        "md:sticky md:top-0 md:bottom-auto md:h-[var(--ssu-vh)] md:z-20",
       )}
       style={
         isMobile
@@ -527,10 +710,10 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       >
         <DfdsHexMark className="h-7 w-auto text-primary flex-shrink-0" />
         <div className="flex flex-col leading-tight">
-          <span className="text-[9px] font-semibold tracking-[0.08em] uppercase text-muted font-mono">
+          <span className="text-[0.5625rem] font-semibold tracking-[0.08em] uppercase text-muted font-mono">
             DFDS
           </span>
-          <span className="text-[12px] font-bold text-primary leading-none font-mono">
+          <span className="text-[0.75rem] font-bold text-primary leading-none font-mono">
             Self Service
           </span>
         </div>
@@ -599,7 +782,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
 
       {/* Commit hash */}
       {process.env.REACT_APP_COMMIT_HASH && (
-        <div className="pb-2 text-[10px] font-mono text-[#c4c8cc] dark:text-[#3d4f63] select-none text-center">
+        <div className="pb-2 text-[0.625rem] font-mono text-[#c4c8cc] dark:text-[#3d4f63] select-none text-center">
           {process.env.REACT_APP_COMMIT_HASH}
         </div>
       )}

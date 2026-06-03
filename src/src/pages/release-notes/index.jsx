@@ -76,11 +76,11 @@ function ReleaseNotesList() {
                 }`}
               >
                 <DateFlag date={note.releaseDate} />
-                <span className="font-mono text-[14px] font-semibold text-primary flex-1">
+                <span className="font-mono text-[0.875rem] font-semibold text-primary flex-1">
                   {note.title}
                 </span>
                 {!note.isActive && isCloudEngineerEnabled && (
-                  <Badge variant="outline" className="text-[10px] shrink-0">
+                  <Badge variant="outline" className="text-[0.625rem] shrink-0">
                     Draft
                   </Badge>
                 )}

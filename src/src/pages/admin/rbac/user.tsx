@@ -89,7 +89,7 @@ function PermissionCombobox({
               }}
               className="w-full flex flex-col px-3 py-1.5 text-left hover:bg-surface-muted transition-colors cursor-pointer border-0 bg-transparent"
             >
-              <span className="text-[10px] text-muted font-mono">
+              <span className="text-[0.625rem] text-muted font-mono">
                 {p.namespace}
               </span>
               <span className="text-xs font-mono text-primary">{p.name}</span>
@@ -136,7 +136,7 @@ function UserPermissionsSection({ userId }: { userId: string }) {
               <Badge
                 key={`${p}-${i}`}
                 variant="outline"
-                className="text-[10px] font-mono"
+                className="text-[0.625rem] font-mono"
               >
                 {p}
               </Badge>
@@ -198,11 +198,11 @@ function UserRolesSection({ userId }: { userId: string }) {
             key={`${roleId}-${i}`}
             className="flex items-center gap-1.5 flex-wrap"
           >
-            <Badge variant="secondary" className="text-[10px] font-mono">
+            <Badge variant="secondary" className="text-[0.625rem] font-mono">
               {roleName}
             </Badge>
             {resourceId && (
-              <span className="text-[10px] text-muted font-mono">
+              <span className="text-[0.625rem] text-muted font-mono">
                 {resourceType ? `${resourceType}: ` : ""}
                 {resolvedName}
               </span>
@@ -276,7 +276,7 @@ function CanTheyTester({ userId }: { userId: string }) {
               ...base,
               minHeight: "36px",
               height: "36px",
-              fontSize: "11px",
+              fontSize: "0.6875rem",
               fontFamily: "monospace",
               border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
               boxShadow: "none",
@@ -287,7 +287,7 @@ function CanTheyTester({ userId }: { userId: string }) {
             indicatorsContainer: (base: any) => ({ ...base, height: "36px" }),
             menu: (base: any) => ({
               ...base,
-              fontSize: "11px",
+              fontSize: "0.6875rem",
               fontFamily: "monospace",
               backgroundColor: isDark ? "#1e293b" : "#ffffff",
               border: isDark ? "1px solid #334155" : undefined,
@@ -303,7 +303,7 @@ function CanTheyTester({ userId }: { userId: string }) {
             }),
             input: (base: any) => ({
               ...base,
-              fontSize: "16px",
+              fontSize: "1rem",
               color: isDark ? "#e2e8f0" : "#002b45",
             }),
             option: (base: any, state: any) => ({

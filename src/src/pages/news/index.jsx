@@ -63,7 +63,7 @@ function CreateNewsModal({ onClose }) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-1">
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -71,14 +71,14 @@ function CreateNewsModal({ onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter a title"
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
               required
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Content <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -86,20 +86,20 @@ function CreateNewsModal({ onClose }) {
               onChange={(e) => setBody(e.target.value)}
               placeholder="Write the news item content…"
               rows={6}
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
               required
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Relevant until
             </label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary focus:outline-none focus:ring-2 focus:ring-action"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary focus:outline-none focus:ring-2 focus:ring-action"
             />
           </div>
 
@@ -171,7 +171,7 @@ function EditNewsModal({ item, onClose }) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-1">
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -179,14 +179,14 @@ function EditNewsModal({ item, onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter a title"
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
               required
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Content <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -194,20 +194,20 @@ function EditNewsModal({ item, onClose }) {
               onChange={(e) => setBody(e.target.value)}
               placeholder="Write the news item content…"
               rows={6}
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
               required
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-secondary mb-1">
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Relevant until
             </label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[13px] text-primary focus:outline-none focus:ring-2 focus:ring-action"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary focus:outline-none focus:ring-2 focus:ring-action"
             />
           </div>
 
@@ -274,19 +274,19 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[14px] font-semibold text-primary leading-snug">
+          <span className="text-[0.875rem] font-semibold text-primary leading-snug">
             {item.title}
           </span>
           {item.isHighlighted && (
-            <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[10px] tracking-[0.04em]">
+            <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[0.625rem] tracking-[0.04em]">
               highlighted
             </span>
           )}
         </div>
-        <p className="text-[13px] text-secondary leading-relaxed line-clamp-2">
+        <p className="text-[0.8125rem] text-secondary leading-relaxed line-clamp-2">
           {item.body}
         </p>
-        <div className="mt-1.5 font-mono text-[11px] text-muted">
+        <div className="mt-1.5 font-mono text-[0.6875rem] text-muted">
           {timeAgo}
           {item.createdBy && (
             <span className="ml-2 text-muted opacity-70">
@@ -422,7 +422,9 @@ export default function NewsPage() {
       ) : visibleItems.length === 0 ? (
         <div className="bg-surface border border-card rounded-[8px] px-5 py-12 text-center animate-fade-up">
           <Newspaper size={32} className="text-muted mx-auto mb-3" />
-          <p className="text-[14px] text-muted font-mono">No news items yet</p>
+          <p className="text-[0.875rem] text-muted font-mono">
+            No news items yet
+          </p>
         </div>
       ) : (
         <div className="bg-surface border border-card rounded-[8px] overflow-hidden animate-fade-up">

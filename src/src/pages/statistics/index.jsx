@@ -31,7 +31,7 @@ function StatsGrid() {
 
   if (!stats || stats.length === 0) {
     return (
-      <p className="font-mono text-[11px] text-muted tracking-[0.03em]">
+      <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         No statistics available.
       </p>
     );
@@ -60,7 +60,7 @@ function StatsGrid() {
               >
                 {stat.value}
               </span>
-              <span className="block font-mono text-[9px] tracking-[0.08em] uppercase text-muted">
+              <span className="block font-mono text-[0.5625rem] tracking-[0.08em] uppercase text-muted">
                 {stat.title}
               </span>
             </div>

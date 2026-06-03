@@ -17,7 +17,7 @@ export function AdminPageHeader({
 }: AdminPageHeaderProps) {
   return (
     <div className={cn("mb-6 animate-fade-up", className)}>
-      <div className="font-mono text-[11px] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
+      <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-action mb-1.5">
         // Admin
       </div>
       <div className={cn(titleSuffix && "flex items-center gap-3 flex-wrap")}>

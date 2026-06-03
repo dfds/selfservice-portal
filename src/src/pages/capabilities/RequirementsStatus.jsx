@@ -108,7 +108,7 @@ export default function RequirementsScore() {
             color="#4caf50"
             className="mb-1.5"
           />
-          <span className="font-mono text-[11px] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
+          <span className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
             {totalCount > 0
               ? `${metCount} of ${totalCount} applicable requirements met`
               : `${overallScore.toFixed(1)}% overall score`}
@@ -156,7 +156,7 @@ export default function RequirementsScore() {
                     >
                       <span
                         className="text-white font-bold"
-                        style={{ fontSize: 7, lineHeight: 1 }}
+                        style={{ fontSize: "0.4375rem", lineHeight: 1 }}
                       >
                         ?
                       </span>
@@ -171,11 +171,11 @@ export default function RequirementsScore() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-0.5">
-                    <span className="text-[13px] font-medium text-[#002b45] dark:text-[#e2e8f0]">
+                    <span className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0]">
                       {category.displayName || category.categoryName}
                     </span>
                     <span
-                      className="font-mono text-[12px] font-bold flex-shrink-0"
+                      className="font-mono text-[0.75rem] font-bold flex-shrink-0"
                       style={{
                         color: isUnknown ? "#9e9e9e" : getScoreColor(score),
                       }}
@@ -184,7 +184,7 @@ export default function RequirementsScore() {
                     </span>
                   </div>
                   {category.description && (
-                    <p className="text-[12px] text-[#666666] dark:text-slate-400 leading-[1.5]">
+                    <p className="text-[0.75rem] text-[#666666] dark:text-slate-400 leading-[1.5]">
                       {category.description}
                     </p>
                   )}
@@ -193,7 +193,7 @@ export default function RequirementsScore() {
                       href={category.helpUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 mt-1 text-[11px] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+                      className="inline-flex items-center gap-1 mt-1 text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
                     >
                       <ExternalLink size={10} />
                       read more
@@ -205,7 +205,7 @@ export default function RequirementsScore() {
           })}
         </div>
       ) : (
-        <div className="py-5 text-center text-[13px] text-[#afafaf] dark:text-slate-500 italic">
+        <div className="py-5 text-center text-[0.8125rem] text-[#afafaf] dark:text-slate-500 italic">
           All is good! We see no issues with the current requirements for this
           capability.
         </div>
