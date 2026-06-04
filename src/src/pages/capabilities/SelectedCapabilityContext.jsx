@@ -654,7 +654,7 @@ function SelectedCapabilityProvider({ children }) {
     if (capabilityMembersFetched && userRoleMap) {
       const membersWithRoleAnnotation = membersList.map((member) => ({
         ...member,
-        role: userRoleMap[member.email] || null,
+        role: userRoleMap[member.id] || null,
       }));
       setMembers(membersWithRoleAnnotation);
     }
