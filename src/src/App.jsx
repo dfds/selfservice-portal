@@ -29,6 +29,8 @@ import PermissionMatrixPage from "./pages/rbac";
 import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
 import MembershipApplicationsAdminPage from "./pages/admin/membership-applications";
 import UserInspectorPage from "./pages/admin/rbac/user";
+import RbacManagePage from "./pages/admin/rbac/manage";
+import RbacAssignmentsPage from "./pages/admin/rbac/assignments";
 import AdminCompliancePage from "./pages/admin/compliance";
 import TopicExplorerPage from "./pages/admin/topics";
 import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
@@ -280,6 +282,11 @@ export default function App() {
           <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
           <Route path="admin/rbac" element={<RbacViewerPage />} />
           <Route path="admin/rbac/user" element={<UserInspectorPage />} />
+          <Route path="admin/rbac/manage" element={<RbacManagePage />} />
+          <Route
+            path="admin/rbac/assignments"
+            element={<RbacAssignmentsPage />}
+          />
           <Route
             path="admin/capabilities/deletion-queue"
             element={<DeletionQueuePage />}

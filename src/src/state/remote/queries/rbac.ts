@@ -4,6 +4,36 @@ import {
   createSsuMutation,
 } from "../queryFactory";
 
+// ── Member types ─────────────────────────────────────────────────────────────
+
+export type MemberTypeFilter = "User" | "ServicePrincipal" | "All";
+
+export interface MemberSummary {
+  id: string;
+  email: string;
+  displayName?: string | null;
+  type: "User" | "ServicePrincipal";
+  lastSeen?: string | null;
+  _links?: {
+    self?: { href: string; allow: string[] };
+    permissionGrants?: { href: string; allow: string[] };
+    roleGrants?: { href: string; allow: string[] };
+    groups?: { href: string; allow: string[] };
+  };
+}
+
+export interface MemberSummaryList {
+  items: MemberSummary[];
+  total: number;
+}
+
+export interface SearchMembersParams {
+  type?: MemberTypeFilter;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
 // ── Queries ──────────────────────────────────────────────────────────────────
 
 const _useGetRoles = createSsuQuery({
@@ -208,5 +238,122 @@ export const useGrantPermissionToRole = createSsuMutation<{
     type: "Allow",
     resource: "",
   }),
+  authMode: true,
+});
+
+// ── Phase 2: Member directory + global grant hooks ────────────────────────────
+
+export const useSearchMembers = createSsuParamQuery<
+  SearchMembersParams,
+  MemberSummaryList
+>({
+  queryKey: (params) => [
+    "rbac",
+    "members",
+    "search",
+    params.type ?? "All",
+    params.search ?? "",
+    params.limit ?? 50,
+    params.offset ?? 0,
+  ],
+  urlSegments: (params) => {
+    const qs = new URLSearchParams();
+    if (params.type && params.type !== "All") qs.set("type", params.type);
+    if (params.search) qs.set("search", params.search);
+    if (params.limit !== undefined) qs.set("limit", String(params.limit));
+    if (params.offset !== undefined) qs.set("offset", String(params.offset));
+    const tail = qs.toString();
+    return [`rbac/members${tail ? `?${tail}` : ""}`];
+  },
+  authMode: true,
+  staleTime: 15_000,
+});
+
+export const useMember = createSsuParamQuery<string, MemberSummary>({
+  queryKey: (id) => ["rbac", "members", id],
+  urlSegments: (id) => ["rbac", "members", id],
+  authMode: true,
+  enabled: (id) => !!id,
+  staleTime: 30_000,
+});
+
+export const useMemberGroups = createSsuParamQuery<string>({
+  queryKey: (id) => ["rbac", "members", id, "groups"],
+  urlSegments: (id) => ["rbac", "members", id, "groups"],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+// Generic permission grant — caller supplies the full RbacPermissionGrant shape
+// ({ assignedEntityType, assignedEntityId, namespace, permission, type, resource }).
+export const useGrantPermission = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "permission", "grant"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useRevokePermission = createSsuMutation<{ grantId: string }>({
+  method: "DELETE",
+  urlSegments: (data) => ["rbac", "permission", "revoke", data.grantId],
+  payload: () => null,
+  authMode: true,
+});
+
+// Global (non-capability-scoped) role grant — caller supplies the full RbacRoleGrant shape.
+export const useGrantRoleGlobal = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["rbac", "role", "grant"],
+  payload: (data) => data,
+  authMode: true,
+});
+
+export const useRevokeRoleGrant = createSsuMutation<{ grantId: string }>({
+  method: "DELETE",
+  urlSegments: (data) => ["rbac", "role", "revoke", data.grantId],
+  payload: () => null,
+  authMode: true,
+});
+
+// Group member add/remove — accept any Member (user OR service principal).
+// `memberId` is the canonical field; the API also accepts `userId` for backwards compat.
+export const useAddGroupMember = createSsuMutation<{
+  groupId: string;
+  memberId: string;
+}>({
+  method: "POST",
+  urlSegments: (data) => ["rbac", "groups", data.groupId, "members"],
+  payload: (data) => ({ groupId: data.groupId, memberId: data.memberId }),
+  authMode: true,
+});
+
+export const useRemoveGroupMember = createSsuMutation<{
+  groupId: string;
+  memberId: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "rbac",
+    "groups",
+    data.groupId,
+    "members",
+    data.memberId,
+  ],
+  payload: () => null,
+  authMode: true,
+});
+
+// Bulk grants — server-side fan-out, atomic on the backend.
+export const useGrantPermissionsBulk = createSsuMutation<{ grants: any[] }>({
+  method: "POST",
+  urlSegments: () => ["rbac", "permission", "grant-bulk"],
+  payload: (data) => ({ grants: data.grants }),
+  authMode: true,
+});
+
+export const useGrantRolesBulk = createSsuMutation<{ grants: any[] }>({
+  method: "POST",
+  urlSegments: () => ["rbac", "role", "grant-bulk"],
+  payload: (data) => ({ grants: data.grants }),
   authMode: true,
 });
