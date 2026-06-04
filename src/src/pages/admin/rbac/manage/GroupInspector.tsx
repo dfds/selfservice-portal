@@ -73,9 +73,7 @@ export function GroupInspector({ groupId, onDeleted }: GroupInspectorProps) {
   }
 
   if (!group) {
-    return (
-      <div className="text-sm text-muted font-mono">Group not found.</div>
-    );
+    return <div className="text-sm text-muted font-mono">Group not found.</div>;
   }
 
   return (
@@ -132,7 +130,9 @@ function MembersCard({
   const removeMutation = useRemoveGroupMember();
 
   const [showAdd, setShowAdd] = useState(false);
-  const [pendingMember, setPendingMember] = useState<MemberSummary | null>(null);
+  const [pendingMember, setPendingMember] = useState<MemberSummary | null>(
+    null,
+  );
   const [removeTarget, setRemoveTarget] = useState<{
     membershipId: string;
     memberId: string;
@@ -288,7 +288,7 @@ function MembersCard({
         isPending={removeMutation.isPending}
         onConfirm={() =>
           removeTarget &&
-          fireRemove({ groupId, memberId: removeTarget.membershipId })
+          fireRemove({ groupId, memberId: removeTarget.memberId })
         }
       />
     </section>
@@ -341,7 +341,8 @@ function GroupGrantsCard({
   groupId: string;
   groupName: string;
 }) {
-  const { data: permsData, isFetched: permsFetched } = useGroupPermissions(groupId);
+  const { data: permsData, isFetched: permsFetched } =
+    useGroupPermissions(groupId);
   const { data: rolesData, isFetched: rolesFetched } = useGroupRoles(groupId);
   const { data: allRolesData } = useGetRoles("");
   const { data: capsData } = useCapabilities();
@@ -504,9 +505,7 @@ function GroupGrantsCard({
         }
         confirmLabel="Revoke"
         confirmLoadingLabel="Revoking…"
-        isPending={
-          revokePermMutation.isPending || revokeRoleMutation.isPending
-        }
+        isPending={revokePermMutation.isPending || revokeRoleMutation.isPending}
         onConfirm={confirmRevoke}
       />
     </section>
@@ -527,7 +526,10 @@ function GroupGrantPermissionDialog({
   onSubmit: (payload: any) => void;
 }) {
   const [permissions, setPermissions] = useState<PermissionSelection[]>([]);
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   React.useEffect(() => {
     if (!open) {
@@ -610,7 +612,10 @@ function GroupGrantRoleDialog({
   onSubmit: (payload: any) => void;
 }) {
   const [roleId, setRoleId] = useState("");
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   React.useEffect(() => {
     if (!open) {

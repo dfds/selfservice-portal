@@ -27,6 +27,24 @@ function sameKey(a: PermissionSelection, b: PermissionSelection) {
   return a.namespace === b.namespace && a.permission === b.permission;
 }
 
+function TriStateCheckbox({ state }: { state: "none" | "some" | "all" }) {
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = state === "some";
+  }, [state]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={state === "all"}
+      readOnly
+      tabIndex={-1}
+      className="cursor-pointer"
+      aria-hidden="true"
+    />
+  );
+}
+
 export function PermissionPicker({
   value,
   onChange,
@@ -114,6 +132,27 @@ export function PermissionPicker({
     else onChange([...value, sel]);
   }
 
+  function toggleNamespace(items: Perm[]) {
+    if (items.length === 0) return;
+    const allSelected = items.every((p) =>
+      selectedMap.has(`${p.namespace}/${p.name}`),
+    );
+    if (allSelected) {
+      const drop = new Set(items.map((p) => `${p.namespace}/${p.name}`));
+      onChange(
+        value.filter((v) => !drop.has(`${v.namespace}/${v.permission}`)),
+      );
+    } else {
+      const existing = new Set(
+        value.map((v) => `${v.namespace}/${v.permission}`),
+      );
+      const additions: PermissionSelection[] = items
+        .filter((p) => !existing.has(`${p.namespace}/${p.name}`))
+        .map((p) => ({ namespace: p.namespace, permission: p.name }));
+      onChange([...value, ...additions]);
+    }
+  }
+
   function remove(sel: PermissionSelection) {
     onChange(value.filter((v) => !sameKey(v, sel)));
   }
@@ -158,9 +197,7 @@ export function PermissionPicker({
       >
         <span
           className={
-            value.length === 0
-              ? "text-muted truncate"
-              : "text-primary truncate"
+            value.length === 0 ? "text-muted truncate" : "text-primary truncate"
           }
         >
           {triggerLabel}
@@ -200,53 +237,83 @@ export function PermissionPicker({
                 No permissions match.
               </p>
             ) : (
-              grouped.map(([ns, items]) => (
-                <div key={ns} className="border-b border-divider last:border-b-0">
-                  <div className="px-3 pt-2 pb-1 text-[0.625rem] uppercase font-mono text-muted bg-surface-muted">
-                    {ns}
-                  </div>
-                  {items.map((p) => {
-                    const key = `${p.namespace}/${p.name}`;
-                    const checked = selectedMap.has(key);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => toggle(p)}
-                        className="w-full flex items-start gap-2 px-3 py-1.5 text-left hover:bg-surface-muted transition-colors cursor-pointer border-0 bg-transparent"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          readOnly
-                          tabIndex={-1}
-                          className="mt-0.5 cursor-pointer"
-                          aria-hidden="true"
-                        />
-                        <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-xs font-mono text-primary truncate">
-                            {p.name}
-                          </span>
-                          {p.description && (
-                            <span className="text-[0.625rem] text-muted font-mono truncate">
-                              {p.description}
+              grouped.map(([ns, items]) => {
+                const selectedInNs = items.reduce(
+                  (n, p) =>
+                    n + (selectedMap.has(`${p.namespace}/${p.name}`) ? 1 : 0),
+                  0,
+                );
+                const nsState: "none" | "some" | "all" =
+                  selectedInNs === 0
+                    ? "none"
+                    : selectedInNs === items.length
+                    ? "all"
+                    : "some";
+                return (
+                  <div
+                    key={ns}
+                    className="border-b border-divider last:border-b-0"
+                  >
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => toggleNamespace(items)}
+                      className="w-full flex items-center gap-2 px-3 pt-2 pb-1 text-left bg-surface-muted hover:bg-surface-subtle transition-colors cursor-pointer border-0"
+                      aria-label={
+                        nsState === "all"
+                          ? `Deselect all in ${ns}`
+                          : `Select all in ${ns}`
+                      }
+                    >
+                      <TriStateCheckbox state={nsState} />
+                      <span className="text-[0.625rem] uppercase font-mono text-muted flex-1 truncate">
+                        {ns}
+                      </span>
+                      <span className="text-[0.625rem] font-mono text-muted shrink-0">
+                        {selectedInNs}/{items.length}
+                      </span>
+                    </button>
+                    {items.map((p) => {
+                      const key = `${p.namespace}/${p.name}`;
+                      const checked = selectedMap.has(key);
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => toggle(p)}
+                          className="w-full flex items-start gap-2 px-3 py-1.5 text-left hover:bg-surface-muted transition-colors cursor-pointer border-0 bg-transparent"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            readOnly
+                            tabIndex={-1}
+                            className="mt-0.5 cursor-pointer"
+                            aria-hidden="true"
+                          />
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="text-xs font-mono text-primary truncate">
+                              {p.name}
                             </span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))
+                            {p.description && (
+                              <span className="text-[0.625rem] text-muted font-mono truncate">
+                                {p.description}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })
             )}
           </div>
 
           {value.length > 0 && (
             <div className="flex items-center justify-between gap-2 px-3 py-1.5 border-t border-divider bg-surface-muted text-[0.625rem] font-mono">
-              <span className="text-muted">
-                {value.length} selected
-              </span>
+              <span className="text-muted">{value.length} selected</span>
               <button
                 type="button"
                 onClick={() => onChange([])}

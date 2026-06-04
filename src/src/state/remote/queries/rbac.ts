@@ -343,6 +343,18 @@ export const useRemoveGroupMember = createSsuMutation<{
   authMode: true,
 });
 
+// Register a service principal so it shows up as an RBAC member. Idempotent:
+// re-registering an existing SP is a no-op and returns the existing member.
+export const useRegisterServicePrincipal = createSsuMutation<{
+  id: string;
+  displayName?: string | null;
+}>({
+  method: "POST",
+  urlSegments: () => ["rbac", "service-principals"],
+  payload: (data) => ({ id: data.id, displayName: data.displayName ?? null }),
+  authMode: true,
+});
+
 // Bulk grants — server-side fan-out, atomic on the backend.
 export const useGrantPermissionsBulk = createSsuMutation<{ grants: any[] }>({
   method: "POST",

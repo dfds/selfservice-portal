@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Plus, Search, Users as UsersIcon, Bot, User as UserIcon, X } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Users as UsersIcon,
+  Bot,
+  User as UserIcon,
+  X,
+} from "lucide-react";
 import { AdminPageHeader } from "@/components/ui/AdminPageHeader";
 import { TabGroup } from "@/components/ui/TabGroup";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -18,8 +25,13 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMutationToast } from "@/hooks/useMutationToast";
 import { EntityPicker } from "@/components/rbac";
 import {
+  ServicePrincipalSearchCombobox,
+  type GraphServicePrincipal,
+} from "@/components/ServicePrincipalSearchCombobox";
+import {
   useRbacGroups,
   useCreateRbacGroup,
+  useRegisterServicePrincipal,
   type MemberSummary,
 } from "@/state/remote/queries/rbac";
 import { EntityInspector } from "./EntityInspector";
@@ -28,13 +40,21 @@ import { GroupInspector } from "./GroupInspector";
 type ManageTab = "user" | "sp" | "group";
 
 const TABS: { id: ManageTab; label: string; icon: React.ReactNode }[] = [
-  { id: "user", label: "Users", icon: <UserIcon size={14} strokeWidth={1.75} /> },
+  {
+    id: "user",
+    label: "Users",
+    icon: <UserIcon size={14} strokeWidth={1.75} />,
+  },
   {
     id: "sp",
     label: "Service accounts",
     icon: <Bot size={14} strokeWidth={1.75} />,
   },
-  { id: "group", label: "Groups", icon: <UsersIcon size={14} strokeWidth={1.75} /> },
+  {
+    id: "group",
+    label: "Groups",
+    icon: <UsersIcon size={14} strokeWidth={1.75} />,
+  },
 ];
 
 function normaliseTab(value: string | null): ManageTab {
@@ -50,7 +70,9 @@ export default function RbacManagePage() {
 
   // Track last-selected MemberSummary so the inspector can show display info
   // even before the per-member fetch resolves.
-  const [selectedMember, setSelectedMember] = useState<MemberSummary | null>(null);
+  const [selectedMember, setSelectedMember] = useState<MemberSummary | null>(
+    null,
+  );
   useEffect(() => {
     if (!selectedId || tab === "group") setSelectedMember(null);
   }, [selectedId, tab]);
@@ -92,12 +114,10 @@ export default function RbacManagePage() {
             : "grid gap-5 [grid-template-columns:360px_1fr]"
         }
       >
-        <aside className={isMobile && selectedId ? "hidden" : "flex flex-col gap-3"}>
-          <LeftPane
-            tab={tab}
-            selectedId={selectedId}
-            onSelect={setSelected}
-          />
+        <aside
+          className={isMobile && selectedId ? "hidden" : "flex flex-col gap-3"}
+        >
+          <LeftPane tab={tab} selectedId={selectedId} onSelect={setSelected} />
         </aside>
 
         <section className={isMobile && !selectedId ? "hidden" : ""}>
@@ -134,24 +154,155 @@ function LeftPane({
   onSelect: (id: string, member?: MemberSummary) => void;
 }) {
   if (tab === "group") {
-    return <GroupList selectedId={selectedId} onSelect={(id) => onSelect(id)} />;
+    return (
+      <GroupList selectedId={selectedId} onSelect={(id) => onSelect(id)} />
+    );
   }
-  const typeFilter = tab === "sp" ? "ServicePrincipal" : "User";
+  if (tab === "sp") {
+    return <ServiceAccountList onSelect={onSelect} />;
+  }
   return (
     <div className="flex flex-col gap-2">
       <EntityPicker
-        typeFilter={typeFilter}
+        typeFilter="User"
         onSelect={(m) => onSelect(m.id, m)}
-        placeholder={
-          tab === "sp"
-            ? "Search service accounts…"
-            : "Search users by name or email…"
-        }
+        placeholder="Search users by name or email…"
       />
       <p className="text-[0.625rem] text-muted font-mono">
-        Start typing to find a {tab === "sp" ? "service account" : "user"}.
+        Start typing to find a user.
       </p>
     </div>
+  );
+}
+
+function ServiceAccountList({
+  onSelect,
+}: {
+  onSelect: (id: string, member?: MemberSummary) => void;
+}) {
+  const [showRegister, setShowRegister] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-1.5">
+        <div className="flex-1">
+          <EntityPicker
+            typeFilter="ServicePrincipal"
+            onSelect={(m) => onSelect(m.id, m)}
+            placeholder="Search service accounts…"
+          />
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowRegister(true)}
+          className="h-9 px-2 text-xs gap-1 shrink-0"
+        >
+          <Plus size={13} strokeWidth={1.75} /> New
+        </Button>
+      </div>
+      <p className="text-[0.625rem] text-muted font-mono">
+        Start typing to find a service account, or register one from Azure AD.
+      </p>
+
+      <RegisterServicePrincipalDialog
+        open={showRegister}
+        onClose={() => setShowRegister(false)}
+        onRegistered={(member) => {
+          setShowRegister(false);
+          onSelect(member.id, member);
+        }}
+      />
+    </div>
+  );
+}
+
+function RegisterServicePrincipalDialog({
+  open,
+  onClose,
+  onRegistered,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onRegistered: (member: MemberSummary) => void;
+}) {
+  const [selected, setSelected] = useState<GraphServicePrincipal | null>(null);
+  const registerMutation = useRegisterServicePrincipal();
+  const fireRegister = useMutationToast(registerMutation, {
+    invalidateKeys: [["rbac", "members"]],
+    successMessage: (_data: any, vars: any) =>
+      `Registered ${vars?.displayName || vars?.id}`,
+    errorMessage: "Could not register service account",
+    onSuccess: (member: any) => {
+      setSelected(null);
+      onRegistered(member as MemberSummary);
+    },
+  });
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) {
+          setSelected(null);
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Register service account</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 mt-2">
+          <p className="text-sm text-secondary">
+            Search Azure AD for the service principal you want to manage in
+            RBAC. The oid shown next to each result is the only durable
+            identifier — make sure you pick the right one.
+          </p>
+          <ServicePrincipalSearchCombobox
+            onSelect={(sp) => setSelected(sp)}
+            submitLabel="Pick"
+          />
+          {selected && (
+            <div className="rounded-[8px] border border-card bg-surface-muted px-3 py-2">
+              <div className="text-sm font-medium text-primary">
+                {selected.displayName}
+              </div>
+              <div className="font-mono text-xs text-muted">
+                oid: {selected.id}
+              </div>
+              {selected.appId && selected.appId !== selected.id && (
+                <div className="font-mono text-[0.6875rem] text-muted">
+                  appId: {selected.appId}
+                </div>
+              )}
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={registerMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="action"
+              disabled={!selected || registerMutation.isPending}
+              onClick={() =>
+                selected &&
+                fireRegister({
+                  id: selected.id,
+                  displayName: selected.displayName,
+                })
+              }
+            >
+              {registerMutation.isPending ? "Registering…" : "Register"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -226,7 +377,9 @@ function GroupList({
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState>{filter ? "No groups match." : "No groups yet."}</EmptyState>
+        <EmptyState>
+          {filter ? "No groups match." : "No groups yet."}
+        </EmptyState>
       ) : (
         <div className="flex flex-col gap-1 max-h-[60vh] overflow-y-auto pr-1">
           {filtered.map((g: any) => {
@@ -243,7 +396,11 @@ function GroupList({
                     : "border-card bg-surface hover:bg-surface-muted"
                 }`}
               >
-                <UsersIcon size={13} strokeWidth={1.75} className="text-muted shrink-0" />
+                <UsersIcon
+                  size={13}
+                  strokeWidth={1.75}
+                  className="text-muted shrink-0"
+                />
                 <span className="text-sm font-medium text-primary flex-1 truncate">
                   {g.name ?? g.id}
                 </span>

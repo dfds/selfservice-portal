@@ -143,7 +143,11 @@ const adminNav: NavGroupDef = {
   children: [
     { title: "RBAC Viewer", url: "/admin/rbac", icon: KeyRound },
     { title: "User Inspector", url: "/admin/rbac/user", icon: UserSearch },
-    { title: "RBAC Manage", url: "/admin/rbac/manage", icon: SlidersHorizontal },
+    {
+      title: "RBAC Manage",
+      url: "/admin/rbac/manage",
+      icon: SlidersHorizontal,
+    },
     {
       title: "RBAC Assignments",
       url: "/admin/rbac/assignments",

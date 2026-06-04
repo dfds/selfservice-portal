@@ -10,13 +10,15 @@ const LABELS: Record<EntityKind, string> = {
   Role: "Role",
 };
 
-const VARIANTS: Record<EntityKind, React.ComponentProps<typeof Badge>["variant"]> =
-  {
-    User: "outline",
-    ServicePrincipal: "soft-warning",
-    Group: "secondary",
-    Role: "soft-success",
-  };
+const VARIANTS: Record<
+  EntityKind,
+  React.ComponentProps<typeof Badge>["variant"]
+> = {
+  User: "outline",
+  ServicePrincipal: "soft-warning",
+  Group: "secondary",
+  Role: "soft-success",
+};
 
 export function EntityTypeBadge({
   kind,

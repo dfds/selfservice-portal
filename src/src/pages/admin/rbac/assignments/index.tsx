@@ -93,7 +93,9 @@ export default function RbacAssignmentsPage() {
   const [tab, setTab] = useState<AssignmentTab>("permissions");
   const [entityType, setEntityType] = useState<EntityTypeFilter>("All");
   const [namespace, setNamespace] = useState("");
-  const [scopeFilter, setScopeFilter] = useState<"All" | "Global" | "Capability">("All");
+  const [scopeFilter, setScopeFilter] = useState<
+    "All" | "Global" | "Capability"
+  >("All");
   const [search, setSearch] = useState("");
   const [showGrant, setShowGrant] = useState(false);
 
@@ -152,11 +154,7 @@ export default function RbacAssignmentsPage() {
         )}
       </div>
 
-      <GrantDialog
-        tab={tab}
-        open={showGrant}
-        onOpenChange={setShowGrant}
-      />
+      <GrantDialog tab={tab} open={showGrant} onOpenChange={setShowGrant} />
     </div>
   );
 }
@@ -225,7 +223,9 @@ function FilterBar({
         <SectionLabel className="block mb-1">Entity type</SectionLabel>
         <select
           value={entityType}
-          onChange={(e) => onEntityTypeChange(e.target.value as EntityTypeFilter)}
+          onChange={(e) =>
+            onEntityTypeChange(e.target.value as EntityTypeFilter)
+          }
           className="w-full h-9 text-xs font-mono border border-input rounded-[5px] bg-background px-2 focus:outline-none focus:ring-1 focus:ring-action"
         >
           {entityTypeOptions.map((o) => (
@@ -294,7 +294,7 @@ function NamespaceSelect({
       const k = q.queryKey;
       if (
         Array.isArray(k) &&
-        (k[0] === "rbac") &&
+        k[0] === "rbac" &&
         (k[1] === "user-permissions" || k[1] === "group-permissions")
       ) {
         const data = q.state.data as any[] | undefined;
@@ -322,12 +322,40 @@ function NamespaceSelect({
   );
 }
 
+// ── Row selection ─────────────────────────────────────────────────────────────
+
+function useRowSelection() {
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const toggleKey = React.useCallback((key: string) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
+  const toggleAllOnPage = React.useCallback((keys: string[]) => {
+    setSelectedKeys((prev) => {
+      const allSelected = keys.length > 0 && keys.every((k) => prev.has(k));
+      const next = new Set(prev);
+      if (allSelected) keys.forEach((k) => next.delete(k));
+      else keys.forEach((k) => next.add(k));
+      return next;
+    });
+  }, []);
+  const clear = React.useCallback(() => setSelectedKeys(new Set()), []);
+  return { selectedKeys, toggleKey, toggleAllOnPage, clear, setSelectedKeys };
+}
+
 // ── Shared data fetching ──────────────────────────────────────────────────────
 
 const MAX_MEMBERS = 200;
 
 function useEntityIndex(entityType: EntityTypeFilter) {
-  const needsMembers = entityType === "All" || entityType === "User" || entityType === "ServicePrincipal";
+  const needsMembers =
+    entityType === "All" ||
+    entityType === "User" ||
+    entityType === "ServicePrincipal";
   const needsGroups = entityType === "All" || entityType === "Group";
 
   const memberType =
@@ -347,7 +375,7 @@ function useEntityIndex(entityType: EntityTypeFilter) {
   const members: MemberSummary[] = needsMembers
     ? (membersQuery.data?.items as MemberSummary[] | undefined) ?? []
     : [];
-  const groups: any[] = needsGroups ? ((groupsQuery.data as any[]) ?? []) : [];
+  const groups: any[] = needsGroups ? (groupsQuery.data as any[]) ?? [] : [];
 
   return {
     members,
@@ -373,8 +401,12 @@ function PermissionsTab({
   search: string;
 }) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext) as any;
-  const { members, groups, isFetched: indexFetched, memberTotal } =
-    useEntityIndex(entityType);
+  const {
+    members,
+    groups,
+    isFetched: indexFetched,
+    memberTotal,
+  } = useEntityIndex(entityType);
 
   const { data: capsData } = useCapabilities();
   const capsMap = useCapsMap(capsData);
@@ -482,6 +514,41 @@ function PermissionsTab({
     onSuccess: () => setRevokeTarget(null),
   });
 
+  const selection = useRowSelection();
+  const toast = useToast();
+  const [showBulk, setShowBulk] = useState(false);
+  const [bulkPending, setBulkPending] = useState(false);
+  const selectedRows = useMemo(
+    () =>
+      filtered.filter((r) => r.grantId && selection.selectedKeys.has(r.rowKey)),
+    [filtered, selection.selectedKeys],
+  );
+
+  async function bulkRevoke() {
+    setBulkPending(true);
+    let failed = 0;
+    for (const r of selectedRows) {
+      try {
+        await revokeMutation.mutateAsync({ grantId: r.grantId! });
+      } catch {
+        failed++;
+      }
+    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["rbac", "user-permissions"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["rbac", "group-permissions"],
+      }),
+    ]);
+    setBulkPending(false);
+    setShowBulk(false);
+    selection.clear();
+    const ok = selectedRows.length - failed;
+    if (failed === 0)
+      toast.success(`Revoked ${ok} permission${ok === 1 ? "" : "s"}`);
+    else toast.error(`Revoked ${ok}; ${failed} failed`);
+  }
+
   return (
     <>
       <ResultsHeader
@@ -490,12 +557,25 @@ function PermissionsTab({
         truncated={typeof memberTotal === "number" && memberTotal > MAX_MEMBERS}
         memberTotal={memberTotal}
       />
+      <BulkActionsBar
+        count={selectedRows.length}
+        onClear={selection.clear}
+        onDelete={() => setShowBulk(true)}
+        deleteLabel="Revoke"
+        isPending={bulkPending}
+      />
       <Table
         isFetched={allFetched}
         empty="No permission grants match these filters."
         columns={["Entity", "Namespace", "Permission", "Scope", ""]}
+        selection={{
+          selectedKeys: selection.selectedKeys,
+          onToggleKey: selection.toggleKey,
+          onToggleAllOnPage: selection.toggleAllOnPage,
+        }}
         rows={filtered.map((r) => ({
           key: r.rowKey,
+          selectable: !!r.grantId,
           cells: [
             <EntityCell
               key="ent"
@@ -536,7 +616,10 @@ function PermissionsTab({
         description={
           revokeTarget && (
             <p>
-              Remove <strong>{revokeTarget.namespace}/{revokeTarget.permission}</strong>{" "}
+              Remove{" "}
+              <strong>
+                {revokeTarget.namespace}/{revokeTarget.permission}
+              </strong>{" "}
               from <strong>{revokeTarget.entityLabel}</strong>?
             </p>
           )
@@ -547,6 +630,24 @@ function PermissionsTab({
         onConfirm={() =>
           revokeTarget?.grantId && fireRevoke({ grantId: revokeTarget.grantId })
         }
+      />
+
+      <ConfirmDialog
+        open={showBulk}
+        onOpenChange={(open) => !open && !bulkPending && setShowBulk(false)}
+        title={`Revoke ${selectedRows.length} permission${
+          selectedRows.length === 1 ? "" : "s"
+        }?`}
+        description={
+          <p>
+            Revoke <strong>{selectedRows.length}</strong> selected permission
+            grant{selectedRows.length === 1 ? "" : "s"}? This cannot be undone.
+          </p>
+        }
+        confirmLabel="Revoke"
+        confirmLoadingLabel="Revoking…"
+        isPending={bulkPending}
+        onConfirm={bulkRevoke}
       />
     </>
   );
@@ -564,8 +665,12 @@ function RolesTab({
   search: string;
 }) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext) as any;
-  const { members, groups, isFetched: indexFetched, memberTotal } =
-    useEntityIndex(entityType);
+  const {
+    members,
+    groups,
+    isFetched: indexFetched,
+    memberTotal,
+  } = useEntityIndex(entityType);
   const { data: allRolesData } = useGetRoles("");
   const allRoles: any[] = (allRolesData as any[]) ?? [];
   const rolesMap: Record<string, string> = useMemo(() => {
@@ -682,6 +787,38 @@ function RolesTab({
     onSuccess: () => setRevokeTarget(null),
   });
 
+  const selection = useRowSelection();
+  const toast = useToast();
+  const [showBulk, setShowBulk] = useState(false);
+  const [bulkPending, setBulkPending] = useState(false);
+  const selectedRows = useMemo(
+    () =>
+      filtered.filter((r) => r.grantId && selection.selectedKeys.has(r.rowKey)),
+    [filtered, selection.selectedKeys],
+  );
+
+  async function bulkRevoke() {
+    setBulkPending(true);
+    let failed = 0;
+    for (const r of selectedRows) {
+      try {
+        await revokeMutation.mutateAsync({ grantId: r.grantId! });
+      } catch {
+        failed++;
+      }
+    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["rbac", "user-roles"] }),
+      queryClient.invalidateQueries({ queryKey: ["rbac", "group-roles"] }),
+    ]);
+    setBulkPending(false);
+    setShowBulk(false);
+    selection.clear();
+    const ok = selectedRows.length - failed;
+    if (failed === 0) toast.success(`Revoked ${ok} role${ok === 1 ? "" : "s"}`);
+    else toast.error(`Revoked ${ok}; ${failed} failed`);
+  }
+
   return (
     <>
       <ResultsHeader
@@ -690,12 +827,25 @@ function RolesTab({
         truncated={typeof memberTotal === "number" && memberTotal > MAX_MEMBERS}
         memberTotal={memberTotal}
       />
+      <BulkActionsBar
+        count={selectedRows.length}
+        onClear={selection.clear}
+        onDelete={() => setShowBulk(true)}
+        deleteLabel="Revoke"
+        isPending={bulkPending}
+      />
       <Table
         isFetched={allFetched}
         empty="No role grants match these filters."
         columns={["Entity", "Role", "Scope", ""]}
+        selection={{
+          selectedKeys: selection.selectedKeys,
+          onToggleKey: selection.toggleKey,
+          onToggleAllOnPage: selection.toggleAllOnPage,
+        }}
         rows={filtered.map((r) => ({
           key: r.rowKey,
+          selectable: !!r.grantId,
           cells: [
             <EntityCell
               key="ent"
@@ -703,7 +853,11 @@ function RolesTab({
               label={r.entityLabel}
               email={r.entityEmail}
             />,
-            <Badge key="role" variant="secondary" className="text-[0.625rem] font-mono">
+            <Badge
+              key="role"
+              variant="secondary"
+              className="text-[0.625rem] font-mono"
+            >
               {r.roleLabel}
             </Badge>,
             <ScopeCell
@@ -744,6 +898,24 @@ function RolesTab({
         onConfirm={() =>
           revokeTarget?.grantId && fireRevoke({ grantId: revokeTarget.grantId })
         }
+      />
+
+      <ConfirmDialog
+        open={showBulk}
+        onOpenChange={(open) => !open && !bulkPending && setShowBulk(false)}
+        title={`Revoke ${selectedRows.length} role${
+          selectedRows.length === 1 ? "" : "s"
+        }?`}
+        description={
+          <p>
+            Revoke <strong>{selectedRows.length}</strong> selected role grant
+            {selectedRows.length === 1 ? "" : "s"}? This cannot be undone.
+          </p>
+        }
+        confirmLabel="Revoke"
+        confirmLoadingLabel="Revoking…"
+        isPending={bulkPending}
+        onConfirm={bulkRevoke}
       />
     </>
   );
@@ -843,25 +1015,74 @@ function MembershipsTab({
     });
   }, [rows, entityType, search]);
 
-  const allFetched =
-    isFetched && memberQueries.every((q) => q.isFetched);
+  const allFetched = isFetched && memberQueries.every((q) => q.isFetched);
 
   const removeMutation = useRemoveGroupMember();
   const [removeTarget, setRemoveTarget] = useState<MembershipRow | null>(null);
   const fireRemove = useMutationToast(removeMutation, {
-    invalidateKeys: [["rbac", "groups"], ["rbac", "members"]],
+    invalidateKeys: [
+      ["rbac", "groups"],
+      ["rbac", "members"],
+    ],
     successMessage: "Membership removed",
     errorMessage: "Could not remove membership",
     onSuccess: () => setRemoveTarget(null),
   });
 
+  const selection = useRowSelection();
+  const toast = useToast();
+  const [showBulk, setShowBulk] = useState(false);
+  const [bulkPending, setBulkPending] = useState(false);
+  const selectedRows = useMemo(
+    () => filtered.filter((r) => selection.selectedKeys.has(r.rowKey)),
+    [filtered, selection.selectedKeys],
+  );
+
+  async function bulkRemove() {
+    setBulkPending(true);
+    let failed = 0;
+    for (const r of selectedRows) {
+      try {
+        await removeMutation.mutateAsync({
+          groupId: r.groupId,
+          memberId: r.entityId,
+        });
+      } catch {
+        failed++;
+      }
+    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["rbac", "groups"] }),
+      queryClient.invalidateQueries({ queryKey: ["rbac", "members"] }),
+    ]);
+    setBulkPending(false);
+    setShowBulk(false);
+    selection.clear();
+    const ok = selectedRows.length - failed;
+    if (failed === 0)
+      toast.success(`Removed ${ok} membership${ok === 1 ? "" : "s"}`);
+    else toast.error(`Removed ${ok}; ${failed} failed`);
+  }
+
   return (
     <>
       <ResultsHeader count={filtered.length} total={rows.length} />
+      <BulkActionsBar
+        count={selectedRows.length}
+        onClear={selection.clear}
+        onDelete={() => setShowBulk(true)}
+        deleteLabel="Remove"
+        isPending={bulkPending}
+      />
       <Table
         isFetched={allFetched}
         empty="No group memberships match these filters."
         columns={["Member", "Group", ""]}
+        selection={{
+          selectedKeys: selection.selectedKeys,
+          onToggleKey: selection.toggleKey,
+          onToggleAllOnPage: selection.toggleAllOnPage,
+        }}
         rows={filtered.map((r) => ({
           key: r.rowKey,
           cells: [
@@ -906,9 +1127,28 @@ function MembershipsTab({
           removeTarget &&
           fireRemove({
             groupId: removeTarget.groupId,
-            memberId: removeTarget.membershipId,
+            memberId: removeTarget.entityId,
           })
         }
+      />
+
+      <ConfirmDialog
+        open={showBulk}
+        onOpenChange={(open) => !open && !bulkPending && setShowBulk(false)}
+        title={`Remove ${selectedRows.length} membership${
+          selectedRows.length === 1 ? "" : "s"
+        }?`}
+        description={
+          <p>
+            Remove <strong>{selectedRows.length}</strong> selected group
+            membership{selectedRows.length === 1 ? "" : "s"}? This cannot be
+            undone.
+          </p>
+        }
+        confirmLabel="Remove"
+        confirmLoadingLabel="Removing…"
+        isPending={bulkPending}
+        onConfirm={bulkRemove}
       />
     </>
   );
@@ -952,7 +1192,10 @@ function BulkPermissionForm({ onDone }: { onDone: () => void }) {
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [groupAddInput, setGroupAddInput] = useState("");
   const [permissions, setPermissions] = useState<PermissionSelection[]>([]);
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   const mutation = useGrantPermissionsBulk();
   const fire = useMutationToast(mutation, {
@@ -1043,7 +1286,10 @@ function BulkRoleForm({ onDone }: { onDone: () => void }) {
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [groupAddInput, setGroupAddInput] = useState("");
   const [roleId, setRoleId] = useState("");
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   const mutation = useGrantRolesBulk();
   const fire = useMutationToast(mutation, {
@@ -1130,9 +1376,7 @@ function BulkMembershipForm({ onDone }: { onDone: () => void }) {
     if (!canSubmit) return;
     setPending(true);
     const results = await Promise.allSettled(
-      targets.map((t) =>
-        addMutation.mutateAsync({ groupId, memberId: t.id }),
-      ),
+      targets.map((t) => addMutation.mutateAsync({ groupId, memberId: t.id })),
     );
     const ok = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.length - ok;
@@ -1196,7 +1440,9 @@ function TargetsPicker({
         <MemberAccumulator targets={targets} setTargets={setTargets} />
       </div>
       <div>
-        <SectionLabel className="block mb-1.5">Also grant to group</SectionLabel>
+        <SectionLabel className="block mb-1.5">
+          Also grant to group
+        </SectionLabel>
         <div className="flex gap-1.5">
           <GroupPicker
             value={groupAddInput}
@@ -1274,9 +1520,7 @@ function MemberAccumulator({
               <EntityTypeBadge kind={t.type} />
               <button
                 type="button"
-                onClick={() =>
-                  setTargets(targets.filter((x) => x.id !== t.id))
-                }
+                onClick={() => setTargets(targets.filter((x) => x.id !== t.id))}
                 className="text-muted hover:text-destructive cursor-pointer border-0 bg-transparent p-0"
                 aria-label={`Remove ${t.displayName || t.email}`}
               >
@@ -1305,7 +1549,12 @@ function FormFooter({
 }) {
   return (
     <div className="flex gap-2 justify-end pt-2">
-      <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onCancel}
+        disabled={isPending}
+      >
         Cancel
       </Button>
       <Button type="submit" variant="action" disabled={!canSubmit}>
@@ -1346,8 +1595,8 @@ function ResultsHeader({
       </p>
       {truncated && typeof memberTotal === "number" && (
         <p className="text-[0.625rem] text-warning font-mono">
-          Capped at {MAX_MEMBERS} of {memberTotal} members — narrow the filter to
-          see more.
+          Capped at {MAX_MEMBERS} of {memberTotal} members — narrow the filter
+          to see more.
         </p>
       )}
     </div>
@@ -1366,7 +1615,9 @@ function EntityCell({
   return (
     <div className="flex items-center gap-2 min-w-0">
       <div className="flex flex-col min-w-0">
-        <span className="text-xs font-medium text-primary truncate">{label}</span>
+        <span className="text-xs font-medium text-primary truncate">
+          {label}
+        </span>
         {email && email !== label && (
           <span className="text-[0.625rem] text-muted font-mono truncate">
             {email}
@@ -1386,9 +1637,7 @@ function ScopeCell({
   resourceLabel: string;
 }) {
   if (!resourceLabel || scopeType === "Global") {
-    return (
-      <span className="text-[0.625rem] text-muted font-mono">Global</span>
-    );
+    return <span className="text-[0.625rem] text-muted font-mono">Global</span>;
   }
   return (
     <span className="text-[0.625rem] text-muted font-mono truncate">
@@ -1400,9 +1649,79 @@ function ScopeCell({
 interface TableRow {
   key: string;
   cells: React.ReactNode[];
+  selectable?: boolean;
 }
 
 const TABLE_PAGE_SIZE = 25;
+
+interface SelectionProps {
+  selectedKeys: Set<string>;
+  onToggleKey: (key: string) => void;
+  onToggleAllOnPage: (keys: string[]) => void;
+}
+
+function HeaderCheckbox({ state }: { state: "none" | "some" | "all" }) {
+  const ref = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (ref.current) ref.current.indeterminate = state === "some";
+  }, [state]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={state === "all"}
+      readOnly
+      tabIndex={-1}
+      className="cursor-pointer"
+      aria-label={
+        state === "all" ? "Deselect all on page" : "Select all on page"
+      }
+    />
+  );
+}
+
+function BulkActionsBar({
+  count,
+  onClear,
+  onDelete,
+  deleteLabel = "Delete",
+  isPending,
+}: {
+  count: number;
+  onClear: () => void;
+  onDelete: () => void;
+  deleteLabel?: string;
+  isPending?: boolean;
+}) {
+  if (count === 0) return null;
+  return (
+    <div className="flex items-center justify-between gap-3 mb-2 px-3 py-1.5 border border-card rounded-[5px] bg-surface-muted">
+      <span className="text-[0.625rem] font-mono text-muted">
+        {count} selected
+      </span>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-[0.625rem] font-mono text-muted hover:text-primary cursor-pointer border-0 bg-transparent"
+        >
+          Clear
+        </button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onDelete}
+          disabled={isPending}
+          className="h-7 px-2 text-xs gap-1 text-destructive border-card"
+        >
+          <Trash2 size={12} strokeWidth={1.75} />
+          {isPending ? `${deleteLabel}…` : `${deleteLabel} ${count}`}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function Table({
   columns,
@@ -1410,12 +1729,14 @@ function Table({
   isFetched,
   empty,
   pageSize = TABLE_PAGE_SIZE,
+  selection,
 }: {
   columns: string[];
   rows: TableRow[];
   isFetched: boolean;
   empty: string;
   pageSize?: number;
+  selection?: SelectionProps;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const total = rows.length;
@@ -1444,37 +1765,77 @@ function Table({
   }
   const pageStart = (currentPage - 1) * pageSize;
   const pageRows = rows.slice(pageStart, pageStart + pageSize);
+  const selectablePageKeys = selection
+    ? pageRows.filter((r) => r.selectable !== false).map((r) => r.key)
+    : [];
+  const selectedOnPage = selection
+    ? selectablePageKeys.filter((k) => selection.selectedKeys.has(k)).length
+    : 0;
+  const headerState: "none" | "some" | "all" =
+    !selection || selectablePageKeys.length === 0
+      ? "none"
+      : selectedOnPage === 0
+      ? "none"
+      : selectedOnPage === selectablePageKeys.length
+      ? "all"
+      : "some";
+
+  const gridTemplate =
+    (selection ? "auto " : "") +
+    columns
+      .map((_, i) => (i === columns.length - 1 ? "auto" : "1fr"))
+      .join(" ");
+
   return (
     <>
       <div className="border border-card rounded-[8px] overflow-hidden">
         <div
           className="grid items-center gap-3 px-3 py-2 bg-surface-muted border-b border-card text-[0.625rem] uppercase font-mono text-muted"
-          style={{
-            gridTemplateColumns: columns
-              .map((_, i) => (i === columns.length - 1 ? "auto" : "1fr"))
-              .join(" "),
-          }}
+          style={{ gridTemplateColumns: gridTemplate }}
         >
+          {selection && (
+            <button
+              type="button"
+              onClick={() => selection.onToggleAllOnPage(selectablePageKeys)}
+              disabled={selectablePageKeys.length === 0}
+              className="cursor-pointer border-0 bg-transparent p-0 leading-none disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Toggle page selection"
+            >
+              <HeaderCheckbox state={headerState} />
+            </button>
+          )}
           {columns.map((c, i) => (
             <span key={i}>{c}</span>
           ))}
         </div>
         <div className="divide-y divide-divider">
-          {pageRows.map((row) => (
-            <div
-              key={row.key}
-              className="grid items-center gap-3 px-3 py-2 bg-surface"
-              style={{
-                gridTemplateColumns: columns
-                  .map((_, i) => (i === columns.length - 1 ? "auto" : "1fr"))
-                  .join(" "),
-              }}
-            >
-              {row.cells.map((c, i) => (
-                <React.Fragment key={i}>{c}</React.Fragment>
-              ))}
-            </div>
-          ))}
+          {pageRows.map((row) => {
+            const canSelect = selection && row.selectable !== false;
+            const checked = selection?.selectedKeys.has(row.key) ?? false;
+            return (
+              <div
+                key={row.key}
+                className="grid items-center gap-3 px-3 py-2 bg-surface"
+                style={{ gridTemplateColumns: gridTemplate }}
+              >
+                {selection &&
+                  (canSelect ? (
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => selection.onToggleKey(row.key)}
+                      className="cursor-pointer"
+                      aria-label={checked ? "Deselect row" : "Select row"}
+                    />
+                  ) : (
+                    <span aria-hidden="true" />
+                  ))}
+                {row.cells.map((c, i) => (
+                  <React.Fragment key={i}>{c}</React.Fragment>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </div>
       {total > pageSize && (

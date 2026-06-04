@@ -55,7 +55,10 @@ export function EntityInspector({
 
   return (
     <div className="flex flex-col gap-4">
-      <InspectorHeader member={member} loading={!memberQuery.isFetched && !initialMember} />
+      <InspectorHeader
+        member={member}
+        loading={!memberQuery.isFetched && !initialMember}
+      />
       <PermissionsCard memberId={memberId} />
       <RolesCard memberId={memberId} />
       <GroupMembershipsCard memberId={memberId} />
@@ -82,9 +85,7 @@ function InspectorHeader({
   }
   if (!member) {
     return (
-      <div className="text-sm text-muted font-mono">
-        Member not found.
-      </div>
+      <div className="text-sm text-muted font-mono">Member not found.</div>
     );
   }
   return (
@@ -182,7 +183,10 @@ function PermissionsCard({ memberId }: { memberId: string }) {
         description={
           revokeTarget && (
             <p>
-              Remove <strong>{revokeTarget.namespace}/{revokeTarget.label}</strong>{" "}
+              Remove{" "}
+              <strong>
+                {revokeTarget.namespace}/{revokeTarget.label}
+              </strong>{" "}
               from this member?
             </p>
           )
@@ -190,7 +194,9 @@ function PermissionsCard({ memberId }: { memberId: string }) {
         confirmLabel="Revoke"
         confirmLoadingLabel="Revoking…"
         isPending={revokeMutation.isPending}
-        onConfirm={() => revokeTarget && fireRevoke({ grantId: revokeTarget.id })}
+        onConfirm={() =>
+          revokeTarget && fireRevoke({ grantId: revokeTarget.id })
+        }
       />
     </Card>
   );
@@ -210,7 +216,10 @@ function GrantPermissionDialog({
   onSubmit: (payload: any) => void;
 }) {
   const [permissions, setPermissions] = useState<PermissionSelection[]>([]);
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   React.useEffect(() => {
     if (!open) {
@@ -281,11 +290,7 @@ function GrantPermissionDialog({
 
 // ── Roles ─────────────────────────────────────────────────────────────────────
 
-function RolesCard({
-  memberId,
-}: {
-  memberId: string;
-}) {
+function RolesCard({ memberId }: { memberId: string }) {
   const { data, isFetched } = useUserRbacRoles(memberId);
   const { data: allRolesData } = useGetRoles("");
   const { data: capsData } = useCapabilities();
@@ -370,12 +375,18 @@ function RolesCard({
         onOpenChange={(open) => !open && setRevokeTarget(null)}
         title="Revoke role?"
         description={
-          revokeTarget && <p>Remove <strong>{revokeTarget.label}</strong> from this member?</p>
+          revokeTarget && (
+            <p>
+              Remove <strong>{revokeTarget.label}</strong> from this member?
+            </p>
+          )
         }
         confirmLabel="Revoke"
         confirmLoadingLabel="Revoking…"
         isPending={revokeMutation.isPending}
-        onConfirm={() => revokeTarget && fireRevoke({ grantId: revokeTarget.id })}
+        onConfirm={() =>
+          revokeTarget && fireRevoke({ grantId: revokeTarget.id })
+        }
       />
     </Card>
   );
@@ -395,7 +406,10 @@ function GrantRoleDialog({
   onSubmit: (payload: any) => void;
 }) {
   const [roleId, setRoleId] = useState("");
-  const [scope, setScope] = useState<ScopeValue>({ type: "Global", resource: "" });
+  const [scope, setScope] = useState<ScopeValue>({
+    type: "Global",
+    resource: "",
+  });
 
   React.useEffect(() => {
     if (!open) {
@@ -472,7 +486,10 @@ function GroupMembershipsCard({ memberId }: { memberId: string }) {
   const removeMutation = useRemoveGroupMember();
   const [showAdd, setShowAdd] = useState(false);
   const [addGroupId, setAddGroupId] = useState("");
-  const [removeTarget, setRemoveTarget] = useState<{ groupId: string; name: string } | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<{
+    groupId: string;
+    name: string;
+  } | null>(null);
 
   const fireAdd = useMutationToast(addMutation, {
     invalidateKeys: [
@@ -606,7 +623,8 @@ function GroupMembershipsCard({ memberId }: { memberId: string }) {
         confirmLoadingLabel="Removing…"
         isPending={removeMutation.isPending}
         onConfirm={() =>
-          removeTarget && fireRemove({ groupId: removeTarget.groupId, memberId })
+          removeTarget &&
+          fireRemove({ groupId: removeTarget.groupId, memberId })
         }
       />
     </Card>
