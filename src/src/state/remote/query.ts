@@ -4,7 +4,6 @@ import {
   getSelfServiceAccessToken,
 } from "@/AuthService";
 import { composeSegmentsUrl, isValidURL } from "@/Utils";
-import { useQuery } from "@tanstack/react-query";
 
 export class SsuRequestQuery {
   urlSegments: string[];
@@ -61,22 +60,4 @@ export async function msGraphRequest(rq: MsGraphRequestQuery) {
     rq.payload,
   );
   return httpResponse;
-}
-
-export function useSsuRequestLink(link: any, isCloudEngineerEnabled: boolean) {
-  const href = link?.href;
-
-  const query = useQuery({
-    queryKey: ["ssu-request", href],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: [href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    enabled: !!href,
-  });
-
-  return query;
 }
