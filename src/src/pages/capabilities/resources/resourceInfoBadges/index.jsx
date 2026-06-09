@@ -220,6 +220,7 @@ export function ResourceInfoBadges() {
     id,
     awsAccount,
     awsAccountInformation,
+    isLoadedAccountInformation,
     links,
     requestAwsAccount,
     setAwsAccountRequested,
@@ -340,7 +341,7 @@ export function ResourceInfoBadges() {
                 namespace={awsAccount.namespace}
                 id={id}
               />
-              {awsAccountInformation !== null && (
+              {isLoadedAccountInformation && awsAccountInformation && (
                 <VPCPeerings awsAccountInformation={awsAccountInformation} />
               )}
             </>
