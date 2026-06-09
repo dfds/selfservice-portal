@@ -23,7 +23,10 @@ import {
   useRequestAccessToCluster,
   useUpdateKafkaTopic,
 } from "@/state/remote/queries/kafka";
-import { useAwsAccount, useAwsAccountInformation } from "@/state/remote/queries/aws";
+import {
+  useAwsAccount,
+  useAwsAccountInformation,
+} from "@/state/remote/queries/aws";
 import { useMe } from "@/state/remote/queries/me";
 import {
   useCapabilityAzureResources,
