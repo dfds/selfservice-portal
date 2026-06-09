@@ -23,7 +23,10 @@ import {
   useRequestAccessToCluster,
   useUpdateKafkaTopic,
 } from "@/state/remote/queries/kafka";
-import { useSsuRequestLink } from "@/state/remote/query";
+import {
+  useAwsAccount,
+  useAwsAccountInformation,
+} from "@/state/remote/queries/aws";
 import { useMe } from "@/state/remote/queries/me";
 import {
   useCapabilityAzureResources,
@@ -78,9 +81,9 @@ function SelectedCapabilityProvider({ children }) {
   const { isFetched: isClustersListFetched, data: clustersList } =
     useKafkaClustersAccessList(details); // NEW
   const { data: awsAccountDetails, isFetched: isLoadedAccount } =
-    useSsuRequestLink(details?._links?.awsAccount); // NEW
+    useAwsAccount(details); // NEW
   const { data: awsAccountInformation, isFetched: isLoadedAccountInformation } =
-    useSsuRequestLink(details?._links?.awsAccountInformation); // NEW
+    useAwsAccountInformation(details); // NEW
   const {
     isFetched: isLoadedMembersApplications,
     data: membersApplicationsList,
