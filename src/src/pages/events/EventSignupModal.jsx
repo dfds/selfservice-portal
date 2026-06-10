@@ -26,11 +26,11 @@ export default function EventSignupModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
+      <DialogContent className="max-h-[80vh] overflow-y-auto flex flex-col">
         <DialogHeader>
           <DialogTitle>Event signups</DialogTitle>
         </DialogHeader>
-        <div className="my-4 space-y-2">
+        <div className="my-4 space-y-2 overflow-y-auto flex-1">
           {!isFetchedSignups ? (
             <Text>Loading...</Text>
           ) : (
