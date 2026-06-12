@@ -1,7 +1,12 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 import { jwtDecode } from "jwt-decode";
 
-const graphScopes = ["user.read"];
+const graphScopes = [
+  "user.read",
+  "application.read.all",
+  "offline_access",
+  "openid",
+];
 const selfServiceApiScopes = [
   "api://3007f683-c3c2-4bf9-b6bd-2af03fb94f6d/access_as_user",
 ];

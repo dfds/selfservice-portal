@@ -219,10 +219,15 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
       });
 
       let resps = await Promise.all(
-        membersResp.items.map(async (member) => ({
-          ...member,
-          pictureUrl: await fetchUserPhoto(member.email),
-        })),
+        membersResp.items.map(async (member) => {
+          const isServicePrincipal = member.type === "service-principal";
+          return {
+            ...member,
+            pictureUrl: isServicePrincipal
+              ? null
+              : await fetchUserPhoto(member.email),
+          };
+        }),
       );
 
       return resps;
@@ -230,6 +235,24 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
     enabled: link != null,
   });
 }
+
+export const useAddServicePrincipalCapabilityMember = createSsuMutation<{
+  capabilityId: string;
+  servicePrincipalId: string;
+  appDisplayName?: string | null;
+}>({
+  method: "POST",
+  urlSegments: (data) => [
+    "capabilities",
+    data.capabilityId,
+    "service-principal-members",
+  ],
+  payload: (data) => ({
+    servicePrincipalId: data.servicePrincipalId,
+    appDisplayName: data.appDisplayName ?? null,
+  }),
+  authMode: true,
+});
 
 export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
