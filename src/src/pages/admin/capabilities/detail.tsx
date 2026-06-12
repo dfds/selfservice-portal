@@ -158,15 +158,34 @@ function MembersSection({ capabilityId }: { capabilityId: string }) {
       {members.length === 0 ? (
         <p className="text-xs text-muted font-mono">No members.</p>
       ) : (
-        <div className="flex flex-col gap-0.5">
-          {members.map((m: any) => (
-            <span
-              key={m.id ?? m.userId}
-              className="text-sm text-secondary font-mono text-xs"
-            >
-              {m.email ?? m.userId ?? m.id}
-            </span>
-          ))}
+        <div className="flex flex-col gap-1">
+          {members.map((m: any) => {
+            const isServicePrincipal =
+              m.type === "service-principal" || !!m.servicePrincipalOid;
+            if (isServicePrincipal) {
+              const objectId = m.servicePrincipalOid ?? m.id ?? m.userId;
+              return (
+                <span key={m.id ?? m.userId} className="flex flex-col gap-0.5">
+                  <span className="text-sm text-secondary font-mono text-xs">
+                    {objectId}
+                  </span>
+                  {m.email && (
+                    <span className="text-muted font-mono text-[11px]">
+                      {m.email}
+                    </span>
+                  )}
+                </span>
+              );
+            }
+            return (
+              <span
+                key={m.id ?? m.userId}
+                className="text-sm text-secondary font-mono text-xs"
+              >
+                {m.email ?? m.userId ?? m.id}
+              </span>
+            );
+          })}
         </div>
       )}
     </div>
