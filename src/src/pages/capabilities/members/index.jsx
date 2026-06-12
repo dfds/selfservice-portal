@@ -125,7 +125,7 @@ function MemberRow({ member, roleTypes }) {
               {isServicePrincipal && (
                 <Badge
                   variant="soft-warning"
-                  className="font-mono text-[0.625rem] whitespace-nowrap flex-shrink-0"
+                  className="font-mono text-[0.625rem] whitespace-nowrap flex-shrink-0 ml-auto md:ml-0"
                 >
                   Service account
                 </Badge>
