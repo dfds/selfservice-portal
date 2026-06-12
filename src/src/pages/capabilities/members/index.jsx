@@ -104,136 +104,147 @@ function MemberRow({ member, roleTypes }) {
 
   return (
     <div className="border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0">
-      <div className="flex items-center gap-3 py-2">
-        {isServicePrincipal ? (
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eef0f1] dark:bg-[#1e2d3d] text-[#0e7cc1] dark:text-[#60a5fa]">
-            <KeyRound size={14} />
-          </div>
-        ) : (
-          <UserAvatar
-            name={member.name}
-            pictureUrl={member.pictureUrl}
-            size="md"
-          />
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-[2px]">
-            <span className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-none">
-              {member.name || member.id}
-            </span>
-            {isServicePrincipal && (
-              <Badge
-                variant="soft-warning"
-                className="font-mono text-[0.625rem]"
-              >
-                Service account
-              </Badge>
+      <div className="flex flex-col gap-2 py-2 md:flex-row md:items-center md:gap-3">
+        <div className="flex items-center gap-3 min-w-0 md:flex-1">
+          {isServicePrincipal ? (
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eef0f1] dark:bg-[#1e2d3d] text-[#0e7cc1] dark:text-[#60a5fa]">
+              <KeyRound size={14} />
+            </div>
+          ) : (
+            <UserAvatar
+              name={member.name}
+              pictureUrl={member.pictureUrl}
+              size="md"
+            />
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start gap-2 mb-[2px]">
+              <span className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-tight min-w-0">
+                {member.name || member.id}
+              </span>
+              {isServicePrincipal && (
+                <Badge
+                  variant="soft-warning"
+                  className="font-mono text-[0.625rem] whitespace-nowrap flex-shrink-0"
+                >
+                  Service account
+                </Badge>
+              )}
+            </div>
+            {isServicePrincipal ? (
+              <div className="flex flex-col gap-[2px]">
+                <button
+                  type="button"
+                  onClick={handleCopyOid}
+                  title="Copy service principal object id"
+                  className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] flex items-center gap-1"
+                >
+                  <span className="min-w-0 break-all text-left md:truncate">
+                    {member.servicePrincipalOid || member.id}
+                  </span>
+                  {copied ? <Check size={11} /> : <Copy size={11} />}
+                </button>
+                {member.email && (
+                  <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 break-all md:truncate">
+                    {member.email}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500">
+                {member.email}
+              </div>
             )}
           </div>
-          {isServicePrincipal ? (
-            <button
-              type="button"
-              onClick={handleCopyOid}
-              title="Copy service principal object id"
-              className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] flex items-center gap-1"
-            >
-              <span className="truncate">
-                {member.servicePrincipalOid || member.id}
-              </span>
-              {copied ? <Check size={11} /> : <Copy size={11} />}
-            </button>
-          ) : (
-            <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500">
-              {member.email}
-            </div>
-          )}
         </div>
-        {userIsOwner && (isServicePrincipal || member.email !== user.id) && (
-          <button
-            onClick={() => removeConfirm.setTarget(member)}
-            className="font-mono text-[0.6875rem] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
-          >
-            remove
-          </button>
-        )}
-        <div className="flex-shrink-0">
-          <Select
-            menuPortalTarget={document.body}
-            menuPosition="fixed"
-            value={selectedRole}
-            isDisabled={!userIsOwner || member.email === user.id || isPending}
-            isLoading={isPending}
-            onChange={(e) => {
-              grantRole(member.id, e.value, e);
-            }}
-            options={roleTypes.map((role) => ({
-              value: role.id,
-              label: role.name,
-            }))}
-            styles={{
-              control: (base) => ({
-                ...base,
-                minHeight: "30px",
-                height: "30px",
-                fontSize: "0.6875rem",
-                fontFamily: "monospace",
-                border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
-                boxShadow: "none",
-                minWidth: "160px",
-                backgroundColor: isDark ? "#0f172a" : "#ffffff",
-              }),
-              valueContainer: (base) => ({ ...base, padding: "0 8px" }),
-              indicatorsContainer: (base) => ({ ...base, height: "30px" }),
-              menu: (base) => ({
-                ...base,
-                fontSize: "0.6875rem",
-                fontFamily: "monospace",
-                backgroundColor: isDark ? "#1e293b" : "#ffffff",
-                border: isDark ? "1px solid #334155" : undefined,
-              }),
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              singleValue: (base) => ({
-                ...base,
-                color: isDark ? "#e2e8f0" : "#002b45",
-              }),
-              placeholder: (base) => ({
-                ...base,
-                color: isDark ? "#64748b" : "#afafaf",
-              }),
-              input: (base) => ({
-                ...base,
-                fontSize: "1rem",
-                color: isDark ? "#e2e8f0" : "#002b45",
-              }),
-              option: (base, state) => ({
-                ...base,
-                backgroundColor: state.isSelected
-                  ? isDark
-                    ? "#1d4ed8"
-                    : "#0e7cc1"
-                  : state.isFocused
-                  ? isDark
-                    ? "#0f172a"
-                    : "#f2f2f2"
-                  : isDark
-                  ? "#1e293b"
-                  : "#ffffff",
-                color: state.isSelected
-                  ? "#ffffff"
-                  : isDark
-                  ? "#e2e8f0"
-                  : "#002b45",
-              }),
-              indicatorSeparator: (base) => ({
-                ...base,
-                backgroundColor: isDark ? "#334155" : "#d9dcde",
-              }),
-              dropdownIndicator: (base) => ({
-                ...base,
-                color: isDark ? "#64748b" : "#afafaf",
-              }),
-            }}
-          />
+        <div className="flex items-center gap-3 md:flex-shrink-0 md:ml-auto">
+          {userIsOwner && (isServicePrincipal || member.email !== user.id) && (
+            <button
+              onClick={() => removeConfirm.setTarget(member)}
+              className="font-mono text-[0.6875rem] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
+            >
+              remove
+            </button>
+          )}
+          <div className="flex-shrink-0">
+            <Select
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              value={selectedRole}
+              isDisabled={!userIsOwner || member.email === user.id || isPending}
+              isLoading={isPending}
+              onChange={(e) => {
+                grantRole(member.id, e.value, e);
+              }}
+              options={roleTypes.map((role) => ({
+                value: role.id,
+                label: role.name,
+              }))}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: "30px",
+                  height: "30px",
+                  fontSize: "0.6875rem",
+                  fontFamily: "monospace",
+                  border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
+                  boxShadow: "none",
+                  minWidth: "160px",
+                  backgroundColor: isDark ? "#0f172a" : "#ffffff",
+                }),
+                valueContainer: (base) => ({ ...base, padding: "0 8px" }),
+                indicatorsContainer: (base) => ({ ...base, height: "30px" }),
+                menu: (base) => ({
+                  ...base,
+                  fontSize: "0.6875rem",
+                  fontFamily: "monospace",
+                  backgroundColor: isDark ? "#1e293b" : "#ffffff",
+                  border: isDark ? "1px solid #334155" : undefined,
+                }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: isDark ? "#e2e8f0" : "#002b45",
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: isDark ? "#64748b" : "#afafaf",
+                }),
+                input: (base) => ({
+                  ...base,
+                  fontSize: "1rem",
+                  color: isDark ? "#e2e8f0" : "#002b45",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected
+                    ? isDark
+                      ? "#1d4ed8"
+                      : "#0e7cc1"
+                    : state.isFocused
+                    ? isDark
+                      ? "#0f172a"
+                      : "#f2f2f2"
+                    : isDark
+                    ? "#1e293b"
+                    : "#ffffff",
+                  color: state.isSelected
+                    ? "#ffffff"
+                    : isDark
+                    ? "#e2e8f0"
+                    : "#002b45",
+                }),
+                indicatorSeparator: (base) => ({
+                  ...base,
+                  backgroundColor: isDark ? "#334155" : "#d9dcde",
+                }),
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: isDark ? "#64748b" : "#afafaf",
+                }),
+              }}
+            />
+          </div>
         </div>
       </div>
       {showSuccess && (
