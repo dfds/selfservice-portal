@@ -9,12 +9,26 @@ import Select from "react-select";
 import { useGrantRole } from "@/state/remote/queries/rbac";
 import { useTheme } from "@/context/ThemeContext";
 import { UserAvatar } from "@/components/ui/UserAvatar";
+import { Badge } from "@/components/ui/badge";
 import { Banner } from "@/components/ui/banner";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRemoveCapabilityMember } from "@/state/remote/queries/capabilities";
+import {
+  useRemoveCapabilityMember,
+  useAddServicePrincipalCapabilityMember,
+} from "@/state/remote/queries/capabilities";
+import { ServicePrincipalSearchCombobox } from "@/components/ServicePrincipalSearchCombobox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useMutationToast } from "@/hooks/useMutationToast";
 import { useConfirmAction } from "@/hooks/useConfirmAction";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useRybbit } from "@/RybbitContext";
+import { KeyRound, Copy, Check } from "lucide-react";
 
 function MemberRow({ member, roleTypes }) {
   const { id: capabilityId, userIsOwner } = useContext(
@@ -49,13 +63,13 @@ function MemberRow({ member, roleTypes }) {
     setSelectedRole(member.role);
   }, [member.role]);
 
-  const grantRole = (memberEmail, roleId, newRole) => {
+  const grantRole = (memberId, roleId, newRole) => {
     grantRoleMutation(
       {
         payload: {
           roleId: roleId,
           assignedEntityType: "User",
-          assignedEntityId: memberEmail,
+          assignedEntityId: memberId,
           type: "Capability",
           resource: capabilityId,
         },
@@ -76,23 +90,65 @@ function MemberRow({ member, roleTypes }) {
     );
   };
 
+  const isServicePrincipal = member.type === "service-principal";
+  const [copied, setCopied] = useState(false);
+  const handleCopyOid = () => {
+    if (!member.servicePrincipalOid && !member.id) return;
+    navigator.clipboard
+      ?.writeText(member.servicePrincipalOid || member.id)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      });
+  };
+
   return (
     <div className="border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0">
       <div className="flex items-center gap-3 py-2">
-        <UserAvatar
-          name={member.name}
-          pictureUrl={member.pictureUrl}
-          size="md"
-        />
+        {isServicePrincipal ? (
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eef0f1] dark:bg-[#1e2d3d] text-[#0e7cc1] dark:text-[#60a5fa]">
+            <KeyRound size={14} />
+          </div>
+        ) : (
+          <UserAvatar
+            name={member.name}
+            pictureUrl={member.pictureUrl}
+            size="md"
+          />
+        )}
         <div className="flex-1 min-w-0">
-          <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-none mb-[2px]">
-            {member.name}
+          <div className="flex items-center gap-2 mb-[2px]">
+            <span className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-none">
+              {member.name || member.id}
+            </span>
+            {isServicePrincipal && (
+              <Badge
+                variant="soft-warning"
+                className="font-mono text-[0.625rem]"
+              >
+                Service account
+              </Badge>
+            )}
           </div>
-          <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500">
-            {member.email}
-          </div>
+          {isServicePrincipal ? (
+            <button
+              type="button"
+              onClick={handleCopyOid}
+              title="Copy service principal object id"
+              className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] flex items-center gap-1"
+            >
+              <span className="truncate">
+                {member.servicePrincipalOid || member.id}
+              </span>
+              {copied ? <Check size={11} /> : <Copy size={11} />}
+            </button>
+          ) : (
+            <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500">
+              {member.email}
+            </div>
+          )}
         </div>
-        {userIsOwner && member.email !== user.id && (
+        {userIsOwner && (isServicePrincipal || member.email !== user.id) && (
           <button
             onClick={() => removeConfirm.setTarget(member)}
             className="font-mono text-[0.6875rem] text-[#aaaaaa] dark:text-[#64748b] hover:text-[#555555] dark:hover:text-[#94a3b8] hover:underline flex-shrink-0"
@@ -108,7 +164,7 @@ function MemberRow({ member, roleTypes }) {
             isDisabled={!userIsOwner || member.email === user.id || isPending}
             isLoading={isPending}
             onChange={(e) => {
-              grantRole(member.email, e.value, e);
+              grantRole(member.id, e.value, e);
             }}
             options={roleTypes.map((role) => ({
               value: role.id,
@@ -202,14 +258,125 @@ function MemberRow({ member, roleTypes }) {
   );
 }
 
+function AddServicePrincipalDialog({ open, onClose, capabilityId }) {
+  const [selected, setSelected] = useState(null);
+  const addMutation = useAddServicePrincipalCapabilityMember();
+  const fireAdd = useMutationToast(addMutation, {
+    invalidateKeys: [
+      ["capabilities", "members", "detailed", capabilityId],
+      ["capabilities", "details", capabilityId],
+    ],
+    successMessage: (_data, vars) =>
+      `Added service account ${
+        vars?.appDisplayName || vars?.servicePrincipalId
+      }`,
+    errorMessage: "Could not add service account",
+    onSuccess: () => {
+      setSelected(null);
+      onClose();
+    },
+  });
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) {
+          setSelected(null);
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Add service account</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 mt-2">
+          <p className="text-sm text-secondary">
+            Search Azure AD for the service principal you want to grant access
+            to this capability. The oid shown next to each result is the only
+            durable identifier — make sure you pick the right one.
+          </p>
+          <ServicePrincipalSearchCombobox
+            onSelect={(sp) => setSelected(sp)}
+            submitLabel="Pick"
+          />
+          {selected && (
+            <div className="rounded-[8px] border border-card bg-surface-muted px-3 py-2">
+              <div className="text-sm font-medium text-primary">
+                {selected.displayName}
+              </div>
+              <div className="font-mono text-xs text-muted">
+                oid: {selected.id}
+              </div>
+              {selected.appId && selected.appId !== selected.id && (
+                <div className="font-mono text-[0.6875rem] text-muted">
+                  appId: {selected.appId}
+                </div>
+              )}
+            </div>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="action"
+              disabled={!selected || addMutation.isPending}
+              onClick={() =>
+                fireAdd({
+                  capabilityId,
+                  servicePrincipalId: selected.id,
+                  appDisplayName: selected.displayName,
+                })
+              }
+            >
+              {addMutation.isPending ? "Adding…" : "Add"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function Members({ roleTypes }) {
-  const { members } = useContext(SelectedCapabilityContext);
+  const {
+    members,
+    id: capabilityId,
+    links,
+  } = useContext(SelectedCapabilityContext);
+  const canAddServicePrincipal = (
+    links?.servicePrincipalMembers?.allow || []
+  ).includes("POST");
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   return (
     <div>
+      {canAddServicePrincipal && (
+        <div className="mb-3 flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddDialog(true)}
+          >
+            <KeyRound size={14} className="mr-1.5" />
+            Add service account
+          </Button>
+        </div>
+      )}
       {(members || []).map((member) => (
-        <MemberRow key={member.email} member={member} roleTypes={roleTypes} />
+        <MemberRow
+          key={member.id || member.email}
+          member={member}
+          roleTypes={roleTypes}
+        />
       ))}
+      <AddServicePrincipalDialog
+        open={showAddDialog}
+        onClose={() => setShowAddDialog(false)}
+        capabilityId={capabilityId}
+      />
     </div>
   );
 }
