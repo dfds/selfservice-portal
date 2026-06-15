@@ -4,6 +4,7 @@ import { useNewsItem } from "@/state/remote/queries/news";
 import { useNavigate, useParams } from "react-router-dom";
 import { intlFormatDistance } from "date-fns";
 import { ArrowLeft, Newspaper } from "lucide-react";
+import LinkifiedText from "@/components/Text/LinkifiedText";
 
 export function NewsView() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ export function NewsView() {
             )}
           </div>
           <p className="text-[0.875rem] text-secondary leading-relaxed whitespace-pre-wrap">
-            {data.body}
+            <LinkifiedText text={data.body} linkClassName="text-action underline" />
           </p>
         </article>
       )}

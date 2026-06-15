@@ -12,6 +12,7 @@ import { useRelevantNews } from "@/state/remote/queries/news";
 import { TrackedLink } from "@/components/Tracking";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Separator } from "@/components/ui/separator";
+import LinkifiedText from "@/components/Text/LinkifiedText";
 import { Layers, List } from "lucide-react";
 
 function HeroRow({ name }) {
@@ -96,7 +97,7 @@ export default function FrontPage() {
           style={{ animationDelay: `${40 + i * 40}ms` }}
         >
           <span className="font-bold tracking-[0.05em]">{item.title} — </span>
-          {item.body ?? ""}
+          <LinkifiedText text={item.body ?? ""} linkClassName="underline" />
         </div>
       ))}
 
