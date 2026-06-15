@@ -24,6 +24,7 @@ import { Trash2, Plus, Newspaper, Star, Pencil } from "lucide-react";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 import { TrackedButton } from "@/components/Tracking";
 import { useRybbit } from "@/RybbitContext";
+import LinkifiedText from "@/components/Text/LinkifiedText";
 
 // ── Create modal ──────────────────────────────────────────────────────────────
 
@@ -273,32 +274,50 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
 
   const navigate = useNavigate();
   const timeAgo = intlFormatDistance(new Date(item.createdAt), new Date());
+  const handleRowClick = (event) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.shiftKey
+    ) {
+      return;
+    }
+    if (event.target.closest("a, button, [role='button']")) return;
+    trackEvent("news:detail:opened", { news_id: item.id });
+    navigate(`/news/v/${item.id}`);
+  };
 
   return (
-    <a
-      href={`/news/v/${item.id}`}
-      onClick={(event) => {
-        if (
-          event.defaultPrevented ||
-          event.button !== 0 ||
-          event.metaKey ||
-          event.ctrlKey ||
-          event.altKey ||
-          event.shiftKey
-        ) {
-          return;
-        }
-        event.preventDefault();
-        trackEvent("news:detail:opened", { news_id: item.id });
-        navigate(`/news/v/${item.id}`);
-      }}
-      className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group no-underline text-inherit hover:bg-surface-muted transition-colors cursor-pointer"
+    <div
+      onClick={handleRowClick}
+      className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group hover:bg-surface-muted transition-colors cursor-pointer"
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[0.875rem] font-semibold text-primary leading-snug">
+          <a
+            href={`/news/v/${item.id}`}
+            onClick={(event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.altKey ||
+                event.shiftKey
+              ) {
+                return;
+              }
+              event.preventDefault();
+              trackEvent("news:detail:opened", { news_id: item.id });
+              navigate(`/news/v/${item.id}`);
+            }}
+            className="no-underline text-[0.875rem] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
+          >
             {item.title}
-          </span>
+          </a>
           {item.isHighlighted && (
             <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[0.625rem] tracking-[0.04em]">
               highlighted
@@ -306,7 +325,11 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
           )}
         </div>
         <p className="text-[0.8125rem] text-secondary leading-relaxed line-clamp-2">
-          {item.body}
+          <LinkifiedText
+            text={item.body}
+            linkClassName="text-action underline"
+            onLinkClick={(e) => e.stopPropagation()}
+          />
         </p>
         <div className="mt-1.5 font-mono text-[0.6875rem] text-muted">
           {timeAgo}
@@ -332,11 +355,10 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
               toggleHighlight({ id: item.id });
             }}
             disabled={highlightNews.isPending}
-            className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${
-              item.isHighlighted
+            className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${item.isHighlighted
                 ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                 : "text-muted hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20"
-            }`}
+              }`}
           >
             <Star
               size={14}
@@ -368,7 +390,7 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
           </button>
         </div>
       )}
-    </a>
+    </div>
   );
 }
 
@@ -456,7 +478,7 @@ export default function NewsPage() {
               key={item.id}
               item={item}
               isCloudEngineerEnabled={isCloudEngineerEnabled}
-              onDeleted={() => {}}
+              onDeleted={() => { }}
               onEdit={setEditTarget}
             />
           ))}

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { getAttachmentIcon, getAttachmentLabel } from "./eventRecord";
 import { formatEventDateTime } from "./eventDateTime";
+import LinkifiedText from "@/components/Text/LinkifiedText";
 
 export function EventView() {
   const { id } = useParams();
@@ -58,7 +59,10 @@ export function EventView() {
 
           {event.description && event.title && (
             <p className="text-[0.875rem] text-secondary leading-relaxed whitespace-pre-wrap mb-6">
-              {event.description}
+              <LinkifiedText
+                text={event.description}
+                linkClassName="text-action underline"
+              />
             </p>
           )}
 

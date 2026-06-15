@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { formatEventDateTime } from "./eventDateTime";
 import { useRybbit } from "@/RybbitContext";
+import LinkifiedText from "@/components/Text/LinkifiedText";
 
 export function getAttachmentIcon(type) {
   switch (type) {
@@ -98,7 +99,11 @@ export default function EventRecord({
         </div>
         {description && title && (
           <p className="text-[0.8125rem] text-secondary leading-relaxed line-clamp-2 mb-1.5 whitespace-pre-line">
-            {description}
+            <LinkifiedText
+              text={description}
+              linkClassName="text-action underline"
+              onLinkClick={(e) => e.stopPropagation()}
+            />
           </p>
         )}
         <div className="font-mono text-[0.6875rem] text-muted">
