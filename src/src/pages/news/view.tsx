@@ -55,7 +55,10 @@ export function NewsView() {
             )}
           </div>
           <p className="text-[0.875rem] text-secondary leading-relaxed whitespace-pre-wrap">
-            <LinkifiedText text={data.body} linkClassName="text-action underline" />
+            <LinkifiedText
+              text={data.body}
+              linkClassName="text-action underline"
+            />
           </p>
         </article>
       )}

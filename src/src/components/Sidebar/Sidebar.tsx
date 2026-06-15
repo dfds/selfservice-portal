@@ -757,12 +757,14 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     [user?.roles],
   );
 
-  // Auto-enable CE mode when user is a cloud engineer
+  // Reconcile CE mode with the user's actual role once /me has loaded. This
+  // both enables it for cloud engineers and clears any stale persisted value
+  // for users who aren't (e.g. lost the role since last visit).
   useEffect(() => {
-    if (user?.isAuthenticated && isCloudEngineer) {
-      setIsCloudEngineerEnabled(true);
+    if (user?.isAuthenticated) {
+      setIsCloudEngineerEnabled(isCloudEngineer);
     }
-  }, [isCloudEngineer]);
+  }, [isCloudEngineer, user?.isAuthenticated]);
 
   function isActive(url: string): boolean {
     if (url === "/") return location.pathname === "/";

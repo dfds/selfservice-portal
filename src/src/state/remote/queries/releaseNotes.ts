@@ -11,16 +11,21 @@ export interface useReleaseNotesProps {
 }
 
 // Manual — conditional URL segment building
-export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps) {
+export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps = {}) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
+  // Drafts are a manage-page-only concern. Keep them in their own cache entry
+  // so the published-only consumers (release notes list, what's-new) never pull
+  // drafts into their payload — and so neither side clobbers the other's cache.
+  const wantsDrafts = includeDrafts === true;
+
   const segments = ["release-notes"];
-  if (includeDrafts != null && includeDrafts === true) {
+  if (wantsDrafts) {
     segments.push("?includeDrafts");
   }
 
   return useQuery({
-    queryKey: ["releasenotes", "list"],
+    queryKey: ["releasenotes", "list", wantsDrafts ? "drafts" : "published"],
     queryFn: async () =>
       ssuRequest({
         method: "GET",

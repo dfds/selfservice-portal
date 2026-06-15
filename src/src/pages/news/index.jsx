@@ -355,10 +355,11 @@ function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
               toggleHighlight({ id: item.id });
             }}
             disabled={highlightNews.isPending}
-            className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${item.isHighlighted
+            className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${
+              item.isHighlighted
                 ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                 : "text-muted hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20"
-              }`}
+            }`}
           >
             <Star
               size={14}
@@ -478,7 +479,7 @@ export default function NewsPage() {
               key={item.id}
               item={item}
               isCloudEngineerEnabled={isCloudEngineerEnabled}
-              onDeleted={() => { }}
+              onDeleted={() => {}}
               onEdit={setEditTarget}
             />
           ))}
