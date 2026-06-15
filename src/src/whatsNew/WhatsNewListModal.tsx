@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import {
   Accordion,
@@ -57,6 +56,7 @@ export function WhatsNewListModal() {
     dismiss,
     dismissAll,
     isCompleted,
+    highlightedReleaseNoteIds,
   } = useWhatsNew();
 
   const groups = useMemo(() => groupByRelease(tours), [tours]);
@@ -106,41 +106,49 @@ export function WhatsNewListModal() {
               Recent release notes
             </SectionLabel>
             <ul className="divide-y divide-divider">
-              {recentNotes.map((note) => (
-                <li key={note.id}>
-                  <a
-                    href={`/release-notes/v/${note.id}`}
-                    onClick={(e) => {
-                      if (
-                        e.defaultPrevented ||
-                        e.button !== 0 ||
-                        e.metaKey ||
-                        e.ctrlKey ||
-                        e.altKey ||
-                        e.shiftKey
-                      )
-                        return;
-                      e.preventDefault();
-                      trackEvent("whatsnew:release-note:opened", {
-                        note_id: note.id,
-                      });
-                      closeList();
-                      navigate(`/release-notes/v/${note.id}`);
-                    }}
-                    className="flex items-baseline gap-3 py-1.5 -mx-2 px-2 rounded-[4px] no-underline hover:bg-surface-muted transition-colors"
-                  >
-                    <time
-                      dateTime={note.releaseDate}
-                      className="font-mono text-[11px] text-muted tabular-nums shrink-0 w-[88px]"
+              {recentNotes.map((note) => {
+                const isNew = highlightedReleaseNoteIds.includes(note.id);
+                return (
+                  <li key={note.id}>
+                    <a
+                      href={`/release-notes/v/${note.id}`}
+                      onClick={(e) => {
+                        if (
+                          e.defaultPrevented ||
+                          e.button !== 0 ||
+                          e.metaKey ||
+                          e.ctrlKey ||
+                          e.altKey ||
+                          e.shiftKey
+                        )
+                          return;
+                        e.preventDefault();
+                        trackEvent("whatsnew:release-note:opened", {
+                          note_id: note.id,
+                        });
+                        closeList();
+                        navigate(`/release-notes/v/${note.id}`);
+                      }}
+                      className="flex items-baseline gap-3 py-1.5 -mx-2 px-2 rounded-[4px] no-underline hover:bg-surface-muted transition-colors"
                     >
-                      {formatCompactDate(note.releaseDate)}
-                    </time>
-                    <span className="font-mono text-sm text-primary flex-1 truncate">
-                      {note.title}
-                    </span>
-                  </a>
-                </li>
-              ))}
+                      <time
+                        dateTime={note.releaseDate}
+                        className="font-mono text-[11px] text-muted tabular-nums shrink-0 w-[88px]"
+                      >
+                        {formatCompactDate(note.releaseDate)}
+                      </time>
+                      <span className="font-mono text-sm text-primary flex-1 truncate">
+                        {note.title}
+                      </span>
+                      {isNew && (
+                        <span className="shrink-0 rounded-[4px] px-1.5 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-[0.06em] text-action bg-[var(--color-action)]/10">
+                          New
+                        </span>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

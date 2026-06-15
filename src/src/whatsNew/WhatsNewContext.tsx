@@ -30,6 +30,7 @@ interface WhatsNewContextValue {
   unseenCount: number;
   hasUnseenLatest: boolean;
   hasUnseenReleaseNotes: boolean;
+  highlightedReleaseNoteIds: string[];
   isListOpen: boolean;
   openList: () => void;
   closeList: () => void;
@@ -92,6 +93,12 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
 
   const [state, setState] = useState<TourState>(() => readLocalState());
   const [isListOpen, setIsListOpen] = useState(false);
+  // Snapshot of the notes that were unseen at the moment the modal opened.
+  // openList marks them seen immediately, so the modal can't derive "new" from
+  // state at render time — it reads this transient snapshot instead.
+  const [highlightedReleaseNoteIds, setHighlightedReleaseNoteIds] = useState<
+    string[]
+  >([]);
 
   // Hydrate from server when /me resolves; server is authoritative.
   useEffect(() => {
@@ -173,6 +180,8 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
 
   const openList = useCallback(() => {
     setIsListOpen(true);
+    // Capture before the seen-merge below clears the unseen set.
+    setHighlightedReleaseNoteIds(unseenReleaseNoteIds);
     rybbit.trackEvent?.("whatsnew:list:open", {});
     const hasNewTours = unseenTours.length > 0;
     const hasNewNotes = unseenReleaseNoteIds.length > 0;
@@ -189,7 +198,10 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     persist(next);
   }, [persist, rybbit, state, unseenTours, unseenReleaseNoteIds]);
 
-  const closeList = useCallback(() => setIsListOpen(false), []);
+  const closeList = useCallback(() => {
+    setIsListOpen(false);
+    setHighlightedReleaseNoteIds([]);
+  }, []);
 
   const markCompleted = useCallback(
     (id: string) => {
@@ -249,6 +261,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     unseenCount: unseenTours.length,
     hasUnseenLatest,
     hasUnseenReleaseNotes,
+    highlightedReleaseNoteIds,
     isListOpen,
     openList,
     closeList,
