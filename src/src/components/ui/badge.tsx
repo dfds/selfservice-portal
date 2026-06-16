@@ -19,6 +19,8 @@ const badgeVariants = cva(
           "bg-[rgba(237,136,0,0.1)] text-[#ed8800] font-mono tracking-[0.06em]",
         pending:
           "border-transparent bg-[rgba(237,136,0,0.1)] text-[#ed8800] font-mono tracking-[0.06em] animate-badge-pulse",
+        unregistered:
+          "bg-surface-muted text-muted border border-[var(--color-border)] font-mono tracking-[0.06em]",
       },
     },
     defaultVariants: {

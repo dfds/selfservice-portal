@@ -1,8 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import {
   createSsuQuery,
   createSsuParamQuery,
   createSsuMutation,
 } from "../queryFactory";
+import { msGraphRequest } from "../query";
 
 // ── Member types ─────────────────────────────────────────────────────────────
 
@@ -14,6 +16,9 @@ export interface MemberSummary {
   displayName?: string | null;
   type: "User" | "ServicePrincipal";
   lastSeen?: string | null;
+  // false when the row was synthesized from an Azure AD tenant search and the user is not yet a
+  // selfservice member (shown with an "Unregistered" chip). Absent/true for real local members.
+  registered?: boolean;
   _links?: {
     self?: { href: string; allow: string[] };
     permissionGrants?: { href: string; allow: string[] };
@@ -282,6 +287,100 @@ export const useMemberGroups = createSsuParamQuery<string>({
   urlSegments: (id) => ["rbac", "members", id, "groups"],
   authMode: true,
   enabled: (id) => !!id,
+});
+
+// Capabilities the member is an active member of. Used alongside their capability role grants to
+// flag the "has a role but is not a member" drift (and offer to reconcile it).
+export interface CapabilityMembership {
+  capabilityId: string;
+  createdAt: string;
+}
+
+export const useUserMemberships = createSsuParamQuery<
+  string,
+  CapabilityMembership[]
+>({
+  queryKey: (id) => ["rbac", "user-memberships", id],
+  urlSegments: (id) => ["rbac", "members", id, "memberships"],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+// Add/remove a member to/from a capability from the RBAC admin page. The API emits the proper
+// UserHasJoinedCapability / UserHasLeftCapability events (unlike a raw DB restore).
+export const useGrantCapabilityMembership = createSsuMutation<{
+  memberId: string;
+  capabilityId: string;
+}>({
+  method: "POST",
+  urlSegments: (data) => ["rbac", "members", data.memberId, "memberships"],
+  payload: (data) => ({ capabilityId: data.capabilityId }),
+  authMode: true,
+});
+
+export const useRemoveCapabilityMembership = createSsuMutation<{
+  memberId: string;
+  capabilityId: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "rbac",
+    "members",
+    data.memberId,
+    "memberships",
+    data.capabilityId,
+  ],
+  payload: () => null,
+  authMode: true,
+});
+
+// ── Azure AD tenant user search & provisioning ───────────────────────────────
+
+export type GraphUser = {
+  id: string;
+  displayName: string;
+  mail: string | null;
+  userPrincipalName: string;
+};
+
+// Searches the Azure AD tenant for users by name/email via Microsoft Graph (delegated token).
+// Requires the `user.read.all` scope on the acquired Graph token (see auth/context.ts). Used to
+// surface people who are not yet selfservice members so an admin can pull them in.
+export function useTenantUserSearch(term: string) {
+  return useQuery<GraphUser[]>({
+    queryKey: ["graph-user-search", term],
+    queryFn: async () => {
+      if (term.length < 2) return [];
+      const safe = term.replace(/'/g, "''");
+      const filter = `startswith(mail,'${safe}') or startswith(displayName,'${safe}')`;
+      const url = `https://graph.microsoft.com/v1.0/users?$filter=${encodeURIComponent(
+        filter,
+      )}&$select=id,displayName,mail,userPrincipalName&$top=8`;
+      const resp = await msGraphRequest({ method: "GET", url, payload: null });
+      if (!resp.ok) return [];
+      const data = await resp.json();
+      return (data.value ?? []) as GraphUser[];
+    },
+    enabled: term.length >= 2,
+    staleTime: 30000,
+  });
+}
+
+// Provisions a local Member row for an Azure AD tenant user (id = email/UPN) so they become a
+// normal selfservice member. Idempotent on the backend (RegisterUserProfile upsert).
+export const useProvisionMember = createSsuMutation<{
+  id: string;
+  displayName?: string;
+  email?: string;
+}>({
+  method: "POST",
+  urlSegments: () => ["rbac", "members"],
+  payload: (data) => ({
+    id: data.id,
+    displayName: data.displayName,
+    email: data.email,
+  }),
+  authMode: true,
 });
 
 // Generic permission grant — caller supplies the full RbacPermissionGrant shape

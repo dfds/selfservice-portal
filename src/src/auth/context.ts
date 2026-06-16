@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 
 const graphScopes = [
   "user.read",
+  "user.read.all",
   "application.read.all",
   "offline_access",
   "openid",

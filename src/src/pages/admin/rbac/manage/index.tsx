@@ -32,6 +32,7 @@ import {
   useRbacGroups,
   useCreateRbacGroup,
   useRegisterServicePrincipal,
+  useProvisionMember,
   type MemberSummary,
 } from "@/state/remote/queries/rbac";
 import { EntityInspector } from "./EntityInspector";
@@ -161,15 +162,50 @@ function LeftPane({
   if (tab === "sp") {
     return <ServiceAccountList onSelect={onSelect} />;
   }
+  return <UserList onSelect={onSelect} />;
+}
+
+function UserList({
+  onSelect,
+}: {
+  onSelect: (id: string, member?: MemberSummary) => void;
+}) {
+  const provisionMutation = useProvisionMember();
+  // Selecting an "Unregistered" Azure AD tenant user provisions a local Member first, then selects
+  // the real (registered) member that comes back. Registered members are selected directly.
+  const fireProvision = useMutationToast(provisionMutation, {
+    invalidateKeys: [["rbac", "members"]],
+    successMessage: (member: any) =>
+      `Added ${
+        member?.displayName || member?.email || member?.id
+      } to selfservice`,
+    errorMessage: "Could not add user to selfservice",
+    onSuccess: (member: any) => onSelect(member.id, member as MemberSummary),
+  });
+
+  function handleSelect(m: MemberSummary) {
+    if (m.registered === false) {
+      fireProvision({
+        id: m.id,
+        displayName: m.displayName ?? undefined,
+        email: m.email,
+      });
+    } else {
+      onSelect(m.id, m);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <EntityPicker
         typeFilter="User"
-        onSelect={(m) => onSelect(m.id, m)}
+        includeTenant
+        onSelect={handleSelect}
         placeholder="Search users by name or email…"
       />
       <p className="text-[0.625rem] text-muted font-mono">
-        Start typing to find a user.
+        Start typing to find a user. People not yet in selfservice show as
+        Unregistered — selecting one adds them.
       </p>
     </div>
   );

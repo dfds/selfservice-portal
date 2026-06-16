@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   useSearchMembers,
+  useTenantUserSearch,
   type MemberSummary,
   type MemberTypeFilter,
 } from "@/state/remote/queries/rbac";
@@ -13,6 +15,9 @@ interface EntityPickerProps {
   onSelect: (member: MemberSummary) => void;
   placeholder?: string;
   autoFocus?: boolean;
+  // When set, also search the Azure AD tenant and surface users not yet in selfservice, tagged
+  // `registered:false` (shown with an "Unregistered" chip). Intended for the Users tab.
+  includeTenant?: boolean;
 }
 
 export function EntityPicker({
@@ -20,6 +25,7 @@ export function EntityPicker({
   onSelect,
   placeholder = "Search by name or email…",
   autoFocus,
+  includeTenant = false,
 }: EntityPickerProps) {
   const [inputValue, setInputValue] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -38,7 +44,38 @@ export function EntityPicker({
     offset: 0,
   });
 
-  const items: MemberSummary[] = query.data?.items ?? [];
+  const tenantQuery = useTenantUserSearch(includeTenant ? debounced : "");
+
+  const localItems: MemberSummary[] = query.data?.items ?? [];
+
+  // Merge tenant matches that are not already local members (dedupe on lowercased id/email).
+  const localKeys = new Set<string>();
+  for (const m of localItems) {
+    localKeys.add(m.id.toLowerCase());
+    if (m.email) localKeys.add(m.email.toLowerCase());
+  }
+  const tenantItems: MemberSummary[] = includeTenant
+    ? (tenantQuery.data ?? [])
+        .map((u): MemberSummary => {
+          const identifier = (u.mail ?? u.userPrincipalName) || "";
+          return {
+            id: identifier.toLowerCase(),
+            email: identifier,
+            displayName: u.displayName,
+            type: "User",
+            registered: false,
+          };
+        })
+        .filter(
+          (u) =>
+            u.id &&
+            !localKeys.has(u.id) &&
+            !localKeys.has(u.email.toLowerCase()),
+        )
+    : [];
+
+  const items: MemberSummary[] = [...localItems, ...tenantItems];
+  const isFetching = query.isFetching || tenantQuery.isFetching;
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -81,7 +118,7 @@ export function EntityPicker({
           className="text-sm font-mono pl-8 pr-8"
           autoComplete="off"
         />
-        {query.isFetching && (
+        {isFetching && (
           <Loader2
             size={13}
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted animate-spin"
@@ -115,7 +152,11 @@ export function EntityPicker({
                     {m.email}
                   </span>
                 </div>
-                <EntityTypeBadge kind={m.type} />
+                {m.registered === false ? (
+                  <Badge variant="unregistered">Unregistered</Badge>
+                ) : (
+                  <EntityTypeBadge kind={m.type} />
+                )}
               </button>
             ))
           )}

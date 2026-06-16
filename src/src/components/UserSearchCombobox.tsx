@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { msGraphRequest } from "@/state/remote/query";
+import {
+  useTenantUserSearch,
+  type GraphUser,
+} from "@/state/remote/queries/rbac";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export type GraphUser = {
-  id: string;
-  displayName: string;
-  mail: string | null;
-  userPrincipalName: string;
-};
+export type { GraphUser };
 
 interface UserSearchComboboxProps {
   onSelect: (userId: string, label: string) => void;
@@ -31,23 +28,8 @@ export function UserSearchCombobox({
     return () => clearTimeout(t);
   }, [inputValue]);
 
-  const { data: suggestions = [], isFetching } = useQuery<GraphUser[]>({
-    queryKey: ["graph-user-search", debouncedQuery],
-    queryFn: async () => {
-      if (debouncedQuery.length < 2) return [];
-      const safe = debouncedQuery.replace(/'/g, "''");
-      const filter = `startswith(mail,'${safe}') or startswith(displayName,'${safe}')`;
-      const url = `https://graph.microsoft.com/v1.0/users?$filter=${encodeURIComponent(
-        filter,
-      )}&$select=id,displayName,mail,userPrincipalName&$top=8`;
-      const resp = await msGraphRequest({ method: "GET", url, payload: null });
-      if (!resp.ok) return [];
-      const data = await resp.json();
-      return (data.value ?? []) as GraphUser[];
-    },
-    enabled: debouncedQuery.length >= 2,
-    staleTime: 30000,
-  });
+  const { data: suggestions = [], isFetching } =
+    useTenantUserSearch(debouncedQuery);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
