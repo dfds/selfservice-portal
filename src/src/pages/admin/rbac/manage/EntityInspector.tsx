@@ -5,18 +5,23 @@ import {
   useMemberGroups,
   useUserPermissions,
   useUserRbacRoles,
+  useUserMemberships,
   useGrantPermissionsBulk,
   useRevokePermission,
   useGrantRoleGlobal,
   useRevokeRoleGrant,
+  useGrantCapabilityMembership,
+  useRemoveCapabilityMembership,
   useAddGroupMember,
   useRemoveGroupMember,
   useRbacGroups,
   useGetRoles,
   type MemberSummary,
+  type CapabilityMembership,
 } from "@/state/remote/queries/rbac";
 import { useCapabilities } from "@/state/remote/queries/capabilities";
 import { useMutationToast } from "@/hooks/useMutationToast";
+import { Badge } from "@/components/ui/badge";
 import {
   EntityTypeBadge,
   GrantsTable,
@@ -61,6 +66,7 @@ export function EntityInspector({
       />
       <PermissionsCard memberId={memberId} />
       <RolesCard memberId={memberId} />
+      <MembershipsCard memberId={memberId} />
       <GroupMembershipsCard memberId={memberId} />
     </div>
   );
@@ -468,6 +474,142 @@ function GrantRoleDialog({
 }
 
 // ── Group memberships ─────────────────────────────────────────────────────────
+
+// ── Capability memberships ────────────────────────────────────────────────────
+
+// Surfaces capabilities where the entity holds a capability-scoped role grant and lets an admin
+// reconcile the "has a role but is not a member" drift the deactivation cleanup can leave behind
+// (it deletes memberships but keeps role grants). One row per capability the entity has a role in;
+// each shows whether they are a member, with a Grant/Remove action.
+function MembershipsCard({ memberId }: { memberId: string }) {
+  const { data: rolesData, isFetched: rolesFetched } =
+    useUserRbacRoles(memberId);
+  const { data: membershipsData, isFetched: membershipsFetched } =
+    useUserMemberships(memberId);
+  const { data: capsData } = useCapabilities();
+
+  const roleItems: any[] = (rolesData as any[]) ?? [];
+  const memberships: CapabilityMembership[] =
+    (membershipsData as CapabilityMembership[]) ?? [];
+  const caps: any[] = (capsData as any[]) ?? [];
+
+  const capsMap: Record<string, string> = caps.reduce((acc, c: any) => {
+    if (c.id) acc[c.id] = c.name;
+    return acc;
+  }, {});
+  const memberCapIds = new Set(memberships.map((m) => m.capabilityId));
+
+  // One row per capability the entity holds a capability-scoped role grant in (dedup by capability).
+  const capabilityIds: string[] = Array.from(
+    new Set(
+      roleItems
+        .filter(
+          (r: any) =>
+            String(r.type).toLowerCase() === "capability" && !!r.resource,
+        )
+        .map((r: any) => r.resource as string),
+    ),
+  ).sort((a, b) => (capsMap[a] ?? a).localeCompare(capsMap[b] ?? b));
+
+  const grantMutation = useGrantCapabilityMembership();
+  const removeMutation = useRemoveCapabilityMembership();
+  const [removeTarget, setRemoveTarget] = useState<{
+    capabilityId: string;
+    name: string;
+  } | null>(null);
+
+  const fireGrant = useMutationToast(grantMutation, {
+    invalidateKeys: [["rbac", "user-memberships", memberId]],
+    successMessage: "Membership granted",
+    errorMessage: "Could not grant membership",
+  });
+
+  const fireRemove = useMutationToast(removeMutation, {
+    invalidateKeys: [["rbac", "user-memberships", memberId]],
+    successMessage: "Membership removed",
+    errorMessage: "Could not remove membership",
+    onSuccess: () => setRemoveTarget(null),
+  });
+
+  const isFetched = rolesFetched && membershipsFetched;
+
+  return (
+    <Card title="Capability memberships" count={capabilityIds.length}>
+      {!isFetched ? (
+        <div className="space-y-1.5">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-full rounded-[4px]" />
+          ))}
+        </div>
+      ) : capabilityIds.length === 0 ? (
+        <EmptyState>No capability-scoped roles.</EmptyState>
+      ) : (
+        <div className="flex flex-col divide-y divide-divider rounded-[8px] border border-card overflow-hidden">
+          {capabilityIds.map((capId) => {
+            const name = capsMap[capId] ?? capId;
+            const isMember = memberCapIds.has(capId);
+            return (
+              <div
+                key={capId}
+                className="flex items-center gap-3 px-3 py-2 bg-surface"
+              >
+                <span className="text-xs font-mono text-primary flex-1 truncate">
+                  {name}
+                </span>
+                <Badge variant={isMember ? "success" : "warning"}>
+                  {isMember ? "Member" : "Not a member"}
+                </Badge>
+                {isMember ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRemoveTarget({ capabilityId: capId, name })
+                    }
+                    disabled={removeMutation.isPending}
+                    className="text-[0.625rem] text-muted hover:text-destructive font-mono transition-colors cursor-pointer border-0 bg-transparent disabled:opacity-50"
+                  >
+                    Remove
+                  </button>
+                ) : (
+                  <Button
+                    variant="action"
+                    size="sm"
+                    onClick={() => fireGrant({ memberId, capabilityId: capId })}
+                    disabled={grantMutation.isPending}
+                    className="h-7 px-2 text-xs gap-1"
+                  >
+                    <Plus size={12} strokeWidth={1.75} /> Grant membership
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <ConfirmDialog
+        open={!!removeTarget}
+        onOpenChange={(open) => !open && setRemoveTarget(null)}
+        title="Remove membership?"
+        description={
+          removeTarget && (
+            <p>
+              Remove this member from <strong>{removeTarget.name}</strong>? They
+              keep their role grant — only the capability membership is removed.
+            </p>
+          )
+        }
+        confirmLabel="Remove"
+        confirmLoadingLabel="Removing…"
+        isPending={removeMutation.isPending}
+        onConfirm={() =>
+          removeTarget &&
+          fireRemove({ memberId, capabilityId: removeTarget.capabilityId })
+        }
+      />
+    </Card>
+  );
+}
 
 function GroupMembershipsCard({ memberId }: { memberId: string }) {
   const { data, isFetched } = useMemberGroups(memberId);
