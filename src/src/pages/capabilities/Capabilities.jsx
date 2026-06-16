@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useMemo, useRef } from "react";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { Text } from "@/components/ui/Text";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import AppContext from "@/AppContext";
@@ -51,6 +51,7 @@ function withRowLinks(columns, getHref) {
 }
 
 function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
+  const navigate = useNavigate();
   const isDeleted = capability.status === "Deleted";
   const isPendingDeletion = capability.status === "Pending Deletion";
   const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
@@ -66,7 +67,17 @@ function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
     avgCost == null ? "No data" : avgCost < 1 ? "<$1/d" : `$${avgCost}/d`;
 
   return (
-    <Link to={`/capabilities/${capability.id}`} className="block group">
+    <div
+      style={{ width: "100%" }}
+      className="block group relative cursor-pointer"
+      onClick={(e) => {
+        // Don't navigate if clicking the favorite button
+        if (e.target.closest("button")) {
+          return;
+        }
+        navigate(`/capabilities/${capability.id}`);
+      }}
+    >
       <Card
         className={cn(
           "mb-2 group-hover:bg-surface-muted",
@@ -123,7 +134,7 @@ function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 }
 
@@ -142,13 +153,13 @@ function CapabilityCardList({
 
   const visibleCapabilities = globalFilter
     ? filteredCapabilities.filter((cap) => {
-        const q = globalFilter.toLowerCase();
-        return (
-          cap.name?.toLowerCase().includes(q) ||
-          cap.description?.toLowerCase().includes(q) ||
-          cap.awsAccountId?.toLowerCase().includes(q)
-        );
-      })
+      const q = globalFilter.toLowerCase();
+      return (
+        cap.name?.toLowerCase().includes(q) ||
+        cap.description?.toLowerCase().includes(q) ||
+        cap.awsAccountId?.toLowerCase().includes(q)
+      );
+    })
     : filteredCapabilities;
 
   const sortedCapabilities = useMemo(() => {
@@ -202,10 +213,10 @@ function CapabilityCardList({
     Math.ceil(sortedCapabilities.length / CARD_PAGE_SIZE),
   );
   const pageStart = (currentPage - 1) * CARD_PAGE_SIZE;
-  const pageItems = sortedCapabilities.slice(
-    pageStart,
-    pageStart + CARD_PAGE_SIZE,
-  );
+
+  const pageItems = useMemo(() => {
+    return sortedCapabilities.slice(pageStart, pageStart + CARD_PAGE_SIZE);
+  }, [sortedCapabilities, pageStart]);
 
   const handleFilterChange = (value) => {
     setGlobalFilter(value);
@@ -742,7 +753,7 @@ export default function CapabilitiesList() {
                     }}
                   >
                     {requirementsScore === null ||
-                    requirementsScore === undefined
+                      requirementsScore === undefined
                       ? "—"
                       : `${requirementsScore.toFixed(1)}%`}
                   </span>
@@ -759,11 +770,11 @@ export default function CapabilitiesList() {
             sortingFn: (rowA, rowB) => {
               const ac =
                 JSON.parse(rowA.original.jsonMetadata ?? "{}")[
-                  "dfds.cost.centre"
+                "dfds.cost.centre"
                 ] ?? "";
               const bc =
                 JSON.parse(rowB.original.jsonMetadata ?? "{}")[
-                  "dfds.cost.centre"
+                "dfds.cost.centre"
                 ] ?? "";
               return (
                 ac.localeCompare(bc) ||
@@ -909,13 +920,11 @@ export default function CapabilitiesList() {
   return (
     <>
       <PageSection
-        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
-          isLoading
-            ? ""
-            : `(${(filteredCapabilities || []).length} / ${
-                (capabilities || []).length
-              })`
-        }`}
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading
+          ? ""
+          : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
+          })`
+          }`}
         headlineChildren={
           isLoading ? null : (
             <div className={styles.myCapabilitiesToggleContainer}>
