@@ -29,23 +29,29 @@
 
   /* Animation utilities — @keyframes must be inside @theme for Tailwind v4 */
   --animate-fade-up: fade-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
   @keyframes fade-up {
     from {
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
+  --animate-fade-up-slow: fade-up 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
   --animate-menu-enter: menu-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
   @keyframes menu-enter {
     from {
       opacity: 0;
       transform: translateY(4px) scale(0.98);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
@@ -53,11 +59,13 @@
   }
 
   --animate-accordion-down: accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1);
+
   @keyframes accordion-down {
     from {
       height: 0;
       opacity: 0;
     }
+
     to {
       height: var(--radix-accordion-content-height);
       opacity: 1;
@@ -65,11 +73,13 @@
   }
 
   --animate-accordion-up: accordion-up 160ms cubic-bezier(0.16, 1, 0.3, 1);
+
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
       opacity: 1;
     }
+
     to {
       height: 0;
       opacity: 0;
@@ -77,11 +87,13 @@
   }
 
   --animate-card-enter: card-enter 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
   @keyframes card-enter {
     from {
       opacity: 0;
       transform: translateY(14px) scale(0.97);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
@@ -90,11 +102,13 @@
 
   --animate-section-enter: section-enter 480ms cubic-bezier(0.16, 1, 0.3, 1)
     both;
+
   @keyframes section-enter {
     from {
       opacity: 0;
       transform: translateY(18px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -102,11 +116,13 @@
   }
 
   --animate-toast-enter: toast-enter 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
   @keyframes toast-enter {
     from {
       opacity: 0;
       transform: translateX(20px) translateY(8px) scale(0.96);
     }
+
     to {
       opacity: 1;
       transform: translateX(0) translateY(0) scale(1);
@@ -114,11 +130,13 @@
   }
 
   --animate-toast-exit: toast-exit 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
   @keyframes toast-exit {
     from {
       opacity: 1;
       transform: translateX(0);
     }
+
     to {
       opacity: 0;
       transform: translateX(24px);
@@ -127,21 +145,25 @@
 
   --animate-progress-fill: progress-fill 600ms cubic-bezier(0.16, 1, 0.3, 1)
     both;
+
   @keyframes progress-fill {
     from {
       transform: scaleX(0);
     }
+
     to {
       transform: scaleX(var(--progress-value, 1));
     }
   }
 
   --animate-badge-pulse: badge-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+
   @keyframes badge-pulse {
     0%,
     100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.6;
     }
@@ -149,11 +171,13 @@
 
   --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1)
     both;
+
   @keyframes number-reveal {
     from {
       opacity: 0;
       transform: translateY(6px) scale(0.94);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
@@ -165,30 +189,38 @@
      during travel, elongating in the direction of motion. */
   --animate-switch-slider-on: switch-slider-on 660ms ease-in-out both;
   --animate-switch-slider-off: switch-slider-off 660ms ease-in-out both;
+
   @keyframes switch-slider-on {
     0% {
       scale: 1;
     }
+
     40% {
       scale: 1.25 1;
     }
+
     75% {
       scale: 1;
     }
+
     100% {
       scale: 1;
     }
   }
+
   @keyframes switch-slider-off {
     0% {
       scale: 1;
     }
+
     40% {
       scale: 1.25 1;
     }
+
     75% {
       scale: 1;
     }
+
     100% {
       scale: 1;
     }
@@ -196,10 +228,12 @@
 
   /* Skeleton shimmer */
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
   @keyframes shimmer {
     0% {
       background-position: -200% 0;
     }
+
     100% {
       background-position: 200% 0;
     }
@@ -207,10 +241,12 @@
 
   /* CE mode rainbow hue rotation */
   --animate-rainbow-hue: rainbow-hue 3s linear infinite;
+
   @keyframes rainbow-hue {
     0% {
       filter: hue-rotate(0deg);
     }
+
     100% {
       filter: hue-rotate(360deg);
     }
@@ -218,22 +254,28 @@
 
   /* What's New bell — rainbow color cycle on the small badge dot */
   --animate-rainbow-text: rainbow-text 4s linear infinite;
+
   @keyframes rainbow-text {
     0% {
       color: hsl(0, 85%, 55%);
     }
+
     20% {
       color: hsl(45, 90%, 55%);
     }
+
     40% {
       color: hsl(140, 70%, 50%);
     }
+
     60% {
       color: hsl(200, 85%, 55%);
     }
+
     80% {
       color: hsl(280, 70%, 60%);
     }
+
     100% {
       color: hsl(360, 85%, 55%);
     }
@@ -327,21 +369,27 @@ html.dark {
   .text-primary {
     color: var(--color-text-primary);
   }
+
   .text-secondary {
     color: var(--color-text-secondary);
   }
+
   .text-muted {
     color: var(--color-text-muted);
   }
+
   .text-action {
     color: var(--color-action);
   }
+
   .text-inverse {
     color: var(--color-text-inverse);
   }
+
   .text-success {
     color: var(--color-success);
   }
+
   .text-warning {
     color: var(--color-warning);
   }
@@ -350,9 +398,11 @@ html.dark {
   .bg-surface {
     background-color: var(--color-surface);
   }
+
   .bg-surface-muted {
     background-color: var(--color-surface-muted);
   }
+
   .bg-surface-subtle {
     background-color: var(--color-surface-subtle);
   }
@@ -361,9 +411,11 @@ html.dark {
   .border-card {
     border-color: var(--color-border-card);
   }
+
   .border-divider {
     border-color: var(--color-border-divider);
   }
+
   .border-tab {
     border-color: var(--color-border-tab);
   }
@@ -372,9 +424,11 @@ html.dark {
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
+
   .shadow-overlay {
     box-shadow: var(--shadow-overlay);
   }
+
   .shadow-overlay-strong {
     box-shadow: var(--shadow-overlay-strong);
   }
@@ -394,15 +448,19 @@ html.dark {
   .animate-stagger-1 {
     animation-delay: 60ms;
   }
+
   .animate-stagger-2 {
     animation-delay: 120ms;
   }
+
   .animate-stagger-3 {
     animation-delay: 180ms;
   }
+
   .animate-stagger-4 {
     animation-delay: 240ms;
   }
+
   .animate-stagger-5 {
     animation-delay: 300ms;
   }
@@ -600,14 +658,17 @@ html.dark
 .ssu-driver-popover .driver-popover-arrow-side-top.driver-popover-arrow {
   border-top-color: var(--color-surface);
 }
+
 .ssu-driver-popover.driver-popover-arrow-side-bottom .driver-popover-arrow,
 .ssu-driver-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-bottom-color: var(--color-surface);
 }
+
 .ssu-driver-popover.driver-popover-arrow-side-left .driver-popover-arrow,
 .ssu-driver-popover .driver-popover-arrow-side-left.driver-popover-arrow {
   border-left-color: var(--color-surface);
 }
+
 .ssu-driver-popover.driver-popover-arrow-side-right .driver-popover-arrow,
 .ssu-driver-popover .driver-popover-arrow-side-right.driver-popover-arrow {
   border-right-color: var(--color-surface);

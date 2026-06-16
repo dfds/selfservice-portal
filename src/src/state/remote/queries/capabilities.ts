@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
 import { useEffect, useState, useContext } from "react";
 import PreAppContext from "@/preAppContext";
-import { sortByField } from "@/lib/utils";
 import { fetchUserPhoto } from "@/lib/graphUtils";
 import {
   createSsuQuery,
@@ -11,7 +10,20 @@ import {
   createSsuMutation,
 } from "../queryFactory";
 
-const sortByName = sortByField<any>("name");
+export function normalizeCapabilityFavourite<T extends Record<string, any>>(
+  capability: T,
+) {
+  if (!capability) {
+    return capability;
+  }
+
+  const { isFavourited, ...rest } = capability;
+
+  return {
+    ...rest,
+    isFavourite: capability.isFavourite ?? isFavourited === true,
+  };
+}
 
 // ── Queries (factory) ────────────────────────────────────────────────────────
 
@@ -19,8 +31,15 @@ export const useCapabilities = createSsuQuery({
   queryKey: ["capabilities", "list"],
   urlSegments: ["capabilities"],
   select: (data: any) => {
-    let list = data.items || [];
-    sortByName(list);
+    let list = (data.items || []).map(normalizeCapabilityFavourite);
+    list.sort((a: any, b: any) => {
+      const aFavourite = a.isFavourite === true;
+      const bFavourite = b.isFavourite === true;
+      if (aFavourite !== bFavourite) {
+        return bFavourite ? 1 : -1;
+      }
+      return a.name.localeCompare(b.name);
+    });
     return list;
   },
   staleTime: 30000,
@@ -29,6 +48,7 @@ export const useCapabilities = createSsuQuery({
 export const useCapability = createSsuParamQuery<string>({
   queryKey: (id) => ["capabilities", "details", id],
   urlSegments: (id) => ["capabilities", id],
+  select: (data: any) => normalizeCapabilityFavourite(data),
   staleTime: 30000,
 });
 
@@ -219,7 +239,7 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
       });
 
       let resps = await Promise.all(
-        membersResp.items.map(async (member) => {
+        membersResp.items.map(async (member: any) => {
           const isServicePrincipal = member.type === "service-principal";
           return {
             ...member,
@@ -254,6 +274,20 @@ export const useAddServicePrincipalCapabilityMember = createSsuMutation<{
   authMode: true,
 });
 
+export const useAddCapabilityFavourite = createSsuMutation<{ id: string }>({
+  method: "POST",
+  urlSegments: (data) => ["capabilities", data.id, "favourite"],
+  payload: () => null,
+});
+
+export const useRemoveCapabilityFavourite = createSsuMutation<{
+  id: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => ["capabilities", data.id, "favourite"],
+  payload: () => null,
+});
+
 export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
@@ -274,7 +308,7 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
       });
 
       let resps = await Promise.all(
-        membersResp.items.map(async (member) => ({
+        membersResp.items.map(async (member: any) => ({
           ...member,
           applicantProfilePictureUrl: await fetchUserPhoto(member.email),
         })),

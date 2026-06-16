@@ -1,8 +1,15 @@
+import { normalizeCapabilityFavourite } from "./capabilities";
 import { createSsuQuery, createSsuMutation } from "../queryFactory";
 
 export const useMe = createSsuQuery({
   queryKey: ["me"],
   urlSegments: ["me"],
+  select: (data: any) => ({
+    ...data,
+    capabilities: Array.isArray(data?.capabilities)
+      ? data.capabilities.map(normalizeCapabilityFavourite)
+      : data?.capabilities,
+  }),
   staleTime: 30000,
 });
 
