@@ -89,6 +89,33 @@ function CapabilityRow({ cap, onFavouriteToggle }) {
               title="Pending deletion"
             />
           )}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onFavouriteToggle?.(cap.id, !isFavourite);
+            }}
+            className={`p-0.5 rounded transition-colors shrink-0 ${
+              isFavourite
+                ? "text-amber-500 hover:text-amber-600"
+                : "text-muted hover:text-amber-500"
+            }`}
+            title={
+              isFavourite
+                ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+            }
+            aria-label={
+              isFavourite
+                ? `Remove ${cap.name} from favorites`
+                : `Add ${cap.name} to favorites`
+            }
+          >
+            <Star
+              size={12}
+              className={isFavourite ? "fill-current" : "fill-none"}
+            />
+          </button>
           <Link
             to={`/capabilities/${cap.id}`}
             className="text-[0.75rem] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline truncate"
@@ -106,29 +133,6 @@ function CapabilityRow({ cap, onFavouriteToggle }) {
               {pendingMembers}
             </span>
           )}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onFavouriteToggle?.(cap.id, !isFavourite);
-            }}
-            className="p-0.5 rounded transition-colors hover:bg-surface-muted shrink-0"
-            title={isFavourite ? "Remove from favorites" : "Add to favorites"}
-            aria-label={
-              isFavourite
-                ? `Remove ${cap.name} from favorites`
-                : `Add ${cap.name} to favorites`
-            }
-          >
-            <Star
-              size={12}
-              className={
-                isFavourite
-                  ? "text-amber-500 fill-amber-500"
-                  : "text-muted fill-none"
-              }
-            />
-          </button>
         </div>
       </td>
 
