@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { msalInstance, selfServiceApiScopes, tokenCache } from "./context";
+import { msalInstance, selfServiceApiScopes } from "./context";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshAuthState, sessionExpired } from "@/state/local/auth";
 import { StoreReducers } from "@/state/local/store";
@@ -21,9 +21,6 @@ function AuthTemplate({ children }) {
   const authState = useSelector((s) => (s as StoreReducers).auth);
 
   useEffect(() => {
-    tokenCache.remove("selfservice-api");
-    tokenCache.remove("msgraph");
-
     msalInstance
       .handleRedirectPromise()
       .then((data) => {

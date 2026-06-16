@@ -1,11 +1,9 @@
 import { getGraphAccessToken, getSelfServiceAccessToken } from "@/AuthService";
-import { tokenCache } from "@/auth/context";
 import {
   AuthenticationResult,
   PublicClientApplication,
 } from "@azure/msal-browser";
 import { Slice, createSlice } from "@reduxjs/toolkit";
-import { jwtDecode } from "jwt-decode";
 
 class AuthStruct {
   isSignedIn: boolean;
@@ -32,30 +30,22 @@ export const auth: Slice<AuthStruct> = createSlice({
       const { msalInstance, redirectResponse } =
         action.payload as RefreshAuthAction;
 
-      if (redirectResponse != null) {
-        if (redirectResponse.account != null) {
-          msalInstance.setActiveAccount(redirectResponse.account);
-          const decoded = jwtDecode(redirectResponse.accessToken);
-          if (decoded.aud === "00000003-0000-0000-c000-000000000000") {
-            tokenCache.put("msgraph", redirectResponse.accessToken);
-          } else {
-            tokenCache.put("selfservice-api", redirectResponse.accessToken);
-          }
-        }
+      if (redirectResponse?.account != null) {
+        msalInstance.setActiveAccount(redirectResponse.account);
+      }
+
+      if (
+        !msalInstance.getActiveAccount() &&
+        msalInstance.getAllAccounts().length > 0
+      ) {
+        msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
       }
 
       if (msalInstance.getAllAccounts().length > 0) {
         state.isSignedIn = true;
-
-        if (!tokenCache.hasTokenExpired("selfservice-api")) {
-          state.isSessionActive = true;
-          state.initialLoadFinished = true;
-          if (tokenCache.hasTokenExpired("msgraph")) {
-            getGraphAccessToken();
-          }
-        } else {
-          getSelfServiceAccessToken();
-        }
+        state.isSessionActive = true;
+        state.initialLoadFinished = true;
+        getSelfServiceAccessToken();
       } else {
         state.isSignedIn = false;
         state.isSessionActive = false;

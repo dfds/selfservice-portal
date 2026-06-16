@@ -13,6 +13,7 @@ import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { PaginationControls } from "@/components/ui/PaginationControls";
+import { safeParseObject } from "@/lib/utils";
 
 function calculateCriticalityLevel(availability, criticality, classification) {
   if (
@@ -94,7 +95,7 @@ export default function CapabilitiesCriticalityPage() {
       );
       const mapped = filtered.map((capability) => {
         const enrichedCapability = { ...capability };
-        const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
+        const jsonMetadata = safeParseObject(capability.jsonMetadata);
         enrichedCapability.availability =
           jsonMetadata["dfds.service.availability"] || "unknown";
         enrichedCapability.criticality =

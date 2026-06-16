@@ -15,7 +15,13 @@ export function ReleaseNotesView() {
 
   useEffect(() => {
     if (data != null) {
-      const parsed = JSON.parse(data.content);
+      let parsed;
+      try {
+        parsed = JSON.parse(data.content);
+      } catch {
+        setContentReady(false);
+        return;
+      }
       setDoc(data);
       setContent(parsed);
       setContentReady(true);

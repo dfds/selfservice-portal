@@ -20,6 +20,7 @@ import {
   ENUM_CAPABILITY_CONTAINS_AI_OPTIONS,
   ENUM_ENV_OPTIONS,
 } from "@/constants/tagConstants";
+import { safeParseObject } from "@/lib/utils";
 
 function getSelectStyles(isDark) {
   return {
@@ -518,7 +519,7 @@ export function CapabilityTags() {
 
   useEffect(() => {
     if (metadata) {
-      setExistingTags(JSON.parse(metadata));
+      setExistingTags(safeParseObject(metadata));
     }
   }, [metadata]);
 

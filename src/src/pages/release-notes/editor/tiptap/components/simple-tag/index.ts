@@ -64,7 +64,6 @@ export const SimpleTag = Mark.create<SimpleTagOptions>({
       setSimpleTag:
         (colour) =>
         ({ chain }) => {
-          console.log("NANI");
           chain().setMark(this.name).run();
 
           return true;

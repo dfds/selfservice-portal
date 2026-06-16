@@ -21,6 +21,7 @@ import azureLogo from "./azure-logo.svg";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Select from "react-select";
 import AzureResourceGroupRequestWizard from "./resourceGroupRequestWizard";
+import { safeParseObject } from "@/lib/utils";
 
 const statusBadgeVariant = (status) =>
   status === "active" ? "soft-success" : "soft-warning";
@@ -205,7 +206,7 @@ export function AwsResourceInfoBadges() {
 
   useEffect(() => {
     if (metadataFetched && metadata != null) {
-      setMetaParsed(JSON.parse(metadata));
+      setMetaParsed(safeParseObject(metadata));
     } else {
       setMetaParsed(undefined);
     }
@@ -477,7 +478,7 @@ export function AzureResourceInfoBadges() {
 
   useEffect(() => {
     if (metadataFetched && metadata != null) {
-      setMetaParsed(JSON.parse(metadata));
+      setMetaParsed(safeParseObject(metadata));
     } else {
       setMetaParsed(undefined);
     }

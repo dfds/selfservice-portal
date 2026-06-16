@@ -10,6 +10,7 @@ import { TrackedLink } from "@/components/Tracking";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TrackedButton } from "@/components/Tracking";
+import { safeParseObject } from "@/lib/utils";
 import styles from "./aiCatalogue.module.css";
 
 export function AICatalogueSection({ anchorId }) {
@@ -38,7 +39,7 @@ export function AICatalogue() {
 
   useEffect(() => {
     if (metadata) {
-      const parsedMetadata = JSON.parse(metadata);
+      const parsedMetadata = safeParseObject(metadata);
       setAICatalogueEntries(
         parsedMetadata["dfds.capability.ai-catalogue-entries"] || [],
       );
@@ -55,7 +56,7 @@ export function AICatalogue() {
         capabilityDefinition: details,
         payload: {
           jsonMetadata: {
-            ...JSON.parse(metadata || "{}"),
+            ...safeParseObject(metadata),
             "dfds.capability.ai-catalogue-entries": entries,
           },
         },

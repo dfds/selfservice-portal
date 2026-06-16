@@ -6,7 +6,7 @@ export class SelfServiceApiClient {
   }
 
   logResponseErrorNotOk = (requestType, url, response) => {
-    console.log(
+    console.warn(
       `Warning: failed ${requestType} using url ${url}, response was: ${response.status} ${response.statusText}`,
     );
   };
@@ -38,7 +38,11 @@ export class SelfServiceApiClient {
     const response = await this.requestWithToken(url, "PUT", payload);
 
     if (!response.ok) {
-      this.logResponseErrorNotOk("updating personal information", response);
+      this.logResponseErrorNotOk(
+        "updating personal information",
+        url,
+        response,
+      );
     }
   }
 
@@ -253,7 +257,7 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log(`for url ${url} response was: ${response.status}`);
+      console.warn(`Warning: GET ${url} failed with ${response.status}`);
       return undefined;
     }
     return response;
@@ -270,7 +274,7 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log(`for url ${url} response was: ${response.status}`);
+      console.warn(`Warning: ${method} ${url} failed with ${response.status}`);
       const errorDetails = await response.json();
       if (errorDetails.detail) {
         return errorDetails;
@@ -378,7 +382,6 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log("response was: ", await response.text());
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
@@ -407,7 +410,6 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log("response was: ", await response.text());
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
@@ -439,7 +441,6 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log("response was: ", await response.text());
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
@@ -473,7 +474,6 @@ export class SelfServiceApiClient {
     );
 
     if (!response.ok) {
-      console.log("response was: ", await response.text());
       throw Error(
         `Error! Response from server: (${response.status}) ${response.statusText}`,
       );
