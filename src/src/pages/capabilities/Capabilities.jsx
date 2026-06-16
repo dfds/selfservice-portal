@@ -89,17 +89,22 @@ function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
             {isPendingDeletion && (
               <AlertCircle size={12} className="text-red-500 shrink-0 mt-0.5" />
             )}
-            <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
-              {truncateString(capability.name, 80)}
-            </span>
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 onFavouriteToggle?.(capability.id, !isFavourite);
               }}
-              className="relative z-10 shrink-0 p-1 rounded hover:bg-surface-muted"
-              title={isFavourite ? "Remove from favorites" : "Add to favorites"}
+              className={`relative z-10 shrink-0 p-1 rounded transition-colors ${
+                isFavourite
+                  ? "text-amber-500 hover:text-amber-600"
+                  : "text-muted hover:text-amber-500"
+              }`}
+              title={
+                isFavourite
+                  ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                  : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+              }
               aria-label={
                 isFavourite
                   ? `Remove ${capability.name} from favorites`
@@ -108,13 +113,12 @@ function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
             >
               <Star
                 size={16}
-                className={
-                  isFavourite
-                    ? "text-amber-500 fill-amber-500"
-                    : "text-muted fill-none"
-                }
+                className={isFavourite ? "fill-current" : "fill-none"}
               />
             </button>
+            <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
+              {truncateString(capability.name, 80)}
+            </span>
             <ChevronRight size={16} className="text-muted shrink-0 mt-0.5" />
           </div>
           <p className="text-secondary text-xs mb-2 leading-relaxed">
@@ -153,13 +157,13 @@ function CapabilityCardList({
 
   const visibleCapabilities = globalFilter
     ? filteredCapabilities.filter((cap) => {
-      const q = globalFilter.toLowerCase();
-      return (
-        cap.name?.toLowerCase().includes(q) ||
-        cap.description?.toLowerCase().includes(q) ||
-        cap.awsAccountId?.toLowerCase().includes(q)
-      );
-    })
+        const q = globalFilter.toLowerCase();
+        return (
+          cap.name?.toLowerCase().includes(q) ||
+          cap.description?.toLowerCase().includes(q) ||
+          cap.awsAccountId?.toLowerCase().includes(q)
+        );
+      })
     : filteredCapabilities;
 
   const sortedCapabilities = useMemo(() => {
@@ -655,11 +659,15 @@ export default function CapabilitiesList() {
                         e.stopPropagation();
                         handleFavouriteToggle(val.id, !isFavourite);
                       }}
-                      className="relative z-10 shrink-0 p-0.5 rounded hover:bg-surface-muted"
+                      className={`relative z-10 shrink-0 p-0.5 rounded transition-colors ${
+                        isFavourite
+                          ? "text-amber-500 hover:text-amber-600"
+                          : "text-muted hover:text-amber-500"
+                      }`}
                       title={
                         isFavourite
-                          ? "Remove from favourites"
-                          : "Add to favourites"
+                          ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                          : "Mark as favourite. Favourites appear first in capability lists and on the front page."
                       }
                       aria-label={
                         isFavourite
@@ -669,11 +677,7 @@ export default function CapabilitiesList() {
                     >
                       <Star
                         size={14}
-                        className={
-                          isFavourite
-                            ? "text-amber-500 fill-amber-500"
-                            : "text-muted fill-none"
-                        }
+                        className={isFavourite ? "fill-current" : "fill-none"}
                       />
                     </button>
                     <Text styledAs="action" as={"div"}>
@@ -753,7 +757,7 @@ export default function CapabilitiesList() {
                     }}
                   >
                     {requirementsScore === null ||
-                      requirementsScore === undefined
+                    requirementsScore === undefined
                       ? "—"
                       : `${requirementsScore.toFixed(1)}%`}
                   </span>
@@ -770,11 +774,11 @@ export default function CapabilitiesList() {
             sortingFn: (rowA, rowB) => {
               const ac =
                 JSON.parse(rowA.original.jsonMetadata ?? "{}")[
-                "dfds.cost.centre"
+                  "dfds.cost.centre"
                 ] ?? "";
               const bc =
                 JSON.parse(rowB.original.jsonMetadata ?? "{}")[
-                "dfds.cost.centre"
+                  "dfds.cost.centre"
                 ] ?? "";
               return (
                 ac.localeCompare(bc) ||
@@ -920,11 +924,13 @@ export default function CapabilitiesList() {
   return (
     <>
       <PageSection
-        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${isLoading
-          ? ""
-          : `(${(filteredCapabilities || []).length} / ${(capabilities || []).length
-          })`
-          }`}
+        headline={`${showOnlyMyCapabilities ? "My" : "All"} Capabilities ${
+          isLoading
+            ? ""
+            : `(${(filteredCapabilities || []).length} / ${
+                (capabilities || []).length
+              })`
+        }`}
         headlineChildren={
           isLoading ? null : (
             <div className={styles.myCapabilitiesToggleContainer}>

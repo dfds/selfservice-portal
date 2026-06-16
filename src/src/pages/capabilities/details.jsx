@@ -202,27 +202,33 @@ function CapabilityDetailsPageContent() {
         >
           ← Capabilities
         </Link>
-        <h1 className="text-[1.625rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em]">
-          {pagetitle}
-        </h1>
-        <button
-          onClick={handleFavouriteToggle}
-          disabled={addFavourite.isPending || removeFavourite.isPending}
-          className={`mt-2 inline-flex items-center gap-1.5 rounded-[5px] border px-2 py-1 text-[0.6875rem] font-mono transition-colors disabled:opacity-50 ${
-            isFavourite
-              ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-700/50 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/40"
-              : "border-card bg-surface text-muted hover:text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 dark:hover:text-amber-300"
-          }`}
-          aria-label={
-            isFavourite ? "Remove from favourites" : "Add to favourites"
-          }
-        >
-          <Star
-            size={12}
-            className={isFavourite ? "fill-current" : "fill-none"}
-          />
-          {isFavourite ? "Favourited" : "Add to favourites"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleFavouriteToggle}
+            disabled={addFavourite.isPending || removeFavourite.isPending}
+            className={`p-1 rounded transition-colors disabled:opacity-50 ${
+              isFavourite
+                ? "text-amber-500 hover:text-amber-600"
+                : "text-muted hover:text-amber-500"
+            }`}
+            aria-label={
+              isFavourite ? "Remove from favourites" : "Add to favourites"
+            }
+            title={
+              isFavourite
+                ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+            }
+          >
+            <Star
+              size={20}
+              className={isFavourite ? "fill-current" : "fill-none"}
+            />
+          </button>
+          <h1 className="text-[1.625rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em]">
+            {pagetitle}
+          </h1>
+        </div>
       </div>
 
       <div className="grid gap-8 items-stretch md:grid-cols-[1fr_180px]">
