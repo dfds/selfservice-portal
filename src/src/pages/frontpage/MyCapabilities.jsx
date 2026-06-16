@@ -1,13 +1,20 @@
 import React, { useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useMe } from "@/state/remote/queries/me";
+import {
+  useAddCapabilityFavourite,
+  useRemoveCapabilityFavourite,
+} from "@/state/remote/queries/capabilities";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import { LightBulb } from "@/pages/capabilities/RequirementsStatus";
-import { AlertCircle, Users } from "lucide-react";
+import { AlertCircle, Users, Star } from "lucide-react";
 import { computeCostTrendPct } from "@/lib/costUtils";
 
-const MAX_SHOWN = 3;
+const MAX_SHOWN = 5;
+const LIST_REORDER_DURATION = 0.32;
 
 function isStaleScore(cap) {
   return (
@@ -62,21 +69,16 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
   );
 }
 
-function CapabilityRow({ cap, index }) {
+function CapabilityRow({ cap, onFavouriteToggle }) {
   const isPendingDeletion =
     cap.outstandingActions?.isPendingDeletion === true ||
     cap.status === "Pending Deletion";
   const pendingMembers =
     cap.outstandingActions?.pendingMembershipApplicationCount ?? 0;
-  const stale = isStaleScore(cap);
+  const isFavourite = cap.isFavourite === true;
 
   return (
-    <tr
-      className={`border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 animate-fade-up${
-        isPendingDeletion ? " opacity-70" : ""
-      }`}
-      style={{ animationDelay: `${index * 50}ms` }}
-    >
+    <>
       {/* Capability name */}
       <td className="py-[0.5rem] pr-3 min-w-0">
         <div className="flex items-center gap-1.5 min-w-0">
@@ -87,6 +89,33 @@ function CapabilityRow({ cap, index }) {
               title="Pending deletion"
             />
           )}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onFavouriteToggle?.(cap.id, !isFavourite);
+            }}
+            className={`p-0.5 rounded transition-colors shrink-0 ${
+              isFavourite
+                ? "text-amber-500 hover:text-amber-600"
+                : "text-muted hover:text-amber-500"
+            }`}
+            title={
+              isFavourite
+                ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+            }
+            aria-label={
+              isFavourite
+                ? `Remove ${cap.name} from favorites`
+                : `Add ${cap.name} to favorites`
+            }
+          >
+            <Star
+              size={12}
+              className={isFavourite ? "fill-current" : "fill-none"}
+            />
+          </button>
           <Link
             to={`/capabilities/${cap.id}`}
             className="text-[0.75rem] font-medium text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline truncate"
@@ -132,7 +161,7 @@ function CapabilityRow({ cap, index }) {
           costsComparisonIsFull={cap.costsComparisonIsFull}
         />
       </td>
-    </tr>
+    </>
   );
 }
 
@@ -140,11 +169,51 @@ export default function MyCapabilities() {
   const { isFetched: meFetched, data: meData } = useMe();
   const { query: costsQuery, getCostComparisonForCapability } =
     useCapabilitiesCost();
+  const addFavourite = useAddCapabilityFavourite();
+  const removeFavourite = useRemoveCapabilityFavourite();
+  const queryClient = useQueryClient();
+
+  const handleFavouriteToggle = (capabilityId, shouldFavourite) => {
+    if (shouldFavourite) {
+      addFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    } else {
+      removeFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    }
+  };
 
   const mine = useMemo(() => {
     if (!meFetched || !meData?.capabilities) return [];
     return [...meData.capabilities]
-      .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
+      .sort((a, b) => {
+        // Favorites first
+        const aFavourite = a.isFavourite === true;
+        const bFavourite = b.isFavourite === true;
+        if (aFavourite !== bFavourite) {
+          return bFavourite ? 1 : -1;
+        }
+        // Then by priority score
+        return (b.priorityScore ?? 0) - (a.priorityScore ?? 0);
+      })
       .slice(0, MAX_SHOWN)
       .map((cap) => {
         const { current, previous, hasFullComparison } =
@@ -208,9 +277,31 @@ export default function MyCapabilities() {
           </tr>
         </thead>
         <tbody>
-          {mine.map((cap, i) => (
-            <CapabilityRow key={cap.id} cap={cap} index={i} />
-          ))}
+          <AnimatePresence initial={false} mode="popLayout">
+            {mine.map((cap, i) => (
+              <motion.tr
+                key={cap.id}
+                layout
+                className={`border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0${
+                  cap.outstandingActions?.isPendingDeletion === true ||
+                  cap.status === "Pending Deletion"
+                    ? " opacity-70"
+                    : ""
+                }`}
+                transition={{
+                  layout: {
+                    duration: LIST_REORDER_DURATION,
+                    ease: "easeInOut",
+                  },
+                }}
+              >
+                <CapabilityRow
+                  cap={cap}
+                  onFavouriteToggle={handleFavouriteToggle}
+                />
+              </motion.tr>
+            ))}
+          </AnimatePresence>
         </tbody>
       </table>
       <div className="pt-[0.625rem]">

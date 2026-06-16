@@ -1,9 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams, useLocation, Link } from "react-router-dom";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Star } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
+import {
+  useAddCapabilityFavourite,
+  useRemoveCapabilityFavourite,
+} from "@/state/remote/queries/capabilities";
 import { TabbedMembersView } from "./members";
 import Summary from "./summary";
 import Costs from "./costs";
@@ -39,6 +44,7 @@ function CapabilityDetailsPageContent() {
     isLoading,
     isFound,
     name,
+    details,
     kafkaClusters,
     loadCapability,
     showCosts,
@@ -48,6 +54,28 @@ function CapabilityDetailsPageContent() {
     awsAccount,
     metadata,
   } = useContext(SelectedCapabilityContext);
+
+  const queryClient = useQueryClient();
+  const addFavourite = useAddCapabilityFavourite();
+  const removeFavourite = useRemoveCapabilityFavourite();
+
+  const isFavourite = details?.isFavourite === true;
+
+  const handleFavouriteToggle = () => {
+    const mutation = isFavourite ? removeFavourite : addFavourite;
+    mutation.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
+          queryClient.invalidateQueries({
+            queryKey: ["capabilities", "details", id],
+          });
+          queryClient.invalidateQueries({ queryKey: ["me"] });
+        },
+      },
+    );
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -174,9 +202,33 @@ function CapabilityDetailsPageContent() {
         >
           ← Capabilities
         </Link>
-        <h1 className="text-[1.625rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em]">
-          {pagetitle}
-        </h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleFavouriteToggle}
+            disabled={addFavourite.isPending || removeFavourite.isPending}
+            className={`p-1 rounded transition-colors disabled:opacity-50 ${
+              isFavourite
+                ? "text-amber-500 hover:text-amber-600"
+                : "text-muted hover:text-amber-500"
+            }`}
+            aria-label={
+              isFavourite ? "Remove from favourites" : "Add to favourites"
+            }
+            title={
+              isFavourite
+                ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+            }
+          >
+            <Star
+              size={20}
+              className={isFavourite ? "fill-current" : "fill-none"}
+            />
+          </button>
+          <h1 className="text-[1.625rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em]">
+            {pagetitle}
+          </h1>
+        </div>
       </div>
 
       <div className="grid gap-8 items-stretch md:grid-cols-[1fr_180px]">

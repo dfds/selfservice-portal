@@ -1,17 +1,23 @@
 import React, { useContext, useEffect, useState, useMemo, useRef } from "react";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { Text } from "@/components/ui/Text";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
 import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
 import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
 import PageSection from "@/components/PageSection";
-import { useCapabilities } from "@/state/remote/queries/capabilities";
+import {
+  useCapabilities,
+  useAddCapabilityFavourite,
+  useRemoveCapabilityFavourite,
+} from "@/state/remote/queries/capabilities";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
 import { Switch } from "@/components/ui/switch";
+import { Star } from "lucide-react";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
+import { useQueryClient } from "@tanstack/react-query";
 import CapabilityCostSummary from "@/components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,17 +50,14 @@ function withRowLinks(columns, getHref) {
   }));
 }
 
-function CapabilityCard({ capability, truncateString, index = 0 }) {
+function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
+  const navigate = useNavigate();
   const isDeleted = capability.status === "Deleted";
   const isPendingDeletion = capability.status === "Pending Deletion";
   const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
   const costCentre = jsonMetadata["dfds.cost.centre"];
   const costs = capability.costs ?? [];
-
-  const isStale =
-    !capability.modifiedAt ||
-    capability.requirementScore == null ||
-    new Date(capability.modifiedAt) < new Date(Date.now() - 14 * 86400000);
+  const isFavourite = capability.isFavourite === true;
 
   const avgCost =
     costs.length > 0
@@ -63,17 +66,21 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
   const costText =
     avgCost == null ? "No data" : avgCost < 1 ? "<$1/d" : `$${avgCost}/d`;
 
-  const delay = index * 22;
-
   return (
-    <Link
-      to={`/capabilities/${capability.id}`}
-      className="block group animate-card-enter"
-      style={{ animationDelay: `${delay}ms` }}
+    <div
+      style={{ width: "100%" }}
+      className="block group relative cursor-pointer"
+      onClick={(e) => {
+        // Don't navigate if clicking the favorite button
+        if (e.target.closest("button")) {
+          return;
+        }
+        navigate(`/capabilities/${capability.id}`);
+      }}
     >
       <Card
         className={cn(
-          "mb-2 transition-all duration-200 group-hover:bg-surface-muted group-hover:-translate-y-0.5 group-hover:shadow-md",
+          "mb-2 group-hover:bg-surface-muted",
           isDeleted && "opacity-60 bg-red-950/20",
         )}
       >
@@ -82,13 +89,37 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
             {isPendingDeletion && (
               <AlertCircle size={12} className="text-red-500 shrink-0 mt-0.5" />
             )}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onFavouriteToggle?.(capability.id, !isFavourite);
+              }}
+              className={`relative z-10 shrink-0 p-1 rounded transition-colors ${
+                isFavourite
+                  ? "text-amber-500 hover:text-amber-600"
+                  : "text-muted hover:text-amber-500"
+              }`}
+              title={
+                isFavourite
+                  ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                  : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+              }
+              aria-label={
+                isFavourite
+                  ? `Remove ${capability.name} from favorites`
+                  : `Add ${capability.name} to favorites`
+              }
+            >
+              <Star
+                size={16}
+                className={isFavourite ? "fill-current" : "fill-none"}
+              />
+            </button>
             <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
               {truncateString(capability.name, 80)}
             </span>
-            <ChevronRight
-              size={16}
-              className="text-muted shrink-0 mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5"
-            />
+            <ChevronRight size={16} className="text-muted shrink-0 mt-0.5" />
           </div>
           <p className="text-secondary text-xs mb-2 leading-relaxed">
             {truncateString(capability.description, 100)}
@@ -107,13 +138,17 @@ function CapabilityCard({ capability, truncateString, index = 0 }) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </div>
   );
 }
 
 const CARD_PAGE_SIZE = 20;
 
-function CapabilityCardList({ filteredCapabilities, truncateString }) {
+function CapabilityCardList({
+  filteredCapabilities,
+  truncateString,
+  onFavouriteToggle,
+}) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("name");
@@ -134,16 +169,24 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
   const sortedCapabilities = useMemo(() => {
     const arr = [...visibleCapabilities];
     const dir = sortDir === "asc" ? 1 : -1;
-    if (sortBy === "name") {
-      arr.sort((a, b) => dir * a.name.localeCompare(b.name));
-    } else if (sortBy === "costCentre") {
-      arr.sort((a, b) => {
+
+    // Always sort with favorites first
+    arr.sort((a, b) => {
+      // Favorites go first
+      const aFavourite = a.isFavourite === true;
+      const bFavourite = b.isFavourite === true;
+      if (aFavourite !== bFavourite) {
+        return bFavourite ? 1 : -1;
+      }
+
+      // Then sort by the selected column
+      if (sortBy === "name") {
+        return dir * a.name.localeCompare(b.name);
+      } else if (sortBy === "costCentre") {
         const ac = JSON.parse(a.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
         const bc = JSON.parse(b.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
         return dir * (ac.localeCompare(bc) || a.name.localeCompare(b.name));
-      });
-    } else if (sortBy === "cost") {
-      arr.sort((a, b) => {
+      } else if (sortBy === "cost") {
         const ac =
           a.costs?.length > 0
             ? Math.floor(a.costs.reduce((s, x) => s + x.pv, 0) / a.costs.length)
@@ -156,17 +199,16 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
         if (ac == null) return 1;
         if (bc == null) return -1;
         return dir * (bc - ac);
-      });
-    } else if (sortBy === "score") {
-      arr.sort((a, b) => {
+      } else if (sortBy === "score") {
         const as_ = a.requirementScore ?? null;
         const bs_ = b.requirementScore ?? null;
         if (as_ == null && bs_ == null) return 0;
         if (as_ == null) return 1;
         if (bs_ == null) return -1;
         return dir * (bs_ - as_);
-      });
-    }
+      }
+      return 0;
+    });
     return arr;
   }, [visibleCapabilities, sortBy, sortDir]);
 
@@ -175,10 +217,10 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
     Math.ceil(sortedCapabilities.length / CARD_PAGE_SIZE),
   );
   const pageStart = (currentPage - 1) * CARD_PAGE_SIZE;
-  const pageItems = sortedCapabilities.slice(
-    pageStart,
-    pageStart + CARD_PAGE_SIZE,
-  );
+
+  const pageItems = useMemo(() => {
+    return sortedCapabilities.slice(pageStart, pageStart + CARD_PAGE_SIZE);
+  }, [sortedCapabilities, pageStart]);
 
   const handleFilterChange = (value) => {
     setGlobalFilter(value);
@@ -242,12 +284,12 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
           </button>
         </div>
       </div>
-      {pageItems.map((cap, index) => (
+      {pageItems.map((cap) => (
         <CapabilityCard
           key={cap.id}
           capability={cap}
           truncateString={truncateString}
-          index={index}
+          onFavouriteToggle={onFavouriteToggle}
         />
       ))}
       {sortedCapabilities.length === 0 && (
@@ -268,7 +310,12 @@ function CapabilityCardList({ filteredCapabilities, truncateString }) {
   );
 }
 
-function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
+function CapabilitiesTable({
+  columns,
+  filteredCapabilities,
+  sortingRef,
+  onFavouriteToggle,
+}) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
   const { isDark } = useTheme();
   const [sorting, setSorting] = useState([]);
@@ -293,6 +340,7 @@ function CapabilitiesTable({ columns, filteredCapabilities, sortingRef }) {
     <MaterialReactTable
       columns={columns}
       data={filteredCapabilities}
+      getRowId={(originalRow) => originalRow.id}
       initialState={{
         pagination: { pageSize: 50 },
         showGlobalFilter: true,
@@ -435,14 +483,73 @@ export default function CapabilitiesList() {
     useCapabilities();
   const { query: costsQuery, getCostComparisonForCapability } =
     useCapabilitiesCost();
+  const addFavourite = useAddCapabilityFavourite();
+  const removeFavourite = useRemoveCapabilityFavourite();
 
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
   const { trackEvent } = useRybbit();
+  const queryClient = useQueryClient();
 
   const [capabilities, setCapabilities] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
+
+  const handleFavouriteToggle = (capabilityId, shouldFavourite) => {
+    if (shouldFavourite) {
+      addFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            // Optimistically update local state
+            setCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: true } : cap,
+              ),
+            );
+            setMyCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: true } : cap,
+              ),
+            );
+            trackEvent("capability:favourited", {
+              capability_id: capabilityId,
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    } else {
+      removeFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            // Optimistically update local state
+            setCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: false } : cap,
+              ),
+            );
+            setMyCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: false } : cap,
+              ),
+            );
+            trackEvent("capability:unfavourited", {
+              capability_id: capabilityId,
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    }
+  };
 
   // Synced with MRT's sorting state inside <CapabilitiesTable> so column
   // sortingFns can keep "No data" rows pinned to the bottom in both
@@ -464,7 +571,7 @@ export default function CapabilitiesList() {
       setCapabilities(capsWithCosts);
 
       const myCapabilities = capsWithCosts.filter((capability) => {
-        return capability.userIsMember;
+        return capability.userIsMember || capability.isFavourite === true;
       });
       setMyCapabilities(myCapabilities);
     }
@@ -514,9 +621,11 @@ export default function CapabilitiesList() {
           {
             accessorFn: (row) => {
               return {
+                id: row.id,
                 name: row.name,
                 description: row.description,
                 status: row.status,
+                isFavourite: row.isFavourite,
               };
             },
             header: "Name",
@@ -527,26 +636,60 @@ export default function CapabilitiesList() {
             enableFilterMatchHighlighting: true,
 
             Cell: ({ cell }) => {
+              const val = cell.getValue();
+              const isFavourite = val.isFavourite === true;
               return (
                 <div>
-                  {cell.getValue().status === "Pending Deletion" ? (
+                  {val.status === "Pending Deletion" ? (
                     <Text styledAs="action" as={"div"}>
                       <AlertCircle size={14} className={styles.warningIcon} />
                     </Text>
                   ) : null}
-                  <Text
-                    styledAs="action"
-                    style={{ marginLeft: "20px" }}
-                    as={"div"}
+                  <div
+                    style={{
+                      marginLeft: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
                   >
-                    {truncateString(cell.getValue().name, 70)}
-                  </Text>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFavouriteToggle(val.id, !isFavourite);
+                      }}
+                      className={`relative z-10 shrink-0 p-0.5 rounded transition-colors ${
+                        isFavourite
+                          ? "text-amber-500 hover:text-amber-600"
+                          : "text-muted hover:text-amber-500"
+                      }`}
+                      title={
+                        isFavourite
+                          ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                          : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+                      }
+                      aria-label={
+                        isFavourite
+                          ? `Remove ${val.name} from favourites`
+                          : `Add ${val.name} to favourites`
+                      }
+                    >
+                      <Star
+                        size={14}
+                        className={isFavourite ? "fill-current" : "fill-none"}
+                      />
+                    </button>
+                    <Text styledAs="action" as={"div"}>
+                      {truncateString(val.name, 70)}
+                    </Text>
+                  </div>
                   <Text
                     styledAs="caption"
                     style={{ marginLeft: "20px" }}
                     as={"div"}
                   >
-                    {truncateString(cell.getValue().description, 70)}
+                    {truncateString(val.description, 70)}
                   </Text>
                 </div>
               );
@@ -775,7 +918,7 @@ export default function CapabilitiesList() {
         ],
         (row) => `/capabilities/${row.original.id}`,
       ),
-    [],
+    [handleFavouriteToggle],
   );
 
   return (
@@ -840,15 +983,15 @@ export default function CapabilitiesList() {
             <CapabilityCardList
               filteredCapabilities={filteredCapabilities}
               truncateString={truncateString}
+              onFavouriteToggle={handleFavouriteToggle}
             />
           ) : (
-            <div className="animate-fade-up">
-              <CapabilitiesTable
-                columns={columns}
-                filteredCapabilities={filteredCapabilities}
-                sortingRef={tableSortingRef}
-              />
-            </div>
+            <CapabilitiesTable
+              columns={columns}
+              filteredCapabilities={filteredCapabilities}
+              sortingRef={tableSortingRef}
+              onFavouriteToggle={handleFavouriteToggle}
+            />
           ))}
       </PageSection>
     </>
