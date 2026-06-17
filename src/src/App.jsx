@@ -26,16 +26,12 @@ import CompliancePage from "./pages/compliance";
 import CostCentreComplianceDetailPage from "./pages/compliance/cost-centre-detail";
 import RbacViewerPage from "./pages/admin/rbac";
 import PermissionMatrixPage from "./pages/rbac";
-import DeletionQueuePage from "./pages/admin/capabilities/deletion-queue";
-import MembershipApplicationsAdminPage from "./pages/admin/membership-applications";
 import UserInspectorPage from "./pages/admin/rbac/user";
 import RbacManagePage from "./pages/admin/rbac/manage";
 import RbacAssignmentsPage from "./pages/admin/rbac/assignments";
-import AdminCompliancePage from "./pages/admin/compliance";
 import TopicExplorerPage from "./pages/admin/topics";
 import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
 import BulkMetadataPage from "./pages/admin/capabilities/metadata";
-import MemberSearchPage from "./pages/admin/members";
 import EcrSyncDashboardPage from "./pages/admin/ecr";
 import PlatformMetricsDashboardPage from "./pages/admin/metrics";
 import JsonSchemaEditorPage from "./pages/admin/json-schema";
@@ -288,24 +284,14 @@ export default function App() {
             element={<RbacAssignmentsPage />}
           />
           <Route
-            path="admin/capabilities/deletion-queue"
-            element={<DeletionQueuePage />}
-          />
-          <Route
             path="admin/capabilities/:id"
             element={<CapabilityAdminDetailPage />}
           />
-          <Route
-            path="admin/membership-applications"
-            element={<MembershipApplicationsAdminPage />}
-          />
-          <Route path="admin/compliance" element={<AdminCompliancePage />} />
           <Route path="admin/topics" element={<TopicExplorerPage />} />
           <Route
             path="admin/capabilities/metadata"
             element={<BulkMetadataPage />}
           />
-          <Route path="admin/members" element={<MemberSearchPage />} />
           <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
           <Route
             path="admin/metrics"

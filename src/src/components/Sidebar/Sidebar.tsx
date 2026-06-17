@@ -30,13 +30,10 @@ import {
   Building2,
   ShieldCheck,
   KeyRound,
-  Trash2,
   UserSearch,
-  Inbox,
   Network,
   X,
   Info,
-  Users,
   Container,
   LineChart,
   Database,
@@ -44,6 +41,8 @@ import {
   Table2,
   ListChecks,
   SlidersHorizontal,
+  ShieldAlert,
+  Clock,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -137,12 +136,38 @@ const costCentresGroup: NavGroupDef = {
   children: [{ title: "Compliance", url: "/compliance", icon: ShieldCheck }],
 };
 
+// External admin links. URLs are injected from environment variables at build
+// time (never hardcoded) — a link only appears when its env var is set. Add a
+// new one by adding the matching REACT_APP_ADMIN_PAGE_URL_* var to the build env.
+const adminExternalNav: NavItemDef[] = (
+  [
+    {
+      title: "Audit",
+      url: process.env.REACT_APP_ADMIN_PAGE_URL_AUDIT,
+      icon: ClipboardCheck,
+      external: true,
+    },
+    {
+      title: "CVEs",
+      url: process.env.REACT_APP_ADMIN_PAGE_URL_CVE,
+      icon: ShieldAlert,
+      external: true,
+    },
+    {
+      title: "Inactivity",
+      url: process.env.REACT_APP_ADMIN_PAGE_URL_INACTIVITY,
+      icon: Clock,
+      external: true,
+    },
+  ] as (Omit<NavItemDef, "url"> & { url?: string })[]
+).filter((item): item is NavItemDef => !!item.url);
+
 const adminNav: NavGroupDef = {
   title: "Admin",
   icon: ShieldCheck,
   children: [
-    { title: "RBAC Viewer", url: "/admin/rbac", icon: KeyRound },
     { title: "User Inspector", url: "/admin/rbac/user", icon: UserSearch },
+    { title: "RBAC Viewer", url: "/admin/rbac", icon: KeyRound },
     {
       title: "RBAC Manage",
       url: "/admin/rbac/manage",
@@ -153,28 +178,17 @@ const adminNav: NavGroupDef = {
       url: "/admin/rbac/assignments",
       icon: ListChecks,
     },
-    {
-      title: "Deletion Queue",
-      url: "/admin/capabilities/deletion-queue",
-      icon: Trash2,
-    },
-    {
-      title: "Membership Queue",
-      url: "/admin/membership-applications",
-      icon: Inbox,
-    },
-    { title: "Compliance", url: "/admin/compliance", icon: ClipboardCheck },
     { title: "Topic Explorer", url: "/admin/topics", icon: Network },
     {
       title: "Metadata Remediation",
       url: "/admin/capabilities/metadata",
       icon: Database,
     },
-    { title: "Member Search", url: "/admin/members", icon: Users },
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
     { title: "Email Campaigns", url: "/admin/email-campaigns", icon: Mail },
+    ...adminExternalNav,
   ],
 };
 

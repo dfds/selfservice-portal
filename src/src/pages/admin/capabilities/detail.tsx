@@ -334,8 +334,8 @@ export default function CapabilityAdminDetailPage() {
     <div className="px-5 md:px-8 py-6">
       {/* Breadcrumb */}
       <div className="mb-4 text-xs font-mono text-muted">
-        <Link to="/admin/compliance" className="hover:text-action no-underline">
-          ← Compliance
+        <Link to="/capabilities" className="hover:text-action no-underline">
+          ← Capabilities
         </Link>
       </div>
 
