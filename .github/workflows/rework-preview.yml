@@ -62,6 +62,9 @@ jobs:
             REACT_APP_API_BASE_URL=https://ssu-preview.hellman.oxygen.dfds.cloud/api
             REACT_APP_AUTH_REDIRECT_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
             REACT_APP_PUBLIC_URL=https://ssu-preview.hellman.oxygen.dfds.cloud
+            REACT_APP_ADMIN_PAGE_URL_AUDIT=${{ secrets.REACT_APP_ADMIN_PAGE_URL_AUDIT }}
+            REACT_APP_ADMIN_PAGE_URL_CVE=${{ secrets.REACT_APP_ADMIN_PAGE_URL_CVE }}
+            REACT_APP_ADMIN_PAGE_URL_INACTIVITY=${{ secrets.REACT_APP_ADMIN_PAGE_URL_INACTIVITY }}
             PUBLIC_URL=/
             REACT_APP_COMMIT_HASH=${{ steps.vars.outputs.commit_id }}
       - shell: bash
