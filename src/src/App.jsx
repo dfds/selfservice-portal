@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import {
+  Route,
+  Outlet,
+  useLocation,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import AppContext from "./AppContext";
 import { useRybbit } from "./RybbitContext";
@@ -242,81 +249,73 @@ function Layout() {
   );
 }
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />}>
+      <Route index element={<FrontPage />} />
+      <Route path="topics" element={<TopicsPage />} />
+      <Route path="capabilities" element={<CapabilitiesPage />} />
+      <Route path="ecr" element={<ECRPage />} />
+      <Route path="statistics" element={<StatisticsPage />} />
+      <Route path="release-notes" element={<ReleaseNotes />} />
+      <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
+      <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
+      <Route path="release-notes/edit/:id" element={<ReleaseNotesEdit />} />
+      <Route path="release-notes/v/:id" element={<ReleaseNotesView />} />
+      <Route
+        path="capabilities/criticality"
+        element={<CapabilityCriticalityPage />}
+      />
+      <Route
+        path="capabilities/selfassessments"
+        element={<CapabilitySelfAssessmentsPage />}
+      />
+      <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
+      <Route path="events" element={<EventsPage />} />
+      <Route path="events/v/:id" element={<EventView />} />
+      <Route path="news" element={<NewsPage />} />
+      <Route path="news/v/:id" element={<NewsView />} />
+      <Route path="compliance" element={<CompliancePage />} />
+      <Route
+        path="compliance/cost-centres/:id"
+        element={<CostCentreComplianceDetailPage />}
+      />
+      <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
+      <Route path="admin/rbac" element={<RbacViewerPage />} />
+      <Route path="admin/rbac/user" element={<UserInspectorPage />} />
+      <Route path="admin/rbac/manage" element={<RbacManagePage />} />
+      <Route path="admin/rbac/assignments" element={<RbacAssignmentsPage />} />
+      <Route
+        path="admin/capabilities/:id"
+        element={<CapabilityAdminDetailPage />}
+      />
+      <Route path="admin/topics" element={<TopicExplorerPage />} />
+      <Route
+        path="admin/capabilities/metadata"
+        element={<BulkMetadataPage />}
+      />
+      <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
+      <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
+      <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
+      <Route path="admin/email-campaigns" element={<EmailCampaignsPage />} />
+      <Route
+        path="admin/email-campaigns/create"
+        element={<EmailCampaignEditor />}
+      />
+      <Route
+        path="admin/email-campaigns/edit/:id"
+        element={<EmailCampaignEditor />}
+      />
+      <Route
+        path="admin/email-campaigns/:id"
+        element={<EmailCampaignDetail />}
+      />
+      <Route path="*" element={<NotFoundPage />} />
+    </Route>,
+  ),
+  { basename: process.env.PUBLIC_URL || undefined },
+);
+
 export default function App() {
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<FrontPage />} />
-          <Route path="topics" element={<TopicsPage />} />
-          <Route path="capabilities" element={<CapabilitiesPage />} />
-          <Route path="ecr" element={<ECRPage />} />
-          <Route path="statistics" element={<StatisticsPage />} />
-          <Route path="release-notes" element={<ReleaseNotes />} />
-          <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
-          <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
-          <Route path="release-notes/edit/:id" element={<ReleaseNotesEdit />} />
-          <Route path="release-notes/v/:id" element={<ReleaseNotesView />} />
-          <Route
-            path="capabilities/criticality"
-            element={<CapabilityCriticalityPage />}
-          />
-          <Route
-            path="capabilities/selfassessments"
-            element={<CapabilitySelfAssessmentsPage />}
-          />
-          <Route path="capabilities/:id" element={<CapabilityDetailsPage />} />
-          <Route path="events" element={<EventsPage />} />
-          <Route path="events/v/:id" element={<EventView />} />
-          <Route path="news" element={<NewsPage />} />
-          <Route path="news/v/:id" element={<NewsView />} />
-          <Route path="compliance" element={<CompliancePage />} />
-          <Route
-            path="compliance/cost-centres/:id"
-            element={<CostCentreComplianceDetailPage />}
-          />
-          <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
-          <Route path="admin/rbac" element={<RbacViewerPage />} />
-          <Route path="admin/rbac/user" element={<UserInspectorPage />} />
-          <Route path="admin/rbac/manage" element={<RbacManagePage />} />
-          <Route
-            path="admin/rbac/assignments"
-            element={<RbacAssignmentsPage />}
-          />
-          <Route
-            path="admin/capabilities/:id"
-            element={<CapabilityAdminDetailPage />}
-          />
-          <Route path="admin/topics" element={<TopicExplorerPage />} />
-          <Route
-            path="admin/capabilities/metadata"
-            element={<BulkMetadataPage />}
-          />
-          <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
-          <Route
-            path="admin/metrics"
-            element={<PlatformMetricsDashboardPage />}
-          />
-          <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
-          <Route
-            path="admin/email-campaigns"
-            element={<EmailCampaignsPage />}
-          />
-          <Route
-            path="admin/email-campaigns/create"
-            element={<EmailCampaignEditor />}
-          />
-          <Route
-            path="admin/email-campaigns/edit/:id"
-            element={<EmailCampaignEditor />}
-          />
-          <Route
-            path="admin/email-campaigns/:id"
-            element={<EmailCampaignDetail />}
-          />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </>
-  );
+  return <RouterProvider router={router} />;
 }

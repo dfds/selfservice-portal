@@ -2,7 +2,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./AppContext";
 import { MsalProvider } from "@azure/msal-react";
 import { msalInstance } from "./auth/context";
@@ -29,29 +28,27 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <MsalProvider instance={msalInstance}>
-        <BrowserRouter basename={process.env.PUBLIC_URL}>
-          <QueryClientProvider client={queryClient}>
-            <ErrorProvider>
-              <ToastProvider>
-                <TrackingProvider>
-                  <SwetrixProvider>
-                    <RybbitProvider>
-                      <PreAppProvider>
-                        <ThemeProvider>
-                          <FontScaleProvider>
-                            <AppProvider>
-                              <App />
-                            </AppProvider>
-                          </FontScaleProvider>
-                        </ThemeProvider>
-                      </PreAppProvider>
-                    </RybbitProvider>
-                  </SwetrixProvider>
-                </TrackingProvider>
-              </ToastProvider>
-            </ErrorProvider>
-          </QueryClientProvider>
-        </BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <ErrorProvider>
+            <ToastProvider>
+              <TrackingProvider>
+                <SwetrixProvider>
+                  <RybbitProvider>
+                    <PreAppProvider>
+                      <ThemeProvider>
+                        <FontScaleProvider>
+                          <AppProvider>
+                            <App />
+                          </AppProvider>
+                        </FontScaleProvider>
+                      </ThemeProvider>
+                    </PreAppProvider>
+                  </RybbitProvider>
+                </SwetrixProvider>
+              </TrackingProvider>
+            </ToastProvider>
+          </ErrorProvider>
+        </QueryClientProvider>
       </MsalProvider>
     </Provider>
   </React.StrictMode>,
