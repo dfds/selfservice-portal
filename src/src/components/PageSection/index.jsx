@@ -43,6 +43,7 @@ export function TabbedPageSection({
   tabsContent,
   header,
   footer,
+  keepMounted = false,
 }) {
   const [selectedTab, setSelectedTab] = useState(Object.keys(tabs)[0]);
 
@@ -73,11 +74,18 @@ export function TabbedPageSection({
         </div>
         <div className="p-4">
           {header}
-          {Object.keys(tabsContent).map(
-            (index) =>
+          {Object.keys(tabsContent).map((index) =>
+            keepMounted ? (
+              // Keep every tab mounted (just hidden) so per-tab state — e.g.
+              // unsaved form edits — survives switching tabs and back.
+              <div key={index} hidden={selectedTab !== index}>
+                {tabsContent[index]}
+              </div>
+            ) : (
               selectedTab === index && (
                 <div key={index}>{tabsContent[index]}</div>
-              ),
+              )
+            ),
           )}
           {footer}
         </div>
