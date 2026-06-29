@@ -503,7 +503,7 @@ export default function EmailCampaignEditor() {
             <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle">
               <FormattingToolbar editor={editor} variables={variables || []} />
               <Separator orientation="vertical" className="mx-1.5 h-5" />
-              <VariableInserter editor={editor} />
+              <VariableInserter editor={editor} targetType={targetType} />
               <span className="text-[0.625rem] text-muted ml-auto">
                 Type{" "}
                 <code className="bg-surface px-1 rounded text-[0.625rem]">

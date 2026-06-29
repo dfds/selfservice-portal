@@ -5,14 +5,22 @@ import type { Editor } from "@tiptap/core";
 
 interface VariableInserterProps {
   editor: Editor | null;
+  targetType?: "Capability" | "User";
 }
 
-export function VariableInserter({ editor }: VariableInserterProps) {
-  const { data: variables, isFetched } = useTemplateVariables();
+export function VariableInserter({
+  editor,
+  targetType = "Capability",
+}: VariableInserterProps) {
+  const { data: variables, isFetched } = useTemplateVariables(targetType);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   if (!editor) return null;
+
+  // In User campaigns, capability-scoped variables only resolve inside a
+  // {{#each User.Capabilities}} block — flag them so authors know where they apply.
+  const showScopeChip = targetType === "User";
 
   const filtered = (variables || []).filter(
     (v: any) =>
@@ -90,9 +98,17 @@ export function VariableInserter({ editor }: VariableInserterProps) {
                       onClick={() => insert(v.name)}
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium shrink-0">
                         {`{{${v.name}}}`}
                       </span>
+                      {showScopeChip && v.scope === "perCapability" && (
+                        <span
+                          title="Use inside {{#each User.Capabilities}}"
+                          className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium shrink-0"
+                        >
+                          loop
+                        </span>
+                      )}
                       <span className="text-[0.6875rem] text-muted truncate">
                         {v.description}
                       </span>
