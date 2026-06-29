@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { InfoAlert } from "@/components/ui/InfoAlert";
 import { ChevronDown, ChevronRight, Plus, Trash2, Users } from "lucide-react";
 import { ENUM_COSTCENTER } from "@/constants/tagConstants";
 
@@ -222,6 +223,46 @@ export function AudienceBuilder({
   return (
     <div className="space-y-4">
       <SectionLabel className="block">Audience</SectionLabel>
+
+      <InfoAlert variant="info">
+        <p className="mb-1.5">
+          The audience decides <strong>who actually receives this email</strong>
+          .{" "}
+          {isUserTarget
+            ? "This is a User campaign — each matching person gets one email, and template variables resolve against that person."
+            : "This is a Capability campaign — one email is sent per matching capability, addressed to its members."}
+        </p>
+        <ul className="space-y-0.5 pl-4 list-disc">
+          <li>
+            <strong>{isUserTarget ? "All Users" : "All Capabilities"}</strong> —
+            no filtering; everyone{" "}
+            {isUserTarget ? "in the platform" : "capability"} is included.
+          </li>
+          <li>
+            <strong>Specific</strong> — only the{" "}
+            {isUserTarget ? "email addresses" : "capability IDs"} you list.
+          </li>
+          <li>
+            <strong>Filter</strong> — a rule-based audience; add conditions and{" "}
+            <em>Preview audience</em> to see who matches before sending.
+          </li>
+        </ul>
+        {isUserTarget && (
+          <p className="mt-1.5">
+            A condition on a{" "}
+            <span className="inline-flex items-center px-1 py-px rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.6875rem] font-medium align-baseline">
+              capability
+            </span>{" "}
+            field includes a user when they belong to at least one matching
+            capability — but the email still renders <em>all</em> of that user's
+            capabilities inside any{" "}
+            <code className="font-mono text-[0.75rem]">
+              {"{{#each User.Capabilities}}"}
+            </code>{" "}
+            loop.
+          </p>
+        )}
+      </InfoAlert>
 
       <div className="flex gap-2">
         {(["all", "specific", "filter"] as const).map((mode) => (

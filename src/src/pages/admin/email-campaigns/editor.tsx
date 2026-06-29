@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
+import { NodeSelection } from "@tiptap/pm/state";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Underline } from "@tiptap/extension-underline";
 import { TextAlign } from "@tiptap/extension-text-align";
@@ -14,13 +15,13 @@ import {
   useCreateEmailCampaign,
   useUpdateEmailCampaign,
   usePreviewEmailCampaign,
-  usePreviewEmailCampaignContent,
   useSendEmailCampaign,
   useScheduleEmailCampaign,
   useTemplateVariables,
 } from "@/state/remote/queries/emailCampaigns";
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
+import { BlockHelperHighlight } from "./tiptap/block-helper-highlight";
 import { VariableInserter } from "./components/variable-inserter";
 import { FormattingToolbar } from "./components/formatting-toolbar";
 import { AudienceBuilder } from "./components/audience-builder";
@@ -37,7 +38,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Save, Eye, Send, CalendarClock } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Eye,
+  Send,
+  CalendarClock,
+  Repeat,
+  Search,
+} from "lucide-react";
 
 type TargetType = "Capability" | "User";
 
@@ -51,19 +60,24 @@ interface AudienceConfig {
 
 export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
-  const isEdit = !!id;
   const navigate = useNavigate();
   const toast = useToast();
 
+  // Track the campaign id in state so a freshly-created draft can transition to
+  // edit-mode in place (without a route remount) — keeps the editor and any
+  // open preview alive and routes subsequent saves through update, not create.
+  const [campaignId, setCampaignId] = useState(id);
+  const isEdit = !!campaignId;
+
+  // Keyed on the original param id: only edit-mode (existing) campaigns load here.
   const { data: existingCampaign, isFetched } = useEmailCampaign(id || "");
   const [targetType, setTargetType] = useState<TargetType>("Capability");
   const { data: variables } = useTemplateVariables(targetType);
   const createCampaign = useCreateEmailCampaign();
-  const updateCampaign = useUpdateEmailCampaign(id || "");
-  const previewCampaign = usePreviewEmailCampaign(id || "");
-  const previewContent = usePreviewEmailCampaignContent();
-  const sendCampaign = useSendEmailCampaign(id || "");
-  const scheduleCampaign = useScheduleEmailCampaign(id || "");
+  const updateCampaign = useUpdateEmailCampaign(campaignId || "");
+  const previewCampaign = usePreviewEmailCampaign(campaignId || "");
+  const sendCampaign = useSendEmailCampaign(campaignId || "");
+  const scheduleCampaign = useScheduleEmailCampaign(campaignId || "");
 
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -91,12 +105,27 @@ export default function EmailCampaignEditor() {
     to: number;
   }>({ active: false, query: "", from: 0, to: 0 });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  // Position of the autocomplete dropdown, anchored just below the caret so it
+  // never covers the text being typed. Falls back to the top-left corner.
+  const [suggestionPos, setSuggestionPos] = useState<{ x: number; y: number }>({
+    x: 16,
+    y: 52,
+  });
   const suggestionRef = useRef<HTMLDivElement>(null);
+  const editorWrapRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef({
     suggestion,
     selectedIndex,
     filteredVars: [] as any[],
   });
+
+  // Click-to-swap popover: clicking a variable chip selects it and opens a
+  // small list to replace it in place (atom nodes can't be edited inline).
+  const [replacePopover, setReplacePopover] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [replaceSearch, setReplaceSearch] = useState("");
 
   const handleSuggestionOpen = useCallback(
     (query: string, from: number, to: number) => {
@@ -128,6 +157,7 @@ export default function EmailCampaignEditor() {
       Typography,
       Link.configure({ openOnClick: false }),
       TemplateVariableNode,
+      BlockHelperHighlight,
       VariableSuggestion.configure({
         onOpen: handleSuggestionOpen,
         onClose: handleSuggestionClose,
@@ -139,6 +169,29 @@ export default function EmailCampaignEditor() {
       attributes: {
         class:
           "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
+      },
+      handleClickOn: (view, _pos, node, nodePos, event) => {
+        if (node.type.name !== "templateVariable") return false;
+        // Select the clicked chip so a subsequent insert replaces it in place.
+        view.dispatch(
+          view.state.tr.setSelection(
+            NodeSelection.create(view.state.doc, nodePos),
+          ),
+        );
+        const wrap = editorWrapRef.current;
+        const chip = (event.target as HTMLElement)?.closest(
+          ".template-variable-chip",
+        ) as HTMLElement | null;
+        if (wrap && chip) {
+          const wr = wrap.getBoundingClientRect();
+          const cr = chip.getBoundingClientRect();
+          setReplaceSearch("");
+          setReplacePopover({
+            x: cr.left - wr.left,
+            y: cr.bottom - wr.top + 4,
+          });
+        }
+        return true;
       },
       handleKeyDown: (_view, event) => {
         const {
@@ -178,9 +231,46 @@ export default function EmailCampaignEditor() {
     v.name.toLowerCase().includes(suggestion.query.toLowerCase()),
   );
 
+  // Group by entity for display (matching the Insert Variable menu). `orderedVars`
+  // is the same set flattened in display order so keyboard nav highlights the
+  // visually-correct row.
+  const groupedFilteredVars = (filteredVars as any[]).reduce(
+    (acc: Record<string, any[]>, v: any) => {
+      (acc[v.entity] ||= []).push(v);
+      return acc;
+    },
+    {} as Record<string, any[]>,
+  );
+  const orderedVars = Object.values(groupedFilteredVars).flat();
+
   useEffect(() => {
-    stateRef.current = { suggestion, selectedIndex, filteredVars };
+    stateRef.current = {
+      suggestion,
+      selectedIndex,
+      filteredVars: orderedVars,
+    };
   });
+
+  // Anchor the autocomplete dropdown below the caret (clamped to the editor
+  // box) so it doesn't obscure what the user is typing.
+  useEffect(() => {
+    if (!suggestion.active || !editor) return;
+    const wrap = editorWrapRef.current;
+    if (!wrap) return;
+    try {
+      const coords = editor.view.coordsAtPos(suggestion.to);
+      const wr = wrap.getBoundingClientRect();
+      const POPUP_WIDTH = 384; // w-96
+      const x = Math.max(
+        8,
+        Math.min(coords.left - wr.left, wr.width - POPUP_WIDTH - 8),
+      );
+      const y = coords.bottom - wr.top + 6;
+      setSuggestionPos({ x, y });
+    } catch {
+      // coordsAtPos can throw mid-transaction; keep the previous position.
+    }
+  }, [suggestion.active, suggestion.from, suggestion.to, editor]);
 
   const insertSuggestion = useCallback(
     (varName: string) => {
@@ -197,6 +287,59 @@ export default function EmailCampaignEditor() {
       handleSuggestionClose();
     },
     [editor, suggestion.from, suggestion.to, handleSuggestionClose],
+  );
+
+  // Drops a ready-made {{#each User.Capabilities}} … {{/each}} loop with a
+  // Capability.Name chip in the body, so authors don't type the markers by hand.
+  const insertCapabilitiesLoop = useCallback(() => {
+    if (!editor) return;
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "{{#each User.Capabilities}}" }],
+        },
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "templateVariable",
+              attrs: { variableName: "Capability.Name" },
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "{{/each}}" }],
+        },
+      ])
+      .run();
+  }, [editor]);
+
+  // Replaces the currently node-selected variable chip with a different one.
+  const applyReplace = useCallback(
+    (varName: string) => {
+      if (!editor || !varName) return;
+      editor.chain().focus().insertTemplateVariable(varName).run();
+      setReplacePopover(null);
+      setReplaceSearch("");
+    },
+    [editor],
+  );
+
+  const replaceVars = (variables || []).filter(
+    (v: any) =>
+      v.name.toLowerCase().includes(replaceSearch.toLowerCase()) ||
+      (v.description || "").toLowerCase().includes(replaceSearch.toLowerCase()),
+  );
+  const groupedReplaceVars = (replaceVars as any[]).reduce(
+    (acc: Record<string, any[]>, v: any) => {
+      (acc[v.entity] ||= []).push(v);
+      return acc;
+    },
+    {} as Record<string, any[]>,
   );
 
   useEffect(() => {
@@ -264,6 +407,18 @@ export default function EmailCampaignEditor() {
         {
           onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
+            // On a fresh create, adopt the new id in place: transition to
+            // edit-mode without remounting the route (so the editor and any
+            // open preview survive) and so the next save updates instead of
+            // creating a duplicate draft.
+            if (!isEdit && data?.id) {
+              setCampaignId(data.id);
+              window.history.replaceState(
+                null,
+                "",
+                `/admin/email-campaigns/edit/${data.id}`,
+              );
+            }
             resolve(data);
           },
           onError: (err: any) => {
@@ -276,56 +431,39 @@ export default function EmailCampaignEditor() {
   };
 
   const handleSave = () => {
-    doSave().then(() => {
-      toast.success(isEdit ? "Campaign updated" : "Campaign created");
-      navigate("/admin/email-campaigns");
-    });
+    const wasEdit = isEdit;
+    doSave()
+      .then(() => {
+        toast.success(wasEdit ? "Campaign updated" : "Campaign created");
+        // Stay in the editor — the "Back to campaigns" link and "Cancel"
+        // button remain the explicit ways to leave.
+      })
+      .catch(() => {});
   };
 
+  // Preview always renders the freshly-saved record so it reflects current
+  // edits. We save first, then preview by the saved id (passing it through the
+  // mutate payload covers the brand-new-draft case before the editor re-renders).
   const handlePreview = () => {
-    setPreviewLoading(true);
-    setPreviewOpen(true);
-
-    if (isEdit) {
-      previewCampaign.mutate(
-        { payload: {} },
-        {
-          onSuccess: (data: any) => {
-            setPreviews(data?.previews || []);
-            setPreviewLoading(false);
+    doSave()
+      .then((saved: any) => {
+        setPreviewLoading(true);
+        setPreviewOpen(true);
+        previewCampaign.mutate(
+          { id: saved?.id, payload: {} },
+          {
+            onSuccess: (data: any) => {
+              setPreviews(data?.previews || []);
+              setPreviewLoading(false);
+            },
+            onError: () => {
+              toast.error("Could not generate preview");
+              setPreviewLoading(false);
+            },
           },
-          onError: () => {
-            toast.error("Could not generate preview");
-            setPreviewLoading(false);
-          },
-        },
-      );
-    } else {
-      if (!editor) {
-        setPreviewLoading(false);
-        return;
-      }
-      previewContent.mutate(
-        {
-          payload: {
-            contentJson: JSON.stringify(editor.getJSON()),
-            contentHtml: editor.getHTML(),
-            subject: subject.trim(),
-            audienceJson: JSON.stringify(audience),
-          },
-        },
-        {
-          onSuccess: (data: any) => {
-            setPreviews(data?.previews || []);
-            setPreviewLoading(false);
-          },
-          onError: () => {
-            toast.error("Could not generate preview");
-            setPreviewLoading(false);
-          },
-        },
-      );
-    }
+        );
+      })
+      .catch(() => {});
   };
 
   const handleSchedule = () => {
@@ -384,7 +522,8 @@ export default function EmailCampaignEditor() {
       });
   };
 
-  const isDraft = !isEdit || existingCampaign?.status === "Draft";
+  // A loaded campaign uses its own status; a new or just-created one is a Draft.
+  const isDraft = existingCampaign ? existingCampaign.status === "Draft" : true;
 
   if (isEdit && !isFetched) {
     return (
@@ -489,21 +628,25 @@ export default function EmailCampaignEditor() {
 
         <div>
           <Label className="text-[0.75rem] mb-2 block">Email Body</Label>
-          {targetType === "User" && (
-            <span className="text-[0.6875rem] text-muted mb-2 block">
-              For iterating capabilities the recipient belongs to, use{" "}
-              <code className="bg-surface-subtle px-1 rounded text-[0.625rem]">
-                {
-                  "{{#each User.Capabilities}} ... {{Capability.Name}} ... {{/each}}"
-                }
-              </code>
-            </span>
-          )}
-          <div className="border border-card rounded-lg overflow-hidden bg-surface relative">
-            <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle">
+          <div
+            ref={editorWrapRef}
+            className="border border-card rounded-lg bg-surface relative"
+          >
+            <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle rounded-t-lg">
               <FormattingToolbar editor={editor} variables={variables || []} />
               <Separator orientation="vertical" className="mx-1.5 h-5" />
               <VariableInserter editor={editor} targetType={targetType} />
+              {targetType === "User" && (
+                <button
+                  type="button"
+                  onClick={insertCapabilitiesLoop}
+                  title="Insert a {{#each User.Capabilities}} … {{/each}} loop"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[0.75rem] font-medium border border-card bg-surface hover:bg-white dark:hover:bg-slate-700 text-secondary cursor-pointer transition-colors"
+                >
+                  <Repeat size={12} />
+                  Capabilities loop
+                </button>
+              )}
               <span className="text-[0.625rem] text-muted ml-auto">
                 Type{" "}
                 <code className="bg-surface px-1 rounded text-[0.625rem]">
@@ -517,34 +660,146 @@ export default function EmailCampaignEditor() {
             {suggestion.active && filteredVars.length > 0 && (
               <div
                 ref={suggestionRef}
-                className="absolute z-50 w-64 rounded-lg border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter"
-                style={{ top: "52px", left: "16px" }}
+                className="absolute z-50 w-96 rounded-lg border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter"
+                style={{ top: suggestionPos.y, left: suggestionPos.x }}
               >
-                <div className="max-h-48 overflow-y-auto p-1">
-                  {filteredVars.map((v: any, i: number) => (
-                    <button
-                      key={v.name}
-                      type="button"
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        insertSuggestion(v.name);
-                      }}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${
-                        i === selectedIndex
-                          ? "bg-action/10 text-action"
-                          : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
-                      }`}
-                    >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.625rem] font-mono font-medium">
-                        {v.name}
-                      </span>
-                      <span className="text-[0.625rem] text-muted truncate">
-                        {v.description}
-                      </span>
-                    </button>
+                <div className="max-h-80 overflow-y-auto p-1">
+                  {Object.entries(groupedFilteredVars).map(([entity, vars]) => (
+                    <div key={entity}>
+                      <div className="px-2 py-1 text-[0.625rem] font-semibold tracking-wider uppercase text-muted font-mono">
+                        {entity}
+                      </div>
+                      {(vars as any[]).map((v: any) => {
+                        const i = orderedVars.indexOf(v);
+                        return (
+                          <button
+                            key={v.name}
+                            type="button"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              insertSuggestion(v.name);
+                            }}
+                            className={`w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${
+                              i === selectedIndex
+                                ? "bg-action/10"
+                                : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
+                            }`}
+                          >
+                            <span className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
+                                {`{{${v.name}}}`}
+                              </span>
+                              {targetType === "User" &&
+                                v.scope === "perCapability" && (
+                                  <span
+                                    title="Use inside {{#each User.Capabilities}}"
+                                    className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium"
+                                  >
+                                    loop
+                                  </span>
+                                )}
+                            </span>
+                            {v.description && (
+                              <span className="text-[0.6875rem] text-secondary leading-snug">
+                                {v.description}
+                              </span>
+                            )}
+                            {v.example && (
+                              <span className="text-[0.625rem] text-muted leading-snug">
+                                e.g.{" "}
+                                <span className="font-mono">{v.example}</span>
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   ))}
                 </div>
               </div>
+            )}
+
+            {replacePopover && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Close variable picker"
+                  className="fixed inset-0 z-40 cursor-default bg-transparent border-0"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setReplacePopover(null);
+                  }}
+                />
+                <div
+                  className="absolute z-50 w-80 rounded-lg border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter"
+                  style={{ top: replacePopover.y, left: replacePopover.x }}
+                >
+                  <div className="p-2 border-b border-card">
+                    <div className="relative">
+                      <Search
+                        size={13}
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted"
+                      />
+                      <input
+                        type="text"
+                        value={replaceSearch}
+                        onChange={(e) => setReplaceSearch(e.target.value)}
+                        placeholder="Replace with..."
+                        className="w-full h-8 pl-8 pr-3 rounded-md border border-card bg-surface text-[0.75rem] text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-action"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto p-1">
+                    {replaceVars.length === 0 ? (
+                      <div className="px-3 py-4 text-center text-muted text-[0.75rem]">
+                        No variables found
+                      </div>
+                    ) : (
+                      Object.entries(groupedReplaceVars).map(
+                        ([entity, vars]) => (
+                          <div key={entity}>
+                            <div className="px-2 py-1 text-[0.625rem] font-semibold tracking-wider uppercase text-muted font-mono">
+                              {entity}
+                            </div>
+                            {(vars as any[]).map((v: any) => (
+                              <button
+                                key={v.name}
+                                type="button"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  applyReplace(v.name);
+                                }}
+                                className="w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
+                                    {`{{${v.name}}}`}
+                                  </span>
+                                  {targetType === "User" &&
+                                    v.scope === "perCapability" && (
+                                      <span
+                                        title="Use inside {{#each User.Capabilities}}"
+                                        className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium"
+                                      >
+                                        loop
+                                      </span>
+                                    )}
+                                </span>
+                                {v.description && (
+                                  <span className="text-[0.6875rem] text-secondary leading-snug">
+                                    {v.description}
+                                  </span>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        ),
+                      )
+                    )}
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -594,7 +849,11 @@ export default function EmailCampaignEditor() {
           <Button
             variant="outline"
             onClick={handlePreview}
-            disabled={previewCampaign.isPending || previewContent.isPending}
+            disabled={
+              previewCampaign.isPending ||
+              createCampaign.isPending ||
+              updateCampaign.isPending
+            }
             className="gap-1.5"
           >
             <Eye size={14} />

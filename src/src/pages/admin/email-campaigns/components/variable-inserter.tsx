@@ -59,7 +59,7 @@ export function VariableInserter({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 z-50 w-72 rounded-lg border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter">
+        <div className="absolute top-full left-0 mt-1 z-50 w-[26rem] rounded-lg border border-card bg-surface shadow-overlay overflow-hidden animate-menu-enter">
           <div className="p-2 border-b border-card">
             <div className="relative">
               <Search
@@ -76,7 +76,7 @@ export function VariableInserter({
               />
             </div>
           </div>
-          <div className="max-h-64 overflow-y-auto p-1">
+          <div className="max-h-[28rem] overflow-y-auto p-1">
             {!isFetched ? (
               <div className="px-3 py-4 text-center text-muted text-[0.75rem]">
                 Loading...
@@ -96,22 +96,34 @@ export function VariableInserter({
                       key={v.name}
                       type="button"
                       onClick={() => insert(v.name)}
-                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
+                      className="w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left hover:bg-[#f2f2f2] dark:hover:bg-slate-700 cursor-pointer border-0 bg-transparent transition-colors"
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium shrink-0">
-                        {`{{${v.name}}}`}
+                      <span className="flex items-center gap-2">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
+                          {`{{${v.name}}}`}
+                        </span>
+                        {showScopeChip && v.scope === "perCapability" && (
+                          <span
+                            title="Use inside {{#each User.Capabilities}}"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium"
+                          >
+                            loop
+                          </span>
+                        )}
                       </span>
-                      {showScopeChip && v.scope === "perCapability" && (
-                        <span
-                          title="Use inside {{#each User.Capabilities}}"
-                          className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium shrink-0"
-                        >
-                          loop
+                      {v.description && (
+                        <span className="text-[0.6875rem] text-secondary leading-snug">
+                          {v.description}
                         </span>
                       )}
-                      <span className="text-[0.6875rem] text-muted truncate">
-                        {v.description}
-                      </span>
+                      {v.example && (
+                        <span className="text-[0.625rem] text-muted leading-snug">
+                          e.g.{" "}
+                          <span className="font-mono text-muted">
+                            {v.example}
+                          </span>
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
