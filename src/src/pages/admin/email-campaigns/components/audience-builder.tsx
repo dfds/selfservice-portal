@@ -32,28 +32,58 @@ interface AudienceBuilderProps {
   onRecipientFilterChange?: (v: string) => void;
 }
 
-const CAPABILITY_FIELD_OPTIONS = [
-  { value: "status", label: "Status" },
-  { value: "name", label: "Capability Name" },
-  { value: "memberCount", label: "Member Count" },
-  { value: "createdAt", label: "Created At" },
-  { value: "requirementScore", label: "Requirement Score" },
-  { value: "metadataKeyExists", label: "Metadata Key Exists" },
-  { value: "metadataKeyValue", label: "Metadata Key = Value" },
-  { value: "awsAccountCount", label: "AWS Account Count" },
-  { value: "azureResourceGroupCount", label: "Azure Resource Count" },
+type FieldScope = "user" | "capability";
+
+interface FieldOption {
+  value: string;
+  label: string;
+  scope: FieldScope;
+}
+
+const CAPABILITY_FIELD_OPTIONS: FieldOption[] = [
+  { value: "status", label: "Status", scope: "capability" },
+  { value: "name", label: "Capability Name", scope: "capability" },
+  { value: "memberCount", label: "Member Count", scope: "capability" },
+  { value: "createdAt", label: "Created At", scope: "capability" },
+  {
+    value: "requirementScore",
+    label: "Requirement Score",
+    scope: "capability",
+  },
+  {
+    value: "metadataKeyExists",
+    label: "Metadata Key Exists",
+    scope: "capability",
+  },
+  {
+    value: "metadataKeyValue",
+    label: "Metadata Key = Value",
+    scope: "capability",
+  },
+  { value: "awsAccountCount", label: "AWS Account Count", scope: "capability" },
+  {
+    value: "azureResourceGroupCount",
+    label: "Azure Resource Count",
+    scope: "capability",
+  },
   {
     value: "activeMembershipApplicationCount",
     label: "Active Membership Applications",
+    scope: "capability",
   },
-  { value: "cost", label: "Monthly Cost (USD)" },
+  { value: "cost", label: "Monthly Cost (USD)", scope: "capability" },
 ];
 
-const USER_FIELD_OPTIONS = [
-  { value: "email", label: "Email" },
-  { value: "displayName", label: "Display Name" },
-  { value: "lastSeen", label: "Last Seen" },
-  { value: "capabilityCostCentre", label: "Capability Cost Centre" },
+const USER_FIELD_OPTIONS: FieldOption[] = [
+  { value: "email", label: "Email", scope: "user" },
+  { value: "displayName", label: "Display Name", scope: "user" },
+  { value: "lastSeen", label: "Last Seen", scope: "user" },
+  // capabilityCostCentre matches a user via their capabilities, so it's capability-scoped.
+  {
+    value: "capabilityCostCentre",
+    label: "Capability Cost Centre",
+    scope: "capability",
+  },
 ];
 
 const NUMERIC_OPS = [
@@ -110,9 +140,18 @@ export function AudienceBuilder({
   onRecipientFilterChange,
 }: AudienceBuilderProps) {
   const isUserTarget = targetType === "User";
+  // User campaigns can also be narrowed by capability attributes (a user is included if they
+  // belong to a matching capability), so the User target offers the user fields plus every
+  // capability field. The Capability target is unchanged.
   const FIELD_OPTIONS = isUserTarget
-    ? USER_FIELD_OPTIONS
+    ? [...USER_FIELD_OPTIONS, ...CAPABILITY_FIELD_OPTIONS]
     : CAPABILITY_FIELD_OPTIONS;
+  const userScopedOptions = FIELD_OPTIONS.filter((f) => f.scope === "user");
+  const capabilityScopedOptions = FIELD_OPTIONS.filter(
+    (f) => f.scope === "capability",
+  );
+  const isCapabilityField = (field: string) =>
+    FIELD_OPTIONS.find((f) => f.value === field)?.scope === "capability";
   const defaultField = isUserTarget ? "email" : "status";
   const defaultOperator = isUserTarget ? "contains" : "eq";
 
@@ -272,12 +311,39 @@ export function AudienceBuilder({
                 }}
                 className="h-9 rounded-md border border-card bg-surface px-2 text-[0.75rem] text-primary"
               >
-                {FIELD_OPTIONS.map((f) => (
-                  <option key={f.value} value={f.value}>
-                    {f.label}
-                  </option>
-                ))}
+                {isUserTarget ? (
+                  <>
+                    <optgroup label="User">
+                      {userScopedOptions.map((f) => (
+                        <option key={f.value} value={f.value}>
+                          {f.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Capability">
+                      {capabilityScopedOptions.map((f) => (
+                        <option key={f.value} value={f.value}>
+                          {f.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </>
+                ) : (
+                  FIELD_OPTIONS.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.label}
+                    </option>
+                  ))
+                )}
               </select>
+              {isUserTarget && isCapabilityField(filter.field) && (
+                <span
+                  title="Matches users who belong to a capability matching this filter"
+                  className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-[0.625rem] font-medium shrink-0"
+                >
+                  capability
+                </span>
+              )}
               <select
                 value={filter.operator}
                 onChange={(e) => updateFilter(i, { operator: e.target.value })}
