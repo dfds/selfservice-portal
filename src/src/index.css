@@ -534,11 +534,27 @@ code {
   font-family: "SFMono-Regular", "Fira Code", monospace;
   font-weight: 500;
   vertical-align: baseline;
+  /* Chips can be dragged to reposition and clicked to swap — signal it. */
+  cursor: grab;
+  transition:
+    outline-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.template-variable-chip:hover {
+  background: #dbeafe;
+  outline: 1px solid #93c5fd;
+  outline-offset: 1px;
 }
 
 .dark .template-variable-chip {
   background: rgba(59, 130, 246, 0.1);
   color: #60a5fa;
+}
+
+.dark .template-variable-chip:hover {
+  background: rgba(59, 130, 246, 0.18);
+  outline-color: rgba(96, 165, 250, 0.5);
 }
 
 .template-variable-chip.ProseMirror-selectednode {
@@ -548,6 +564,23 @@ code {
 
 .dark .template-variable-chip.ProseMirror-selectednode {
   outline-color: #60a5fa;
+}
+
+/* Handlebars block-helper markers ({{#each …}} / {{/each}}) in the email body —
+ * matches the amber "loop" scope chip palette used in the variable inserter. */
+.template-block-marker {
+  background: #fffbeb;
+  color: #b45309;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", "Fira Code", monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.dark .template-block-marker {
+  background: rgba(180, 83, 9, 0.18);
+  color: #fbbf24;
 }
 
 /* driver.js theming — driver's stylesheet is dynamically imported AFTER our

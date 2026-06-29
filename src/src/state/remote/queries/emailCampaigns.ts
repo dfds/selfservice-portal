@@ -65,11 +65,6 @@ export const useResolveAudience = createSsuMutation<any>({
   urlSegments: () => ["email-campaigns/resolve-audience"],
 });
 
-export const usePreviewEmailCampaignContent = createSsuMutation<any>({
-  method: "POST",
-  urlSegments: () => ["email-campaigns/preview"],
-});
-
 // ── Manual hooks (hook-arg dependent) ────────────────────────────────────────
 
 export function useEmailCampaigns(statusFilter?: string) {
@@ -121,10 +116,12 @@ export function useDuplicateEmailCampaign(id: string) {
 export function usePreviewEmailCampaign(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   return useMutation({
+    // The id can be overridden per-call via `data.id` so a freshly-created
+    // draft can be previewed before the editor re-renders with the new param.
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "POST",
-        urlSegments: ["email-campaigns", id, "preview"],
+        urlSegments: ["email-campaigns", data?.id || id, "preview"],
         payload: data?.payload || {},
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
