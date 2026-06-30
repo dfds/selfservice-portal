@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -27,6 +28,7 @@ import {
   RefreshCw,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
   Building2,
   ShieldCheck,
   KeyRound,
@@ -200,9 +202,11 @@ function navItemTourId(item: NavItemDef): string {
 function NavItemLink({
   item,
   isActive,
+  onPanel = false,
 }: {
   item: NavItemDef;
   isActive: boolean;
+  onPanel?: boolean;
 }) {
   const Icon = item.icon;
   const tourId = navItemTourId(item);
@@ -210,7 +214,11 @@ function NavItemLink({
   const cls = cn(
     "flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] no-underline transition duration-150 ease-out-expo border-l-2",
     isActive
-      ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
+      ? onPanel
+        ? "bg-[#f2f2f2] dark:bg-slate-700 text-primary font-medium border-action"
+        : "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
+      : onPanel
+      ? "text-secondary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] hover:text-primary border-transparent"
       : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
   );
 
@@ -261,7 +269,120 @@ function NavItemLink({
   );
 }
 
-function NavGroupLink({
+// Shared styling for a group's top-level trigger button — matches NavItemLink.
+function groupBtnCls(active: boolean): string {
+  return cn(
+    "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
+    active
+      ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
+      : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
+  );
+}
+
+const NAV_FADE = "20px";
+
+interface ScrollEdges {
+  top: boolean;
+  bottom: boolean;
+}
+
+function useScrollEdges(
+  ref: React.RefObject<HTMLElement | null>,
+  enabled = true,
+): ScrollEdges {
+  const [edges, setEdges] = useState<ScrollEdges>({
+    top: false,
+    bottom: false,
+  });
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || !enabled) {
+      setEdges({ top: false, bottom: false });
+      return;
+    }
+
+    function update() {
+      if (!el) return;
+      const top = el.scrollTop > 2;
+      const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
+      setEdges((prev) =>
+        prev.top === top && prev.bottom === bottom ? prev : { top, bottom },
+      );
+    }
+
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    const mo = new MutationObserver(update);
+    mo.observe(el, { childList: true, subtree: true });
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, [enabled]);
+
+  return edges;
+}
+
+function edgeMask(edges: ScrollEdges): string {
+  return `linear-gradient(to bottom, ${
+    edges.top ? "transparent" : "black"
+  } 0, black ${NAV_FADE}, black calc(100% - ${NAV_FADE}), ${
+    edges.bottom ? "transparent" : "black"
+  } 100%)`;
+}
+
+function EdgeIndicators({ edges }: { edges: ScrollEdges }) {
+  return (
+    <>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
+        style={{
+          top: "0.25em",
+          width: "1.5em",
+          height: "1.5em",
+          opacity: edges.top ? 1 : 0,
+          transform: `translateY(${edges.top ? "0" : "-0.25em"})`,
+          transition:
+            "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <ChevronUp
+          className="w-[0.9em] h-[0.9em]"
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
+        style={{
+          bottom: "0.25em",
+          width: "1.5em",
+          height: "1.5em",
+          opacity: edges.bottom ? 1 : 0,
+          transform: `translateY(${edges.bottom ? "0" : "0.25em"})`,
+          transition:
+            "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <ChevronDown
+          className="w-[0.9em] h-[0.9em]"
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+      </div>
+    </>
+  );
+}
+
+// Inline accordion — used on mobile, where the flyout's hover/portal model
+// doesn't fit the full-height drawer.
+function NavGroupAccordion({
   group,
   isActive,
 }: {
@@ -282,12 +403,7 @@ function NavGroupLink({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={cn(
-          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
-          anyChildActive
-            ? "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
-            : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
-        )}
+        className={groupBtnCls(anyChildActive)}
       >
         <Icon
           size={15}
@@ -326,6 +442,143 @@ function NavGroupLink({
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function NavGroupFlyout({
+  group,
+  isActive,
+}: {
+  group: NavGroupDef;
+  isActive: (url: string) => boolean;
+}) {
+  const anyChildActive = group.children.some((c) => isActive(c.url));
+  const Icon = group.icon;
+  const { factor } = useFontScale();
+  const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState({ left: 0, top: 0, maxHeight: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
+  const location = useLocation();
+
+  const edges = useScrollEdges(scrollRef, open);
+  const mask = edgeMask(edges);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  // Outside click + Escape.
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      const t = e.target as Node;
+      if (btnRef.current?.contains(t) || panelRef.current?.contains(t)) return;
+      setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  function place() {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (!r) return;
+    setCoords({
+      left: (r.right + 6) / factor,
+      top: r.top / factor,
+      maxHeight: (window.innerHeight - r.top - 8) / factor,
+    });
+  }
+  function openPanel() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    place();
+    setOpen(true);
+  }
+  function scheduleClose() {
+    closeTimer.current = window.setTimeout(() => setOpen(false), 140);
+  }
+  function cancelClose() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+  }
+
+  return (
+    <div>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={() => (open ? setOpen(false) : openPanel())}
+        onMouseEnter={openPanel}
+        onMouseLeave={scheduleClose}
+        className={groupBtnCls(anyChildActive || open)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <Icon
+          size={15}
+          strokeWidth={1.75}
+          className="flex-shrink-0"
+          aria-hidden="true"
+        />
+        <span className="flex-1">{group.title}</span>
+        <ChevronRight
+          size={13}
+          strokeWidth={1.75}
+          className="flex-shrink-0 text-muted"
+          aria-hidden="true"
+        />
+      </button>
+      {open &&
+        createPortal(
+          <div
+            ref={panelRef}
+            role="menu"
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
+            className="fixed z-[60] w-[210px] rounded-[8px] border border-card bg-surface shadow-overlay animate-menu-enter"
+            style={{
+              left: coords.left,
+              top: coords.top,
+            }}
+          >
+            <div
+              ref={scrollRef}
+              className="overflow-y-auto p-2"
+              style={{
+                maxHeight: coords.maxHeight,
+                maskImage: mask,
+                WebkitMaskImage: mask,
+                transition:
+                  "mask-image 160ms ease, -webkit-mask-image 160ms ease",
+              }}
+            >
+              <SectionLabel className="px-2 pb-1.5 block">
+                {group.title}
+              </SectionLabel>
+              <div className="flex flex-col gap-0.5">
+                {group.children.map((item) => (
+                  <NavItemLink
+                    key={item.url}
+                    item={item}
+                    isActive={isActive(item.url)}
+                    onPanel
+                  />
+                ))}
+              </div>
+            </div>
+            <EdgeIndicators edges={edges} />
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -722,8 +975,6 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
-const NAV_FADE = "20px";
-
 export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
   const isMobile = useIsMobile();
   const { user } = useContext(AppContext);
@@ -732,39 +983,8 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
   const location = useLocation();
 
   const navRef = useRef<HTMLElement>(null);
-  const [navEdges, setNavEdges] = useState({ top: false, bottom: false });
-
-  useLayoutEffect(() => {
-    const el = navRef.current;
-    if (!el) return;
-
-    function update() {
-      if (!el) return;
-      const top = el.scrollTop > 2;
-      const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
-      setNavEdges((prev) =>
-        prev.top === top && prev.bottom === bottom ? prev : { top, bottom },
-      );
-    }
-
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    const mo = new MutationObserver(update);
-    mo.observe(el, { childList: true, subtree: true });
-    return () => {
-      el.removeEventListener("scroll", update);
-      ro.disconnect();
-      mo.disconnect();
-    };
-  }, []);
-
-  const navMask = `linear-gradient(to bottom, ${
-    navEdges.top ? "transparent" : "black"
-  } 0, black ${NAV_FADE}, black calc(100% - ${NAV_FADE}), ${
-    navEdges.bottom ? "transparent" : "black"
-  } 100%)`;
+  const navEdges = useScrollEdges(navRef);
+  const navMask = edgeMask(navEdges);
 
   const isCloudEngineer = useMemo(
     () => checkIfCloudEngineer(user?.roles ?? []),
@@ -798,6 +1018,72 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     }
     return false;
   }
+
+  // Desktop opens groups in a floating flyout; mobile uses the inline
+  // accordion inside the full-height drawer.
+  function renderGroup(group: NavGroupDef) {
+    return isMobile ? (
+      <NavGroupAccordion key={group.title} group={group} isActive={isActive} />
+    ) : (
+      <NavGroupFlyout key={group.title} group={group} isActive={isActive} />
+    );
+  }
+
+  const mainSections = (
+    <>
+      {/* PLATFORM */}
+      <div>
+        <SectionLabel className="px-3 pb-1.5 block">Platform</SectionLabel>
+        <div className="flex flex-col gap-1 md:gap-0.5">
+          {platformNav.map((item) => (
+            <NavItemLink
+              key={item.url}
+              item={item}
+              isActive={isActive(item.url)}
+            />
+          ))}
+          {isCloudEngineerEnabled &&
+            ceNav.map((item) => (
+              <NavItemLink
+                key={item.url}
+                item={item}
+                isActive={isActive(item.url)}
+              />
+            ))}
+          {renderGroup(costCentresGroup)}
+          {isCloudEngineerEnabled && renderGroup(adminNav)}
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div>
+        <SectionLabel className="px-3 pb-1.5 block">Content</SectionLabel>
+        <div className="flex flex-col gap-1 md:gap-0.5">
+          {contentNav.map((item) => (
+            <NavItemLink
+              key={item.url}
+              item={item}
+              isActive={isActive(item.url)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* EXTERNAL */}
+      <div>
+        <SectionLabel className="px-3 pb-1.5 block">External</SectionLabel>
+        <div className="flex flex-col gap-1 md:gap-0.5">
+          {externalNav.map((item) => (
+            <NavItemLink
+              key={item.url}
+              item={item}
+              isActive={isActive(item.url)}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <aside
@@ -857,99 +1143,10 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
             transition: "mask-image 160ms ease, -webkit-mask-image 160ms ease",
           }}
         >
-          {/* PLATFORM */}
-          <div>
-            <SectionLabel className="px-3 pb-1.5 block">Platform</SectionLabel>
-            <div className="flex flex-col gap-1 md:gap-0.5">
-              {platformNav.map((item) => (
-                <NavItemLink
-                  key={item.url}
-                  item={item}
-                  isActive={isActive(item.url)}
-                />
-              ))}
-              {isCloudEngineerEnabled &&
-                ceNav.map((item) => (
-                  <NavItemLink
-                    key={item.url}
-                    item={item}
-                    isActive={isActive(item.url)}
-                  />
-                ))}
-              <NavGroupLink group={costCentresGroup} isActive={isActive} />
-              {isCloudEngineerEnabled && (
-                <NavGroupLink group={adminNav} isActive={isActive} />
-              )}
-            </div>
-          </div>
-
-          {/* CONTENT */}
-          <div>
-            <SectionLabel className="px-3 pb-1.5 block">Content</SectionLabel>
-            <div className="flex flex-col gap-1 md:gap-0.5">
-              {contentNav.map((item) => (
-                <NavItemLink
-                  key={item.url}
-                  item={item}
-                  isActive={isActive(item.url)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* EXTERNAL */}
-          <div>
-            <SectionLabel className="px-3 pb-1.5 block">External</SectionLabel>
-            <div className="flex flex-col gap-1 md:gap-0.5">
-              {externalNav.map((item) => (
-                <NavItemLink
-                  key={item.url}
-                  item={item}
-                  isActive={isActive(item.url)}
-                />
-              ))}
-            </div>
-          </div>
+          {mainSections}
         </nav>
         {/* Scroll-overflow chevron indicators */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
-          style={{
-            top: "0.25em",
-            width: "1.5em",
-            height: "1.5em",
-            opacity: navEdges.top ? 1 : 0,
-            transform: `translateY(${navEdges.top ? "0" : "-0.25em"})`,
-            transition:
-              "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        >
-          <ChevronUp
-            className="w-[0.9em] h-[0.9em]"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 right-0 mx-auto flex items-center justify-center rounded-full bg-surface border border-card shadow-card text-muted"
-          style={{
-            bottom: "0.25em",
-            width: "1.5em",
-            height: "1.5em",
-            opacity: navEdges.bottom ? 1 : 0,
-            transform: `translateY(${navEdges.bottom ? "0" : "0.25em"})`,
-            transition:
-              "opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        >
-          <ChevronDown
-            className="w-[0.9em] h-[0.9em]"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </div>
+        <EdgeIndicators edges={navEdges} />
       </div>
 
       {/* Commit hash */}
