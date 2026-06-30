@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
         // package when bundling for production. Alias to the ESM version to fix it.
         "@mui/system/createStyled": fileURLToPath(
           new URL(
-            "./node_modules/@mui/system/esm/createStyled.js",
+            "./node_modules/@mui/system/esm/createStyled/index.js",
             import.meta.url,
           ),
         ),
