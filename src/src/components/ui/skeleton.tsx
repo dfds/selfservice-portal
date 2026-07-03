@@ -74,6 +74,38 @@ export function SkeletonTopicRow() {
   );
 }
 
+// Deployments: ExpandableRow-shaped — workload name + kind/cluster pills +
+// replicas + chevron stub, inside a bordered card
+export function SkeletonDeploymentRow() {
+  return (
+    <div className="border border-card rounded-[8px]">
+      <div className="flex items-center gap-3 px-4 py-3">
+        <Skeleton className="h-3.5 flex-1" style={{ maxWidth: "220px" }} />
+        <Skeleton className="h-[20px] w-[70px] rounded-full flex-shrink-0" />
+        <Skeleton className="h-[20px] w-[56px] rounded-full flex-shrink-0" />
+        <Skeleton className="h-3 w-[64px] flex-shrink-0" />
+        <Skeleton className="h-3.5 w-3.5 flex-shrink-0" />
+      </div>
+    </div>
+  );
+}
+
+// Services dense-table row: caret+name (wide) + capability + location + health
+// (replicas + bar) + ingress + source + open action, matching ServicesTable.
+export function SkeletonServiceTableRow() {
+  return (
+    <div className="flex items-center gap-3 px-3 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
+      <Skeleton className="h-3.5 flex-1" style={{ maxWidth: "200px" }} />
+      <Skeleton className="h-3 w-[96px] flex-shrink-0" />
+      <Skeleton className="h-3 w-[120px] flex-shrink-0" />
+      <Skeleton className="h-3 w-[56px] flex-shrink-0" />
+      <Skeleton className="h-3 w-[28px] flex-shrink-0" />
+      <Skeleton className="h-3 w-[80px] flex-shrink-0" />
+      <Skeleton className="h-[22px] w-[54px] rounded-[5px] flex-shrink-0" />
+    </div>
+  );
+}
+
 // Capabilities table: name (wide) + status pill + aws badge + member count stub
 export function SkeletonCapabilityTableRow() {
   return (
