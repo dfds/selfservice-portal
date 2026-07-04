@@ -65,6 +65,7 @@ jobs:
             REACT_APP_ADMIN_PAGE_URL_AUDIT=${{ secrets.REACT_APP_ADMIN_PAGE_URL_AUDIT }}
             REACT_APP_ADMIN_PAGE_URL_CVE=${{ secrets.REACT_APP_ADMIN_PAGE_URL_CVE }}
             REACT_APP_ADMIN_PAGE_URL_INACTIVITY=${{ secrets.REACT_APP_ADMIN_PAGE_URL_INACTIVITY }}
+            REACT_APP_GRAFANA_BASE_URL=${{ secrets.REACT_APP_GRAFANA_BASE_URL }}
             PUBLIC_URL=/
             REACT_APP_COMMIT_HASH=${{ steps.vars.outputs.commit_id }}
       - shell: bash
