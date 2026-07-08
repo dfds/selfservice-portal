@@ -18,6 +18,8 @@ import CapabilityDetailsPage from "./pages/capabilities/details";
 import CapabilityCriticalityPage from "./pages/capabilities/criticality";
 import CapabilitySelfAssessmentsPage from "./pages/capabilities/SelfAssessments";
 import ECRPage from "./pages/ecr";
+import ServicesPage from "./pages/services";
+import ServiceDetailsPage from "./pages/services/ServiceDetailsPage";
 import StatisticsPage from "./pages/statistics";
 import ReleaseNotes from "./pages/release-notes";
 import AuthTemplate from "./auth/AuthTemplate";
@@ -256,6 +258,11 @@ const router = createBrowserRouter(
       <Route path="topics" element={<TopicsPage />} />
       <Route path="capabilities" element={<CapabilitiesPage />} />
       <Route path="ecr" element={<ECRPage />} />
+      <Route path="services" element={<ServicesPage />} />
+      <Route
+        path="services/:cluster/:namespace/:name"
+        element={<ServiceDetailsPage />}
+      />
       <Route path="statistics" element={<StatisticsPage />} />
       <Route path="release-notes" element={<ReleaseNotes />} />
       <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
