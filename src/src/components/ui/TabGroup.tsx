@@ -31,13 +31,13 @@ export function TabGroup<T extends string>({
             type="button"
             onClick={() => onChange(tab.id)}
             className={cn(
-              "px-3 py-2 text-[0.75rem] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors",
+              "inline-flex items-center gap-1.5 px-3 py-2 text-[0.75rem] font-medium border-b-2 -mb-px cursor-pointer bg-transparent transition-colors",
               value === tab.id
                 ? "border-action text-action"
                 : "border-transparent text-muted hover:text-secondary",
             )}
           >
-            {tab.icon && <span className="mr-1.5">{tab.icon}</span>}
+            {tab.icon}
             {tab.label}
           </button>
         ))}
