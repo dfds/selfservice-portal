@@ -23,7 +23,7 @@ function EventRow({ event, past = false }) {
   const label = EVENT_TYPE_LABELS[event.type] ?? "Event";
 
   return (
-    <div className={past ? "opacity-65" : ""}>
+    <div>
       <div className="flex items-center gap-1.5">
         {past ? (
           <span className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px] bg-surface-muted text-muted border border-divider">
@@ -43,9 +43,7 @@ function EventRow({ event, past = false }) {
       </div>
       <Link
         to={`/events/v/${event.id}`}
-        className={`block text-[0.75rem] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline ${
-          past ? "text-muted" : "text-[#002b45] dark:text-[#e2e8f0]"
-        }`}
+        className="block text-[0.75rem] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline text-[#002b45] dark:text-[#e2e8f0]"
       >
         {event.title}
       </Link>
