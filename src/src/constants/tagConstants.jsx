@@ -158,6 +158,18 @@ const GROUP_TECHNOLOGY_AND_DATA_BUSINESS_CAPABILITIES = [
   { label: "Data Platform", value: "data-platform" },
   { label: "Data Science", value: "data-science" },
   {
+    label: "Global customer master data",
+    value: "global-customer-master-data",
+  },
+  {
+    label: "Global Product and Service catalogue",
+    value: "global-product-and-service-catalogue",
+  },
+  {
+    label: "Global vendor master data",
+    value: "global-vendor-master-data",
+  },
+  {
     label: "Marketing & Campaign Management",
     value: "marketing-campaign-management",
   },
