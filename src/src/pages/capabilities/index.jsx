@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import styles from "./capabilities.module.css";
 import AppContext from "@/AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import CapabilitiesList from "./Capabilities";
-import { TrackedButton, TrackedLink } from "@/components/Tracking";
+import { TrackedLink } from "@/components/Tracking";
 import Page from "@/components/Page";
 import { TabbedCapabilityMembershipManagement } from "./capabilityMembershipManagement";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
+import { Button } from "@/components/ui/button";
 
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
@@ -44,21 +44,26 @@ export default function CapabilitiesPage() {
   };
 
   useEffect(() => {
-    setActions(
-      <TrackedButton
-        trackName="CapabilityWizard-Begin"
-        size="sm"
-        onClick={startAddCapabilityWizard}
-      >
-        New capability
-      </TrackedButton>,
-    );
+    setActions(null);
     return () => setActions(null);
-  }, []);
+  }, [setActions]);
 
   return (
     <>
-      <Page title="Capabilities">
+      <Page>
+        <div className="flex items-start justify-between mb-6 gap-8 animate-fade-up">
+          <div>
+            <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
+              Capabilities
+            </h1>
+          </div>
+          <div className="flex items-end pb-1">
+            <Button variant="action" onClick={startAddCapabilityWizard}>
+              + New capability
+            </Button>
+          </div>
+        </div>
+
         {showNewCapabilityWizard && (
           <NewCapabilityWizard
             inProgress={isCreatingNewCapability}
