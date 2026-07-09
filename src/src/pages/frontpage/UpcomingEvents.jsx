@@ -61,9 +61,8 @@ export default function UpcomingEvents() {
   }
 
   const upcoming = data?.upcomingEvents ?? [];
-  const latest = data?.latestHeldEvent ?? null;
 
-  if (!upcoming.length && !latest) {
+  if (!upcoming.length) {
     return (
       <p className="font-mono text-[0.6875rem] text-muted tracking-[0.03em]">
         No events scheduled.
@@ -76,21 +75,6 @@ export default function UpcomingEvents() {
       {upcoming.map((event, i) => (
         <EventItem key={event.id} event={event} index={i} />
       ))}
-      {latest && (
-        <>
-          {upcoming.length > 0 && (
-            <div className="pt-[0.625rem] pb-[0.375rem]">
-              <span className="font-mono text-[0.5625rem] font-semibold tracking-[0.08em] uppercase text-muted">
-                Last held
-              </span>
-            </div>
-          )}
-          <EventItem
-            event={latest}
-            index={upcoming.length}
-          />
-        </>
-      )}
       <div className="pt-[0.625rem]">
         <Link
           to="/events"
