@@ -58,6 +58,15 @@ interface AudienceConfig {
   filters?: any[];
 }
 
+function preserveEmptyParagraphSpacing(html: string) {
+  // Email clients often collapse truly empty paragraphs. Convert them to a
+  // non-breaking space so blank lines remain visible in preview and sends.
+  return html.replace(
+    /<p(\s[^>]*)?>\s*(?:<br\s*\/?>)?\s*<\/p>/gi,
+    "<p$1>&nbsp;</p>",
+  );
+}
+
 export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -389,7 +398,7 @@ export default function EmailCampaignEditor() {
         name: name.trim(),
         subject: subject.trim(),
         contentJson: JSON.stringify(editor.getJSON()),
-        contentHtml: editor.getHTML(),
+        contentHtml: preserveEmptyParagraphSpacing(editor.getHTML()),
         audienceJson: JSON.stringify(audience),
         recipientFilter: recipientFilter || null,
         targetType,
