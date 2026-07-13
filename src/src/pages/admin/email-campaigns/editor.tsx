@@ -449,7 +449,7 @@ export default function EmailCampaignEditor() {
         // Stay in the editor — the "Back to campaigns" link and "Cancel"
         // button remain the explicit ways to leave.
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const waitForPreviewRetry = (ms: number) =>
@@ -531,7 +531,7 @@ export default function EmailCampaignEditor() {
             setPreviewLoading(false);
           });
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const handleSchedule = () => {
@@ -637,11 +637,13 @@ export default function EmailCampaignEditor() {
                   }
                 }}
                 disabled={isEdit}
-                className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border transition-colors ${targetType === t
-                  ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
-                  : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
-                  } ${isEdit ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
-                  }`}
+                className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border transition-colors ${
+                  targetType === t
+                    ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
+                    : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
+                } ${
+                  isEdit ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+                }`}
               >
                 {t === "Capability" ? "Capabilities" : "Users"}
               </button>
@@ -745,10 +747,11 @@ export default function EmailCampaignEditor() {
                               e.preventDefault();
                               insertSuggestion(v.name);
                             }}
-                            className={`w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${i === selectedIndex
-                              ? "bg-action/10"
-                              : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
-                              }`}
+                            className={`w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${
+                              i === selectedIndex
+                                ? "bg-action/10"
+                                : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
+                            }`}
                           >
                             <span className="flex items-center gap-2">
                               <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
@@ -935,8 +938,8 @@ export default function EmailCampaignEditor() {
               {updateCampaign.isPending
                 ? "Saving..."
                 : scheduleCampaign.isPending
-                  ? "Scheduling..."
-                  : "Schedule"}
+                ? "Scheduling..."
+                : "Schedule"}
             </Button>
           )}
           {isEdit && isDraft && scheduleType === "Immediate" && (
@@ -984,8 +987,8 @@ export default function EmailCampaignEditor() {
               {updateCampaign.isPending
                 ? "Saving..."
                 : sendCampaign.isPending
-                  ? "Sending..."
-                  : "Send Now"}
+                ? "Sending..."
+                : "Send Now"}
             </Button>
           </div>
         </DialogContent>
