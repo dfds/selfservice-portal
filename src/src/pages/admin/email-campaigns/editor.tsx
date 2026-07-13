@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -60,6 +60,7 @@ interface AudienceConfig {
 
 export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -126,6 +127,7 @@ export default function EmailCampaignEditor() {
     y: number;
   } | null>(null);
   const [replaceSearch, setReplaceSearch] = useState("");
+  const previewAfterCreateHandledRef = useRef<string | null>(null);
 
   const handleSuggestionOpen = useCallback(
     (query: string, from: number, to: number) => {
@@ -438,32 +440,89 @@ export default function EmailCampaignEditor() {
         // Stay in the editor — the "Back to campaigns" link and "Cancel"
         // button remain the explicit ways to leave.
       })
-      .catch(() => {});
+      .catch(() => { });
   };
+
+  const waitForPreviewRetry = (ms: number) =>
+    new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  const requestPreview = async (id: string | undefined, attempts = 1) => {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      try {
+        return await previewCampaign.mutateAsync({ id, payload: {} });
+      } catch (error) {
+        lastError = error;
+        if (attempt < attempts - 1) {
+          await waitForPreviewRetry(300 * (attempt + 1));
+        }
+      }
+    }
+
+    throw lastError;
+  };
+
+  useEffect(() => {
+    const shouldOpenPreview = (location.state as any)?.openPreviewAfterCreate;
+
+    if (!shouldOpenPreview || !campaignId || !loaded) {
+      return;
+    }
+
+    if (previewAfterCreateHandledRef.current === campaignId) {
+      return;
+    }
+
+    previewAfterCreateHandledRef.current = campaignId;
+    setPreviewLoading(true);
+    setPreviews([]);
+    setPreviewOpen(true);
+
+    requestPreview(campaignId, 3)
+      .then((data: any) => {
+        setPreviews(data?.previews || []);
+        setPreviewLoading(false);
+      })
+      .catch(() => {
+        toast.error("Could not generate preview");
+        setPreviewLoading(false);
+      })
+      .finally(() => {
+        navigate(location.pathname, { replace: true, state: null });
+      });
+  }, [campaignId, loaded, location.pathname, location.state, navigate, toast]);
 
   // Preview always renders the freshly-saved record so it reflects current
   // edits. We save first, then preview by the saved id (passing it through the
   // mutate payload covers the brand-new-draft case before the editor re-renders).
   const handlePreview = () => {
+    const previewAttempts = isEdit ? 1 : 3;
     doSave()
       .then((saved: any) => {
+        if (!isEdit && saved?.id) {
+          navigate(`/admin/email-campaigns/edit/${saved.id}`, {
+            replace: true,
+            state: { openPreviewAfterCreate: true },
+          });
+          return;
+        }
+
         setPreviewLoading(true);
+        setPreviews([]);
         setPreviewOpen(true);
-        previewCampaign.mutate(
-          { id: saved?.id, payload: {} },
-          {
-            onSuccess: (data: any) => {
-              setPreviews(data?.previews || []);
-              setPreviewLoading(false);
-            },
-            onError: () => {
-              toast.error("Could not generate preview");
-              setPreviewLoading(false);
-            },
-          },
-        );
+
+        requestPreview(saved?.id, previewAttempts)
+          .then((data: any) => {
+            setPreviews(data?.previews || []);
+            setPreviewLoading(false);
+          })
+          .catch(() => {
+            toast.error("Could not generate preview");
+            setPreviewLoading(false);
+          });
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const handleSchedule = () => {
@@ -569,13 +628,11 @@ export default function EmailCampaignEditor() {
                   }
                 }}
                 disabled={isEdit}
-                className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border transition-colors ${
-                  targetType === t
-                    ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
-                    : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
-                } ${
-                  isEdit ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
-                }`}
+                className={`px-3 py-1.5 rounded-md text-[0.75rem] font-medium border transition-colors ${targetType === t
+                  ? "bg-[#002b45] text-white border-[#002b45] dark:bg-slate-600 dark:border-slate-500"
+                  : "bg-transparent text-secondary border-card hover:bg-white dark:hover:bg-slate-700"
+                  } ${isEdit ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+                  }`}
               >
                 {t === "Capability" ? "Capabilities" : "Users"}
               </button>
@@ -679,11 +736,10 @@ export default function EmailCampaignEditor() {
                               e.preventDefault();
                               insertSuggestion(v.name);
                             }}
-                            className={`w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${
-                              i === selectedIndex
-                                ? "bg-action/10"
-                                : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
-                            }`}
+                            className={`w-full flex flex-col items-start gap-1 px-2 py-2 rounded-md text-left cursor-pointer border-0 bg-transparent transition-colors ${i === selectedIndex
+                              ? "bg-action/10"
+                              : "hover:bg-[#f2f2f2] dark:hover:bg-slate-700"
+                              }`}
                           >
                             <span className="flex items-center gap-2">
                               <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[0.6875rem] font-mono font-medium">
@@ -857,7 +913,7 @@ export default function EmailCampaignEditor() {
             className="gap-1.5"
           >
             <Eye size={14} />
-            Preview
+            Save and Preview
           </Button>
           {isEdit && isDraft && scheduleType !== "Immediate" && (
             <Button
@@ -870,8 +926,8 @@ export default function EmailCampaignEditor() {
               {updateCampaign.isPending
                 ? "Saving..."
                 : scheduleCampaign.isPending
-                ? "Scheduling..."
-                : "Schedule"}
+                  ? "Scheduling..."
+                  : "Schedule"}
             </Button>
           )}
           {isEdit && isDraft && scheduleType === "Immediate" && (
@@ -879,7 +935,7 @@ export default function EmailCampaignEditor() {
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
               disabled={updateCampaign.isPending}
-              className="gap-1.5"
+              className="gap-1.5 ml-auto"
             >
               <Send size={14} />
               Send Now
@@ -919,8 +975,8 @@ export default function EmailCampaignEditor() {
               {updateCampaign.isPending
                 ? "Saving..."
                 : sendCampaign.isPending
-                ? "Sending..."
-                : "Send Now"}
+                  ? "Sending..."
+                  : "Send Now"}
             </Button>
           </div>
         </DialogContent>
