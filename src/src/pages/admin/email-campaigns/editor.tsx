@@ -593,7 +593,7 @@ export default function EmailCampaignEditor() {
   // A loaded campaign uses its own status; a new or just-created one is a Draft.
   const isDraft = existingCampaign ? existingCampaign.status === "Draft" : true;
 
-  if (isEdit && !isFetched) {
+  if (id && !isFetched) {
     return (
       <div className="px-5 md:px-8 py-6 space-y-4">
         <Skeleton className="h-6 w-48" />
