@@ -33,6 +33,13 @@ import { useExpandable } from "@/hooks/useExpandable";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
+import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
+import {
+  buildMetadataIndex,
+  matchesMetadata,
+  type MetadataFilter,
+  type MetadataMode,
+} from "@/lib/metadataFilters";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -75,10 +82,6 @@ type CostCentreDetailsData = {
 };
 
 type StatusFilter = "all" | "Compliant" | "NonCompliant" | "Unknown";
-
-type MetadataFilter = { key: string; value: string };
-
-type MetadataMode = "and" | "or";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -206,112 +209,6 @@ function sortCapabilities(
     }
     return sign * ((av as number) - (bv as number));
   });
-}
-
-// ─── Metadata combobox ───────────────────────────────────────────────────────
-// Free-text input + click-to-open suggestion dropdown. Native <datalist> only
-// surfaces options while the user is typing; this gives a discoverable list on
-// focus/chevron click and still accepts arbitrary typed input.
-
-function MetadataCombobox({
-  value,
-  onChange,
-  options,
-  placeholder,
-  ariaLabel,
-}: {
-  value: string;
-  onChange: (next: string) => void;
-  options: string[];
-  placeholder: string;
-  ariaLabel: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onClickOutside(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
-  }, [open]);
-
-  const filtered = useMemo(() => {
-    const q = value.trim().toLowerCase();
-    if (!q) return options;
-    return options.filter((o) => o.toLowerCase().includes(q));
-  }, [options, value]);
-
-  return (
-    <div ref={containerRef} className="relative flex-1 min-w-[140px]">
-      <input
-        ref={inputRef}
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") setOpen(false);
-        }}
-        placeholder={placeholder}
-        aria-label={ariaLabel}
-        autoComplete="off"
-        className="w-full h-[28px] pl-2 pr-7 bg-surface border border-[#d9dcde] dark:border-[#334155] rounded-[5px] font-mono text-[0.75rem] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]"
-      />
-      <button
-        type="button"
-        onMouseDown={(e) => {
-          // Prevent input blur so toggling stays predictable while focused.
-          e.preventDefault();
-        }}
-        onClick={() => {
-          setOpen((prev) => !prev);
-          inputRef.current?.focus();
-        }}
-        aria-label={`Toggle ${ariaLabel} suggestions`}
-        className="absolute right-0 top-0 h-[28px] w-7 flex items-center justify-center text-muted hover:text-action transition-colors"
-      >
-        <ChevronDown
-          size={12}
-          strokeWidth={2}
-          className={cn("transition-transform", open && "rotate-180")}
-        />
-      </button>
-      {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 border border-card rounded-[6px] bg-surface shadow-card z-50 overflow-hidden max-h-52 overflow-y-auto">
-          {filtered.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                onChange(opt);
-                setOpen(false);
-              }}
-              className={cn(
-                "w-full text-left px-2.5 py-1 font-mono text-[0.75rem] hover:bg-surface-muted transition-colors border-0 bg-transparent",
-                opt === value
-                  ? "text-action"
-                  : "text-[#002b45] dark:text-[#e2e8f0]",
-              )}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 // ─── URL state codec ─────────────────────────────────────────────────────────
@@ -453,43 +350,24 @@ export default function CostCentreComplianceDetailPage() {
 
   // Aggregate every metadata key + per-key value set seen across the cost centre's
   // capabilities. Drives both the key combobox and the per-key value suggestions.
-  const metadataIndex = useMemo(() => {
-    const valuesByKey = new Map<string, Set<string>>();
-    metadataByCap.forEach((meta) => {
-      for (const [k, v] of Object.entries(meta)) {
-        let set = valuesByKey.get(k);
-        if (!set) {
-          set = new Set();
-          valuesByKey.set(k, set);
-        }
-        set.add(v);
-      }
-    });
-    const keys = Array.from(valuesByKey.keys()).sort();
-    const values: Record<string, string[]> = {};
-    for (const k of keys) values[k] = Array.from(valuesByKey.get(k)!).sort();
-    return { keys, values };
-  }, [metadataByCap]);
+  const metadataIndex = useMemo(
+    () => buildMetadataIndex(Array.from(metadataByCap.values())),
+    [metadataByCap],
+  );
 
   // Metadata-filtered set: drives the stats panel above.
   // AND: every non-empty filter must match. OR: at least one must match.
   // Empty rows (no key) are skipped in either mode — they're mid-edit, not active.
   const metadataFilteredCapabilities = useMemo<CapabilityCompliance[]>(() => {
     const all = data?.capabilities ?? [];
-    const active = metadataFilters.filter((f) => f.key);
-    if (active.length === 0) return all;
-    return all.filter((cap) => {
-      const meta = metadataByCap.get(cap.capabilityId) ?? {};
-      const matches = (f: MetadataFilter) => {
-        const v = meta[f.key];
-        if (v === undefined) return false;
-        if (f.value && v !== f.value) return false;
-        return true;
-      };
-      return metadataMode === "or"
-        ? active.some(matches)
-        : active.every(matches);
-    });
+    if (metadataFilters.every((f) => !f.key)) return all;
+    return all.filter((cap) =>
+      matchesMetadata(
+        metadataByCap.get(cap.capabilityId) ?? {},
+        metadataFilters,
+        metadataMode,
+      ),
+    );
   }, [data, metadataFilters, metadataMode, metadataByCap]);
 
   // Table set: metadata + status. Status filter is table-only.
@@ -1030,7 +908,7 @@ function CapabilityMatrix({
           "& .MuiSelect-icon": { color: textMuted },
         },
       }}
-      muiTableDetailPanelProps={{
+      muiDetailPanelProps={{
         sx: {
           backgroundColor: bgMuted,
           borderBottom: `1px solid ${borderColor}`,
