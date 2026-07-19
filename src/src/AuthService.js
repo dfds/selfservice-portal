@@ -6,7 +6,6 @@ import {
   msalInstance,
   selfServiceApiScopes,
   graphScopes,
-  tokenCache,
 } from "./auth/context";
 import store from "./state/local/store";
 import { refreshAuthState, sessionExpired } from "./state/local/auth";
@@ -60,12 +59,10 @@ export async function getSelfServiceAccessToken() {
         scopes: selfServiceApiScopes,
         account: account,
       });
-      tokenCache.put("selfservice-api", accessToken);
       store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
       return accessToken;
     } catch (e) {
       console.log("getSelfServiceAccessToken failed:", e);
-      tokenCache.remove("selfservice-api");
 
       if (e instanceof InteractionRequiredAuthError) {
         store.dispatch(sessionExpired());
@@ -90,13 +87,11 @@ export async function getGraphAccessToken() {
       scopes: graphScopes,
       account: account,
     });
-    tokenCache.put("msgraph", accessToken);
     store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
 
     return accessToken;
   } catch (e) {
     console.log("getGraphAccessToken silent acquisition failed:", e);
-    tokenCache.remove("msgraph");
     return null;
   }
 }

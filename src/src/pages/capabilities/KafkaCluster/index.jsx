@@ -67,7 +67,6 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   const handleGetCredentials = async () => {
     setIsLoadingCredentials(true);
     const access = await getAccessToCluster(cluster);
-    console.log(access);
     setAccess(access);
     setShowAccess(true);
     setIsLoadingCredentials(false);
