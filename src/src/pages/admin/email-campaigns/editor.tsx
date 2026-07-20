@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -58,8 +58,18 @@ interface AudienceConfig {
   filters?: any[];
 }
 
+function preserveEmptyParagraphSpacing(html: string) {
+  // Email clients often collapse truly empty paragraphs. Convert them to a
+  // non-breaking space so blank lines remain visible in preview and sends.
+  return html.replace(
+    /<p(\s[^>]*)?>\s*(?:<br\s*\/?>)?\s*<\/p>/gi,
+    "<p$1>&nbsp;</p>",
+  );
+}
+
 export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -126,6 +136,7 @@ export default function EmailCampaignEditor() {
     y: number;
   } | null>(null);
   const [replaceSearch, setReplaceSearch] = useState("");
+  const previewAfterCreateHandledRef = useRef<string | null>(null);
 
   const handleSuggestionOpen = useCallback(
     (query: string, from: number, to: number) => {
@@ -387,7 +398,7 @@ export default function EmailCampaignEditor() {
         name: name.trim(),
         subject: subject.trim(),
         contentJson: JSON.stringify(editor.getJSON()),
-        contentHtml: editor.getHTML(),
+        contentHtml: preserveEmptyParagraphSpacing(editor.getHTML()),
         audienceJson: JSON.stringify(audience),
         recipientFilter: recipientFilter || null,
         targetType,
@@ -441,27 +452,84 @@ export default function EmailCampaignEditor() {
       .catch(() => {});
   };
 
+  const waitForPreviewRetry = (ms: number) =>
+    new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  const requestPreview = async (id: string | undefined, attempts = 1) => {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      try {
+        return await previewCampaign.mutateAsync({ id, payload: {} });
+      } catch (error) {
+        lastError = error;
+        if (attempt < attempts - 1) {
+          await waitForPreviewRetry(300 * (attempt + 1));
+        }
+      }
+    }
+
+    throw lastError;
+  };
+
+  useEffect(() => {
+    const shouldOpenPreview = (location.state as any)?.openPreviewAfterCreate;
+
+    if (!shouldOpenPreview || !campaignId || !loaded) {
+      return;
+    }
+
+    if (previewAfterCreateHandledRef.current === campaignId) {
+      return;
+    }
+
+    previewAfterCreateHandledRef.current = campaignId;
+    setPreviewLoading(true);
+    setPreviews([]);
+    setPreviewOpen(true);
+
+    requestPreview(campaignId, 3)
+      .then((data: any) => {
+        setPreviews(data?.previews || []);
+        setPreviewLoading(false);
+      })
+      .catch(() => {
+        toast.error("Could not generate preview");
+        setPreviewLoading(false);
+      })
+      .finally(() => {
+        navigate(location.pathname, { replace: true, state: null });
+      });
+  }, [campaignId, loaded, location.pathname, location.state, navigate, toast]);
+
   // Preview always renders the freshly-saved record so it reflects current
   // edits. We save first, then preview by the saved id (passing it through the
   // mutate payload covers the brand-new-draft case before the editor re-renders).
   const handlePreview = () => {
+    const previewAttempts = isEdit ? 1 : 3;
     doSave()
       .then((saved: any) => {
+        if (!isEdit && saved?.id) {
+          navigate(`/admin/email-campaigns/edit/${saved.id}`, {
+            replace: true,
+            state: { openPreviewAfterCreate: true },
+          });
+          return;
+        }
+
         setPreviewLoading(true);
+        setPreviews([]);
         setPreviewOpen(true);
-        previewCampaign.mutate(
-          { id: saved?.id, payload: {} },
-          {
-            onSuccess: (data: any) => {
-              setPreviews(data?.previews || []);
-              setPreviewLoading(false);
-            },
-            onError: () => {
-              toast.error("Could not generate preview");
-              setPreviewLoading(false);
-            },
-          },
-        );
+
+        requestPreview(saved?.id, previewAttempts)
+          .then((data: any) => {
+            setPreviews(data?.previews || []);
+            setPreviewLoading(false);
+          })
+          .catch(() => {
+            toast.error("Could not generate preview");
+            setPreviewLoading(false);
+          });
       })
       .catch(() => {});
   };
@@ -525,7 +593,7 @@ export default function EmailCampaignEditor() {
   // A loaded campaign uses its own status; a new or just-created one is a Draft.
   const isDraft = existingCampaign ? existingCampaign.status === "Draft" : true;
 
-  if (isEdit && !isFetched) {
+  if (id && !isFetched) {
     return (
       <div className="px-5 md:px-8 py-6 space-y-4">
         <Skeleton className="h-6 w-48" />
@@ -857,7 +925,7 @@ export default function EmailCampaignEditor() {
             className="gap-1.5"
           >
             <Eye size={14} />
-            Preview
+            Save and Preview
           </Button>
           {isEdit && isDraft && scheduleType !== "Immediate" && (
             <Button
@@ -879,7 +947,7 @@ export default function EmailCampaignEditor() {
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
               disabled={updateCampaign.isPending}
-              className="gap-1.5"
+              className="gap-1.5 ml-auto"
             >
               <Send size={14} />
               Send Now
