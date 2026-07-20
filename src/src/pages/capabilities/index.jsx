@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import styles from "./capabilities.module.css";
 import AppContext from "@/AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import CapabilitiesList from "./Capabilities";
@@ -44,21 +43,30 @@ export default function CapabilitiesPage() {
   };
 
   useEffect(() => {
-    setActions(
-      <TrackedButton
-        trackName="CapabilityWizard-Begin"
-        size="sm"
-        onClick={startAddCapabilityWizard}
-      >
-        New capability
-      </TrackedButton>,
-    );
+    setActions(null);
     return () => setActions(null);
-  }, []);
+  }, [setActions]);
 
   return (
     <>
-      <Page title="Capabilities">
+      <Page>
+        <div className="flex items-start justify-between mb-6 gap-8 animate-fade-up">
+          <div>
+            <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
+              Capabilities
+            </h1>
+          </div>
+          <div className="flex items-end pb-1">
+            <TrackedButton
+              trackName="Capabilities-NewCapability"
+              variation="action"
+              onClick={startAddCapabilityWizard}
+            >
+              + New capability
+            </TrackedButton>
+          </div>
+        </div>
+
         {showNewCapabilityWizard && (
           <NewCapabilityWizard
             inProgress={isCreatingNewCapability}

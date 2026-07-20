@@ -18,34 +18,26 @@ const EVENT_TYPE_COLORS = {
   other: { bg: "#f1f5f9", color: "#64748b" },
 };
 
-function EventRow({ event, past = false }) {
+function EventRow({ event }) {
   const colors = EVENT_TYPE_COLORS[event.type] ?? EVENT_TYPE_COLORS.other;
   const label = EVENT_TYPE_LABELS[event.type] ?? "Event";
 
   return (
-    <div className={past ? "opacity-65" : ""}>
+    <div>
       <div className="flex items-center gap-1.5">
-        {past ? (
-          <span className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px] bg-surface-muted text-muted border border-divider">
-            Past event
-          </span>
-        ) : (
-          <span
-            className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px]"
-            style={{ background: colors.bg, color: colors.color }}
-          >
-            {label}
-          </span>
-        )}
+        <span
+          className="inline-block font-mono text-[0.5rem] font-semibold tracking-[0.06em] uppercase px-1 py-[1px] rounded-[3px]"
+          style={{ background: colors.bg, color: colors.color }}
+        >
+          {label}
+        </span>
         <span className="font-mono text-[0.5625rem] text-[#afafaf] dark:text-[#64748b] tracking-[0.04em]">
           {formatEventDateTimeShort(event.eventDate)}
         </span>
       </div>
       <Link
         to={`/events/v/${event.id}`}
-        className={`block text-[0.75rem] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline ${
-          past ? "text-muted" : "text-[#002b45] dark:text-[#e2e8f0]"
-        }`}
+        className="block text-[0.75rem] font-medium leading-[1.3] line-clamp-1 no-underline hover:underline text-[#002b45] dark:text-[#e2e8f0]"
       >
         {event.title}
       </Link>
@@ -57,7 +49,6 @@ export default function MiniUpcomingEvents() {
   const { data, isLoading } = useUpcomingEvents();
 
   const upcoming = data?.upcomingEvents ?? [];
-  const latest = data?.latestHeldEvent ?? null;
   const next = upcoming[0] ?? null;
 
   return (
@@ -68,15 +59,12 @@ export default function MiniUpcomingEvents() {
       <div className="flex-1 flex flex-col gap-2">
         {isLoading ? (
           <Skeleton className="h-[34px] rounded-[5px]" />
-        ) : !next && !latest ? (
+        ) : !next ? (
           <p className="font-mono text-[0.625rem] text-muted tracking-[0.03em]">
             No events scheduled.
           </p>
         ) : (
-          <>
-            {next && <EventRow event={next} />}
-            {latest && <EventRow event={latest} past />}
-          </>
+          <EventRow event={next} />
         )}
       </div>
       <div className="pt-2">
