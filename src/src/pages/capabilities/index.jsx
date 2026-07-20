@@ -3,12 +3,11 @@ import { useSearchParams } from "react-router-dom";
 import AppContext from "@/AppContext";
 import NewCapabilityWizard from "./NewCapabilityWizard";
 import CapabilitiesList from "./Capabilities";
-import { TrackedLink } from "@/components/Tracking";
+import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import Page from "@/components/Page";
 import { TabbedCapabilityMembershipManagement } from "./capabilityMembershipManagement";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
-import { Button } from "@/components/ui/button";
 
 export default function CapabilitiesPage() {
   const { addNewCapability } = useContext(AppContext);
@@ -58,9 +57,13 @@ export default function CapabilitiesPage() {
             </h1>
           </div>
           <div className="flex items-end pb-1">
-            <Button variant="action" onClick={startAddCapabilityWizard}>
+            <TrackedButton
+              trackName="Capabilities-NewCapability"
+              variation="action"
+              onClick={startAddCapabilityWizard}
+            >
               + New capability
-            </Button>
+            </TrackedButton>
           </div>
         </div>
 
