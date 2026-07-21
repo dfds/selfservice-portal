@@ -1,0 +1,85 @@
+name: selfservice-portal build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/**"
+      - Dockerfile
+      - nginx.conf
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: selfservice-portal-production-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and publish
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out selfservice-portal
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - name: Set outputs
+        id: vars
+        working-directory: src
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Check out ssu-apps
+        uses: actions/checkout@v4
+        with:
+          repository: dfds/ssu-apps
+          path: ssu-apps
+          ref: master
+          token: ${{ secrets.SSU_APPS_GH_TOKEN }}
+
+      - name: Build and push application image
+        uses: ./ssu-apps/.github/actions/build_push_container_ecr
+        id: build_app
+        with:
+          dockerfile_path: ./src/Dockerfile
+          context_path: ./src
+          tag: latest
+          repo: 579478677147.dkr.ecr.eu-central-1.amazonaws.com/selfservice-portal
+          role_arn: ${{ secrets.SSU_APPS_GH_IAM_ROLE }}
+          aws_region: eu-central-1
+          args: |
+            REACT_APP_COMMIT_HASH=${{ steps.vars.outputs.commit_id }}
+            REACT_APP_API_BASE_URL=https://build.dfds.cloud/api
+            REACT_APP_AUTH_REDIRECT_URL=https://build.dfds.cloud
+            REACT_APP_PUBLIC_URL=https://build.dfds.cloud
+            REACT_APP_ADMIN_PAGE_URL_AUDIT=${{ secrets.REACT_APP_ADMIN_PAGE_URL_AUDIT }}
+            REACT_APP_ADMIN_PAGE_URL_CVE=${{ secrets.REACT_APP_ADMIN_PAGE_URL_CVE }}
+            REACT_APP_ADMIN_PAGE_URL_INACTIVITY=${{ secrets.REACT_APP_ADMIN_PAGE_URL_INACTIVITY }}
+            REACT_APP_GRAFANA_BASE_URL=${{ secrets.REACT_APP_GRAFANA_BASE_URL }}
+            PUBLIC_URL=/
+
+      - name: Update deployment image tag
+        env:
+          IMAGE_TAG: sha-${{ steps.build_app.outputs.sha }}
+        run: |
+          cd ssu-apps
+          git config user.name "ssu-apps SA"
+          git config user.email "ssu-apps@dfds.cloud"
+          git pull --rebase origin master
+          wget -q https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O /tmp/yq
+          chmod +x /tmp/yq
+          /tmp/yq -i '.image.tag = strenv(IMAGE_TAG)' argo/values/selfservice-portal.yaml
+          git add argo/values/selfservice-portal.yaml
+          git commit -m "Updated selfservice-portal image tag to ${IMAGE_TAG}"
+          git push origin HEAD:master
