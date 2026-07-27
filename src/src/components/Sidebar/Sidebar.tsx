@@ -99,7 +99,6 @@ const platformNav: NavItemDef[] = [
   { title: "Home", url: "/", icon: Home },
   { title: "Capabilities", url: "/capabilities", icon: Layers },
   { title: "Topics", url: "/topics", icon: List },
-  { title: "Service catalogue", url: "/services", icon: Network },
   { title: "ECR", url: "/ecr", icon: Package },
   { title: "Permission Matrix", url: "/rbac/permissions", icon: Table2 },
 ];
@@ -126,6 +125,7 @@ const externalNav: NavItemDef[] = [
 ];
 
 const ceNav: NavItemDef[] = [
+  { title: "Service catalogue", url: "/services", icon: Network },
   { title: "Criticality", url: "/capabilities/criticality", icon: BarChart2 },
   {
     title: "Self Assessments",
