@@ -125,6 +125,7 @@ const externalNav: NavItemDef[] = [
 ];
 
 const ceNav: NavItemDef[] = [
+  { title: "Service catalogue", url: "/services", icon: Network },
   { title: "Criticality", url: "/capabilities/criticality", icon: BarChart2 },
   {
     title: "Self Assessments",

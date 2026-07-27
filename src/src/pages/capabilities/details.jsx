@@ -14,6 +14,7 @@ import Summary from "./summary";
 import Costs from "./costs";
 import AwsResources from "./resources/aws";
 import AzureResources from "./resources/azure";
+import Deployments from "./resources/deployments";
 import KafkaCluster from "./KafkaCluster";
 import PageSection, { TabbedPageSection } from "@/components/PageSection";
 import { Text } from "@/components/ui/Text";
@@ -123,6 +124,7 @@ function CapabilityDetailsPageContent() {
       : []),
     { href: "#aws-resources", label: "AWS & Kubernetes" },
     { href: "#azure-resources", label: "Azure" },
+    { href: "#services", label: "Services" },
     { href: "#kafka", label: "Kafka" },
     ...(showCosts && awsAccount ? [{ href: "#costs", label: "Costs" }] : []),
     ...(!isDeleted ? [{ href: "#management", label: "Management" }] : []),
@@ -285,6 +287,13 @@ function CapabilityDetailsPageContent() {
             style={{ animationDelay: "300ms" }}
           >
             <AzureResources anchorId="azure-resources" />
+          </div>
+
+          <div
+            className="animate-section-enter"
+            style={{ animationDelay: "320ms" }}
+          >
+            <Deployments anchorId="services" />
           </div>
 
           <div
