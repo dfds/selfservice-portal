@@ -84,6 +84,9 @@ export function GroupInspector({ groupId, onDeleted }: GroupInspectorProps) {
             {group.name ?? group.id}
           </h2>
           <p className="text-xs text-muted font-mono truncate">{group.id}</p>
+          {group.description && (
+            <p className="text-sm text-foreground mt-1.5">{group.description}</p>
+          )}
         </div>
         <Button
           variant="outline"
