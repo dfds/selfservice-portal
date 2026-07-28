@@ -157,7 +157,10 @@ export const useCanThey = createSsuMutation<any>({
 export const useCreateRbacGroup = createSsuMutation<any>({
   method: "POST",
   urlSegments: () => ["rbac", "groups"],
-  payload: (data) => data,
+  payload: (data) => ({
+    name: data.name,
+    description: data.description || "",
+  }),
   authMode: true,
 });
 

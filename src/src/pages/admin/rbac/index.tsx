@@ -561,6 +561,7 @@ export default function RbacViewerPage() {
   const [tab, setTab] = useState<Tab>("roles");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupDescription, setNewGroupDescription] = useState("");
   const [showCreateRole, setShowCreateRole] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [newRoleDescription, setNewRoleDescription] = useState("");
@@ -611,8 +612,7 @@ export default function RbacViewerPage() {
     queryClient.invalidateQueries({ queryKey: ["rbac", "role-permissions"] });
     if (failed > 0) {
       toast.error(
-        `${selectedPerms.size - failed}/${
-          selectedPerms.size
+        `${selectedPerms.size - failed}/${selectedPerms.size
         } permissions granted`,
       );
     } else {
@@ -649,6 +649,7 @@ export default function RbacViewerPage() {
     errorMessage: "Could not create group",
     onSuccess: () => {
       setNewGroupName("");
+      setNewGroupDescription("");
       setShowCreateGroup(false);
     },
   });
@@ -673,8 +674,8 @@ export default function RbacViewerPage() {
 
   function handleCreateGroup(e: React.FormEvent) {
     e.preventDefault();
-    if (!newGroupName.trim()) return;
-    fireCreateGroup({ name: newGroupName.trim() });
+    if (!newGroupName.trim() || !newGroupDescription.trim()) return;
+    fireCreateGroup({ name: newGroupName.trim(), description: newGroupDescription.trim() });
   }
 
   return (
@@ -868,7 +869,7 @@ export default function RbacViewerPage() {
           {showCreateGroup && (
             <form
               onSubmit={handleCreateGroup}
-              className="flex gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40"
+              className="flex flex-col gap-2 mb-4 p-3 border border-card rounded-[8px] bg-surface-muted/40"
             >
               <Input
                 placeholder="Group name"
@@ -877,25 +878,34 @@ export default function RbacViewerPage() {
                 className="text-sm font-mono"
                 autoFocus
               />
-              <Button
-                type="submit"
-                variant="default"
-                size="sm"
-                disabled={!newGroupName.trim() || createGroup.isPending}
-              >
-                {createGroup.isPending ? "Creating…" : "Create"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setShowCreateGroup(false);
-                  setNewGroupName("");
-                }}
-              >
-                Cancel
-              </Button>
+              <Input
+                placeholder="Description"
+                value={newGroupDescription}
+                onChange={(e) => setNewGroupDescription(e.target.value)}
+                className="text-sm"
+              />
+              <div className="flex gap-2 justify-end">
+                <Button
+                  type="submit"
+                  variant="default"
+                  size="sm"
+                  disabled={!newGroupName.trim() || !newGroupDescription.trim() || createGroup.isPending}
+                >
+                  {createGroup.isPending ? "Creating…" : "Create"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowCreateGroup(false);
+                    setNewGroupName("");
+                    setNewGroupDescription("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           )}
 
