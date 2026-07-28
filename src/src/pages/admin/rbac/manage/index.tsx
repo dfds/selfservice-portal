@@ -355,6 +355,7 @@ function GroupList({
   const [filter, setFilter] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newDescription, setNewDescription] = useState("");
 
   const createMutation = useCreateRbacGroup();
   const fireCreate = useMutationToast(createMutation, {
@@ -364,6 +365,7 @@ function GroupList({
     onSuccess: (data: any) => {
       setShowCreate(false);
       setNewName("");
+      setNewDescription("");
       if (data?.id) onSelect(data.id);
     },
   });
@@ -457,8 +459,8 @@ function GroupList({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (!newName.trim()) return;
-              fireCreate({ name: newName.trim() });
+              if (!newName.trim() || !newDescription.trim()) return;
+              fireCreate({ name: newName.trim(), description: newDescription.trim() });
             }}
             className="space-y-4 mt-2"
           >
@@ -470,6 +472,15 @@ function GroupList({
                 placeholder="e.g. platform-admins"
                 className="text-sm font-mono"
                 autoFocus
+              />
+            </div>
+            <div>
+              <SectionLabel className="block mb-1.5">Description</SectionLabel>
+              <Input
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                placeholder="e.g. Members with platform admin privileges"
+                className="text-sm"
               />
             </div>
             <div className="flex gap-2 justify-end pt-2">
@@ -484,7 +495,7 @@ function GroupList({
               <Button
                 type="submit"
                 variant="action"
-                disabled={!newName.trim() || createMutation.isPending}
+                disabled={!newName.trim() || !newDescription.trim() || createMutation.isPending}
               >
                 {createMutation.isPending ? "Creating…" : "Create"}
               </Button>
