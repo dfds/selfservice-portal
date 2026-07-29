@@ -56,8 +56,7 @@ import {
   trafficFor,
   formatReqRate,
   formatReqRateValue,
-  formatErrorPct,
-  errorChipClass,
+  errorDisplay,
   workloadReachability,
   reachabilityLabel,
   reachabilityTooltip,
@@ -686,16 +685,13 @@ export function ServicesTableView({
               </span>
             );
           }
-          const colour =
-            traffic.errorPct <= 0
-              ? "text-muted"
-              : errorChipClass(traffic.health) || "text-secondary";
+          const errors = errorDisplay(traffic);
           return (
             <span
-              className={cn("font-mono text-[12px]", colour)}
-              title={`5xx share of ${formatReqRate(traffic.reqRate)} inbound`}
+              className={cn("font-mono text-[12px]", errors.className)}
+              title={errors.title}
             >
-              {formatErrorPct(traffic.errorPct)}
+              {errors.text}
             </span>
           );
         },

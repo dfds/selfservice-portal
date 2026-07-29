@@ -79,3 +79,25 @@ export const LABEL_HINTS: Record<string, string> = {
 export function hintFor(label: string): string | undefined {
   return LABEL_HINTS[label.trim().toLowerCase()];
 }
+
+/**
+ * The catalogue page's five headline numbers. Kept apart from LABEL_HINTS
+ * because these count across the whole platform, so a couple of the labels mean
+ * something different here — "Ingress" is a total of exposed hostnames, not the
+ * per-workload column of the same name.
+ */
+export const SUMMARY_HINTS: Record<string, string> = {
+  workloads:
+    "Every workload the catalogue discovered across all clusters — not just the ones the table below is currently showing.",
+  healthy: "Workloads where all desired pod replicas are ready.",
+  degraded:
+    "Workloads where some, but not all, desired pod replicas are ready.",
+  down: "Workloads where none of the desired pod replicas are ready.",
+  ingress:
+    "Total external hostnames exposed across all workloads. A workload fronted by several hosts counts once per host.",
+};
+
+/** Returns the summary-strip hint for a label, or undefined when none exists. */
+export function summaryHintFor(label: string): string | undefined {
+  return SUMMARY_HINTS[label.trim().toLowerCase()];
+}

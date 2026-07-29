@@ -18,6 +18,8 @@ import { ServiceMetadataGuideModal } from "./ServiceMetadataGuideModal";
 import { LastUpdated, catalogUpdatedAt } from "@/components/ui/LastUpdated";
 import { connectsIndex, connectsOptions } from "./filtering";
 import { workloadStatus, ingressHostsFor } from "./catalogView";
+import { summaryHintFor } from "./labelHints";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { parseMetadata } from "../compliance/utils";
 import { useRybbit } from "@/RybbitContext";
 
@@ -178,36 +180,43 @@ export default function ServicesPage() {
       ) : (
         <>
           {/* Summary strip */}
-          <div
-            data-tour="services-stats"
-            className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5 animate-fade-up animate-stagger-1"
-          >
-            <StatCard
-              value={summary.workloads}
-              label="Workloads"
-              loading={!isFetched}
-            />
-            <StatCard
-              value={<span className="text-success">{summary.healthy}</span>}
-              label="Healthy"
-              loading={!isFetched}
-            />
-            <StatCard
-              value={<span className="text-warning">{summary.degraded}</span>}
-              label="Degraded"
-              loading={!isFetched}
-            />
-            <StatCard
-              value={<span className="text-error">{summary.down}</span>}
-              label="Down"
-              loading={!isFetched}
-            />
-            <StatCard
-              value={summary.ingress}
-              label="Ingress"
-              loading={!isFetched}
-            />
-          </div>
+          <TooltipProvider delayDuration={150}>
+            <div
+              data-tour="services-stats"
+              className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5 animate-fade-up animate-stagger-1"
+            >
+              <StatCard
+                value={summary.workloads}
+                label="Workloads"
+                tip={summaryHintFor("Workloads")}
+                loading={!isFetched}
+              />
+              <StatCard
+                value={<span className="text-success">{summary.healthy}</span>}
+                label="Healthy"
+                tip={summaryHintFor("Healthy")}
+                loading={!isFetched}
+              />
+              <StatCard
+                value={<span className="text-warning">{summary.degraded}</span>}
+                label="Degraded"
+                tip={summaryHintFor("Degraded")}
+                loading={!isFetched}
+              />
+              <StatCard
+                value={<span className="text-error">{summary.down}</span>}
+                label="Down"
+                tip={summaryHintFor("Down")}
+                loading={!isFetched}
+              />
+              <StatCard
+                value={summary.ingress}
+                label="Ingress"
+                tip={summaryHintFor("Ingress")}
+                loading={!isFetched}
+              />
+            </div>
+          </TooltipProvider>
 
           {/* View toggle */}
           <div className="flex items-center mb-4">

@@ -12,8 +12,7 @@ import {
   repoUrlsFor,
   trafficFor,
   formatReqRate,
-  formatErrorPct,
-  errorChipClass,
+  errorDisplay,
 } from "./catalogView";
 
 export function WorkloadDetailPanel({
@@ -61,9 +60,18 @@ export function WorkloadDetailPanel({
             <Badge variant="outline">
               Inbound {formatReqRate(traffic.reqRate)}
             </Badge>
-            <Badge variant="outline" className={errorChipClass(traffic.health)}>
-              Errors {formatErrorPct(traffic.errorPct)}
-            </Badge>
+            {(() => {
+              const errors = errorDisplay(traffic);
+              return (
+                <Badge
+                  variant="outline"
+                  className={errors.className}
+                  title={errors.title}
+                >
+                  Errors {errors.text}
+                </Badge>
+              );
+            })()}
           </div>
         </div>
       )}

@@ -17,8 +17,7 @@ import {
   ingressHostsFor,
   apiDocsCountFor,
   trafficFor,
-  formatErrorPct,
-  errorChipClass,
+  errorDisplay,
   workloadReachability,
   reachabilityBadgeVariant,
   reachabilityLabel,
@@ -63,6 +62,7 @@ export function ServicesMobileList({
         const hosts = ingressHostsFor(app.services || []);
         const docs = apiDocsCountFor(app);
         const traffic = showErrors ? trafficFor(app) : null;
+        const trafficErrors = traffic ? errorDisplay(traffic) : null;
         const reach = workloadReachability(app);
         const description = app.metadata?.description?.trim();
         const KindIcon = app.kind === "StatefulSet" ? Database : Boxes;
@@ -127,18 +127,16 @@ export function ServicesMobileList({
                   {reachabilityLabel(reach)}
                 </Badge>
               )}
-              {traffic && (
+              {trafficErrors && (
                 <span
                   className={cn(
                     "inline-flex items-center gap-1",
-                    traffic.errorPct <= 0
-                      ? "text-muted"
-                      : errorChipClass(traffic.health) || "text-secondary",
+                    trafficErrors.className,
                   )}
-                  title="5xx share of inbound HTTP"
+                  title={trafficErrors.title}
                 >
                   <AlertTriangle size={11} />
-                  {formatErrorPct(traffic.errorPct)}
+                  {trafficErrors.text}
                 </span>
               )}
             </div>
