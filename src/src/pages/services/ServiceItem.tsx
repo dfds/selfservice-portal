@@ -11,6 +11,7 @@ import {
   reachabilityLabel,
   reachabilityResultTooltip,
 } from "./catalogView";
+import { hintFor } from "./labelHints";
 
 // A single Kubernetes Service belonging to a workload: identity + ports, the
 // correct externally-exposed URLs (host + Traefik pathPrefix), and API docs.
@@ -40,7 +41,9 @@ export function ServiceItem({ svc }: { svc: CatalogService }) {
 
       {urls.length > 0 && (
         <div>
-          <SectionLabel className="mb-1 block">Exposed at</SectionLabel>
+          <SectionLabel className="mb-1 block" tip={hintFor("Exposed at")}>
+            Exposed at
+          </SectionLabel>
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             {urls.map((u, i) => {
               const verdict = reachabilityForHost([svc], u.host);
@@ -74,7 +77,9 @@ export function ServiceItem({ svc }: { svc: CatalogService }) {
 
       {apiDocs.length > 0 && (
         <div>
-          <SectionLabel className="mb-1 block">API docs</SectionLabel>
+          <SectionLabel className="mb-1 block" tip={hintFor("API docs")}>
+            API docs
+          </SectionLabel>
           <div className="flex flex-wrap items-center gap-2">
             <FileText size={11} className="text-muted" />
             {apiDocs.map((doc, i) => {

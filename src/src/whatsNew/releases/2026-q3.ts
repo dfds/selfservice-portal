@@ -53,16 +53,9 @@ export const tour_2026_q3_service_catalogue: TourDefinition = {
       position: "bottom",
     },
     {
-      target: '[data-tour="services-tag-filters"]',
-      title: "Filter by capability metadata",
-      body: "Add a tag filter to narrow by the metadata your capabilities carry — cost centre, criticality, team, anything you've defined. Stack several and use the AND / OR switch to decide whether a workload has to match all of them or any of them.",
-      route: "/services",
-      position: "bottom",
-    },
-    {
       target: '[data-tour="services-add-filter"]',
       title: "Filter by what a workload actually is",
-      body: "Add filter opens a list of dimensions read straight from the cluster: runtime, GitOps managed, image repo and tag, source repo, ingress host, database, Kafka topic, and what it connects to. Pick values and they become removable chips under the toolbar, so you can always see what's narrowing the list.",
+      body: "Add filter opens a list of dimensions read straight from the cluster: runtime, GitOps managed, image repo and tag, source repo, ingress host, database, Kafka topic, and what it connects to. Pick values and they become removable chips under the toolbar, so you can always see what's narrowing the list. The same menu adds a capability tag filter, for narrowing by the metadata your capabilities carry — cost centre, criticality, team, anything you've defined. Stack several tags and an AND / OR switch appears, deciding whether a workload has to match all of them or any of them.",
       route: "/services",
       position: "bottom",
     },
