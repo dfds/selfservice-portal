@@ -30,7 +30,7 @@ export function WorkloadDetailPanel({
   const traffic = trafficFor(app);
 
   return (
-    <div className="px-4 py-3.5 space-y-3.5">
+    <div data-tour="services-detail-panel" className="px-4 py-3.5 space-y-3.5">
       <div>
         <SectionLabel className="mb-1.5 block">Type</SectionLabel>
         {app.kind ? (
@@ -161,6 +161,7 @@ export function WorkloadDetailPanel({
 
       <Link
         to={workloadDetailHref(app)}
+        data-tour="services-full-details"
         className="inline-flex items-center gap-1 text-action hover:underline font-mono text-[0.75rem]"
       >
         View full details

@@ -90,6 +90,7 @@ export function AddFilterButton({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        data-tour="services-add-filter"
         className={cn(
           "flex items-center gap-1.5 h-[34px] px-3 text-[0.8125rem] rounded-[6px] border border-input bg-surface text-secondary hover:text-primary transition-colors cursor-pointer",
         )}

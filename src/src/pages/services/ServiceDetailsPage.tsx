@@ -209,7 +209,7 @@ export default function ServiceDetailsPage() {
           </Button>
         ))}
         {grafanaBase && (
-          <>
+          <div data-tour="service-observability" className="flex gap-2">
             <Button asChild variant="outline" size="sm">
               <a
                 href={grafanaMetricsUrl(grafanaBase, app)}
@@ -230,7 +230,7 @@ export default function ServiceDetailsPage() {
                 Logs
               </a>
             </Button>
-          </>
+          </div>
         )}
       </div>
 

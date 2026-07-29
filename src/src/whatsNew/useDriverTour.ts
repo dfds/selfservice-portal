@@ -1,29 +1,26 @@
 import { useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { openMobileSidebar } from "./mobileSidebar";
+import { waitForDataLoaded, waitForSelector } from "./tourDom";
 import type { TourDefinition, TourStep } from "./types";
 
-function waitForElement(selector: string, timeoutMs = 4000): Promise<boolean> {
-  return new Promise((resolve) => {
-    const existing = document.querySelector(selector);
-    if (existing) {
-      resolve(true);
-      return;
-    }
-    const start = performance.now();
-    const interval = window.setInterval(() => {
-      if (document.querySelector(selector)) {
-        window.clearInterval(interval);
-        resolve(true);
-        return;
-      }
-      if (performance.now() - start > timeoutMs) {
-        window.clearInterval(interval);
-        resolve(false);
-      }
-    }, 80);
-  });
+const OPTIONAL_STEP_TIMEOUT_MS = 900;
+
+const PAGE_TRANSITION_PAUSE_MS = 1400;
+
+const TRANSITION_CLASS = "ssu-tour-transitioning";
+
+function hideTourChrome() {
+  document.documentElement.classList.add(TRANSITION_CLASS);
+}
+
+function showTourChrome() {
+  document.documentElement.classList.remove(TRANSITION_CLASS);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function bodyToString(body: unknown): string {
@@ -34,7 +31,6 @@ function bodyToString(body: unknown): string {
 
 export function useDriverTour() {
   const navigate = useNavigate();
-  const location = useLocation();
   const isMobile = useIsMobile();
 
   return useCallback(
@@ -44,14 +40,17 @@ export function useDriverTour() {
       await import("driver.js/dist/driver.css");
       const driver = driverModule.driver;
 
-      // Run navigation, mobile sidebar opening, the step's own onEnter, and
-      // wait for the target to mount. Called BEFORE driver.js positions on the
-      // step — driver.js does not await onHighlightStarted, so any prep that
-      // affects which DOM node gets highlighted has to happen here, before
-      // moveNext/movePrevious or the initial drive() call.
-      async function prepareStep(step: TourStep): Promise<void> {
-        if (step.route && location.pathname !== step.route) {
+      async function prepareStep(step: TourStep): Promise<boolean> {
+        const here = window.location.pathname + window.location.search;
+        if (step.route && here !== step.route) {
+          const changesPage =
+            step.route.split("?")[0] !== window.location.pathname;
           navigate(step.route);
+          if (changesPage) {
+            hideTourChrome();
+            await waitForDataLoaded();
+            await sleep(PAGE_TRANSITION_PAUSE_MS);
+          }
         }
         if (
           isMobile &&
@@ -62,31 +61,54 @@ export function useDriverTour() {
         if (step.onEnter) {
           await step.onEnter();
         }
-        await waitForElement(step.target);
+        const found = await waitForSelector(
+          step.target,
+          step.optional ? OPTIONAL_STEP_TIMEOUT_MS : undefined,
+        );
+        return !!found;
       }
 
-      const steps = tour.steps.map((step, idx) => ({
+      const activeSteps = tour.steps.filter((s) => !s.skipIf?.({ isMobile }));
+      if (activeSteps.length === 0) {
+        onComplete?.();
+        return;
+      }
+
+      async function resolveStep(
+        from: number,
+        dir: 1 | -1,
+      ): Promise<number | null> {
+        for (let i = from + dir; i >= 0 && i < activeSteps.length; i += dir) {
+          const found = await prepareStep(activeSteps[i]);
+          if (found || !activeSteps[i].optional) return i;
+        }
+        return null;
+      }
+
+      let transitioning = false;
+      async function travel(from: number, dir: 1 | -1): Promise<void> {
+        if (transitioning) return;
+        transitioning = true;
+        try {
+          const to = await resolveStep(from, dir);
+          if (to !== null) drv.moveTo(to);
+          else if (dir === 1) drv.destroy();
+          // Only after moveTo has repositioned onto the new target — bringing
+          // the overlay back any earlier shows the old step's spotlight.
+          showTourChrome();
+        } finally {
+          transitioning = false;
+        }
+      }
+
+      const steps = activeSteps.map((step, idx) => ({
         element: step.target,
         popover: {
           title: step.title,
           description: bodyToString(step.body),
           side: step.position ?? "auto",
-          onNextClick: async () => {
-            const next = tour.steps[idx + 1];
-            if (next) {
-              await prepareStep(next);
-              drv.moveNext();
-            } else {
-              drv.destroy();
-            }
-          },
-          onPrevClick: async () => {
-            const prev = tour.steps[idx - 1];
-            if (prev) {
-              await prepareStep(prev);
-              drv.movePrevious();
-            }
-          },
+          onNextClick: () => travel(idx, 1),
+          onPrevClick: () => travel(idx, -1),
         },
       }));
 
@@ -107,12 +129,14 @@ export function useDriverTour() {
         onDestroyed: () => {
           rootObserver?.disconnect();
           rootObserver = null;
+          showTourChrome();
           onComplete?.();
         },
       });
 
-      await prepareStep(tour.steps[0]);
+      await prepareStep(activeSteps[0]);
       drv.drive();
+      showTourChrome();
 
       rootObserver = new MutationObserver(() => {
         if (drv.isActive()) drv.refresh();
@@ -122,6 +146,6 @@ export function useDriverTour() {
         attributeFilter: ["style"],
       });
     },
-    [navigate, location.pathname, isMobile],
+    [navigate, isMobile],
   );
 }

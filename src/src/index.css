@@ -587,6 +587,17 @@ code {
  * index.css, so its defaults win at equal specificity. We scope every
  * override under .ssu-driver-popover (set via popoverClass in useDriverTour)
  * to make selectors more specific than driver.js's defaults. */
+html .driver-overlay,
+html .driver-popover {
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ssu-tour-transitioning .driver-overlay,
+.ssu-tour-transitioning .driver-popover {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .driver-popover.ssu-driver-popover {
   background-color: var(--color-surface);
   color: var(--color-text-primary);

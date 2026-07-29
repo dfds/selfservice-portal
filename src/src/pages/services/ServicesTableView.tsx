@@ -15,6 +15,8 @@ import {
   type MRT_ColumnSizingState,
 } from "material-react-table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import type { TableHeadProps } from "@mui/material/TableHead";
+import type { TableRowProps } from "@mui/material/TableRow";
 import {
   Boxes,
   Database,
@@ -853,6 +855,7 @@ export function ServicesTableView({
         Cell: ({ row }) => (
           <Link
             to={workloadDetailHref(row.original)}
+            data-tour="services-open"
             className="inline-flex items-center gap-1 font-mono text-[11px] text-muted border border-card rounded-[5px] px-2 py-1 hover:text-action hover:border-action transition-colors"
           >
             Open
@@ -919,14 +922,16 @@ export function ServicesTableView({
 
   const filterBar =
     enableMetadataFilters && metadataByCapability ? (
-      <MetadataFilterBar
-        filters={tagFilters}
-        mode={tagMode}
-        index={metadataIndex}
-        onChange={setTagFilters}
-        onModeChange={setTagMode}
-        className="relative z-30 mt-1 mb-3"
-      />
+      <div data-tour="services-tag-filters">
+        <MetadataFilterBar
+          filters={tagFilters}
+          mode={tagMode}
+          index={metadataIndex}
+          onChange={setTagFilters}
+          onModeChange={setTagMode}
+          className="relative z-30 mt-1 mb-3"
+        />
+      </div>
     ) : null;
 
   const facetControls = enableFacets ? (
@@ -1095,6 +1100,9 @@ export function ServicesTableView({
             muiTableBodyRowProps={({ row, isDetailPanel }) => {
               const accent = accentColor[workloadStatus(row.original)];
               return {
+                ...({
+                  "data-tour": isDetailPanel ? undefined : "services-row",
+                } as TableRowProps),
                 onClick: isDetailPanel
                   ? undefined
                   : (e: React.MouseEvent) => {
@@ -1123,6 +1131,9 @@ export function ServicesTableView({
                 backgroundColor: colors.bg,
               },
             })}
+            muiTableHeadProps={
+              { "data-tour": "services-table-head" } as TableHeadProps
+            }
             muiTableHeadCellProps={{
               sx: {
                 fontFamily: "var(--mono)",
@@ -1232,7 +1243,7 @@ const SearchBox = React.memo(function SearchBox({
   };
 
   return (
-    <div className="relative">
+    <div data-tour="services-search" className="relative">
       <Search
         size={14}
         className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
@@ -1276,22 +1287,28 @@ function Toolbar({
       {enableSearch && (
         <SearchBox value={searchValue} onDebouncedChange={onSearchChange} />
       )}
-      {enableChips &&
-        CHIPS.map((chip) => (
-          <button
-            key={chip.id}
-            type="button"
-            onClick={() => setQuick(chip.id)}
-            className={cn(
-              "h-[34px] px-3 font-mono text-[11px] rounded-[6px] border cursor-pointer transition-colors",
-              quick === chip.id
-                ? "border-action text-action"
-                : "border-card text-secondary hover:text-primary",
-            )}
-          >
-            {chip.label}
-          </button>
-        ))}
+      {enableChips && (
+        <div
+          data-tour="services-quick-filters"
+          className="flex items-center gap-2"
+        >
+          {CHIPS.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={() => setQuick(chip.id)}
+              className={cn(
+                "h-[34px] px-3 font-mono text-[11px] rounded-[6px] border cursor-pointer transition-colors",
+                quick === chip.id
+                  ? "border-action text-action"
+                  : "border-card text-secondary hover:text-primary",
+              )}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+      )}
       {afterChips}
       <div className="ml-auto flex items-center gap-3">
         <span className="text-xs text-muted font-mono">
@@ -1366,6 +1383,7 @@ function ColumnControls({
           type="button"
           onClick={() => setOpen((p) => !p)}
           aria-label="Show or hide columns"
+          data-tour="services-columns"
           className={chip}
         >
           <Columns3 size={13} />
