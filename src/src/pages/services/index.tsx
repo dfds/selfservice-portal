@@ -38,7 +38,10 @@ function ViewToggle({
         : "text-secondary hover:text-primary hover:bg-surface-muted",
     );
   return (
-    <div className="inline-flex rounded-[6px] border border-card overflow-hidden">
+    <div
+      data-tour="services-view-toggle"
+      className="inline-flex rounded-[6px] border border-card overflow-hidden"
+    >
       <button
         type="button"
         onClick={() => onChange("table")}
@@ -175,7 +178,10 @@ export default function ServicesPage() {
       ) : (
         <>
           {/* Summary strip */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5 animate-fade-up animate-stagger-1">
+          <div
+            data-tour="services-stats"
+            className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5 animate-fade-up animate-stagger-1"
+          >
             <StatCard
               value={summary.workloads}
               label="Workloads"
