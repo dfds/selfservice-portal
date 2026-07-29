@@ -224,7 +224,7 @@ function Layout() {
                   {isAdminRoute && isCloudEngineer && (
                     <div className="flex items-center gap-2 px-5 md:px-8 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-[0.75rem] font-mono font-semibold tracking-[0.12em]">
                       <span aria-hidden="true">⚠</span>
-                      WORK IN PROGRESS — This section is under active
+                      WORK IN PROGRESS - This section is under active
                       development and may change without notice.
                     </div>
                   )}

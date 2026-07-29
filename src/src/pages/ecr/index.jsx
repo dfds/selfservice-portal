@@ -96,7 +96,7 @@ function RepositoryDetailDialog({ repository, onClose }) {
                 ? `${asDate(repository.requestedAt)}, by ${
                     repository.createdBy
                   }`
-                : "—",
+                : "-",
             },
           ].map(({ label, value }) => (
             <div key={label} className="flex gap-4 text-[0.8125rem]">

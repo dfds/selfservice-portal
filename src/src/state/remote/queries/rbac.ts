@@ -386,7 +386,7 @@ export const useProvisionMember = createSsuMutation<{
   authMode: true,
 });
 
-// Generic permission grant — caller supplies the full RbacPermissionGrant shape
+// Generic permission grant - caller supplies the full RbacPermissionGrant shape
 // ({ assignedEntityType, assignedEntityId, namespace, permission, type, resource }).
 export const useGrantPermission = createSsuMutation<any>({
   method: "POST",
@@ -402,7 +402,7 @@ export const useRevokePermission = createSsuMutation<{ grantId: string }>({
   authMode: true,
 });
 
-// Global (non-capability-scoped) role grant — caller supplies the full RbacRoleGrant shape.
+// Global (non-capability-scoped) role grant - caller supplies the full RbacRoleGrant shape.
 export const useGrantRoleGlobal = createSsuMutation<any>({
   method: "POST",
   urlSegments: () => ["rbac", "role", "grant"],
@@ -417,7 +417,7 @@ export const useRevokeRoleGrant = createSsuMutation<{ grantId: string }>({
   authMode: true,
 });
 
-// Group member add/remove — accept any Member (user OR service principal).
+// Group member add/remove - accept any Member (user OR service principal).
 // `memberId` is the canonical field; the API also accepts `userId` for backwards compat.
 export const useAddGroupMember = createSsuMutation<{
   groupId: string;
@@ -457,7 +457,7 @@ export const useRegisterServicePrincipal = createSsuMutation<{
   authMode: true,
 });
 
-// Bulk grants — server-side fan-out, atomic on the backend.
+// Bulk grants - server-side fan-out, atomic on the backend.
 export const useGrantPermissionsBulk = createSsuMutation<{ grants: any[] }>({
   method: "POST",
   urlSegments: () => ["rbac", "permission", "grant-bulk"],

@@ -595,7 +595,7 @@ function MembershipsCard({ memberId }: { memberId: string }) {
           removeTarget && (
             <p>
               Remove this member from <strong>{removeTarget.name}</strong>? They
-              keep their role grant — only the capability membership is removed.
+              keep their role grant - only the capability membership is removed.
             </p>
           )
         }

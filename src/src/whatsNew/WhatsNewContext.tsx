@@ -95,7 +95,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
   const [isListOpen, setIsListOpen] = useState(false);
   // Snapshot of the notes that were unseen at the moment the modal opened.
   // openList marks them seen immediately, so the modal can't derive "new" from
-  // state at render time — it reads this transient snapshot instead.
+  // state at render time - it reads this transient snapshot instead.
   const [highlightedReleaseNoteIds, setHighlightedReleaseNoteIds] = useState<
     string[]
   >([]);
@@ -119,7 +119,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
       setState(next);
       writeLocalState(next);
       const settings = (me as any)?.personalInformation?.userSettings;
-      // Merge with whatever else is on UserSettings — POST overwrites the blob.
+      // Merge with whatever else is on UserSettings - POST overwrites the blob.
       const payload = {
         ...(settings ?? {}),
         seenWhatsNewIds: next.seenIds,
@@ -153,7 +153,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     !state.seenIds.includes(LATEST_TOUR_ID) &&
     !state.dismissedIds.includes(LATEST_TOUR_ID);
 
-  // Mirrors the "top 3 active by releaseDate desc" rule in WhatsNewListModal —
+  // Mirrors the "top 3 active by releaseDate desc" rule in WhatsNewListModal -
   // keep the two in sync.
   const { data: releaseNotesData } = useReleaseNotes({});
   const recentReleaseNoteIds = useMemo<string[]>(() => {

@@ -23,12 +23,12 @@ kind: Deployment
 metadata:
   name: billing-api
   annotations:
-    # Free-form description — shown on the workload's detail view
+    # Free-form description - shown on the workload's detail view
     dfds.cloud/description: |
       REST API for billing operations: invoicing,
       payment processing and reconciliation.
 
-    # Reference links — repeat with any <label> you like
+    # Reference links - repeat with any <label> you like
     dfds.cloud/link.runbook: "https://wiki.dfds.cloud/runbooks/billing-api"
     dfds.cloud/link.dashboard: "https://grafana.dfds.cloud/d/billing-api"
     dfds.cloud/link.docs: "https://wiki.dfds.cloud/billing-api"
@@ -78,7 +78,7 @@ function CodeBlock({ text }: { text: string }) {
         window.setTimeout(() => setCopied(false), 1500);
       },
       () => {
-        /* clipboard unavailable — no-op */
+        /* clipboard unavailable - no-op */
       },
     );
   };
@@ -139,7 +139,7 @@ function WorkloadTab() {
             <AccordionTrigger>Reference links</AccordionTrigger>
             <AccordionContent>
               <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
-                Point people at runbooks, dashboards, docs — anything useful.
+                Point people at runbooks, dashboards, docs - anything useful.
                 Add one annotation per link; the text after <Code>link.</Code>{" "}
                 becomes the label. Links are shown sorted by label.
               </p>
@@ -155,7 +155,7 @@ dfds.cloud/link.dashboard: "https://grafana.dfds.cloud/d/my-app"`}
             <AccordionContent>
               <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
                 Link the source repo. The catalogue already auto-detects the
-                repo from GitOps sources (Argo CD / Flux) where it can — this is
+                repo from GitOps sources (Argo CD / Flux) where it can - this is
                 a fallback/complement for workloads it can't attribute. Also
                 accepts <Code>git-origin</Code>. Surfaces as the{" "}
                 <strong>Repo</strong> link.
@@ -222,7 +222,7 @@ function IngressTab() {
             <AccordionTrigger>Probe path</AccordionTrigger>
             <AccordionContent>
               <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
-                Probe a specific path instead of the route's mount prefix — for
+                Probe a specific path instead of the route's mount prefix - for
                 example a dedicated health endpoint.
               </p>
               <CodeBlock text={`dfds.cloud/reachability-path: "/healthz"`} />
@@ -246,7 +246,7 @@ function IngressTab() {
               <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
                 Which HTTP status codes count as reachable (default{" "}
                 <Code>200</Code>). Accepts single codes, inclusive ranges and{" "}
-                <Code>Nxx</Code> class shorthands, comma-separated — e.g. an
+                <Code>Nxx</Code> class shorthands, comma-separated - e.g. an
                 endpoint that redirects or requires auth:
               </p>
               <CodeBlock
@@ -260,7 +260,7 @@ dfds.cloud/reachability-expect: "200,401"`}
             <AccordionTrigger>Opt out</AccordionTrigger>
             <AccordionContent>
               <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
-                Skip reachability probing for the exposed host entirely — no
+                Skip reachability probing for the exposed host entirely - no
                 verdict is recorded and the <strong>Reachable</strong> column
                 stays empty.
               </p>
@@ -300,7 +300,7 @@ export function ServiceMetadataGuideModal({
             annotations. The catalogue reads them from available Kubernetes
             clusters on its next scan and surfaces them here on the Services
             page. Annotations live on different resources depending on what you
-            want to add — pick a tab below.
+            want to add - pick a tab below.
           </DialogDescription>
         </DialogHeader>
 
@@ -316,7 +316,7 @@ export function ServiceMetadataGuideModal({
 
         <Banner variant="warning" className="mt-4">
           <BannerParagraph>
-            Changes appear after the next catalogue scan, not instantly — check
+            Changes appear after the next catalogue scan, not instantly - check
             the "last updated" time at the top of the Services page.
           </BannerParagraph>
         </Banner>

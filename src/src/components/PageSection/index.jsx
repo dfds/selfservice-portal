@@ -79,8 +79,8 @@ export function TabbedPageSection({
           {header}
           {Object.keys(tabsContent).map((index) =>
             keepMounted ? (
-              // Keep every tab mounted (just hidden) so per-tab state — e.g.
-              // unsaved form edits — survives switching tabs and back.
+              // Keep every tab mounted (just hidden) so per-tab state - e.g.
+              // unsaved form edits - survives switching tabs and back.
               <div key={index} hidden={selectedTab !== index}>
                 {tabsContent[index]}
               </div>

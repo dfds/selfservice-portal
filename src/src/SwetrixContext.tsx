@@ -50,7 +50,7 @@ function extractEmail(account: any): string | null {
 function SwetrixProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line no-restricted-globals
   const hostname = location.hostname;
-  // Swetrix tracking is disabled — Rybbit is the active analytics stream.
+  // Swetrix tracking is disabled - Rybbit is the active analytics stream.
   // Flip this back to `isSwetrixHost(hostname)` to re-enable.
   const isEnabled = false;
   const isLocal = hostname === "localhost" || hostname === "127.0.0.1";

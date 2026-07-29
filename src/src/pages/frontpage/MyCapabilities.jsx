@@ -28,7 +28,7 @@ function CostCell({ costs, previousCosts, costsComparisonIsFull }) {
   const hasData = costs && costs.length > 0;
   const total = hasData ? costs.reduce((acc, x) => acc + x.pv, 0) : null;
   const displayedCost =
-    total == null ? "—" : total < 1 ? "<$1" : `$${Math.floor(total)}`;
+    total == null ? "-" : total < 1 ? "<$1" : `$${Math.floor(total)}`;
   return (
     <span className="font-mono text-[0.6875rem] text-foreground">
       {displayedCost}
@@ -45,7 +45,7 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
         className="font-mono text-[0.6875rem] text-muted"
         title="Not enough history to calculate a trend"
       >
-        —
+        -
       </span>
     );
   }
@@ -58,7 +58,7 @@ function TrendCell({ costs, previousCosts, costsComparisonIsFull }) {
       title={
         costsComparisonIsFull
           ? "Average daily cost vs. the prior 30-day period"
-          : `Approximate — only ${
+          : `Approximate - only ${
               previousCosts.length + costs.length
             } days of history available`
       }

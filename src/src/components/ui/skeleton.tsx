@@ -74,7 +74,7 @@ export function SkeletonTopicRow() {
   );
 }
 
-// Deployments: ExpandableRow-shaped — workload name + kind/cluster pills +
+// Deployments: ExpandableRow-shaped - workload name + kind/cluster pills +
 // replicas + chevron stub, inside a bordered card
 export function SkeletonDeploymentRow() {
   return (
@@ -217,7 +217,7 @@ export function SkeletonRequirementsScore() {
   );
 }
 
-// Requirements: single metric row — dot + name + score
+// Requirements: single metric row - dot + name + score
 export function SkeletonRequirementsRow({
   isLast = false,
 }: {
@@ -259,7 +259,7 @@ export function SkeletonMembershipApplicationRow({
   );
 }
 
-// Compliance dashboard: cost centre card — donut + name/count + score, progress strip, chip row
+// Compliance dashboard: cost centre card - donut + name/count + score, progress strip, chip row
 export function SkeletonComplianceCard() {
   return (
     <div className="bg-surface border border-card rounded-[10px] overflow-hidden">
@@ -356,7 +356,7 @@ export function SkeletonCampaignDetail() {
   );
 }
 
-// StatCard value area — uses darker gradient since the card bg is already surface-muted
+// StatCard value area - uses darker gradient since the card bg is already surface-muted
 export function SkeletonStatCardValue({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {

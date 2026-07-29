@@ -18,7 +18,7 @@ const SectionLabel = React.forwardRef<HTMLElement, SectionLabelProps>(
         ref={ref}
         className={cn(
           "font-mono text-[0.625rem] font-semibold tracking-[0.08em] uppercase text-muted",
-          // w-fit so a block-level label hugs its text — otherwise the tooltip
+          // w-fit so a block-level label hugs its text - otherwise the tooltip
           // anchors to the centre of the full-width box, far from the label.
           tip && "cursor-help w-fit",
           className,

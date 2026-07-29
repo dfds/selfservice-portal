@@ -263,7 +263,7 @@ export default function Summary({ anchorId }) {
           Created
         </span>
         <span className="text-[0.8125rem] text-[#666666] dark:text-slate-400">
-          {createdAt ? asDate(createdAt) : "—"}
+          {createdAt ? asDate(createdAt) : "-"}
           {createdBy && (
             <>
               , by{" "}

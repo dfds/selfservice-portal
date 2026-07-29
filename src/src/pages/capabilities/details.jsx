@@ -364,7 +364,7 @@ function CapabilityDetailsPageContent() {
           )}
         </div>
 
-        {/* Right: sticky anchor nav — desktop only */}
+        {/* Right: sticky anchor nav - desktop only */}
         <div
           className="hidden md:block animate-fade-up"
           style={{ animationDelay: "100ms" }}
@@ -393,7 +393,7 @@ function CapabilityDetailsPageContent() {
         </div>
       </div>
 
-      {/* Mobile: fixed bottom nav bar — md:hidden */}
+      {/* Mobile: fixed bottom nav bar - md:hidden */}
       {createPortal(
         <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white dark:bg-[#1e293b] border-t border-[#d9dcde] dark:border-[#334155] shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
           {/* Expandable link list */}
@@ -425,7 +425,7 @@ function CapabilityDetailsPageContent() {
             </div>
           </div>
 
-          {/* Collapsed bar — always visible trigger */}
+          {/* Collapsed bar - always visible trigger */}
           <button
             type="button"
             onClick={() => setMobileNavOpen((o) => !o)}

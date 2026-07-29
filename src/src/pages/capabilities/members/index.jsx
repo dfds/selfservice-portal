@@ -306,7 +306,7 @@ function AddServicePrincipalDialog({ open, onClose, capabilityId }) {
           <p className="text-sm text-secondary">
             Search Azure AD for the service principal you want to grant access
             to this capability. The oid shown next to each result is the only
-            durable identifier — make sure you pick the right one.
+            durable identifier - make sure you pick the right one.
           </p>
           <ServicePrincipalSearchCombobox
             onSelect={(sp) => setSelected(sp)}

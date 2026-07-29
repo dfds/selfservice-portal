@@ -263,7 +263,7 @@ function CanTheyTester({ userId }: { userId: string }) {
         <Select
           menuPortalTarget={document.body}
           menuPosition="fixed"
-          placeholder="— namespace —"
+          placeholder="- namespace -"
           value={namespace ? { value: namespace, label: namespace } : null}
           onChange={(opt: any) => {
             setNamespace(opt?.value ?? "");

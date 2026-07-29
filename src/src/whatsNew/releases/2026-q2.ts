@@ -6,7 +6,7 @@ export const tour_2026_q2_customisation: TourDefinition = {
   releaseDate: "2026-06-15",
   title: "Make the portal yours",
   summary:
-    "Pick a colour theme and resize the whole UI to taste — your choices follow you across sessions and devices.",
+    "Pick a colour theme and resize the whole UI to taste - your choices follow you across sessions and devices.",
   category: "ui",
   steps: [
     {
@@ -57,7 +57,7 @@ export const tour_2026_q2_topbar: TourDefinition = {
     },
     {
       target: '[data-tour="nav-capabilities"]',
-      title: "Capabilities — refreshed",
+      title: "Capabilities - refreshed",
       body: "The capabilities list now shares the new design system: faster filtering, denser tables, and a mobile-friendly card view.",
       route: "/capabilities",
       position: "right",

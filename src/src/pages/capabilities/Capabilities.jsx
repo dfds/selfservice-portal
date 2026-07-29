@@ -758,7 +758,7 @@ export default function CapabilitiesList() {
                   >
                     {requirementsScore === null ||
                     requirementsScore === undefined
-                      ? "—"
+                      ? "-"
                       : `${requirementsScore.toFixed(1)}%`}
                   </span>
                 </div>

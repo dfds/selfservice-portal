@@ -263,7 +263,7 @@ export function buildGraph(
 
   // ── Dependency overlay ──
   for (const dep of dependencies) {
-    // Skip external DB/Kafka — already drawn as structural datastore nodes.
+    // Skip external DB/Kafka - already drawn as structural datastore nodes.
     if (isExternalDatastoreEdge(dep.target, dep.type)) continue;
 
     const sid = wlId(
@@ -339,7 +339,7 @@ export function buildWorkloadGraph(
 
     const sid = srcIsFocus ? focusWl : neighbourNode(dep.source);
     const tid = dstIsFocus ? focusWl : neighbourNode(dep.target);
-    if (sid === tid) continue; // self-edge from noisy data — skip
+    if (sid === tid) continue; // self-edge from noisy data - skip
 
     addEdge(sid, tid, {
       key: `dep:${dep.type || dep.origin || "conn"}`,
@@ -414,7 +414,7 @@ export function workloadConnections(
       isExternalDatastoreEdge(dep.target, dep.type)
     )
       continue;
-    if (srcIsFocus && dstIsFocus) continue; // self-edge — skip
+    if (srcIsFocus && dstIsFocus) continue; // self-edge - skip
 
     if (srcIsFocus) {
       const ep = describeEndpoint(dep.target, dep.type);

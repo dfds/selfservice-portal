@@ -11,7 +11,7 @@ export interface TourStep {
   /**
    * Return true to drop this step for the current viewport. Use for targets
    * that only exist on desktop (e.g. MRT table controls, which are unmounted
-   * entirely on mobile) — without this the step stalls on waitForElement and
+   * entirely on mobile) - without this the step stalls on waitForElement and
    * degrades to an unanchored popover.
    */
   skipIf?: (ctx: { isMobile: boolean }) => boolean;

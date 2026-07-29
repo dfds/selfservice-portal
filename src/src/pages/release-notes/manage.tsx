@@ -16,7 +16,7 @@ import { useMutationToast } from "@/hooks/useMutationToast";
 import { useRybbit } from "@/RybbitContext";
 
 function formatDate(iso: string) {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleDateString(undefined, {
     day: "2-digit",
     month: "short",
@@ -142,7 +142,7 @@ export function ReleaseNotesManage() {
                       </span>
                       <span className="font-mono text-[0.6875rem] text-muted">
                         Created: {formatDate(elem.createdAt)} by{" "}
-                        {elem.createdBy ?? "—"}
+                        {elem.createdBy ?? "-"}
                       </span>
                       <span className="font-mono text-[0.6875rem] text-muted">
                         Modified: {formatDate(elem.modifiedAt)}

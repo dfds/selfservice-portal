@@ -614,7 +614,7 @@ function CustomTagsForm({
   const [addError, setAddError] = useState("");
 
   // The custom tags saved on the capability (dfds.other.* keys, normalised to
-  // strings) — the baseline the current rows are compared against for dirtiness.
+  // strings) - the baseline the current rows are compared against for dirtiness.
   const initialCustom = Object.fromEntries(
     Object.entries(existingTags || {})
       .filter(([key]) => key.startsWith(CUSTOM_TAG_PREFIX))
@@ -925,7 +925,7 @@ export function CapabilityTags({ anchorId }) {
         <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
           Tagging your capability correctly helps all of us with oversight and
           incident management. However, tagging capabilities is only the first
-          step — please remember to tag your cloud resources as well.{" "}
+          step - please remember to tag your cloud resources as well.{" "}
           <TrackedLink
             trackName="TaggingPolicy"
             href={

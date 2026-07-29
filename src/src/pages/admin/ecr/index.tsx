@@ -45,7 +45,7 @@ export default function EcrSyncDashboardPage() {
     successMessage: () =>
       syncMode === "update"
         ? "ECR sync complete"
-        : "Dry run complete — no changes made",
+        : "Dry run complete - no changes made",
     errorMessage: "ECR sync failed",
     onSuccess: () => setShowSyncConfirm(false),
     onError: () => setShowSyncConfirm(false),

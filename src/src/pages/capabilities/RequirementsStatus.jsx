@@ -8,7 +8,7 @@ import {
   SkeletonRequirementsRow,
 } from "@/components/ui/skeleton";
 
-// Helper to get color based on score — also used by Capabilities.jsx
+// Helper to get color based on score - also used by Capabilities.jsx
 export function getScoreColor(score) {
   if (score < 0) return "#9e9e9e"; // gray for invalid scores
   if (score < 40) return "#f44336"; // red
@@ -112,7 +112,7 @@ export default function RequirementsScore() {
             {totalCount > 0
               ? `${metCount} of ${totalCount} applicable requirements met`
               : `${overallScore.toFixed(1)}% overall score`}
-            {" — Read more about requirements "}
+            {" - Read more about requirements "}
             <a
               href="https://wiki.dfds.cloud/en/playbooks/requirements"
               target="_blank"

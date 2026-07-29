@@ -53,7 +53,7 @@ export function ServicesGraphView({ apps }: { apps: CatalogApplication[] }) {
 
       {depsUnavailable && (
         <InfoAlert variant="warning" className="mb-3">
-          Runtime dependencies couldn't be loaded — showing the structural graph
+          Runtime dependencies couldn't be loaded - showing the structural graph
           only.
         </InfoAlert>
       )}
