@@ -32,12 +32,7 @@ import {
   Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { TooltipProvider, HintTooltip } from "@/components/ui/tooltip";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { PaginationControls } from "@/components/ui/PaginationControls";
@@ -73,6 +68,7 @@ import { WorkloadDetailPanel } from "./WorkloadDetailPanel";
 import { ServicesMobileList } from "./ServicesMobileList";
 import { ServiceMetadataGuideModal } from "./ServiceMetadataGuideModal";
 import { AddFilterButton, ActiveFacetChips } from "./FilterBuilder";
+import { hintFor } from "./labelHints";
 import {
   FACET_KEYS,
   facetOptions,
@@ -502,12 +498,7 @@ export function ServicesTableView({
       {
         id: "workload",
         header: "Workload",
-        Header: (
-          <ColHeader
-            label="Workload"
-            tip="A detected Kubernetes resource (Deployment, StatefulSet, or Service) running in a capability's namespace."
-          />
-        ),
+        Header: <ColHeader label="Workload" />,
         accessorFn: ACCESSORS.workload,
         enableHiding: false,
         size: 230,
@@ -538,12 +529,7 @@ export function ServicesTableView({
       defs.push({
         id: "capability",
         header: "Capability",
-        Header: (
-          <ColHeader
-            label="Capability"
-            tip="The capability that owns this workload."
-          />
-        ),
+        Header: <ColHeader label="Capability" />,
         accessorFn: ACCESSORS.capability,
         size: 150,
         Cell: ({ row }) => {
@@ -571,12 +557,7 @@ export function ServicesTableView({
       {
         id: "location",
         header: "Location",
-        Header: (
-          <ColHeader
-            label="Location"
-            tip="The cluster and namespace where the workload runs."
-          />
-        ),
+        Header: <ColHeader label="Location" />,
         accessorFn: ACCESSORS.location,
         size: 178,
         Cell: ({ row }) => {
@@ -592,12 +573,7 @@ export function ServicesTableView({
       {
         id: "health",
         header: "Health",
-        Header: (
-          <ColHeader
-            label="Health"
-            tip="Replica readiness: how many of the desired pod replicas are currently ready. Orange if some are not ready, red if none are."
-          />
-        ),
+        Header: <ColHeader label="Health" />,
         accessorFn: ACCESSORS.health,
         size: 100,
         muiTableHeadCellProps: { align: "center" },
@@ -629,12 +605,7 @@ export function ServicesTableView({
       {
         id: "description",
         header: "Description",
-        Header: (
-          <ColHeader
-            label="Description"
-            tip="Author-provided summary of the workload, set via the dfds.cloud/description annotation."
-          />
-        ),
+        Header: <ColHeader label="Description" />,
         accessorFn: ACCESSORS.description,
         size: 260,
         Cell: ({ row }) => {
@@ -668,12 +639,7 @@ export function ServicesTableView({
       {
         id: "traffic",
         header: "Req/s",
-        Header: (
-          <ColHeader
-            label="Req/s"
-            tip="Inbound HTTP request rate (Beyla-observed)."
-          />
-        ),
+        Header: <ColHeader label="Req/s" />,
         accessorFn: ACCESSORS.traffic,
         size: 84,
         muiTableHeadCellProps: { align: "center" },
@@ -703,12 +669,7 @@ export function ServicesTableView({
       {
         id: "errors",
         header: "Errors",
-        Header: (
-          <ColHeader
-            label="Errors"
-            tip="Share of inbound requests returning 5xx errors (Beyla-observed)."
-          />
-        ),
+        Header: <ColHeader label="Errors" />,
         accessorFn: ACCESSORS.errors,
         size: 84,
         muiTableHeadCellProps: { align: "center" },
@@ -742,12 +703,7 @@ export function ServicesTableView({
       {
         id: "ingress",
         header: "Ingress",
-        Header: (
-          <ColHeader
-            label="Ingress"
-            tip="External hostnames the workload is exposed on. Colour reflects probe reachability: green = all reachable, orange = partial, red = unreachable, grey = unknown."
-          />
-        ),
+        Header: <ColHeader label="Ingress" />,
         accessorFn: ACCESSORS.ingress,
         size: 76,
         muiTableHeadCellProps: { align: "center" },
@@ -786,12 +742,7 @@ export function ServicesTableView({
       {
         id: "docs",
         header: "API Docs",
-        Header: (
-          <ColHeader
-            label="API Docs"
-            tip="Number of API documentation specs (e.g. OpenAPI) discovered for the workload."
-          />
-        ),
+        Header: <ColHeader label="API Docs" />,
         accessorFn: ACCESSORS.docs,
         size: 76,
         muiTableHeadCellProps: { align: "center" },
@@ -819,12 +770,7 @@ export function ServicesTableView({
       {
         id: "source",
         header: "Source",
-        Header: (
-          <ColHeader
-            label="Source"
-            tip="The GitOps tool and revision that deployed this workload."
-          />
-        ),
+        Header: <ColHeader label="Source" />,
         accessorFn: ACCESSORS.source,
         size: 150,
         Cell: ({ row }) => {
@@ -920,19 +866,22 @@ export function ServicesTableView({
     [page, maxPageIndex, pageSize],
   );
 
-  const filterBar =
-    enableMetadataFilters && metadataByCapability ? (
-      <div data-tour="services-tag-filters">
-        <MetadataFilterBar
-          filters={tagFilters}
-          mode={tagMode}
-          index={metadataIndex}
-          onChange={setTagFilters}
-          onModeChange={setTagMode}
-          className="relative z-30 mt-1 mb-3"
-        />
-      </div>
-    ) : null;
+  const canFilterByTag = enableMetadataFilters && !!metadataByCapability;
+
+  const filterBar = canFilterByTag ? (
+    <MetadataFilterBar
+      filters={tagFilters}
+      mode={tagMode}
+      index={metadataIndex}
+      onChange={setTagFilters}
+      onModeChange={setTagMode}
+      // With facets on, "add a tag filter" lives in the Add filter menu
+      // instead — one entry point for both kinds of filter. Without facets
+      // there is no menu to host it, so the bar keeps its own button.
+      showAddButton={!enableFacets}
+      className="relative z-30 mt-1 mb-3"
+    />
+  ) : null;
 
   const facetControls = enableFacets ? (
     <AddFilterButton
@@ -940,6 +889,13 @@ export function ServicesTableView({
       options={optionsByFacet}
       onChange={setFacets}
       depsLoading={depsLoading}
+      onAddTagFilter={
+        canFilterByTag
+          ? () => setTagFilters([...tagFilters, { key: "", value: "" }])
+          : undefined
+      }
+      tagFilterCount={tagFilters.length}
+      tagFilterDisabled={metadataIndex.keys.length === 0}
     />
   ) : null;
   const facetChips = enableFacets ? (
@@ -1321,19 +1277,15 @@ function Toolbar({
   );
 }
 
-function ColHeader({ label, tip }: { label: string; tip: string }) {
+function ColHeader({ label }: { label: string }) {
+  const tip = hintFor(label);
+  if (!tip) return <span>{label}</span>;
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span className="cursor-help">{label}</span>
-      </TooltipTrigger>
-      <TooltipContent
-        side="top"
-        className="max-w-[260px] normal-case tracking-normal font-sans text-[0.6875rem] leading-snug"
-      >
-        {tip}
-      </TooltipContent>
-    </Tooltip>
+    <HintTooltip tip={tip}>
+      <span className="cursor-help" tabIndex={0}>
+        {label}
+      </span>
+    </HintTooltip>
   );
 }
 

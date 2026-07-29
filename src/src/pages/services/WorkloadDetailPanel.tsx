@@ -6,6 +6,7 @@ import { Code } from "@/components/ui/Code";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import type { CatalogApplication } from "@/state/remote/queries/catalog";
 import { ServiceItem } from "./ServiceItem";
+import { hintFor } from "./labelHints";
 import {
   workloadDetailHref,
   repoUrlsFor,
@@ -32,7 +33,9 @@ export function WorkloadDetailPanel({
   return (
     <div data-tour="services-detail-panel" className="px-4 py-3.5 space-y-3.5">
       <div>
-        <SectionLabel className="mb-1.5 block">Type</SectionLabel>
+        <SectionLabel className="mb-1.5 block" tip={hintFor("Type")}>
+          Type
+        </SectionLabel>
         {app.kind ? (
           <Badge variant="outline">{app.kind}</Badge>
         ) : (
@@ -42,14 +45,18 @@ export function WorkloadDetailPanel({
 
       {app.runtime && (
         <div>
-          <SectionLabel className="mb-1.5 block">Runtime</SectionLabel>
+          <SectionLabel className="mb-1.5 block" tip={hintFor("Runtime")}>
+            Runtime
+          </SectionLabel>
           <Badge variant="outline">{app.runtime}</Badge>
         </div>
       )}
 
       {traffic && (
         <div>
-          <SectionLabel className="mb-1.5 block">Activity</SectionLabel>
+          <SectionLabel className="mb-1.5 block" tip={hintFor("Activity")}>
+            Activity
+          </SectionLabel>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline">
               Inbound {formatReqRate(traffic.reqRate)}
@@ -62,7 +69,9 @@ export function WorkloadDetailPanel({
       )}
 
       <div>
-        <SectionLabel className="mb-1.5 block">Description</SectionLabel>
+        <SectionLabel className="mb-1.5 block" tip={hintFor("Description")}>
+          Description
+        </SectionLabel>
         {description ? (
           <p className="text-[0.8125rem] text-secondary leading-[1.6] whitespace-pre-line">
             {description}
@@ -84,7 +93,9 @@ export function WorkloadDetailPanel({
 
       {links.length > 0 && (
         <div>
-          <SectionLabel className="mb-1.5 block">Links</SectionLabel>
+          <SectionLabel className="mb-1.5 block" tip={hintFor("Links")}>
+            Links
+          </SectionLabel>
           <div className="flex flex-wrap gap-x-4 gap-y-1.5">
             {links.map((l, i) => (
               <a
@@ -104,7 +115,9 @@ export function WorkloadDetailPanel({
 
       {(repoUrls.length > 0 || src) && (
         <div>
-          <SectionLabel className="mb-1.5 block">Source</SectionLabel>
+          <SectionLabel className="mb-1.5 block" tip={hintFor("Source")}>
+            Source
+          </SectionLabel>
           <div className="space-y-2">
             {repoUrls.map((repo) => (
               <a
@@ -145,7 +158,9 @@ export function WorkloadDetailPanel({
       )}
 
       <div>
-        <SectionLabel className="mb-1.5 block">Services</SectionLabel>
+        <SectionLabel className="mb-1.5 block" tip={hintFor("Services")}>
+          Services
+        </SectionLabel>
         {services.length > 0 ? (
           <div className="space-y-2">
             {services.map((svc, i) => (
@@ -180,7 +195,7 @@ function MetaItem({
 }) {
   return (
     <div className="inline-flex items-center gap-1.5">
-      <SectionLabel>{label}</SectionLabel>
+      <SectionLabel tip={hintFor(label)}>{label}</SectionLabel>
       {children}
     </div>
   );

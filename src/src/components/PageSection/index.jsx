@@ -17,7 +17,10 @@ export function SectionContent({ title, children }) {
 export default function PageSection({
   id,
   headline,
-  headlineChildren,
+  headlineChildren = undefined,
+  // Optional one-sentence explanation of the section, shown on hover/focus of
+  // the headline. Needs a <TooltipProvider> ancestor.
+  headlineTip = undefined,
   children,
 }) {
   return (
@@ -25,7 +28,7 @@ export default function PageSection({
       <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
         {headline && (
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
-            <SectionLabel>{headline}</SectionLabel>
+            <SectionLabel tip={headlineTip}>{headline}</SectionLabel>
             {headlineChildren && <div>{headlineChildren}</div>}
           </div>
         )}

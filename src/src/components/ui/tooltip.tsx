@@ -24,4 +24,39 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+/**
+ * A short explanatory tooltip for a label. The content resets the mono/uppercase
+ * styling labels usually carry, so the hint itself reads as plain prose.
+ *
+ * The child element should carry `cursor-help` and `tabIndex={0}` — Radix's
+ * `asChild` trigger does not make a plain <span> focusable on its own.
+ */
+function HintTooltip({
+  tip,
+  side = "top",
+  children,
+}: {
+  tip: React.ReactNode;
+  side?: React.ComponentPropsWithoutRef<typeof TooltipContent>["side"];
+  children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent
+        side={side}
+        className="max-w-[260px] normal-case tracking-normal font-sans text-[0.6875rem] leading-snug"
+      >
+        {tip}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  HintTooltip,
+};

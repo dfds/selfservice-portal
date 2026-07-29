@@ -14,6 +14,7 @@ export function MetadataFilterBar({
   onChange,
   onModeChange,
   addLabel = "Add tag filter",
+  showAddButton = true,
   className,
 }: {
   filters: MetadataFilter[];
@@ -22,6 +23,12 @@ export function MetadataFilterBar({
   onChange: (filters: MetadataFilter[]) => void;
   onModeChange: (mode: MetadataMode) => void;
   addLabel?: string;
+  /**
+   * Set false when the caller owns the "add a filter" affordance itself — the
+   * services table folds it into its Add filter menu. With no button of its
+   * own, the bar renders nothing until there is a row to show.
+   */
+  showAddButton?: boolean;
   className?: string;
 }) {
   const addFilter = () => onChange([...filters, { key: "", value: "" }]);
@@ -32,51 +39,60 @@ export function MetadataFilterBar({
   const removeFilter = (i: number) =>
     onChange(filters.filter((_, idx) => idx !== i));
 
+  // Without an add button there is nothing to show until the caller adds a row.
+  if (!showAddButton && filters.length === 0) return null;
+
+  const showModeSwitch = filters.length > 1;
+
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <button
-          type="button"
-          onClick={addFilter}
-          className="inline-flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] transition-all"
-        >
-          <Plus size={12} strokeWidth={2} />
-          {addLabel}
-        </button>
-        {filters.length > 1 && (
-          <div className="flex items-center gap-2 ml-1">
-            <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted">
-              match
-            </span>
-            <div
-              role="radiogroup"
-              aria-label="Combine metadata filters with AND or OR"
-              className="inline-flex border border-[#d9dcde] dark:border-[#334155] rounded-full overflow-hidden h-[24px]"
+      {(showAddButton || showModeSwitch) && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {showAddButton && (
+            <button
+              type="button"
+              onClick={addFilter}
+              className="inline-flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa] transition-all"
             >
-              {(["and", "or"] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  role="radio"
-                  aria-checked={mode === m}
-                  onClick={() => onModeChange(m)}
-                  className={cn(
-                    "px-2.5 text-[0.625rem] font-mono font-semibold uppercase tracking-[0.1em] transition-colors",
-                    mode === m
-                      ? "bg-[#0e7cc1] dark:bg-[#60a5fa] text-white"
-                      : "bg-white dark:bg-[#0f172a] text-[#4a6278] dark:text-[#94a3b8] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
-                  )}
-                >
-                  {m}
-                </button>
-              ))}
+              <Plus size={12} strokeWidth={2} />
+              {addLabel}
+            </button>
+          )}
+          {showModeSwitch && (
+            <div className="flex items-center gap-2 ml-1">
+              <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted">
+                match
+              </span>
+              <div
+                role="radiogroup"
+                aria-label="Combine metadata filters with AND or OR"
+                className="inline-flex border border-[#d9dcde] dark:border-[#334155] rounded-full overflow-hidden h-[24px]"
+              >
+                {(["and", "or"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    role="radio"
+                    aria-checked={mode === m}
+                    onClick={() => onModeChange(m)}
+                    className={cn(
+                      "px-2.5 text-[0.625rem] font-mono font-semibold uppercase tracking-[0.1em] transition-colors",
+                      mode === m
+                        ? "bg-[#0e7cc1] dark:bg-[#60a5fa] text-white"
+                        : "bg-white dark:bg-[#0f172a] text-[#4a6278] dark:text-[#94a3b8] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
+                    )}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <span className="text-[10.5px] font-mono text-muted">
+                {mode === "and" ? "all tags must match" : "any tag may match"}
+              </span>
             </div>
-            <span className="text-[10.5px] font-mono text-muted">
-              {mode === "and" ? "all tags must match" : "any tag may match"}
-            </span>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {filters.length > 0 && (
         <div className="flex flex-col gap-2">
