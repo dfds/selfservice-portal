@@ -18,7 +18,7 @@ import { checkIfCloudEngineer } from "@/lib/roleUtils";
 import AppContext from "@/AppContext";
 import { useRybbit } from "@/RybbitContext";
 import { useDriverTour } from "./useDriverTour";
-import { getTours, LATEST_TOUR_ID } from "./registry";
+import { getTours } from "./registry";
 import type { TourDefinition, TourState } from "./types";
 import { EMPTY_TOUR_STATE } from "./types";
 import { useReleaseNotes } from "@/state/remote/queries/releaseNotes";
@@ -28,6 +28,7 @@ const LOCAL_STORAGE_KEY = "ssu-whatsnew-state";
 interface WhatsNewContextValue {
   tours: TourDefinition[];
   unseenCount: number;
+  latestTourId: string | null;
   hasUnseenLatest: boolean;
   hasUnseenReleaseNotes: boolean;
   highlightedReleaseNoteIds: string[];
@@ -148,10 +149,14 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
     [tours, state.seenIds, state.dismissedIds],
   );
 
+  // tours is already filtered by visibleTo and sorted newest first, so this is
+  // the latest tour this user is actually allowed to see (null if none are).
+  const latestTourId = tours[0]?.id ?? null;
+
   const hasUnseenLatest =
-    !!LATEST_TOUR_ID &&
-    !state.seenIds.includes(LATEST_TOUR_ID) &&
-    !state.dismissedIds.includes(LATEST_TOUR_ID);
+    !!latestTourId &&
+    !state.seenIds.includes(latestTourId) &&
+    !state.dismissedIds.includes(latestTourId);
 
   // Mirrors the "top 3 active by releaseDate desc" rule in WhatsNewListModal -
   // keep the two in sync.
@@ -259,6 +264,7 @@ export function WhatsNewProvider({ children }: { children: ReactNode }) {
   const value: WhatsNewContextValue = {
     tours,
     unseenCount: unseenTours.length,
+    latestTourId,
     hasUnseenLatest,
     hasUnseenReleaseNotes,
     highlightedReleaseNoteIds,

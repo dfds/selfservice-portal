@@ -612,7 +612,8 @@ export default function RbacViewerPage() {
     queryClient.invalidateQueries({ queryKey: ["rbac", "role-permissions"] });
     if (failed > 0) {
       toast.error(
-        `${selectedPerms.size - failed}/${selectedPerms.size
+        `${selectedPerms.size - failed}/${
+          selectedPerms.size
         } permissions granted`,
       );
     } else {
@@ -675,7 +676,10 @@ export default function RbacViewerPage() {
   function handleCreateGroup(e: React.FormEvent) {
     e.preventDefault();
     if (!newGroupName.trim() || !newGroupDescription.trim()) return;
-    fireCreateGroup({ name: newGroupName.trim(), description: newGroupDescription.trim() });
+    fireCreateGroup({
+      name: newGroupName.trim(),
+      description: newGroupDescription.trim(),
+    });
   }
 
   return (
@@ -889,7 +893,11 @@ export default function RbacViewerPage() {
                   type="submit"
                   variant="default"
                   size="sm"
-                  disabled={!newGroupName.trim() || !newGroupDescription.trim() || createGroup.isPending}
+                  disabled={
+                    !newGroupName.trim() ||
+                    !newGroupDescription.trim() ||
+                    createGroup.isPending
+                  }
                 >
                   {createGroup.isPending ? "Creating…" : "Create"}
                 </Button>

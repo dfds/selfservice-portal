@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Sparkles, X } from "lucide-react";
 import { Banner, BannerParagraph } from "@/components/ui/banner";
 import { useWhatsNew } from "./WhatsNewContext";
-import { LATEST_TOUR_ID } from "./registry";
 
 const SESSION_FLAG_PREFIX = "ssu-whatsnew-banner-shown-";
 
@@ -26,15 +25,15 @@ function markShown(latestId: string | null): void {
 }
 
 export function WhatsNewBanner() {
-  const { hasUnseenLatest, openList, dismiss } = useWhatsNew();
+  const { hasUnseenLatest, latestTourId, openList, dismiss } = useWhatsNew();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (hasUnseenLatest && shouldShow(LATEST_TOUR_ID)) {
+    if (hasUnseenLatest && shouldShow(latestTourId)) {
       setVisible(true);
-      markShown(LATEST_TOUR_ID);
+      markShown(latestTourId);
     }
-  }, [hasUnseenLatest]);
+  }, [hasUnseenLatest, latestTourId]);
 
   if (!visible || !hasUnseenLatest) return null;
 
@@ -61,7 +60,7 @@ export function WhatsNewBanner() {
               type="button"
               aria-label="Dismiss"
               onClick={() => {
-                if (LATEST_TOUR_ID) dismiss(LATEST_TOUR_ID);
+                if (latestTourId) dismiss(latestTourId);
                 setVisible(false);
               }}
               className="inline-flex items-center justify-center min-h-[24px] min-w-[24px] rounded-[4px] bg-transparent border-0 cursor-pointer text-secondary hover:text-primary hover:bg-[#f2f2f2] dark:hover:bg-[#1e2d3d]"

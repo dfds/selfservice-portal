@@ -169,27 +169,36 @@ export default function ServiceDetailsPage() {
       <div className="p-8">
         <BackLink />
 
-        {/* Page header */}
-        <div className="flex items-start gap-3 mb-5">
-          <KindIcon size={22} className="text-muted flex-none mt-1" />
-          <div className="min-w-0">
-            <h1 className="text-[1.5rem] font-bold text-[#002b45] dark:text-[#e2e8f0] tracking-[-0.01em] leading-tight">
-              {app.name}
-            </h1>
-            <LastUpdated
-              updatedAt={lastUpdatedAt}
-              isFetching={appsQuery.isFetching}
-              className="mt-1"
-            />
+        {/* Page header - title on the left, metric tiles trailing on the same line */}
+        <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4 mb-5">
+          <div className="flex items-start gap-3 min-w-0">
+            <KindIcon size={22} className="text-muted flex-none mt-1" />
+            <div className="min-w-0">
+              <h1 className="text-[1.5rem] font-bold text-[#002b45] dark:text-[#e2e8f0] tracking-[-0.01em] leading-tight">
+                {app.name}
+              </h1>
+              <LastUpdated
+                updatedAt={lastUpdatedAt}
+                isFetching={appsQuery.isFetching}
+                className="mt-1"
+              />
+            </div>
           </div>
-          <div
-            className={cn(
-              "ml-auto inline-flex items-center gap-2 font-mono text-[0.8125rem] border border-card rounded-[6px] px-3 py-1.5",
-              statusColor[st],
-            )}
-          >
-            <span className={cn("w-2.5 h-2.5 rounded-full", statusDot[st])} />
-            {statusLabel[st]}
+
+          {/* Metric tiles */}
+          <div className="flex flex-wrap gap-2.5">
+            <Tile label="Replicas ready" valueClassName={statusColor[st]}>
+              {ready}/{desired}
+            </Tile>
+            <Tile label="Ingress">
+              <span className="inline-flex items-center gap-1.5">
+                <Globe size={15} className="text-muted" />
+                {hosts.length}
+              </span>
+            </Tile>
+            <Tile label="Services">{services.length}</Tile>
+            <Tile label="Kafka topics">{kafkaTopics.length}</Tile>
+            <Tile label="Databases">{databases.length}</Tile>
           </div>
         </div>
 
@@ -235,22 +244,6 @@ export default function ServiceDetailsPage() {
               </Button>
             </div>
           )}
-        </div>
-
-        {/* Metric tiles */}
-        <div className="flex flex-wrap gap-2.5 mb-6">
-          <Tile label="Replicas ready" valueClassName={statusColor[st]}>
-            {ready}/{desired}
-          </Tile>
-          <Tile label="Ingress">
-            <span className="inline-flex items-center gap-1.5">
-              <Globe size={15} className="text-muted" />
-              {hosts.length}
-            </span>
-          </Tile>
-          <Tile label="Services">{services.length}</Tile>
-          <Tile label="Kafka topics">{kafkaTopics.length}</Tile>
-          <Tile label="Databases">{databases.length}</Tile>
         </div>
 
         {/* Content grid */}
