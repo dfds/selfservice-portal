@@ -18,7 +18,7 @@ export const TemplateVariableNode = Node.create<TemplateVariableOptions>({
   inline: true,
   atom: true,
   selectable: true,
-  // Atom nodes are otherwise locked in place — allow dragging to reposition.
+  // Atom nodes are otherwise locked in place - allow dragging to reposition.
   draggable: true,
   marks: "_",
 

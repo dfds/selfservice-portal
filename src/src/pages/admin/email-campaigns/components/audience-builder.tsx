@@ -229,21 +229,21 @@ export function AudienceBuilder({
           The audience decides <strong>who actually receives this email</strong>
           .{" "}
           {isUserTarget
-            ? "This is a User campaign — each matching person gets one email, and template variables resolve against that person."
-            : "This is a Capability campaign — one email is sent per matching capability, addressed to its members."}
+            ? "This is a User campaign - each matching person gets one email, and template variables resolve against that person."
+            : "This is a Capability campaign - one email is sent per matching capability, addressed to its members."}
         </p>
         <ul className="space-y-0.5 pl-4 list-disc">
           <li>
-            <strong>{isUserTarget ? "All Users" : "All Capabilities"}</strong> —
+            <strong>{isUserTarget ? "All Users" : "All Capabilities"}</strong> -
             no filtering; everyone{" "}
             {isUserTarget ? "in the platform" : "capability"} is included.
           </li>
           <li>
-            <strong>Specific</strong> — only the{" "}
+            <strong>Specific</strong> - only the{" "}
             {isUserTarget ? "email addresses" : "capability IDs"} you list.
           </li>
           <li>
-            <strong>Filter</strong> — a rule-based audience; add conditions and{" "}
+            <strong>Filter</strong> - a rule-based audience; add conditions and{" "}
             <em>Preview audience</em> to see who matches before sending.
           </li>
         </ul>
@@ -254,7 +254,7 @@ export function AudienceBuilder({
               capability
             </span>{" "}
             field includes a user when they belong to at least one matching
-            capability — but the email still renders <em>all</em> of that user's
+            capability - but the email still renders <em>all</em> of that user's
             capabilities inside any{" "}
             <code className="font-mono text-[0.75rem]">
               {"{{#each User.Capabilities}}"}
@@ -420,7 +420,7 @@ export function AudienceBuilder({
                   onChange={(e) => updateFilter(i, { value: e.target.value })}
                   className="h-9 flex-1 rounded-md border border-card bg-surface px-2 text-[0.75rem] text-primary"
                 >
-                  <option value="">— select —</option>
+                  <option value="">- select -</option>
                   <option value="Active">Active</option>
                   <option value="Pending Deletion">Pending Deletion</option>
                   <option value="Deleted">Deleted</option>
@@ -525,7 +525,7 @@ export function AudienceBuilder({
                   </td>
                   <td className="px-3 py-1.5 text-secondary">
                     {u.displayName || (
-                      <span className="text-muted italic">—</span>
+                      <span className="text-muted italic">-</span>
                     )}
                   </td>
                 </tr>

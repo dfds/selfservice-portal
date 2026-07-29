@@ -13,7 +13,7 @@ const RYBBIT_SCRIPT_URL =
 const RYBBIT_SITE_ID = "2f8dd0f249df";
 
 // Rybbit injects a `window.rybbit` object once its <script> finishes loading.
-// We can't call identify() until that has happened — so we keep a small
+// We can't call identify() until that has happened - so we keep a small
 // load-callback queue alongside a module-level loaded flag.
 let scriptLoaded = false;
 const onScriptLoad: Array<() => void> = [];
@@ -104,7 +104,7 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
   const account = accounts && accounts.length > 0 ? accounts[0] : null;
   const email = isAuthenticated ? extractEmail(account) : null;
   const traits = isAuthenticated ? extractTraits(account) : {};
-  // Stable key used to detect when *any* identifying info changes — covers the
+  // Stable key used to detect when *any* identifying info changes - covers the
   // rare case where name/username arrive after the initial sign-in event.
   const identityKey = email
     ? `${email}|${traits.name ?? ""}|${traits.username ?? ""}`

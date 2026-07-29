@@ -12,7 +12,7 @@ const STATUS_COLOR = {
 
 const STATUS_TOOLTIP = {
   operational: "Operational",
-  recently_resolved: "Operational — had an incident in the past 2 hours",
+  recently_resolved: "Operational - had an incident in the past 2 hours",
   degraded: "Degraded or outage",
   loading: "Loading…",
   error: "Status unavailable",

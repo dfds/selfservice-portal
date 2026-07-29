@@ -10,13 +10,13 @@ export interface useReleaseNotesProps {
   includeDrafts?: boolean;
 }
 
-// Manual — conditional URL segment building
+// Manual - conditional URL segment building
 export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps = {}) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   // Drafts are a manage-page-only concern. Keep them in their own cache entry
   // so the published-only consumers (release notes list, what's-new) never pull
-  // drafts into their payload — and so neither side clobbers the other's cache.
+  // drafts into their payload - and so neither side clobbers the other's cache.
   const wantsDrafts = includeDrafts === true;
 
   const segments = ["release-notes"];
@@ -48,7 +48,7 @@ export const useCreateReleaseNote = createSsuMutation<{ payload: any }>({
   urlSegments: () => ["release-notes"],
 });
 
-// Manual — hook argument (id) not supported by createSsuMutation
+// Manual - hook argument (id) not supported by createSsuMutation
 export function useUpdateReleaseNote(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   return useMutation({

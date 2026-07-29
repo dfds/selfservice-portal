@@ -36,7 +36,7 @@ export function useDriverTour() {
   return useCallback(
     async (tour: TourDefinition, onComplete?: () => void) => {
       const driverModule = await import("driver.js");
-      // @ts-expect-error — driver.js ships CSS without TS declarations
+      // @ts-expect-error - driver.js ships CSS without TS declarations
       await import("driver.js/dist/driver.css");
       const driver = driverModule.driver;
 
@@ -93,7 +93,7 @@ export function useDriverTour() {
           const to = await resolveStep(from, dir);
           if (to !== null) drv.moveTo(to);
           else if (dir === 1) drv.destroy();
-          // Only after moveTo has repositioned onto the new target — bringing
+          // Only after moveTo has repositioned onto the new target - bringing
           // the overlay back any earlier shows the old step's spotlight.
           showTourChrome();
         } finally {

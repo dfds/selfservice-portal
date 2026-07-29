@@ -18,7 +18,7 @@ export function WorkloadGraphView({ app }: { app: CatalogApplication }) {
     <div>
       {depsUnavailable && (
         <InfoAlert variant="warning" className="mb-3">
-          Runtime dependencies couldn't be loaded — showing the workload's
+          Runtime dependencies couldn't be loaded - showing the workload's
           structure only.
         </InfoAlert>
       )}

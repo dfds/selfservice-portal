@@ -74,7 +74,7 @@ export default function EmailCampaignEditor() {
   const toast = useToast();
 
   // Track the campaign id in state so a freshly-created draft can transition to
-  // edit-mode in place (without a route remount) — keeps the editor and any
+  // edit-mode in place (without a route remount) - keeps the editor and any
   // open preview alive and routes subsequent saves through update, not create.
   const [campaignId, setCampaignId] = useState(id);
   const isEdit = !!campaignId;
@@ -446,7 +446,7 @@ export default function EmailCampaignEditor() {
     doSave()
       .then(() => {
         toast.success(wasEdit ? "Campaign updated" : "Campaign created");
-        // Stay in the editor — the "Back to campaigns" link and "Cancel"
+        // Stay in the editor - the "Back to campaigns" link and "Cancel"
         // button remain the explicit ways to leave.
       })
       .catch(() => {});

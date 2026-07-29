@@ -28,7 +28,7 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
  * A short explanatory tooltip for a label. The content resets the mono/uppercase
  * styling labels usually carry, so the hint itself reads as plain prose.
  *
- * The child element should carry `cursor-help` and `tabIndex={0}` — Radix's
+ * The child element should carry `cursor-help` and `tabIndex={0}` - Radix's
  * `asChild` trigger does not make a plain <span> focusable on its own.
  */
 function HintTooltip({

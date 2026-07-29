@@ -24,7 +24,7 @@ export function MetadataFilterBar({
   onModeChange: (mode: MetadataMode) => void;
   addLabel?: string;
   /**
-   * Set false when the caller owns the "add a filter" affordance itself — the
+   * Set false when the caller owns the "add a filter" affordance itself - the
    * services table folds it into its Add filter menu. With no button of its
    * own, the bar renders nothing until there is a row to show.
    */

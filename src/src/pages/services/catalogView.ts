@@ -21,7 +21,7 @@ export interface TrafficView {
   reqRate: number;
   errorPct: number; // 0..100, for display
   health: TrafficHealth | null; // null when the rate is too noisy to rate
-  lowVolume: boolean; // below the floor — errorPct is derived from few samples
+  lowVolume: boolean; // below the floor - errorPct is derived from few samples
 }
 
 // Below this request rate the error *ratio* has too small a denominator to
@@ -36,8 +36,8 @@ export function trafficFor(app: CatalogApplication): TrafficView | null {
   const errorPct = errorRatio * 100;
   const lowVolume = reqRate < TRAFFIC_HEALTH_FLOOR;
 
-  // A clean zero needs no denominator to be trustworthy — no errors is no
-  // errors at any volume — so "healthy" is decided before the floor applies.
+  // A clean zero needs no denominator to be trustworthy - no errors is no
+  // errors at any volume - so "healthy" is decided before the floor applies.
   // Only degraded/erroring read the magnitude of the ratio, and only those
   // are withheld when the sample is too thin to support them.
   let health: TrafficHealth | null = null;
@@ -109,7 +109,7 @@ export function errorDisplay(traffic: TrafficView): ErrorDisplay {
     return {
       text: `~${formatErrorPct(traffic.errorPct)}`,
       className: "text-secondary",
-      title: `5xx seen, but only ${inbound} inbound — too little traffic to rate this reliably`,
+      title: `5xx seen, but only ${inbound} inbound - too little traffic to rate this reliably`,
     };
   }
 
@@ -180,11 +180,11 @@ export function workloadUrlsFor(app: CatalogApplication): WorkloadUrl[] {
 export type ReachabilityStatus = "reachable" | "unreachable" | "unknown";
 
 // Five-state aggregate for a whole workload's exposure:
-//   none        — no external hosts at all (nothing to probe)
-//   reachable   — every exposed host reachable
-//   unreachable — every exposed host failed (responded but wrong status)
-//   unknown     — every exposed host indeterminate / not-yet-probed
-//   partial     — any other mix
+//   none        - no external hosts at all (nothing to probe)
+//   reachable   - every exposed host reachable
+//   unreachable - every exposed host failed (responded but wrong status)
+//   unknown     - every exposed host indeterminate / not-yet-probed
+//   partial     - any other mix
 export type WorkloadReachability =
   | "none"
   | "reachable"
@@ -278,7 +278,7 @@ export function reachabilityTooltip(app: CatalogApplication): string {
       const when = v?.checkedAt
         ? ` · ${new Date(v.checkedAt).toLocaleString()}`
         : "";
-      return `${host} — ${status}${code}${when}`;
+      return `${host} - ${status}${code}${when}`;
     })
     .join("\n");
 }

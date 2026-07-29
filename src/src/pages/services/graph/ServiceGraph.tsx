@@ -73,7 +73,7 @@ function Legend({
 export function GraphCanvas({
   graph,
   heightClass = "h-[600px]",
-  emptyMessage = "Nothing to connect for the current selection — no services, dependencies, or other links were found.",
+  emptyMessage = "Nothing to connect for the current selection - no services, dependencies, or other links were found.",
 }: {
   graph: BuiltGraph;
   heightClass?: string;
@@ -220,8 +220,8 @@ export function GraphCanvas({
         <p className="text-[0.8125rem] text-secondary max-w-md">
           This selection resolves to {graph.totalNodes.toLocaleString()} nodes,
           above the {MAX_NODES}-node limit for the graph. Narrow your selection
-          with the filters above — by namespace, capability, or a label selector
-          — to render the connections.
+          with the filters above - by namespace, capability, or a label selector
+          - to render the connections.
         </p>
       </div>
     );

@@ -281,7 +281,7 @@ function NamespaceSelect({
   onChange: (v: string) => void;
 }) {
   // Pull namespaces from the full members + groups permission queries that
-  // are already in the cache (no extra fetch — best-effort population).
+  // are already in the cache (no extra fetch - best-effort population).
   const { data: rolesData } = useGetRoles("");
   const roles: any[] = (rolesData as any[]) ?? [];
   void roles; // namespaces come from elsewhere; this just nudges deps
@@ -1595,7 +1595,7 @@ function ResultsHeader({
       </p>
       {truncated && typeof memberTotal === "number" && (
         <p className="text-[0.625rem] text-warning font-mono">
-          Capped at {MAX_MEMBERS} of {memberTotal} members — narrow the filter
+          Capped at {MAX_MEMBERS} of {memberTotal} members - narrow the filter
           to see more.
         </p>
       )}

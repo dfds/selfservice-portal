@@ -172,7 +172,7 @@ function overallPctFromCategories(cap: CapabilityCompliance): number {
 
 // Sort key for one capability under a given column id. Mirrors the desktop
 // matrix's accessorFn so the two views stay aligned. Returns null when the
-// row has no data for the column — sort treats nulls as bottom regardless
+// row has no data for the column - sort treats nulls as bottom regardless
 // of direction.
 function sortKeyFor(
   cap: CapabilityCompliance,
@@ -190,7 +190,7 @@ function sortKeyFor(
 }
 
 // Sort the mobile capability list. Nulls always pinned to the bottom (asc or
-// desc) so "—" rows don't crowd the top when the user flips direction.
+// desc) so "-" rows don't crowd the top when the user flips direction.
 function sortCapabilities(
   capabilities: CapabilityCompliance[],
   sorting: MRT_SortingState,
@@ -259,13 +259,13 @@ function writeUrl(
   if (patch.tags !== undefined) {
     next.delete("tag");
     for (const f of patch.tags) {
-      // Preserve empty rows the user is mid-typing — they're filtered out at
+      // Preserve empty rows the user is mid-typing - they're filtered out at
       // query time but the row needs to remain visible.
       next.append("tag", f.value ? `${f.key}=${f.value}` : f.key);
     }
   }
   if (patch.tagMode !== undefined) {
-    // "and" is the default — omit it from the URL.
+    // "and" is the default - omit it from the URL.
     if (patch.tagMode === "or") next.set("tagmode", "or");
     else next.delete("tagmode");
   }
@@ -305,7 +305,7 @@ export default function CostCentreComplianceDetailPage() {
   const sorting = useMemo(() => readSorting(searchParams), [searchParams]);
   const isMobile = useIsMobile();
 
-  // Single setter used by every filter/sort interaction — keeps the URL the
+  // Single setter used by every filter/sort interaction - keeps the URL the
   // source of truth and avoids stacking history entries on each keystroke.
   const updateUrl = useCallback(
     (patch: Parameters<typeof writeUrl>[1]) => {
@@ -339,7 +339,7 @@ export default function CostCentreComplianceDetailPage() {
     [updateUrl, sorting],
   );
 
-  // Cache parsed metadata for each capability — re-used by the filter + expanded views.
+  // Cache parsed metadata for each capability - re-used by the filter + expanded views.
   const metadataByCap = useMemo(() => {
     const out = new Map<string, Record<string, string>>();
     (data?.capabilities ?? []).forEach((cap) => {
@@ -357,7 +357,7 @@ export default function CostCentreComplianceDetailPage() {
 
   // Metadata-filtered set: drives the stats panel above.
   // AND: every non-empty filter must match. OR: at least one must match.
-  // Empty rows (no key) are skipped in either mode — they're mid-edit, not active.
+  // Empty rows (no key) are skipped in either mode - they're mid-edit, not active.
   const metadataFilteredCapabilities = useMemo<CapabilityCompliance[]>(() => {
     const all = data?.capabilities ?? [];
     if (metadataFilters.every((f) => !f.key)) return all;
@@ -378,7 +378,7 @@ export default function CostCentreComplianceDetailPage() {
     );
   }, [metadataFilteredCapabilities, statusFilter]);
 
-  // Aggregates ignore the status filter on purpose — only the matrix narrows.
+  // Aggregates ignore the status filter on purpose - only the matrix narrows.
   const aggregates = useMemo(() => {
     const total = metadataFilteredCapabilities.length;
     const compliant = metadataFilteredCapabilities.filter(
@@ -676,7 +676,7 @@ function SummaryCell({
         className="text-[1.25rem] font-bold font-mono leading-none"
         style={{ color: value === null ? undefined : color }}
       >
-        {value === null ? "—" : value}
+        {value === null ? "-" : value}
       </span>
     </div>
   );
@@ -790,7 +790,7 @@ function CapabilityMatrix({
               {ratio.compliant} / {ratio.total}
             </span>
           ) : (
-            <span className="text-muted text-[0.75rem]">—</span>
+            <span className="text-muted text-[0.75rem]">-</span>
           );
         },
       })),
@@ -820,7 +820,7 @@ function CapabilityMatrix({
               className="font-mono text-[0.8125rem] font-semibold"
               style={{ color }}
             >
-              {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
+              {cap.overallStatus === "Unknown" ? "-" : `${pct}%`}
             </span>
           );
         },
@@ -1016,7 +1016,7 @@ function ExpandedDetail({
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
                   <span className="text-primary truncate flex-1">
-                    {v || "—"}
+                    {v || "-"}
                   </span>
                 </div>
               ))}
@@ -1149,7 +1149,7 @@ function MobileCapabilityCard({
             className="text-[1rem] font-bold font-mono flex-shrink-0"
             style={{ color: overallColor }}
           >
-            {cap.overallStatus === "Unknown" ? "—" : `${pct}%`}
+            {cap.overallStatus === "Unknown" ? "-" : `${pct}%`}
           </div>
           <ChevronDown
             size={14}
@@ -1174,7 +1174,7 @@ function MobileCapabilityCard({
                     {ratio.compliant} / {ratio.total}
                   </span>
                 ) : (
-                  <span className="text-muted text-[0.75rem]">—</span>
+                  <span className="text-muted text-[0.75rem]">-</span>
                 )}
                 <span className="text-[0.5625rem] font-mono uppercase tracking-[0.08em] text-muted">
                   {c.short}

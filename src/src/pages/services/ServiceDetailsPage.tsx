@@ -122,7 +122,7 @@ export default function ServiceDetailsPage() {
         <BackLink />
         <InfoAlert variant="warning">
           The platform catalog is currently unavailable. This service can't be
-          shown right now — try again later.
+          shown right now - try again later.
         </InfoAlert>
       </div>
     );
@@ -439,7 +439,7 @@ export default function ServiceDetailsPage() {
                 </div>
               ) : (
                 <p className="text-[0.8125rem] text-muted">
-                  No Kubernetes Service — internal workload.
+                  No Kubernetes Service - internal workload.
                 </p>
               )}
             </PageSection>
@@ -713,7 +713,7 @@ function Tile({
       >
         {children}
       </div>
-      {/* The caption sits below the value, so the hint opens downwards —
+      {/* The caption sits below the value, so the hint opens downwards -
           a top-side tooltip would cover the number it describes. */}
       <LabelText
         as="div"
@@ -739,7 +739,7 @@ function Def({ term, children }: { term: string; children: React.ReactNode }) {
 }
 
 // A small key label (tile caption, definition term, rail key). When the
-// catalogue defines a hint for the label, it explains itself on hover/focus —
+// catalogue defines a hint for the label, it explains itself on hover/focus -
 // the same affordance the table's column headers have.
 function LabelText({
   label,

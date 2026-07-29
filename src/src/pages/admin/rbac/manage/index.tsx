@@ -205,7 +205,7 @@ function UserList({
       />
       <p className="text-[0.625rem] text-muted font-mono">
         Start typing to find a user. People not yet in selfservice show as
-        Unregistered — selecting one adds them.
+        Unregistered - selecting one adds them.
       </p>
     </div>
   );
@@ -293,7 +293,7 @@ function RegisterServicePrincipalDialog({
           <p className="text-sm text-secondary">
             Search Azure AD for the service principal you want to manage in
             RBAC. The oid shown next to each result is the only durable
-            identifier — make sure you pick the right one.
+            identifier - make sure you pick the right one.
           </p>
           <ServicePrincipalSearchCombobox
             onSelect={(sp) => setSelected(sp)}
@@ -460,7 +460,10 @@ function GroupList({
             onSubmit={(e) => {
               e.preventDefault();
               if (!newName.trim() || !newDescription.trim()) return;
-              fireCreate({ name: newName.trim(), description: newDescription.trim() });
+              fireCreate({
+                name: newName.trim(),
+                description: newDescription.trim(),
+              });
             }}
             className="space-y-4 mt-2"
           >
@@ -495,7 +498,11 @@ function GroupList({
               <Button
                 type="submit"
                 variant="action"
-                disabled={!newName.trim() || !newDescription.trim() || createMutation.isPending}
+                disabled={
+                  !newName.trim() ||
+                  !newDescription.trim() ||
+                  createMutation.isPending
+                }
               >
                 {createMutation.isPending ? "Creating…" : "Create"}
               </Button>

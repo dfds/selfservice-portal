@@ -47,7 +47,7 @@ export default function Deployments({ anchorId }) {
                 meta.clustersQueried === 1 ? "" : "s"
               } could not be reached)`
             : ""}
-          . Deployment information can't be shown right now — try again later.
+          . Deployment information can't be shown right now - try again later.
         </InfoAlert>
       ) : apps.length === 0 ? (
         <EmptyState>

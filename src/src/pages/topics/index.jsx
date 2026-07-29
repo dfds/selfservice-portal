@@ -156,7 +156,7 @@ export default function TopicsPage() {
         <InfoAlert className="mb-5 animate-fade-up animate-stagger-1">
           A comprehensive list of Kafka topics available for development teams.
           Every capability has read access to all public topics. Handle
-          sensitive data responsibly — both when producing and consuming.
+          sensitive data responsibly - both when producing and consuming.
         </InfoAlert>
 
         <div className="animate-fade-up animate-stagger-2">

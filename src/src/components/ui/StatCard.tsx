@@ -24,7 +24,7 @@ export function StatCard({
   className,
   ...props
 }: StatCardProps) {
-  // The caption sits below the value, so the hint opens downwards — anchored
+  // The caption sits below the value, so the hint opens downwards - anchored
   // above it would cover the very number it is explaining.
   const caption = (
     <span
@@ -57,7 +57,7 @@ export function StatCard({
             hasData ? "text-action" : "text-muted",
           )}
         >
-          {hasData ? value : "—"}
+          {hasData ? value : "-"}
         </span>
       )}
       {tip ? (

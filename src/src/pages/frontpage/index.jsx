@@ -96,14 +96,14 @@ export default function FrontPage() {
           className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[0.75rem] text-[#ed8800] leading-[1.6] animate-fade-up"
           style={{ animationDelay: `${40 + i * 40}ms` }}
         >
-          <span className="font-bold tracking-[0.05em]">{item.title} — </span>
+          <span className="font-bold tracking-[0.05em]">{item.title} - </span>
           <LinkifiedText text={item.body ?? ""} linkClassName="underline" />
         </div>
       ))}
 
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
-        {/* CENTER: My Capabilities + Platform nav cards — first in DOM so it appears at top on mobile */}
+        {/* CENTER: My Capabilities + Platform nav cards - first in DOM so it appears at top on mobile */}
         <div
           className="animate-fade-up lg:order-2"
           style={{ animationDelay: "80ms" }}
@@ -138,7 +138,7 @@ export default function FrontPage() {
             iconBg="#ede9fe"
             icon={<List size={18} color="#6d28d9" />}
             name="Kafka Topics"
-            description="Browse all platform topics. Building in .NET? Check out dafda — you're welcome!"
+            description="Browse all platform topics. Building in .NET? Check out dafda - you're welcome!"
           />
           <NavCard
             href="https://wiki.dfds.cloud/en/playbooks/getting-started/journey"
@@ -215,7 +215,7 @@ export default function FrontPage() {
               >
                 playbooks
               </a>{" "}
-              cover the most common tasks — start there.
+              cover the most common tasks - start there.
             </p>
             <p className="text-[0.8125rem] text-secondary leading-[1.6] mb-2">
               Got a question the docs don't answer? The community on Slack is

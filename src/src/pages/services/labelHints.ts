@@ -1,5 +1,5 @@
 /**
- * One-sentence explanations for every label the service catalogue shows —
+ * One-sentence explanations for every label the service catalogue shows -
  * column headers, row-panel section labels, detail-page rail keys and tiles.
  *
  * Keyed by the lowercased label text so the same word explains itself the same
@@ -21,7 +21,7 @@ export const LABEL_HINTS: Record<string, string> = {
     "Number of API documentation specs (e.g. OpenAPI) discovered for the workload.",
 
   // ── Workload attributes ────────────────────────────────────────────────────
-  type: "The kind of Kubernetes resource this workload is — Deployment, StatefulSet, DaemonSet, or a standalone Service.",
+  type: "The kind of Kubernetes resource this workload is - Deployment, StatefulSet, DaemonSet, or a standalone Service.",
   runtime:
     "The language runtime Beyla fingerprinted for this workload (go, dotnet, java, …). Absent when it could not be detected.",
   activity:
@@ -29,7 +29,7 @@ export const LABEL_HINTS: Record<string, string> = {
   description:
     "Author-provided summary of the workload, set via the dfds.cloud/description annotation.",
   links:
-    "Author-provided reference links — runbooks, dashboards, docs — set via dfds.cloud/link.<label> annotations.",
+    "Author-provided reference links - runbooks, dashboards, docs - set via dfds.cloud/link.<label> annotations.",
   status:
     "Overall workload health, derived from how many of the desired replicas are ready.",
   "replicas ready": "Ready pod replicas out of the desired replica count.",
@@ -37,8 +37,8 @@ export const LABEL_HINTS: Record<string, string> = {
   // ── Source / deployment ────────────────────────────────────────────────────
   source:
     "The GitOps tool and revision that deployed this workload, plus its source repositories.",
-  gitops: "The GitOps controller that manages this workload — Argo CD or Flux.",
-  tool: "The GitOps controller that deployed this workload — Argo CD or Flux.",
+  gitops: "The GitOps controller that manages this workload - Argo CD or Flux.",
+  tool: "The GitOps controller that deployed this workload - Argo CD or Flux.",
   app: "The Argo CD / Flux application this workload was deployed as part of.",
   revision:
     "The Git commit the GitOps controller last reconciled this workload to.",
@@ -60,7 +60,7 @@ export const LABEL_HINTS: Record<string, string> = {
   "kafka topics":
     "Kafka topics this workload produces to or consumes from, inferred from OpenTelemetry messaging traces.",
   databases:
-    "Databases this workload talks to, inferred from OpenTelemetry client traces. Best-effort — only instrumented calls appear.",
+    "Databases this workload talks to, inferred from OpenTelemetry client traces. Best-effort - only instrumented calls appear.",
   calls:
     "Services, databases, and endpoints this workload was observed calling.",
   "called by": "Workloads observed sending traffic to this workload.",
@@ -83,12 +83,12 @@ export function hintFor(label: string): string | undefined {
 /**
  * The catalogue page's five headline numbers. Kept apart from LABEL_HINTS
  * because these count across the whole platform, so a couple of the labels mean
- * something different here — "Ingress" is a total of exposed hostnames, not the
+ * something different here - "Ingress" is a total of exposed hostnames, not the
  * per-workload column of the same name.
  */
 export const SUMMARY_HINTS: Record<string, string> = {
   workloads:
-    "Every workload the catalogue discovered across all clusters — not just the ones the table below is currently showing.",
+    "Every workload the catalogue discovered across all clusters - not just the ones the table below is currently showing.",
   healthy: "Workloads where all desired pod replicas are ready.",
   degraded:
     "Workloads where some, but not all, desired pod replicas are ready.",

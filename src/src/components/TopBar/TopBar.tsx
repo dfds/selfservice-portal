@@ -82,7 +82,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
           <Menu size={18} strokeWidth={1.75} aria-hidden="true" />
         </button>
 
-        {/* Breadcrumb — desktop: full trail, mobile: current page only */}
+        {/* Breadcrumb - desktop: full trail, mobile: current page only */}
         <nav
           aria-label="Breadcrumb"
           className="hidden md:flex items-center gap-1.5 text-[0.8125rem]"

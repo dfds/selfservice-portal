@@ -141,7 +141,7 @@ const costCentresGroup: NavGroupDef = {
 };
 
 // External admin links. URLs are injected from environment variables at build
-// time (never hardcoded) — a link only appears when its env var is set. Add a
+// time (never hardcoded) - a link only appears when its env var is set. Add a
 // new one by adding the matching REACT_APP_ADMIN_PAGE_URL_* var to the build env.
 const adminExternalNav: NavItemDef[] = (
   [
@@ -220,8 +220,8 @@ function NavItemLink({
         ? "bg-[#f2f2f2] dark:bg-slate-700 text-primary font-medium border-action"
         : "bg-white dark:bg-slate-700 text-primary font-medium shadow-card border-action"
       : onPanel
-        ? "text-secondary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] hover:text-primary border-transparent"
-        : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
+      ? "text-secondary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] hover:text-primary border-transparent"
+      : "text-secondary hover:bg-white/60 dark:hover:bg-slate-700/60 hover:text-primary border-transparent",
   );
 
   const handleNavClick = () => {
@@ -271,7 +271,7 @@ function NavItemLink({
   );
 }
 
-// Shared styling for a group's top-level trigger button — matches NavItemLink.
+// Shared styling for a group's top-level trigger button - matches NavItemLink.
 function groupBtnCls(active: boolean): string {
   return cn(
     "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] transition duration-150 ease-out-expo border-l-2 cursor-pointer border-t-0 border-r-0 border-b-0 bg-transparent text-left",
@@ -330,9 +330,11 @@ function useScrollEdges(
 }
 
 function edgeMask(edges: ScrollEdges): string {
-  return `linear-gradient(to bottom, ${edges.top ? "transparent" : "black"
-    } 0, black ${NAV_FADE}, black calc(100% - ${NAV_FADE}), ${edges.bottom ? "transparent" : "black"
-    } 100%)`;
+  return `linear-gradient(to bottom, ${
+    edges.top ? "transparent" : "black"
+  } 0, black ${NAV_FADE}, black calc(100% - ${NAV_FADE}), ${
+    edges.bottom ? "transparent" : "black"
+  } 100%)`;
 }
 
 function EdgeIndicators({ edges }: { edges: ScrollEdges }) {
@@ -380,7 +382,7 @@ function EdgeIndicators({ edges }: { edges: ScrollEdges }) {
   );
 }
 
-// Inline accordion — used on mobile, where the flyout's hover/portal model
+// Inline accordion - used on mobile, where the flyout's hover/portal model
 // doesn't fit the full-height drawer.
 function NavGroupAccordion({
   group,
@@ -588,10 +590,10 @@ const THEME_OPTIONS: {
   icon: React.ElementType;
   label: string;
 }[] = [
-    { value: "light", icon: Sun, label: "Light" },
-    { value: "dark", icon: Moon, label: "Dark" },
-    { value: "system", icon: Monitor, label: "Auto" },
-  ];
+  { value: "light", icon: Sun, label: "Light" },
+  { value: "dark", icon: Moon, label: "Dark" },
+  { value: "system", icon: Monitor, label: "Auto" },
+];
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -1097,9 +1099,9 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       style={
         isMobile
           ? {
-            transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
-            transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
-          }
+              transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 500ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }
           : undefined
       }
     >
@@ -1161,7 +1163,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         {/* Mobile-only: What's New + CE Mode (hidden in TopBar on small screens) */}
         {isMobile && (
           <div className="flex items-center justify-between gap-2">
-            {/* Close the drawer when the bell is tapped — the list modal opens on top of the page, the sidebar shouldn't linger. */}
+            {/* Close the drawer when the bell is tapped - the list modal opens on top of the page, the sidebar shouldn't linger. */}
             <div onClick={onClose}>
               <WhatsNewBell />
             </div>
@@ -1181,16 +1183,18 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
                   onClick={() =>
                     setIsCloudEngineerEnabled((prev: boolean) => !prev)
                   }
-                  className={`relative inline-flex h-5 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#002b45] cursor-pointer before:content-[''] before:absolute before:-inset-[10px] [transition:background-color_200ms_50ms_cubic-bezier(0.16,1,0.3,1)] ${isCloudEngineerEnabled
-                    ? "bg-[#1b63c1]"
-                    : "bg-[#d9dcde] dark:bg-[#334155]"
-                    }`}
+                  className={`relative inline-flex h-5 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#002b45] cursor-pointer before:content-[''] before:absolute before:-inset-[10px] [transition:background-color_200ms_50ms_cubic-bezier(0.16,1,0.3,1)] ${
+                    isCloudEngineerEnabled
+                      ? "bg-[#1b63c1]"
+                      : "bg-[#d9dcde] dark:bg-[#334155]"
+                  }`}
                 >
                   <span
-                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm z-10 [transition:translate_200ms_cubic-bezier(0.16,1,0.3,1)] ${isCloudEngineerEnabled
-                      ? "translate-x-4 animate-switch-slider-on"
-                      : "translate-x-0.5 animate-switch-slider-off"
-                      }`}
+                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm z-10 [transition:translate_200ms_cubic-bezier(0.16,1,0.3,1)] ${
+                      isCloudEngineerEnabled
+                        ? "translate-x-4 animate-switch-slider-on"
+                        : "translate-x-0.5 animate-switch-slider-off"
+                    }`}
                   />
                 </button>
               </div>

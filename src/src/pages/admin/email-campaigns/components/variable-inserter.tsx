@@ -19,7 +19,7 @@ export function VariableInserter({
   if (!editor) return null;
 
   // In User campaigns, capability-scoped variables only resolve inside a
-  // {{#each User.Capabilities}} block — flag them so authors know where they apply.
+  // {{#each User.Capabilities}} block - flag them so authors know where they apply.
   const showScopeChip = targetType === "User";
 
   const filtered = (variables || []).filter(

@@ -175,7 +175,7 @@ export default function ServicesPage() {
                 meta.clustersQueried === 1 ? "" : "s"
               } could not be reached)`
             : ""}
-          . Services can't be shown right now — try again later.
+          . Services can't be shown right now - try again later.
         </InfoAlert>
       ) : (
         <>

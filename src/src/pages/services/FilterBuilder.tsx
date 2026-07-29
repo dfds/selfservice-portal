@@ -45,7 +45,7 @@ export function AddFilterButton({
   depsLoading?: boolean;
   /** When set, the menu offers a "Capability tag" entry that appends a blank tag row. */
   onAddTagFilter?: () => void;
-  /** Number of tag filters currently active — shown as a count badge. */
+  /** Number of tag filters currently active - shown as a count badge. */
   tagFilterCount?: number;
   /** No capability metadata observed, so there is nothing to filter on. */
   tagFilterDisabled?: boolean;
@@ -156,7 +156,7 @@ export function AddFilterButton({
                 })}
               </div>
 
-              {/* Pinned below the scrolling dimension list — it is not a
+              {/* Pinned below the scrolling dimension list - it is not a
                   dimension with a value pane, and it must stay reachable
                   however far down the list you have scrolled. Clicking it
                   drops a blank key = value row into the tag filter builder

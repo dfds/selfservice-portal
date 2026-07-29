@@ -493,7 +493,7 @@ export default function CompliancePage() {
             </p>
           </div>
 
-          {/* Overall Compliance + Summary panel — horizontal */}
+          {/* Overall Compliance + Summary panel - horizontal */}
           <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
             <div className="-ml-3 font-mono text-[0.625rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
               // Overall Compliance{" "}
@@ -502,14 +502,14 @@ export default function CompliancePage() {
               </span>
             </div>
             <div className="flex items-center gap-8">
-              {/* Summary stats — horizontal cells */}
+              {/* Summary stats - horizontal cells */}
               <div className="flex items-center gap-8">
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     Total Count
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    {fetchedCount > 0 ? totalCaps : "—"}
+                    {fetchedCount > 0 ? totalCaps : "-"}
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
@@ -522,7 +522,7 @@ export default function CompliancePage() {
                       color: fetchedCount > 0 ? "#16a34a" : undefined,
                     }}
                   >
-                    {fetchedCount > 0 ? totalCompliant : "—"}
+                    {fetchedCount > 0 ? totalCompliant : "-"}
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
@@ -535,7 +535,7 @@ export default function CompliancePage() {
                       color: fetchedCount > 0 ? gaugeColor : undefined,
                     }}
                   >
-                    {fetchedCount > 0 ? `${overallPct}%` : "—"}
+                    {fetchedCount > 0 ? `${overallPct}%` : "-"}
                   </span>
                 </div>
               </div>

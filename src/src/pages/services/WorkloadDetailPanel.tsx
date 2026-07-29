@@ -38,7 +38,7 @@ export function WorkloadDetailPanel({
         {app.kind ? (
           <Badge variant="outline">{app.kind}</Badge>
         ) : (
-          <span className="text-muted">—</span>
+          <span className="text-muted">-</span>
         )}
       </div>
 
@@ -177,7 +177,7 @@ export function WorkloadDetailPanel({
           </div>
         ) : (
           <p className="text-[0.8125rem] text-muted">
-            No Kubernetes Service — internal workload.
+            No Kubernetes Service - internal workload.
           </p>
         )}
       </div>

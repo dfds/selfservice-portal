@@ -23,7 +23,7 @@ function PreAppProvider({ children }) {
     try {
       localStorage.setItem(CE_MODE_STORAGE_KEY, String(isCloudEngineerEnabled));
     } catch {
-      /* localStorage unavailable (private mode) — non-fatal */
+      /* localStorage unavailable (private mode) non-fatal */
     }
     queryClient.invalidateQueries();
   }, [isCloudEngineerEnabled]);

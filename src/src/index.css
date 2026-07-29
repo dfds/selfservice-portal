@@ -22,12 +22,12 @@
   --color-border-tab: #ced0d1;
   --color-border-divider: #eeeeee;
 
-  /* Easing curves — exponential deceleration for natural motion */
+  /* Easing curves - exponential deceleration for natural motion */
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Animation utilities — @keyframes must be inside @theme for Tailwind v4 */
+  /* Animation utilities - @keyframes must be inside @theme for Tailwind v4 */
   --animate-fade-up: fade-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
 
   @keyframes fade-up {
@@ -184,7 +184,7 @@
     }
   }
 
-  /* Switch thumb slider — two differently-named keyframes so the browser
+  /* Switch thumb slider - two differently-named keyframes so the browser
      re-fires the animation on every state toggle. Thumb stretches horizontally
      during travel, elongating in the direction of motion. */
   --animate-switch-slider-on: switch-slider-on 660ms ease-in-out both;
@@ -252,7 +252,7 @@
     }
   }
 
-  /* What's New bell — rainbow color cycle on the small badge dot */
+  /* What's New bell - rainbow color cycle on the small badge dot */
   --animate-rainbow-text: rainbow-text 4s linear infinite;
 
   @keyframes rainbow-text {
@@ -283,9 +283,9 @@
 }
 
 :root {
-  /* User-configurable font scaling — driven by FontScaleContext */
+  /* User-configurable font scaling - driven by FontScaleContext */
   --ssu-font-scale: 1;
-  /* Viewport units corrected for `body { zoom }` — keeps `h-screen`-style
+  /* Viewport units corrected for `body { zoom }` - keeps `h-screen`-style
      containers from overflowing when the user scales the UI up. */
   --ssu-vh: calc(100vh / var(--ssu-font-scale));
   --ssu-vw: calc(100vw / var(--ssu-font-scale));
@@ -363,7 +363,7 @@ html.dark {
   --color-brand: #e2e8f0;
 }
 
-/* Semantic utilities — auto-switch with CSS vars (no dark: variant needed) */
+/* Semantic utilities - auto-switch with CSS vars (no dark: variant needed) */
 @layer utilities {
   /* Text colors */
   .text-primary {
@@ -444,7 +444,7 @@ html.dark {
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Stagger delays — combine with animate-fade-up or animate-section-enter */
+  /* Stagger delays - combine with animate-fade-up or animate-section-enter */
   .animate-stagger-1 {
     animation-delay: 60ms;
   }
@@ -485,7 +485,7 @@ body {
 }
 
 /* Apply user font-scale to direct children of <body> (the React #root and any
-   Radix portals) — not to <body> itself. driver.js appends its overlay/popover
+   Radix portals) - not to <body> itself. driver.js appends its overlay/popover
    directly under <body>; if those siblings inherit zoom too, the popover's
    `top`/`left` (already in the visually-zoomed coord space from the target's
    getBoundingClientRect) get displaced by the zoom factor and the popover lands
@@ -521,7 +521,7 @@ code {
   font-family: monospace;
 }
 
-/* Template variable chips — used in the email broadcast TipTap editor */
+/* Template variable chips - used in the email broadcast TipTap editor */
 .template-variable-chip {
   display: inline-flex;
   align-items: center;
@@ -534,7 +534,7 @@ code {
   font-family: "SFMono-Regular", "Fira Code", monospace;
   font-weight: 500;
   vertical-align: baseline;
-  /* Chips can be dragged to reposition and clicked to swap — signal it. */
+  /* Chips can be dragged to reposition and clicked to swap - signal it. */
   cursor: grab;
   transition:
     outline-color 0.12s ease,
@@ -566,7 +566,7 @@ code {
   outline-color: #60a5fa;
 }
 
-/* Handlebars block-helper markers ({{#each …}} / {{/each}}) in the email body —
+/* Handlebars block-helper markers ({{#each …}} / {{/each}}) in the email body -
  * matches the amber "loop" scope chip palette used in the variable inserter. */
 .template-block-marker {
   background: #fffbeb;
@@ -583,7 +583,7 @@ code {
   color: #fbbf24;
 }
 
-/* driver.js theming — driver's stylesheet is dynamically imported AFTER our
+/* driver.js theming - driver's stylesheet is dynamically imported AFTER our
  * index.css, so its defaults win at equal specificity. We scope every
  * override under .ssu-driver-popover (set via popoverClass in useDriverTour)
  * to make selectors more specific than driver.js's defaults. */

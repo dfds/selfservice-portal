@@ -545,7 +545,7 @@ export function ServicesTableView({
             </Link>
           ) : (
             <span className="text-action truncate block">
-              {app.capabilityName || app.capabilityId || "—"}
+              {app.capabilityName || app.capabilityId || "-"}
             </span>
           );
         },
@@ -618,7 +618,7 @@ export function ServicesTableView({
                   setGuideOpen(true);
                 }}
                 className="inline-flex items-center gap-1 font-mono text-[11px] text-muted hover:text-action transition-colors"
-                title="No description set — click to learn how to add one"
+                title="No description set - click to learn how to add one"
               >
                 <Plus size={11} className="flex-none" />
                 Add a description
@@ -651,7 +651,7 @@ export function ServicesTableView({
                 className="font-mono text-[12px] text-muted"
                 title="No inbound HTTP traffic observed"
               >
-                —
+                -
               </span>
             );
           }
@@ -681,7 +681,7 @@ export function ServicesTableView({
                 className="font-mono text-[12px] text-muted"
                 title="No inbound HTTP traffic observed"
               >
-                —
+                -
               </span>
             );
           }
@@ -872,7 +872,7 @@ export function ServicesTableView({
       onChange={setTagFilters}
       onModeChange={setTagMode}
       // With facets on, "add a tag filter" lives in the Add filter menu
-      // instead — one entry point for both kinds of filter. Without facets
+      // instead - one entry point for both kinds of filter. Without facets
       // there is no menu to host it, so the bar keeps its own button.
       showAddButton={!enableFacets}
       className="relative z-30 mt-1 mb-3"
@@ -1235,7 +1235,10 @@ function Toolbar({
   rightAddon?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-4">
+    <div
+      data-tour="services-toolbar"
+      className="flex flex-wrap items-center gap-2 mb-4"
+    >
       {enableSearch && (
         <SearchBox value={searchValue} onDebouncedChange={onSearchChange} />
       )}
