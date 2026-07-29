@@ -46,8 +46,7 @@ import {
   prettifyDbSystem,
   trafficFor,
   formatReqRate,
-  formatErrorPct,
-  errorChipClass,
+  errorDisplay,
   type WorkloadStatus,
 } from "./catalogView";
 import { hintFor } from "./labelHints";
@@ -161,6 +160,7 @@ export default function ServiceDetailsPage() {
   const KindIcon = app.kind === "StatefulSet" ? Database : Boxes;
   const lastUpdatedAt = catalogUpdatedAt(meta, appsQuery.dataUpdatedAt);
   const traffic = trafficFor(app);
+  const trafficErrors = traffic ? errorDisplay(traffic) : null;
   // Grafana host is injected at build time; the observability links are hidden when it's unset
   const grafanaBase = (process.env.REACT_APP_GRAFANA_BASE_URL || "").trim();
 
@@ -588,12 +588,15 @@ export default function ServiceDetailsPage() {
               {traffic && (
                 <RailRow k="Inbound" v={formatReqRate(traffic.reqRate)} />
               )}
-              {traffic && (
+              {traffic && trafficErrors && (
                 <RailRow
                   k="Errors"
                   v={
-                    <span className={errorChipClass(traffic.health)}>
-                      {formatErrorPct(traffic.errorPct)}
+                    <span
+                      className={trafficErrors.className}
+                      title={trafficErrors.title}
+                    >
+                      {trafficErrors.text}
                     </span>
                   }
                 />

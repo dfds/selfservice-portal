@@ -20,9 +20,13 @@ export type TrafficHealth = "healthy" | "degraded" | "erroring";
 export interface TrafficView {
   reqRate: number;
   errorPct: number; // 0..100, for display
-  health: TrafficHealth | null; // null below the volume floor
+  health: TrafficHealth | null; // null when the rate is too noisy to rate
+  lowVolume: boolean; // below the floor — errorPct is derived from few samples
 }
 
+// Below this request rate the error *ratio* has too small a denominator to
+// mean anything: a single stray 5xx in the lookback window reads as 33% or
+// 50%. Verdicts that depend on the magnitude of the ratio sit behind it.
 const TRAFFIC_HEALTH_FLOOR = 0.05;
 
 export function trafficFor(app: CatalogApplication): TrafficView | null {
@@ -30,13 +34,22 @@ export function trafficFor(app: CatalogApplication): TrafficView | null {
   if (reqRate <= 0) return null;
   const errorRatio = app.errorRate ?? 0;
   const errorPct = errorRatio * 100;
+  const lowVolume = reqRate < TRAFFIC_HEALTH_FLOOR;
+
+  // A clean zero needs no denominator to be trustworthy — no errors is no
+  // errors at any volume — so "healthy" is decided before the floor applies.
+  // Only degraded/erroring read the magnitude of the ratio, and only those
+  // are withheld when the sample is too thin to support them.
   let health: TrafficHealth | null = null;
-  if (reqRate >= TRAFFIC_HEALTH_FLOOR) {
+  if (errorRatio <= 0) {
+    health = "healthy";
+  } else if (!lowVolume) {
     if (errorRatio < 0.01) health = "healthy";
     else if (errorRatio < 0.05) health = "degraded";
     else health = "erroring";
   }
-  return { reqRate, errorPct, health };
+
+  return { reqRate, errorPct, health, lowVolume };
 }
 
 export function formatReqRateValue(reqRate: number): string {
@@ -56,17 +69,55 @@ export function formatErrorPct(errorPct: number): string {
   return `${Math.round(errorPct)}%`;
 }
 
-export function errorChipClass(health: TrafficHealth | null): string {
+function errorChipClass(health: TrafficHealth | null): string {
   switch (health) {
-    case "healthy":
-      return "text-success";
     case "degraded":
       return "text-warning";
     case "erroring":
       return "text-error";
     default:
-      return "";
+      return "text-secondary";
   }
+}
+
+export interface ErrorDisplay {
+  text: string;
+  className: string;
+  title: string;
+}
+
+// Single source of truth for the Errors cell across the table, the mobile
+// list, the detail panel and the service page. Text and colour are decided
+// together so they can never disagree.
+export function errorDisplay(traffic: TrafficView): ErrorDisplay {
+  const inbound = formatReqRate(traffic.reqRate);
+
+  // "none" is one fixed appearance at every request rate. The word already
+  // says everything the colour could, so the colour carries no verdict.
+  if (traffic.errorPct <= 0) {
+    return {
+      text: "none",
+      className: "text-muted",
+      title: `No 5xx responses out of ${inbound} inbound`,
+    };
+  }
+
+  // Errors exist but the rate is too low to size them. Show that they are
+  // non-zero and mark the figure approximate rather than printing a bare
+  // percentage computed from a handful of requests.
+  if (traffic.lowVolume) {
+    return {
+      text: `~${formatErrorPct(traffic.errorPct)}`,
+      className: "text-secondary",
+      title: `5xx seen, but only ${inbound} inbound — too little traffic to rate this reliably`,
+    };
+  }
+
+  return {
+    text: formatErrorPct(traffic.errorPct),
+    className: errorChipClass(traffic.health),
+    title: `5xx share of ${inbound} inbound`,
+  };
 }
 
 export function workloadDetailHref(app: CatalogApplication): string {
