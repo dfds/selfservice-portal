@@ -362,7 +362,7 @@ export function MembershipApplicationTable({
         columns={columns}
         data={tableData}
         initialState={{
-          pagination: { pageSize: 5 },
+          pagination: { pageIndex: 0, pageSize: 5 },
           showGlobalFilter: true,
         }}
         muiTableHeadCellProps={{

@@ -309,7 +309,7 @@ export default function CapabilitiesCriticalityPage() {
                 columns={columns}
                 data={enrichedCapabilities}
                 initialState={{
-                  pagination: { pageSize: 50 },
+                  pagination: { pageIndex: 0, pageSize: 50 },
                   showGlobalFilter: true,
                   showColumnFilters: true,
                 }}
