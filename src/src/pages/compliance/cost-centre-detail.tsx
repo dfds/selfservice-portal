@@ -843,7 +843,10 @@ function CapabilityMatrix({
       )}
       state={{ sorting }}
       onSortingChange={setSorting}
-      initialState={{ pagination: { pageSize: 25 } }}
+      // MRT replaces the whole `pagination` object rather than merging it with
+      // its defaults, so an omitted pageIndex stays undefined and the paginated
+      // row model slices on NaN - 87 rows, none rendered.
+      initialState={{ pagination: { pageIndex: 0, pageSize: 25 } }}
       enableGlobalFilter={false}
       enableColumnActions={false}
       enableDensityToggle={false}

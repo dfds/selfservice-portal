@@ -342,7 +342,7 @@ function CapabilitiesTable({
       data={filteredCapabilities}
       getRowId={(originalRow) => originalRow.id}
       initialState={{
-        pagination: { pageSize: 50 },
+        pagination: { pageIndex: 0, pageSize: 50 },
         showGlobalFilter: true,
         columnVisibility: { AwsAccountId: false, hiddenName: false },
       }}
