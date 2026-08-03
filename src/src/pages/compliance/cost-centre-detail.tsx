@@ -390,7 +390,7 @@ export default function CostCentreComplianceDetailPage() {
     const unknown = metadataFilteredCapabilities.filter(
       (c) => c.overallStatus === "Unknown",
     ).length;
-    const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
+    const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
     const categories = CATEGORY_COLUMNS.map(({ key }) => {
       let c = 0;
       let nc = 0;

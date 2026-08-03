@@ -165,7 +165,7 @@ function CostCentreCard({
 }) {
   const total = data?.totalCapabilities ?? capCount;
   const compliant = data?.compliantCount ?? 0;
-  const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
+  const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
   const { trackEvent } = useRybbit();
@@ -251,7 +251,7 @@ function CostCentreCard({
               const catPct =
                 catTotal > 0
                   ? Math.round((cat.compliantCount / catTotal) * 100)
-                  : 0;
+                  : 100;
               return (
                 <span
                   key={cat.categoryName}
@@ -260,8 +260,8 @@ function CostCentreCard({
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
-                      ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
-                      : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                        ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
+                        : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
                   )}
                 >
                   {cat.categoryName}
@@ -337,7 +337,7 @@ export default function CompliancePage() {
       const pct =
         data && data.totalCapabilities > 0
           ? Math.round((data.compliantCount / data.totalCapabilities) * 100)
-          : 0;
+          : 100;
       map.set(cc.name, {
         data,
         isFetched: fetched,
@@ -581,15 +581,15 @@ export default function CompliancePage() {
                 className={cn(
                   "flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                   !activeFilters.has(key) &&
-                    "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
+                  "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
                 )}
                 style={
                   activeFilters.has(key)
                     ? {
-                        color,
-                        borderColor: color,
-                        background: `${color}18`,
-                      }
+                      color,
+                      borderColor: color,
+                      background: `${color}18`,
+                    }
                     : {}
                 }
               >
