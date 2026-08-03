@@ -8,8 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { InfoAlert } from "@/components/ui/InfoAlert";
 import PreAppContext from "@/preAppContext";
 import { useToast } from "@/context/ToastContext";
+
+// Mirrors PermissionsQuery.FindGuestPermissions on the API, which resolves the role by
+// lowercased name rather than by id.
+const isGuestRole = (role: { name: string }) =>
+  role.name.trim().toLowerCase() === "guest";
 
 type RbacRoleDTO = {
   id: string;
@@ -146,6 +152,21 @@ export default function PermissionMatrixPage() {
         </p>
       </div>
 
+      {roles.some(isGuestRole) && (
+        <InfoAlert variant="warning" className="mb-5">
+          <span className="block mb-1 font-mono text-[0.6875rem] font-semibold tracking-[0.1em] uppercase">
+            Guest is the baseline role
+          </span>
+          Every permission ticked in the <strong>Guest</strong> column is
+          granted to <strong>every authenticated user</strong> — on every
+          capability and platform-wide — including users who already hold
+          another role. Guest is a floor, not a fallback: other roles add to it,
+          they never replace it. Never grant{" "}
+          <code className="font-mono">rbac</code> or{" "}
+          <code className="font-mono">system-admin</code> permissions here.
+        </InfoAlert>
+      )}
+
       {isFetching && !isFetched && (
         <div className="space-y-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -179,7 +200,24 @@ export default function PermissionMatrixPage() {
                         className="px-3 py-2 text-center font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
                       >
                         <div className="flex flex-col items-center gap-1.5">
-                          <span>{role.name}</span>
+                          {/* The badge shares the name's line. It keeps its natural height so its
+                              own text isn't squeezed, and -my-[1.5px] cancels the 3px that would
+                              otherwise add to the row — every column keeps the same two-row header
+                              and the Save buttons stay on one baseline. -translate-y-px is optical,
+                              not geometric: the boxes centre exactly, but the name's cap-height
+                              glyphs sit high while the badge's all-x-height text sits low, which
+                              reads as the badge hanging. Transform, so layout is untouched. */}
+                          <span className="flex items-center gap-1.5 leading-none">
+                            {role.name}
+                            {isGuestRole(role) && (
+                              <span
+                                title="Applies to every user, in addition to any other role they hold"
+                                className="-my-[1.5px] inline-flex -translate-y-px items-center rounded-full border border-[#ed8800]/40 px-1.5 py-px font-mono text-[0.625rem] leading-none text-[#ed8800] normal-case"
+                              >
+                                everyone
+                              </span>
+                            )}
+                          </span>
                           {isCloudEngineerEnabled && (
                             <Button
                               size="sm"

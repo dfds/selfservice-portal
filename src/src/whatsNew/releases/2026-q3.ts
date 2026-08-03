@@ -22,7 +22,6 @@ export const tour_2026_q3_service_catalogue: TourDefinition = {
   summary:
     "A tour of the catalogue: what the headline numbers mean, switching between table and graph, the ways to narrow the list, how to shape the table - then down into a single workload's detail page.",
   category: "feature",
-  visibleTo: ({ isCloudEngineer }) => isCloudEngineer,
   steps: [
     {
       target: '[data-tour="services-stats"]',
