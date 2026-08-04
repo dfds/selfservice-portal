@@ -117,10 +117,11 @@ export default function FrontPage() {
 
         <Column>
           <PageSection>
-            <SectionContent title="New developer portal coming soon!">
-              Try out the new developer portal (Beta) already today! Read the
+            <SectionContent title="New Portal Goes Live on the 1st September">
+              After a successful beta period, the new Developer Portal will
+              officially replace the current portal on 1 September 2026. Read
               full announcement{" "}
-              <TrackedLink href="https://wiki.dfds.cloud/en/announcements/new-developer-portal">
+              <TrackedLink href="https://ssu-preview.hellman.oxygen.dfds.cloud/news/v/b511a594-68c3-4356-b7ef-de2a69ff5a4d">
                 here
               </TrackedLink>
               .
@@ -133,7 +134,7 @@ export default function FrontPage() {
                 variation="primary"
                 className={styles.fullwidthbutton}
               >
-                Go to new developer portal (Beta)
+                Access to new portal until 1st Sep
               </TrackedLinkButton>
             </SectionContent>
           </PageSection>
