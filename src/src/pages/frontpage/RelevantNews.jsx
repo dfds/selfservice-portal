@@ -5,8 +5,25 @@ import { useRelevantNews } from "@/state/remote/queries/news";
 import { SkeletonNewsItem } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 
+function normalizePreviewBody(text) {
+  return String(text)
+    .replace(/\r\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\r/g, "\n");
+}
+
+function renderPreviewBody(text) {
+  return text.split("\n").map((line, index, lines) => (
+    <React.Fragment key={index}>
+      {line}
+      {index < lines.length - 1 ? <br /> : null}
+    </React.Fragment>
+  ));
+}
+
 function RelevantNewsItem({ item, index }) {
   const timeAgo = intlFormatDistance(new Date(item.createdAt), new Date());
+  const body = item.body ? normalizePreviewBody(item.body) : "";
 
   return (
     <Link
@@ -26,9 +43,9 @@ function RelevantNewsItem({ item, index }) {
       <div className="text-[0.8125rem] font-medium text-[#002b45] dark:text-[#e2e8f0] leading-[1.4] mb-[3px]">
         {item.title}
       </div>
-      {item.body && (
+      {body && (
         <p className="font-mono text-[0.6875rem] text-muted leading-[1.5] line-clamp-2">
-          {item.body}
+          {renderPreviewBody(body)}
         </p>
       )}
     </Link>
