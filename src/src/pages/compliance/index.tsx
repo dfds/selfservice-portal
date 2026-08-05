@@ -46,6 +46,9 @@ const SORT_OPTIONS: { key: SortMode; label: string }[] = [
   { key: "caps", label: "Largest first" },
 ];
 
+const NA_TOOLTIP =
+  "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+
 // ─── DonutChart ──────────────────────────────────────────────────────────────
 
 function DonutChart({
@@ -166,6 +169,7 @@ function CostCentreCard({
   const total = data?.totalCapabilities ?? capCount;
   const compliant = data?.compliantCount ?? 0;
   const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
+  const compliantDisplay = total > 0 ? `${compliant}/${total}` : "N/A";
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
   const { trackEvent } = useRybbit();
@@ -214,7 +218,9 @@ function CostCentreCard({
                 {pct}%
               </div>
               <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
-                {compliant}/{total}
+                <span title={compliantDisplay === "N/A" ? NA_TOOLTIP : undefined}>
+                  {compliantDisplay}
+                </span>
               </div>
             </>
           ) : (
@@ -509,7 +515,9 @@ export default function CompliancePage() {
                     Total Count
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    {fetchedCount > 0 ? totalCaps : "-"}
+                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
+                      {fetchedCount > 0 ? totalCaps : "N/A"}
+                    </span>
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
@@ -522,7 +530,9 @@ export default function CompliancePage() {
                       color: fetchedCount > 0 ? "#16a34a" : undefined,
                     }}
                   >
-                    {fetchedCount > 0 ? totalCompliant : "-"}
+                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
+                      {fetchedCount > 0 ? totalCompliant : "N/A"}
+                    </span>
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
@@ -535,7 +545,9 @@ export default function CompliancePage() {
                       color: fetchedCount > 0 ? gaugeColor : undefined,
                     }}
                   >
-                    {fetchedCount > 0 ? `${overallPct}%` : "-"}
+                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
+                      {fetchedCount > 0 ? `${overallPct}%` : "N/A"}
+                    </span>
                   </span>
                 </div>
               </div>
