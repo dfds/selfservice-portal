@@ -25,13 +25,21 @@ import {
   SkeletonComplianceCapabilityRow,
 } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { useCostCentreComplianceDetails } from "@/state/remote/queries/capabilities";
+import {
+  useCapabilities,
+  useCostCentreComplianceDetails,
+} from "@/state/remote/queries/capabilities";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useExpandable } from "@/hooks/useExpandable";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
-import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
+import {
+  getCostCentreLabel,
+  complianceColor,
+  parseMetadata,
+  parseCostCentre,
+} from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -287,10 +295,41 @@ function writeUrl(
 export default function CostCentreComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const costCentreId = id ?? null;
-  const { data, isFetched } = useCostCentreComplianceDetails(costCentreId) as {
-    data: CostCentreDetailsData | undefined;
-    isFetched: boolean;
-  };
+  const isRogue = costCentreId === "rogue-capabilities";
+
+  const { data: apiData, isFetched: apiIsFetched } =
+    useCostCentreComplianceDetails(isRogue ? null : costCentreId) as {
+      data: CostCentreDetailsData | undefined;
+      isFetched: boolean;
+    };
+
+  const { data: allCapabilities, isFetched: capsIsFetched } = useCapabilities();
+
+  const rogueData = useMemo<CostCentreDetailsData | undefined>(() => {
+    if (!isRogue) return undefined;
+    const caps: any[] = (allCapabilities as any[]) ?? [];
+    const rogueCaps = caps.filter(
+      (cap) => cap.status !== "Deleted" && !parseCostCentre(cap),
+    );
+    return {
+      costCentre: "rogue-capabilities",
+      totalCapabilities: rogueCaps.length,
+      compliantCount: 0,
+      nonCompliantCount: 0,
+      unknownCount: rogueCaps.length,
+      categories: [],
+      capabilities: rogueCaps.map((cap) => ({
+        capabilityId: cap.id,
+        capabilityName: cap.name,
+        jsonMetadata: cap.jsonMetadata ?? null,
+        overallStatus: "Unknown" as const,
+        categories: [],
+      })),
+    };
+  }, [isRogue, allCapabilities]);
+
+  const data = isRogue ? rogueData : apiData;
+  const isFetched = isRogue ? capsIsFetched : apiIsFetched;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = useMemo(
@@ -421,7 +460,11 @@ export default function CostCentreComplianceDetailPage() {
   const removeFilter = (index: number) =>
     updateUrl({ tags: metadataFilters.filter((_, i) => i !== index) });
 
-  const costCentreLabel = costCentreId ? getCostCentreLabel(costCentreId) : "";
+  const costCentreLabel = isRogue
+    ? "Rogue Capabilities"
+    : costCentreId
+      ? getCostCentreLabel(costCentreId)
+      : "";
 
   return (
     <div className="min-h-full">
@@ -436,7 +479,7 @@ export default function CostCentreComplianceDetailPage() {
             Compliance
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Cost Centre
+            {isRogue ? "// Untagged Capabilities" : "// Cost Centre"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
@@ -446,7 +489,7 @@ export default function CostCentreComplianceDetailPage() {
                 <Skeleton className="h-8 w-[260px]" />
               )}
             </h1>
-            {costCentreId && (
+            {costCentreId && !isRogue && (
               <span className="font-mono text-[0.6875rem] text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
                 {costCentreId}
               </span>
