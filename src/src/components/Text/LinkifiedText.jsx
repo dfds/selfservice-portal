@@ -3,6 +3,22 @@ import React from "react";
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 const TRAILING_PUNCTUATION_REGEX = /[.,!?;:)}\]]+$/;
 
+function normalizeText(text) {
+  return String(text)
+    .replace(/\r\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\r/g, "\n");
+}
+
+function renderTextWithLineBreaks(text, keyPrefix) {
+  return text.split("\n").map((line, index, lines) => (
+    <React.Fragment key={`${keyPrefix}-line-${index}`}>
+      {line}
+      {index < lines.length - 1 ? <br /> : null}
+    </React.Fragment>
+  ));
+}
+
 function splitTrailingPunctuation(token) {
   const punctuationMatch = token.match(TRAILING_PUNCTUATION_REGEX);
   if (!punctuationMatch) {
@@ -17,7 +33,8 @@ function splitTrailingPunctuation(token) {
 export default function LinkifiedText({ text, linkClassName, onLinkClick }) {
   if (!text) return null;
 
-  const segments = String(text).split(URL_REGEX);
+  const normalizedText = normalizeText(text);
+  const segments = normalizedText.split(URL_REGEX);
 
   return (
     <>
@@ -25,12 +42,12 @@ export default function LinkifiedText({ text, linkClassName, onLinkClick }) {
         if (!segment) return null;
 
         if (!segment.startsWith("http://") && !segment.startsWith("https://")) {
-          return <React.Fragment key={index}>{segment}</React.Fragment>;
+          return renderTextWithLineBreaks(segment, `text-${index}`);
         }
 
         const { url, trailing } = splitTrailingPunctuation(segment);
         if (!url) {
-          return <React.Fragment key={index}>{segment}</React.Fragment>;
+          return renderTextWithLineBreaks(segment, `text-${index}`);
         }
 
         return (
