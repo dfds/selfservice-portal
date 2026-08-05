@@ -291,6 +291,74 @@ function CostCentreCard({
   );
 }
 
+// ─── RogueCapabilitiesCard ────────────────────────────────────────────────────
+
+function RogueCapabilitiesCard({
+  capCount,
+  className,
+  style,
+}: {
+  capCount: number;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <Link
+      to="/compliance/cost-centres/rogue-capabilities"
+      className={cn(
+        "block bg-surface border border-dashed border-[#f59e0b] dark:border-[#78350f] rounded-[10px] overflow-hidden no-underline text-inherit",
+        "transition-[box-shadow,border-color] duration-200",
+        "hover:shadow-[0_4px_16px_rgba(0,0,0,.08)] hover:border-[#d97706] dark:hover:border-[#f59e0b]",
+        className,
+      )}
+      style={style}
+    >
+      {/* Card header */}
+      <div className="w-full flex items-center gap-3 p-4 text-left">
+        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-[#fffbeb] dark:bg-[#78350f]/30">
+          <span className="text-[1.25rem]" aria-hidden="true">
+            🏴‍☠️
+          </span>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <span className="text-[12.5px] font-bold text-[#002b45] dark:text-[#e2e8f0] block truncate">
+            Rogue Capabilities
+          </span>
+          <span className="text-[0.6875rem] text-[#afafaf] dark:text-[#64748b]">
+            {capCount} {capCount === 1 ? "capability" : "capabilities"} without
+            a cost centre
+          </span>
+        </div>
+
+        <div className="flex-shrink-0 text-right">
+          <div className="text-[1.375rem] font-bold tracking-[-0.03em] leading-none text-[#d97706] dark:text-[#f59e0b]">
+            {capCount}
+          </div>
+          <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
+            untagged
+          </div>
+        </div>
+
+        <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
+      </div>
+
+      {/* Progress strip - always "empty" since no cost centre data */}
+      <div className="h-1 w-full bg-[#fef3c7] dark:bg-[#78350f]/20" />
+
+      {/* Description chips */}
+      <div className="flex flex-wrap gap-1.5 px-4 py-3">
+        <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]">
+          No cost centre tag
+        </span>
+        <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]">
+          Not tracked in compliance
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 // ─── CompliancePage ───────────────────────────────────────────────────────────
 
 export default function CompliancePage() {
@@ -304,19 +372,26 @@ export default function CompliancePage() {
   const { trackEvent } = useRybbit();
   const searchTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const costCentres = useMemo(() => {
+  const { costCentres, rogueCount } = useMemo(() => {
     const caps: any[] = capabilities ?? [];
     // Filter out deleted capabilities
     const activeCaps = caps.filter((cap) => cap.status !== "Deleted");
     const map = new Map<string, number>();
+    let rogue = 0;
     for (const cap of activeCaps) {
       const cc = parseCostCentre(cap);
-      if (!cc) continue;
+      if (!cc) {
+        rogue++;
+        continue;
+      }
       map.set(cc, (map.get(cc) ?? 0) + 1);
     }
-    return Array.from(map.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    return {
+      costCentres: Array.from(map.entries())
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+      rogueCount: rogue,
+    };
   }, [capabilities]);
 
   const complianceResults = useQueries({
@@ -658,7 +733,7 @@ export default function CompliancePage() {
             Array.from({ length: 6 }).map((_, i) => (
               <SkeletonComplianceCard key={i} />
             ))
-          ) : filtered.length === 0 ? (
+          ) : filtered.length === 0 && rogueCount === 0 ? (
             <div className="col-span-full">
               <EmptyState>
                 {costCentres.length === 0
@@ -667,20 +742,29 @@ export default function CompliancePage() {
               </EmptyState>
             </div>
           ) : (
-            filtered.map(({ name, count }, i) => {
-              const entry = complianceMap.get(name);
-              return (
-                <CostCentreCard
-                  key={name}
-                  name={name}
-                  capCount={count}
-                  data={entry?.data}
-                  isFetched={entry?.isFetched ?? false}
+            <>
+              {filtered.map(({ name, count }, i) => {
+                const entry = complianceMap.get(name);
+                return (
+                  <CostCentreCard
+                    key={name}
+                    name={name}
+                    capCount={count}
+                    data={entry?.data}
+                    isFetched={entry?.isFetched ?? false}
+                    className="animate-card-enter"
+                    style={{ animationDelay: `${i * 25}ms` }}
+                  />
+                );
+              })}
+              {isFetched && rogueCount > 0 && (
+                <RogueCapabilitiesCard
+                  capCount={rogueCount}
                   className="animate-card-enter"
-                  style={{ animationDelay: `${i * 25}ms` }}
+                  style={{ animationDelay: `${filtered.length * 25}ms` }}
                 />
-              );
-            })
+              )}
+            </>
           )}
         </div>
       </div>
