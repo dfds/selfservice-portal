@@ -33,6 +33,8 @@ import NewsPage from "./pages/news";
 import NewsView from "./pages/news/view";
 import CompliancePage from "./pages/compliance";
 import CostCentreComplianceDetailPage from "./pages/compliance/cost-centre-detail";
+import RequirementsCompliancePage from "./pages/compliance/requirements";
+import RequirementComplianceDetailPage from "./pages/compliance/requirement-detail";
 import RbacViewerPage from "./pages/admin/rbac";
 import PermissionMatrixPage from "./pages/rbac";
 import UserInspectorPage from "./pages/admin/rbac/user";
@@ -286,6 +288,11 @@ const router = createBrowserRouter(
       <Route
         path="compliance/cost-centres/:id"
         element={<CostCentreComplianceDetailPage />}
+      />
+      <Route path="compliance/requirements" element={<RequirementsCompliancePage />} />
+      <Route
+        path="compliance/requirements/:id"
+        element={<RequirementComplianceDetailPage />}
       />
       <Route path="rbac/permissions" element={<PermissionMatrixPage />} />
       <Route path="admin/rbac" element={<RbacViewerPage />} />

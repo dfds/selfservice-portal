@@ -359,3 +359,18 @@ export function useUserProfilePicture(upn: string) {
 
   return { ...query, profilePicture };
 }
+
+export const useRequirementsCompliance = createSsuQuery({
+  queryKey: ["compliance", "requirements"],
+  urlSegments: ["compliance", "requirements"],
+  staleTime: 60000,
+});
+
+export const useRequirementComplianceDetails = createSsuParamQuery<
+  string | null
+>({
+  queryKey: (id) => ["compliance", "requirements", id],
+  urlSegments: (id) => ["compliance", "requirements", id!],
+  enabled: (id) => !!id,
+  staleTime: 60000,
+});
