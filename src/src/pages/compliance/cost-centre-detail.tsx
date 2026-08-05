@@ -101,6 +101,9 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
   { key: "Unknown", label: "Unknown" },
 ];
 
+const NA_TOOLTIP =
+  "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function statusLabel(s: string): string {
@@ -675,6 +678,7 @@ function SummaryCell({
       <span
         className="text-[1.25rem] font-bold font-mono leading-none"
         style={{ color: value === null ? undefined : color }}
+        title={value === null ? NA_TOOLTIP : undefined}
       >
         {value === null ? "N/A" : value}
       </span>
@@ -790,7 +794,9 @@ function CapabilityMatrix({
               {ratio.compliant} / {ratio.total}
             </span>
           ) : (
-            <span className="text-muted text-[0.75rem]">N/A</span>
+            <span className="text-muted text-[0.75rem]" title={NA_TOOLTIP}>
+              N/A
+            </span>
           );
         },
       })),
@@ -819,6 +825,7 @@ function CapabilityMatrix({
             <span
               className="font-mono text-[0.8125rem] font-semibold"
               style={{ color }}
+              title={cap.overallStatus === "Unknown" ? NA_TOOLTIP : undefined}
             >
               {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
             </span>
@@ -1019,7 +1026,7 @@ function ExpandedDetail({
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
                   <span className="text-primary truncate flex-1">
-                    {v || "N/A"}
+                    <span title={v ? undefined : NA_TOOLTIP}>{v || "N/A"}</span>
                   </span>
                 </div>
               ))}
@@ -1151,6 +1158,7 @@ function MobileCapabilityCard({
           <div
             className="text-[1rem] font-bold font-mono flex-shrink-0"
             style={{ color: overallColor }}
+            title={cap.overallStatus === "Unknown" ? NA_TOOLTIP : undefined}
           >
             {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
           </div>
@@ -1177,7 +1185,9 @@ function MobileCapabilityCard({
                     {ratio.compliant} / {ratio.total}
                   </span>
                 ) : (
-                  <span className="text-muted text-[0.75rem]">N/A</span>
+                  <span className="text-muted text-[0.75rem]" title={NA_TOOLTIP}>
+                    N/A
+                  </span>
                 )}
                 <span className="text-[0.5625rem] font-mono uppercase tracking-[0.08em] text-muted">
                   {c.short}
