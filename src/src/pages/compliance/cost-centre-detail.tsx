@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -15,6 +16,7 @@ import {
   Plus,
   X,
 } from "lucide-react";
+import { useQueries } from "@tanstack/react-query";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -29,6 +31,8 @@ import {
   useCapabilities,
   useCostCentreComplianceDetails,
 } from "@/state/remote/queries/capabilities";
+import { ssuRequest } from "@/state/remote/query";
+import PreAppContext from "@/preAppContext";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -296,6 +300,7 @@ export default function CostCentreComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const costCentreId = id ?? null;
   const isRogue = costCentreId === "rogue-capabilities";
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
   const { data: apiData, isFetched: apiIsFetched } =
     useCostCentreComplianceDetails(isRogue ? null : costCentreId) as {
@@ -305,31 +310,100 @@ export default function CostCentreComplianceDetailPage() {
 
   const { data: allCapabilities, isFetched: capsIsFetched } = useCapabilities();
 
-  const rogueData = useMemo<CostCentreDetailsData | undefined>(() => {
-    if (!isRogue) return undefined;
+  // Stable list of capabilities with no cost centre tag
+  const rogueCaps = useMemo<any[]>(() => {
+    if (!isRogue) return [];
     const caps: any[] = (allCapabilities as any[]) ?? [];
-    const rogueCaps = caps.filter(
+    return caps.filter(
       (cap) => cap.status !== "Deleted" && !parseCostCentre(cap),
     );
-    return {
-      costCentre: "rogue-capabilities",
-      totalCapabilities: rogueCaps.length,
-      compliantCount: 0,
-      nonCompliantCount: 0,
-      unknownCount: rogueCaps.length,
-      categories: [],
-      capabilities: rogueCaps.map((cap) => ({
+  }, [isRogue, allCapabilities]);
+
+  // Fetch real compliance for each rogue capability
+  const rogueComplianceResults = useQueries({
+    queries: rogueCaps.map((cap) => ({
+      queryKey: ["capabilities", "compliance", cap.id],
+      queryFn: async () =>
+        ssuRequest({
+          method: "GET",
+          urlSegments: ["compliance", "capabilities", cap.id],
+          payload: null,
+          isCloudEngineerEnabled,
+        }),
+      enabled: isRogue && capsIsFetched,
+      staleTime: 60_000,
+    })),
+  });
+
+  const rogueData = useMemo<CostCentreDetailsData | undefined>(() => {
+    if (!isRogue) return undefined;
+    const capabilities: CapabilityCompliance[] = rogueCaps.map((cap, i) => {
+      const raw: any = rogueComplianceResults[i]?.data ?? {};
+      const categories: ComplianceCategory[] = (
+        raw.categories ?? raw.items ?? []
+      ).map((cat: any) => ({
+        categoryName: cat.categoryName ?? cat.category ?? "",
+        status: cat.status ?? "Unknown",
+        score: cat.score ?? null,
+        helpUrl: cat.helpUrl ?? null,
+        displayName: cat.displayName ?? null,
+        description: cat.description ?? null,
+        items: cat.items ?? [],
+      }));
+      const overallStatus: CapabilityCompliance["overallStatus"] =
+        raw.overallStatus ??
+        (categories.length === 0
+          ? "Unknown"
+          : categories.every((c) => c.status === "Compliant")
+            ? "Compliant"
+            : categories.some((c) => c.status === "NonCompliant")
+              ? "NonCompliant"
+              : "Unknown");
+      return {
         capabilityId: cap.id,
         capabilityName: cap.name,
         jsonMetadata: cap.jsonMetadata ?? null,
-        overallStatus: "Unknown" as const,
-        categories: [],
-      })),
+        overallStatus,
+        categories,
+      };
+    });
+    const compliantCount = capabilities.filter(
+      (c) => c.overallStatus === "Compliant",
+    ).length;
+    const nonCompliantCount = capabilities.filter(
+      (c) => c.overallStatus === "NonCompliant",
+    ).length;
+    const unknownCount = capabilities.filter(
+      (c) => c.overallStatus === "Unknown",
+    ).length;
+    return {
+      costCentre: "rogue-capabilities",
+      totalCapabilities: capabilities.length,
+      compliantCount,
+      nonCompliantCount,
+      unknownCount,
+      categories: CATEGORY_COLUMNS.map(({ key }) => {
+        let c = 0;
+        let nc = 0;
+        capabilities.forEach((cap) => {
+          const cat = cap.categories.find((ct) => ct.categoryName === key);
+          if (!cat) return;
+          if (cat.status === "Compliant") c++;
+          else if (cat.status === "NonCompliant") nc++;
+        });
+        return { categoryName: key, compliantCount: c, nonCompliantCount: nc };
+      }),
+      capabilities,
     };
-  }, [isRogue, allCapabilities]);
+  }, [isRogue, rogueCaps, rogueComplianceResults]);
+
+  const rogueIsFetched =
+    isRogue &&
+    capsIsFetched &&
+    rogueComplianceResults.every((r) => r.isFetched);
 
   const data = isRogue ? rogueData : apiData;
-  const isFetched = isRogue ? capsIsFetched : apiIsFetched;
+  const isFetched = isRogue ? rogueIsFetched : apiIsFetched;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = useMemo(
