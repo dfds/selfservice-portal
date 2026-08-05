@@ -85,21 +85,42 @@ export default function FrontPage() {
   const highlighted =
     newsData?.newsItems?.filter((item) => item.isHighlighted) ?? [];
 
+  const getHighlightedBody = (item) =>
+    item.frontpageSummary || item.body || "";
+
   return (
     <div className="p-4 sm:p-8">
       <HeroRow name={name} />
 
       {/* Highlighted notices from relevant news */}
-      {highlighted.map((item, i) => (
-        <div
-          key={item.id}
-          className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[0.75rem] text-[#ed8800] leading-[1.6] animate-fade-up"
-          style={{ animationDelay: `${40 + i * 40}ms` }}
-        >
-          <span className="font-bold tracking-[0.05em]">{item.title} - </span>
-          <LinkifiedText text={item.body ?? ""} linkClassName="underline" />
-        </div>
-      ))}
+      {highlighted.map((item, i) => {
+        const hasFrontpageSummary = Boolean(item.frontpageSummary?.trim());
+
+        return (
+          <div
+            key={item.id}
+            className="mb-[1.75rem] bg-[rgba(237,136,0,0.1)] dark:bg-[rgba(237,136,0,0.08)] border border-[rgba(237,136,0,0.25)] dark:border-[rgba(237,136,0,0.2)] rounded-[6px] px-4 py-3 font-mono text-[0.75rem] text-[#ed8800] leading-[1.6] animate-fade-up"
+            style={{ animationDelay: `${40 + i * 40}ms` }}
+          >
+            <span className="font-bold tracking-[0.05em]">{item.title} - </span>
+            <LinkifiedText
+              text={getHighlightedBody(item)}
+              linkClassName="underline"
+            />
+            {hasFrontpageSummary && (
+              <>
+                {" "}
+                <Link
+                  to={`/news/v/${item.id}`}
+                  className="text-inherit underline"
+                >
+                  [read more]
+                </Link>
+              </>
+            )}
+          </div>
+        );
+      })}
 
       {/* 3-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-5 items-start">
