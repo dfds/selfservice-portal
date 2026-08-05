@@ -137,7 +137,18 @@ const ceNav: NavItemDef[] = [
 const costCentresGroup: NavGroupDef = {
   title: "Dashboards",
   icon: Gauge,
-  children: [{ title: "Compliance", url: "/compliance", icon: ShieldCheck }],
+  children: [
+    {
+      title: "Cost Center Compliance",
+      url: "/compliance",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Requirement Compliance",
+      url: "/compliance/requirements",
+      icon: ListChecks,
+    },
+  ],
 };
 
 // External admin links. URLs are injected from environment variables at build
