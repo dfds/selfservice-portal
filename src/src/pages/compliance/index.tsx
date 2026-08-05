@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { Search, ChevronRight } from "lucide-react";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
-import { useCapabilities } from "@/state/remote/queries/capabilities";
+import {
+  useCapabilities,
+  useRogueCapabilitiesCompliance,
+} from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -316,7 +319,7 @@ function RogueCapabilitiesCard({
       {/* Card header */}
       <div className="w-full flex items-center gap-3 p-4 text-left">
         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-[#fffbeb] dark:bg-[#78350f]/30">
-          <span className="text-[1.25rem]" aria-hidden="true">
+          <span className="text-[2rem]" aria-hidden="true">
             🏴‍☠️
           </span>
         </div>
@@ -364,6 +367,9 @@ function RogueCapabilitiesCard({
 export default function CompliancePage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched, data: capabilities } = useCapabilities();
+  const { data: rogueComplianceData } = useRogueCapabilitiesCompliance() as {
+    data: { totalCapabilities: number; compliantCount: number } | undefined;
+  };
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("pct-desc");
   const [activeFilters, setActiveFilters] = useState<Set<string>>(
@@ -443,11 +449,28 @@ export default function CompliancePage() {
       else if (entry.tier === "orange") nOrange++;
       else if (entry.tier === "red") nRed++;
     }
+    // Include rogue capabilities from the dedicated API endpoint — same
+    // tier logic as cost centres.
+    if (rogueComplianceData) {
+      const roguePct =
+        rogueComplianceData.totalCapabilities > 0
+          ? Math.round(
+            (rogueComplianceData.compliantCount /
+              rogueComplianceData.totalCapabilities) *
+            100,
+          )
+          : 100;
+      totalCaps += rogueComplianceData.totalCapabilities;
+      totalCompliant += rogueComplianceData.compliantCount;
+      const rogueTier = complianceTier(roguePct);
+      if (rogueTier === "green") nGreen++;
+      else if (rogueTier === "orange") nOrange++;
+      else nRed++;
+    }
     const fetchedCount = nGreen + nOrange + nRed;
     const overallPct =
       totalCaps > 0 ? Math.round((totalCompliant / totalCaps) * 100) : 0;
     return {
-      totalCaps,
       totalCompliant,
       overallPct,
       nGreen,
@@ -455,7 +478,7 @@ export default function CompliancePage() {
       nRed,
       fetchedCount,
     };
-  }, [complianceMap]);
+  }, [complianceMap, rogueComplianceData]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -525,13 +548,18 @@ export default function CompliancePage() {
   }
 
   const n = costCentres.length;
+  // Total derived from the capabilities list — available as soon as the list
+  // loads, independently of the slower per-cost-centre compliance API calls.
+  const capListTotal = useMemo(
+    () => costCentres.reduce((s, cc) => s + cc.count, 0) + rogueCount,
+    [costCentres, rogueCount],
+  );
   const {
     overallPct,
     nGreen,
     nOrange,
     nRed,
     fetchedCount,
-    totalCaps,
     totalCompliant,
   } = sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
@@ -590,8 +618,8 @@ export default function CompliancePage() {
                     Total Count
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
-                      {fetchedCount > 0 ? totalCaps : "N/A"}
+                    <span title={isFetched ? undefined : NA_TOOLTIP}>
+                      {isFetched ? capListTotal : "N/A"}
                     </span>
                   </span>
                 </div>
@@ -602,7 +630,7 @@ export default function CompliancePage() {
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
-                      color: fetchedCount > 0 ? "#16a34a" : undefined,
+                      color: fetchedCount > 0 ? (totalCompliant > 0 ? "#16a34a" : "#ef4444") : undefined,
                     }}
                   >
                     <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>

@@ -90,6 +90,18 @@ export const useCapabilityCompliance = createSsuParamQuery<string | null>({
   staleTime: 60000,
 });
 
+export const useRogueCapabilitiesCompliance = createSsuQuery({
+  queryKey: ["compliance", "rogue-capabilities"],
+  urlSegments: ["compliance", "rogue-capabilities"],
+  staleTime: 60000,
+});
+
+export const useRogueCapabilitiesComplianceDetails = createSsuQuery({
+  queryKey: ["compliance", "rogue-capabilities", "details"],
+  urlSegments: ["compliance", "rogue-capabilities", "details"],
+  staleTime: 60000,
+});
+
 export const useCapabilityMetadata = createSsuLinkQuery<any>({
   queryKey: (def) => ["capabilities", "metadata", def?.id],
   linkHref: (def) => def?._links?.metadata?.href,
