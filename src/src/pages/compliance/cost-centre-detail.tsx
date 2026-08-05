@@ -676,7 +676,7 @@ function SummaryCell({
         className="text-[1.25rem] font-bold font-mono leading-none"
         style={{ color: value === null ? undefined : color }}
       >
-        {value === null ? "-" : value}
+        {value === null ? "N/A" : value}
       </span>
     </div>
   );
@@ -782,7 +782,7 @@ function CapabilityMatrix({
         muiTableBodyCellProps: { align: "center" },
         Cell: ({ row }) => {
           const ratio = categoryRatio(findCategory(row.original, c.key));
-          return ratio ? (
+          return ratio && ratio.total > 0 ? (
             <span
               className="font-mono text-[0.75rem] tabular-nums font-semibold"
               style={{ color: ratioColor(ratio) }}
@@ -790,7 +790,7 @@ function CapabilityMatrix({
               {ratio.compliant} / {ratio.total}
             </span>
           ) : (
-            <span className="text-muted text-[0.75rem]">-</span>
+            <span className="text-muted text-[0.75rem]">N/A</span>
           );
         },
       })),
@@ -820,7 +820,7 @@ function CapabilityMatrix({
               className="font-mono text-[0.8125rem] font-semibold"
               style={{ color }}
             >
-              {cap.overallStatus === "Unknown" ? "-" : `${pct}%`}
+              {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
             </span>
           );
         },
@@ -1019,7 +1019,7 @@ function ExpandedDetail({
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
                   <span className="text-primary truncate flex-1">
-                    {v || "-"}
+                    {v || "N/A"}
                   </span>
                 </div>
               ))}
@@ -1152,7 +1152,7 @@ function MobileCapabilityCard({
             className="text-[1rem] font-bold font-mono flex-shrink-0"
             style={{ color: overallColor }}
           >
-            {cap.overallStatus === "Unknown" ? "-" : `${pct}%`}
+            {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
           </div>
           <ChevronDown
             size={14}
@@ -1169,7 +1169,7 @@ function MobileCapabilityCard({
             const ratio = categoryRatio(cat);
             return (
               <div key={c.key} className="flex flex-col items-center gap-1">
-                {ratio ? (
+                {ratio && ratio.total > 0 ? (
                   <span
                     className="font-mono text-[0.6875rem] tabular-nums font-semibold"
                     style={{ color: ratioColor(ratio) }}
@@ -1177,7 +1177,7 @@ function MobileCapabilityCard({
                     {ratio.compliant} / {ratio.total}
                   </span>
                 ) : (
-                  <span className="text-muted text-[0.75rem]">-</span>
+                  <span className="text-muted text-[0.75rem]">N/A</span>
                 )}
                 <span className="text-[0.5625rem] font-mono uppercase tracking-[0.08em] text-muted">
                   {c.short}
