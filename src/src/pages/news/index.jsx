@@ -31,6 +31,7 @@ import LinkifiedText from "@/components/Text/LinkifiedText";
 function CreateNewsModal({ onClose }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [frontpageSummary, setFrontpageSummary] = useState("");
   const [dueDate, setDueDate] = useState(
     new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
   );
@@ -52,10 +53,14 @@ function CreateNewsModal({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim() || !body.trim()) return;
+    const trimmedFrontpageSummary = frontpageSummary.trim();
     submit({
       payload: {
         title: title.trim(),
         body: body.trim(),
+        ...(trimmedFrontpageSummary
+          ? { frontpageSummary: trimmedFrontpageSummary }
+          : {}),
         dueDate: new Date(dueDate).toISOString(),
       },
     });
@@ -101,6 +106,19 @@ function CreateNewsModal({ onClose }) {
 
           <div>
             <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Front page summary
+            </label>
+            <textarea
+              value={frontpageSummary}
+              onChange={(e) => setFrontpageSummary(e.target.value)}
+              placeholder="Optional summary shown for highlighted items on the front page…"
+              rows={3}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Relevant until
             </label>
             <input
@@ -136,11 +154,15 @@ function EditNewsModal({ item, onClose }) {
   const initialDueDate = item.dueDate ? item.dueDate.slice(0, 10) : "";
   const [title, setTitle] = useState(item.title ?? "");
   const [body, setBody] = useState(item.body ?? "");
+  const [frontpageSummary, setFrontpageSummary] = useState(
+    item.frontpageSummary ?? "",
+  );
   const [dueDate, setDueDate] = useState(initialDueDate);
 
   useEffect(() => {
     setTitle(item.title ?? "");
     setBody(item.body ?? "");
+    setFrontpageSummary(item.frontpageSummary ?? "");
     setDueDate(item.dueDate ? item.dueDate.slice(0, 10) : "");
   }, [item]);
 
@@ -163,11 +185,15 @@ function EditNewsModal({ item, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim() || !body.trim()) return;
+    const trimmedFrontpageSummary = frontpageSummary.trim();
     submit({
       id: item.id,
       payload: {
         title: title.trim(),
         body: body.trim(),
+        ...(trimmedFrontpageSummary
+          ? { frontpageSummary: trimmedFrontpageSummary }
+          : {}),
         dueDate: new Date(dueDate).toISOString(),
       },
     });
@@ -208,6 +234,19 @@ function EditNewsModal({ item, onClose }) {
               rows={6}
               className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Front page summary
+            </label>
+            <textarea
+              value={frontpageSummary}
+              onChange={(e) => setFrontpageSummary(e.target.value)}
+              placeholder="Optional summary shown for highlighted items on the front page…"
+              rows={3}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
             />
           </div>
 
