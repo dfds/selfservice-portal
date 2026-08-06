@@ -1,9 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ExternalLink } from "lucide-react";
+import { useQueries } from "@tanstack/react-query";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import { useRequirementsCompliance } from "@/state/remote/queries/capabilities";
-import { complianceColor } from "./utils";
+import { ssuRequest } from "@/state/remote/query";
+import PreAppContext from "@/preAppContext";
+import { complianceColor, complianceTier, parseCostCentre, getCostCentreLabel } from "./utils";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -80,12 +83,22 @@ function DonutChart({
 
 // ─── RequirementCard ──────────────────────────────────────────────────────────
 
+type CostCentreEntry = {
+  label: string;
+  isRogue: boolean;
+  pct: number;
+  tier: "green" | "orange" | "red";
+};
+type CostCentreInfo = { entries: CostCentreEntry[]; isFetched: boolean };
+
 function RequirementCard({
   req,
+  costCentreInfo,
   className,
   style,
 }: {
   req: RequirementSummary;
+  costCentreInfo?: CostCentreInfo;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -166,30 +179,35 @@ function RequirementCard({
         />
       </div>
 
-      {/* Status chips */}
-      <div className="flex flex-wrap gap-1.5 px-4 py-3">
-        {req.compliantCount > 0 && (
-          <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]">
-            {req.compliantCount} compliant
+      {/* Cost centre compliance tags */}
+      <div className="flex flex-wrap gap-1.5 px-4 py-3 min-h-[2.25rem] items-center">
+        {!costCentreInfo?.isFetched ? (
+          <>
+            <Skeleton className="h-4 w-20 rounded-full" />
+            <Skeleton className="h-4 w-16 rounded-full" />
+          </>
+        ) : costCentreInfo.entries.length === 0 ? (
+          <span className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] italic">
+            No data yet
           </span>
-        )}
-        {req.nonCompliantCount > 0 && (
-          <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]">
-            {req.nonCompliantCount} non-compliant
-          </span>
-        )}
-        {req.unknownCount > 0 && (
-          <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#f8fafc] text-[#64748b] dark:bg-[#1e293b] dark:text-[#94a3b8]">
-            {req.unknownCount} unknown
-          </span>
-        )}
-        {req.compliantCount === 0 &&
-          req.nonCompliantCount === 0 &&
-          req.unknownCount === 0 && (
-            <span className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] italic">
-              No data yet
+        ) : (
+          costCentreInfo.entries.map((entry) => (
+            <span
+              key={entry.label}
+              title={`${entry.pct}% compliant`}
+              className={cn(
+                "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
+                entry.tier === "green"
+                  ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
+                  : entry.tier === "orange"
+                  ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#451a03]/40 dark:text-[#fbbf24]"
+                  : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+              )}
+            >
+              {entry.label}
             </span>
-          )}
+          ))
+        )}
       </div>
     </Link>
   );
@@ -202,9 +220,70 @@ export default function RequirementsCompliancePage() {
     isFetched: boolean;
     data: { items: RequirementSummary[] } | undefined;
   };
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const [sort, setSort] = useState<SortMode>("pct-asc");
 
   const requirements: RequirementSummary[] = data?.items ?? [];
+
+  const detailResults = useQueries({
+    queries: requirements.map((req) => ({
+      queryKey: ["compliance", "requirements", req.requirementId],
+      queryFn: async () =>
+        ssuRequest({
+          method: "GET",
+          urlSegments: ["compliance", "requirements", req.requirementId],
+          payload: null,
+          isCloudEngineerEnabled,
+        }),
+      enabled: isFetched,
+      staleTime: 60_000,
+    })),
+  });
+
+  const costCentreInfoMap = useMemo(() => {
+    const map = new Map<string, CostCentreInfo>();
+    requirements.forEach((req, i) => {
+      const result = detailResults[i];
+      const detailData = result?.data as
+        | { capabilities: { jsonMetadata: string | null; status: string }[] }
+        | undefined;
+      const fetched = result?.isFetched ?? false;
+      if (!fetched || !detailData?.capabilities) {
+        map.set(req.requirementId, { entries: [], isFetched: false });
+        return;
+      }
+      // Group all capabilities by cost centre, count compliant vs total.
+      const byCC = new Map<string | null, { total: number; compliant: number }>();
+      for (const cap of detailData.capabilities) {
+        const cc = parseCostCentre(cap); // null = rogue
+        const counts = byCC.get(cc) ?? { total: 0, compliant: 0 };
+        counts.total++;
+        if (cap.status === "Compliant") counts.compliant++;
+        byCC.set(cc, counts);
+      }
+      const entries: CostCentreEntry[] = [];
+      for (const [cc, counts] of byCC) {
+        const pct =
+          counts.total > 0
+            ? Math.round((counts.compliant / counts.total) * 100)
+            : 0;
+        entries.push({
+          label: cc ? getCostCentreLabel(cc) : "Rogue capabilities",
+          isRogue: cc === null,
+          pct,
+          tier: complianceTier(pct),
+        });
+      }
+      // Named cost centres sorted alphabetically, rogue last.
+      entries.sort((a, b) => {
+        if (a.isRogue && !b.isRogue) return 1;
+        if (!a.isRogue && b.isRogue) return -1;
+        return a.label.localeCompare(b.label);
+      });
+      map.set(req.requirementId, { entries, isFetched: true });
+    });
+    return map;
+  }, [requirements, detailResults]);
 
   const sorted = useMemo(() => {
     return [...requirements].sort((a, b) => {
@@ -371,6 +450,7 @@ export default function RequirementsCompliancePage() {
               <RequirementCard
                 key={req.requirementId}
                 req={req}
+                costCentreInfo={costCentreInfoMap.get(req.requirementId)}
                 className="animate-card-enter"
                 style={{ animationDelay: `${i * 25}ms` }}
               />
