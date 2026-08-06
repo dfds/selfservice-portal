@@ -208,8 +208,13 @@ function ExpandedItemsDetail({
                   {statusIcon(statusToken(item.status))}
                   <span className="truncate flex-1">{item.name}</span>
                   <span className="text-muted">
-                    {item.status}
                     {item.detail ? ` · ${item.detail}` : ""}
+                  </span>
+                  <span
+                    className="font-medium"
+                    style={{ color: statusColor(item.status) }}
+                  >
+                    {statusLabel(item.status)}
                   </span>
                 </div>
               ))}
@@ -347,11 +352,36 @@ function CapabilityTable({
         size: 80,
         muiTableHeadCellProps: { align: "right" },
         muiTableBodyCellProps: { align: "right" },
-        Cell: ({ row }) => (
-          <span className="font-mono text-[0.75rem] text-muted">
-            {row.original.items.length}
-          </span>
-        ),
+        Cell: ({ row }) => {
+          const items = row.original.items;
+          if (items.length === 0)
+            return (
+              <span className="font-mono text-[0.75rem] text-muted">—</span>
+            );
+          const allUnknown = items.every((it) => it.status === "Unknown");
+          if (allUnknown)
+            return (
+              <span
+                className="font-mono text-[0.75rem] text-muted"
+                title={NA_TOOLTIP}
+              >
+                Unknown
+              </span>
+            );
+          const compliant = items.filter(
+            (it) => it.status === "Compliant",
+          ).length;
+          const total = items.length;
+          const pct = Math.round((compliant / total) * 100);
+          return (
+            <span
+              className="font-mono text-[0.75rem] font-semibold"
+              style={{ color: complianceColor(pct) }}
+            >
+              {compliant}/{total}
+            </span>
+          );
+        },
       },
     ],
     [],
