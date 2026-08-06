@@ -6,7 +6,12 @@ import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import { useRequirementsCompliance } from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
-import { complianceColor, complianceTier, parseCostCentre, getCostCentreLabel } from "./utils";
+import {
+  complianceColor,
+  complianceTier,
+  parseCostCentre,
+  getCostCentreLabel,
+} from "./utils";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -253,7 +258,10 @@ export default function RequirementsCompliancePage() {
         return;
       }
       // Group all capabilities by cost centre, count compliant vs total.
-      const byCC = new Map<string | null, { total: number; compliant: number }>();
+      const byCC = new Map<
+        string | null,
+        { total: number; compliant: number }
+      >();
       for (const cap of detailData.capabilities) {
         const cc = parseCostCentre(cap); // null = rogue
         const counts = byCC.get(cc) ?? { total: 0, compliant: 0 };
@@ -303,7 +311,9 @@ export default function RequirementsCompliancePage() {
     // unique capability count, then derive the weighted compliance rate from
     // the full sums (most accurate) and back-calculate compliant count for
     // a consistent display.
-    const uniqueCaps = Math.max(...requirements.map((r) => r.totalCapabilities));
+    const uniqueCaps = Math.max(
+      ...requirements.map((r) => r.totalCapabilities),
+    );
     const totalCapsSum = requirements.reduce(
       (s, r) => s + r.totalCapabilities,
       0,
