@@ -269,8 +269,9 @@ function CostCentreCard({
               return (
                 <span
                   key={cat.categoryName}
+                  title={`${catPct}% compliant`}
                   className={cn(
-                    "text-[0.625rem] font-medium px-2 py-0.5 rounded-full",
+                    "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
@@ -303,10 +304,14 @@ function CostCentreCard({
 
 function RogueCapabilitiesCard({
   capCount,
+  categories,
+  isFetched,
   className,
   style,
 }: {
   capCount: number;
+  categories: { categoryName: string; compliantCount: number; nonCompliantCount: number }[];
+  isFetched: boolean;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -354,14 +359,45 @@ function RogueCapabilitiesCard({
       {/* Progress strip - always "empty" since no cost centre data */}
       <div className="h-1 w-full bg-[#fef3c7] dark:bg-[#78350f]/20" />
 
-      {/* Description chips */}
+      {/* Category chips */}
       <div className="flex flex-wrap gap-1.5 px-4 py-3">
-        <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]">
-          No cost centre tag
-        </span>
-        <span className="text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]">
-          Not tracked in compliance
-        </span>
+        {isFetched ? (
+          categories.length > 0 ? (
+            categories.map((cat) => {
+              const catTotal = cat.compliantCount + cat.nonCompliantCount;
+              const catPct =
+                catTotal > 0
+                  ? Math.round((cat.compliantCount / catTotal) * 100)
+                  : 100;
+              return (
+                <span
+                  key={cat.categoryName}
+                  title={`${catPct}% compliant`}
+                  className={cn(
+                    "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
+                    catPct >= 80
+                      ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
+                      : catPct >= 50
+                        ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
+                        : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                  )}
+                >
+                  {cat.categoryName}
+                </span>
+              );
+            })
+          ) : (
+            <span className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] italic">
+              No categories
+            </span>
+          )
+        ) : (
+          <>
+            <Skeleton className="h-5 w-[64px] rounded-full" />
+            <Skeleton className="h-5 w-[56px] rounded-full" />
+            <Skeleton className="h-5 w-[72px] rounded-full" />
+          </>
+        )}
       </div>
     </Link>
   );
@@ -372,8 +408,9 @@ function RogueCapabilitiesCard({
 export default function CompliancePage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched, data: capabilities } = useCapabilities();
-  const { data: rogueComplianceData } = useRogueCapabilitiesCompliance() as {
-    data: { totalCapabilities: number; compliantCount: number } | undefined;
+  const { data: rogueComplianceData, isFetched: rogueIsFetched } = useRogueCapabilitiesCompliance() as {
+    data: { totalCapabilities: number; compliantCount: number; categories: { categoryName: string; compliantCount: number; nonCompliantCount: number }[] } | undefined;
+    isFetched: boolean;
   };
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("pct-desc");
@@ -792,6 +829,8 @@ export default function CompliancePage() {
               {isFetched && rogueCount > 0 && (
                 <RogueCapabilitiesCard
                   capCount={rogueCount}
+                  categories={rogueComplianceData?.categories ?? []}
+                  isFetched={rogueIsFetched}
                   className="animate-card-enter"
                   style={{ animationDelay: `${filtered.length * 25}ms` }}
                 />
