@@ -310,7 +310,11 @@ function RogueCapabilitiesCard({
   style,
 }: {
   capCount: number;
-  categories: { categoryName: string; compliantCount: number; nonCompliantCount: number }[];
+  categories: {
+    categoryName: string;
+    compliantCount: number;
+    nonCompliantCount: number;
+  }[];
   isFetched: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -378,8 +382,8 @@ function RogueCapabilitiesCard({
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
-                        ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
-                        : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                      ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
+                      : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
                   )}
                 >
                   {cat.categoryName}
@@ -408,10 +412,21 @@ function RogueCapabilitiesCard({
 export default function CompliancePage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched, data: capabilities } = useCapabilities();
-  const { data: rogueComplianceData, isFetched: rogueIsFetched } = useRogueCapabilitiesCompliance() as {
-    data: { totalCapabilities: number; compliantCount: number; categories: { categoryName: string; compliantCount: number; nonCompliantCount: number }[] } | undefined;
-    isFetched: boolean;
-  };
+  const { data: rogueComplianceData, isFetched: rogueIsFetched } =
+    useRogueCapabilitiesCompliance() as {
+      data:
+        | {
+            totalCapabilities: number;
+            compliantCount: number;
+            categories: {
+              categoryName: string;
+              compliantCount: number;
+              nonCompliantCount: number;
+            }[];
+          }
+        | undefined;
+      isFetched: boolean;
+    };
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("pct-desc");
   const [activeFilters, setActiveFilters] = useState<Set<string>>(

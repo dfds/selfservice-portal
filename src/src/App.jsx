@@ -289,7 +289,10 @@ const router = createBrowserRouter(
         path="compliance/cost-centres/:id"
         element={<CostCentreComplianceDetailPage />}
       />
-      <Route path="compliance/requirements" element={<RequirementsCompliancePage />} />
+      <Route
+        path="compliance/requirements"
+        element={<RequirementsCompliancePage />}
+      />
       <Route
         path="compliance/requirements/:id"
         element={<RequirementComplianceDetailPage />}

@@ -1,6 +1,13 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowDown, ArrowLeft, ArrowUp, ExternalLink, Plus, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  ExternalLink,
+  Plus,
+  X,
+} from "lucide-react";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -657,7 +664,9 @@ export default function RequirementComplianceDetailPage() {
     [metadataByCap],
   );
 
-  const metadataFilteredCapabilities = useMemo<CapabilityForRequirement[]>(() => {
+  const metadataFilteredCapabilities = useMemo<
+    CapabilityForRequirement[]
+  >(() => {
     const all = data?.capabilities ?? [];
     if (metadataFilters.every((f) => !f.key)) return all;
     return all.filter((cap) =>
@@ -671,7 +680,9 @@ export default function RequirementComplianceDetailPage() {
 
   const filteredCapabilities = useMemo<CapabilityForRequirement[]>(() => {
     if (statusFilter === "all") return metadataFilteredCapabilities;
-    return metadataFilteredCapabilities.filter((c) => c.status === statusFilter);
+    return metadataFilteredCapabilities.filter(
+      (c) => c.status === statusFilter,
+    );
   }, [metadataFilteredCapabilities, statusFilter]);
 
   const aggregates = useMemo(() => {
