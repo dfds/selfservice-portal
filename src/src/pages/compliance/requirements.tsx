@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight, ExternalLink } from "lucide-react";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import { useRequirementsCompliance } from "@/state/remote/queries/capabilities";
-import { complianceColor, complianceTier } from "./utils";
+import { complianceColor } from "./utils";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -219,31 +219,26 @@ export default function RequirementsCompliancePage() {
 
   const stats = useMemo(() => {
     if (requirements.length === 0) return null;
-    const total = requirements.reduce((s, r) => s + r.totalCapabilities, 0);
-    const compliant = requirements.reduce((s, r) => s + r.compliantCount, 0);
-    const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
-    const nGreen = requirements.filter(
-      (r) =>
-        r.totalCapabilities > 0 &&
-        complianceTier(
-          Math.round((r.compliantCount / r.totalCapabilities) * 100),
-        ) === "green",
-    ).length;
-    const nOrange = requirements.filter(
-      (r) =>
-        r.totalCapabilities > 0 &&
-        complianceTier(
-          Math.round((r.compliantCount / r.totalCapabilities) * 100),
-        ) === "orange",
-    ).length;
-    const nRed = requirements.filter(
-      (r) =>
-        r.totalCapabilities > 0 &&
-        complianceTier(
-          Math.round((r.compliantCount / r.totalCapabilities) * 100),
-        ) === "red",
-    ).length;
-    return { pct, nGreen, nOrange, nRed };
+    // Each requirement is evaluated against the same capability set, so
+    // summing totalCapabilities would double-count. Use the max to get the
+    // unique capability count, then derive the weighted compliance rate from
+    // the full sums (most accurate) and back-calculate compliant count for
+    // a consistent display.
+    const uniqueCaps = Math.max(...requirements.map((r) => r.totalCapabilities));
+    const totalCapsSum = requirements.reduce(
+      (s, r) => s + r.totalCapabilities,
+      0,
+    );
+    const totalCompliantSum = requirements.reduce(
+      (s, r) => s + r.compliantCount,
+      0,
+    );
+    const pct =
+      totalCapsSum > 0
+        ? Math.round((totalCompliantSum / totalCapsSum) * 100)
+        : 0;
+    const totalCompliant = Math.round((pct / 100) * uniqueCaps);
+    return { totalCaps: uniqueCaps, totalCompliant, pct };
   }, [requirements]);
 
   const gaugeColor = complianceColor(stats?.pct ?? 0);
@@ -290,52 +285,53 @@ export default function RequirementsCompliancePage() {
             <div className="-ml-3 font-mono text-[0.625rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
               // Overall Compliance{" "}
               <span className="font-normal tracking-[0.1em] text-muted">
-                (across all requirements)
+                (all capabilities)
               </span>
             </div>
             <div className="flex items-center gap-8">
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                  Avg. rate
-                </span>
-                <span
-                  className="text-[1.125rem] font-bold font-mono leading-none"
-                  style={{ color: stats ? gaugeColor : undefined }}
-                >
-                  <span title={stats ? undefined : NA_TOOLTIP}>
-                    {stats ? `${stats.pct}%` : "N/A"}
+              <div className="flex items-center gap-8">
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Total Count
                   </span>
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                  ≥80%
-                </span>
-                <span className="text-[1.125rem] font-bold font-mono leading-none text-[#22c55e]">
-                  <span title={stats ? undefined : NA_TOOLTIP}>
-                    {stats ? stats.nGreen : "N/A"}
+                  <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
+                    <span title={stats ? undefined : NA_TOOLTIP}>
+                      {stats ? stats.totalCaps : "N/A"}
+                    </span>
                   </span>
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                  50–79%
-                </span>
-                <span className="text-[1.125rem] font-bold font-mono leading-none text-[#f59e0b]">
-                  <span title={stats ? undefined : NA_TOOLTIP}>
-                    {stats ? stats.nOrange : "N/A"}
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Compliant
                   </span>
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                  {"<50%"}
-                </span>
-                <span className="text-[1.125rem] font-bold font-mono leading-none text-[#ef4444]">
-                  <span title={stats ? undefined : NA_TOOLTIP}>
-                    {stats ? stats.nRed : "N/A"}
+                  <span
+                    className="text-[1.125rem] font-bold font-mono leading-none"
+                    style={{
+                      color: stats
+                        ? stats.totalCompliant > 0
+                          ? "#16a34a"
+                          : "#ef4444"
+                        : undefined,
+                    }}
+                  >
+                    <span title={stats ? undefined : NA_TOOLTIP}>
+                      {stats ? stats.totalCompliant : "N/A"}
+                    </span>
                   </span>
-                </span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
+                    Compliant rate
+                  </span>
+                  <span
+                    className="text-[1.125rem] font-bold font-mono leading-none"
+                    style={{ color: stats ? gaugeColor : undefined }}
+                  >
+                    <span title={stats ? undefined : NA_TOOLTIP}>
+                      {stats ? `${stats.pct}%` : "N/A"}
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
