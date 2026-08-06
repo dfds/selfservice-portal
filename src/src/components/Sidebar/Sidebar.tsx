@@ -664,6 +664,7 @@ function NavSubGroupFlyout({
             onMouseEnter={handlePanelMouseEnter}
             onMouseLeave={handlePanelMouseLeave}
             className="fixed z-[70] w-[210px] rounded-[8px] border border-card bg-surface shadow-overlay animate-menu-enter"
+            data-flyout-child
             style={{ left: coords.left, top: coords.top }}
           >
             <div
@@ -722,6 +723,8 @@ function NavGroupFlyout({
     function onDown(e: MouseEvent) {
       const t = e.target as Node;
       if (btnRef.current?.contains(t) || panelRef.current?.contains(t)) return;
+      // Also keep open when clicking inside a child flyout panel (portal).
+      if ((t as Element).closest?.("[data-flyout-child]")) return;
       setOpen(false);
     }
     function onKey(e: KeyboardEvent) {
