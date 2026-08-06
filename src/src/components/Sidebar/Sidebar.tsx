@@ -92,7 +92,26 @@ interface NavItemDef {
 interface NavGroupDef {
   title: string;
   icon: React.ElementType;
-  children: NavItemDef[];
+  children: (NavItemDef | NavGroupDef)[];
+}
+
+function isNavGroup(item: NavItemDef | NavGroupDef): item is NavGroupDef {
+  return "children" in item;
+}
+
+function anyDescendantActive(
+  children: (NavItemDef | NavGroupDef)[],
+  isActive: (url: string) => boolean,
+): boolean {
+  return children.some((c) =>
+    isNavGroup(c) ? anyDescendantActive(c.children, isActive) : isActive(c.url),
+  );
+}
+
+function flatNavItems(children: (NavItemDef | NavGroupDef)[]): NavItemDef[] {
+  return children.flatMap((c) =>
+    isNavGroup(c) ? flatNavItems(c.children) : [c],
+  );
 }
 
 const platformNav: NavItemDef[] = [
@@ -139,14 +158,20 @@ const costCentresGroup: NavGroupDef = {
   icon: Gauge,
   children: [
     {
-      title: "Cost Center Compliance",
-      url: "/compliance",
+      title: "Compliance",
       icon: ShieldCheck,
-    },
-    {
-      title: "Requirement Compliance",
-      url: "/compliance/requirements",
-      icon: ListChecks,
+      children: [
+        {
+          title: "Cost Center Compliance",
+          url: "/compliance",
+          icon: ShieldCheck,
+        },
+        {
+          title: "Requirement Compliance",
+          url: "/compliance/requirements",
+          icon: ListChecks,
+        },
+      ],
     },
   ],
 };
@@ -395,14 +420,14 @@ function EdgeIndicators({ edges }: { edges: ScrollEdges }) {
 
 // Inline accordion - used on mobile, where the flyout's hover/portal model
 // doesn't fit the full-height drawer.
-function NavGroupAccordion({
+function NavSubGroupAccordion({
   group,
   isActive,
 }: {
   group: NavGroupDef;
   isActive: (url: string) => boolean;
 }) {
-  const anyChildActive = group.children.some((c) => isActive(c.url));
+  const anyChildActive = anyDescendantActive(group.children, isActive);
   const [open, setOpen] = useState(anyChildActive);
   const Icon = group.icon;
 
@@ -445,16 +470,223 @@ function NavGroupAccordion({
       >
         <div className="min-h-0">
           <div className="flex flex-col gap-1 md:gap-0.5 pl-4 pt-1">
-            {group.children.map((item) => (
-              <NavItemLink
-                key={item.url}
-                item={item}
-                isActive={isActive(item.url)}
-              />
-            ))}
+            {group.children.map((item) =>
+              isNavGroup(item) ? (
+                <NavSubGroupAccordion
+                  key={item.title}
+                  group={item}
+                  isActive={isActive}
+                />
+              ) : (
+                <NavItemLink
+                  key={item.url}
+                  item={item}
+                  isActive={isActive(item.url)}
+                />
+              ),
+            )}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function NavGroupAccordion({
+  group,
+  isActive,
+}: {
+  group: NavGroupDef;
+  isActive: (url: string) => boolean;
+}) {
+  const anyChildActive = anyDescendantActive(group.children, isActive);
+  const [open, setOpen] = useState(anyChildActive);
+  const Icon = group.icon;
+
+  const location = useLocation();
+  useEffect(() => {
+    if (!anyChildActive) setOpen(false);
+  }, [location.pathname]);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={groupBtnCls(anyChildActive)}
+      >
+        <Icon
+          size={15}
+          strokeWidth={1.75}
+          className="flex-shrink-0"
+          aria-hidden="true"
+        />
+        <span className="flex-1">{group.title}</span>
+        <ChevronDown
+          size={13}
+          strokeWidth={1.75}
+          className={cn(
+            "flex-shrink-0 text-muted transition-transform duration-200 ease-out-expo",
+            open ? "rotate-180" : "",
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      <div
+        className="overflow-hidden"
+        style={{
+          display: "grid",
+          gridTemplateRows: open ? "1fr" : "0fr",
+          transition: "grid-template-rows 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div className="min-h-0">
+          <div className="flex flex-col gap-1 md:gap-0.5 pl-4 pt-1">
+            {group.children.map((item) =>
+              isNavGroup(item) ? (
+                <NavSubGroupAccordion
+                  key={item.title}
+                  group={item}
+                  isActive={isActive}
+                />
+              ) : (
+                <NavItemLink
+                  key={item.url}
+                  item={item}
+                  isActive={isActive(item.url)}
+                />
+              ),
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Sub-group flyout rendered inside a parent flyout panel — opens a second
+// panel to the right on hover, coordinating close timers with the parent.
+function NavSubGroupFlyout({
+  group,
+  isActive,
+  cancelParentClose,
+  scheduleParentClose,
+}: {
+  group: NavGroupDef;
+  isActive: (url: string) => boolean;
+  cancelParentClose: () => void;
+  scheduleParentClose: () => void;
+}) {
+  const anyChildActive = anyDescendantActive(group.children, isActive);
+  const Icon = group.icon;
+  const { factor } = useFontScale();
+  const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState({ left: 0, top: 0, maxHeight: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
+
+  const location = useLocation();
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  function place() {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (!r) return;
+    setCoords({
+      left: (r.right + 6) / factor,
+      top: r.top / factor,
+      maxHeight: (window.innerHeight - r.top - 8) / factor,
+    });
+  }
+  function openSubPanel() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    cancelParentClose();
+    place();
+    setOpen(true);
+  }
+  function scheduleClose() {
+    closeTimer.current = window.setTimeout(() => setOpen(false), 140);
+  }
+  function cancelClose() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+  }
+  function handlePanelMouseEnter() {
+    cancelClose();
+    cancelParentClose();
+  }
+  function handlePanelMouseLeave() {
+    scheduleClose();
+    scheduleParentClose();
+  }
+
+  return (
+    <div
+      onMouseEnter={openSubPanel}
+      onMouseLeave={() => {
+        scheduleClose();
+        scheduleParentClose();
+      }}
+    >
+      <button
+        ref={btnRef}
+        type="button"
+        className={cn(
+          "w-full flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-[6px] text-[0.8125rem] no-underline transition duration-150 ease-out-expo border-l-2",
+          anyChildActive || open
+            ? "bg-[#f2f2f2] dark:bg-slate-700 text-primary font-medium border-action"
+            : "text-secondary hover:bg-[#f2f2f2] dark:hover:bg-[#334155] hover:text-primary border-transparent",
+          "border-t-0 border-r-0 border-b-0 bg-transparent text-left cursor-pointer",
+        )}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <Icon
+          size={15}
+          strokeWidth={1.75}
+          className="flex-shrink-0"
+          aria-hidden="true"
+        />
+        <span className="flex-1">{group.title}</span>
+        <ChevronRight
+          size={13}
+          strokeWidth={1.75}
+          className="flex-shrink-0 text-muted"
+          aria-hidden="true"
+        />
+      </button>
+      {open &&
+        createPortal(
+          <div
+            ref={panelRef}
+            role="menu"
+            onMouseEnter={handlePanelMouseEnter}
+            onMouseLeave={handlePanelMouseLeave}
+            className="fixed z-[70] w-[210px] rounded-[8px] border border-card bg-surface shadow-overlay animate-menu-enter"
+            style={{ left: coords.left, top: coords.top }}
+          >
+            <div
+              className="overflow-y-auto p-2"
+              style={{ maxHeight: coords.maxHeight }}
+            >
+              <SectionLabel className="px-2 pb-1.5 block">
+                {group.title}
+              </SectionLabel>
+              <div className="flex flex-col gap-0.5">
+                {flatNavItems(group.children).map((item) => (
+                  <NavItemLink
+                    key={item.url}
+                    item={item}
+                    isActive={isActive(item.url)}
+                    onPanel
+                  />
+                ))}
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -466,7 +698,7 @@ function NavGroupFlyout({
   group: NavGroupDef;
   isActive: (url: string) => boolean;
 }) {
-  const anyChildActive = group.children.some((c) => isActive(c.url));
+  const anyChildActive = anyDescendantActive(group.children, isActive);
   const Icon = group.icon;
   const { factor } = useFontScale();
   const [open, setOpen] = useState(false);
@@ -578,14 +810,24 @@ function NavGroupFlyout({
                 {group.title}
               </SectionLabel>
               <div className="flex flex-col gap-0.5">
-                {group.children.map((item) => (
-                  <NavItemLink
-                    key={item.url}
-                    item={item}
-                    isActive={isActive(item.url)}
-                    onPanel
-                  />
-                ))}
+                {group.children.map((item) =>
+                  isNavGroup(item) ? (
+                    <NavSubGroupFlyout
+                      key={item.title}
+                      group={item}
+                      isActive={isActive}
+                      cancelParentClose={cancelClose}
+                      scheduleParentClose={scheduleClose}
+                    />
+                  ) : (
+                    <NavItemLink
+                      key={item.url}
+                      item={item}
+                      isActive={isActive(item.url)}
+                      onPanel
+                    />
+                  ),
+                )}
               </div>
             </div>
             <EdgeIndicators edges={edges} />
@@ -1022,7 +1264,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         ...platformNav,
         ...contentNav,
         ...ceNav,
-        ...costCentresGroup.children,
+        ...flatNavItems(costCentresGroup.children),
       ];
       const hasMoreSpecificMatch = allNavItems.some(
         (item) => item.url !== url && location.pathname.startsWith(item.url),
