@@ -34,11 +34,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useExpandable } from "@/hooks/useExpandable";
 import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
-import {
-  getCostCentreLabel,
-  complianceColor,
-  parseMetadata,
-} from "./utils";
+import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -109,7 +105,8 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
 ];
 
 const NA_TOOLTIP =
-  "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+  "An em dash means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+const NA_DISPLAY = "—";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -443,8 +440,8 @@ export default function CostCentreComplianceDetailPage() {
   const costCentreLabel = isRogue
     ? "Rogue Capabilities"
     : costCentreId
-      ? getCostCentreLabel(costCentreId)
-      : "";
+    ? getCostCentreLabel(costCentreId)
+    : "";
 
   return (
     <div className="min-h-full">
@@ -703,7 +700,7 @@ function SummaryCell({
         style={{ color: value === null ? undefined : color }}
         title={value === null ? NA_TOOLTIP : undefined}
       >
-        {value === null ? "N/A" : value}
+        {value === null ? NA_DISPLAY : value}
       </span>
     </div>
   );
@@ -818,7 +815,7 @@ function CapabilityMatrix({
             </span>
           ) : (
             <span className="text-muted text-[0.75rem]" title={NA_TOOLTIP}>
-              N/A
+              {NA_DISPLAY}
             </span>
           );
         },
@@ -850,7 +847,7 @@ function CapabilityMatrix({
               style={{ color }}
               title={cap.overallStatus === "Unknown" ? NA_TOOLTIP : undefined}
             >
-              {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
+              {cap.overallStatus === "Unknown" ? NA_DISPLAY : `${pct}%`}
             </span>
           );
         },
@@ -1049,7 +1046,9 @@ function ExpandedDetail({
                   <span className="text-muted truncate max-w-[40%]">{k}</span>
                   <span className="text-muted">=</span>
                   <span className="text-primary truncate flex-1">
-                    <span title={v ? undefined : NA_TOOLTIP}>{v || "N/A"}</span>
+                    <span title={v ? undefined : NA_TOOLTIP}>
+                      {v || NA_DISPLAY}
+                    </span>
                   </span>
                 </div>
               ))}
@@ -1183,7 +1182,7 @@ function MobileCapabilityCard({
             style={{ color: overallColor }}
             title={cap.overallStatus === "Unknown" ? NA_TOOLTIP : undefined}
           >
-            {cap.overallStatus === "Unknown" ? "N/A" : `${pct}%`}
+            {cap.overallStatus === "Unknown" ? NA_DISPLAY : `${pct}%`}
           </div>
           <ChevronDown
             size={14}
@@ -1208,8 +1207,11 @@ function MobileCapabilityCard({
                     {ratio.compliant} / {ratio.total}
                   </span>
                 ) : (
-                  <span className="text-muted text-[0.75rem]" title={NA_TOOLTIP}>
-                    N/A
+                  <span
+                    className="text-muted text-[0.75rem]"
+                    title={NA_TOOLTIP}
+                  >
+                    {NA_DISPLAY}
                   </span>
                 )}
                 <span className="text-[0.5625rem] font-mono uppercase tracking-[0.08em] text-muted">
