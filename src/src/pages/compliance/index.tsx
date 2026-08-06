@@ -627,7 +627,7 @@ export default function CompliancePage() {
             </div>
             <div className="flex items-center gap-3">
               <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
-                Compliance
+                Cost Center Compliance
               </h1>
               {isFetched && (
                 <span className="relative top-[2px] text-[0.75rem] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
