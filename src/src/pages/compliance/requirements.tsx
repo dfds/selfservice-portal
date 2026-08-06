@@ -1,17 +1,12 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ExternalLink } from "lucide-react";
-import { useQueries } from "@tanstack/react-query";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
-import { useRequirementsCompliance } from "@/state/remote/queries/capabilities";
-import { ssuRequest } from "@/state/remote/query";
-import PreAppContext from "@/preAppContext";
 import {
-  complianceColor,
-  complianceTier,
-  parseCostCentre,
-  getCostCentreLabel,
-} from "./utils";
+  useRequirementsCompliance,
+  useComplianceSummary,
+} from "@/state/remote/queries/capabilities";
+import { complianceColor, complianceTier, getCostCentreLabel } from "./utils";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -27,6 +22,11 @@ export type RequirementSummary = {
   compliantCount: number;
   nonCompliantCount: number;
   unknownCount: number;
+  byCostCentre: {
+    costCentre: string | null;
+    total: number;
+    compliantCount: number;
+  }[];
 };
 
 type SortMode = "name" | "pct-asc" | "pct-desc";
@@ -205,8 +205,8 @@ function RequirementCard({
                 entry.tier === "green"
                   ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                   : entry.tier === "orange"
-                  ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#451a03]/40 dark:text-[#fbbf24]"
-                  : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                    ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#451a03]/40 dark:text-[#fbbf24]"
+                    : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
               )}
             >
               {entry.label}
@@ -225,73 +225,48 @@ export default function RequirementsCompliancePage() {
     isFetched: boolean;
     data: { items: RequirementSummary[] } | undefined;
   };
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const { data: summaryData } = useComplianceSummary() as {
+    data:
+    | {
+      totalCapabilities: number;
+      fullyCompliantCapabilities: number;
+      overallRate: number | null;
+    }
+    | undefined;
+  };
   const [sort, setSort] = useState<SortMode>("pct-asc");
 
   const requirements: RequirementSummary[] = data?.items ?? [];
 
-  const detailResults = useQueries({
-    queries: requirements.map((req) => ({
-      queryKey: ["compliance", "requirements", req.requirementId],
-      queryFn: async () =>
-        ssuRequest({
-          method: "GET",
-          urlSegments: ["compliance", "requirements", req.requirementId],
-          payload: null,
-          isCloudEngineerEnabled,
-        }),
-      enabled: isFetched,
-      staleTime: 60_000,
-    })),
-  });
-
   const costCentreInfoMap = useMemo(() => {
     const map = new Map<string, CostCentreInfo>();
-    requirements.forEach((req, i) => {
-      const result = detailResults[i];
-      const detailData = result?.data as
-        | { capabilities: { jsonMetadata: string | null; status: string }[] }
-        | undefined;
-      const fetched = result?.isFetched ?? false;
-      if (!fetched || !detailData?.capabilities) {
-        map.set(req.requirementId, { entries: [], isFetched: false });
-        return;
+    for (const req of requirements) {
+      if (!req.byCostCentre?.length) {
+        map.set(req.requirementId, { entries: [], isFetched: isFetched });
+        continue;
       }
-      // Group all capabilities by cost centre, count compliant vs total.
-      const byCC = new Map<
-        string | null,
-        { total: number; compliant: number }
-      >();
-      for (const cap of detailData.capabilities) {
-        const cc = parseCostCentre(cap); // null = rogue
-        const counts = byCC.get(cc) ?? { total: 0, compliant: 0 };
-        counts.total++;
-        if (cap.status === "Compliant") counts.compliant++;
-        byCC.set(cc, counts);
-      }
-      const entries: CostCentreEntry[] = [];
-      for (const [cc, counts] of byCC) {
-        const pct =
-          counts.total > 0
-            ? Math.round((counts.compliant / counts.total) * 100)
-            : 0;
-        entries.push({
-          label: cc ? getCostCentreLabel(cc) : "Rogue capabilities",
-          isRogue: cc === null,
-          pct,
-          tier: complianceTier(pct),
+      const entries: CostCentreEntry[] = req.byCostCentre
+        .map(({ costCentre, total, compliantCount }) => {
+          const pct =
+            total > 0 ? Math.round((compliantCount / total) * 100) : 0;
+          return {
+            label: costCentre
+              ? getCostCentreLabel(costCentre)
+              : "Rogue capabilities",
+            isRogue: costCentre === null,
+            pct,
+            tier: complianceTier(pct),
+          };
+        })
+        .sort((a, b) => {
+          if (a.isRogue && !b.isRogue) return 1;
+          if (!a.isRogue && b.isRogue) return -1;
+          return a.label.localeCompare(b.label);
         });
-      }
-      // Named cost centres sorted alphabetically, rogue last.
-      entries.sort((a, b) => {
-        if (a.isRogue && !b.isRogue) return 1;
-        if (!a.isRogue && b.isRogue) return -1;
-        return a.label.localeCompare(b.label);
-      });
       map.set(req.requirementId, { entries, isFetched: true });
-    });
+    }
     return map;
-  }, [requirements, detailResults]);
+  }, [requirements, isFetched]);
 
   const sorted = useMemo(() => {
     return [...requirements].sort((a, b) => {
@@ -304,31 +279,20 @@ export default function RequirementsCompliancePage() {
     });
   }, [requirements, sort]);
 
-  const stats = useMemo(() => {
-    if (requirements.length === 0) return null;
-    // Each requirement is evaluated against the same capability set, so
-    // summing totalCapabilities would double-count. Use the max to get the
-    // unique capability count, then derive the weighted compliance rate from
-    // the full sums (most accurate) and back-calculate compliant count for
-    // a consistent display.
-    const uniqueCaps = Math.max(
-      ...requirements.map((r) => r.totalCapabilities),
-    );
-    const totalCapsSum = requirements.reduce(
-      (s, r) => s + r.totalCapabilities,
-      0,
-    );
-    const totalCompliantSum = requirements.reduce(
-      (s, r) => s + r.compliantCount,
-      0,
-    );
-    const pct =
-      totalCapsSum > 0
-        ? Math.round((totalCompliantSum / totalCapsSum) * 100)
-        : 0;
-    const totalCompliant = Math.round((pct / 100) * uniqueCaps);
-    return { totalCaps: uniqueCaps, totalCompliant, pct };
-  }, [requirements]);
+  const stats = summaryData
+    ? {
+      totalCaps: summaryData.totalCapabilities,
+      totalCompliant: summaryData.fullyCompliantCapabilities,
+      pct:
+        summaryData.totalCapabilities === 0
+          ? 100
+          : Math.round(
+            (summaryData.fullyCompliantCapabilities /
+              summaryData.totalCapabilities) *
+            100,
+          ),
+    }
+    : null;
 
   const gaugeColor = complianceColor(stats?.pct ?? 0);
 
@@ -417,7 +381,7 @@ export default function RequirementsCompliancePage() {
                     style={{ color: stats ? gaugeColor : undefined }}
                   >
                     <span title={stats ? undefined : NA_TOOLTIP}>
-                      {stats ? `${stats.pct}%` : "N/A"}
+                      {stats ? `${stats.pct ?? 0}%` : "N/A"}
                     </span>
                   </span>
                 </div>

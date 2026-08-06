@@ -360,6 +360,12 @@ export function useUserProfilePicture(upn: string) {
   return { ...query, profilePicture };
 }
 
+export const useComplianceSummary = createSsuQuery({
+  queryKey: ["compliance", "summary"],
+  urlSegments: ["compliance", "summary"],
+  staleTime: 60000,
+});
+
 export const useRequirementsCompliance = createSsuQuery({
   queryKey: ["compliance", "requirements"],
   urlSegments: ["compliance", "requirements"],
