@@ -8,6 +8,7 @@ export interface NewsItem {
   id: string;
   title: string;
   body: string;
+  frontpageSummary?: string | null;
   dueDate: string;
   isHighlighted: boolean;
   isRelevant: boolean;
@@ -40,7 +41,12 @@ export const useNewsItem = createSsuParamQuery<string, NewsItem>({
 });
 
 export const useCreateNews = createSsuMutation<{
-  payload: { title: string; body: string; dueDate: string };
+  payload: {
+    title: string;
+    body: string;
+    frontpageSummary?: string;
+    dueDate: string;
+  };
 }>({
   method: "POST",
   urlSegments: () => ["news"],
@@ -48,7 +54,12 @@ export const useCreateNews = createSsuMutation<{
 
 export const useUpdateNews = createSsuMutation<{
   id: string;
-  payload: { title: string; body: string; dueDate: string };
+  payload: {
+    title: string;
+    body: string;
+    frontpageSummary?: string;
+    dueDate: string;
+  };
 }>({
   method: "POST",
   urlSegments: (data) => ["news", data.id],
