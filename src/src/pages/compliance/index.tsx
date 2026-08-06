@@ -50,7 +50,8 @@ const SORT_OPTIONS: { key: SortMode; label: string }[] = [
 ];
 
 const NA_TOOLTIP =
-  "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+  "An em dash means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+const NA_DISPLAY = "—";
 
 // ─── DonutChart ──────────────────────────────────────────────────────────────
 
@@ -172,7 +173,7 @@ function CostCentreCard({
   const total = data?.totalCapabilities ?? capCount;
   const compliant = data?.compliantCount ?? 0;
   const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
-  const compliantDisplay = total > 0 ? `${compliant}/${total}` : "N/A";
+  const compliantDisplay = total > 0 ? `${compliant}/${total}` : NA_DISPLAY;
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
   const { trackEvent } = useRybbit();
@@ -221,7 +222,11 @@ function CostCentreCard({
                 {pct}%
               </div>
               <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
-                <span title={compliantDisplay === "N/A" ? NA_TOOLTIP : undefined}>
+                <span
+                  title={
+                    compliantDisplay === NA_DISPLAY ? NA_TOOLTIP : undefined
+                  }
+                >
                   {compliantDisplay}
                 </span>
               </div>
@@ -269,8 +274,8 @@ function CostCentreCard({
                     catPct >= 80
                       ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                       : catPct >= 50
-                        ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
-                        : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                      ? "bg-[#fffbeb] text-[#d97706] dark:bg-[#78350f]/40 dark:text-[#fbbf24]"
+                      : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
                   )}
                 >
                   {cat.categoryName}
@@ -455,10 +460,10 @@ export default function CompliancePage() {
       const roguePct =
         rogueComplianceData.totalCapabilities > 0
           ? Math.round(
-            (rogueComplianceData.compliantCount /
-              rogueComplianceData.totalCapabilities) *
-            100,
-          )
+              (rogueComplianceData.compliantCount /
+                rogueComplianceData.totalCapabilities) *
+                100,
+            )
           : 100;
       totalCaps += rogueComplianceData.totalCapabilities;
       totalCompliant += rogueComplianceData.compliantCount;
@@ -554,14 +559,8 @@ export default function CompliancePage() {
     () => costCentres.reduce((s, cc) => s + cc.count, 0) + rogueCount,
     [costCentres, rogueCount],
   );
-  const {
-    overallPct,
-    nGreen,
-    nOrange,
-    nRed,
-    fetchedCount,
-    totalCompliant,
-  } = sidePanelStats;
+  const { overallPct, nGreen, nOrange, nRed, fetchedCount, totalCompliant } =
+    sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
 
   return (
@@ -619,7 +618,7 @@ export default function CompliancePage() {
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
                     <span title={isFetched ? undefined : NA_TOOLTIP}>
-                      {isFetched ? capListTotal : "N/A"}
+                      {isFetched ? capListTotal : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
@@ -630,11 +629,16 @@ export default function CompliancePage() {
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
-                      color: fetchedCount > 0 ? (totalCompliant > 0 ? "#16a34a" : "#ef4444") : undefined,
+                      color:
+                        fetchedCount > 0
+                          ? totalCompliant > 0
+                            ? "#16a34a"
+                            : "#ef4444"
+                          : undefined,
                     }}
                   >
                     <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
-                      {fetchedCount > 0 ? totalCompliant : "N/A"}
+                      {fetchedCount > 0 ? totalCompliant : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
@@ -649,7 +653,7 @@ export default function CompliancePage() {
                     }}
                   >
                     <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
-                      {fetchedCount > 0 ? `${overallPct}%` : "N/A"}
+                      {fetchedCount > 0 ? `${overallPct}%` : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
@@ -696,15 +700,15 @@ export default function CompliancePage() {
                 className={cn(
                   "flex items-center gap-1.5 h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
                   !activeFilters.has(key) &&
-                  "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
+                    "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#afafaf] dark:text-[#64748b]",
                 )}
                 style={
                   activeFilters.has(key)
                     ? {
-                      color,
-                      borderColor: color,
-                      background: `${color}18`,
-                    }
+                        color,
+                        borderColor: color,
+                        background: `${color}18`,
+                      }
                     : {}
                 }
               >
