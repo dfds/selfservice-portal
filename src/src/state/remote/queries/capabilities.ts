@@ -374,3 +374,9 @@ export const useRequirementComplianceDetails = createSsuParamQuery<
   enabled: (id) => !!id,
   staleTime: 60000,
 });
+
+export const useComplianceSummary = createSsuQuery({
+  queryKey: ["compliance", "summary"],
+  urlSegments: ["compliance", "summary"],
+  staleTime: 60000,
+});
