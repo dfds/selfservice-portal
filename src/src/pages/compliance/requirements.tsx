@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { ChevronRight, ExternalLink } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
-import { useRequirementsCompliance } from "@/state/remote/queries/capabilities";
+import {
+  useRequirementsCompliance,
+  useComplianceSummary,
+} from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
 import {
@@ -221,6 +224,18 @@ function RequirementCard({
 // ─── RequirementsCompliancePage ───────────────────────────────────────────────
 
 export default function RequirementsCompliancePage() {
+  const { data: summaryData, isFetched: summaryFetched } =
+    useComplianceSummary() as {
+      data:
+        | {
+            totalCapabilities: number;
+            fullyCompliantCapabilities: number;
+            nonCompliantCapabilities: number;
+            unknownCapabilities: number;
+          }
+        | undefined;
+      isFetched: boolean;
+    };
   const { isFetched, data } = useRequirementsCompliance() as {
     isFetched: boolean;
     data: { items: RequirementSummary[] } | undefined;
@@ -384,27 +399,27 @@ export default function RequirementsCompliancePage() {
                     Total Count
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    <span title={stats ? undefined : NA_TOOLTIP}>
-                      {stats ? stats.totalCaps : "N/A"}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched ? (summaryData?.totalCapabilities ?? "N/A") : "N/A"}
                     </span>
                   </span>
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    Compliant
+                    100% Compliant
                   </span>
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
-                      color: stats
-                        ? stats.totalCompliant > 0
+                      color: summaryData
+                        ? summaryData.fullyCompliantCapabilities > 0
                           ? "#16a34a"
                           : "#ef4444"
                         : undefined,
                     }}
                   >
-                    <span title={stats ? undefined : NA_TOOLTIP}>
-                      {stats ? stats.totalCompliant : "N/A"}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched ? (summaryData?.fullyCompliantCapabilities ?? "N/A") : "N/A"}
                     </span>
                   </span>
                 </div>
@@ -414,10 +429,28 @@ export default function RequirementsCompliancePage() {
                   </span>
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
-                    style={{ color: stats ? gaugeColor : undefined }}
+                    style={{
+                      color: summaryData
+                        ? complianceColor(
+                            summaryData.totalCapabilities === 0
+                              ? 100
+                              : Math.round(
+                                  (summaryData.fullyCompliantCapabilities /
+                                    summaryData.totalCapabilities) *
+                                    100,
+                                ),
+                          )
+                        : undefined,
+                    }}
                   >
-                    <span title={stats ? undefined : NA_TOOLTIP}>
-                      {stats ? `${stats.pct}%` : "N/A"}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched
+                        ? summaryData
+                          ? summaryData.totalCapabilities === 0
+                            ? "100%"
+                            : `${Math.round((summaryData.fullyCompliantCapabilities / summaryData.totalCapabilities) * 100)}%`
+                          : "N/A"
+                        : "N/A"}
                     </span>
                   </span>
                 </div>
