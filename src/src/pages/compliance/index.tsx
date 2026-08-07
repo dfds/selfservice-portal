@@ -6,6 +6,7 @@ import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import {
   useCapabilities,
   useRogueCapabilitiesCompliance,
+  useComplianceSummary,
 } from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
@@ -412,6 +413,18 @@ function RogueCapabilitiesCard({
 export default function CompliancePage() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched, data: capabilities } = useCapabilities();
+  const { data: summaryData, isFetched: summaryFetched } =
+    useComplianceSummary() as {
+      data:
+        | {
+            totalCapabilities: number;
+            fullyCompliantCapabilities: number;
+            nonCompliantCapabilities: number;
+            unknownCapabilities: number;
+          }
+        | undefined;
+      isFetched: boolean;
+    };
   const { data: rogueComplianceData, isFetched: rogueIsFetched } =
     useRogueCapabilitiesCompliance() as {
       data:
@@ -669,8 +682,8 @@ export default function CompliancePage() {
                     Total Count
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    <span title={isFetched ? undefined : NA_TOOLTIP}>
-                      {isFetched ? capListTotal : NA_DISPLAY}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched ? (summaryData?.totalCapabilities ?? NA_DISPLAY) : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
@@ -681,16 +694,15 @@ export default function CompliancePage() {
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
-                      color:
-                        fetchedCount > 0
-                          ? totalCompliant > 0
-                            ? "#16a34a"
-                            : "#ef4444"
-                          : undefined,
+                      color: summaryData
+                        ? summaryData.fullyCompliantCapabilities > 0
+                          ? "#16a34a"
+                          : "#ef4444"
+                        : undefined,
                     }}
                   >
-                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
-                      {fetchedCount > 0 ? totalCompliant : NA_DISPLAY}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched ? (summaryData?.fullyCompliantCapabilities ?? NA_DISPLAY) : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
@@ -701,11 +713,27 @@ export default function CompliancePage() {
                   <span
                     className="text-[1.125rem] font-bold font-mono leading-none"
                     style={{
-                      color: fetchedCount > 0 ? gaugeColor : undefined,
+                      color: summaryData
+                        ? complianceColor(
+                            summaryData.totalCapabilities === 0
+                              ? 100
+                              : Math.round(
+                                  (summaryData.fullyCompliantCapabilities /
+                                    summaryData.totalCapabilities) *
+                                    100,
+                                ),
+                          )
+                        : undefined,
                     }}
                   >
-                    <span title={fetchedCount > 0 ? undefined : NA_TOOLTIP}>
-                      {fetchedCount > 0 ? `${overallPct}%` : NA_DISPLAY}
+                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                      {summaryFetched
+                        ? summaryData
+                          ? summaryData.totalCapabilities === 0
+                            ? "100%"
+                            : `${Math.round((summaryData.fullyCompliantCapabilities / summaryData.totalCapabilities) * 100)}%`
+                          : NA_DISPLAY
+                        : NA_DISPLAY}
                     </span>
                   </span>
                 </div>
