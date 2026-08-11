@@ -77,6 +77,10 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
 const NA_TOOLTIP =
   "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
 
+const SCORE_FORMATTER = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusLabel(s: string): string {
@@ -92,9 +96,62 @@ function statusColor(s: string): string {
 }
 
 function statusToken(s: string): string {
-  if (s === "Compliant") return "compliant";
-  if (s === "NonCompliant") return "noncompliant";
+  const normalized = (s ?? "").toLowerCase().replace(/[_\s-]/g, "");
+  if (["compliant", "present", "met", "pass", "passed"].includes(normalized)) {
+    return "compliant";
+  }
+  if (
+    ["noncompliant", "missing", "notmet", "fail", "failed"].includes(
+      normalized,
+    )
+  ) {
+    return "noncompliant";
+  }
   return "unknown";
+}
+
+function itemCompliantCount(
+  items: CapabilityItem[],
+): { compliant: number; total: number } {
+  const total = items.length;
+  if (total === 0) return { compliant: 0, total: 0 };
+
+  const normalizedName = (name: string) => name.toLowerCase().replace(/[_\s-]/g, "");
+  const compliantAggregate = items.find((it) => {
+    const n = normalizedName(it.name);
+    return n.startsWith("compliant") || n.startsWith("comliant");
+  });
+  const nonCompliantAggregate = items.find((it) => {
+    const n = normalizedName(it.name);
+    return n.startsWith("noncompliant");
+  });
+
+  // Non-tag requirements expose aggregate counts. Use compliant/(compliant+non-compliant).
+  if (compliantAggregate || nonCompliantAggregate) {
+    const compliant = Number(compliantAggregate?.status ?? "0");
+    const nonCompliant = Number(nonCompliantAggregate?.status ?? "0");
+    if (!Number.isNaN(compliant) && !Number.isNaN(nonCompliant)) {
+      const aggregateTotal = compliant + nonCompliant;
+      if (aggregateTotal > 0) return { compliant, total: aggregateTotal };
+    }
+    return { compliant: 0, total: 0 };
+  }
+
+  // Tag requirements expose one row per tag with present/missing style statuses.
+  const compliant = items.filter(
+    (it) => statusToken(it.status) === "compliant",
+  ).length;
+  const nonCompliant = items.filter(
+    (it) => statusToken(it.status) === "noncompliant",
+  ).length;
+  const resolved = compliant + nonCompliant;
+  if (resolved > 0) return { compliant, total: resolved };
+
+  return { compliant: 0, total: 0 };
+}
+
+function formatScore(score: number): string {
+  return SCORE_FORMATTER.format(score);
 }
 
 // ─── URL state ────────────────────────────────────────────────────────────────
@@ -121,8 +178,12 @@ function readSorting(p: URLSearchParams): MRT_SortingState {
   const s = p.get("sort");
   if (!s) return [];
   const colon = s.lastIndexOf(":");
-  if (colon === -1) return [{ id: s, desc: false }];
-  return [{ id: s.slice(0, colon), desc: s.slice(colon + 1) === "desc" }];
+  if (colon === -1) {
+    const id = s === "status" ? "items" : s;
+    return [{ id, desc: false }];
+  }
+  const id = s.slice(0, colon) === "status" ? "items" : s.slice(0, colon);
+  return [{ id, desc: s.slice(colon + 1) === "desc" }];
 }
 
 function writeUrl(
@@ -306,28 +367,6 @@ function CapabilityTable({
         ),
       },
       {
-        id: "status",
-        header: "Status",
-        accessorFn: (row) => row.status,
-        size: 160,
-        muiTableHeadCellProps: { align: "center" },
-        muiTableBodyCellProps: { align: "center" },
-        Cell: ({ row }) => {
-          const s = row.original.status;
-          return (
-            <div className="flex items-center justify-center gap-1.5">
-              {statusIcon(statusToken(s))}
-              <span
-                className="text-[0.75rem] font-medium"
-                style={{ color: statusColor(s) }}
-              >
-                {statusLabel(s)}
-              </span>
-            </div>
-          );
-        },
-      },
-      {
         id: "score",
         header: "Score",
         accessorFn: (row) => row.score,
@@ -347,16 +386,20 @@ function CapabilityTable({
               className="font-mono text-[0.8125rem] font-semibold"
               style={{ color: complianceColor(score) }}
             >
-              {score}%
+              {formatScore(score)}%
             </span>
           );
         },
       },
       {
         id: "items",
-        header: "Items",
-        accessorFn: (row) => row.items.length,
-        size: 80,
+        header: "Compliance",
+        accessorFn: (row) => {
+          const { compliant, total } = itemCompliantCount(row.items);
+          if (total === 0) return -1;
+          return total > 0 ? compliant / total : -1;
+        },
+        size: 130,
         muiTableHeadCellProps: { align: "right" },
         muiTableBodyCellProps: { align: "right" },
         Cell: ({ row }) => {
@@ -365,8 +408,8 @@ function CapabilityTable({
             return (
               <span className="font-mono text-[0.75rem] text-muted">—</span>
             );
-          const allUnknown = items.every((it) => it.status === "Unknown");
-          if (allUnknown)
+          const { compliant, total } = itemCompliantCount(items);
+          if (total === 0)
             return (
               <span
                 className="font-mono text-[0.75rem] text-muted"
@@ -375,10 +418,6 @@ function CapabilityTable({
                 Unknown
               </span>
             );
-          const compliant = items.filter(
-            (it) => it.status === "Compliant",
-          ).length;
-          const total = items.length;
           const pct = Math.round((compliant / total) * 100);
           return (
             <span
@@ -502,7 +541,7 @@ function MobileCapabilityList({
 }) {
   const SORT_COLS = [
     { id: "capability", label: "Name" },
-    { id: "status", label: "Status" },
+    { id: "items", label: "Compliance" },
     { id: "score", label: "Score" },
   ];
   const active = sorting[0];
@@ -520,8 +559,13 @@ function MobileCapabilityList({
       const sign = active.desc ? -1 : 1;
       if (active.id === "capability")
         return sign * a.capabilityName.localeCompare(b.capabilityName);
-      if (active.id === "status")
-        return sign * a.status.localeCompare(b.status);
+      if (active.id === "items") {
+        const ar = itemCompliantCount(a.items);
+        const br = itemCompliantCount(b.items);
+        const av = ar.total > 0 ? ar.compliant / ar.total : -1;
+        const bv = br.total > 0 ? br.compliant / br.total : -1;
+        return sign * (av - bv);
+      }
       if (active.id === "score") {
         if (a.score == null && b.score == null) return 0;
         if (a.score == null) return 1;
@@ -577,13 +621,30 @@ function MobileCapabilityList({
                 </div>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                {statusIcon(statusToken(cap.status))}
-                <span
-                  className="text-[0.6875rem] font-medium"
-                  style={{ color: statusColor(cap.status) }}
-                >
-                  {statusLabel(cap.status)}
-                </span>
+                {cap.items.length === 0 ? (
+                  <span className="font-mono text-[0.6875rem] text-muted">—</span>
+                ) : (() => {
+                  const { compliant, total } = itemCompliantCount(cap.items);
+                  if (total === 0) {
+                    return (
+                      <span
+                        className="font-mono text-[0.6875rem] text-muted"
+                        title={NA_TOOLTIP}
+                      >
+                        Unknown
+                      </span>
+                    );
+                  }
+                  const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
+                  return (
+                    <span
+                      className="font-mono text-[0.6875rem] font-semibold"
+                      style={{ color: complianceColor(pct) }}
+                    >
+                      {compliant}/{total}
+                    </span>
+                  );
+                })()}
               </div>
             </div>
             {cap.score != null && (
@@ -591,7 +652,7 @@ function MobileCapabilityList({
                 className="mt-1 text-[0.6875rem] font-mono font-semibold"
                 style={{ color: complianceColor(cap.score) }}
               >
-                {cap.score}%
+                {formatScore(cap.score)}%
               </div>
             )}
           </Link>
