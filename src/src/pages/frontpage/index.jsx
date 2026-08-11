@@ -85,8 +85,7 @@ export default function FrontPage() {
   const highlighted =
     newsData?.newsItems?.filter((item) => item.isHighlighted) ?? [];
 
-  const getHighlightedBody = (item) =>
-    item.frontpageSummary || item.body || "";
+  const getHighlightedBody = (item) => item.frontpageSummary || item.body || "";
 
   return (
     <div className="p-4 sm:p-8">
