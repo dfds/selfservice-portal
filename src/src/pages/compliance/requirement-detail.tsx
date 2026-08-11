@@ -115,22 +115,22 @@ function statusToken(s: string): string {
     return "compliant";
   }
   if (
-    ["noncompliant", "missing", "notmet", "fail", "failed"].includes(
-      normalized,
-    )
+    ["noncompliant", "missing", "notmet", "fail", "failed"].includes(normalized)
   ) {
     return "noncompliant";
   }
   return "unknown";
 }
 
-function itemCompliantCount(
-  items: CapabilityItem[],
-): { compliant: number; total: number } {
+function itemCompliantCount(items: CapabilityItem[]): {
+  compliant: number;
+  total: number;
+} {
   const total = items.length;
   if (total === 0) return { compliant: 0, total: 0 };
 
-  const normalizedName = (name: string) => name.toLowerCase().replace(/[_\s-]/g, "");
+  const normalizedName = (name: string) =>
+    name.toLowerCase().replace(/[_\s-]/g, "");
   const compliantAggregate = items.find((it) => {
     const n = normalizedName(it.name);
     return n.startsWith("compliant") || n.startsWith("comliant");
@@ -288,7 +288,9 @@ function CostCentreOverview({
             "flex items-center gap-3 py-2.5 no-underline hover:bg-surface-muted/40 transition-colors rounded-[6px] max-w-[420px] w-full",
             "xl:pr-3",
             index < entries.length - 1 && "border-b border-divider",
-            index < entries.length - 2 && index % 2 === 0 && "xl:border-b xl:border-divider",
+            index < entries.length - 2 &&
+              index % 2 === 0 &&
+              "xl:border-b xl:border-divider",
           )}
         >
           <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate px-1">
@@ -686,29 +688,34 @@ function MobileCapabilityList({
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 {cap.items.length === 0 ? (
-                  <span className="font-mono text-[0.6875rem] text-muted">—</span>
-                ) : (() => {
-                  const { compliant, total } = itemCompliantCount(cap.items);
-                  if (total === 0) {
+                  <span className="font-mono text-[0.6875rem] text-muted">
+                    —
+                  </span>
+                ) : (
+                  (() => {
+                    const { compliant, total } = itemCompliantCount(cap.items);
+                    if (total === 0) {
+                      return (
+                        <span
+                          className="font-mono text-[0.6875rem] text-muted"
+                          title={NA_TOOLTIP}
+                        >
+                          Unknown
+                        </span>
+                      );
+                    }
+                    const pct =
+                      total > 0 ? Math.round((compliant / total) * 100) : 0;
                     return (
                       <span
-                        className="font-mono text-[0.6875rem] text-muted"
-                        title={NA_TOOLTIP}
+                        className="font-mono text-[0.6875rem] font-semibold"
+                        style={{ color: complianceColor(pct) }}
                       >
-                        Unknown
+                        {compliant}/{total}
                       </span>
                     );
-                  }
-                  const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
-                  return (
-                    <span
-                      className="font-mono text-[0.6875rem] font-semibold"
-                      style={{ color: complianceColor(pct) }}
-                    >
-                      {compliant}/{total}
-                    </span>
-                  );
-                })()}
+                  })()
+                )}
               </div>
             </div>
             {cap.score != null && (
@@ -826,11 +833,17 @@ export default function RequirementComplianceDetailPage() {
   }, [metadataFilteredCapabilities]);
 
   const costCentreOverview = useMemo<CostCentreRequirementSummary[]>(() => {
-    const byCostCentre = new Map<string | null, { compliant: number; total: number }>();
+    const byCostCentre = new Map<
+      string | null,
+      { compliant: number; total: number }
+    >();
 
     for (const cap of metadataFilteredCapabilities) {
       const costCentre = parseCostCentre(cap);
-      const current = byCostCentre.get(costCentre) ?? { compliant: 0, total: 0 };
+      const current = byCostCentre.get(costCentre) ?? {
+        compliant: 0,
+        total: 0,
+      };
       current.total += 1;
       if (cap.status === "Compliant") current.compliant += 1;
       byCostCentre.set(costCentre, current);
@@ -844,7 +857,9 @@ export default function RequirementComplianceDetailPage() {
           : 0;
       entries.push({
         key: costCentre ?? "rogue-capabilities",
-        label: costCentre ? getCostCentreLabel(costCentre) : "Rogue capabilities",
+        label: costCentre
+          ? getCostCentreLabel(costCentre)
+          : "Rogue capabilities",
         compliant: counts.compliant,
         total: counts.total,
         pct,
