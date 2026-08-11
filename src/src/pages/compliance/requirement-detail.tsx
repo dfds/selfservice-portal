@@ -23,7 +23,12 @@ import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMuiTableColors } from "@/context/ThemeContext";
-import { complianceColor, parseMetadata } from "./utils";
+import {
+  complianceColor,
+  getCostCentreLabel,
+  parseCostCentre,
+  parseMetadata,
+} from "./utils";
 import { ArcGauge } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -64,6 +69,15 @@ type RequirementDetailsData = {
 };
 
 type StatusFilter = "all" | "Compliant" | "NonCompliant" | "Unknown";
+
+type CostCentreRequirementSummary = {
+  key: string;
+  label: string;
+  compliant: number;
+  total: number;
+  pct: number;
+  isRogue: boolean;
+};
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -243,6 +257,56 @@ function SummaryCell({
       >
         {value === null ? "N/A" : value}
       </span>
+    </div>
+  );
+}
+
+function CostCentreOverview({
+  entries,
+}: {
+  entries: CostCentreRequirementSummary[];
+}) {
+  if (entries.length === 0) {
+    return (
+      <div className="text-[0.75rem] text-muted italic">
+        No cost centre data available for this requirement.
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4">
+      {entries.map((entry, index) => (
+        <Link
+          key={entry.key}
+          to={
+            entry.isRogue
+              ? "/compliance/cost-centres/rogue-capabilities"
+              : `/compliance/cost-centres/${encodeURIComponent(entry.key)}`
+          }
+          className={cn(
+            "flex items-center gap-3 py-2.5 no-underline hover:bg-surface-muted/40 transition-colors rounded-[6px] max-w-[420px] w-full",
+            "xl:pr-3",
+            index < entries.length - 1 && "border-b border-divider",
+            index < entries.length - 2 && index % 2 === 0 && "xl:border-b xl:border-divider",
+          )}
+        >
+          <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate px-1">
+            {entry.label}
+          </span>
+          <div className="flex items-center gap-2 flex-shrink-0 px-1">
+            <span
+              className="font-mono text-[10.5px] w-[36px] text-right font-semibold"
+              style={{ color: complianceColor(entry.pct) }}
+            >
+              {entry.pct}%
+            </span>
+            <span className="font-mono text-[10.5px] text-[#afafaf] w-[44px] text-right">
+              {entry.compliant}/{entry.total}
+            </span>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
@@ -761,6 +825,42 @@ export default function RequirementComplianceDetailPage() {
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 
+  const costCentreOverview = useMemo<CostCentreRequirementSummary[]>(() => {
+    const byCostCentre = new Map<string | null, { compliant: number; total: number }>();
+
+    for (const cap of metadataFilteredCapabilities) {
+      const costCentre = parseCostCentre(cap);
+      const current = byCostCentre.get(costCentre) ?? { compliant: 0, total: 0 };
+      current.total += 1;
+      if (cap.status === "Compliant") current.compliant += 1;
+      byCostCentre.set(costCentre, current);
+    }
+
+    const entries: CostCentreRequirementSummary[] = [];
+    for (const [costCentre, counts] of byCostCentre.entries()) {
+      const pct =
+        counts.total > 0
+          ? Math.round((counts.compliant / counts.total) * 100)
+          : 0;
+      entries.push({
+        key: costCentre ?? "rogue-capabilities",
+        label: costCentre ? getCostCentreLabel(costCentre) : "Rogue capabilities",
+        compliant: counts.compliant,
+        total: counts.total,
+        pct,
+        isRogue: costCentre === null,
+      });
+    }
+
+    entries.sort((a, b) => {
+      if (a.isRogue && !b.isRogue) return 1;
+      if (!a.isRogue && b.isRogue) return -1;
+      return a.label.localeCompare(b.label);
+    });
+
+    return entries;
+  }, [metadataFilteredCapabilities]);
+
   const addFilter = () =>
     updateUrl({ tags: [...metadataFilters, { key: "", value: "" }] });
   const updateFilter = (index: number, patch: Partial<MetadataFilter>) =>
@@ -820,38 +920,55 @@ export default function RequirementComplianceDetailPage() {
 
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div className="flex-shrink-0">
-              {isFetched ? (
-                <ArcGauge
-                  pct={aggregates.pct}
-                  color={complianceColor(aggregates.pct)}
-                />
-              ) : (
-                <Skeleton className="w-24 h-24 rounded-full" />
-              )}
-            </div>
-            <div className="flex items-center justify-around sm:justify-start gap-5 w-full sm:w-auto">
-              <SummaryCell
-                label="Total"
-                value={isFetched ? aggregates.total : null}
-              />
-              <SummaryCell
-                label="Compliant"
-                value={isFetched ? aggregates.compliant : null}
-                color="#16a34a"
-              />
-              <SummaryCell
-                label="Non-compliant"
-                value={isFetched ? aggregates.nonCompliant : null}
-                color="#dc2626"
-              />
-              {(isFetched ? aggregates.unknown > 0 : true) && (
+          <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 xl:gap-8">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 xl:flex-shrink-0">
+              <div className="flex-shrink-0">
+                {isFetched ? (
+                  <ArcGauge
+                    pct={aggregates.pct}
+                    color={complianceColor(aggregates.pct)}
+                  />
+                ) : (
+                  <Skeleton className="w-24 h-24 rounded-full" />
+                )}
+              </div>
+              <div className="flex items-center justify-around sm:justify-start gap-5 sm:gap-5 w-full sm:w-auto sm:flex-shrink-0">
                 <SummaryCell
-                  label="Unknown"
-                  value={isFetched ? aggregates.unknown : null}
-                  color="#94a3b8"
+                  label="Total"
+                  value={isFetched ? aggregates.total : null}
                 />
+                <SummaryCell
+                  label="Compliant"
+                  value={isFetched ? aggregates.compliant : null}
+                  color="#16a34a"
+                />
+                <SummaryCell
+                  label="Non-compliant"
+                  value={isFetched ? aggregates.nonCompliant : null}
+                  color="#dc2626"
+                />
+                {(isFetched ? aggregates.unknown > 0 : true) && (
+                  <SummaryCell
+                    label="Unknown"
+                    value={isFetched ? aggregates.unknown : null}
+                    color="#94a3b8"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="w-full xl:min-w-0 xl:max-w-[880px] xl:ml-auto">
+              <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-3">
+                Cost centre overview for this requirement
+              </div>
+              {isFetched ? (
+                <CostCentreOverview entries={costCentreOverview} />
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                </div>
               )}
             </div>
           </div>
