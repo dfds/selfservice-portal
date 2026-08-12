@@ -400,7 +400,9 @@ export default function RequirementsCompliancePage() {
                   </span>
                   <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
                     <span title={summaryFetched ? undefined : NA_TOOLTIP}>
-                      {summaryFetched ? (summaryData?.totalCapabilities ?? "N/A") : "N/A"}
+                      {summaryFetched
+                        ? summaryData?.totalCapabilities ?? "N/A"
+                        : "N/A"}
                     </span>
                   </span>
                 </div>
@@ -419,7 +421,9 @@ export default function RequirementsCompliancePage() {
                     }}
                   >
                     <span title={summaryFetched ? undefined : NA_TOOLTIP}>
-                      {summaryFetched ? (summaryData?.fullyCompliantCapabilities ?? "N/A") : "N/A"}
+                      {summaryFetched
+                        ? summaryData?.fullyCompliantCapabilities ?? "N/A"
+                        : "N/A"}
                     </span>
                   </span>
                 </div>
@@ -448,7 +452,11 @@ export default function RequirementsCompliancePage() {
                         ? summaryData
                           ? summaryData.totalCapabilities === 0
                             ? "100%"
-                            : `${Math.round((summaryData.fullyCompliantCapabilities / summaryData.totalCapabilities) * 100)}%`
+                            : `${Math.round(
+                                (summaryData.fullyCompliantCapabilities /
+                                  summaryData.totalCapabilities) *
+                                  100,
+                              )}%`
                           : "N/A"
                         : "N/A"}
                     </span>

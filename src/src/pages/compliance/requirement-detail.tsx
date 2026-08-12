@@ -23,7 +23,12 @@ import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMuiTableColors } from "@/context/ThemeContext";
-import { complianceColor, parseMetadata } from "./utils";
+import {
+  complianceColor,
+  getCostCentreLabel,
+  parseCostCentre,
+  parseMetadata,
+} from "./utils";
 import { ArcGauge } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -65,6 +70,15 @@ type RequirementDetailsData = {
 
 type StatusFilter = "all" | "Compliant" | "NonCompliant" | "Unknown";
 
+type CostCentreRequirementSummary = {
+  key: string;
+  label: string;
+  compliant: number;
+  total: number;
+  pct: number;
+  isRogue: boolean;
+};
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
@@ -76,6 +90,10 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
 
 const NA_TOOLTIP =
   "N/A means that either no compliance data is available for this value yet or that the data shows no items in this category.";
+
+const SCORE_FORMATTER = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -92,9 +110,62 @@ function statusColor(s: string): string {
 }
 
 function statusToken(s: string): string {
-  if (s === "Compliant") return "compliant";
-  if (s === "NonCompliant") return "noncompliant";
+  const normalized = (s ?? "").toLowerCase().replace(/[_\s-]/g, "");
+  if (["compliant", "present", "met", "pass", "passed"].includes(normalized)) {
+    return "compliant";
+  }
+  if (
+    ["noncompliant", "missing", "notmet", "fail", "failed"].includes(normalized)
+  ) {
+    return "noncompliant";
+  }
   return "unknown";
+}
+
+function itemCompliantCount(items: CapabilityItem[]): {
+  compliant: number;
+  total: number;
+} {
+  const total = items.length;
+  if (total === 0) return { compliant: 0, total: 0 };
+
+  const normalizedName = (name: string) =>
+    name.toLowerCase().replace(/[_\s-]/g, "");
+  const compliantAggregate = items.find((it) => {
+    const n = normalizedName(it.name);
+    return n.startsWith("compliant") || n.startsWith("comliant");
+  });
+  const nonCompliantAggregate = items.find((it) => {
+    const n = normalizedName(it.name);
+    return n.startsWith("noncompliant");
+  });
+
+  // Non-tag requirements expose aggregate counts. Use compliant/(compliant+non-compliant).
+  if (compliantAggregate || nonCompliantAggregate) {
+    const compliant = Number(compliantAggregate?.status ?? "0");
+    const nonCompliant = Number(nonCompliantAggregate?.status ?? "0");
+    if (!Number.isNaN(compliant) && !Number.isNaN(nonCompliant)) {
+      const aggregateTotal = compliant + nonCompliant;
+      if (aggregateTotal > 0) return { compliant, total: aggregateTotal };
+    }
+    return { compliant: 0, total: 0 };
+  }
+
+  // Tag requirements expose one row per tag with present/missing style statuses.
+  const compliant = items.filter(
+    (it) => statusToken(it.status) === "compliant",
+  ).length;
+  const nonCompliant = items.filter(
+    (it) => statusToken(it.status) === "noncompliant",
+  ).length;
+  const resolved = compliant + nonCompliant;
+  if (resolved > 0) return { compliant, total: resolved };
+
+  return { compliant: 0, total: 0 };
+}
+
+function formatScore(score: number): string {
+  return SCORE_FORMATTER.format(score);
 }
 
 // ─── URL state ────────────────────────────────────────────────────────────────
@@ -121,8 +192,12 @@ function readSorting(p: URLSearchParams): MRT_SortingState {
   const s = p.get("sort");
   if (!s) return [];
   const colon = s.lastIndexOf(":");
-  if (colon === -1) return [{ id: s, desc: false }];
-  return [{ id: s.slice(0, colon), desc: s.slice(colon + 1) === "desc" }];
+  if (colon === -1) {
+    const id = s === "status" ? "items" : s;
+    return [{ id, desc: false }];
+  }
+  const id = s.slice(0, colon) === "status" ? "items" : s.slice(0, colon);
+  return [{ id, desc: s.slice(colon + 1) === "desc" }];
 }
 
 function writeUrl(
@@ -182,6 +257,58 @@ function SummaryCell({
       >
         {value === null ? "N/A" : value}
       </span>
+    </div>
+  );
+}
+
+function CostCentreOverview({
+  entries,
+}: {
+  entries: CostCentreRequirementSummary[];
+}) {
+  if (entries.length === 0) {
+    return (
+      <div className="text-[0.75rem] text-muted italic">
+        No cost centre data available for this requirement.
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4">
+      {entries.map((entry, index) => (
+        <Link
+          key={entry.key}
+          to={
+            entry.isRogue
+              ? "/compliance/cost-centres/rogue-capabilities"
+              : `/compliance/cost-centres/${encodeURIComponent(entry.key)}`
+          }
+          className={cn(
+            "flex items-center gap-3 py-2.5 no-underline hover:bg-surface-muted/40 transition-colors rounded-[6px] max-w-[420px] w-full",
+            "xl:pr-3",
+            index < entries.length - 1 && "border-b border-divider",
+            index < entries.length - 2 &&
+              index % 2 === 0 &&
+              "xl:border-b xl:border-divider",
+          )}
+        >
+          <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate px-1">
+            {entry.label}
+          </span>
+          <div className="flex items-center gap-2 flex-shrink-0 px-1">
+            <span
+              className="font-mono text-[10.5px] w-[36px] text-right font-semibold"
+              style={{ color: complianceColor(entry.pct) }}
+            >
+              {entry.pct}%
+            </span>
+            <span className="font-mono text-[10.5px] text-[#afafaf] w-[44px] text-right">
+              {entry.compliant}/{entry.total}
+            </span>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
@@ -306,28 +433,6 @@ function CapabilityTable({
         ),
       },
       {
-        id: "status",
-        header: "Status",
-        accessorFn: (row) => row.status,
-        size: 160,
-        muiTableHeadCellProps: { align: "center" },
-        muiTableBodyCellProps: { align: "center" },
-        Cell: ({ row }) => {
-          const s = row.original.status;
-          return (
-            <div className="flex items-center justify-center gap-1.5">
-              {statusIcon(statusToken(s))}
-              <span
-                className="text-[0.75rem] font-medium"
-                style={{ color: statusColor(s) }}
-              >
-                {statusLabel(s)}
-              </span>
-            </div>
-          );
-        },
-      },
-      {
         id: "score",
         header: "Score",
         accessorFn: (row) => row.score,
@@ -347,16 +452,20 @@ function CapabilityTable({
               className="font-mono text-[0.8125rem] font-semibold"
               style={{ color: complianceColor(score) }}
             >
-              {score}%
+              {formatScore(score)}%
             </span>
           );
         },
       },
       {
         id: "items",
-        header: "Items",
-        accessorFn: (row) => row.items.length,
-        size: 80,
+        header: "Compliance",
+        accessorFn: (row) => {
+          const { compliant, total } = itemCompliantCount(row.items);
+          if (total === 0) return -1;
+          return total > 0 ? compliant / total : -1;
+        },
+        size: 130,
         muiTableHeadCellProps: { align: "right" },
         muiTableBodyCellProps: { align: "right" },
         Cell: ({ row }) => {
@@ -365,8 +474,8 @@ function CapabilityTable({
             return (
               <span className="font-mono text-[0.75rem] text-muted">—</span>
             );
-          const allUnknown = items.every((it) => it.status === "Unknown");
-          if (allUnknown)
+          const { compliant, total } = itemCompliantCount(items);
+          if (total === 0)
             return (
               <span
                 className="font-mono text-[0.75rem] text-muted"
@@ -375,10 +484,6 @@ function CapabilityTable({
                 Unknown
               </span>
             );
-          const compliant = items.filter(
-            (it) => it.status === "Compliant",
-          ).length;
-          const total = items.length;
           const pct = Math.round((compliant / total) * 100);
           return (
             <span
@@ -502,7 +607,7 @@ function MobileCapabilityList({
 }) {
   const SORT_COLS = [
     { id: "capability", label: "Name" },
-    { id: "status", label: "Status" },
+    { id: "items", label: "Compliance" },
     { id: "score", label: "Score" },
   ];
   const active = sorting[0];
@@ -520,8 +625,13 @@ function MobileCapabilityList({
       const sign = active.desc ? -1 : 1;
       if (active.id === "capability")
         return sign * a.capabilityName.localeCompare(b.capabilityName);
-      if (active.id === "status")
-        return sign * a.status.localeCompare(b.status);
+      if (active.id === "items") {
+        const ar = itemCompliantCount(a.items);
+        const br = itemCompliantCount(b.items);
+        const av = ar.total > 0 ? ar.compliant / ar.total : -1;
+        const bv = br.total > 0 ? br.compliant / br.total : -1;
+        return sign * (av - bv);
+      }
       if (active.id === "score") {
         if (a.score == null && b.score == null) return 0;
         if (a.score == null) return 1;
@@ -577,13 +687,35 @@ function MobileCapabilityList({
                 </div>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                {statusIcon(statusToken(cap.status))}
-                <span
-                  className="text-[0.6875rem] font-medium"
-                  style={{ color: statusColor(cap.status) }}
-                >
-                  {statusLabel(cap.status)}
-                </span>
+                {cap.items.length === 0 ? (
+                  <span className="font-mono text-[0.6875rem] text-muted">
+                    —
+                  </span>
+                ) : (
+                  (() => {
+                    const { compliant, total } = itemCompliantCount(cap.items);
+                    if (total === 0) {
+                      return (
+                        <span
+                          className="font-mono text-[0.6875rem] text-muted"
+                          title={NA_TOOLTIP}
+                        >
+                          Unknown
+                        </span>
+                      );
+                    }
+                    const pct =
+                      total > 0 ? Math.round((compliant / total) * 100) : 0;
+                    return (
+                      <span
+                        className="font-mono text-[0.6875rem] font-semibold"
+                        style={{ color: complianceColor(pct) }}
+                      >
+                        {compliant}/{total}
+                      </span>
+                    );
+                  })()
+                )}
               </div>
             </div>
             {cap.score != null && (
@@ -591,7 +723,7 @@ function MobileCapabilityList({
                 className="mt-1 text-[0.6875rem] font-mono font-semibold"
                 style={{ color: complianceColor(cap.score) }}
               >
-                {cap.score}%
+                {formatScore(cap.score)}%
               </div>
             )}
           </Link>
@@ -700,6 +832,50 @@ export default function RequirementComplianceDetailPage() {
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 
+  const costCentreOverview = useMemo<CostCentreRequirementSummary[]>(() => {
+    const byCostCentre = new Map<
+      string | null,
+      { compliant: number; total: number }
+    >();
+
+    for (const cap of metadataFilteredCapabilities) {
+      const costCentre = parseCostCentre(cap);
+      const current = byCostCentre.get(costCentre) ?? {
+        compliant: 0,
+        total: 0,
+      };
+      current.total += 1;
+      if (cap.status === "Compliant") current.compliant += 1;
+      byCostCentre.set(costCentre, current);
+    }
+
+    const entries: CostCentreRequirementSummary[] = [];
+    for (const [costCentre, counts] of byCostCentre.entries()) {
+      const pct =
+        counts.total > 0
+          ? Math.round((counts.compliant / counts.total) * 100)
+          : 0;
+      entries.push({
+        key: costCentre ?? "rogue-capabilities",
+        label: costCentre
+          ? getCostCentreLabel(costCentre)
+          : "Rogue capabilities",
+        compliant: counts.compliant,
+        total: counts.total,
+        pct,
+        isRogue: costCentre === null,
+      });
+    }
+
+    entries.sort((a, b) => {
+      if (a.isRogue && !b.isRogue) return 1;
+      if (!a.isRogue && b.isRogue) return -1;
+      return a.label.localeCompare(b.label);
+    });
+
+    return entries;
+  }, [metadataFilteredCapabilities]);
+
   const addFilter = () =>
     updateUrl({ tags: [...metadataFilters, { key: "", value: "" }] });
   const updateFilter = (index: number, patch: Partial<MetadataFilter>) =>
@@ -759,38 +935,55 @@ export default function RequirementComplianceDetailPage() {
 
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div className="flex-shrink-0">
-              {isFetched ? (
-                <ArcGauge
-                  pct={aggregates.pct}
-                  color={complianceColor(aggregates.pct)}
-                />
-              ) : (
-                <Skeleton className="w-24 h-24 rounded-full" />
-              )}
-            </div>
-            <div className="flex items-center justify-around sm:justify-start gap-5 w-full sm:w-auto">
-              <SummaryCell
-                label="Total"
-                value={isFetched ? aggregates.total : null}
-              />
-              <SummaryCell
-                label="Compliant"
-                value={isFetched ? aggregates.compliant : null}
-                color="#16a34a"
-              />
-              <SummaryCell
-                label="Non-compliant"
-                value={isFetched ? aggregates.nonCompliant : null}
-                color="#dc2626"
-              />
-              {(isFetched ? aggregates.unknown > 0 : true) && (
+          <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 xl:gap-8">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 xl:flex-shrink-0">
+              <div className="flex-shrink-0">
+                {isFetched ? (
+                  <ArcGauge
+                    pct={aggregates.pct}
+                    color={complianceColor(aggregates.pct)}
+                  />
+                ) : (
+                  <Skeleton className="w-24 h-24 rounded-full" />
+                )}
+              </div>
+              <div className="flex items-center justify-around sm:justify-start gap-5 sm:gap-5 w-full sm:w-auto sm:flex-shrink-0">
                 <SummaryCell
-                  label="Unknown"
-                  value={isFetched ? aggregates.unknown : null}
-                  color="#94a3b8"
+                  label="Total"
+                  value={isFetched ? aggregates.total : null}
                 />
+                <SummaryCell
+                  label="Compliant"
+                  value={isFetched ? aggregates.compliant : null}
+                  color="#16a34a"
+                />
+                <SummaryCell
+                  label="Non-compliant"
+                  value={isFetched ? aggregates.nonCompliant : null}
+                  color="#dc2626"
+                />
+                {(isFetched ? aggregates.unknown > 0 : true) && (
+                  <SummaryCell
+                    label="Unknown"
+                    value={isFetched ? aggregates.unknown : null}
+                    color="#94a3b8"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="w-full xl:min-w-0 xl:max-w-[880px] xl:ml-auto">
+              <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-3">
+                Cost centre overview for this requirement
+              </div>
+              {isFetched ? (
+                <CostCentreOverview entries={costCentreOverview} />
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                </div>
               )}
             </div>
           </div>
