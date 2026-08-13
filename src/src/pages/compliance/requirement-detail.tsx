@@ -875,7 +875,13 @@ export default function RequirementComplianceDetailPage() {
   const costCentreBreakdown = useMemo(() => {
     const byCostCentre = new Map<
       string,
-      { categoryName: string; compliantCount: number; nonCompliantCount: number; sortLabel: string; isRogue: boolean }
+      {
+        categoryName: string;
+        compliantCount: number;
+        nonCompliantCount: number;
+        sortLabel: string;
+        isRogue: boolean;
+      }
     >();
 
     metadataFilteredCapabilities.forEach((cap) => {
@@ -1037,7 +1043,9 @@ export default function RequirementComplianceDetailPage() {
                     if (!match) return null;
                     return match.key === "rogue-capabilities"
                       ? "/compliance/cost-centres/rogue-capabilities"
-                      : `/compliance/cost-centres/${encodeURIComponent(match.key)}`;
+                      : `/compliance/cost-centres/${encodeURIComponent(
+                          match.key,
+                        )}`;
                   }}
                 />
               ) : (

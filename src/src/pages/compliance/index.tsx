@@ -769,7 +769,7 @@ export default function CompliancePage() {
                     <span className="font-mono text-[1.125rem] font-bold leading-none text-[#002b45] dark:text-[#e2e8f0]">
                       <span title={summaryFetched ? undefined : NA_TOOLTIP}>
                         {summaryFetched
-                          ? (summaryData?.totalCapabilities ?? NA_DISPLAY)
+                          ? summaryData?.totalCapabilities ?? NA_DISPLAY
                           : NA_DISPLAY}
                       </span>
                     </span>
@@ -791,8 +791,8 @@ export default function CompliancePage() {
                     >
                       <span title={summaryFetched ? undefined : NA_TOOLTIP}>
                         {summaryFetched
-                          ? (summaryData?.fullyCompliantCapabilities ??
-                            NA_DISPLAY)
+                          ? summaryData?.fullyCompliantCapabilities ??
+                            NA_DISPLAY
                           : NA_DISPLAY}
                       </span>
                     </span>
@@ -822,7 +822,11 @@ export default function CompliancePage() {
                           ? summaryData
                             ? summaryData.totalCapabilities === 0
                               ? "100%"
-                              : `${Math.round((summaryData.fullyCompliantCapabilities / summaryData.totalCapabilities) * 100)}%`
+                              : `${Math.round(
+                                  (summaryData.fullyCompliantCapabilities /
+                                    summaryData.totalCapabilities) *
+                                    100,
+                                )}%`
                             : NA_DISPLAY
                           : NA_DISPLAY}
                       </span>
