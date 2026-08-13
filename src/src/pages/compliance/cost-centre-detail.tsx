@@ -27,6 +27,7 @@ import {
 import { EmptyState } from "@/components/ui/EmptyState";
 import {
   useCostCentreComplianceDetails,
+  useRequirementsCompliance,
   useRogueCapabilitiesComplianceDetails,
 } from "@/state/remote/queries/capabilities";
 import { statusIcon } from "@/lib/statusUtils";
@@ -107,6 +108,14 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
 const NA_TOOLTIP =
   "An em dash means that either no compliance data is available for this value yet or that the data shows no items in this category.";
 const NA_DISPLAY = "—";
+
+function requirementDetailPath(requirementId: string): string {
+  return `/compliance/requirements/${encodeURIComponent(requirementId)}`;
+}
+
+function normalizedRequirementKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -305,8 +314,31 @@ export default function CostCentreComplianceDetailPage() {
       isFetched: boolean;
     };
 
+  const { data: requirementsData } = useRequirementsCompliance() as {
+    data:
+      | {
+          items: {
+            requirementId: string;
+            categoryName: string;
+            displayName: string;
+          }[];
+        }
+      | undefined;
+  };
+
   const data = isRogue ? rogueApiData : apiData;
   const isFetched = isRogue ? rogueIsFetched : apiIsFetched;
+
+  const requirementIdByCategory = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const req of requirementsData?.items ?? []) {
+      map.set(normalizedRequirementKey(req.categoryName), req.requirementId);
+      if (req.displayName) {
+        map.set(normalizedRequirementKey(req.displayName), req.requirementId);
+      }
+    }
+    return map;
+  }, [requirementsData]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = useMemo(
@@ -367,7 +399,7 @@ export default function CostCentreComplianceDetailPage() {
     return out;
   }, [data]);
 
-  // Aggregate every metadata key + per-key value set seen across the cost centre's
+  // Aggregate every metadata key + per-key value set seen across the cost center's
   // capabilities. Drives both the key combobox and the per-key value suggestions.
   const metadataIndex = useMemo(
     () => buildMetadataIndex(Array.from(metadataByCap.values())),
@@ -456,7 +488,7 @@ export default function CostCentreComplianceDetailPage() {
             Compliance
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            {isRogue ? "// Untagged Capabilities" : "// Cost Centre"}
+            {isRogue ? "// Untagged Capabilities" : "// Cost Center"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
@@ -520,7 +552,17 @@ export default function CostCentreComplianceDetailPage() {
             </div>
             <div className="w-full sm:flex-1 sm:min-w-[280px]">
               {isFetched ? (
-                <CategoryBreakdownList categories={aggregates.categories} />
+                <CategoryBreakdownList
+                  categories={aggregates.categories}
+                  getHref={(categoryName) => {
+                    const requirementId = requirementIdByCategory.get(
+                      normalizedRequirementKey(categoryName),
+                    );
+                    return requirementId
+                      ? requirementDetailPath(requirementId)
+                      : null;
+                  }}
+                />
               ) : (
                 <div className="flex flex-col gap-2">
                   <Skeleton className="h-4 w-full" />
@@ -655,7 +697,7 @@ export default function CostCentreComplianceDetailPage() {
           ) : filteredCapabilities.length === 0 ? (
             <EmptyState>
               {data && data.totalCapabilities === 0
-                ? "No capabilities are tagged with this cost centre."
+                ? "No capabilities are tagged with this cost center."
                 : "No capabilities match the active filters."}
             </EmptyState>
           ) : isMobile ? (
@@ -669,6 +711,7 @@ export default function CostCentreComplianceDetailPage() {
             <CapabilityMatrix
               capabilities={filteredCapabilities}
               metadataByCap={metadataByCap}
+              requirementIdByCategory={requirementIdByCategory}
               sorting={sorting}
               setSorting={setSorting}
             />
@@ -711,11 +754,13 @@ function SummaryCell({
 function CapabilityMatrix({
   capabilities,
   metadataByCap,
+  requirementIdByCategory,
   sorting,
   setSorting,
 }: {
   capabilities: CapabilityCompliance[];
   metadataByCap: Map<string, Record<string, string>>;
+  requirementIdByCategory: Map<string, string>;
   sorting: MRT_SortingState;
   setSorting: (
     updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState),
@@ -775,21 +820,26 @@ function CapabilityMatrix({
                 {row.original.capabilityId}
               </div>
             </div>
-            <Link
-              to={`/capabilities/${row.original.capabilityId}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex-shrink-0 p-1 rounded-[5px] text-muted hover:text-action hover:bg-surface-muted transition-colors"
-              aria-label={`Open ${row.original.capabilityName}`}
-              title="Open capability"
-            >
-              <ExternalLink size={12} strokeWidth={2} />
-            </Link>
           </div>
         ),
       },
       ...CATEGORY_COLUMNS.map<MRT_ColumnDef<CapabilityCompliance>>((c) => ({
         id: c.key,
         header: c.short,
+        Header: () => (
+          <Link
+            to={requirementDetailPath(
+              requirementIdByCategory.get(normalizedRequirementKey(c.key)) ??
+                c.key,
+            )}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center justify-center gap-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted hover:text-action hover:underline"
+            title={`Open ${c.short} requirement`}
+          >
+            <span>{c.short}</span>
+            <ExternalLink size={10} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        ),
         size: 110,
         accessorFn: (row) => {
           const r = categoryRatio(findCategory(row, c.key));
@@ -854,7 +904,7 @@ function CapabilityMatrix({
       },
     ];
     return cols;
-  }, []);
+  }, [requirementIdByCategory]);
 
   return (
     <MaterialReactTable
@@ -938,7 +988,7 @@ function CapabilityMatrix({
           "& .MuiSelect-icon": { color: textMuted },
         },
       }}
-      muiDetailPanelProps={{
+      muiTableDetailPanelProps={{
         sx: {
           backgroundColor: bgMuted,
           borderBottom: `1px solid ${borderColor}`,

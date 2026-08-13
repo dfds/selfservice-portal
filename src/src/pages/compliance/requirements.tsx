@@ -187,7 +187,7 @@ function RequirementCard({
         />
       </div>
 
-      {/* Cost centre compliance tags */}
+      {/* Cost center compliance tags */}
       <div className="flex flex-wrap gap-1.5 px-4 py-3 min-h-[2.25rem] items-center">
         {!costCentreInfo?.isFetched ? (
           <>
@@ -204,7 +204,7 @@ function RequirementCard({
               key={entry.label}
               title={`${entry.pct}% compliant`}
               className={cn(
-                "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
+                "inline-flex items-center gap-1 text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
                 entry.tier === "green"
                   ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                   : entry.tier === "orange"
@@ -212,7 +212,13 @@ function RequirementCard({
                   : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
               )}
             >
-              {entry.label}
+              <span>{entry.label}</span>
+              <ExternalLink
+                size={10}
+                strokeWidth={2}
+                aria-hidden="true"
+                className="opacity-80"
+              />
             </span>
           ))
         )}
@@ -272,7 +278,7 @@ export default function RequirementsCompliancePage() {
         map.set(req.requirementId, { entries: [], isFetched: false });
         return;
       }
-      // Group all capabilities by cost centre, count compliant vs total.
+      // Group all capabilities by cost center, count compliant vs total.
       const byCC = new Map<
         string | null,
         { total: number; compliant: number }
@@ -297,7 +303,7 @@ export default function RequirementsCompliancePage() {
           tier: complianceTier(pct),
         });
       }
-      // Named cost centres sorted alphabetically, rogue last.
+      // Named cost centers sorted alphabetically, rogue last.
       entries.sort((a, b) => {
         if (a.isRogue && !b.isRogue) return 1;
         if (!a.isRogue && b.isRogue) return -1;
@@ -351,49 +357,68 @@ export default function RequirementsCompliancePage() {
     <div className="min-h-full">
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
-        <div className="mb-6 animate-fade-up flex flex-col @[900px]:flex-row @[900px]:items-start @[900px]:justify-between gap-4 @[900px]:gap-8">
-          <div className="min-w-0 flex-1">
-            <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-              // Requirements
-            </div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
-                Requirement Compliance
-              </h1>
-              {isFetched && (
-                <span className="relative top-[2px] text-[0.75rem] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
-                  {requirements.length}{" "}
-                  {requirements.length === 1 ? "requirement" : "requirements"}
-                </span>
-              )}
-            </div>
-            <p className="text-description mt-2">
-              Compliance breakdown by individual requirement across all
-              capabilities. Read more about requirements{" "}
-              <a
-                href="https://wiki.dfds.cloud/en/playbooks/requirements"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-action hover:underline"
+        <div className="mb-6 animate-fade-up">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+            // Compliance
+          </div>
+          <div className="mb-3">
+            <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
+              <Link
+                to="/compliance"
+                className="inline-flex h-[30px] items-center rounded-[7px] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[#4a6278] no-underline transition-colors hover:bg-white hover:text-[#0e7cc1] dark:text-[#94a3b8] dark:hover:bg-[#0f172a] dark:hover:text-[#60a5fa]"
               >
-                here
-              </a>
-            </p>
-            <p className="text-description mt-2">
-              Click on a requirement for a per-capability breakdown
-            </p>
+                Cost Centers View
+              </Link>
+              <Link
+                to="/compliance/requirements"
+                aria-current="page"
+                className="inline-flex h-[30px] items-center rounded-[7px] bg-[#0e7cc1] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-white no-underline dark:bg-[#60a5fa]"
+              >
+                Requirements View
+              </Link>
+            </div>
           </div>
 
-          {/* Stats panel */}
-          <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
-            <div className="-ml-3 font-mono text-[0.625rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
-              // Overall Compliance{" "}
-              <span className="font-normal tracking-[0.1em] text-muted">
-                (all capabilities)
-              </span>
+          <div className="flex flex-col gap-4 @[900px]:flex-row @[900px]:items-start @[900px]:justify-between @[900px]:gap-8">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3">
+                <h1 className="font-mono text-[1.75rem] font-bold leading-[1.2] tracking-[-0.02em] text-[#002b45] dark:text-[#e2e8f0]">
+                  Requirement Compliance
+                </h1>
+                {isFetched && (
+                  <span className="relative top-[2px] rounded-full bg-[#f2f2f2] px-2.5 py-0.5 font-mono text-[0.75rem] text-[#afafaf] dark:bg-[#1e293b]">
+                    {requirements.length}{" "}
+                    {requirements.length === 1 ? "requirement" : "requirements"}
+                  </span>
+                )}
+              </div>
+              <p className="text-description mt-2">
+                Compliance breakdown by individual requirement across all
+                capabilities. Read more about requirements{" "}
+                <a
+                  href="https://wiki.dfds.cloud/en/playbooks/requirements"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-action hover:underline"
+                >
+                  here
+                </a>
+              </p>
+              <p className="text-description mt-2">
+                Click on a requirement for a per-capability breakdown
+              </p>
             </div>
-            <div className="flex items-center gap-8">
+
+            {/* Stats panel */}
+            <div className="hidden w-full flex-shrink-0 rounded-[8px] border border-card bg-surface pb-4 pl-7 pr-4 pt-2.5 md:block @[900px]:w-auto">
+              <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
+                // Overall Compliance{" "}
+                <span className="font-normal tracking-[0.1em] text-muted">
+                  (all capabilities)
+                </span>
+              </div>
               <div className="flex items-center gap-8">
+<<<<<<< HEAD
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     Total Count
@@ -459,8 +484,77 @@ export default function RequirementsCompliancePage() {
                               )}%`
                           : "N/A"
                         : "N/A"}
+=======
+                <div className="flex items-center gap-8">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      Total Count
                     </span>
-                  </span>
+                    <span className="font-mono text-[1.125rem] font-bold leading-none text-[#002b45] dark:text-[#e2e8f0]">
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? summaryData?.totalCapabilities ?? "N/A"
+                          : "N/A"}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      100% Compliant
+>>>>>>> 37d690fd (use tab style navigation)
+                    </span>
+                    <span
+                      className="font-mono text-[1.125rem] font-bold leading-none"
+                      style={{
+                        color: summaryData
+                          ? summaryData.fullyCompliantCapabilities > 0
+                            ? "#16a34a"
+                            : "#ef4444"
+                          : undefined,
+                      }}
+                    >
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? summaryData?.fullyCompliantCapabilities ?? "N/A"
+                          : "N/A"}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      Compliant rate
+                    </span>
+                    <span
+                      className="font-mono text-[1.125rem] font-bold leading-none"
+                      style={{
+                        color: summaryData
+                          ? complianceColor(
+                              summaryData.totalCapabilities === 0
+                                ? 100
+                                : Math.round(
+                                    (summaryData.fullyCompliantCapabilities /
+                                      summaryData.totalCapabilities) *
+                                      100,
+                                  ),
+                            )
+                          : undefined,
+                      }}
+                    >
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? summaryData
+                            ? summaryData.totalCapabilities === 0
+                              ? "100%"
+                              : `${Math.round(
+                                  (summaryData.fullyCompliantCapabilities /
+                                    summaryData.totalCapabilities) *
+                                    100,
+                                )}%`
+                            : "N/A"
+                          : "N/A"}
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
