@@ -29,7 +29,11 @@ import {
   parseCostCentre,
   parseMetadata,
 } from "./utils";
+<<<<<<< HEAD
 import { ArcGauge } from "./components";
+=======
+import { ArcGauge, CategoryBreakdownList } from "./components";
+>>>>>>> bfca1293 (link icons and dashboard links)
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
   buildMetadataIndex,
@@ -832,6 +836,7 @@ export default function RequirementComplianceDetailPage() {
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 
+<<<<<<< HEAD
   const costCentreOverview = useMemo<CostCentreRequirementSummary[]>(() => {
     const byCostCentre = new Map<
       string | null,
@@ -874,6 +879,41 @@ export default function RequirementComplianceDetailPage() {
     });
 
     return entries;
+=======
+  const costCentreBreakdown = useMemo(() => {
+    const byCostCentre = new Map<
+      string,
+      { categoryName: string; compliantCount: number; nonCompliantCount: number; sortLabel: string; isRogue: boolean }
+    >();
+
+    metadataFilteredCapabilities.forEach((cap) => {
+      const rawCostCentre = parseCostCentre(cap);
+      const key = rawCostCentre ?? "rogue-capabilities";
+      const label = rawCostCentre
+        ? getCostCentreLabel(rawCostCentre)
+        : "Rogue capabilities";
+      const current = byCostCentre.get(key) ?? {
+        categoryName: label,
+        compliantCount: 0,
+        nonCompliantCount: 0,
+        sortLabel: label,
+        isRogue: rawCostCentre == null,
+      };
+
+      if (cap.status === "Compliant") current.compliantCount += 1;
+      else if (cap.status === "NonCompliant") current.nonCompliantCount += 1;
+
+      byCostCentre.set(key, current);
+    });
+
+    return Array.from(byCostCentre.entries())
+      .map(([key, value]) => ({ key, ...value }))
+      .sort((a, b) => {
+        if (a.isRogue && !b.isRogue) return 1;
+        if (!a.isRogue && b.isRogue) return -1;
+        return a.sortLabel.localeCompare(b.sortLabel);
+      });
+>>>>>>> bfca1293 (link icons and dashboard links)
   }, [metadataFilteredCapabilities]);
 
   const addFilter = () =>
@@ -935,8 +975,13 @@ export default function RequirementComplianceDetailPage() {
 
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
+<<<<<<< HEAD
           <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 xl:gap-8">
             <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 xl:flex-shrink-0">
+=======
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-6">
+            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 w-full sm:w-auto">
+>>>>>>> bfca1293 (link icons and dashboard links)
               <div className="flex-shrink-0">
                 {isFetched ? (
                   <ArcGauge
@@ -971,6 +1016,7 @@ export default function RequirementComplianceDetailPage() {
                 )}
               </div>
             </div>
+<<<<<<< HEAD
             <div className="w-full xl:min-w-0 xl:max-w-[880px] xl:ml-auto">
               <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-3">
                 Cost centre overview for this requirement
@@ -983,6 +1029,31 @@ export default function RequirementComplianceDetailPage() {
                   <Skeleton className="h-14 w-full" />
                   <Skeleton className="h-14 w-full" />
                   <Skeleton className="h-14 w-full" />
+=======
+            <div className="w-full sm:flex-1 sm:min-w-[280px]">
+              {isFetched ? (
+                <CategoryBreakdownList
+                  categories={costCentreBreakdown.map((entry) => ({
+                    categoryName: entry.categoryName,
+                    compliantCount: entry.compliantCount,
+                    nonCompliantCount: entry.nonCompliantCount,
+                  }))}
+                  getHref={(categoryName) => {
+                    const match = costCentreBreakdown.find(
+                      (entry) => entry.categoryName === categoryName,
+                    );
+                    if (!match) return null;
+                    return match.key === "rogue-capabilities"
+                      ? "/compliance/cost-centres/rogue-capabilities"
+                      : `/compliance/cost-centres/${encodeURIComponent(match.key)}`;
+                  }}
+                />
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+>>>>>>> bfca1293 (link icons and dashboard links)
                 </div>
               )}
             </div>
