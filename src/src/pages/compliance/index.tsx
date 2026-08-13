@@ -345,7 +345,7 @@ function RogueCapabilitiesCard({
           </span>
           <span className="text-[0.6875rem] text-[#afafaf] dark:text-[#64748b]">
             {capCount} {capCount === 1 ? "capability" : "capabilities"} without
-            a cost centre
+            a cost center
           </span>
         </div>
 
@@ -361,7 +361,7 @@ function RogueCapabilitiesCard({
         <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
       </div>
 
-      {/* Progress strip - always "empty" since no cost centre data */}
+      {/* Progress strip - always "empty" since no cost center data */}
       <div className="h-1 w-full bg-[#fef3c7] dark:bg-[#78350f]/20" />
 
       {/* Category chips */}
@@ -520,7 +520,7 @@ export default function CompliancePage() {
       else if (entry.tier === "red") nRed++;
     }
     // Include rogue capabilities from the dedicated API endpoint — same
-    // tier logic as cost centres.
+    // tier logic as cost centers.
     if (rogueComplianceData) {
       const roguePct =
         rogueComplianceData.totalCapabilities > 0
@@ -633,61 +633,68 @@ export default function CompliancePage() {
       {/* ─── Main Content ─────────────────────────────────────────────── */}
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
-        <div className="mb-6 animate-fade-up flex flex-col @[900px]:flex-row @[900px]:items-start @[900px]:justify-between gap-4 @[900px]:gap-8">
-          <div className="min-w-0 flex-1">
-            <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-              // Cost Centres
-            </div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
-                Cost Center Compliance
-              </h1>
-              {isFetched && (
-                <span className="relative top-[2px] text-[0.75rem] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
-                  {filtered.length}{" "}
-                  {filtered.length === 1 ? "centre" : "centres"}
-                </span>
-              )}
-            </div>
-            <p className="text-description mt-2">
-              This page shows requirement compliance by cost center. Read more
-              about requirements{" "}
-              <a
-                href="https://wiki.dfds.cloud/en/playbooks/requirements"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-action hover:underline"
+        <div className="mb-6 animate-fade-up">
+          <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
+            // Compliance
+          </div>
+          <div className="mb-3">
+            <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
+              <Link
+                to="/compliance"
+                aria-current="page"
+                className="inline-flex h-[30px] items-center rounded-[7px] bg-[#0e7cc1] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-white no-underline dark:bg-[#60a5fa]"
               >
-                here
-              </a>
-            </p>
-            <p className="text-description mt-2">
-              Click on individual cost centres for more details
-            </p>
-            <p className="text-description mt-2">
-              Do you want to explore compliance from a requirements
-              perspective?{" "}
+                Cost Centers View
+              </Link>
               <Link
                 to="/compliance/requirements"
-                className="text-action hover:underline"
+                className="inline-flex h-[30px] items-center rounded-[7px] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[#4a6278] no-underline transition-colors hover:bg-white hover:text-[#0e7cc1] dark:text-[#94a3b8] dark:hover:bg-[#0f172a] dark:hover:text-[#60a5fa]"
               >
-                Click here
+                Requirements View
               </Link>
-              .
-            </p>
+            </div>
           </div>
 
-          {/* Overall Compliance + Summary panel - horizontal */}
-          <div className="hidden md:block w-full @[900px]:w-auto flex-shrink-0 rounded-[8px] border border-card bg-surface pl-7 pr-4 pt-2.5 pb-4">
-            <div className="-ml-3 font-mono text-[0.625rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-2">
-              // Overall Compliance{" "}
-              <span className="font-normal tracking-[0.1em] text-muted">
-                (all capabilities)
-              </span>
+          <div className="flex flex-col gap-4 @[900px]:flex-row @[900px]:items-start @[900px]:justify-between @[900px]:gap-8">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3">
+                <h1 className="font-mono text-[1.75rem] font-bold leading-[1.2] tracking-[-0.02em] text-[#002b45] dark:text-[#e2e8f0]">
+                  Cost Center Compliance
+                </h1>
+                {isFetched && (
+                  <span className="relative top-[2px] rounded-full bg-[#f2f2f2] px-2.5 py-0.5 font-mono text-[0.75rem] text-[#afafaf] dark:bg-[#1e293b]">
+                    {filtered.length}{" "}
+                    {filtered.length === 1 ? "cost center" : "cost centers"}
+                  </span>
+                )}
+              </div>
+              <p className="text-description mt-2">
+                This page shows requirement compliance by cost center. Read more
+                about requirements{" "}
+                <a
+                  href="https://wiki.dfds.cloud/en/playbooks/requirements"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-action hover:underline"
+                >
+                  here
+                </a>
+              </p>
+              <p className="text-description mt-2">
+                Click on individual cost centers for more details
+              </p>
             </div>
-            <div className="flex items-center gap-8">
-              {/* Summary stats - horizontal cells */}
+
+            {/* Overall Compliance + Summary panel - horizontal */}
+            <div className="hidden w-full flex-shrink-0 rounded-[8px] border border-card bg-surface pb-4 pl-7 pr-4 pt-2.5 md:block @[900px]:w-auto">
+              <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
+                // Overall Compliance{" "}
+                <span className="font-normal tracking-[0.1em] text-muted">
+                  (all capabilities)
+                </span>
+              </div>
               <div className="flex items-center gap-8">
+<<<<<<< HEAD
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
                     Total Count
@@ -753,8 +760,74 @@ export default function CompliancePage() {
                               )}%`
                           : NA_DISPLAY
                         : NA_DISPLAY}
+=======
+                <div className="flex items-center gap-8">
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      Total Count
                     </span>
-                  </span>
+                    <span className="font-mono text-[1.125rem] font-bold leading-none text-[#002b45] dark:text-[#e2e8f0]">
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? (summaryData?.totalCapabilities ?? NA_DISPLAY)
+                          : NA_DISPLAY}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      100% Compliant
+>>>>>>> 37d690fd (use tab style navigation)
+                    </span>
+                    <span
+                      className="font-mono text-[1.125rem] font-bold leading-none"
+                      style={{
+                        color: summaryData
+                          ? summaryData.fullyCompliantCapabilities > 0
+                            ? "#16a34a"
+                            : "#ef4444"
+                          : undefined,
+                      }}
+                    >
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? (summaryData?.fullyCompliantCapabilities ??
+                            NA_DISPLAY)
+                          : NA_DISPLAY}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
+                      Compliant rate
+                    </span>
+                    <span
+                      className="font-mono text-[1.125rem] font-bold leading-none"
+                      style={{
+                        color: summaryData
+                          ? complianceColor(
+                              summaryData.totalCapabilities === 0
+                                ? 100
+                                : Math.round(
+                                    (summaryData.fullyCompliantCapabilities /
+                                      summaryData.totalCapabilities) *
+                                      100,
+                                  ),
+                            )
+                          : undefined,
+                      }}
+                    >
+                      <span title={summaryFetched ? undefined : NA_TOOLTIP}>
+                        {summaryFetched
+                          ? summaryData
+                            ? summaryData.totalCapabilities === 0
+                              ? "100%"
+                              : `${Math.round((summaryData.fullyCompliantCapabilities / summaryData.totalCapabilities) * 100)}%`
+                            : NA_DISPLAY
+                          : NA_DISPLAY}
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -834,7 +907,7 @@ export default function CompliancePage() {
             type="text"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Search cost centres..."
+            placeholder="Search cost centers..."
             className="w-full h-[36px] pl-8 pr-4 bg-white dark:bg-[#0f172a] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] font-mono text-[1rem] md:text-[12.5px] text-[#002b45] dark:text-[#e2e8f0] outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa] focus:shadow-[0_0_0_3px_rgba(14,124,193,.1)] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] transition-[border-color,box-shadow]"
           />
         </div>
@@ -868,8 +941,8 @@ export default function CompliancePage() {
             <div className="col-span-full">
               <EmptyState>
                 {costCentres.length === 0
-                  ? "No cost centres found. Capabilities may not have the dfds.cost.centre tag set."
-                  : "No cost centres match your filters."}
+                  ? "No cost centers found. Capabilities may not have the dfds.cost.centre tag set."
+                  : "No cost centers match your filters."}
               </EmptyState>
             </div>
           ) : (
