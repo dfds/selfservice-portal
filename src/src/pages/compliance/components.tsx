@@ -82,7 +82,9 @@ export function CategoryBreakdownList({
           <>
             <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate inline-flex items-center gap-1.5">
               <span className="truncate">{cat.categoryName}</span>
-              {href && <ExternalLink size={10} strokeWidth={2} aria-hidden="true" />}
+              {href && (
+                <ExternalLink size={10} strokeWidth={2} aria-hidden="true" />
+              )}
             </span>
             <div className="flex items-center gap-2 flex-shrink-0">
               <ProgressBar value={pct} color={color} className="w-[80px]" />
