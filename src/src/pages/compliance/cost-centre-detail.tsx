@@ -820,15 +820,6 @@ function CapabilityMatrix({
                 {row.original.capabilityId}
               </div>
             </div>
-            <Link
-              to={`/capabilities/${row.original.capabilityId}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex-shrink-0 p-1 rounded-[5px] text-muted hover:text-action hover:bg-surface-muted transition-colors"
-              aria-label={`Open ${row.original.capabilityName}`}
-              title="Open capability"
-            >
-              <ExternalLink size={12} strokeWidth={2} />
-            </Link>
           </div>
         ),
       },

@@ -388,6 +388,14 @@ export default function RequirementsCompliancePage() {
             <p className="text-description mt-2">
               Click on a requirement for a per-capability breakdown
             </p>
+            <p className="text-description mt-2">
+              Do you want to explore compliance from a cost center
+              perspective?{" "}
+              <Link to="/compliance" className="text-action hover:underline">
+                Click here
+              </Link>
+              .
+            </p>
           </div>
 
           {/* Stats panel */}
