@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/lib/utils";
 import { complianceColor } from "./utils";
@@ -61,9 +63,11 @@ export type CategoryBreakdown = {
 export function CategoryBreakdownList({
   categories,
   className,
+  getHref,
 }: {
   categories: CategoryBreakdown[];
   className?: string;
+  getHref?: (categoryName: string) => string | null;
 }) {
   if (!categories.length) return null;
   return (
@@ -73,16 +77,12 @@ export function CategoryBreakdownList({
         const pct =
           total > 0 ? Math.round((cat.compliantCount / total) * 100) : 100;
         const color = complianceColor(pct);
-        return (
-          <div
-            key={cat.categoryName}
-            className={cn(
-              "flex items-center gap-3 py-2.5",
-              i < categories.length - 1 && "border-b border-divider",
-            )}
-          >
-            <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate">
-              {cat.categoryName}
+        const href = getHref?.(cat.categoryName) ?? null;
+        const content = (
+          <>
+            <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate inline-flex items-center gap-1.5">
+              <span className="truncate">{cat.categoryName}</span>
+              {href && <ExternalLink size={10} strokeWidth={2} aria-hidden="true" />}
             </span>
             <div className="flex items-center gap-2 flex-shrink-0">
               <ProgressBar value={pct} color={color} className="w-[80px]" />
@@ -96,6 +96,33 @@ export function CategoryBreakdownList({
                 {cat.compliantCount}/{total}
               </span>
             </div>
+          </>
+        );
+
+        if (href) {
+          return (
+            <Link
+              key={cat.categoryName}
+              to={href}
+              className={cn(
+                "flex items-center gap-3 py-2.5 hover:bg-surface-muted/40 transition-colors rounded-[6px]",
+                i < categories.length - 1 && "border-b border-divider",
+              )}
+            >
+              {content}
+            </Link>
+          );
+        }
+
+        return (
+          <div
+            key={cat.categoryName}
+            className={cn(
+              "flex items-center gap-3 py-2.5",
+              i < categories.length - 1 && "border-b border-divider",
+            )}
+          >
+            {content}
           </div>
         );
       })}

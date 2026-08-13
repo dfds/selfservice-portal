@@ -204,7 +204,7 @@ function RequirementCard({
               key={entry.label}
               title={`${entry.pct}% compliant`}
               className={cn(
-                "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
+                "inline-flex items-center gap-1 text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
                 entry.tier === "green"
                   ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
                   : entry.tier === "orange"
@@ -212,7 +212,13 @@ function RequirementCard({
                   : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
               )}
             >
-              {entry.label}
+              <span>{entry.label}</span>
+              <ExternalLink
+                size={10}
+                strokeWidth={2}
+                aria-hidden="true"
+                className="opacity-80"
+              />
             </span>
           ))
         )}
