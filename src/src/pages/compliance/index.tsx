@@ -664,6 +664,17 @@ export default function CompliancePage() {
             <p className="text-description mt-2">
               Click on individual cost centres for more details
             </p>
+            <p className="text-description mt-2">
+              Do you want to explore compliance from a requirements
+              perspective?{" "}
+              <Link
+                to="/compliance/requirements"
+                className="text-action hover:underline"
+              >
+                Click here
+              </Link>
+              .
+            </p>
           </div>
 
           {/* Overall Compliance + Summary panel - horizontal */}
