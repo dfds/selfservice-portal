@@ -399,7 +399,7 @@ export default function CostCentreComplianceDetailPage() {
     return out;
   }, [data]);
 
-  // Aggregate every metadata key + per-key value set seen across the cost centre's
+  // Aggregate every metadata key + per-key value set seen across the cost center's
   // capabilities. Drives both the key combobox and the per-key value suggestions.
   const metadataIndex = useMemo(
     () => buildMetadataIndex(Array.from(metadataByCap.values())),
@@ -488,7 +488,7 @@ export default function CostCentreComplianceDetailPage() {
             Compliance
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            {isRogue ? "// Untagged Capabilities" : "// Cost Centre"}
+            {isRogue ? "// Untagged Capabilities" : "// Cost Center"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
@@ -697,7 +697,7 @@ export default function CostCentreComplianceDetailPage() {
           ) : filteredCapabilities.length === 0 ? (
             <EmptyState>
               {data && data.totalCapabilities === 0
-                ? "No capabilities are tagged with this cost centre."
+                ? "No capabilities are tagged with this cost center."
                 : "No capabilities match the active filters."}
             </EmptyState>
           ) : isMobile ? (
