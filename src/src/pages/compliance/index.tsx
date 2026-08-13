@@ -694,73 +694,6 @@ export default function CompliancePage() {
                 </span>
               </div>
               <div className="flex items-center gap-8">
-<<<<<<< HEAD
-                <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    Total Count
-                  </span>
-                  <span className="text-[1.125rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono leading-none">
-                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
-                      {summaryFetched
-                        ? summaryData?.totalCapabilities ?? NA_DISPLAY
-                        : NA_DISPLAY}
-                    </span>
-                  </span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    100% Compliant
-                  </span>
-                  <span
-                    className="text-[1.125rem] font-bold font-mono leading-none"
-                    style={{
-                      color: summaryData
-                        ? summaryData.fullyCompliantCapabilities > 0
-                          ? "#16a34a"
-                          : "#ef4444"
-                        : undefined,
-                    }}
-                  >
-                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
-                      {summaryFetched
-                        ? summaryData?.fullyCompliantCapabilities ?? NA_DISPLAY
-                        : NA_DISPLAY}
-                    </span>
-                  </span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted whitespace-nowrap">
-                    Compliant rate
-                  </span>
-                  <span
-                    className="text-[1.125rem] font-bold font-mono leading-none"
-                    style={{
-                      color: summaryData
-                        ? complianceColor(
-                            summaryData.totalCapabilities === 0
-                              ? 100
-                              : Math.round(
-                                  (summaryData.fullyCompliantCapabilities /
-                                    summaryData.totalCapabilities) *
-                                    100,
-                                ),
-                          )
-                        : undefined,
-                    }}
-                  >
-                    <span title={summaryFetched ? undefined : NA_TOOLTIP}>
-                      {summaryFetched
-                        ? summaryData
-                          ? summaryData.totalCapabilities === 0
-                            ? "100%"
-                            : `${Math.round(
-                                (summaryData.fullyCompliantCapabilities /
-                                  summaryData.totalCapabilities) *
-                                  100,
-                              )}%`
-                          : NA_DISPLAY
-                        : NA_DISPLAY}
-=======
                 <div className="flex items-center gap-8">
                   <div className="flex flex-col items-center gap-1.5">
                     <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
@@ -777,7 +710,6 @@ export default function CompliancePage() {
                   <div className="flex flex-col items-center gap-1.5">
                     <span className="whitespace-nowrap text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-muted">
                       100% Compliant
->>>>>>> 37d690fd (use tab style navigation)
                     </span>
                     <span
                       className="font-mono text-[1.125rem] font-bold leading-none"
