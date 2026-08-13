@@ -29,11 +29,7 @@ import {
   parseCostCentre,
   parseMetadata,
 } from "./utils";
-<<<<<<< HEAD
-import { ArcGauge } from "./components";
-=======
 import { ArcGauge, CategoryBreakdownList } from "./components";
->>>>>>> bfca1293 (link icons and dashboard links)
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
   buildMetadataIndex,
@@ -828,50 +824,6 @@ export default function RequirementComplianceDetailPage() {
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 
-<<<<<<< HEAD
-  const costCentreOverview = useMemo<CostCentreRequirementSummary[]>(() => {
-    const byCostCentre = new Map<
-      string | null,
-      { compliant: number; total: number }
-    >();
-
-    for (const cap of metadataFilteredCapabilities) {
-      const costCentre = parseCostCentre(cap);
-      const current = byCostCentre.get(costCentre) ?? {
-        compliant: 0,
-        total: 0,
-      };
-      current.total += 1;
-      if (cap.status === "Compliant") current.compliant += 1;
-      byCostCentre.set(costCentre, current);
-    }
-
-    const entries: CostCentreRequirementSummary[] = [];
-    for (const [costCentre, counts] of byCostCentre.entries()) {
-      const pct =
-        counts.total > 0
-          ? Math.round((counts.compliant / counts.total) * 100)
-          : 0;
-      entries.push({
-        key: costCentre ?? "rogue-capabilities",
-        label: costCentre
-          ? getCostCentreLabel(costCentre)
-          : "Rogue capabilities",
-        compliant: counts.compliant,
-        total: counts.total,
-        pct,
-        isRogue: costCentre === null,
-      });
-    }
-
-    entries.sort((a, b) => {
-      if (a.isRogue && !b.isRogue) return 1;
-      if (!a.isRogue && b.isRogue) return -1;
-      return a.label.localeCompare(b.label);
-    });
-
-    return entries;
-=======
   const costCentreBreakdown = useMemo(() => {
     const byCostCentre = new Map<
       string,
@@ -911,7 +863,6 @@ export default function RequirementComplianceDetailPage() {
         if (!a.isRogue && b.isRogue) return -1;
         return a.sortLabel.localeCompare(b.sortLabel);
       });
->>>>>>> bfca1293 (link icons and dashboard links)
   }, [metadataFilteredCapabilities]);
 
   const addFilter = () =>
@@ -973,13 +924,8 @@ export default function RequirementComplianceDetailPage() {
 
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
-<<<<<<< HEAD
-          <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 xl:gap-8">
-            <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 xl:flex-shrink-0">
-=======
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-6">
             <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 w-full sm:w-auto">
->>>>>>> bfca1293 (link icons and dashboard links)
               <div className="flex-shrink-0">
                 {isFetched ? (
                   <ArcGauge
@@ -1014,20 +960,6 @@ export default function RequirementComplianceDetailPage() {
                 )}
               </div>
             </div>
-<<<<<<< HEAD
-            <div className="w-full xl:min-w-0 xl:max-w-[880px] xl:ml-auto">
-              <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-3">
-                Cost centre overview for this requirement
-              </div>
-              {isFetched ? (
-                <CostCentreOverview entries={costCentreOverview} />
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-=======
             <div className="w-full sm:flex-1 sm:min-w-[280px]">
               {isFetched ? (
                 <CategoryBreakdownList
@@ -1053,7 +985,6 @@ export default function RequirementComplianceDetailPage() {
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
->>>>>>> bfca1293 (link icons and dashboard links)
                 </div>
               )}
             </div>

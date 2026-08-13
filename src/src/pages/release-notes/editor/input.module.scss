@@ -45,7 +45,9 @@
     @media (min-width: 768px) {
       font-size: 0.875rem;
     }
-    outline: none;
+    & {
+      outline: none;
+    }
 
     &::placeholder {
       color: var(--color-text-muted);
