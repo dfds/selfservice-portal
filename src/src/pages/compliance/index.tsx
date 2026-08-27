@@ -6,6 +6,7 @@ import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import {
   useCapabilities,
   useRogueCapabilitiesCompliance,
+  useOrphanedCapabilitiesCompliance,
   useComplianceSummary,
 } from "@/state/remote/queries/capabilities";
 import { ssuRequest } from "@/state/remote/query";
@@ -19,6 +20,8 @@ import {
   complianceColor,
 } from "./utils";
 import { useRybbit } from "@/RybbitContext";
+import piratehatPng from "../../../icons/piratehat.png";
+import ghostPng from "../../../icons/ghost.png";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -301,6 +304,116 @@ function CostCentreCard({
   );
 }
 
+// ─── OrphanedCapabilitiesCard ───────────────────────────────────────────────
+
+function OrphanedCapabilitiesCard({
+  capCount,
+  categories,
+  isFetched,
+  className,
+  style,
+}: {
+  capCount: number;
+  categories: {
+    categoryName: string;
+    compliantCount: number;
+    nonCompliantCount: number;
+  }[];
+  isFetched: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <Link
+      to="/compliance/cost-centres/orphaned-capabilities"
+      className={cn(
+        "block bg-surface border border-dashed border-[#a855f7] dark:border-[#581c87] rounded-[10px] overflow-hidden no-underline text-inherit",
+        "transition-[box-shadow,border-color] duration-200",
+        "hover:shadow-[0_4px_16px_rgba(0,0,0,.08)] hover:border-[#9333ea] dark:hover:border-[#a855f7]",
+        className,
+      )}
+      style={style}
+    >
+      {/* Card header */}
+      <div className="w-full flex items-center gap-3 p-4 text-left">
+        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-[#faf5ff] dark:bg-[#581c87]/30">
+          <img
+            src={ghostPng}
+            alt=""
+            aria-hidden="true"
+            className="w-8 h-8 object-contain"
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <span className="text-[12.5px] font-bold text-[#002b45] dark:text-[#e2e8f0] block truncate">
+            Orphaned Capabilities
+          </span>
+          <span className="text-[0.6875rem] text-[#afafaf] dark:text-[#64748b]">
+            {capCount} {capCount === 1 ? "capability" : "capabilities"} without
+            any members
+          </span>
+        </div>
+
+        <div className="flex-shrink-0 text-right">
+          <div className="text-[1.375rem] font-bold tracking-[-0.03em] leading-none text-[#9333ea] dark:text-[#a855f7]">
+            {capCount}
+          </div>
+          <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
+            orphaned
+          </div>
+        </div>
+
+        <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
+      </div>
+
+      {/* Progress strip */}
+      <div className="h-1 w-full bg-[#f3e8ff] dark:bg-[#581c87]/20" />
+
+      {/* Category chips */}
+      <div className="flex flex-wrap gap-1.5 px-4 py-3">
+        {isFetched ? (
+          categories.length > 0 ? (
+            categories.map((cat) => {
+              const catTotal = cat.compliantCount + cat.nonCompliantCount;
+              const catPct =
+                catTotal > 0
+                  ? Math.round((cat.compliantCount / catTotal) * 100)
+                  : 100;
+              return (
+                <span
+                  key={cat.categoryName}
+                  title={`${catPct}% compliant`}
+                  className={cn(
+                    "text-[0.625rem] font-medium px-2 py-0.5 rounded-full cursor-default",
+                    catPct >= 80
+                      ? "bg-[#f0fdf4] text-[#16a34a] dark:bg-[#14532d]/40 dark:text-[#4ade80]"
+                      : catPct >= 50
+                      ? "bg-[#faf5ff] text-[#9333ea] dark:bg-[#581c87]/40 dark:text-[#c084fc]"
+                      : "bg-[#fff1f2] text-[#dc2626] dark:bg-[#7f1d1d]/40 dark:text-[#f87171]",
+                  )}
+                >
+                  {cat.categoryName}
+                </span>
+              );
+            })
+          ) : (
+            <span className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] italic">
+              No categories
+            </span>
+          )
+        ) : (
+          <>
+            <Skeleton className="h-5 w-[64px] rounded-full" />
+            <Skeleton className="h-5 w-[56px] rounded-full" />
+            <Skeleton className="h-5 w-[72px] rounded-full" />
+          </>
+        )}
+      </div>
+    </Link>
+  );
+}
+
 // ─── RogueCapabilitiesCard ────────────────────────────────────────────────────
 
 function RogueCapabilitiesCard({
@@ -334,9 +447,12 @@ function RogueCapabilitiesCard({
       {/* Card header */}
       <div className="w-full flex items-center gap-3 p-4 text-left">
         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-[#fffbeb] dark:bg-[#78350f]/30">
-          <span className="text-[2rem]" aria-hidden="true">
-            🏴‍☠️
-          </span>
+          <img
+            src={piratehatPng}
+            alt=""
+            aria-hidden="true"
+            className="w-8 h-8 object-contain"
+          />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -427,6 +543,21 @@ export default function CompliancePage() {
     };
   const { data: rogueComplianceData, isFetched: rogueIsFetched } =
     useRogueCapabilitiesCompliance() as {
+      data:
+        | {
+            totalCapabilities: number;
+            compliantCount: number;
+            categories: {
+              categoryName: string;
+              compliantCount: number;
+              nonCompliantCount: number;
+            }[];
+          }
+        | undefined;
+      isFetched: boolean;
+    };
+  const { data: orphanedComplianceData, isFetched: orphanedIsFetched } =
+    useOrphanedCapabilitiesCompliance() as {
       data:
         | {
             totalCapabilities: number;
@@ -537,6 +668,22 @@ export default function CompliancePage() {
       else if (rogueTier === "orange") nOrange++;
       else nRed++;
     }
+    if (orphanedComplianceData) {
+      const orphanedPct =
+        orphanedComplianceData.totalCapabilities > 0
+          ? Math.round(
+              (orphanedComplianceData.compliantCount /
+                orphanedComplianceData.totalCapabilities) *
+                100,
+            )
+          : 100;
+      totalCaps += orphanedComplianceData.totalCapabilities;
+      totalCompliant += orphanedComplianceData.compliantCount;
+      const orphanedTier = complianceTier(orphanedPct);
+      if (orphanedTier === "green") nGreen++;
+      else if (orphanedTier === "orange") nOrange++;
+      else nRed++;
+    }
     const fetchedCount = nGreen + nOrange + nRed;
     const overallPct =
       totalCaps > 0 ? Math.round((totalCompliant / totalCaps) * 100) : 0;
@@ -548,7 +695,7 @@ export default function CompliancePage() {
       nRed,
       fetchedCount,
     };
-  }, [complianceMap, rogueComplianceData]);
+  }, [complianceMap, rogueComplianceData, orphanedComplianceData]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -906,6 +1053,21 @@ export default function CompliancePage() {
                   style={{ animationDelay: `${filtered.length * 25}ms` }}
                 />
               )}
+              {isFetched &&
+                orphanedComplianceData &&
+                orphanedComplianceData.totalCapabilities > 0 && (
+                  <OrphanedCapabilitiesCard
+                    capCount={orphanedComplianceData.totalCapabilities}
+                    categories={orphanedComplianceData?.categories ?? []}
+                    isFetched={orphanedIsFetched}
+                    className="animate-card-enter"
+                    style={{
+                      animationDelay: `${
+                        (filtered.length + (rogueCount > 0 ? 1 : 0)) * 25
+                      }ms`,
+                    }}
+                  />
+                )}
             </>
           )}
         </div>
