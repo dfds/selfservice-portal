@@ -102,6 +102,18 @@ export const useRogueCapabilitiesComplianceDetails = createSsuQuery({
   staleTime: 60000,
 });
 
+export const useOrphanedCapabilitiesCompliance = createSsuQuery({
+  queryKey: ["compliance", "orphaned-capabilities"],
+  urlSegments: ["compliance", "orphaned-capabilities"],
+  staleTime: 60000,
+});
+
+export const useOrphanedCapabilitiesComplianceDetails = createSsuQuery({
+  queryKey: ["compliance", "orphaned-capabilities", "details"],
+  urlSegments: ["compliance", "orphaned-capabilities", "details"],
+  staleTime: 60000,
+});
+
 export const useCapabilityMetadata = createSsuLinkQuery<any>({
   queryKey: (def) => ["capabilities", "metadata", def?.id],
   linkHref: (def) => def?._links?.metadata?.href,

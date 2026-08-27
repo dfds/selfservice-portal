@@ -29,6 +29,7 @@ import {
   useCostCentreComplianceDetails,
   useRequirementsCompliance,
   useRogueCapabilitiesComplianceDetails,
+  useOrphanedCapabilitiesComplianceDetails,
 } from "@/state/remote/queries/capabilities";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
@@ -301,15 +302,24 @@ export default function CostCentreComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const costCentreId = id ?? null;
   const isRogue = costCentreId === "rogue-capabilities";
+  const isOrphaned = costCentreId === "orphaned-capabilities";
 
   const { data: apiData, isFetched: apiIsFetched } =
-    useCostCentreComplianceDetails(isRogue ? null : costCentreId) as {
+    useCostCentreComplianceDetails(
+      isRogue || isOrphaned ? null : costCentreId,
+    ) as {
       data: CostCentreDetailsData | undefined;
       isFetched: boolean;
     };
 
   const { data: rogueApiData, isFetched: rogueIsFetched } =
     useRogueCapabilitiesComplianceDetails() as {
+      data: CostCentreDetailsData | undefined;
+      isFetched: boolean;
+    };
+
+  const { data: orphanedApiData, isFetched: orphanedIsFetched } =
+    useOrphanedCapabilitiesComplianceDetails() as {
       data: CostCentreDetailsData | undefined;
       isFetched: boolean;
     };
@@ -326,8 +336,12 @@ export default function CostCentreComplianceDetailPage() {
       | undefined;
   };
 
-  const data = isRogue ? rogueApiData : apiData;
-  const isFetched = isRogue ? rogueIsFetched : apiIsFetched;
+  const data = isRogue ? rogueApiData : isOrphaned ? orphanedApiData : apiData;
+  const isFetched = isRogue
+    ? rogueIsFetched
+    : isOrphaned
+    ? orphanedIsFetched
+    : apiIsFetched;
 
   const requirementIdByCategory = useMemo(() => {
     const map = new Map<string, string>();
@@ -471,6 +485,8 @@ export default function CostCentreComplianceDetailPage() {
 
   const costCentreLabel = isRogue
     ? "Rogue Capabilities"
+    : isOrphaned
+    ? "Orphaned Capabilities"
     : costCentreId
     ? getCostCentreLabel(costCentreId)
     : "";
@@ -488,7 +504,11 @@ export default function CostCentreComplianceDetailPage() {
             Compliance
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            {isRogue ? "// Untagged Capabilities" : "// Cost Center"}
+            {isRogue
+              ? "// Untagged Capabilities"
+              : isOrphaned
+              ? "// Memberless Capabilities"
+              : "// Cost Center"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">
@@ -498,7 +518,7 @@ export default function CostCentreComplianceDetailPage() {
                 <Skeleton className="h-8 w-[260px]" />
               )}
             </h1>
-            {costCentreId && !isRogue && (
+            {costCentreId && !isRogue && !isOrphaned && (
               <span className="font-mono text-[0.6875rem] text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-2.5 py-0.5 rounded-full">
                 {costCentreId}
               </span>
