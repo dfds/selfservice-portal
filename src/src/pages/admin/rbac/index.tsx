@@ -200,7 +200,6 @@ function GroupExpandedContent({
   members: any[];
   onMembersChanged: () => void;
 }) {
-  const toast = useToast();
   const { data: rolesData, isFetched: rolesFetched } = useGroupRoles(groupId);
   const { data: permsData, isFetched: permsFetched } =
     useGroupPermissions(groupId);

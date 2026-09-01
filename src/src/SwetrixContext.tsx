@@ -25,12 +25,6 @@ const SwetrixContext = React.createContext<SwetrixState>({
   swetrixIsEnabled: false,
 });
 
-function isSwetrixHost(hostname: string): boolean {
-  if (hostname === "localhost" || hostname === "127.0.0.1") return true;
-  if (hostname.includes("ssu-preview.hellman.oxygen.dfds.cloud")) return true;
-  return false;
-}
-
 function extractEmail(account: any): string | null {
   if (!account) return null;
   const claims = account.idTokenClaims || {};

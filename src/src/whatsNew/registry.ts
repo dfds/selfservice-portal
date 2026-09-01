@@ -1,6 +1,8 @@
 import type { TourDefinition } from "./types";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tour_2026_q2_customisation,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tour_2026_q2_topbar,
 } from "./releases/2026-q2";
 import { tour_2026_q3_service_catalogue } from "./releases/2026-q3";

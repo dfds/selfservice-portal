@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowDown,
@@ -35,7 +29,7 @@ import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useExpandable } from "@/hooks/useExpandable";
-import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
+import { useMuiTableColors } from "@/context/ThemeContext";
 import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
@@ -786,16 +780,8 @@ function CapabilityMatrix({
     updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState),
   ) => void;
 }) {
-  const { isDark } = useTheme();
-  const {
-    bg,
-    bgMuted,
-    textPrimary,
-    textMuted,
-    borderColor,
-    inputBorder,
-    inputText,
-  } = useMuiTableColors();
+  const { bg, bgMuted, textPrimary, textMuted, borderColor } =
+    useMuiTableColors();
 
   // Mirror sorting into a ref so sortingFns can pin "no data" rows to the
   // bottom in both directions (TanStack v8 otherwise flips the comparator's

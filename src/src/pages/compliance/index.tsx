@@ -103,6 +103,7 @@ function DonutChart({
 
 // ─── FilterCheckbox ──────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function FilterCheckbox({
   label,
   dotColor,
@@ -764,15 +765,7 @@ export default function CompliancePage() {
     trackEvent("compliance:list:sorted", { sort: key });
   }
 
-  const n = costCentres.length;
-  // Total derived from the capabilities list — available as soon as the list
-  // loads, independently of the slower per-cost-centre compliance API calls.
-  const capListTotal = useMemo(
-    () => costCentres.reduce((s, cc) => s + cc.count, 0) + rogueCount,
-    [costCentres, rogueCount],
-  );
-  const { overallPct, nGreen, nOrange, nRed, fetchedCount, totalCompliant } =
-    sidePanelStats;
+  const { overallPct, nGreen, nOrange, nRed, fetchedCount } = sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
 
   return (
@@ -782,7 +775,7 @@ export default function CompliancePage() {
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Compliance
+            {"// Compliance"}
           </div>
           <div className="mb-3">
             <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
@@ -835,7 +828,7 @@ export default function CompliancePage() {
             {/* Overall Compliance + Summary panel - horizontal */}
             <div className="hidden w-full flex-shrink-0 rounded-[8px] border border-card bg-surface pb-4 pl-7 pr-4 pt-2.5 md:block @[900px]:w-auto">
               <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
-                // Overall Compliance{" "}
+                {"// Overall Compliance"}{" "}
                 <span className="font-normal tracking-[0.1em] text-muted">
                   (all capabilities)
                 </span>

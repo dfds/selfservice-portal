@@ -136,7 +136,7 @@ export default function PermissionMatrixPage() {
     <div className="px-5 md:px-8 py-6 max-w-[1400px] mx-auto">
       <div className="mb-6">
         <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1">
-          // RBAC
+          {"// RBAC"}
         </div>
         <h1 className="text-[1.6rem] font-bold text-[#002b45] dark:text-[#e2e8f0]">
           Permission Matrix

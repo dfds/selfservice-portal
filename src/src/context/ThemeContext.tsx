@@ -38,10 +38,6 @@ function resolveIsDark(theme: Theme): boolean {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
-function applyTheme(theme: Theme) {
-  document.documentElement.classList.toggle("dark", resolveIsDark(theme));
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem("ssu-theme") as Theme | null;

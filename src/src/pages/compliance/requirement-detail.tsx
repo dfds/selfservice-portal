@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowDown,
@@ -261,6 +261,7 @@ function SummaryCell({
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function CostCentreOverview({
   entries,
 }: {
@@ -889,7 +890,7 @@ export default function RequirementComplianceDetailPage() {
             Requirements
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Requirement
+            {"// Requirement"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">

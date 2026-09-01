@@ -147,7 +147,7 @@ export default function ServicesPage() {
       <div className="animate-fade-up mb-6 flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] mb-1.5">
-            // Service catalogue
+            {"// Service catalogue"}
           </div>
           <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2] mb-2">
             Services
