@@ -54,7 +54,7 @@
     "cytoscape": "^3.34.0",
     "cytoscape-dagre": "^4.0.0",
     "date-fns": "^2.29.3",
-    "dompurify": "^3.2.4",
+    "dompurify": "^3.4.14",
     "driver.js": "^1.4.0",
     "framer-motion": "^12.40.0",
     "global": "^4.4.0",
