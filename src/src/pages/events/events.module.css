@@ -1,0 +1,197 @@
+/* Align links with description and add spacing */
+.linksRow {
+  margin: 0px 8px 8px 8px;
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  text-decoration: none;
+  color: #005eb8;
+  font-weight: 500;
+  font-size: 1em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+  white-space: pre-line;
+  transition: color 0.2s;
+}
+
+.linkButton:hover {
+  color: #003d6a;
+  text-decoration: underline;
+}
+
+:global(.dark) .linkButton {
+  color: #60a5fa;
+}
+
+:global(.dark) .linkButton:hover {
+  color: #93c5fd;
+}
+.iconButtonRow {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  align-items: center;
+}
+
+.cardMediaImage {
+  position: unset !important;
+  float: right;
+}
+
+.cardMedia {
+  position: unset !important;
+}
+
+.container {
+  display: flex;
+}
+
+.column {
+  width: 100%;
+}
+
+.breakwords {
+  overflow-wrap: break-word;
+}
+
+.signedUpMessage {
+  color: green;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  font-family: "sans-serif";
+}
+
+.content {
+  padding: 0 50px;
+}
+
+.title {
+  margin: 0px 8px;
+  font-size: 1.5em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+  color: #002b45;
+}
+
+:global(.dark) .title {
+  color: #e2e8f0;
+}
+
+.description {
+  margin: 0px 8px;
+  font-size: 1em;
+  font-family: DFDS, Verdana, system-ui, Arial, "Helvetica Neue", Helvetica,
+    sans-serif;
+  white-space: pre-line;
+  color: #4d4e4c;
+}
+
+:global(.dark) .description {
+  color: #94a3b8;
+}
+
+hr {
+  margin: 0px;
+}
+
+.rowLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.deleteButtonContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.deleteButtonIcon {
+  color: darkred;
+  font-size: 2em;
+}
+
+:global(.dark) .deleteButtonIcon {
+  color: #f87171;
+}
+
+.editButtonContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.editButtonIcon {
+  color: black;
+  font-size: 2em;
+}
+
+:global(.dark) .editButtonIcon {
+  color: #94a3b8;
+}
+
+.recordingDateLabel {
+  color: rgb(0, 43, 69);
+  font-weight: bold;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+:global(.dark) .recordingDateLabel {
+  color: #e2e8f0;
+}
+
+.recordingDateInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgba(77, 78, 76, 0.7);
+  font-size: 1rem;
+  margin-bottom: 4px;
+  background-color: #ffffff;
+  color: #002b45;
+}
+
+:global(.dark) .recordingDateInput {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+.recordingDescriptionInput {
+  width: 100%;
+  height: 10em;
+  line-height: 1.25;
+  padding: 8px;
+  border: 1px solid rgba(77, 78, 76, 0.7);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+  color: #002b45;
+}
+
+:global(.dark) .recordingDescriptionInput {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+.date {
+  margin: 0px 8px;
+}

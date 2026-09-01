@@ -13,17 +13,20 @@ import {
 } from "./state/remote/queries/me";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateEcrRepository } from "./state/remote/queries/ecr";
+import { checkIfCloudEngineer } from "@/lib/roleUtils";
 import {
-  useRegisterDemo,
-  useDeleteDemo,
-  useUpdateDemo,
-} from "@/state/remote/queries/demos";
+  useRegisterEvent,
+  useDeleteEvent,
+  useUpdateEvent,
+} from "@/state/remote/queries/events";
 import {
   useCreateReleaseNote,
   useToggleNoteActivity,
 } from "@/state/remote/queries/releaseNotes";
 import { useUpdateUserSettingsInformation } from "@/state/remote/queries/me";
 import { sleep } from "./Utils";
+import { useToast } from "@/context/ToastContext";
+import { useRybbit } from "./RybbitContext";
 
 const AppContext = React.createContext(null);
 
@@ -54,6 +57,8 @@ function truncateString(str, maxLength) {
 
 function AppProvider({ children }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
+  const { trackEvent } = useRybbit();
   const user = useCurrentUser();
   const validAuthSession = useSelector((s) => s.auth.isSessionActive);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(
@@ -106,9 +111,9 @@ function AppProvider({ children }) {
   const createEcrRepository = useCreateEcrRepository();
   const createReleaseNote = useCreateReleaseNote();
   const toggleNoteActivity = useToggleNoteActivity();
-  const registerDemoRecording = useRegisterDemo();
-  const deleteDemoRecording = useDeleteDemo();
-  const updateDemoRecording = useUpdateDemo();
+  const registerEvent = useRegisterEvent();
+  const deleteEvent = useDeleteEvent();
+  const updateEvent = useUpdateEvent();
   const reloadUser = () => {
     queryClient.invalidateQueries({ queryKey: ["me"] });
   };
@@ -141,9 +146,19 @@ function AppProvider({ children }) {
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           queryClient.invalidateQueries({ queryKey: ["capabilities", "list"] });
           queryClient.invalidateQueries({ queryKey: ["me"] });
+          toast.success("Capability created. Time to spend 💰");
+          trackEvent("capability:create:succeeded", {
+            capability_id: data?.id,
+          });
+        },
+        onError: (err) => {
+          toast.error("Could not create capability");
+          trackEvent("capability:create:failed", {
+            error_kind: err?.name || "unknown",
+          });
         },
       },
     );
@@ -160,7 +175,11 @@ function AppProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["ecr", "repositories"] });
+          toast.success(
+            "Repository created. Ready for your finest container spaghetti",
+          );
         },
+        onError: () => toast.error("Could not create repository"),
       },
     );
   }
@@ -177,50 +196,58 @@ function AppProvider({ children }) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
+          toast.success("Release note draft created");
         },
+        onError: () => toast.error("Could not create release note"),
       },
     );
   }
 
-  async function addNewDemoRecording(payload) {
-    registerDemoRecording.mutate(payload, {
+  async function addNewEvent(payload) {
+    registerEvent.mutate(payload, {
       onSuccess: async () => {
         await sleep(200).then(() => {
-          queryClient.invalidateQueries({ queryKey: ["demos"] });
+          queryClient.invalidateQueries({ queryKey: ["events"] });
+          toast.success("Event registered. DFDS management thanks you");
         });
       },
+      onError: () => toast.error("Could not register event"),
     });
   }
 
-  async function removeDemoRecording(id) {
-    deleteDemoRecording.mutate(
+  async function removeEvent(id) {
+    deleteEvent.mutate(
       {
-        demoId: id,
+        eventId: id,
       },
       {
         onSuccess: async () => {
           await sleep(200).then(() => {
-            queryClient.invalidateQueries({ queryKey: ["demos"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
+            toast.success("Event deleted.");
           });
         },
+        onError: () => toast.error("Could not delete event"),
       },
     );
   }
 
-  async function editDemoRecording(payload) {
-    updateDemoRecording.mutate(payload, {
+  async function editEvent(payload) {
+    updateEvent.mutate(payload, {
       onSuccess: async () => {
         await sleep(200).then(() => {
-          queryClient.invalidateQueries({ queryKey: ["demos"] });
+          queryClient.invalidateQueries({ queryKey: ["events"] });
+          toast.success("Event updated.");
         });
       },
+      onError: () => toast.error("Could not update event"),
     });
   }
 
   async function toggleReleaseNoteIsActive(note) {
     var link = note._links?.toggleIsActive?.href;
     if (!link) {
-      console.error("No link found for toggling release note activity.");
+      console.error("No link found for toggling release note activity");
       return;
     }
 
@@ -234,12 +261,6 @@ function AppProvider({ children }) {
         },
       },
     );
-  }
-
-  function checkIfCloudEngineer(roles) {
-    const regex = /^\s*cloud\.engineer\s*$/i;
-    const match = roles?.some((element) => regex.test(element.toLowerCase()));
-    return match;
   }
 
   function toggleShowOnlyMyCapabilities() {
@@ -320,9 +341,9 @@ function AppProvider({ children }) {
     showDeletedCapabilities,
     setShowDeletedCapabilities,
     toggleShowDeletedCapabilities,
-    addNewDemoRecording,
-    removeDemoRecording,
-    editDemoRecording,
+    addNewEvent,
+    removeEvent,
+    editEvent,
   };
 
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;

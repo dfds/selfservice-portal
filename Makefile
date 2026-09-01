@@ -31,12 +31,12 @@ check-node-version: ## Verify node version dependencies
 
 .PHONY: build
 build: check-node-version ## Build and copy build artifacts over
-	@cd src && REACT_APP_DATE_OF_RELEASE="$(shell date -u +"%Y-%m-%d %H:%M") UTC" npm run build
+	@cd src && REACT_APP_DATE_OF_RELEASE="$(shell date -u +"%Y-%m-%d %H:%M") UTC" REACT_APP_COMMIT_HASH="$(shell git rev-parse --short HEAD)" npm run build
 	@cp -r ./src/build/* "$(OUTPUT_DIR_APP)"
 
 .PHONY: container
 container: ## Build docker image
-	@docker build -t $(APP_IMAGE_NAME) .
+	@docker build -t $(APP_IMAGE_NAME) --build-arg REACT_APP_COMMIT_HASH="$(shell git rev-parse --short HEAD)" .
 
 .PHONY: manifests
 manifests: ## Copy manifests over and update build number

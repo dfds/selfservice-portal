@@ -1,24 +1,20 @@
 import React from "react";
-import AppContext from "AppContext";
-import { Text } from "@dfds-ui/typography";
-import { TextBlock } from "components/Text";
-import { ButtonStack, Badge } from "@dfds-ui/react-components";
+import AppContext from "@/AppContext";
+import { Text } from "@/components/ui/Text";
+import { TextBlock } from "@/components/Text";
 import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableHeaderCell,
-  TableDataCell,
-} from "@dfds-ui/react-components";
-import { Modal } from "@dfds-ui/modal";
-import PageSection from "components/PageSection";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import NewTopicDialog from "./NewTopicDialog";
 import { useState } from "react";
 import { useContext } from "react";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
 import TopicList from "./TopicList";
-import styles from "./index.module.css";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 
 export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
@@ -46,9 +42,6 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   const schemas = cluster.schemas;
   const publicTopics = topics.filter((x) => x.name.startsWith("pub."));
   const privateTopics = topics.filter((x) => !x.name.startsWith("pub."));
-  const clusterDescription = (cluster.description || "")
-    .split("\n")
-    .map((x, i) => <Text key={i}>{x}</Text>);
 
   const handleAddTopicToClusterClicked = () => setShowDialog(true);
   const handleCloseTopicFormClicked = () => setShowDialog(false);
@@ -97,182 +90,176 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   );
 
   return (
-    <PageSection
-      id={anchorId}
-      headline="Kafka"
-      headlineChildren={
-        <div className={styles.headlineContainer}>
-          <span>({cluster.name.toLocaleLowerCase()})</span>
-          <div className={styles.badges}>
-            <Badge className={styles.badge}>
-              ID: <span>{cluster.id}</span>
-            </Badge>
-          </div>
-        </div>
-      }
-    >
-      <Text styledAs="label">Description</Text>
-      {clusterDescription}
-
-      <Modal
-        heading={"Connect to cluster"}
-        isOpen={showAccess}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        onRequestClose={() => {
-          setShowAccess(false);
-        }}
-        sizes={{
-          s: "50%",
-          m: "50%",
-          l: "50%",
-          xl: "50%",
-          xxl: "50%",
-        }}
+    <div id={anchorId}>
+      <Dialog
+        open={showAccess}
+        onOpenChange={(o) => !o && setShowAccess(false)}
       >
-        <div>
-          <Text styledAs={"smallHeadline"}>
-            In order to connect to the Kafka cluster{" "}
-            <TextBlock>
-              {cluster.name.toLocaleLowerCase()} ({cluster.id})
-            </TextBlock>
-            , please use the following configuration:
+        <DialogContent className="max-w-[95vw] sm:max-w-[50%] overflow-y-auto max-h-[85vh]">
+          <DialogHeader>
+            <DialogTitle>Connect to cluster</DialogTitle>
+          </DialogHeader>
+          <div>
+            <Text styledAs={"smallHeadline"}>
+              In order to connect to the Kafka cluster{" "}
+              <TextBlock>
+                {cluster.name.toLocaleLowerCase()} ({cluster.id})
+              </TextBlock>
+              , please use the following configuration:
+            </Text>
+          </div>
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th className="border px-3 py-2 text-left font-bold">Key</th>
+                <th className="border px-3 py-2 text-left font-bold">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>bootstrap.servers</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>{access.bootstrapServers}</TextBlock>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>security.protocol</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>SASL_SSL</TextBlock>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>sasl.mechanism</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>PLAIN</TextBlock>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>sasl.username</code>
+                </td>
+                <td className="border px-3 py-2">
+                  See{" "}
+                  <TrackedLink
+                    trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
+                    href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Accessing platform credentials
+                  </TrackedLink>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>sasl.password</code>
+                </td>
+                <td className="border px-3 py-2">
+                  See{" "}
+                  <TrackedLink
+                    trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
+                    href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Accessing platform credentials
+                  </TrackedLink>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>group.id</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>{capabilityId}.application-name</TextBlock> (
+                  <i>example</i>)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <Text>
+            <i>
+              <strong>Please note</strong> <br />
+              That <TextBlock>group.id</TextBlock> <strong>must</strong> be
+              prefixed with the capability id (
+              <TextBlock>{capabilityId}</TextBlock>) followed by a dot (
+              <TextBlock>.</TextBlock>), before the rest of the consumer group
+              id, like in the example above.
+            </i>
           </Text>
-        </div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Key</TableHeaderCell>
-              <TableHeaderCell>Value</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableDataCell>
-                <code>bootstrap.servers</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>{access.bootstrapServers}</TextBlock>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>security.protocol</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>SASL_SSL</TextBlock>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>sasl.mechanism</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>PLAIN</TextBlock>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>sasl.username</code>
-              </TableDataCell>
-              <TableDataCell>
-                See{" "}
-                <TrackedLink
-                  trackName="AccessingPlatformCredentials"
-                  href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Accessing platform credentials
-                </TrackedLink>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>sasl.password</code>
-              </TableDataCell>
-              <TableDataCell>
-                See{" "}
-                <TrackedLink
-                  trackName="AccessingPlatformCredentials"
-                  href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Accessing platform credentials
-                </TrackedLink>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>group.id</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>{capabilityId}.application-name</TextBlock> (
-                <i>example</i>)
-              </TableDataCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-        <Text>
-          <i>
-            <strong>Please note</strong> <br />
-            That <TextBlock>group.id</TextBlock> <strong>must</strong> be
-            prefixed with the capability id (
-            <TextBlock>{capabilityId}</TextBlock>) followed by a dot (
-            <TextBlock>.</TextBlock>), before the rest of the consumer group id,
-            like in the example above.
-          </i>
-        </Text>
-        <Text styledAs={"smallHeadline"}>
-          In order to connect to the Schema Registry, please use the following
-          configuration:
-        </Text>
+          <Text styledAs={"smallHeadline"}>
+            In order to connect to the Schema Registry, please use the following
+            configuration:
+          </Text>
 
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Key</TableHeaderCell>
-              <TableHeaderCell>Value</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableDataCell>
-                <code>schema.registry.url</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>{access.schemaRegistryUrl}</TextBlock>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>schema.registry.basic.auth.credentials.source</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>USER_INFO</TextBlock>
-              </TableDataCell>
-            </TableRow>
-            <TableRow>
-              <TableDataCell>
-                <code>schema.registry.basic.auth.user.info</code>
-              </TableDataCell>
-              <TableDataCell>
-                <TextBlock>username:password</TextBlock> (See{" "}
-                <TrackedLink
-                  trackName="AccessingPlatformCredentials"
-                  href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Accessing platform credentials
-                </TrackedLink>
-                )
-              </TableDataCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Modal>
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th className="border px-3 py-2 text-left font-bold">Key</th>
+                <th className="border px-3 py-2 text-left font-bold">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>schema.registry.url</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>{access.schemaRegistryUrl}</TextBlock>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>schema.registry.basic.auth.credentials.source</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>USER_INFO</TextBlock>
+                </td>
+              </tr>
+              <tr>
+                <td className="border px-3 py-2 break-all">
+                  <code>schema.registry.basic.auth.user.info</code>
+                </td>
+                <td className="border px-3 py-2">
+                  <TextBlock>username:password</TextBlock> (See{" "}
+                  <TrackedLink
+                    trackName="AccessingPlatformCredentials"
+                    rybbitEvent={{
+                      name: "resource:credentials:opened",
+                      properties: { kind: "kafka" },
+                    }}
+                    href="https://wiki.dfds.cloud/en/playbooks/aws-sso#accessing-platform-credentials"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Accessing platform credentials
+                  </TrackedLink>
+                  )
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAccess(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {showDialog && (
         <NewTopicDialog
@@ -285,9 +272,13 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
       )}
 
       {hasWriteAccess && (
-        <ButtonStack align="left">
+        <div className="flex gap-2 flex-wrap items-center mb-4">
           <TrackedButton
             trackName="TopicCreate-ShowDialog"
+            rybbitEvent={{
+              name: "kafka:topic:create-dialog-opened",
+              properties: { capability_id: id, cluster_id: cluster.id },
+            }}
             size="small"
             onClick={handleAddTopicToClusterClicked}
           >
@@ -295,6 +286,10 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
           </TrackedButton>
           <TrackedButton
             trackName="Topic-HowToConnect"
+            rybbitEvent={{
+              name: "kafka:how-to-connect:opened",
+              properties: { cluster_id: cluster.id },
+            }}
             size="small"
             variation="outlined"
             submitting={isLoadingCredentials}
@@ -302,47 +297,53 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
           >
             How to connect?
           </TrackedButton>
-        </ButtonStack>
+        </div>
       )}
 
-      <br />
-
-      <TopicList
-        name="Public Topics"
-        topics={publicTopics}
-        clusterId={cluster.id}
-        selectedTopic={selectedKafkaTopic}
-        onTopicClicked={handleTopicClicked}
-        schemas={schemas}
-      />
-      <br />
+      {hasWriteAccess && (
+        <TopicList
+          name="Public Topics"
+          topics={publicTopics}
+          clusterId={cluster.id}
+          selectedTopic={selectedKafkaTopic}
+          onTopicClicked={handleTopicClicked}
+          schemas={schemas}
+        />
+      )}
 
       {hasWriteAccess && (
-        <>
-          <TopicList
-            name="Private Topics"
-            topics={privateTopics}
-            clusterId={cluster.id}
-            selectedTopic={selectedKafkaTopic}
-            onTopicClicked={handleTopicClicked}
-            schemas={schemas}
-          />
-          <br />
-        </>
+        <TopicList
+          name="Private Topics"
+          topics={privateTopics}
+          clusterId={cluster.id}
+          selectedTopic={selectedKafkaTopic}
+          onTopicClicked={handleTopicClicked}
+          schemas={schemas}
+        />
       )}
 
       {canRequestAccess && (
-        <ButtonStack align="right">
-          <TrackedButton
-            trackName="KafkaCluster-RequestClusterAccess"
-            size="small"
-            submitting={isRequestingAccess}
-            onClick={handleRequestAccess}
-          >
-            Request Access
-          </TrackedButton>
-        </ButtonStack>
+        <div className="flex flex-col gap-2 mt-3">
+          <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6]">
+            You don&apos;t currently have access to this Kafka cluster. Request
+            access to view topics and connect to the cluster.
+          </p>
+          <div>
+            <TrackedButton
+              trackName="KafkaCluster-RequestClusterAccess"
+              rybbitEvent={{
+                name: "kafka:cluster-access:requested",
+                properties: { capability_id: id, cluster_id: cluster.id },
+              }}
+              size="small"
+              submitting={isRequestingAccess}
+              onClick={handleRequestAccess}
+            >
+              Request Access
+            </TrackedButton>
+          </div>
+        </div>
       )}
-    </PageSection>
+    </div>
   );
 }

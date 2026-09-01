@@ -1,7 +1,5 @@
-import { H1 } from "@dfds-ui/react-components";
-import { Text } from "@dfds-ui/typography";
-import { Container, Column, DfdsLoader } from "@dfds-ui/react-components";
 import NotFound from "./NotFound";
+import { Spinner } from "@/components/ui/spinner";
 import styles from "./page.module.css";
 
 export default function Page({
@@ -11,7 +9,11 @@ export default function Page({
   children,
 }) {
   if (isLoading) {
-    return <DfdsLoader showMenu={true} label="Loading..." />;
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Spinner size="lg" />
+      </div>
+    );
   }
 
   if (isNotFound) {
@@ -19,25 +21,9 @@ export default function Page({
   }
 
   return (
-    <>
-      {title && (
-        <>
-          <br />
-          <br />
-        </>
-      )}
-
-      <Container>
-        <Column m={12} l={12} xl={12} xxl={12}>
-          {title && (
-            <Text as={H1} styledAs="heroHeadline" className={styles.pageTitle}>
-              {title}
-            </Text>
-          )}
-
-          {children}
-        </Column>
-      </Container>
-    </>
+    <div className="p-4 sm:p-8">
+      {title && <h1 className={styles.pageTitle}>{title}</h1>}
+      {children}
+    </div>
   );
 }

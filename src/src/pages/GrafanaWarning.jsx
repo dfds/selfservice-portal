@@ -1,4 +1,4 @@
-import { Text } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
 import { TrackedLink } from "@/components/Tracking";
 
 export default function GrafanaWarning() {
@@ -37,6 +37,6 @@ const warningStyle = {
 
 const headerStyle = {
   fontWeight: "bold",
-  fontSize: "16px",
+  fontSize: "1rem",
   marginBottom: "5px",
 };

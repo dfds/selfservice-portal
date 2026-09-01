@@ -1,13 +1,19 @@
 import React, { useEffect, useContext, useState } from "react";
-import PageSection from "components/PageSection";
-import { Text } from "@dfds-ui/react-components";
+import { X } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import { useToast } from "@/context/ToastContext";
+import { TabbedPageSection } from "@/components/PageSection";
 import { TrackedButton, TrackedLink } from "@/components/Tracking";
 import SelectedCapabilityContext from "../SelectedCapabilityContext";
-import styles from "./capabilityTags.module.css";
 import Select from "react-select";
 import PreAppContext from "@/preAppContext";
 import { useUpdateCapabilityMetadata } from "@/state/remote/queries/capabilities";
 import { useQueryClient } from "@tanstack/react-query";
+import { Banner } from "@/components/ui/banner";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { IconButton } from "@/components/ui/IconButton";
+import { UnsavedChangesPrompt } from "@/components/UnsavedChangesPrompt";
+import { useRybbit } from "@/RybbitContext";
 import {
   ENUM_COSTCENTER_OPTIONS,
   getBusinessCapabilitiesOptions,
@@ -19,12 +25,117 @@ import {
   ENUM_ENV_OPTIONS,
 } from "@/constants/tagConstants";
 
-function TagsForm({ canEditTags, onSubmit, defaultValues }) {
-  const [formHasError, setFormHasError] = useState(false);
-  const [costCenterError, setCostCenterError] = useState(undefined);
-  const [businessCapabilityError, setBusinessCapabilityError] =
-    useState(undefined);
-  const [isDirty, setIsDirty] = useState(false);
+function getSelectStyles(isDark) {
+  return {
+    control: (base) => ({
+      ...base,
+      minHeight: "30px",
+      height: "30px",
+      fontSize: "0.75rem",
+      fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
+      border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
+      boxShadow: "none",
+      borderRadius: "5px",
+      backgroundColor: isDark ? "#0f172a" : "#ffffff",
+      "&:hover": { borderColor: isDark ? "#60a5fa" : "#0e7cc1" },
+    }),
+    valueContainer: (base) => ({ ...base, padding: "0 8px" }),
+    indicatorsContainer: (base) => ({ ...base, height: "30px" }),
+    menu: (base) => ({
+      ...base,
+      fontSize: "0.75rem",
+      fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
+      backgroundColor: isDark ? "#1e293b" : "#ffffff",
+      border: isDark ? "1px solid #334155" : undefined,
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    singleValue: (base) => ({
+      ...base,
+      color: isDark ? "#e2e8f0" : "#002b45",
+      fontWeight: 500,
+    }),
+    placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
+    input: (base) => ({
+      ...base,
+      fontSize: "1rem",
+      color: isDark ? "#e2e8f0" : "#002b45",
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? isDark
+          ? "#1d4ed8"
+          : "#0e7cc1"
+        : state.isFocused
+        ? isDark
+          ? "#0f172a"
+          : "#f2f2f2"
+        : isDark
+        ? "#1e293b"
+        : "#ffffff",
+      color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
+    }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      backgroundColor: isDark ? "#334155" : "#d9dcde",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: isDark ? "#64748b" : "#afafaf",
+    }),
+  };
+}
+
+const selectPortalProps = {
+  menuPortalTarget: document.body,
+  menuPosition: "fixed",
+};
+
+function TagField({ label, description, error, required, children }) {
+  return (
+    <div className="flex flex-col @[626px]:flex-row @[626px]:items-start py-3 border-b border-[#eeeeee] dark:border-[#1e2d3d] last:border-0 gap-2 @[626px]:gap-4">
+      <div className="@[626px]:w-[220px] @[626px]:flex-shrink-0">
+        <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
+          {label}
+          {required && (
+            <span
+              title="Required for compliance"
+              aria-label="Required for compliance"
+              className="text-[#be1e2d] dark:text-[#f87171] font-semibold"
+            >
+              {" *"}
+            </span>
+          )}
+        </div>
+        {description && (
+          <div className="text-[0.6875rem] text-[#afafaf] dark:text-slate-500 leading-[1.4] mt-0.5">
+            {description}
+          </div>
+        )}
+      </div>
+      <div className="flex-1 @[626px]:flex @[626px]:justify-end">
+        <div className="w-full @[626px]:w-[390px]">
+          {children}
+          {error && (
+            <div className="font-mono text-[0.625rem] text-[#be1e2d] mt-1">
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TagsForm({
+  canEditTags,
+  onSubmit,
+  onDirtyChange,
+  defaultValues,
+  isPending = false,
+}) {
+  const { isDark } = useTheme();
+  const selectStyles = getSelectStyles(isDark);
   const [selectedCostCenterOption, setSelectedCostCenterOption] =
     useState(undefined);
   const [
@@ -45,13 +156,26 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     setSelectedCapabilityContainsAIOption,
   ] = useState(undefined);
 
-  useEffect(() => {
-    if (costCenterError) {
-      setFormHasError(true);
-    } else {
-      setFormHasError(false);
-    }
-  }, [costCenterError]);
+  const requiredErrors = {
+    "dfds.cost.centre": !selectedCostCenterOption
+      ? "A cost centre must be set"
+      : undefined,
+    "dfds.businessCapability": !selectedBusinessCapabilityOption
+      ? "A Business Capability must be set"
+      : undefined,
+    "dfds.env": !selectedEnvOption ? "An environment must be set" : undefined,
+    "dfds.data.classification": !selectedClassificationOption
+      ? "Data classification must be set"
+      : undefined,
+    "dfds.service.criticality": !selectedCriticalityOption
+      ? "Service criticality must be set"
+      : undefined,
+    "dfds.service.availability": !selectedAvailabilityOption
+      ? "Service availability must be set"
+      : undefined,
+  };
+
+  const formHasError = Object.values(requiredErrors).some(Boolean);
 
   // Auto-select the only business capability option if there is just one
   useEffect(() => {
@@ -68,22 +192,6 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
       }
     }
   }, [selectedCostCenterOption, selectedBusinessCapabilityOption]);
-
-  useEffect(() => {
-    if (!selectedCostCenterOption) {
-      setCostCenterError("A cost center must be set");
-    } else {
-      setCostCenterError(undefined);
-    }
-  }, [selectedCostCenterOption]);
-
-  useEffect(() => {
-    if (!selectedBusinessCapabilityOption) {
-      setBusinessCapabilityError("A Business Capability must be set");
-    } else {
-      setBusinessCapabilityError(undefined);
-    }
-  }, [selectedBusinessCapabilityOption]);
 
   useEffect(() => {
     if (defaultValues) {
@@ -168,249 +276,566 @@ function TagsForm({ canEditTags, onSubmit, defaultValues }) {
     return data;
   };
 
+  // Derive dirty by comparing the current selection against the saved values, so
+  // reverting an edit clears the unsaved-changes indicator.
+  const currentTags = translateToTags();
+  const isDirty = Object.keys(currentTags).some(
+    (key) => (currentTags[key] ?? "") !== (defaultValues?.[key] ?? ""),
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  // Restore every field to the saved values, clearing any unsaved edits
+  // (including fields the user set that had no saved value).
+  const resetToDefaults = () => {
+    const values = defaultValues || {};
+    // Use null (not undefined) for empty fields: react-select treats an
+    // undefined `value` as uncontrolled and keeps the stale selection.
+    setSelectedCostCenterOption(
+      ENUM_COSTCENTER_OPTIONS.find(
+        (o) => o.value === values["dfds.cost.centre"],
+      ) || null,
+    );
+    const costCentre = values["dfds.cost.centre"];
+    setSelectedBusinessCapabilityOption(
+      costCentre
+        ? getBusinessCapabilitiesOptions(costCentre).find(
+            (o) => o.value === values["dfds.businessCapability"],
+          ) || null
+        : null,
+    );
+    setSelectedClassificationOption(
+      ENUM_CLASSIFICATION_OPTIONS.find(
+        (o) => o.value === values["dfds.data.classification"],
+      ) || null,
+    );
+    setSelectedCriticalityOption(
+      ENUM_CRITICALITY_OPTIONS.find(
+        (o) => o.value === values["dfds.service.criticality"],
+      ) || null,
+    );
+    setSelectedAvailabilityOption(
+      ENUM_AVAILABILITY_OPTIONS.find(
+        (o) => o.value === values["dfds.service.availability"],
+      ) || null,
+    );
+    setSelectedAzureRGUsageOption(
+      ENUM_AZURERG_USAGE_OPTIONS.find(
+        (o) => o.value === values["dfds.azure.purpose"],
+      ) || null,
+    );
+    setSelectedEnvOption(
+      ENUM_ENV_OPTIONS.find((o) => o.value === values["dfds.env"]) || null,
+    );
+    setSelectedCapabilityContainsAIOption(
+      ENUM_CAPABILITY_CONTAINS_AI_OPTIONS.find(
+        (o) => o.value === values["dfds.capability.contains-ai"],
+      ) || null,
+    );
+  };
+
   return (
     <>
       {canEditTags && formHasError && (
-        <Text className={`${styles.error} ${styles.center}`}>
+        <div className="mb-3 font-mono text-[0.625rem] text-[#be1e2d] tracking-[0.04em]">
           Some tags are not compliant. Please correct them and resubmit.
-        </Text>
+        </div>
       )}
 
-      {/* Cost Center */}
-      <div>
-        <label className={styles.label}>Cost Center:</label>
-        <span>
-          Required for internal analysis and cost aggregation tools such as
-          FinOut.
-        </span>
-        <Select
-          options={ENUM_COSTCENTER_OPTIONS}
-          value={selectedCostCenterOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedCostCenterOption(e);
-            setSelectedBusinessCapabilityOption(null); // force dropdown to show placeholder
-            setIsDirty(true);
-            setBusinessCapabilityError("A Business Capability must be set");
-          }}
-        />
-        <div className={styles.errorContainer}>
-          {canEditTags && costCenterError && (
-            <span className={styles.error}>{costCenterError}</span>
-          )}
-        </div>
+      <div className="mb-3 font-mono text-[0.625rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em]">
+        <span className="text-[#be1e2d] dark:text-[#f87171] font-semibold">
+          *
+        </span>{" "}
+        Required for compliance
       </div>
 
-      {/* Business Capability */}
-      <div>
-        <label className={styles.label}>Business Capability:</label>
-        <span>Select the Business Capability for this Cost Center.</span>
-        <Select
-          options={getBusinessCapabilitiesOptions(
-            selectedCostCenterOption?.value,
-          )}
-          value={selectedBusinessCapabilityOption ?? null}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          placeholder="Select..."
-          onChange={(e) => {
-            setSelectedBusinessCapabilityOption(e);
-            setIsDirty(true);
-          }}
-        />
-        <div className={styles.errorContainer}>
-          {canEditTags && businessCapabilityError && (
-            <span className={styles.error}>{businessCapabilityError}</span>
-          )}
-        </div>
+      <div className="tag-list @container">
+        <TagField
+          label="dfds.cost.centre"
+          required
+          description="Required for internal analysis and cost aggregation tools such as FinOut."
+          error={canEditTags ? requiredErrors["dfds.cost.centre"] : undefined}
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_COSTCENTER_OPTIONS}
+            value={selectedCostCenterOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedCostCenterOption(e);
+              setSelectedBusinessCapabilityOption(null);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.businessCapability"
+          required
+          description="If in doubt, contact your enterprise architect"
+          error={
+            canEditTags ? requiredErrors["dfds.businessCapability"] : undefined
+          }
+        >
+          <Select
+            {...selectPortalProps}
+            options={getBusinessCapabilitiesOptions(
+              selectedCostCenterOption?.value,
+            )}
+            value={selectedBusinessCapabilityOption ?? null}
+            isDisabled={!canEditTags}
+            placeholder="Select..."
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedBusinessCapabilityOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.env"
+          required
+          description="Select the environment for this capability."
+          error={canEditTags ? requiredErrors["dfds.env"] : undefined}
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_ENV_OPTIONS}
+            value={selectedEnvOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedEnvOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.data.classification"
+          required
+          description={
+            <>
+              Guidance:{" "}
+              <a
+                href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-Data-Confidentiality"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              >
+                Understand Classification
+              </a>
+            </>
+          }
+          error={
+            canEditTags ? requiredErrors["dfds.data.classification"] : undefined
+          }
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_CLASSIFICATION_OPTIONS}
+            value={selectedClassificationOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedClassificationOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.service.criticality"
+          required
+          description={
+            <>
+              Guidance:{" "}
+              <a
+                href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Criticality"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              >
+                Understand Criticality
+              </a>
+            </>
+          }
+          error={
+            canEditTags ? requiredErrors["dfds.service.criticality"] : undefined
+          }
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_CRITICALITY_OPTIONS}
+            value={selectedCriticalityOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedCriticalityOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.service.availability"
+          required
+          description={
+            <>
+              Guidance:{" "}
+              <a
+                href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Availability"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              >
+                Understand Availability
+              </a>
+            </>
+          }
+          error={
+            canEditTags
+              ? requiredErrors["dfds.service.availability"]
+              : undefined
+          }
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_AVAILABILITY_OPTIONS}
+            value={selectedAvailabilityOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedAvailabilityOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.azure.purpose"
+          description={
+            <>
+              If using Azure Resource Groups, please provide a reason for using
+              it. See:{" "}
+              <a
+                href="https://dfds.sharepoint.com/sites/GroupIT_Architecture/Lists/TEST%20%20Architecture%20Decision%20Record/DispForm.aspx?ID=5&e=M0gIY9"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+              >
+                cloud selection guidance
+              </a>
+            </>
+          }
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_AZURERG_USAGE_OPTIONS}
+            value={selectedAzureRGUsageOption ?? null}
+            isDisabled={!canEditTags}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedAzureRGUsageOption(e);
+            }}
+          />
+        </TagField>
+
+        <TagField
+          label="dfds.capability.contains-ai"
+          description="Please indicate whether this capability contains AI services. Required for compliance and monitoring."
+        >
+          <Select
+            {...selectPortalProps}
+            options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
+            value={selectedCapabilityContainsAIOption ?? null}
+            styles={selectStyles}
+            onChange={(e) => {
+              setSelectedCapabilityContainsAIOption(e);
+            }}
+          />
+        </TagField>
       </div>
 
-      {/* Environment Tag */}
-      <div>
-        <label className={styles.label}>Environment:</label>
-        <span>Select the environment for this capability.</span>
-        <Select
-          options={ENUM_ENV_OPTIONS}
-          value={selectedEnvOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedEnvOption(e);
-            setIsDirty(true);
+      <div className="mt-4 flex items-center gap-2">
+        <TrackedButton
+          trackName="CapabilityTags-Submit"
+          size="small"
+          variation="outlined"
+          disabled={!canEditTags || !isDirty || isPending}
+          onClick={() => {
+            onSubmit(translateToTags());
           }}
-        />
-        <div className={styles.errorContainer}></div>
+        >
+          {isPending ? "Submitting..." : "Submit"}
+        </TrackedButton>
+        <TrackedButton
+          trackName="CapabilityTags-Reset"
+          size="small"
+          variation="link"
+          disabled={!canEditTags || !isDirty || isPending}
+          onClick={resetToDefaults}
+        >
+          Discard
+        </TrackedButton>
       </div>
-
-      {/* Data Classification */}
-      <div>
-        <label className={styles.label}>Data Classification:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-Data-Confidentiality"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Classification
-          </a>
-        </span>
-        <Select
-          options={ENUM_CLASSIFICATION_OPTIONS}
-          value={selectedClassificationOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedClassificationOption(e);
-            setIsDirty(true);
-          }}
-        />
-
-        <div className={styles.errorContainer}></div>
-      </div>
-
-      {/* Service Criticality */}
-      <div>
-        <label className={styles.label}>Service Criticality:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Criticality"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Criticality
-          </a>
-        </span>
-        <Select
-          options={ENUM_CRITICALITY_OPTIONS}
-          value={selectedCriticalityOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedCriticalityOption(e);
-            setIsDirty(true);
-          }}
-        />
-
-        <div className={styles.errorContainer}></div>
-      </div>
-
-      {/* Service Availability */}
-      <div>
-        <label className={styles.label}>Service Availability:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Availability"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Availability
-          </a>
-        </span>
-        <Select
-          options={ENUM_AVAILABILITY_OPTIONS}
-          value={selectedAvailabilityOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedAvailabilityOption(e);
-            setIsDirty(true);
-          }}
-        />
-
-        <div className={styles.errorContainer}></div>
-      </div>
-
-      {/* Azure Resource Group use case */}
-      <div>
-        <label className={styles.label}>
-          Azure Resource Group reason for use:
-        </label>
-        <span>
-          Guidance: If using Azure Resource Groups, please provide a reason for
-          using it. This is required for requesting Azure Resource Groups. See:{" "}
-          <a
-            href="https://dfds.sharepoint.com/sites/GroupIT_Architecture/Lists/TEST%20%20Architecture%20Decision%20Record/DispForm.aspx?ID=5&e=M0gIY9"
-            target="_blank"
-            rel="noreferrer"
-          >
-            cloud selection guidance
-          </a>
-        </span>
-        <Select
-          options={ENUM_AZURERG_USAGE_OPTIONS}
-          value={selectedAzureRGUsageOption}
-          className={styles.input}
-          isDisabled={!canEditTags}
-          onChange={(e) => {
-            setSelectedAzureRGUsageOption(e);
-            setIsDirty(true);
-          }}
-        />
-
-        <div className={styles.errorContainer}></div>
-      </div>
-
-      {/* Capability AI Usage Claim */}
-      <div>
-        <label className={styles.label}>
-          Does this capability provide AI services
-        </label>
-        <span>
-          Guidance: Please indicate whether this capability contains AI
-          services. This information is important for compliance and monitoring
-          purposes.
-        </span>
-        <Select
-          options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
-          value={selectedCapabilityContainsAIOption}
-          className={styles.input}
-          onChange={(e) => {
-            setSelectedCapabilityContainsAIOption(e);
-            setIsDirty(true);
-          }}
-        />
-
-        <div className={styles.errorContainer}></div>
-      </div>
-
-      {/* Submit Button */}
-      <TrackedButton
-        trackName="CapabilityTags-Submit"
-        size="small"
-        variation="outlined"
-        disabled={!canEditTags || formHasError || !isDirty}
-        onClick={() => {
-          onSubmit(translateToTags());
-          setIsDirty(false);
-        }}
-      >
-        Submit
-      </TrackedButton>
     </>
   );
 }
 
-export function CapabilityTagsPageSection({ anchorId }) {
+const CUSTOM_TAG_PREFIX = "dfds.other.";
+
+function TabLabel({ children, dirty }) {
   return (
-    <PageSection id={anchorId} headline="Capability Tags">
-      <CapabilityTags />
-    </PageSection>
+    <span className="inline-flex items-center gap-1.5">
+      {children}
+      {dirty && (
+        <span
+          title="Unsaved changes"
+          aria-label="Unsaved changes"
+          className="inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#ed8800]"
+        />
+      )}
+    </span>
   );
 }
 
-export function CapabilityTags() {
+const customInputClass =
+  "w-full h-[30px] px-2 font-mono text-[0.75rem] rounded-[5px] border border-[#d9dcde] dark:border-[#334155] bg-white dark:bg-[#0f172a] text-[#002b45] dark:text-[#e2e8f0] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] focus:outline-none focus:border-[#0e7cc1] dark:focus:border-[#60a5fa]";
+
+function CustomTagsForm({
+  existingTags,
+  canEditTags,
+  onSubmit,
+  onDirtyChange,
+  isPending = false,
+}) {
+  const [rows, setRows] = useState([]);
+  const [newKey, setNewKey] = useState("");
+  const [newValue, setNewValue] = useState("");
+  const [addError, setAddError] = useState("");
+
+  // The custom tags saved on the capability (dfds.other.* keys, normalised to
+  // strings) - the baseline the current rows are compared against for dirtiness.
+  const initialCustom = Object.fromEntries(
+    Object.entries(existingTags || {})
+      .filter(([key]) => key.startsWith(CUSTOM_TAG_PREFIX))
+      .map(([key, value]) => [key, value == null ? "" : String(value)]),
+  );
+
+  // Initialise (and refresh after save) rows from the capability metadata.
+  useEffect(() => {
+    setRows(
+      Object.entries(initialCustom).map(([key, value], i) => ({
+        id: i,
+        key,
+        value,
+      })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingTags]);
+
+  // Derive dirty by comparing the current rows against the saved custom tags, so
+  // reverting edits (or adding then removing a tag) clears the indicator.
+  const currentCustom = Object.fromEntries(
+    rows.map((row) => [row.key, row.value]),
+  );
+  const initialKeys = Object.keys(initialCustom);
+  const currentKeys = Object.keys(currentCustom);
+  const isDirty =
+    initialKeys.length !== currentKeys.length ||
+    currentKeys.some((key) => currentCustom[key] !== initialCustom[key]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  // Restore rows to the saved custom tags, discarding edits, additions and
+  // removals as well as any in-progress new-tag input.
+  const resetRows = () => {
+    setRows(
+      Object.entries(initialCustom).map(([key, value], i) => ({
+        id: i,
+        key,
+        value,
+      })),
+    );
+    setNewKey("");
+    setNewValue("");
+    setAddError("");
+  };
+
+  const updateRowValue = (id, value) => {
+    setRows((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, value } : row)),
+    );
+  };
+
+  const removeRow = (id) => {
+    setRows((prev) => prev.filter((row) => row.id !== id));
+  };
+
+  const addRow = () => {
+    const trimmed = newKey.trim();
+    if (!trimmed) {
+      setAddError("Enter a tag name.");
+      return;
+    }
+    const fullKey = CUSTOM_TAG_PREFIX + trimmed;
+    if (rows.some((row) => row.key === fullKey)) {
+      setAddError("A custom tag with this name already exists.");
+      return;
+    }
+    setRows((prev) => [
+      ...prev,
+      {
+        id: prev.length ? Math.max(...prev.map((r) => r.id)) + 1 : 0,
+        key: fullKey,
+        value: newValue,
+      },
+    ]);
+    setNewKey("");
+    setNewValue("");
+    setAddError("");
+  };
+
+  return (
+    <div className="@container">
+      <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+        Custom tags let you attach free-text metadata to this capability under
+        the <span className="font-mono">{CUSTOM_TAG_PREFIX}</span> namespace.
+        Use them for capability-specific information that isn&apos;t covered by
+        the authoritative tags.
+      </p>
+
+      <div className="tag-list">
+        {rows.map((row) => (
+          <TagField key={row.id} label={row.key}>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                className={customInputClass}
+                value={row.value}
+                disabled={!canEditTags}
+                placeholder="Value"
+                onChange={(e) => updateRowValue(row.id, e.target.value)}
+              />
+              {canEditTags && (
+                <IconButton
+                  size="sm"
+                  colorScheme="destructive"
+                  aria-label={`Remove ${row.key}`}
+                  onClick={() => removeRow(row.id)}
+                >
+                  <X size={14} />
+                </IconButton>
+              )}
+            </div>
+          </TagField>
+        ))}
+
+        {rows.length === 0 && (
+          <EmptyState>
+            {canEditTags
+              ? "No custom tags yet. Add one below."
+              : "No custom tags."}
+          </EmptyState>
+        )}
+      </div>
+
+      {canEditTags && (
+        <div className="mt-4 pt-4 border-t border-[#eeeeee] dark:border-[#1e2d3d]">
+          <div className="font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 tracking-[0.04em] mb-2">
+            Add custom tag
+          </div>
+          <div className="flex flex-col gap-2 @[626px]:flex-row @[626px]:items-center">
+            <div className="flex items-center flex-1 rounded-[5px] border border-[#d9dcde] dark:border-[#334155] bg-white dark:bg-[#0f172a] focus-within:border-[#0e7cc1] dark:focus-within:border-[#60a5fa] overflow-hidden">
+              <span className="font-mono text-[0.75rem] text-[#afafaf] dark:text-slate-500 pl-2 pr-0.5 whitespace-nowrap select-none">
+                {CUSTOM_TAG_PREFIX}
+              </span>
+              <input
+                type="text"
+                className="w-full h-[30px] pr-2 font-mono text-[0.75rem] bg-transparent text-[#002b45] dark:text-[#e2e8f0] placeholder:text-[#afafaf] dark:placeholder:text-[#64748b] focus:outline-none"
+                value={newKey}
+                placeholder="myCustomTag"
+                onChange={(e) => {
+                  setNewKey(e.target.value);
+                  setAddError("");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") addRow();
+                }}
+              />
+            </div>
+            <input
+              type="text"
+              className={`${customInputClass} @[626px]:flex-1`}
+              value={newValue}
+              placeholder="Value"
+              onChange={(e) => setNewValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addRow();
+              }}
+            />
+            <TrackedButton
+              trackName="CapabilityTags-AddCustom"
+              size="small"
+              variation="outlined"
+              disabled={!newKey.trim()}
+              onClick={addRow}
+            >
+              Add
+            </TrackedButton>
+          </div>
+          {addError && (
+            <div className="font-mono text-[0.625rem] text-[#be1e2d] mt-1">
+              {addError}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center gap-2">
+        <TrackedButton
+          trackName="CapabilityTags-SubmitCustom"
+          size="small"
+          variation="outlined"
+          disabled={!canEditTags || !isDirty || isPending}
+          onClick={() => {
+            onSubmit(rows);
+          }}
+        >
+          {isPending ? "Submitting..." : "Submit"}
+        </TrackedButton>
+        <TrackedButton
+          trackName="CapabilityTags-ResetCustom"
+          size="small"
+          variation="link"
+          disabled={!canEditTags || !isDirty || isPending}
+          onClick={resetRows}
+        >
+          Discard
+        </TrackedButton>
+      </div>
+    </div>
+  );
+}
+
+export function CapabilityTagsPageSection({ anchorId }) {
+  return <CapabilityTags anchorId={anchorId} />;
+}
+
+export function CapabilityTags({ anchorId }) {
   const { metadata, links, details } = useContext(SelectedCapabilityContext);
   const updateCapabilityMetadata = useUpdateCapabilityMetadata();
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const queryClient = useQueryClient();
+  const toast = useToast();
+  const { trackEvent } = useRybbit();
 
   const [canEditTags, setCanEditTags] = useState(false);
-
   const [existingTags, setExistingTags] = useState({});
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [authoritativeDirty, setAuthoritativeDirty] = useState(false);
+  const [customDirty, setCustomDirty] = useState(false);
 
   useEffect(() => {
     if (links && (links?.setRequiredMetadata?.allow || []).includes("POST")) {
@@ -424,12 +849,17 @@ export function CapabilityTags() {
     }
   }, [metadata]);
 
-  const handleSubmit = (data) => {
+  // The backend replaces the entire metadata blob on save, so every submit must
+  // send the full object. Each tab merges its own changes onto the existing tags.
+  const submitMetadata = (fullMetadata) => {
+    trackEvent("capability:metadata:submitted", {
+      capability_id: details?.id,
+    });
     updateCapabilityMetadata.mutate(
       {
         capabilityDefinition: details,
         payload: {
-          jsonMetadata: data,
+          jsonMetadata: fullMetadata,
         },
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       },
@@ -438,36 +868,117 @@ export function CapabilityTags() {
           queryClient.invalidateQueries({
             queryKey: ["capabilities", "metadata", details?.id],
           });
+          setShowSuccess(true);
+          setTimeout(() => setShowSuccess(false), 3000);
+          trackEvent("capability:metadata:succeeded", {
+            capability_id: details?.id,
+          });
+        },
+        onError: (err) => {
+          toast.error("Could not save tags");
+          trackEvent("capability:metadata:failed", {
+            capability_id: details?.id,
+            error_kind: err?.name || "unknown",
+          });
         },
       },
     );
   };
 
+  const handleAuthoritativeSubmit = (authoritativeTags) => {
+    // Preserve all custom (and any other) keys, overlay the authoritative values.
+    submitMetadata({ ...existingTags, ...authoritativeTags });
+  };
+
+  const handleCustomSubmit = (rows) => {
+    // Keep everything except custom keys, then replace the custom set with the
+    // current rows (handles edits, additions and removals).
+    const base = Object.fromEntries(
+      Object.entries(existingTags).filter(
+        ([key]) => !key.startsWith(CUSTOM_TAG_PREFIX),
+      ),
+    );
+    const custom = Object.fromEntries(rows.map((row) => [row.key, row.value]));
+    submitMetadata({ ...base, ...custom });
+  };
+
+  const headlineChildren = (
+    <TrackedLink
+      trackName="TaggingPolicy"
+      href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
+      target="_blank"
+      rel="noreferrer"
+      className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+    >
+      Tagging Policy →
+    </TrackedLink>
+  );
+
+  const tabs = {
+    authoritative: <TabLabel dirty={authoritativeDirty}>Standard</TabLabel>,
+    custom: <TabLabel dirty={customDirty}>Custom</TabLabel>,
+  };
+
+  const tabsContent = {
+    authoritative: (
+      <>
+        <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-4">
+          Tagging your capability correctly helps all of us with oversight and
+          incident management. However, tagging capabilities is only the first
+          step - please remember to tag your cloud resources as well.{" "}
+          <TrackedLink
+            trackName="TaggingPolicy"
+            href={
+              "https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#0e7cc1] dark:text-[#60a5fa] no-underline hover:underline"
+          >
+            See DFDS Tagging Policy.
+          </TrackedLink>
+        </p>
+
+        <TagsForm
+          defaultValues={existingTags}
+          canEditTags={canEditTags}
+          onSubmit={handleAuthoritativeSubmit}
+          onDirtyChange={setAuthoritativeDirty}
+          isPending={updateCapabilityMetadata.isPending}
+        />
+      </>
+    ),
+    custom: (
+      <CustomTagsForm
+        existingTags={existingTags}
+        canEditTags={canEditTags}
+        onSubmit={handleCustomSubmit}
+        onDirtyChange={setCustomDirty}
+        isPending={updateCapabilityMetadata.isPending}
+      />
+    ),
+  };
+
   return (
     <>
-      <Text>
-        Tagging your capability correctly helps all of us with oversight and
-        incident management.
-      </Text>
-      <Text>
-        However, tagging capabilities is only the first step; Please remember to
-        tag your cloud resources as well.
-      </Text>
-      <Text>
-        <TrackedLink
-          trackName="TaggingPolicy"
-          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-          target="_blank"
-          rel="noreferrer"
-        >
-          see DFDS Tagging Policy.
-        </TrackedLink>
-      </Text>
-
-      <TagsForm
-        defaultValues={existingTags}
-        canEditTags={canEditTags}
-        onSubmit={(data) => handleSubmit(data)}
+      <UnsavedChangesPrompt
+        when={authoritativeDirty || customDirty}
+        message="You have unsaved tag changes that will be lost if you leave this page."
+      />
+      <TabbedPageSection
+        id={anchorId}
+        headline="Tags"
+        headlineChildren={headlineChildren}
+        tabs={tabs}
+        tabsContent={tabsContent}
+        keepMounted
+        footer={
+          showSuccess && (
+            <Banner variant="success" className="mt-4" countdown={3000}>
+              Tags updated successfully.
+            </Banner>
+          )
+        }
       />
     </>
   );

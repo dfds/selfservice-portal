@@ -1,138 +1,258 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { msGraphRequest, ssuRequest } from "../query";
 import { useEffect, useState, useContext } from "react";
 import PreAppContext from "@/preAppContext";
+import { fetchUserPhoto } from "@/lib/graphUtils";
+import {
+  createSsuQuery,
+  createSsuParamQuery,
+  createSsuLinkQuery,
+  createSsuMutation,
+} from "../queryFactory";
 
-const sortByName = (list) => {
-  list.sort((a, b) => a.name.localeCompare(b.name));
-};
+export function normalizeCapabilityFavourite<T extends Record<string, any>>(
+  capability: T,
+) {
+  if (!capability) {
+    return capability;
+  }
 
-export function useCapabilities() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["capabilities", "list"],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["capabilities"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    select: (data: any) => {
-      let list = data.items || [];
-      sortByName(list);
-      return list;
-    },
-    staleTime: 30000,
-  });
+  const { isFavourited, ...rest } = capability;
 
-  return query;
+  return {
+    ...rest,
+    isFavourite: capability.isFavourite ?? isFavourited === true,
+  };
 }
 
-export function useCapability(id: string) {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["capabilities", "details", id],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["capabilities", id],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-    staleTime: 30000,
-  });
+// ── Queries (factory) ────────────────────────────────────────────────────────
 
-  return query;
-}
+export const useCapabilities = createSsuQuery({
+  queryKey: ["capabilities", "list"],
+  urlSegments: ["capabilities"],
+  select: (data: any) => {
+    let list = (data.items || []).map(normalizeCapabilityFavourite);
+    list.sort((a: any, b: any) => {
+      const aFavourite = a.isFavourite === true;
+      const bFavourite = b.isFavourite === true;
+      if (aFavourite !== bFavourite) {
+        return bFavourite ? 1 : -1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+    return list;
+  },
+  staleTime: 30000,
+});
 
-export function useCapabilityAdd() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["capabilities"],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useCapability = createSsuParamQuery<string>({
+  queryKey: (id) => ["capabilities", "details", id],
+  urlSegments: (id) => ["capabilities", id],
+  select: (data: any) => normalizeCapabilityFavourite(data),
+  staleTime: 30000,
+});
 
-  return mutation;
-}
+export const useCapabilityAdd = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: () => ["capabilities"],
+});
 
-export function useCapabilityMetadata(capabilityDefinition: any) {
-  const link = capabilityDefinition?._links;
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+export const useCostCentreCompliance = createSsuParamQuery<string | null>({
+  queryKey: (costCentre) => ["compliance", "cost-centres", costCentre],
+  urlSegments: (costCentre) => ["compliance", "cost-centres", costCentre!],
+  enabled: (cc) => !!cc,
+  staleTime: 60000,
+});
 
-  const query = useQuery({
-    queryKey: ["capabilities", "metadata", capabilityDefinition?.id],
-    queryFn: async () => {
-      return ssuRequest({
-        method: "GET",
-        urlSegments: [link.metadata.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      });
-    },
-    enabled: link != null,
-  });
+export const useCostCentreComplianceDetails = createSsuParamQuery<
+  string | null
+>({
+  queryKey: (costCentre) => [
+    "compliance",
+    "cost-centres",
+    costCentre,
+    "details",
+  ],
+  urlSegments: (costCentre) => [
+    "compliance",
+    "cost-centres",
+    costCentre!,
+    "details",
+  ],
+  enabled: (cc) => !!cc,
+  staleTime: 60000,
+});
 
-  return query;
-}
+export const useCapabilityCompliance = createSsuParamQuery<string | null>({
+  queryKey: (capabilityId) => ["capabilities", "compliance", capabilityId],
+  urlSegments: (capabilityId) => ["compliance", "capabilities", capabilityId!],
+  enabled: (id) => !!id,
+  staleTime: 60000,
+});
 
-export function useUpdateCapabilityMetadata() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.capabilityDefinition?._links.metadata.href],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useRogueCapabilitiesCompliance = createSsuQuery({
+  queryKey: ["compliance", "rogue-capabilities"],
+  urlSegments: ["compliance", "rogue-capabilities"],
+  staleTime: 60000,
+});
 
-  return mutation;
-}
+export const useRogueCapabilitiesComplianceDetails = createSsuQuery({
+  queryKey: ["compliance", "rogue-capabilities", "details"],
+  urlSegments: ["compliance", "rogue-capabilities", "details"],
+  staleTime: 60000,
+});
 
-export function useUpdateRequiredCapabilityMetadata() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [
-          data.capabilityDefinition?._links.setRequiredMetadata.href,
-        ],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useOrphanedCapabilitiesCompliance = createSsuQuery({
+  queryKey: ["compliance", "orphaned-capabilities"],
+  urlSegments: ["compliance", "orphaned-capabilities"],
+  staleTime: 60000,
+});
 
-  return mutation;
-}
+export const useOrphanedCapabilitiesComplianceDetails = createSsuQuery({
+  queryKey: ["compliance", "orphaned-capabilities", "details"],
+  urlSegments: ["compliance", "orphaned-capabilities", "details"],
+  staleTime: 60000,
+});
 
-export function useLeaveCapability() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [data.capabilityDefinition?._links?.leaveCapability.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useCapabilityMetadata = createSsuLinkQuery<any>({
+  queryKey: (def) => ["capabilities", "metadata", def?.id],
+  linkHref: (def) => def?._links?.metadata?.href,
+});
 
-  return mutation;
-}
+export const useUpdateCapabilityMetadata = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [data.capabilityDefinition?._links.metadata.href],
+});
+
+export const useUpdateRequiredCapabilityMetadata = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.capabilityDefinition?._links.setRequiredMetadata.href,
+  ],
+});
+
+export const useLeaveCapability = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    data.capabilityDefinition?._links?.leaveCapability.href,
+  ],
+  payload: () => null,
+});
+
+export const useCancelCapabilityDeletion = createSsuMutation<any>({
+  method: "POST",
+  urlSegments: (data) => [
+    "capabilities",
+    data.capabilityId,
+    "canceldeletionrequest",
+  ],
+  payload: () => null,
+});
+
+export const useCapabilityAwsAccount = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["capabilities", "aws-account", capabilityId],
+  urlSegments: (capabilityId) => ["capabilities", capabilityId, "awsaccount"],
+  enabled: (id) => !!id,
+});
+
+export const useCapabilityAzureResourcesById = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["capabilities", "azure-resources", capabilityId],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "azureresources",
+  ],
+  enabled: (id) => !!id,
+});
+
+export const useCapabilityKafkaAccess = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["capabilities", "kafka-access", capabilityId],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "kafkaclusteraccess",
+  ],
+  enabled: (id) => !!id,
+});
+
+export const useCapabilityMembers = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["capabilities", "members", capabilityId],
+  urlSegments: (capabilityId) => ["capabilities", capabilityId, "members"],
+  enabled: (id) => !!id,
+  select: (data: any) => data.items || [],
+});
+
+export const useCapabilityMetadataById = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["capabilities", "metadata-raw", capabilityId],
+  urlSegments: (capabilityId) => ["capabilities", capabilityId, "metadata"],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+export const useSetCapabilityMetadata = createSsuMutation<{
+  capabilityId: string;
+  metadata: any;
+}>({
+  method: "POST",
+  urlSegments: (data) => ["capabilities", data.capabilityId, "metadata"],
+  payload: (data) => ({ JsonMetadata: data.metadata }),
+  authMode: true,
+});
+
+export const useCapabilityRequirementScore = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => [
+    "capabilities",
+    "requirement-score",
+    capabilityId,
+  ],
+  urlSegments: (capabilityId) => [
+    "capabilities",
+    capabilityId,
+    "requirement-score",
+  ],
+  authMode: true,
+  enabled: (id) => !!id,
+});
+
+export const useBypassJoinCapability = createSsuMutation<{
+  capabilityId: string;
+  userId: string;
+}>({
+  method: "POST",
+  urlSegments: (data) => ["capabilities", data.capabilityId, "join"],
+  payload: (data) => ({ userId: data.userId }),
+  authMode: true,
+});
+
+export const useRemoveCapabilityMember = createSsuMutation<{
+  capabilityId: string;
+  memberId: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => [
+    "capabilities",
+    data.capabilityId,
+    "members",
+    data.memberId,
+  ],
+  payload: () => null,
+});
+
+export const useAllCapabilitiesWithMembers = createSsuQuery({
+  queryKey: ["capabilities", "all-with-members"],
+  urlSegments: ["system", "legacy", "aad-aws-sync"],
+  authMode: true,
+  select: (data: any) => (Array.isArray(data) ? data : []),
+  staleTime: 60000,
+});
+
+// ── Manual hooks (complex queryFn) ───────────────────────────────────────────
 
 export function useCapabilityMembersDetailed(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.members;
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
-  const query = useQuery({
+  return useQuery({
     queryKey: ["capabilities", "members", "detailed", capabilityDefinition?.id],
     queryFn: async () => {
       const membersResp = await ssuRequest({
@@ -143,23 +263,14 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
       });
 
       let resps = await Promise.all(
-        membersResp.items.map(async (member) => {
-          if (!member.email) {
-            return { ...member, pictureUrl: "" };
-          }
-          let resp = await msGraphRequest({
-            method: "GET",
-            url: `https://graph.microsoft.com/v1.0/users/${member.email}/photos/96x96/$value`,
-            payload: null,
-          });
-
-          if (!resp.ok) {
-            return { ...member, pictureUrl: "" };
-          } else {
-            const blob = await resp.blob();
-            const url = window.URL || window.webkitURL;
-            return { ...member, pictureUrl: url.createObjectURL(blob) };
-          }
+        membersResp.items.map(async (member: any) => {
+          const isServicePrincipal = member.type === "service-principal";
+          return {
+            ...member,
+            pictureUrl: isServicePrincipal
+              ? null
+              : await fetchUserPhoto(member.email),
+          };
         }),
       );
 
@@ -167,15 +278,45 @@ export function useCapabilityMembersDetailed(capabilityDefinition: any) {
     },
     enabled: link != null,
   });
-
-  return query;
 }
+
+export const useAddServicePrincipalCapabilityMember = createSsuMutation<{
+  capabilityId: string;
+  servicePrincipalId: string;
+  appDisplayName?: string | null;
+}>({
+  method: "POST",
+  urlSegments: (data) => [
+    "capabilities",
+    data.capabilityId,
+    "service-principal-members",
+  ],
+  payload: (data) => ({
+    servicePrincipalId: data.servicePrincipalId,
+    appDisplayName: data.appDisplayName ?? null,
+  }),
+  authMode: true,
+});
+
+export const useAddCapabilityFavourite = createSsuMutation<{ id: string }>({
+  method: "POST",
+  urlSegments: (data) => ["capabilities", data.id, "favourite"],
+  payload: () => null,
+});
+
+export const useRemoveCapabilityFavourite = createSsuMutation<{
+  id: string;
+}>({
+  method: "DELETE",
+  urlSegments: (data) => ["capabilities", data.id, "favourite"],
+  payload: () => null,
+});
 
 export function useCapabilityMembersApplications(capabilityDefinition: any) {
   const link = capabilityDefinition?._links?.membershipApplications;
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
-  const query = useQuery({
+  return useQuery({
     queryKey: [
       "capabilities",
       "members",
@@ -191,35 +332,16 @@ export function useCapabilityMembersApplications(capabilityDefinition: any) {
       });
 
       let resps = await Promise.all(
-        membersResp.items.map(async (member) => {
-          if (!member.email) {
-            return { ...member, applicantProfilePictureUrl: "" };
-          }
-          let resp = await msGraphRequest({
-            method: "GET",
-            url: `https://graph.microsoft.com/v1.0/users/${member.email}/photos/96x96/$value`,
-            payload: null,
-          });
-
-          if (!resp.ok) {
-            return { ...member, applicantProfilePictureUrl: "" };
-          } else {
-            const blob = await resp.blob();
-            const url = window.URL || window.webkitURL;
-            return {
-              ...member,
-              applicantProfilePictureUrl: url.createObjectURL(blob),
-            };
-          }
-        }),
+        membersResp.items.map(async (member: any) => ({
+          ...member,
+          applicantProfilePictureUrl: await fetchUserPhoto(member.email),
+        })),
       );
 
       return resps;
     },
     enabled: !!link,
   });
-
-  return query;
 }
 
 export function useUserProfilePicture(upn: string) {
@@ -237,7 +359,7 @@ export function useUserProfilePicture(upn: string) {
   const [profilePicture, setProfilePicture] = useState("");
 
   useEffect(() => {
-    if (!query.data.ok) {
+    if (!query.data?.ok) {
       setProfilePicture("");
     } else {
       query.data.blob().then((data) => {
@@ -249,3 +371,24 @@ export function useUserProfilePicture(upn: string) {
 
   return { ...query, profilePicture };
 }
+
+export const useRequirementsCompliance = createSsuQuery({
+  queryKey: ["compliance", "requirements"],
+  urlSegments: ["compliance", "requirements"],
+  staleTime: 60000,
+});
+
+export const useRequirementComplianceDetails = createSsuParamQuery<
+  string | null
+>({
+  queryKey: (id) => ["compliance", "requirements", id],
+  urlSegments: (id) => ["compliance", "requirements", id!],
+  enabled: (id) => !!id,
+  staleTime: 60000,
+});
+
+export const useComplianceSummary = createSsuQuery({
+  queryKey: ["compliance", "summary"],
+  urlSegments: ["compliance", "summary"],
+  staleTime: 60000,
+});

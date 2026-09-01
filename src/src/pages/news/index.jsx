@@ -1,0 +1,529 @@
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { intlFormatDistance } from "date-fns";
+import Page from "@/components/Page";
+import { Button } from "@/components/ui/button";
+import { InfoAlert } from "@/components/ui/InfoAlert";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import PreAppContext from "@/preAppContext";
+import {
+  useNews,
+  useCreateNews,
+  useUpdateNews,
+  useDeleteNews,
+  useHighlightNews,
+} from "@/state/remote/queries/news";
+import { useMutationToast } from "@/hooks/useMutationToast";
+import { Trash2, Plus, Newspaper, Star, Pencil } from "lucide-react";
+import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
+import { TrackedButton } from "@/components/Tracking";
+import { useRybbit } from "@/RybbitContext";
+import LinkifiedText from "@/components/Text/LinkifiedText";
+
+// ── Create modal ──────────────────────────────────────────────────────────────
+
+function CreateNewsModal({ onClose }) {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [frontpageSummary, setFrontpageSummary] = useState("");
+  const [dueDate, setDueDate] = useState(
+    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+  );
+
+  const createNews = useCreateNews();
+  const { trackEvent } = useRybbit();
+  const submit = useMutationToast(createNews, {
+    invalidateKeys: [["news", "list"]],
+    successMessage: "News item created",
+    errorMessage: "Failed to create news item",
+    onSuccess: (data) => {
+      trackEvent("news:create:submitted", {
+        has_due_date: true,
+      });
+      onClose();
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title.trim() || !body.trim()) return;
+    const trimmedFrontpageSummary = frontpageSummary.trim();
+    submit({
+      payload: {
+        title: title.trim(),
+        body: body.trim(),
+        ...(trimmedFrontpageSummary
+          ? { frontpageSummary: trimmedFrontpageSummary }
+          : {}),
+        dueDate: new Date(dueDate).toISOString(),
+      },
+    });
+  };
+
+  const isValid = title.trim().length > 0 && body.trim().length > 0;
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Create news item</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter a title"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
+              required
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Content <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Write the news item content…"
+              rows={6}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Front page summary
+            </label>
+            <textarea
+              value={frontpageSummary}
+              onChange={(e) => setFrontpageSummary(e.target.value)}
+              placeholder="Optional summary shown for highlighted items on the front page…"
+              rows={3}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Relevant until
+            </label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary focus:outline-none focus:ring-2 focus:ring-action"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={createNews.isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!isValid || createNews.isPending}>
+              {createNews.isPending ? "Creating…" : "Create"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Edit modal ────────────────────────────────────────────────────────────────
+
+function EditNewsModal({ item, onClose }) {
+  const initialDueDate = item.dueDate ? item.dueDate.slice(0, 10) : "";
+  const [title, setTitle] = useState(item.title ?? "");
+  const [body, setBody] = useState(item.body ?? "");
+  const [frontpageSummary, setFrontpageSummary] = useState(
+    item.frontpageSummary ?? "",
+  );
+  const [dueDate, setDueDate] = useState(initialDueDate);
+
+  useEffect(() => {
+    setTitle(item.title ?? "");
+    setBody(item.body ?? "");
+    setFrontpageSummary(item.frontpageSummary ?? "");
+    setDueDate(item.dueDate ? item.dueDate.slice(0, 10) : "");
+  }, [item]);
+
+  const updateNews = useUpdateNews();
+  const { trackEvent } = useRybbit();
+  const submit = useMutationToast(updateNews, {
+    invalidateKeys: [
+      ["news", "list"],
+      ["news", "relevant"],
+      ["news", "details", item.id],
+    ],
+    successMessage: "News item updated",
+    errorMessage: "Failed to update news item",
+    onSuccess: () => {
+      trackEvent("news:update:submitted", { news_id: item.id });
+      onClose();
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title.trim() || !body.trim()) return;
+    const trimmedFrontpageSummary = frontpageSummary.trim();
+    submit({
+      id: item.id,
+      payload: {
+        title: title.trim(),
+        body: body.trim(),
+        ...(trimmedFrontpageSummary
+          ? { frontpageSummary: trimmedFrontpageSummary }
+          : {}),
+        dueDate: new Date(dueDate).toISOString(),
+      },
+    });
+  };
+
+  const isValid = title.trim().length > 0 && body.trim().length > 0;
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit news item</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter a title"
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action"
+              required
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Content <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Write the news item content…"
+              rows={6}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Front page summary
+            </label>
+            <textarea
+              value={frontpageSummary}
+              onChange={(e) => setFrontpageSummary(e.target.value)}
+              placeholder="Optional summary shown for highlighted items on the front page…"
+              rows={3}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-action resize-y"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
+              Relevant until
+            </label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="w-full rounded-[6px] border border-card bg-surface px-3 py-2 text-[0.8125rem] text-primary focus:outline-none focus:ring-2 focus:ring-action"
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={updateNews.isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!isValid || updateNews.isPending}>
+              {updateNews.isPending ? "Saving…" : "Save changes"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── News item row ─────────────────────────────────────────────────────────────
+
+function NewsRow({ item, isCloudEngineerEnabled, onDeleted, onEdit }) {
+  const deleteNews = useDeleteNews();
+  const { trackEvent } = useRybbit();
+  const remove = useMutationToast(deleteNews, {
+    invalidateKeys: [["news", "list"]],
+    successMessage: "News item deleted",
+    errorMessage: "Failed to delete news item",
+    onSuccess: () => {
+      trackEvent("news:deleted", { news_id: item.id });
+      onDeleted();
+    },
+  });
+
+  const highlightNews = useHighlightNews();
+  const toggleHighlight = useMutationToast(highlightNews, {
+    invalidateKeys: [["news", "list"]],
+    successMessage: item.isHighlighted
+      ? "Highlight removed"
+      : "News item highlighted",
+    errorMessage: "Failed to update highlight",
+    onSuccess: () => {
+      trackEvent("news:highlighted", {
+        news_id: item.id,
+        on: !item.isHighlighted,
+      });
+    },
+  });
+
+  const navigate = useNavigate();
+  const timeAgo = intlFormatDistance(new Date(item.createdAt), new Date());
+  const handleRowClick = (event) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.shiftKey
+    ) {
+      return;
+    }
+    if (event.target.closest("a, button, [role='button']")) return;
+    trackEvent("news:detail:opened", { news_id: item.id });
+    navigate(`/news/v/${item.id}`);
+  };
+
+  return (
+    <div
+      onClick={handleRowClick}
+      className="flex items-start gap-4 px-5 py-4 border-b border-divider last:border-0 group hover:bg-surface-muted transition-colors cursor-pointer"
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <a
+            href={`/news/v/${item.id}`}
+            onClick={(event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.altKey ||
+                event.shiftKey
+              ) {
+                return;
+              }
+              event.preventDefault();
+              trackEvent("news:detail:opened", { news_id: item.id });
+              navigate(`/news/v/${item.id}`);
+            }}
+            className="no-underline text-[0.875rem] font-semibold text-primary leading-snug group-hover:text-action transition-colors"
+          >
+            {item.title}
+          </a>
+          {item.isHighlighted && (
+            <span className="inline-flex items-center h-[18px] px-1.5 rounded-[4px] bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-mono text-[0.625rem] tracking-[0.04em]">
+              highlighted
+            </span>
+          )}
+        </div>
+        <p className="text-[0.8125rem] text-secondary leading-relaxed line-clamp-2">
+          <LinkifiedText
+            text={item.body}
+            linkClassName="text-action underline"
+            onLinkClick={(e) => e.stopPropagation()}
+          />
+        </p>
+        <div className="mt-1.5 font-mono text-[0.6875rem] text-muted">
+          {timeAgo}
+          {item.createdBy && (
+            <span className="ml-2 text-muted opacity-70">
+              by {item.createdBy}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {isCloudEngineerEnabled && (
+        <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100">
+          <button
+            aria-label={
+              item.isHighlighted
+                ? `Remove highlight from "${item.title}"`
+                : `Highlight "${item.title}"`
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleHighlight({ id: item.id });
+            }}
+            disabled={highlightNews.isPending}
+            className={`p-1.5 rounded-[5px] transition-colors disabled:opacity-40 ${
+              item.isHighlighted
+                ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                : "text-muted hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+            }`}
+          >
+            <Star
+              size={14}
+              fill={item.isHighlighted ? "currentColor" : "none"}
+            />
+          </button>
+          <button
+            aria-label={`Edit "${item.title}"`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit(item);
+            }}
+            className="p-1.5 rounded-[5px] text-muted hover:text-action hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+          >
+            <Pencil size={14} />
+          </button>
+          <button
+            aria-label={`Delete "${item.title}"`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              remove({ id: item.id });
+            }}
+            disabled={deleteNews.isPending}
+            className="p-1.5 rounded-[5px] text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-40"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Page skeleton ─────────────────────────────────────────────────────────────
+
+function NewsListSkeleton() {
+  return (
+    <div className="bg-surface border border-card rounded-[8px] overflow-hidden animate-pulse">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="px-5 py-4 border-b border-divider last:border-0"
+        >
+          <div className="h-[14px] w-2/3 rounded bg-surface-muted mb-2" />
+          <div className="h-[12px] w-full rounded bg-surface-muted mb-1" />
+          <div className="h-[12px] w-4/5 rounded bg-surface-muted" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
+
+export default function NewsPage() {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+  const { setActions } = useTopBarActions();
+  const [showCreate, setShowCreate] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+
+  const { data, isFetched } = useNews();
+
+  React.useEffect(() => {
+    if (!isCloudEngineerEnabled) {
+      setActions(null);
+      return;
+    }
+    setActions(
+      <TrackedButton
+        trackName="News-CreateClicked"
+        rybbitEvent={{ name: "news:create:opened" }}
+        size="sm"
+        onClick={() => setShowCreate(true)}
+      >
+        <Plus size={14} className="mr-1" />
+        New item
+      </TrackedButton>,
+    );
+    return () => setActions(null);
+  }, [isCloudEngineerEnabled]);
+
+  const items = data ?? [];
+  const visibleItems = isCloudEngineerEnabled
+    ? items
+    : items.filter((n) => n.isRelevant);
+
+  return (
+    <Page title="News">
+      {showCreate && <CreateNewsModal onClose={() => setShowCreate(false)} />}
+      {editTarget && (
+        <EditNewsModal item={editTarget} onClose={() => setEditTarget(null)} />
+      )}
+
+      <InfoAlert className="mb-4 animate-fade-up animate-stagger-1">
+        <p className="font-semibold mb-1">Platform news</p>
+        <p>
+          Updates, announcements and other news from the Cloud Engineering
+          platform team.
+        </p>
+      </InfoAlert>
+
+      {!isFetched ? (
+        <NewsListSkeleton />
+      ) : visibleItems.length === 0 ? (
+        <div className="bg-surface border border-card rounded-[8px] px-5 py-12 text-center animate-fade-up">
+          <Newspaper size={32} className="text-muted mx-auto mb-3" />
+          <p className="text-[0.875rem] text-muted font-mono">
+            No news items yet
+          </p>
+        </div>
+      ) : (
+        <div className="bg-surface border border-card rounded-[8px] overflow-hidden animate-fade-up">
+          {visibleItems.map((item) => (
+            <NewsRow
+              key={item.id}
+              item={item}
+              isCloudEngineerEnabled={isCloudEngineerEnabled}
+              onDeleted={() => {}}
+              onEdit={setEditTarget}
+            />
+          ))}
+        </div>
+      )}
+    </Page>
+  );
+}

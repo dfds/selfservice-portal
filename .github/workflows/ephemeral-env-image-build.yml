@@ -66,3 +66,4 @@ jobs:
             REACT_APP_AUTH_REDIRECT_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
             REACT_APP_PUBLIC_URL=https://internal.hellman.oxygen.dfds.cloud/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
             PUBLIC_URL=/ssu/dev-env/${{ steps.vars.outputs.branch_name }}
+            REACT_APP_COMMIT_HASH=${{ steps.vars.outputs.commit_id }}

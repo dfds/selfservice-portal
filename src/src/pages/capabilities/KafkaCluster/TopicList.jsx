@@ -1,7 +1,7 @@
 import React from "react";
-import { Text } from "@dfds-ui/typography";
 import Topic from "./Topic";
-import { Divider } from "@dfds-ui/react-components/divider";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function TopicList({
   name,
@@ -21,17 +21,11 @@ export default function TopicList({
   };
 
   return (
-    <>
-      <Text styledAs="action">{name}</Text>
-      <Divider />
+    <div className="mt-4">
+      <SectionLabel className="mb-1 block">{name}</SectionLabel>
       {sorted.length === 0 && (
-        <div
-          style={{ paddingLeft: "1rem", fontStyle: "italic", color: "#ccc" }}
-        >
-          No {name.toLocaleLowerCase()} topics...yet!
-        </div>
+        <EmptyState>No {name.toLocaleLowerCase()} topics…yet!</EmptyState>
       )}
-
       {sorted.map((topic) => (
         <Topic
           key={`${clusterId}-${topic.id}`}
@@ -44,6 +38,6 @@ export default function TopicList({
           schemas={schemas}
         />
       ))}
-    </>
+    </div>
   );
 }

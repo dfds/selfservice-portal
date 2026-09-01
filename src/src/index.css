@@ -1,3 +1,480 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand: #002b45;
+  --color-action: #0e7cc1;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f2f2;
+  --color-surface-subtle: #eef0f1;
+  --color-success: #4caf50;
+  --color-warning: #ed8800;
+  --color-error: #be1e2d;
+  --color-destructive: var(--color-error);
+  --color-brand-dark: #153b53;
+  --color-text-primary: #002b45;
+  --color-text-secondary: #666666;
+  --color-text-muted: #afafaf;
+  --color-text-inverse: #ffffff;
+  --color-border: #d3d3d3;
+  --color-border-card: #d9dcde;
+  --color-border-tab: #ced0d1;
+  --color-border-divider: #eeeeee;
+
+  /* Easing curves - exponential deceleration for natural motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animation utilities - @keyframes must be inside @theme for Tailwind v4 */
+  --animate-fade-up: fade-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-fade-up-slow: fade-up 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  --animate-menu-enter: menu-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes menu-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --animate-accordion-down: accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+  }
+
+  --animate-accordion-up: accordion-up 160ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  --animate-card-enter: card-enter 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --animate-section-enter: section-enter 480ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+
+  @keyframes section-enter {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  --animate-toast-enter: toast-enter 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes toast-enter {
+    from {
+      opacity: 0;
+      transform: translateX(20px) translateY(8px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0) translateY(0) scale(1);
+    }
+  }
+
+  --animate-toast-exit: toast-exit 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes toast-exit {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+
+  --animate-progress-fill: progress-fill 600ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+
+  @keyframes progress-fill {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(var(--progress-value, 1));
+    }
+  }
+
+  --animate-badge-pulse: badge-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+
+  @keyframes badge-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+
+  @keyframes number-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.94);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Switch thumb slider - two differently-named keyframes so the browser
+     re-fires the animation on every state toggle. Thumb stretches horizontally
+     during travel, elongating in the direction of motion. */
+  --animate-switch-slider-on: switch-slider-on 660ms ease-in-out both;
+  --animate-switch-slider-off: switch-slider-off 660ms ease-in-out both;
+
+  @keyframes switch-slider-on {
+    0% {
+      scale: 1;
+    }
+
+    40% {
+      scale: 1.25 1;
+    }
+
+    75% {
+      scale: 1;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  @keyframes switch-slider-off {
+    0% {
+      scale: 1;
+    }
+
+    40% {
+      scale: 1.25 1;
+    }
+
+    75% {
+      scale: 1;
+    }
+
+    100% {
+      scale: 1;
+    }
+  }
+
+  /* Skeleton shimmer */
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* CE mode rainbow hue rotation */
+  --animate-rainbow-hue: rainbow-hue 3s linear infinite;
+
+  @keyframes rainbow-hue {
+    0% {
+      filter: hue-rotate(0deg);
+    }
+
+    100% {
+      filter: hue-rotate(360deg);
+    }
+  }
+
+  /* What's New bell - rainbow color cycle on the small badge dot */
+  --animate-rainbow-text: rainbow-text 4s linear infinite;
+
+  @keyframes rainbow-text {
+    0% {
+      color: hsl(0, 85%, 55%);
+    }
+
+    20% {
+      color: hsl(45, 90%, 55%);
+    }
+
+    40% {
+      color: hsl(140, 70%, 50%);
+    }
+
+    60% {
+      color: hsl(200, 85%, 55%);
+    }
+
+    80% {
+      color: hsl(280, 70%, 60%);
+    }
+
+    100% {
+      color: hsl(360, 85%, 55%);
+    }
+  }
+}
+
+:root {
+  /* User-configurable font scaling - driven by FontScaleContext */
+  --ssu-font-scale: 1;
+  /* Viewport units corrected for `body { zoom }` - keeps `h-screen`-style
+     containers from overflowing when the user scales the UI up. */
+  --ssu-vh: calc(100vh / var(--ssu-font-scale));
+  --ssu-vw: calc(100vw / var(--ssu-font-scale));
+
+  /* Colors */
+  --color-brand: #002b45;
+  --color-action: #0e7cc1;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f2f2;
+  --color-surface-subtle: #eef0f1;
+  --color-success: #4caf50;
+  --color-warning: #ed8800;
+  --color-error: #be1e2d;
+  --color-destructive: var(--color-error);
+  --color-brand-dark: #153b53;
+  --color-text-primary: #002b45;
+  --color-text-secondary: #666666;
+  --color-text-muted: #afafaf;
+  --color-text-inverse: #ffffff;
+  --color-border: #d3d3d3;
+  --color-border-card: #d9dcde;
+  --color-border-tab: #ced0d1;
+  --color-border-divider: #eeeeee;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+
+  /* Radius */
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-pill: 20px;
+  --radius-full: 9999px;
+  --radius-circle: 50%;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-overlay: 0px 8px 16px rgba(0, 0, 0, 0.12);
+  --shadow-overlay-strong: 0px 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* Transitions */
+  --transition-base: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --header-height: 3.75rem;
+  --sidebar-width: 220px;
+  --topbar-height: 52px;
+
+  /* Typography */
+  --mono: "SFMono-Regular", "Fira Code", "Consolas", monospace;
+}
+
+html {
+  scroll-padding-top: calc(var(--topbar-height) + 1rem);
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-surface: #1e293b;
+  --color-surface-muted: #0f172a;
+  --color-surface-subtle: #141e2b;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-border: #334155;
+  --color-border-card: #334155;
+  --color-border-tab: #2d3e50;
+  --color-border-divider: #1e2d3d;
+  --color-action: #60a5fa;
+  --color-brand: #e2e8f0;
+}
+
+/* Semantic utilities - auto-switch with CSS vars (no dark: variant needed) */
+@layer utilities {
+  /* Text colors */
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .text-action {
+    color: var(--color-action);
+  }
+
+  .text-inverse {
+    color: var(--color-text-inverse);
+  }
+
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .text-warning {
+    color: var(--color-warning);
+  }
+
+  /* Surface backgrounds */
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+
+  .bg-surface-muted {
+    background-color: var(--color-surface-muted);
+  }
+
+  .bg-surface-subtle {
+    background-color: var(--color-surface-subtle);
+  }
+
+  /* Border colors */
+  .border-card {
+    border-color: var(--color-border-card);
+  }
+
+  .border-divider {
+    border-color: var(--color-border-divider);
+  }
+
+  .border-tab {
+    border-color: var(--color-border-tab);
+  }
+
+  /* Shadows */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-overlay {
+    box-shadow: var(--shadow-overlay);
+  }
+
+  .shadow-overlay-strong {
+    box-shadow: var(--shadow-overlay-strong);
+  }
+
+  /* Typography patterns */
+  .text-description {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ease-out-expo {
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Stagger delays - combine with animate-fade-up or animate-section-enter */
+  .animate-stagger-1 {
+    animation-delay: 60ms;
+  }
+
+  .animate-stagger-2 {
+    animation-delay: 120ms;
+  }
+
+  .animate-stagger-3 {
+    animation-delay: 180ms;
+  }
+
+  .animate-stagger-4 {
+    animation-delay: 240ms;
+  }
+
+  .animate-stagger-5 {
+    animation-delay: 300ms;
+  }
+}
+
+.ce-rainbow-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: oklch(0.55 0.22 260);
+  animation: var(--animate-rainbow-hue);
+  z-index: 0;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -6,6 +483,24 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Apply user font-scale to direct children of <body> (the React #root and any
+   Radix portals) - not to <body> itself. driver.js appends its overlay/popover
+   directly under <body>; if those siblings inherit zoom too, the popover's
+   `top`/`left` (already in the visually-zoomed coord space from the target's
+   getBoundingClientRect) get displaced by the zoom factor and the popover lands
+   in the wrong spot. Excluding the driver elements keeps tour positioning correct
+   while the rest of the UI still scales. */
+body > *:not(.driver-overlay):not(.driver-popover) {
+  zoom: var(--ssu-font-scale, 1);
+}
+
+/* Scale the driver.js popover with the user font-scale by inflating the
+   actual padding/font-sizes/etc. rather than `transform: scale` (which mis-
+   aligns when driver uses `style.right`/`style.bottom` to anchor) or `zoom`
+   (which would re-displace the popover by the zoom factor). Driver's layout
+   math reads getBoundingClientRect, so a naturally-larger popover positions
+   correctly without any coordinate-space tricks. */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
@@ -21,7 +516,204 @@ code {
   align-items: center;
 
   text-transform: lowercase;
-  color: #002b454d;
+  color: color-mix(in srgb, var(--color-text-primary) 40%, transparent);
   font-size: 0.65rem;
   font-family: monospace;
+}
+
+/* Template variable chips - used in the email broadcast TipTap editor */
+.template-variable-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  margin: 0 1px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-family: "SFMono-Regular", "Fira Code", monospace;
+  font-weight: 500;
+  vertical-align: baseline;
+  /* Chips can be dragged to reposition and clicked to swap - signal it. */
+  cursor: grab;
+  transition:
+    outline-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.template-variable-chip:hover {
+  background: #dbeafe;
+  outline: 1px solid #93c5fd;
+  outline-offset: 1px;
+}
+
+.dark .template-variable-chip {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+}
+
+.dark .template-variable-chip:hover {
+  background: rgba(59, 130, 246, 0.18);
+  outline-color: rgba(96, 165, 250, 0.5);
+}
+
+.template-variable-chip.ProseMirror-selectednode {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.dark .template-variable-chip.ProseMirror-selectednode {
+  outline-color: #60a5fa;
+}
+
+/* Handlebars block-helper markers ({{#each …}} / {{/each}}) in the email body -
+ * matches the amber "loop" scope chip palette used in the variable inserter. */
+.template-block-marker {
+  background: #fffbeb;
+  color: #b45309;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", "Fira Code", monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.dark .template-block-marker {
+  background: rgba(180, 83, 9, 0.18);
+  color: #fbbf24;
+}
+
+/* driver.js theming - driver's stylesheet is dynamically imported AFTER our
+ * index.css, so its defaults win at equal specificity. We scope every
+ * override under .ssu-driver-popover (set via popoverClass in useDriverTour)
+ * to make selectors more specific than driver.js's defaults. */
+html .driver-overlay,
+html .driver-popover {
+  transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ssu-tour-transitioning .driver-overlay,
+.ssu-tour-transitioning .driver-popover {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.driver-popover.ssu-driver-popover {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-card);
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  font-family: inherit;
+  /* Scale the popover with the user's UI size preference. */
+  padding: calc(15px * var(--ssu-font-scale, 1));
+  min-width: calc(250px * var(--ssu-font-scale, 1));
+  max-width: calc(300px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: calc(0.9rem * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-description {
+  color: var(--color-text-secondary);
+  font-size: calc(0.8125rem * var(--ssu-font-scale, 1));
+  line-height: 1.5;
+}
+
+.ssu-driver-popover .driver-popover-footer {
+  margin-top: calc(15px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn,
+.ssu-driver-popover .driver-popover-footer .driver-popover-next-btn,
+.ssu-driver-popover .driver-popover-footer .driver-popover-close-btn {
+  background-color: var(--color-action);
+  color: #ffffff;
+  border: 1px solid var(--color-action);
+  border-radius: 5px;
+  padding: calc(6px * var(--ssu-font-scale, 1))
+    calc(12px * var(--ssu-font-scale, 1));
+  font-size: calc(0.75rem * var(--ssu-font-scale, 1));
+  font-weight: 500;
+  text-shadow: none;
+  cursor: pointer;
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-next-btn:hover,
+.ssu-driver-popover .driver-popover-footer .driver-popover-close-btn:hover {
+  background-color: #0a6aaa;
+  border-color: #0a6aaa;
+  color: #ffffff;
+}
+
+html.dark
+  .ssu-driver-popover
+  .driver-popover-footer
+  .driver-popover-next-btn:hover,
+html.dark
+  .ssu-driver-popover
+  .driver-popover-footer
+  .driver-popover-close-btn:hover {
+  background-color: #1a5e8f;
+  border-color: #1a5e8f;
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-card);
+}
+
+.ssu-driver-popover .driver-popover-footer .driver-popover-prev-btn:hover {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-card);
+}
+
+.ssu-driver-popover .driver-popover-close-btn {
+  color: var(--color-text-secondary);
+  font-size: calc(1.25rem * var(--ssu-font-scale, 1));
+  width: calc(32px * var(--ssu-font-scale, 1));
+  height: calc(28px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover .driver-popover-close-btn:hover,
+.ssu-driver-popover .driver-popover-close-btn:focus {
+  color: var(--color-text-primary);
+}
+
+.ssu-driver-popover .driver-popover-progress-text {
+  color: var(--color-text-muted);
+  font-family: "SFMono-Regular", "Fira Code", "Consolas", monospace;
+  font-size: calc(0.6875rem * var(--ssu-font-scale, 1));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Scale the arrow with UI size so it stays proportional to the popover. */
+.ssu-driver-popover .driver-popover-arrow {
+  border-width: calc(5px * var(--ssu-font-scale, 1));
+}
+
+.ssu-driver-popover.driver-popover-arrow-side-top .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: var(--color-surface);
+}
+
+.ssu-driver-popover.driver-popover-arrow-side-bottom .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: var(--color-surface);
+}
+
+.ssu-driver-popover.driver-popover-arrow-side-left .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: var(--color-surface);
+}
+
+.ssu-driver-popover.driver-popover-arrow-side-right .driver-popover-arrow,
+.ssu-driver-popover .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: var(--color-surface);
 }

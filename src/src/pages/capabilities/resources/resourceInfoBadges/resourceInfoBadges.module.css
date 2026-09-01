@@ -106,7 +106,7 @@ hr.divider {
 }
 
 .subheader {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 550;
   font-family: "DFDS";
 }
@@ -137,4 +137,22 @@ hr.divider {
   width: 250px;
   margin-left: 10px;
   border: 1px solid #ccc;
+}
+
+@media (max-width: 768px) {
+  .indent20 {
+    margin-left: 0;
+  }
+
+  .environmentselect {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .catalogueId {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
+  }
 }

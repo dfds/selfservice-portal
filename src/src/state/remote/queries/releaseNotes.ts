@@ -1,22 +1,31 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ssuRequest } from "../query";
+import { createSsuParamQuery, createSsuMutation } from "../queryFactory";
 import PreAppContext from "@/preAppContext";
 import { useContext } from "react";
+
+// ── Queries ──────────────────────────────────────────────────────────────────
 
 export interface useReleaseNotesProps {
   includeDrafts?: boolean;
 }
 
-export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps) {
+// Manual - conditional URL segment building
+export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps = {}) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
 
+  // Drafts are a manage-page-only concern. Keep them in their own cache entry
+  // so the published-only consumers (release notes list, what's-new) never pull
+  // drafts into their payload - and so neither side clobbers the other's cache.
+  const wantsDrafts = includeDrafts === true;
+
   const segments = ["release-notes"];
-  if (includeDrafts != null && includeDrafts === true) {
+  if (wantsDrafts) {
     segments.push("?includeDrafts");
   }
 
-  const query = useQuery({
-    queryKey: ["releasenotes", "list"],
+  return useQuery({
+    queryKey: ["releasenotes", "list", wantsDrafts ? "drafts" : "published"],
     queryFn: async () =>
       ssuRequest({
         method: "GET",
@@ -25,44 +34,24 @@ export function useReleaseNotes({ includeDrafts }: useReleaseNotesProps) {
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
-
-  return query;
 }
 
-export function useReleaseNote(id: string) {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const query = useQuery({
-    queryKey: ["releasenotes", "details", id],
-    queryFn: async () =>
-      ssuRequest({
-        method: "GET",
-        urlSegments: ["release-notes", id],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useReleaseNote = createSsuParamQuery<string>({
+  queryKey: (id) => ["releasenotes", "details", id],
+  urlSegments: (id) => ["release-notes", id],
+});
 
-  return query;
-}
+// ── Mutations ────────────────────────────────────────────────────────────────
 
-export function useCreateReleaseNote() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["release-notes"],
-        payload: data.payload,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useCreateReleaseNote = createSsuMutation<{ payload: any }>({
+  method: "POST",
+  urlSegments: () => ["release-notes"],
+});
 
-  return mutation;
-}
-
+// Manual - hook argument (id) not supported by createSsuMutation
 export function useUpdateReleaseNote(id: string) {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: async (data: any) =>
       ssuRequest({
         method: "PUT",
@@ -71,51 +60,24 @@ export function useUpdateReleaseNote(id: string) {
         isCloudEngineerEnabled: isCloudEngineerEnabled,
       }),
   });
-
-  return mutation;
 }
 
-export function useToggleNoteActivity() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (input: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: [input.href],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
+export const useToggleNoteActivity = createSsuMutation<{ href: string }>({
+  method: "POST",
+  urlSegments: (input) => [input.href],
+  payload: () => null,
+});
 
-  return mutation;
-}
+export const useToggleReleaseNoteActive = createSsuMutation<{
+  id: string;
+}>({
+  method: "POST",
+  urlSegments: (input) => ["release-notes", input.id, "toggle-active"],
+  payload: () => null,
+});
 
-export function useToggleReleaseNoteActive() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (input: any) =>
-      ssuRequest({
-        method: "POST",
-        urlSegments: ["release-notes", input.id, "toggle-active"],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
-
-export function useDeleteReleaseNote() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const mutation = useMutation({
-    mutationFn: async (data: any) =>
-      ssuRequest({
-        method: "DELETE",
-        urlSegments: ["release-notes", data.id],
-        payload: null,
-        isCloudEngineerEnabled: isCloudEngineerEnabled,
-      }),
-  });
-
-  return mutation;
-}
+export const useDeleteReleaseNote = createSsuMutation<{ id: string }>({
+  method: "DELETE",
+  urlSegments: (data) => ["release-notes", data.id],
+  payload: () => null,
+});

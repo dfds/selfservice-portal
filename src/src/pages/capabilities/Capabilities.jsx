@@ -1,22 +1,30 @@
-import React, { useContext, useEffect, useState, useMemo } from "react";
-import { Text } from "@dfds-ui/typography";
-import { Link } from "react-router-dom";
-import { ChevronRight, StatusAlert } from "@dfds-ui/icons/system";
-import { Spinner } from "@dfds-ui/react-components";
-import AppContext from "AppContext";
+import React, { useContext, useEffect, useState, useMemo, useRef } from "react";
+import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
+import { Text } from "@/components/ui/Text";
+import { Link, useNavigate } from "react-router-dom";
+import { ChevronRight, AlertCircle, ArrowUp, ArrowDown } from "lucide-react";
+import { SkeletonCapabilityTableRow } from "@/components/ui/skeleton";
+import AppContext from "@/AppContext";
 import PreAppContext from "@/preAppContext";
-import PageSection from "components/PageSection";
-import { useCapabilities } from "@/state/remote/queries/capabilities";
+import PageSection from "@/components/PageSection";
+import {
+  useCapabilities,
+  useAddCapabilityFavourite,
+  useRemoveCapabilityFavourite,
+} from "@/state/remote/queries/capabilities";
 import { useCapabilitiesCost } from "@/state/remote/queries/platformdataapi";
-import { Switch } from "@dfds-ui/forms";
+import { Switch } from "@/components/ui/switch";
+import { Star } from "lucide-react";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
-import CapabilityCostSummary from "components/BasicCapabilityCost";
+import { useQueryClient } from "@tanstack/react-query";
+import CapabilityCostSummary from "@/components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
-import { getCostCentreLabel } from "@/constants/tagConstants";
-import { TrackedButton } from "@/components/Tracking";
-import ExtractEmailsModal from "@/components/ExtractEmailsModal";
-import { useGetRoles } from "@/state/remote/queries/rbac";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { PaginationControls } from "@/components/ui/PaginationControls";
+import { useRybbit } from "@/RybbitContext";
 //import { InlineAwsCountSummary } from "pages/capabilities/AwsResourceCount";
 
 function RowLink({ to }) {
@@ -42,47 +50,351 @@ function withRowLinks(columns, getHref) {
   }));
 }
 
-function CapabilitiesTable({ columns, filteredCapabilities }) {
+function CapabilityCard({ capability, truncateString, onFavouriteToggle }) {
+  const navigate = useNavigate();
+  const isDeleted = capability.status === "Deleted";
+  const isPendingDeletion = capability.status === "Pending Deletion";
+  const jsonMetadata = JSON.parse(capability.jsonMetadata ?? "{}");
+  const costCentre = jsonMetadata["dfds.cost.centre"];
+  const costs = capability.costs ?? [];
+  const isFavourite = capability.isFavourite === true;
+
+  const avgCost =
+    costs.length > 0
+      ? Math.floor(costs.reduce((acc, x) => acc + x.pv, 0) / costs.length)
+      : null;
+  const costText =
+    avgCost == null ? "No data" : avgCost < 1 ? "<$1/d" : `$${avgCost}/d`;
+
+  return (
+    <div
+      style={{ width: "100%" }}
+      className="block group relative cursor-pointer"
+      onClick={(e) => {
+        // Don't navigate if clicking the favorite button
+        if (e.target.closest("button")) {
+          return;
+        }
+        navigate(`/capabilities/${capability.id}`);
+      }}
+    >
+      <Card
+        className={cn(
+          "mb-2 group-hover:bg-surface-muted",
+          isDeleted && "opacity-60 bg-red-950/20",
+        )}
+      >
+        <CardContent className="p-3">
+          <div className="flex items-start gap-2 mb-1">
+            {isPendingDeletion && (
+              <AlertCircle size={12} className="text-red-500 shrink-0 mt-0.5" />
+            )}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onFavouriteToggle?.(capability.id, !isFavourite);
+              }}
+              className={`relative z-10 shrink-0 p-1 rounded transition-colors ${
+                isFavourite
+                  ? "text-amber-500 hover:text-amber-600"
+                  : "text-muted hover:text-amber-500"
+              }`}
+              title={
+                isFavourite
+                  ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                  : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+              }
+              aria-label={
+                isFavourite
+                  ? `Remove ${capability.name} from favorites`
+                  : `Add ${capability.name} to favorites`
+              }
+            >
+              <Star
+                size={16}
+                className={isFavourite ? "fill-current" : "fill-none"}
+              />
+            </button>
+            <span className="text-primary font-semibold text-sm flex-1 min-w-0 break-words">
+              {truncateString(capability.name, 80)}
+            </span>
+            <ChevronRight size={16} className="text-muted shrink-0 mt-0.5" />
+          </div>
+          <p className="text-secondary text-xs mb-2 leading-relaxed">
+            {truncateString(capability.description, 100)}
+          </p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1 text-xs font-mono text-muted">
+              <LightBulb score={capability.requirementScore} size={10} />{" "}
+              {capability.requirementScore?.toFixed(1)}%
+            </span>
+            {costCentre && (
+              <span className="text-xs font-mono text-muted">{costCentre}</span>
+            )}
+            <span className="text-xs font-mono text-muted ml-auto">
+              {costText}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const CARD_PAGE_SIZE = 20;
+
+function CapabilityCardList({
+  filteredCapabilities,
+  truncateString,
+  onFavouriteToggle,
+}) {
   const { globalFilter, setGlobalFilter } = useContext(AppContext);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("name");
+  const [sortDir, setSortDir] = useState("asc");
+  const { trackEvent } = useRybbit();
+
+  const visibleCapabilities = globalFilter
+    ? filteredCapabilities.filter((cap) => {
+        const q = globalFilter.toLowerCase();
+        return (
+          cap.name?.toLowerCase().includes(q) ||
+          cap.description?.toLowerCase().includes(q) ||
+          cap.awsAccountId?.toLowerCase().includes(q)
+        );
+      })
+    : filteredCapabilities;
+
+  const sortedCapabilities = useMemo(() => {
+    const arr = [...visibleCapabilities];
+    const dir = sortDir === "asc" ? 1 : -1;
+
+    // Always sort with favorites first
+    arr.sort((a, b) => {
+      // Favorites go first
+      const aFavourite = a.isFavourite === true;
+      const bFavourite = b.isFavourite === true;
+      if (aFavourite !== bFavourite) {
+        return bFavourite ? 1 : -1;
+      }
+
+      // Then sort by the selected column
+      if (sortBy === "name") {
+        return dir * a.name.localeCompare(b.name);
+      } else if (sortBy === "costCentre") {
+        const ac = JSON.parse(a.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
+        const bc = JSON.parse(b.jsonMetadata ?? "{}")["dfds.cost.centre"] ?? "";
+        return dir * (ac.localeCompare(bc) || a.name.localeCompare(b.name));
+      } else if (sortBy === "cost") {
+        const ac =
+          a.costs?.length > 0
+            ? Math.floor(a.costs.reduce((s, x) => s + x.pv, 0) / a.costs.length)
+            : null;
+        const bc =
+          b.costs?.length > 0
+            ? Math.floor(b.costs.reduce((s, x) => s + x.pv, 0) / b.costs.length)
+            : null;
+        if (ac == null && bc == null) return 0;
+        if (ac == null) return 1;
+        if (bc == null) return -1;
+        return dir * (bc - ac);
+      } else if (sortBy === "score") {
+        const as_ = a.requirementScore ?? null;
+        const bs_ = b.requirementScore ?? null;
+        if (as_ == null && bs_ == null) return 0;
+        if (as_ == null) return 1;
+        if (bs_ == null) return -1;
+        return dir * (bs_ - as_);
+      }
+      return 0;
+    });
+    return arr;
+  }, [visibleCapabilities, sortBy, sortDir]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedCapabilities.length / CARD_PAGE_SIZE),
+  );
+  const pageStart = (currentPage - 1) * CARD_PAGE_SIZE;
+
+  const pageItems = useMemo(() => {
+    return sortedCapabilities.slice(pageStart, pageStart + CARD_PAGE_SIZE);
+  }, [sortedCapabilities, pageStart]);
+
+  const handleFilterChange = (value) => {
+    setGlobalFilter(value);
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredCapabilities]);
+
+  return (
+    <div>
+      <div className="flex flex-col gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Find a capability..."
+          value={globalFilter ?? ""}
+          onChange={(e) => handleFilterChange(e.target.value)}
+          className="w-full px-3 py-2 text-base md:text-sm border border-divider rounded-[5px] bg-surface text-primary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <div className="flex gap-2">
+          <select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              setCurrentPage(1);
+              trackEvent("capability:list:sorted", {
+                column: e.target.value,
+                direction: sortDir,
+                view: "cards",
+              });
+            }}
+            className="flex-1 px-2 py-2 text-base md:text-sm border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="name">Name</option>
+            <option value="costCentre">Cost Centre</option>
+            <option value="cost">Cost</option>
+            <option value="score">Score</option>
+          </select>
+          <button
+            onClick={() => {
+              const next = sortDir === "asc" ? "desc" : "asc";
+              setSortDir(next);
+              setCurrentPage(1);
+              trackEvent("capability:list:sorted", {
+                column: sortBy,
+                direction: next,
+                view: "cards",
+              });
+            }}
+            className="shrink-0 flex items-center justify-center px-3 py-2 border border-divider rounded-[5px] bg-surface text-primary focus:outline-none focus:ring-1 focus:ring-blue-500"
+            aria-label={
+              sortDir === "asc" ? "Sort descending" : "Sort ascending"
+            }
+          >
+            {sortDir === "asc" ? (
+              <ArrowUp size={14} />
+            ) : (
+              <ArrowDown size={14} />
+            )}
+          </button>
+        </div>
+      </div>
+      {pageItems.map((cap) => (
+        <CapabilityCard
+          key={cap.id}
+          capability={cap}
+          truncateString={truncateString}
+          onFavouriteToggle={onFavouriteToggle}
+        />
+      ))}
+      {sortedCapabilities.length === 0 && (
+        <p className="text-center text-sm text-muted italic py-8">
+          No capabilities match that search. Try a different incantation.
+        </p>
+      )}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageStart={pageStart}
+        pageSize={CARD_PAGE_SIZE}
+        total={sortedCapabilities.length}
+        onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+        onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+      />
+    </div>
+  );
+}
+
+function CapabilitiesTable({
+  columns,
+  filteredCapabilities,
+  sortingRef,
+  onFavouriteToggle,
+}) {
+  const { globalFilter, setGlobalFilter } = useContext(AppContext);
+  const { isDark } = useTheme();
+  const [sorting, setSorting] = useState([]);
+  const { trackEvent } = useRybbit();
+  // Keep ref in sync during render so column sortingFns see the latest
+  // direction on the same render that MRT applies it.
+  if (sortingRef) sortingRef.current = sorting;
+
+  const {
+    bg,
+    bgMuted,
+    textPrimary,
+    textMuted,
+    borderColor,
+    inputBorder,
+    inputText,
+  } = useMuiTableColors();
+  const bgDeleted = isDark ? "#3b1a1a" : "#dd8888";
+  const bgDeletedHover = isDark ? "#4a2020" : "rgba(187, 221, 243, 0.1)";
 
   return (
     <MaterialReactTable
       columns={columns}
       data={filteredCapabilities}
+      getRowId={(originalRow) => originalRow.id}
       initialState={{
-        pagination: { pageSize: 50 },
+        pagination: { pageIndex: 0, pageSize: 50 },
         showGlobalFilter: true,
         columnVisibility: { AwsAccountId: false, hiddenName: false },
       }}
       state={{
         globalFilter: globalFilter,
+        sorting: sorting,
       }}
       onGlobalFilterChange={(value) => {
         setGlobalFilter(value);
       }}
+      onSortingChange={(updater) => {
+        setSorting((prev) => {
+          const next = typeof updater === "function" ? updater(prev) : updater;
+          const first = Array.isArray(next) && next.length > 0 ? next[0] : null;
+          if (first) {
+            trackEvent("capability:list:sorted", {
+              column: first.id,
+              direction: first.desc ? "desc" : "asc",
+              view: "table",
+            });
+          }
+          return next;
+        });
+      }}
       muiTableHeadCellProps={{
         sx: {
-          fontWeight: "700",
-          fontSize: "16px",
-          fontFamily: "DFDS",
-          color: "#002b45",
+          fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
+          fontSize: "0.6875rem",
+          fontWeight: "600",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: textMuted,
+          borderBottom: `1px solid ${borderColor}`,
+          backgroundColor: bg,
         },
       }}
-      muiTableBodyCellProps={{
+      muiTableBodyCellProps={({ row }) => ({
         sx: {
           position: "relative",
           fontWeight: "400",
-          fontSize: "16px",
-          fontFamily: "DFDS",
-          color: "#4d4e4c",
+          fontSize: "0.875rem",
+          color: textPrimary,
           padding: "5px",
+          backgroundColor: row.original.status === "Deleted" ? bgDeleted : bg,
+          borderBottom: `1px solid ${borderColor}`,
         },
-      }}
+      })}
       muiTablePaperProps={{
-        elevation: 0, //change the mui box shadow
-        //customize paper styles
+        elevation: 0,
         sx: {
           borderRadius: "0",
+          backgroundColor: bg,
         },
       }}
       enableGlobalFilterModes={true}
@@ -92,8 +404,20 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
         sx: {
           minWidth: "1120px",
           fontWeight: "400",
-          fontSize: "16px",
+          fontSize: "1rem",
           padding: "5px",
+          "& .MuiOutlinedInput-root": {
+            color: inputText,
+            "& fieldset": { borderColor: inputBorder },
+            "&:hover fieldset": { borderColor: inputBorder },
+            "&.Mui-focused fieldset": {
+              borderColor: isDark ? "#60a5fa" : undefined,
+            },
+          },
+          "& .MuiInputBase-input::placeholder": {
+            color: textMuted,
+            opacity: 1,
+          },
         },
         size: "small",
         variant: "outlined",
@@ -108,25 +432,37 @@ function CapabilitiesTable({ columns, filteredCapabilities }) {
       enableTopToolbar={true}
       enableBottomToolbar={true}
       enableColumnActions={false}
+      renderEmptyRowsFallback={() => (
+        <div className="text-center text-sm text-muted italic py-8">
+          Nothing here matches your search. Even the cloud is confused.
+        </div>
+      )}
       muiTopToolbarProps={{
         sx: {
-          background: "none",
+          background: bg,
+          color: textPrimary,
+          "& .MuiIconButton-root": { color: textMuted },
+          "& .MuiSvgIcon-root": { color: textMuted },
         },
       }}
       muiBottomToolbarProps={{
         sx: {
-          background: "none",
+          background: bg,
+          color: textPrimary,
+          borderTop: `1px solid ${borderColor}`,
+          "& .MuiIconButton-root": { color: textMuted },
+          "& .MuiTablePagination-root": { color: textPrimary },
+          "& .MuiTablePagination-selectLabel": { color: textMuted },
+          "& .MuiTablePagination-displayedRows": { color: textMuted },
+          "& .MuiSelect-icon": { color: textMuted },
         },
       }}
       muiTableBodyRowProps={({ row }) => ({
         sx: {
           cursor: "pointer",
-          background: row.original.status === "Deleted" ? "#d88" : "",
           "&:hover td": {
             backgroundColor:
-              row.original.status === "Deleted"
-                ? "rgba(187, 221, 243, 0.1)"
-                : "rgba(187, 221, 243, 0.4)",
+              row.original.status === "Deleted" ? bgDeletedHover : bgMuted,
           },
         },
       })}
@@ -145,26 +481,97 @@ export default function CapabilitiesList() {
   const { isCloudEngineerEnabled } = useContext(PreAppContext);
   const { isFetched: isCapabilityFetched, data: capabilitiesData } =
     useCapabilities();
-  const { query: costsQuery, getCostsForCapability } = useCapabilitiesCost();
-  const { isFetched: isRolesFetched, data: rolesData } = useGetRoles("");
+  const { query: costsQuery, getCostComparisonForCapability } =
+    useCapabilitiesCost();
+  const addFavourite = useAddCapabilityFavourite();
+  const removeFavourite = useRemoveCapabilityFavourite();
 
+  const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
-  const [showExtractEmailsModal, setShowExtractEmailsModal] = useState(false);
+  const { trackEvent } = useRybbit();
+  const queryClient = useQueryClient();
 
   const [capabilities, setCapabilities] = useState([]);
   const [myCapabilities, setMyCapabilities] = useState([]);
   const [filteredCapabilities, setFilteredCapabilities] = useState([]);
 
+  const handleFavouriteToggle = (capabilityId, shouldFavourite) => {
+    if (shouldFavourite) {
+      addFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            // Optimistically update local state
+            setCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: true } : cap,
+              ),
+            );
+            setMyCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: true } : cap,
+              ),
+            );
+            trackEvent("capability:favourited", {
+              capability_id: capabilityId,
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    } else {
+      removeFavourite.mutate(
+        { id: capabilityId },
+        {
+          onSuccess: () => {
+            // Optimistically update local state
+            setCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: false } : cap,
+              ),
+            );
+            setMyCapabilities((prev) =>
+              prev.map((cap) =>
+                cap.id === capabilityId ? { ...cap, isFavourite: false } : cap,
+              ),
+            );
+            trackEvent("capability:unfavourited", {
+              capability_id: capabilityId,
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["capabilities", "list"],
+            });
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+          },
+        },
+      );
+    }
+  };
+
+  // Synced with MRT's sorting state inside <CapabilitiesTable> so column
+  // sortingFns can keep "No data" rows pinned to the bottom in both
+  // directions (TanStack v8 otherwise flips the comparator return on desc).
+  const tableSortingRef = useRef([]);
+
   useEffect(() => {
     if (isCapabilityFetched && capabilitiesData) {
-      const capsWithCosts = capabilitiesData.map((cap) => ({
-        ...cap,
-        costs: getCostsForCapability(cap.id, 7),
-      }));
+      const capsWithCosts = capabilitiesData.map((cap) => {
+        const { current, previous, hasFullComparison } =
+          getCostComparisonForCapability(cap.id);
+        return {
+          ...cap,
+          costs: current,
+          previousCosts: previous,
+          costsComparisonIsFull: hasFullComparison,
+        };
+      });
       setCapabilities(capsWithCosts);
 
       const myCapabilities = capsWithCosts.filter((capability) => {
-        return capability.userIsMember;
+        return capability.userIsMember || capability.isFavourite === true;
       });
       setMyCapabilities(myCapabilities);
     }
@@ -214,9 +621,11 @@ export default function CapabilitiesList() {
           {
             accessorFn: (row) => {
               return {
+                id: row.id,
                 name: row.name,
                 description: row.description,
                 status: row.status,
+                isFavourite: row.isFavourite,
               };
             },
             header: "Name",
@@ -227,26 +636,60 @@ export default function CapabilitiesList() {
             enableFilterMatchHighlighting: true,
 
             Cell: ({ cell }) => {
+              const val = cell.getValue();
+              const isFavourite = val.isFavourite === true;
               return (
                 <div>
-                  {cell.getValue().status === "Pending Deletion" ? (
+                  {val.status === "Pending Deletion" ? (
                     <Text styledAs="action" as={"div"}>
-                      <StatusAlert className={styles.warningIcon} />
+                      <AlertCircle size={14} className={styles.warningIcon} />
                     </Text>
                   ) : null}
-                  <Text
-                    styledAs="action"
-                    style={{ marginLeft: "20px" }}
-                    as={"div"}
+                  <div
+                    style={{
+                      marginLeft: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
                   >
-                    {truncateString(cell.getValue().name, 70)}
-                  </Text>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFavouriteToggle(val.id, !isFavourite);
+                      }}
+                      className={`relative z-10 shrink-0 p-0.5 rounded transition-colors ${
+                        isFavourite
+                          ? "text-amber-500 hover:text-amber-600"
+                          : "text-muted hover:text-amber-500"
+                      }`}
+                      title={
+                        isFavourite
+                          ? "Favourite capability. Click to remove it from your favourites. Favourites appear first in capability lists and on the front page."
+                          : "Mark as favourite. Favourites appear first in capability lists and on the front page."
+                      }
+                      aria-label={
+                        isFavourite
+                          ? `Remove ${val.name} from favourites`
+                          : `Add ${val.name} to favourites`
+                      }
+                    >
+                      <Star
+                        size={14}
+                        className={isFavourite ? "fill-current" : "fill-none"}
+                      />
+                    </button>
+                    <Text styledAs="action" as={"div"}>
+                      {truncateString(val.name, 70)}
+                    </Text>
+                  </div>
                   <Text
                     styledAs="caption"
                     style={{ marginLeft: "20px" }}
                     as={"div"}
                   >
-                    {truncateString(cell.getValue().description, 70)}
+                    {truncateString(val.description, 70)}
                   </Text>
                 </div>
               );
@@ -271,6 +714,11 @@ export default function CapabilitiesList() {
             header: "Compliance",
             size: 150,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB) => {
+              const aScore = rowA.original.requirementScore ?? -1;
+              const bScore = rowB.original.requirementScore ?? -1;
+              return aScore - bScore;
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
@@ -282,6 +730,20 @@ export default function CapabilitiesList() {
               let requirementsScore = cellValue.requirementsScore ?? 0;
               const modifiedAt = cellValue.modifiedAt;
               const capabilityId = cellValue.id;
+
+              // Check if data is stale (older than 2 weeks or score is missing)
+              const isStale = (() => {
+                if (!modifiedAt) return true;
+                if (
+                  requirementsScore === null ||
+                  requirementsScore === undefined
+                )
+                  return true;
+                const twoWeeksAgo = new Date();
+                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+                const modifiedDate = new Date(modifiedAt);
+                return modifiedDate < twoWeeksAgo;
+              })();
 
               return (
                 <div
@@ -299,7 +761,12 @@ export default function CapabilitiesList() {
                       width: "70px",
                       textAlign: "right",
                     }}
-                  >{`${requirementsScore.toFixed(1)}%`}</span>
+                  >
+                    {requirementsScore === null ||
+                    requirementsScore === undefined
+                      ? "-"
+                      : `${requirementsScore.toFixed(1)}%`}
+                  </span>
                 </div>
               );
             },
@@ -310,6 +777,20 @@ export default function CapabilitiesList() {
             header: "Cost Centre",
             size: 50,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB) => {
+              const ac =
+                JSON.parse(rowA.original.jsonMetadata ?? "{}")[
+                  "dfds.cost.centre"
+                ] ?? "";
+              const bc =
+                JSON.parse(rowB.original.jsonMetadata ?? "{}")[
+                  "dfds.cost.centre"
+                ] ?? "";
+              return (
+                ac.localeCompare(bc) ||
+                rowA.original.name.localeCompare(rowB.original.name)
+              );
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
@@ -367,20 +848,50 @@ export default function CapabilitiesList() {
 
           {
             accessorFn: (row) => row.costs,
-            header: "Costs",
+            header: "Cost (last 30 days)",
             size: 150,
             enableColumnFilterModes: false,
+            sortingFn: (rowA, rowB, columnId) => {
+              const aCosts = rowA.original.costs ?? [];
+              const bCosts = rowB.original.costs ?? [];
+              const aAvg =
+                aCosts.length > 0
+                  ? aCosts.reduce((s, x) => s + x.pv, 0) / aCosts.length
+                  : null;
+              const bAvg =
+                bCosts.length > 0
+                  ? bCosts.reduce((s, x) => s + x.pv, 0) / bCosts.length
+                  : null;
+              if (aAvg == null && bAvg == null) return 0;
+              if (aAvg == null || bAvg == null) {
+                // Always send "No data" rows to the bottom. TanStack flips
+                // the comparator return for desc, so pre-invert to cancel.
+                const isDesc =
+                  tableSortingRef.current.find((s) => s.id === columnId)
+                    ?.desc ?? false;
+                const sign = aAvg == null ? 1 : -1;
+                return isDesc ? -sign : sign;
+              }
+              return aAvg - bAvg;
+            },
             muiTableHeadCellProps: {
               align: "center",
             },
             muiTableBodyCellProps: {
               align: "right",
             },
-            Cell: ({ cell }) => {
+            Cell: ({ cell, row }) => {
               let data = cell.getValue() != null ? cell.getValue() : [];
+              let previousData = row.original.previousCosts ?? [];
+              let previousDataIsFull =
+                row.original.costsComparisonIsFull ?? true;
               return (
                 <div className={styles.costs}>
-                  <CapabilityCostSummary data={data} />
+                  <CapabilityCostSummary
+                    data={data}
+                    previousData={previousData}
+                    previousDataIsFull={previousDataIsFull}
+                  />
                 </div>
               );
             },
@@ -428,7 +939,7 @@ export default function CapabilitiesList() {
         ],
         (row) => `/capabilities/${row.original.id}`,
       ),
-    [],
+    [handleFavouriteToggle],
   );
 
   return (
@@ -443,14 +954,20 @@ export default function CapabilitiesList() {
         }`}
         headlineChildren={
           isLoading ? null : (
-            <>
+            <div className={styles.myCapabilitiesToggleContainer}>
               <div className={styles.myCapabilitiesToggleBox}>
                 <span className={styles.myCapabilitiesToggleTitle}>
                   Show just mine:{" "}
                 </span>
                 <Switch
                   checked={showOnlyMyCapabilities}
-                  onChange={toggleShowOnlyMyCapabilities}
+                  onCheckedChange={(checked) => {
+                    toggleShowOnlyMyCapabilities(checked);
+                    trackEvent("capability:list:filter-toggled", {
+                      filter: "mine",
+                      on: !showOnlyMyCapabilities,
+                    });
+                  }}
                 />
               </div>
               {isCloudEngineerEnabled && (
@@ -460,33 +977,43 @@ export default function CapabilitiesList() {
                   </span>
                   <Switch
                     checked={showDeletedCapabilities}
-                    onChange={toggleShowDeletedCapabilities}
+                    onCheckedChange={(checked) => {
+                      toggleShowDeletedCapabilities(checked);
+                      trackEvent("capability:list:filter-toggled", {
+                        filter: "deleted",
+                        on: !showDeletedCapabilities,
+                      });
+                    }}
                   />
                 </div>
               )}
-              {isCloudEngineerEnabled && (
-                <div style={{ float: "right", marginLeft: "20px" }}>
-                  <TrackedButton
-                    trackName="ExtractUserEmails"
-                    size="small"
-                    onClick={() => setShowExtractEmailsModal(true)}
-                  >
-                    Extract User Emails
-                  </TrackedButton>
-                </div>
-              )}
-            </>
+            </div>
           )
         }
       >
-        {isLoading && <Spinner />}
-
-        {!isLoading && (
-          <CapabilitiesTable
-            columns={columns}
-            filteredCapabilities={filteredCapabilities}
-          />
+        {isLoading && (
+          <div>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCapabilityTableRow key={i} />
+            ))}
+          </div>
         )}
+
+        {!isLoading &&
+          (isMobile ? (
+            <CapabilityCardList
+              filteredCapabilities={filteredCapabilities}
+              truncateString={truncateString}
+              onFavouriteToggle={handleFavouriteToggle}
+            />
+          ) : (
+            <CapabilitiesTable
+              columns={columns}
+              filteredCapabilities={filteredCapabilities}
+              sortingRef={tableSortingRef}
+              onFavouriteToggle={handleFavouriteToggle}
+            />
+          ))}
       </PageSection>
 
       <ExtractEmailsModal

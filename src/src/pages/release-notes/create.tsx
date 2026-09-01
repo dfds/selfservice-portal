@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import Page from "@/components/Page";
-import styles from "./releasenotes.module.css";
 import Nope from "@/components/Nope";
 import "./style.scss";
 
@@ -14,8 +13,6 @@ export default function ReleaseNotesCreate() {
     <>
       {isCloudEngineerEnabled ? (
         <Page title="">
-          <div className={styles.buffer}></div>
-
           <Editor mode={EditorMode.Create} />
         </Page>
       ) : (

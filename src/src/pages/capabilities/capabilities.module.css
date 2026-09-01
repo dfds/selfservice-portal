@@ -119,6 +119,10 @@
   size: 0.5em;
 }
 
+.myCapabilitiesToggleContainer {
+  display: contents;
+}
+
 .myCapabilitiesToggleBox {
   display: inline-block;
   justify-content: space-between;
@@ -130,6 +134,27 @@
 .myCapabilitiesToggleTitle {
   vertical-align: super;
   margin: 0 5px 0 0;
+}
+
+@media (max-width: 768px) {
+  .myCapabilitiesToggleContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .myCapabilitiesToggleBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .myCapabilitiesToggleTitle {
+    vertical-align: unset;
+    margin: 0;
+  }
 }
 
 .label {
@@ -179,4 +204,10 @@
 .wizardStep {
   margin: auto;
   width: 60%;
+}
+
+@media (max-width: 768px) {
+  .wizardStep {
+    width: 100%;
+  }
 }

@@ -44,10 +44,19 @@
   /* color: #fff */
 }
 
+:global(.dark) .header:hover {
+  background-color: #1e2d3d;
+}
+
 .headerselected {
   background-color: #002b45 !important;
   border: 1px solid #4d4e4c29;
   color: #fff;
+}
+
+:global(.dark) .headerselected {
+  background-color: #1d4ed8 !important;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .chevronSize {
@@ -65,6 +74,11 @@
   animation-timing-function: ease;
 }
 
+:global(.dark) .contentcontainer {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
 .jsoncontainer {
   padding: 1rem;
   background-color: #fff;
@@ -75,6 +89,11 @@
   animation-name: slidein;
   animation-duration: 0.5s;
   animation-timing-function: ease;
+}
+
+:global(.dark) .jsoncontainer {
+  background-color: #1e293b;
+  border-color: #334155;
 }
 
 .messagecontent {

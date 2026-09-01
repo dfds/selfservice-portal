@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Tooltip, Text, TextField } from "@dfds-ui/react-components";
+import { Text } from "@/components/ui/Text";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import styles from "./capabilities.module.css";
 import CreationWizard from "../../CreationWizard";
 import { TrackedLink } from "@/components/Tracking";
@@ -14,6 +22,68 @@ import {
 } from "@/constants/tagConstants";
 import Select from "react-select";
 import AppContext from "@/AppContext";
+import { useTheme } from "@/context/ThemeContext";
+
+function getSelectStyles(isDark) {
+  return {
+    control: (base) => ({
+      ...base,
+      minHeight: "30px",
+      height: "30px",
+      fontSize: "0.75rem",
+      fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
+      border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
+      boxShadow: "none",
+      borderRadius: "5px",
+      backgroundColor: isDark ? "#0f172a" : "#ffffff",
+      "&:hover": { borderColor: isDark ? "#60a5fa" : "#0e7cc1" },
+    }),
+    valueContainer: (base) => ({ ...base, padding: "0 8px" }),
+    indicatorsContainer: (base) => ({ ...base, height: "30px" }),
+    menu: (base) => ({
+      ...base,
+      fontSize: "0.75rem",
+      fontFamily: "SFMono-Regular, SF Mono, Fira Code, Consolas, monospace",
+      backgroundColor: isDark ? "#1e293b" : "#ffffff",
+      border: isDark ? "1px solid #334155" : undefined,
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    singleValue: (base) => ({
+      ...base,
+      color: isDark ? "#e2e8f0" : "#002b45",
+      fontWeight: 500,
+    }),
+    placeholder: (base) => ({ ...base, color: isDark ? "#64748b" : "#afafaf" }),
+    input: (base) => ({
+      ...base,
+      fontSize: "1rem",
+      color: isDark ? "#e2e8f0" : "#002b45",
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? isDark
+          ? "#1d4ed8"
+          : "#0e7cc1"
+        : state.isFocused
+        ? isDark
+          ? "#0f172a"
+          : "#f2f2f2"
+        : isDark
+        ? "#1e293b"
+        : "#ffffff",
+      color: state.isSelected ? "#ffffff" : isDark ? "#e2e8f0" : "#002b45",
+    }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      backgroundColor: isDark ? "#334155" : "#d9dcde",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: isDark ? "#64748b" : "#afafaf",
+    }),
+  };
+}
 
 export default function NewCapabilityWizard({
   inProgress,
@@ -76,6 +146,7 @@ export default function NewCapabilityWizard({
       emptyFormValues={emptyFormValues}
       completeInProgress={inProgress}
       completeName={"Add Capability"}
+      rybbitDomain="capability"
     />
   );
 }
@@ -165,31 +236,57 @@ const BasicInformationStep = ({
 
   return (
     <>
-      <div className={styles.tooltip}>
-        <Tooltip content='It is recommended to use "-" (dashes) to separate words in a multi word Capability name (e.g. foo-bar instead of foo_bar).'></Tooltip>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="capability-name">
+            Name <span aria-hidden="true">*</span>
+          </Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help underline decoration-dotted text-sm text-[#666666]">
+                  Naming tip
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                It is recommended to use &quot;-&quot; (dashes) to separate
+                words in a multi word Capability name (e.g. foo-bar instead of
+                foo_bar).
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <Input
+          id="capability-name"
+          placeholder="Enter name of capability"
+          required
+          value={formData.name}
+          onChange={changeName}
+          maxLength={255}
+        />
+        {nameError && <p className="text-xs text-red-600">{nameError}</p>}
       </div>
-      <TextField
-        label="Name"
-        placeholder="Enter name of capability"
-        required
-        value={formData.name}
-        onChange={changeName}
-        errorMessage={nameError}
-        maxLength={255}
-      />
-      <TextField
-        label="Description"
-        placeholder="Enter a description"
-        required
-        value={formData.description}
-        onChange={changeDescription}
-        errorMessage={descriptionError}
-      ></TextField>
+      <div className="flex flex-col gap-1 mt-2">
+        <Label htmlFor="capability-description">
+          Description <span aria-hidden="true">*</span>
+        </Label>
+        <Input
+          id="capability-description"
+          placeholder="Enter a description"
+          required
+          value={formData.description}
+          onChange={changeDescription}
+        />
+        {descriptionError && (
+          <p className="text-xs text-red-600">{descriptionError}</p>
+        )}
+      </div>
     </>
   );
 };
 
 const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
+  const { isDark } = useTheme();
   const [costCentre, setCostCentre] = useState("");
   const [selectedCostCentreOption, setSelectedCostCentreOption] =
     useState(undefined);
@@ -301,6 +398,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           DFDS Tagging Policy.
         </TrackedLink>
@@ -322,6 +420,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         <Select
           options={ENUM_COSTCENTER_OPTIONS}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           value={selectedCostCentreOption}
           onChange={(selection) => {
             setSelectedCostCentreOption(selection);
@@ -357,6 +456,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         <Select
           options={getBusinessCapabilitiesOptions(costCentre)}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           value={selectedBusinessCapabilityOption ?? null}
           placeholder="Select..."
           onChange={(selection) => {
@@ -382,6 +482,7 @@ const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 };
 
 const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
+  const { isDark } = useTheme();
   const [classification, setClassification] = useState(undefined);
   const [selectedClassificationOption, setSelectedClassificationOption] =
     useState(undefined);
@@ -524,6 +625,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           See DFDS Tagging Policy.
         </TrackedLink>
@@ -537,6 +639,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_ENV_OPTIONS}
           value={selectedEnvOption}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           onChange={(selection) => setSelectedEnvOption(selection)}
         />
         <div className={styles.errorContainer}></div>
@@ -559,6 +662,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_CLASSIFICATION_OPTIONS}
           value={selectedClassificationOption}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           onChange={(selection) => setSelectedClassificationOption(selection)}
         ></Select>
       </div>
@@ -580,6 +684,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_CRITICALITY_OPTIONS}
           value={selectedCriticalityOption}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           onChange={(selection) => setSelectedCriticalityOption(selection)}
         ></Select>
       </div>
@@ -601,6 +706,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_AVAILABILITY_OPTIONS}
           value={selectedAvailabilityOption}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           onChange={(selection) => setSelectedAvailabilityOption(selection)}
         ></Select>
       </div>
@@ -610,6 +716,7 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
 };
 
 const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
+  const { isDark } = useTheme();
   const [containsAI, setContainsAI] = useState(undefined);
   const [
     selectedCapabilityContainsAIOption,
@@ -666,6 +773,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
           href={"https://internal.hellman.oxygen.dfds.cloud/aicatalogue/"}
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           AI Catalogue.
         </TrackedLink>
@@ -685,6 +793,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
           }
           target="_blank"
           rel="noreferrer"
+          className="text-action underline underline-offset-2 hover:no-underline"
         >
           AI guiding practices.
         </TrackedLink>
@@ -698,6 +807,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
           options={ENUM_CAPABILITY_CONTAINS_AI_OPTIONS}
           value={selectedCapabilityContainsAIOption}
           className={styles.input}
+          styles={getSelectStyles(isDark)}
           onChange={(selection) =>
             setSelectedCapabilityContainsAIOption(selection)
           }
