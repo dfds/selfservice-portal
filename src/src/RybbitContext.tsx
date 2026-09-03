@@ -8,8 +8,7 @@ import React, {
 } from "react";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 
-const RYBBIT_SCRIPT_URL =
-  "https://ssu-preview.hellman.oxygen.dfds.cloud/tr/api/script.js";
+const RYBBIT_SCRIPT_URL = "https://build.dfds.cloud/tr/api/script.js";
 const RYBBIT_SITE_ID = "2f8dd0f249df";
 
 // Rybbit injects a `window.rybbit` object once its <script> finishes loading.
@@ -49,7 +48,7 @@ export function useRybbit(): RybbitState {
 
 function isRybbitHost(hostname: string): boolean {
   if (hostname === "localhost" || hostname === "127.0.0.1") return true;
-  if (hostname.includes("ssu-preview.hellman.oxygen.dfds.cloud")) return true;
+  if (hostname.includes("build.dfds.cloud")) return true;
   return false;
 }
 
