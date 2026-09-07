@@ -46,6 +46,7 @@ export interface CatalogApiDoc {
 
 export interface CatalogReachability {
   host: string;
+  path?: string;
   url: string;
   status: "reachable" | "unreachable" | "unknown";
   statusCode: number;
