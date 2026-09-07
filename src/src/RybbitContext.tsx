@@ -126,10 +126,7 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const tag =
-      hostname === "ssu-preview.hellman.oxygen.dfds.cloud"
-        ? "production"
-        : "dev";
+    const tag = hostname === "build.dfds.cloud" ? "production" : "dev";
 
     const s = document.createElement("script");
     s.src = RYBBIT_SCRIPT_URL;

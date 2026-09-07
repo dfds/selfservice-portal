@@ -6,7 +6,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import type { CatalogService } from "@/state/remote/queries/catalog";
 import {
   serviceUrlsFor,
-  reachabilityForHost,
+  reachabilityForUrl,
   reachabilityBadgeVariant,
   reachabilityLabel,
   reachabilityResultTooltip,
@@ -46,7 +46,7 @@ export function ServiceItem({ svc }: { svc: CatalogService }) {
           </SectionLabel>
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             {urls.map((u, i) => {
-              const verdict = reachabilityForHost([svc], u.host);
+              const verdict = reachabilityForUrl([svc], u);
               return (
                 <span key={i} className="inline-flex items-center gap-1.5">
                   <a

@@ -192,44 +192,55 @@ export type WorkloadReachability =
   | "unknown"
   | "partial";
 
-export function reachabilityForHost(
+// The backend normalizes probed paths; route prefixes arrive verbatim.
+function normalizeReachPath(path: string): string {
+  return "/" + (path || "").replace(/^\/+|\/+$/g, "");
+}
+
+// Older catalogs omit `path`; derive it from the probed URL for matching.
+function verdictPath(r: CatalogReachability): string {
+  if (r.path) return normalizeReachPath(r.path);
+  try {
+    return normalizeReachPath(new URL(r.url).pathname);
+  } catch {
+    return "/";
+  }
+}
+
+// Host-only matching assigns one probe result to every route on the host.
+export function reachabilityForUrl(
   services: CatalogService[],
-  host: string,
+  url: ServiceUrl & { service?: string },
 ): CatalogReachability | undefined {
+  const wantPath = normalizeReachPath(url.path);
   for (const svc of services || []) {
+    if (url.service && svc.name !== url.service) continue;
     for (const r of svc.reachability || []) {
-      if (r.host === host) return r;
+      if (r.host === url.host && verdictPath(r) === wantPath) return r;
     }
   }
   return undefined;
-}
-
-export function reachabilityForUrl(
-  services: CatalogService[],
-  url: WorkloadUrl,
-): CatalogReachability | undefined {
-  return reachabilityForHost(services, url.host);
 }
 
 export function workloadReachability(
   app: CatalogApplication,
 ): WorkloadReachability {
   const services = app.services || [];
-  const hosts = ingressHostsFor(services);
-  if (hosts.length === 0) return "none";
+  const urls = workloadUrlsFor(app);
+  if (urls.length === 0) return "none";
 
   let reachable = 0;
   let unreachable = 0;
   let unknown = 0;
-  for (const host of hosts) {
-    const verdict = reachabilityForHost(services, host);
+  for (const u of urls) {
+    const verdict = reachabilityForUrl(services, u);
     const status: ReachabilityStatus = verdict?.status ?? "unknown";
     if (status === "reachable") reachable++;
     else if (status === "unreachable") unreachable++;
     else unknown++;
   }
 
-  const total = hosts.length;
+  const total = urls.length;
   if (reachable === total) return "reachable";
   if (unreachable === total) return "unreachable";
   if (unknown === total) return "unknown";
@@ -268,17 +279,17 @@ export function reachabilityRank(state: WorkloadReachability): number {
 
 export function reachabilityTooltip(app: CatalogApplication): string {
   const services = app.services || [];
-  const hosts = ingressHostsFor(services);
-  if (hosts.length === 0) return "";
-  return hosts
-    .map((host) => {
-      const v = reachabilityForHost(services, host);
+  const urls = workloadUrlsFor(app);
+  if (urls.length === 0) return "";
+  return urls
+    .map((u) => {
+      const v = reachabilityForUrl(services, u);
       const status: ReachabilityStatus = v?.status ?? "unknown";
       const code = v && v.statusCode > 0 ? ` (${v.statusCode})` : "";
       const when = v?.checkedAt
         ? ` · ${new Date(v.checkedAt).toLocaleString()}`
         : "";
-      return `${host} - ${status}${code}${when}`;
+      return `${u.host}${u.path} - ${status}${code}${when}`;
     })
     .join("\n");
 }
