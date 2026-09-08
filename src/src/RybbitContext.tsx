@@ -7,6 +7,8 @@ import React, {
   useState,
 } from "react";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { jwtDecode } from "jwt-decode";
+import { tokenCache } from "./auth/context";
 
 const RYBBIT_SCRIPT_URL = "https://build.dfds.cloud/tr/api/script.js";
 const RYBBIT_SITE_ID = "2f8dd0f249df";
@@ -70,6 +72,15 @@ function extractEmail(account: any): string | null {
   return raw || null;
 }
 
+function graphTokenName(): string | undefined {
+  try {
+    const token = tokenCache.get("msgraph");
+    return token ? (jwtDecode(token) as any)?.name || undefined : undefined;
+  } catch (e) {
+    return undefined;
+  }
+}
+
 function extractTraits(account: any): RybbitTraits {
   if (!account) return {};
   const claims = account.idTokenClaims || {};
@@ -79,7 +90,7 @@ function extractTraits(account: any): RybbitTraits {
     claims.upn ||
     account.username ||
     undefined;
-  const name = claims.name || account.name || undefined;
+  const name = claims.name || account.name || graphTokenName() || undefined;
   const username =
     claims.preferred_username ||
     claims.upn ||
