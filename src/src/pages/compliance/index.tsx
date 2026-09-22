@@ -481,7 +481,11 @@ function RogueCapabilitiesCard({
           categories.length > 0 ? (
             categories.map((cat) => {
               const catTotal = cat.compliantCount + cat.nonCompliantCount;
-              const catPct = calcCompliancePct(cat.compliantCount, catTotal);
+              const catPct = calcCompliancePct(
+                cat.compliantCount,
+                catTotal,
+                100,
+              );
               return (
                 <span
                   key={cat.categoryName}
