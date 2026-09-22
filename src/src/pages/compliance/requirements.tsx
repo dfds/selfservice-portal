@@ -10,6 +10,7 @@ import {
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
 import {
+  calcCompliancePct,
   complianceColor,
   complianceTier,
   parseCostCentre,
@@ -110,10 +111,7 @@ function RequirementCard({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const pct =
-    req.totalCapabilities > 0
-      ? Math.round((req.compliantCount / req.totalCapabilities) * 100)
-      : 0;
+  const pct = calcCompliancePct(req.compliantCount, req.totalCapabilities);
   const color = complianceColor(pct);
 
   return (
@@ -292,10 +290,7 @@ export default function RequirementsCompliancePage() {
       }
       const entries: CostCentreEntry[] = [];
       for (const [cc, counts] of byCC) {
-        const pct =
-          counts.total > 0
-            ? Math.round((counts.compliant / counts.total) * 100)
-            : 0;
+        const pct = calcCompliancePct(counts.compliant, counts.total);
         entries.push({
           label: cc ? getCostCentreLabel(cc) : "Rogue capabilities",
           isRogue: cc === null,
@@ -343,10 +338,7 @@ export default function RequirementsCompliancePage() {
       (s, r) => s + r.compliantCount,
       0,
     );
-    const pct =
-      totalCapsSum > 0
-        ? Math.round((totalCompliantSum / totalCapsSum) * 100)
-        : 0;
+    const pct = calcCompliancePct(totalCompliantSum, totalCapsSum);
     const totalCompliant = Math.round((pct / 100) * uniqueCaps);
     return { totalCaps: uniqueCaps, totalCompliant, pct };
   }, [requirements]);

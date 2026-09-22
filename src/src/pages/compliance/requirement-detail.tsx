@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMuiTableColors } from "@/context/ThemeContext";
 import {
+  calcCompliancePct,
   complianceColor,
   getCostCentreLabel,
   parseCostCentre,
@@ -476,7 +477,7 @@ function CapabilityTable({
                 Unknown
               </span>
             );
-          const pct = Math.round((compliant / total) * 100);
+          const pct = calcCompliancePct(compliant, total);
           return (
             <span
               className="font-mono text-[0.75rem] font-semibold"
@@ -696,8 +697,7 @@ function MobileCapabilityList({
                         </span>
                       );
                     }
-                    const pct =
-                      total > 0 ? Math.round((compliant / total) * 100) : 0;
+                    const pct = calcCompliancePct(compliant, total);
                     return (
                       <span
                         className="font-mono text-[0.6875rem] font-semibold"
@@ -820,7 +820,7 @@ export default function RequirementComplianceDetailPage() {
     const unknown = metadataFilteredCapabilities.filter(
       (c) => c.status === "Unknown",
     ).length;
-    const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
+    const pct = calcCompliancePct(compliant, total);
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 

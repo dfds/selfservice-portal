@@ -18,6 +18,7 @@ import {
   parseCostCentre,
   complianceTier,
   complianceColor,
+  calcCompliancePct,
 } from "./utils";
 import { useRybbit } from "@/RybbitContext";
 import piratehatPng from "../../../icons/piratehat.png";
@@ -176,7 +177,7 @@ function CostCentreCard({
 }) {
   const total = data?.totalCapabilities ?? capCount;
   const compliant = data?.compliantCount ?? 0;
-  const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
+  const pct = calcCompliancePct(compliant, total);
   const compliantDisplay = total > 0 ? `${compliant}/${total}` : NA_DISPLAY;
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
@@ -266,10 +267,7 @@ function CostCentreCard({
           categories.length > 0 ? (
             categories.map((cat) => {
               const catTotal = cat.compliantCount + cat.nonCompliantCount;
-              const catPct =
-                catTotal > 0
-                  ? Math.round((cat.compliantCount / catTotal) * 100)
-                  : 100;
+              const catPct = calcCompliancePct(cat.compliantCount, catTotal);
               return (
                 <span
                   key={cat.categoryName}
@@ -376,10 +374,7 @@ function OrphanedCapabilitiesCard({
           categories.length > 0 ? (
             categories.map((cat) => {
               const catTotal = cat.compliantCount + cat.nonCompliantCount;
-              const catPct =
-                catTotal > 0
-                  ? Math.round((cat.compliantCount / catTotal) * 100)
-                  : 100;
+              const catPct = calcCompliancePct(cat.compliantCount, catTotal);
               return (
                 <span
                   key={cat.categoryName}
@@ -486,10 +481,7 @@ function RogueCapabilitiesCard({
           categories.length > 0 ? (
             categories.map((cat) => {
               const catTotal = cat.compliantCount + cat.nonCompliantCount;
-              const catPct =
-                catTotal > 0
-                  ? Math.round((cat.compliantCount / catTotal) * 100)
-                  : 100;
+              const catPct = calcCompliancePct(cat.compliantCount, catTotal);
               return (
                 <span
                   key={cat.categoryName}
@@ -622,10 +614,10 @@ export default function CompliancePage() {
       const result = complianceResults[i];
       const data = result?.data as ComplianceData | undefined;
       const fetched = result?.isFetched ?? false;
-      const pct =
-        data && data.totalCapabilities > 0
-          ? Math.round((data.compliantCount / data.totalCapabilities) * 100)
-          : 100;
+      const pct = calcCompliancePct(
+        data?.compliantCount ?? 0,
+        data?.totalCapabilities ?? 0,
+      );
       map.set(cc.name, {
         data,
         isFetched: fetched,
@@ -653,14 +645,10 @@ export default function CompliancePage() {
     // Include rogue capabilities from the dedicated API endpoint — same
     // tier logic as cost centers.
     if (rogueComplianceData) {
-      const roguePct =
-        rogueComplianceData.totalCapabilities > 0
-          ? Math.round(
-              (rogueComplianceData.compliantCount /
-                rogueComplianceData.totalCapabilities) *
-                100,
-            )
-          : 100;
+      const roguePct = calcCompliancePct(
+        rogueComplianceData.compliantCount,
+        rogueComplianceData.totalCapabilities,
+      );
       totalCaps += rogueComplianceData.totalCapabilities;
       totalCompliant += rogueComplianceData.compliantCount;
       const rogueTier = complianceTier(roguePct);
@@ -669,14 +657,10 @@ export default function CompliancePage() {
       else nRed++;
     }
     if (orphanedComplianceData) {
-      const orphanedPct =
-        orphanedComplianceData.totalCapabilities > 0
-          ? Math.round(
-              (orphanedComplianceData.compliantCount /
-                orphanedComplianceData.totalCapabilities) *
-                100,
-            )
-          : 100;
+      const orphanedPct = calcCompliancePct(
+        orphanedComplianceData.compliantCount,
+        orphanedComplianceData.totalCapabilities,
+      );
       totalCaps += orphanedComplianceData.totalCapabilities;
       totalCompliant += orphanedComplianceData.compliantCount;
       const orphanedTier = complianceTier(orphanedPct);
@@ -685,8 +669,7 @@ export default function CompliancePage() {
       else nRed++;
     }
     const fetchedCount = nGreen + nOrange + nRed;
-    const overallPct =
-      totalCaps > 0 ? Math.round((totalCompliant / totalCaps) * 100) : 0;
+    const overallPct = calcCompliancePct(totalCompliant, totalCaps);
     return {
       totalCompliant,
       overallPct,
@@ -885,13 +868,10 @@ export default function CompliancePage() {
                       style={{
                         color: summaryData
                           ? complianceColor(
-                              summaryData.totalCapabilities === 0
-                                ? 100
-                                : Math.round(
-                                    (summaryData.fullyCompliantCapabilities /
-                                      summaryData.totalCapabilities) *
-                                      100,
-                                  ),
+                              calcCompliancePct(
+                                summaryData.fullyCompliantCapabilities,
+                                summaryData.totalCapabilities,
+                              ),
                             )
                           : undefined,
                       }}
@@ -899,13 +879,10 @@ export default function CompliancePage() {
                       <span title={summaryFetched ? undefined : NA_TOOLTIP}>
                         {summaryFetched
                           ? summaryData
-                            ? summaryData.totalCapabilities === 0
-                              ? "100%"
-                              : `${Math.round(
-                                  (summaryData.fullyCompliantCapabilities /
-                                    summaryData.totalCapabilities) *
-                                    100,
-                                )}%`
+                            ? `${calcCompliancePct(
+                                summaryData.fullyCompliantCapabilities,
+                                summaryData.totalCapabilities,
+                              )}%`
                             : NA_DISPLAY
                           : NA_DISPLAY}
                       </span>
