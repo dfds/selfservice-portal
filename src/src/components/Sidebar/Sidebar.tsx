@@ -29,7 +29,6 @@ import {
   ChevronUp,
   ChevronDown,
   ChevronRight,
-  Building2,
   ShieldCheck,
   KeyRound,
   UserSearch,

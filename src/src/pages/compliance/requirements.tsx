@@ -320,31 +320,6 @@ export default function RequirementsCompliancePage() {
     });
   }, [requirements, sort]);
 
-  const stats = useMemo(() => {
-    if (requirements.length === 0) return null;
-    // Each requirement is evaluated against the same capability set, so
-    // summing totalCapabilities would double-count. Use the max to get the
-    // unique capability count, then derive the weighted compliance rate from
-    // the full sums (most accurate) and back-calculate compliant count for
-    // a consistent display.
-    const uniqueCaps = Math.max(
-      ...requirements.map((r) => r.totalCapabilities),
-    );
-    const totalCapsSum = requirements.reduce(
-      (s, r) => s + r.totalCapabilities,
-      0,
-    );
-    const totalCompliantSum = requirements.reduce(
-      (s, r) => s + r.compliantCount,
-      0,
-    );
-    const pct = calcCompliancePct(totalCompliantSum, totalCapsSum);
-    const totalCompliant = Math.round((pct / 100) * uniqueCaps);
-    return { totalCaps: uniqueCaps, totalCompliant, pct };
-  }, [requirements]);
-
-  const gaugeColor = complianceColor(stats?.pct ?? 0);
-
   return (
     <div className="min-h-full">
       <div className="min-w-0 p-4 md:p-8 @container">

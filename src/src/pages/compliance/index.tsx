@@ -102,62 +102,6 @@ function DonutChart({
   );
 }
 
-// ─── FilterCheckbox ──────────────────────────────────────────────────────────
-
-function FilterCheckbox({
-  label,
-  dotColor,
-  count,
-  checked,
-  onToggle,
-}: {
-  label: string;
-  dotColor: string;
-  count: number;
-  checked: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <div
-      role="checkbox"
-      aria-checked={checked}
-      onClick={onToggle}
-      className="flex items-center gap-2 px-2 py-1.5 rounded-[6px] cursor-pointer select-none hover:bg-surface-muted transition-colors"
-    >
-      <div
-        className={cn(
-          "w-3.5 h-3.5 rounded-[4px] border flex-shrink-0 flex items-center justify-center transition-all",
-          checked
-            ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
-            : "border-[#d9dcde] dark:border-[#334155]",
-        )}
-      >
-        {checked && (
-          <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-            <polyline
-              points="1,3.5 3,5 7,1"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </div>
-      <div
-        className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{ background: dotColor }}
-      />
-      <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1">
-        {label}
-      </span>
-      <span className="text-[10.5px] font-mono text-[#afafaf] bg-[#f2f2f2] dark:bg-[#1e293b] px-1.5 py-0.5 rounded-full flex-shrink-0">
-        {count}
-      </span>
-    </div>
-  );
-}
-
 // ─── CostCentreCard ──────────────────────────────────────────────────────────
 
 function CostCentreCard({
@@ -751,15 +695,7 @@ export default function CompliancePage() {
     trackEvent("compliance:list:sorted", { sort: key });
   }
 
-  const n = costCentres.length;
-  // Total derived from the capabilities list — available as soon as the list
-  // loads, independently of the slower per-cost-centre compliance API calls.
-  const capListTotal = useMemo(
-    () => costCentres.reduce((s, cc) => s + cc.count, 0) + rogueCount,
-    [costCentres, rogueCount],
-  );
-  const { overallPct, nGreen, nOrange, nRed, fetchedCount, totalCompliant } =
-    sidePanelStats;
+  const { overallPct, nGreen, nOrange, nRed, fetchedCount } = sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
 
   return (
@@ -769,7 +705,7 @@ export default function CompliancePage() {
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Compliance
+            {"// Compliance"}
           </div>
           <div className="mb-3">
             <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
@@ -822,7 +758,7 @@ export default function CompliancePage() {
             {/* Overall Compliance + Summary panel - horizontal */}
             <div className="hidden w-full flex-shrink-0 rounded-[8px] border border-card bg-surface pb-4 pl-7 pr-4 pt-2.5 md:block @[900px]:w-auto">
               <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
-                // Overall Compliance{" "}
+                {"// Overall Compliance "}
                 <span className="font-normal tracking-[0.1em] text-muted">
                   (all capabilities)
                 </span>
