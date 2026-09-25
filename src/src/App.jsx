@@ -21,6 +21,7 @@ import ECRPage from "./pages/ecr";
 import ServicesPage from "./pages/services";
 import ServiceDetailsPage from "./pages/services/ServiceDetailsPage";
 import StatisticsPage from "./pages/statistics";
+import CopilotPage from "./pages/copilot";
 import ReleaseNotes from "./pages/release-notes";
 import AuthTemplate from "./auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
@@ -45,6 +46,7 @@ import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
 import BulkMetadataPage from "./pages/admin/capabilities/metadata";
 import EcrSyncDashboardPage from "./pages/admin/ecr";
 import PlatformMetricsDashboardPage from "./pages/admin/metrics";
+import CopilotAdminPage from "./pages/admin/copilot";
 import JsonSchemaEditorPage from "./pages/admin/json-schema";
 import EmailCampaignsPage from "./pages/admin/email-campaigns";
 import EmailCampaignEditor from "./pages/admin/email-campaigns/editor";
@@ -266,6 +268,7 @@ const router = createBrowserRouter(
         element={<ServiceDetailsPage />}
       />
       <Route path="statistics" element={<StatisticsPage />} />
+      <Route path="copilot" element={<CopilotPage />} />
       <Route path="release-notes" element={<ReleaseNotes />} />
       <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
       <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
@@ -313,6 +316,7 @@ const router = createBrowserRouter(
       />
       <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
       <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
+      <Route path="admin/copilot" element={<CopilotAdminPage />} />
       <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
       <Route path="admin/email-campaigns" element={<EmailCampaignsPage />} />
       <Route

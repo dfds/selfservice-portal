@@ -45,6 +45,7 @@ import {
   ShieldAlert,
   Clock,
   Gauge,
+  Bot,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -119,6 +120,7 @@ const platformNav: NavItemDef[] = [
   { title: "Service catalogue", url: "/services", icon: Network },
   { title: "Topics", url: "/topics", icon: List },
   { title: "ECR", url: "/ecr", icon: Package },
+  { title: "Copilot", url: "/copilot", icon: Bot },
   { title: "Permission Matrix", url: "/rbac/permissions", icon: Table2 },
 ];
 
@@ -214,6 +216,7 @@ const adminNav: NavGroupDef = {
     },
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
+    { title: "Copilot", url: "/admin/copilot", icon: Bot },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
     { title: "Email Campaigns", url: "/admin/email-campaigns", icon: Mail },
     ...adminExternalNav,
