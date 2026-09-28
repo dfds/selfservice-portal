@@ -1,15 +1,7 @@
 import type { TourDefinition } from "./types";
-import {
-  tour_2026_q2_customisation,
-  tour_2026_q2_topbar,
-} from "./releases/2026-q2";
 import { tour_2026_q3_service_catalogue } from "./releases/2026-q3";
 
-const ALL_TOURS: TourDefinition[] = [
-  tour_2026_q3_service_catalogue,
-  // tour_2026_q2_customisation,
-  // tour_2026_q2_topbar,
-];
+const ALL_TOURS: TourDefinition[] = [tour_2026_q3_service_catalogue];
 
 export interface TourContext {
   isCloudEngineer: boolean;

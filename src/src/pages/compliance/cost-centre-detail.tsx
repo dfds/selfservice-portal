@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowDown,
@@ -35,8 +29,13 @@ import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useExpandable } from "@/hooks/useExpandable";
-import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
-import { getCostCentreLabel, complianceColor, parseMetadata } from "./utils";
+import { useMuiTableColors } from "@/context/ThemeContext";
+import {
+  getCostCentreLabel,
+  calcCompliancePct,
+  complianceColor,
+  parseMetadata,
+} from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -184,7 +183,7 @@ function overallPctFromCategories(cap: CapabilityCompliance): number {
   const evaluated = cap.categories.filter((c) => c.status !== "Unknown");
   if (evaluated.length === 0) return 0;
   const compliant = evaluated.filter((c) => c.status === "Compliant").length;
-  return Math.round((compliant / evaluated.length) * 100);
+  return calcCompliancePct(compliant, evaluated.length);
 }
 
 // Sort key for one capability under a given column id. Mirrors the desktop
@@ -455,7 +454,7 @@ export default function CostCentreComplianceDetailPage() {
     const unknown = metadataFilteredCapabilities.filter(
       (c) => c.overallStatus === "Unknown",
     ).length;
-    const pct = total > 0 ? Math.round((compliant / total) * 100) : 100;
+    const pct = calcCompliancePct(compliant, total);
     const categories = CATEGORY_COLUMNS.map(({ key }) => {
       let c = 0;
       let nc = 0;
@@ -786,16 +785,8 @@ function CapabilityMatrix({
     updater: MRT_SortingState | ((old: MRT_SortingState) => MRT_SortingState),
   ) => void;
 }) {
-  const { isDark } = useTheme();
-  const {
-    bg,
-    bgMuted,
-    textPrimary,
-    textMuted,
-    borderColor,
-    inputBorder,
-    inputText,
-  } = useMuiTableColors();
+  const { bg, bgMuted, textPrimary, textMuted, borderColor } =
+    useMuiTableColors();
 
   // Mirror sorting into a ref so sortingFns can pin "no data" rows to the
   // bottom in both directions (TanStack v8 otherwise flips the comparator's

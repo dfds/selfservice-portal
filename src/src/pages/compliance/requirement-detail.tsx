@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowDown,
@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMuiTableColors } from "@/context/ThemeContext";
 import {
+  calcCompliancePct,
   complianceColor,
   getCostCentreLabel,
   parseCostCentre,
@@ -69,15 +70,6 @@ type RequirementDetailsData = {
 };
 
 type StatusFilter = "all" | "Compliant" | "NonCompliant" | "Unknown";
-
-type CostCentreRequirementSummary = {
-  key: string;
-  label: string;
-  compliant: number;
-  total: number;
-  pct: number;
-  isRogue: boolean;
-};
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -261,58 +253,6 @@ function SummaryCell({
   );
 }
 
-function CostCentreOverview({
-  entries,
-}: {
-  entries: CostCentreRequirementSummary[];
-}) {
-  if (entries.length === 0) {
-    return (
-      <div className="text-[0.75rem] text-muted italic">
-        No cost centre data available for this requirement.
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4">
-      {entries.map((entry, index) => (
-        <Link
-          key={entry.key}
-          to={
-            entry.isRogue
-              ? "/compliance/cost-centres/rogue-capabilities"
-              : `/compliance/cost-centres/${encodeURIComponent(entry.key)}`
-          }
-          className={cn(
-            "flex items-center gap-3 py-2.5 no-underline hover:bg-surface-muted/40 transition-colors rounded-[6px] max-w-[420px] w-full",
-            "xl:pr-3",
-            index < entries.length - 1 && "border-b border-divider",
-            index < entries.length - 2 &&
-              index % 2 === 0 &&
-              "xl:border-b xl:border-divider",
-          )}
-        >
-          <span className="text-[0.75rem] text-[#4a6278] dark:text-[#94a3b8] flex-1 min-w-0 truncate px-1">
-            {entry.label}
-          </span>
-          <div className="flex items-center gap-2 flex-shrink-0 px-1">
-            <span
-              className="font-mono text-[10.5px] w-[36px] text-right font-semibold"
-              style={{ color: complianceColor(entry.pct) }}
-            >
-              {entry.pct}%
-            </span>
-            <span className="font-mono text-[10.5px] text-[#afafaf] w-[44px] text-right">
-              {entry.compliant}/{entry.total}
-            </span>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
 // ─── ExpandedItemsDetail ──────────────────────────────────────────────────────
 
 function ExpandedItemsDetail({
@@ -476,7 +416,7 @@ function CapabilityTable({
                 Unknown
               </span>
             );
-          const pct = Math.round((compliant / total) * 100);
+          const pct = calcCompliancePct(compliant, total);
           return (
             <span
               className="font-mono text-[0.75rem] font-semibold"
@@ -696,8 +636,7 @@ function MobileCapabilityList({
                         </span>
                       );
                     }
-                    const pct =
-                      total > 0 ? Math.round((compliant / total) * 100) : 0;
+                    const pct = calcCompliancePct(compliant, total);
                     return (
                       <span
                         className="font-mono text-[0.6875rem] font-semibold"
@@ -820,7 +759,7 @@ export default function RequirementComplianceDetailPage() {
     const unknown = metadataFilteredCapabilities.filter(
       (c) => c.status === "Unknown",
     ).length;
-    const pct = total > 0 ? Math.round((compliant / total) * 100) : 0;
+    const pct = calcCompliancePct(compliant, total);
     return { total, compliant, nonCompliant, unknown, pct };
   }, [metadataFilteredCapabilities]);
 
@@ -889,7 +828,7 @@ export default function RequirementComplianceDetailPage() {
             Requirements
           </Link>
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Requirement
+            {"// Requirement"}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-[1.75rem] font-bold text-[#002b45] dark:text-[#e2e8f0] font-mono tracking-[-0.02em] leading-[1.2]">

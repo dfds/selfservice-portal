@@ -66,11 +66,6 @@ const statusColor: Record<WorkloadStatus, string> = {
   degraded: "text-warning",
   down: "text-error",
 };
-const statusDot: Record<WorkloadStatus, string> = {
-  healthy: "bg-success",
-  degraded: "bg-warning",
-  down: "bg-error",
-};
 
 const BackLink = () => (
   <Link

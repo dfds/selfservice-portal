@@ -18,7 +18,6 @@ import {
   useDeleteRole,
   useGrantPermissionToRole,
 } from "@/state/remote/queries/rbac";
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -200,7 +199,6 @@ function GroupExpandedContent({
   members: any[];
   onMembersChanged: () => void;
 }) {
-  const toast = useToast();
   const { data: rolesData, isFetched: rolesFetched } = useGroupRoles(groupId);
   const { data: permsData, isFetched: permsFetched } =
     useGroupPermissions(groupId);
@@ -557,7 +555,6 @@ const TABS: { id: Tab; label: string; Icon: React.ElementType }[] = [
 ];
 
 export default function RbacViewerPage() {
-  const toast = useToast();
   const [tab, setTab] = useState<Tab>("roles");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");

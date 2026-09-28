@@ -10,6 +10,7 @@ import {
 import { ssuRequest } from "@/state/remote/query";
 import PreAppContext from "@/preAppContext";
 import {
+  calcCompliancePct,
   complianceColor,
   complianceTier,
   parseCostCentre,
@@ -110,10 +111,7 @@ function RequirementCard({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const pct =
-    req.totalCapabilities > 0
-      ? Math.round((req.compliantCount / req.totalCapabilities) * 100)
-      : 0;
+  const pct = calcCompliancePct(req.compliantCount, req.totalCapabilities);
   const color = complianceColor(pct);
 
   return (
@@ -292,10 +290,7 @@ export default function RequirementsCompliancePage() {
       }
       const entries: CostCentreEntry[] = [];
       for (const [cc, counts] of byCC) {
-        const pct =
-          counts.total > 0
-            ? Math.round((counts.compliant / counts.total) * 100)
-            : 0;
+        const pct = calcCompliancePct(counts.compliant, counts.total);
         entries.push({
           label: cc ? getCostCentreLabel(cc) : "Rogue capabilities",
           isRogue: cc === null,
@@ -325,41 +320,13 @@ export default function RequirementsCompliancePage() {
     });
   }, [requirements, sort]);
 
-  const stats = useMemo(() => {
-    if (requirements.length === 0) return null;
-    // Each requirement is evaluated against the same capability set, so
-    // summing totalCapabilities would double-count. Use the max to get the
-    // unique capability count, then derive the weighted compliance rate from
-    // the full sums (most accurate) and back-calculate compliant count for
-    // a consistent display.
-    const uniqueCaps = Math.max(
-      ...requirements.map((r) => r.totalCapabilities),
-    );
-    const totalCapsSum = requirements.reduce(
-      (s, r) => s + r.totalCapabilities,
-      0,
-    );
-    const totalCompliantSum = requirements.reduce(
-      (s, r) => s + r.compliantCount,
-      0,
-    );
-    const pct =
-      totalCapsSum > 0
-        ? Math.round((totalCompliantSum / totalCapsSum) * 100)
-        : 0;
-    const totalCompliant = Math.round((pct / 100) * uniqueCaps);
-    return { totalCaps: uniqueCaps, totalCompliant, pct };
-  }, [requirements]);
-
-  const gaugeColor = complianceColor(stats?.pct ?? 0);
-
   return (
     <div className="min-h-full">
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <div className="font-mono text-[0.6875rem] font-semibold tracking-[0.15em] uppercase text-[#0e7cc1] dark:text-[#60a5fa] mb-1.5">
-            // Compliance
+            {"// Compliance"}
           </div>
           <div className="mb-3">
             <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
@@ -412,7 +379,7 @@ export default function RequirementsCompliancePage() {
             {/* Stats panel */}
             <div className="hidden w-full flex-shrink-0 rounded-[8px] border border-card bg-surface pb-4 pl-7 pr-4 pt-2.5 md:block @[900px]:w-auto">
               <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
-                // Overall Compliance{" "}
+                {"// Overall Compliance "}
                 <span className="font-normal tracking-[0.1em] text-muted">
                   (all capabilities)
                 </span>
