@@ -25,6 +25,7 @@ const SwetrixContext = React.createContext<SwetrixState>({
   swetrixIsEnabled: false,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isSwetrixHost(hostname: string): boolean {
   if (hostname === "localhost" || hostname === "127.0.0.1") return true;
   if (hostname.includes("ssu-preview.hellman.oxygen.dfds.cloud")) return true;

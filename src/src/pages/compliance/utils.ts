@@ -42,6 +42,20 @@ export function parseMetadata(
   return {};
 }
 
+/**
+ * Rounds a compliant/total ratio to a whole percentage, without ever
+ * rounding a partial ratio up to 100% (or down to 0%). E.g. 239/240 must
+ * show as 99%, not 100%, since it isn't actually fully compliant.
+ * When total is 0, returns 100 (vacuously compliant - no items to violate).
+ */
+export function calcCompliancePct(compliant: number, total: number): number {
+  if (total <= 0) return 100;
+  const pct = Math.round((compliant / total) * 100);
+  if (compliant < total && pct >= 100) return 99;
+  if (compliant > 0 && pct <= 0) return 1;
+  return pct;
+}
+
 export function complianceTier(pct: number): "green" | "orange" | "red" {
   return pct >= 80 ? "green" : pct >= 50 ? "orange" : "red";
 }

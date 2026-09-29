@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/lib/utils";
-import { complianceColor } from "./utils";
+import { calcCompliancePct, complianceColor } from "./utils";
 
 export function ArcGauge({ pct, color }: { pct: number; color: string }) {
   const r = 36;
@@ -74,8 +74,7 @@ export function CategoryBreakdownList({
     <div className={className}>
       {categories.map((cat, i) => {
         const total = cat.compliantCount + cat.nonCompliantCount;
-        const pct =
-          total > 0 ? Math.round((cat.compliantCount / total) * 100) : 100;
+        const pct = calcCompliancePct(cat.compliantCount, total);
         const color = complianceColor(pct);
         const href = getHref?.(cat.categoryName) ?? null;
         const content = (

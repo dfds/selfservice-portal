@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   Boxes,
   Database,
-  FileText,
   Globe,
   ChevronRight,
   AlertTriangle,
@@ -15,7 +14,6 @@ import {
   workloadStatus,
   workloadDetailHref,
   ingressHostsFor,
-  apiDocsCountFor,
   trafficFor,
   errorDisplay,
   workloadReachability,
@@ -60,7 +58,6 @@ export function ServicesMobileList({
         const desired = app.replicas ?? 0;
         const pct = desired > 0 ? Math.round((100 * ready) / desired) : 0;
         const hosts = ingressHostsFor(app.services || []);
-        const docs = apiDocsCountFor(app);
         const traffic = showErrors ? trafficFor(app) : null;
         const trafficErrors = traffic ? errorDisplay(traffic) : null;
         const reach = workloadReachability(app);
