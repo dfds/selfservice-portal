@@ -1,11 +1,14 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 import PageSection from "@/components/PageSection";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { InfoAlert } from "@/components/ui/InfoAlert";
 import { SkeletonServiceTableRow } from "@/components/ui/skeleton";
 import { useCapabilityDeployments } from "@/state/remote/queries/catalog";
 import { ServicesTableView } from "../../services/ServicesTableView";
+import { ENRICH_MODAL_PARAM } from "../../services/ServiceMetadataGuideModal";
 import { LastUpdated, catalogUpdatedAt } from "@/components/ui/LastUpdated";
 
 export default function Deployments({ anchorId }) {
@@ -19,7 +22,18 @@ export default function Deployments({ anchorId }) {
   const lastUpdatedAt = catalogUpdatedAt(meta, dataUpdatedAt);
 
   return (
-    <PageSection id={anchorId} headline="Services">
+    <PageSection
+      id={anchorId}
+      headline="Services"
+      headlineChildren={
+        <Button asChild variant="outline" size="sm">
+          <Link to={`/services?modal=${ENRICH_MODAL_PARAM}`}>
+            <BookOpen size={14} />
+            Enrich your services
+          </Link>
+        </Button>
+      }
+    >
       <p className="text-[0.8125rem] text-[#666666] dark:text-slate-400 leading-[1.6] mb-2">
         Kubernetes workloads running for this capability, discovered across
         clusters. This view is read-only and refreshed periodically from the

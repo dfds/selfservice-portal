@@ -101,6 +101,8 @@ function CodeBlock({ text }: { text: string }) {
   );
 }
 
+export const ENRICH_MODAL_PARAM = "enrichYourServices";
+
 type ResourceTab = "workload" | "ingress";
 
 const TABS: { id: ResourceTab; label: string; icon: React.ReactNode }[] = [

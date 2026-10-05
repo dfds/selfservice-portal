@@ -14,7 +14,10 @@ import { SkeletonServiceTableRow } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ServicesTableView } from "./ServicesTableView";
 import { ServicesGraphView } from "./ServicesGraphView";
-import { ServiceMetadataGuideModal } from "./ServiceMetadataGuideModal";
+import {
+  ENRICH_MODAL_PARAM,
+  ServiceMetadataGuideModal,
+} from "./ServiceMetadataGuideModal";
 import { LastUpdated, catalogUpdatedAt } from "@/components/ui/LastUpdated";
 import { connectsIndex, connectsOptions } from "./filtering";
 import { workloadStatus, ingressHostsFor } from "./catalogView";
@@ -63,8 +66,6 @@ function ViewToggle({
     </div>
   );
 }
-
-const ENRICH_MODAL_PARAM = "enrichYourServices";
 
 function EnrichServicesButton() {
   const [searchParams, setSearchParams] = useSearchParams();
