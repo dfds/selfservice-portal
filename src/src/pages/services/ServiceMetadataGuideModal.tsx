@@ -101,6 +101,8 @@ function CodeBlock({ text }: { text: string }) {
   );
 }
 
+export const ENRICH_MODAL_PARAM = "enrichYourServices";
+
 type ResourceTab = "workload" | "ingress";
 
 const TABS: { id: ResourceTab; label: string; icon: React.ReactNode }[] = [
@@ -289,7 +291,16 @@ export function ServiceMetadataGuideModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[min(48rem,calc(0.95*var(--ssu-vw)))] max-h-[calc(0.85*var(--ssu-vh))] overflow-y-auto">
+      {/* Radix focuses the first tab on open. When opened from a ?modal= link
+          there is no prior pointer input, so the browser matches :focus-visible
+          and outlines the tab. Focus the content container instead. */}
+      <DialogContent
+        className="max-w-[min(48rem,calc(0.95*var(--ssu-vw)))] max-h-[calc(0.85*var(--ssu-vh))] overflow-y-auto focus:outline-none"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).focus();
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-mono uppercase text-sm tracking-[0.08em]">
             <BookOpen size={16} />
