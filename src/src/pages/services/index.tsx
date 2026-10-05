@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BookOpen, Table2, Network } from "lucide-react";
 import {
@@ -14,7 +14,10 @@ import { SkeletonServiceTableRow } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ServicesTableView } from "./ServicesTableView";
 import { ServicesGraphView } from "./ServicesGraphView";
-import { ServiceMetadataGuideModal } from "./ServiceMetadataGuideModal";
+import {
+  ENRICH_MODAL_PARAM,
+  ServiceMetadataGuideModal,
+} from "./ServiceMetadataGuideModal";
 import { LastUpdated, catalogUpdatedAt } from "@/components/ui/LastUpdated";
 import { connectsIndex, connectsOptions } from "./filtering";
 import { workloadStatus, ingressHostsFor } from "./catalogView";
@@ -65,8 +68,27 @@ function ViewToggle({
 }
 
 function EnrichServicesButton() {
-  const [guideOpen, setGuideOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const guideOpen = searchParams.get("modal") === ENRICH_MODAL_PARAM;
+  const setGuideOpen = (open: boolean) => {
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        if (open) p.set("modal", ENRICH_MODAL_PARAM);
+        else p.delete("modal");
+        return p;
+      },
+      { replace: true },
+    );
+  };
   const { trackEvent } = useRybbit();
+
+  useEffect(() => {
+    if (guideOpen)
+      trackEvent("services:metadata-guide:open", { source: "link" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Button
@@ -75,7 +97,7 @@ function EnrichServicesButton() {
         className="flex-none"
         onClick={() => {
           setGuideOpen(true);
-          trackEvent("services:metadata-guide:open");
+          trackEvent("services:metadata-guide:open", { source: "button" });
         }}
       >
         <BookOpen size={14} />
