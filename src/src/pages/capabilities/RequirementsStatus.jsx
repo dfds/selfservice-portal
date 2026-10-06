@@ -188,6 +188,21 @@ export default function RequirementsScore() {
                       {category.description}
                     </p>
                   )}
+                  {category.nonCompliantItems?.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-0.5">
+                      <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-[#afafaf] dark:text-slate-500">
+                        Non-compliant items
+                      </span>
+                      {category.nonCompliantItems.map((item, i) => (
+                        <div
+                          key={`${item}-${i}`}
+                          className="flex items-center gap-2 text-[0.6875rem] font-mono text-[#4a6278] dark:text-slate-400"
+                        >
+                          <span className="truncate flex-1">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {category.helpUrl && (
                     <a
                       href={category.helpUrl}
