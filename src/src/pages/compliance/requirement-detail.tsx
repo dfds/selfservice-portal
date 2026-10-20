@@ -53,7 +53,9 @@ type CapabilityForRequirement = {
   jsonMetadata: string | null;
   status: "Compliant" | "NonCompliant" | "Unknown";
   score: number | null;
+  // Calculation input only; render nonCompliantItems instead.
   items: CapabilityItem[];
+  nonCompliantItems?: string[] | null;
 };
 
 type RequirementDetailsData = {
@@ -263,32 +265,32 @@ function ExpandedItemsDetail({
   metadata: Record<string, string>;
 }) {
   const metadataEntries = Object.entries(metadata);
+  const nonCompliantItems = cap.nonCompliantItems ?? [];
   return (
     <div className="border-t border-divider bg-surface-muted/40 px-4 py-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div>
           <div className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-muted mb-2">
-            Items
+            Non-compliant items
           </div>
-          {cap.items.length === 0 ? (
-            <p className="text-[0.6875rem] text-muted italic">No items.</p>
+          {nonCompliantItems.length === 0 ? (
+            <p className="text-[0.6875rem] text-muted italic">
+              No non-compliant items.
+            </p>
           ) : (
             <div className="flex flex-col gap-0.5">
-              {cap.items.map((item, i) => (
+              {nonCompliantItems.map((item, i) => (
                 <div
-                  key={i}
+                  key={`${item}-${i}`}
                   className="flex items-center gap-2 text-[0.6875rem] font-mono text-secondary"
                 >
-                  {statusIcon(statusToken(item.status))}
-                  <span className="truncate flex-1">{item.name}</span>
-                  <span className="text-muted">
-                    {item.detail ? ` · ${item.detail}` : ""}
-                  </span>
+                  {statusIcon("noncompliant")}
+                  <span className="truncate flex-1">{item}</span>
                   <span
                     className="font-medium"
-                    style={{ color: statusColor(item.status) }}
+                    style={{ color: statusColor("NonCompliant") }}
                   >
-                    {statusLabel(item.status)}
+                    {statusLabel("NonCompliant")}
                   </span>
                 </div>
               ))}

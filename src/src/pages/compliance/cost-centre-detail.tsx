@@ -60,7 +60,9 @@ type ComplianceCategory = {
   helpUrl?: string | null;
   displayName?: string | null;
   description?: string | null;
+  // Calculation input only; render nonCompliantItems instead.
   items: ComplianceCategoryItem[];
+  nonCompliantItems?: string[] | null;
 };
 
 type CapabilityCompliance = {
@@ -1066,18 +1068,14 @@ function ExpandedDetail({
                     </a>
                   )}
                 </div>
-                {cat.items.length > 0 && (
+                {(cat.nonCompliantItems?.length ?? 0) > 0 && (
                   <div className="mt-2 flex flex-col gap-0.5">
-                    {cat.items.map((item) => (
+                    {cat.nonCompliantItems!.map((item, i) => (
                       <div
-                        key={item.name}
+                        key={`${item}-${i}`}
                         className="flex items-center gap-2 text-[0.6875rem] font-mono text-secondary"
                       >
-                        <span className="truncate flex-1">{item.name}</span>
-                        <span className="text-muted">
-                          {item.status}
-                          {item.detail ? ` · ${item.detail}` : ""}
-                        </span>
+                        <span className="truncate flex-1">{item}</span>
                       </div>
                     ))}
                   </div>
