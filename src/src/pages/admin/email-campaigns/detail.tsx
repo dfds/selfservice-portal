@@ -11,6 +11,11 @@ import {
   useDuplicateEmailCampaign,
   useRevertToDraftEmailCampaign,
 } from "@/state/remote/queries/emailCampaigns";
+import {
+  useOwnerAssets,
+  PrivateAssetOwnerType,
+} from "@/state/remote/queries/privateAssets";
+import { resolveInlineImageUrls } from "./tiptap/inline-image-node";
 import { CampaignStatusBadge } from "./components/campaign-status-badge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +40,7 @@ import {
   Copy,
   Undo2,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 type RecipientTab = "all" | "Pending" | "Sent" | "Failed";
 
@@ -55,13 +60,32 @@ export default function EmailCampaignDetail() {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [revertOpen, setRevertOpen] = useState(false);
   const [recipientTab, setRecipientTab] = useState<RecipientTab>("all");
-  const [bodyExpanded, setBodyExpanded] = useState(false);
+  const [bodyExpanded, setBodyExpanded] = useState(true);
 
-  useEffect(() => {
-    if (campaign?.status === "Sent" || campaign?.status === "Failed") {
-      setBodyExpanded(true);
-    }
-  }, [campaign?.status]);
+  const { data: assets, isFetching: assetsFetching } = useOwnerAssets(
+    id,
+    PrivateAssetOwnerType.EmailCampaign,
+  );
+
+  const assetUrlByContentId = useMemo(() => {
+    const map = new Map<string, string>();
+    (assets || []).forEach((a) => {
+      if (a.url) map.set(a.contentId, a.url);
+    });
+    return map;
+  }, [assets]);
+
+  // contentHtml stores inline images as cid:{contentId}; resolve them to
+  // presigned URLs so the body preview renders images.
+  const resolvedBodyHtml = useMemo(
+    () =>
+      resolveInlineImageUrls(
+        campaign?.contentHtml || "",
+        assetUrlByContentId,
+        assetsFetching,
+      ),
+    [campaign?.contentHtml, assetUrlByContentId, assetsFetching],
+  );
 
   const handleCancel = () => {
     cancelCampaign.mutate(undefined, {
@@ -277,7 +301,7 @@ export default function EmailCampaignDetail() {
           {bodyExpanded && (
             <div className="border border-card rounded-lg overflow-hidden">
               <iframe
-                srcDoc={campaign.contentHtml}
+                srcDoc={resolvedBodyHtml}
                 sandbox="allow-same-origin"
                 className="w-full min-h-[400px] bg-white"
                 title="Email body"
