@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
@@ -19,9 +25,21 @@ import {
   useScheduleEmailCampaign,
   useTemplateVariables,
 } from "@/state/remote/queries/emailCampaigns";
+import {
+  useUploadPrivateAsset,
+  useOwnerAssets,
+  PrivateAssetOwnerType,
+} from "@/state/remote/queries/privateAssets";
+import { validateImageFile, generateContentId } from "@/lib/privateAssetUtils";
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
 import { BlockHelperHighlight } from "./tiptap/block-helper-highlight";
+import {
+  InlineImage,
+  serializeInlineImages,
+  serializeInlineImageJson,
+  resolveInlineImageUrls,
+} from "./tiptap/inline-image-node";
 import { VariableInserter } from "./components/variable-inserter";
 import { FormattingToolbar } from "./components/formatting-toolbar";
 import { AudienceBuilder } from "./components/audience-builder";
@@ -88,6 +106,19 @@ export default function EmailCampaignEditor() {
   const previewCampaign = usePreviewEmailCampaign(campaignId || "");
   const sendCampaign = useSendEmailCampaign(campaignId || "");
   const scheduleCampaign = useScheduleEmailCampaign(campaignId || "");
+  const uploadAsset = useUploadPrivateAsset();
+  const { data: campaignAssets, isFetching: assetsFetching } = useOwnerAssets(
+    campaignId,
+    PrivateAssetOwnerType.EmailCampaign,
+  );
+
+  const assetUrlByContentId = useMemo(() => {
+    const map = new Map<string, string>();
+    (campaignAssets || []).forEach((a) => {
+      if (a.url) map.set(a.contentId, a.url);
+    });
+    return map;
+  }, [campaignAssets]);
 
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -101,9 +132,27 @@ export default function EmailCampaignEditor() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [cronExpression, setCronExpression] = useState("");
 
+  const [imageUploading, setImageUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previews, setPreviews] = useState<any[]>([]);
   const [previewLoading, setPreviewLoading] = useState(false);
+
+  // Previews carry cid:{contentId} image refs; resolve them to presigned URLs,
+  // showing a loading placeholder while the asset list is still fetching.
+  const resolvedPreviews = useMemo(
+    () =>
+      previews.map((p) => ({
+        ...p,
+        html: resolveInlineImageUrls(
+          p?.html || "",
+          assetUrlByContentId,
+          assetsFetching,
+        ),
+      })),
+    [previews, assetUrlByContentId, assetsFetching],
+  );
 
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
 
@@ -169,6 +218,7 @@ export default function EmailCampaignEditor() {
       Link.configure({ openOnClick: false }),
       TemplateVariableNode,
       BlockHelperHighlight,
+      InlineImage,
       VariableSuggestion.configure({
         onOpen: handleSuggestionOpen,
         onClose: handleSuggestionClose,
@@ -386,6 +436,30 @@ export default function EmailCampaignEditor() {
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
 
+  // Inline images persist as cid:{contentId}; swap in fresh presigned URLs so
+  // they render while editing (the stored URLs expire after ~15 min).
+  useEffect(() => {
+    if (!editor || assetUrlByContentId.size === 0) return;
+
+    const { state, view } = editor;
+    const tr = state.tr;
+    let changed = false;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name !== "image") return;
+      const contentId = node.attrs.contentId as string | null;
+      if (!contentId) return;
+      const freshUrl = assetUrlByContentId.get(contentId);
+      if (freshUrl && node.attrs.src !== freshUrl) {
+        tr.setNodeMarkup(pos, undefined, { ...node.attrs, src: freshUrl });
+        changed = true;
+      }
+    });
+    if (changed) {
+      tr.setMeta("addToHistory", false);
+      view.dispatch(tr);
+    }
+  }, [editor, assetUrlByContentId, loaded]);
+
   const doSave = (): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (!editor) return reject(new Error("Editor not ready"));
@@ -397,8 +471,10 @@ export default function EmailCampaignEditor() {
       const payload = {
         name: name.trim(),
         subject: subject.trim(),
-        contentJson: JSON.stringify(editor.getJSON()),
-        contentHtml: preserveEmptyParagraphSpacing(editor.getHTML()),
+        contentJson: JSON.stringify(serializeInlineImageJson(editor.getJSON())),
+        contentHtml: serializeInlineImages(
+          preserveEmptyParagraphSpacing(editor.getHTML()),
+        ),
         audienceJson: JSON.stringify(audience),
         recipientFilter: recipientFilter || null,
         targetType,
@@ -450,6 +526,96 @@ export default function EmailCampaignEditor() {
         // button remain the explicit ways to leave.
       })
       .catch(() => {});
+  };
+
+  const handleInsertImageClick = () => {
+    imageInputRef.current?.click();
+  };
+
+  const updateImageNodeByContentId = (
+    contentId: string,
+    action: "setSrc" | "remove",
+    src?: string,
+  ) => {
+    if (!editor) return;
+    const { state, view } = editor;
+    const tr = state.tr;
+    let changed = false;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name !== "image" || node.attrs.contentId !== contentId) {
+        return;
+      }
+      if (action === "remove") {
+        tr.delete(pos, pos + node.nodeSize);
+      } else {
+        tr.setNodeMarkup(pos, undefined, { ...node.attrs, src });
+      }
+      changed = true;
+      return false;
+    });
+    if (changed) {
+      tr.setMeta("addToHistory", false);
+      view.dispatch(tr);
+    }
+  };
+
+  const handleImageFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file || !editor) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.ok) {
+      toast.error(validation.error || "Invalid image");
+      return;
+    }
+
+    // The image button is disabled until the draft is saved, so campaignId is
+    // expected here; guard defensively.
+    if (!campaignId) return;
+
+    const contentId = generateContentId();
+
+    // Drop a placeholder at the cursor immediately; the NodeView renders a
+    // spinner until its src is filled in once the upload completes. Insert
+    // after the current selection so an already-selected image isn't replaced.
+    const insertPos = editor.state.selection.to;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(insertPos, {
+        type: "image",
+        attrs: { src: "", contentId, isInline: true },
+      })
+      .run();
+
+    setImageUploading(true);
+    try {
+      const asset = await uploadAsset.mutateAsync({
+        file,
+        ownerId: campaignId,
+        ownerType: PrivateAssetOwnerType.EmailCampaign,
+        contentId,
+        isInline: true,
+      });
+
+      updateImageNodeByContentId(
+        contentId,
+        "setSrc",
+        asset.url || `cid:${asset.contentId}`,
+      );
+
+      if (!asset.url) {
+        toast.error("Image uploaded, but preview is unavailable right now");
+      }
+    } catch {
+      updateImageNodeByContentId(contentId, "remove");
+      toast.error("Could not upload image");
+    } finally {
+      setImageUploading(false);
+    }
   };
 
   const waitForPreviewRetry = (ms: number) =>
@@ -701,7 +867,14 @@ export default function EmailCampaignEditor() {
             className="border border-card rounded-lg bg-surface relative"
           >
             <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle rounded-t-lg">
-              <FormattingToolbar editor={editor} variables={variables || []} />
+              <FormattingToolbar
+                editor={editor}
+                variables={variables || []}
+                onInsertImage={handleInsertImageClick}
+                imageUploading={imageUploading}
+                imageDisabled={!campaignId}
+                imageDisabledReason="Save the draft before inserting images"
+              />
               <Separator orientation="vertical" className="mx-1.5 h-5" />
               <VariableInserter editor={editor} targetType={targetType} />
               {targetType === "User" && (
@@ -724,6 +897,14 @@ export default function EmailCampaignEditor() {
               </span>
             </div>
             <EditorContent editor={editor} />
+
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/gif,image/webp"
+              className="hidden"
+              onChange={handleImageFileChange}
+            />
 
             {suggestion.active && filteredVars.length > 0 && (
               <div
@@ -959,7 +1140,7 @@ export default function EmailCampaignEditor() {
       <PreviewDialog
         open={previewOpen}
         onOpenChange={setPreviewOpen}
-        previews={previews}
+        previews={resolvedPreviews}
         loading={previewLoading}
         targetType={targetType}
       />

@@ -12,6 +12,8 @@ import {
   Trash2,
   ChevronDown,
   Search,
+  ImagePlus,
+  Loader2,
 } from "lucide-react";
 
 interface TemplateVariable {
@@ -23,6 +25,10 @@ interface TemplateVariable {
 interface FormattingToolbarProps {
   editor: Editor | null;
   variables: TemplateVariable[];
+  onInsertImage?: () => void;
+  imageUploading?: boolean;
+  imageDisabled?: boolean;
+  imageDisabledReason?: string;
 }
 
 function FormatButton({
@@ -334,6 +340,10 @@ function LinkPopover({
 export function FormattingToolbar({
   editor,
   variables,
+  onInsertImage,
+  imageUploading,
+  imageDisabled,
+  imageDisabledReason,
 }: FormattingToolbarProps) {
   if (!editor) return null;
 
@@ -359,6 +369,28 @@ export function FormattingToolbar({
         label="Strikethrough"
       />
       <LinkPopover editor={editor} variables={variables} />
+      {onInsertImage && (
+        // Wrapping span carries the tooltip so it still shows while the button
+        // is disabled (disabled buttons don't fire hover events).
+        <span
+          className="inline-flex"
+          title={imageDisabled ? imageDisabledReason : "Insert image"}
+        >
+          <button
+            type="button"
+            onClick={onInsertImage}
+            disabled={imageUploading || imageDisabled}
+            aria-label="Insert image"
+            className="p-1.5 rounded-md transition-colors cursor-pointer border-0 bg-transparent text-secondary hover:bg-[#f2f2f2] dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {imageUploading ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <ImagePlus size={14} />
+            )}
+          </button>
+        </span>
+      )}
     </div>
   );
 }
