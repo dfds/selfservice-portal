@@ -125,6 +125,9 @@ export default function EmailCampaignEditor() {
   const [audience, setAudience] = useState<AudienceConfig>({ mode: "all" });
   const [recipientFilter, setRecipientFilter] = useState("");
   const [loaded, setLoaded] = useState(!isEdit);
+  // Tracks unsaved edits so sending can be blocked until the draft is saved.
+  const [dirty, setDirty] = useState(false);
+  const markDirty = useCallback(() => setDirty(true), []);
 
   const [scheduleType, setScheduleType] = useState<
     "Immediate" | "Scheduled" | "Recurring"
@@ -226,6 +229,11 @@ export default function EmailCampaignEditor() {
       }),
     ],
     content: "",
+    onUpdate: ({ transaction }) => {
+      // Programmatic transactions (image URL refresh, placeholder resolve) tag
+      // themselves so they don't count as unsaved user edits.
+      if (!transaction.getMeta("skipDirty")) markDirty();
+    },
     editorProps: {
       attributes: {
         class:
@@ -433,6 +441,7 @@ export default function EmailCampaignEditor() {
         editor.commands.setContent(existingCampaign.contentJson || "");
       }
       setLoaded(true);
+      setDirty(false);
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
 
@@ -456,6 +465,7 @@ export default function EmailCampaignEditor() {
     });
     if (changed) {
       tr.setMeta("addToHistory", false);
+      tr.setMeta("skipDirty", true);
       view.dispatch(tr);
     }
   }, [editor, assetUrlByAssetId, loaded]);
@@ -468,6 +478,15 @@ export default function EmailCampaignEditor() {
         return reject(new Error("Validation failed"));
       }
 
+      // Assets still referenced by an image node in the body; sent so the
+      // backend can prune orphaned uploads.
+      const assetIds: string[] = [];
+      editor.state.doc.descendants((node) => {
+        if (node.type.name === "image" && node.attrs.assetId) {
+          assetIds.push(node.attrs.assetId as string);
+        }
+      });
+
       const payload = {
         name: name.trim(),
         subject: subject.trim(),
@@ -476,6 +495,7 @@ export default function EmailCampaignEditor() {
           preserveEmptyParagraphSpacing(editor.getHTML()),
         ),
         audienceJson: JSON.stringify(audience),
+        assetIds: Array.from(new Set(assetIds)),
         recipientFilter: recipientFilter || null,
         targetType,
         scheduleType,
@@ -493,6 +513,7 @@ export default function EmailCampaignEditor() {
         { payload },
         {
           onSuccess: (data: any) => {
+            setDirty(false);
             queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
             // On a fresh create, adopt the new id in place: transition to
             // edit-mode without remounting the route (so the editor and any
@@ -560,6 +581,7 @@ export default function EmailCampaignEditor() {
     });
     if (changed) {
       tr.setMeta("addToHistory", false);
+      tr.setMeta("skipDirty", true);
       view.dispatch(tr);
     }
   };
@@ -805,6 +827,7 @@ export default function EmailCampaignEditor() {
                     // that doesn't apply to the new target type.
                     setAudience({ mode: "all" });
                     setRecipientFilter("");
+                    markDirty();
                   }
                 }}
                 disabled={isEdit}
@@ -833,7 +856,10 @@ export default function EmailCampaignEditor() {
           <Input
             id="campaign-name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              markDirty();
+            }}
             placeholder="e.g., Q1 Migration Notice"
             disabled={!isDraft}
           />
@@ -849,7 +875,10 @@ export default function EmailCampaignEditor() {
           <Input
             id="campaign-subject"
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              markDirty();
+            }}
             placeholder={
               targetType === "User"
                 ? "e.g., Hi {{User.DisplayName}}, an update on your capabilities"
@@ -1060,10 +1089,20 @@ export default function EmailCampaignEditor() {
 
         <AudienceBuilder
           value={audience}
-          onChange={setAudience}
+          onChange={(a) => {
+            setAudience(a);
+            markDirty();
+          }}
           targetType={targetType}
           recipientFilter={recipientFilter}
-          onRecipientFilterChange={isDraft ? setRecipientFilter : undefined}
+          onRecipientFilterChange={
+            isDraft
+              ? (f) => {
+                  setRecipientFilter(f);
+                  markDirty();
+                }
+              : undefined
+          }
         />
 
         <SchedulePicker
@@ -1078,6 +1117,7 @@ export default function EmailCampaignEditor() {
             setScheduleType(st);
             setScheduledAt(sa);
             setCronExpression(ce);
+            markDirty();
           }}
           disabled={!isDraft}
         />
@@ -1093,7 +1133,11 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSave}
-              disabled={createCampaign.isPending || updateCampaign.isPending}
+              disabled={
+                createCampaign.isPending ||
+                updateCampaign.isPending ||
+                imageUploading
+              }
               className="gap-1.5"
             >
               <Save size={14} />
@@ -1106,7 +1150,8 @@ export default function EmailCampaignEditor() {
             disabled={
               previewCampaign.isPending ||
               createCampaign.isPending ||
-              updateCampaign.isPending
+              updateCampaign.isPending ||
+              imageUploading
             }
             className="gap-1.5"
           >
@@ -1117,7 +1162,11 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSchedule}
-              disabled={scheduleCampaign.isPending || updateCampaign.isPending}
+              disabled={
+                scheduleCampaign.isPending ||
+                updateCampaign.isPending ||
+                imageUploading
+              }
               className="gap-1.5"
             >
               <CalendarClock size={14} />
@@ -1132,7 +1181,8 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
-              disabled={updateCampaign.isPending}
+              disabled={updateCampaign.isPending || imageUploading || dirty}
+              title={dirty ? "Save your changes before sending" : undefined}
               className="gap-1.5 ml-auto"
             >
               <Send size={14} />
@@ -1166,7 +1216,12 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={handleSend}
-              disabled={updateCampaign.isPending || sendCampaign.isPending}
+              disabled={
+                updateCampaign.isPending ||
+                sendCampaign.isPending ||
+                imageUploading ||
+                dirty
+              }
               className="gap-1.5"
             >
               <Send size={14} />
