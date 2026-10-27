@@ -16,9 +16,7 @@ export const InlineImage = Image.extend({
         default: null,
         parseHTML: (element) => element.getAttribute("data-asset-id"),
         renderHTML: (attributes) =>
-          attributes.assetId
-            ? { "data-asset-id": attributes.assetId }
-            : {},
+          attributes.assetId ? { "data-asset-id": attributes.assetId } : {},
       },
       // Transient, client-only marker used to locate a placeholder while its
       // upload is in flight; never parsed from or rendered to HTML.
