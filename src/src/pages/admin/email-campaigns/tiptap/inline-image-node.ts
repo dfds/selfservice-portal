@@ -2,9 +2,9 @@ import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { ImageNodeView } from "./image-node-view";
 
-// Extends the base image node with the private-asset identity (contentId) and
+// Extends the base image node with the private-asset identity (assetId) and
 // inline flag. The editor DOM uses `src` for a presigned preview URL, while the
-// persisted HTML src is rewritten to `cid:{contentId}` at save time so inline
+// persisted HTML src is rewritten to `cid:{assetId}` at save time so inline
 // attachments render in the sent email after the preview URL expires.
 export const InlineImage = Image.extend({
   name: "image",
@@ -12,13 +12,19 @@ export const InlineImage = Image.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
-      contentId: {
+      assetId: {
         default: null,
-        parseHTML: (element) => element.getAttribute("data-content-id"),
+        parseHTML: (element) => element.getAttribute("data-asset-id"),
         renderHTML: (attributes) =>
-          attributes.contentId
-            ? { "data-content-id": attributes.contentId }
+          attributes.assetId
+            ? { "data-asset-id": attributes.assetId }
             : {},
+      },
+      // Transient, client-only marker used to locate a placeholder while its
+      // upload is in flight; never parsed from or rendered to HTML.
+      uploadId: {
+        default: null,
+        rendered: false,
       },
       isInline: {
         default: true,
@@ -35,19 +41,19 @@ export const InlineImage = Image.extend({
   },
 });
 
-// Rewrites inline image sources to `cid:{contentId}` so persisted HTML carries a
+// Rewrites inline image sources to `cid:{assetId}` so persisted HTML carries a
 // stable reference instead of an expiring presigned URL. Non-inline or
-// contentId-less images are left untouched.
+// assetId-less images are left untouched.
 export function serializeInlineImages(html: string): string {
   if (!html || typeof DOMParser === "undefined") return html;
 
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const images = doc.body.querySelectorAll("img[data-content-id]");
+  const images = doc.body.querySelectorAll("img[data-asset-id]");
   images.forEach((img) => {
-    const contentId = img.getAttribute("data-content-id");
+    const assetId = img.getAttribute("data-asset-id");
     const isInline = img.getAttribute("data-inline") !== "false";
-    if (contentId && isInline) {
-      img.setAttribute("src", `cid:${contentId}`);
+    if (assetId && isInline) {
+      img.setAttribute("src", `cid:${assetId}`);
     }
   });
   return doc.body.innerHTML;
@@ -59,7 +65,7 @@ type ProseMirrorJsonNode = {
   content?: ProseMirrorJsonNode[];
 };
 
-// Rewrites inline image sources in a ProseMirror JSON doc to cid:{contentId} so
+// Rewrites inline image sources in a ProseMirror JSON doc to cid:{assetId} so
 // contentJson stores the stable identity, not an expiring presigned URL.
 export function serializeInlineImageJson<T>(doc: T): T {
   const clone = JSON.parse(JSON.stringify(doc)) as ProseMirrorJsonNode;
@@ -67,10 +73,10 @@ export function serializeInlineImageJson<T>(doc: T): T {
   const walk = (node: ProseMirrorJsonNode) => {
     if (
       node.type === "image" &&
-      node.attrs?.contentId &&
+      node.attrs?.assetId &&
       node.attrs?.isInline !== false
     ) {
-      node.attrs = { ...node.attrs, src: `cid:${node.attrs.contentId}` };
+      node.attrs = { ...node.attrs, src: `cid:${node.attrs.assetId}` };
     }
     node.content?.forEach(walk);
   };
@@ -79,13 +85,13 @@ export function serializeInlineImageJson<T>(doc: T): T {
   return clone as T;
 }
 
-// Replaces cid:{contentId} image sources with presigned preview URLs so inline
+// Replaces cid:{assetId} image sources with presigned preview URLs so inline
 // images render outside the editor (e.g. in server-rendered previews). Images
 // that cannot be resolved are swapped for a placeholder: a spinner while the
 // asset list is still loading, otherwise an "unavailable" note.
 export function resolveInlineImageUrls(
   html: string,
-  urlByContentId: Map<string, string>,
+  urlByAssetId: Map<string, string>,
   loading = false,
 ): string {
   if (!html || typeof DOMParser === "undefined") return html;
@@ -97,7 +103,7 @@ export function resolveInlineImageUrls(
     const src = img.getAttribute("src") || "";
     if (!src.startsWith("cid:")) return;
 
-    const url = urlByContentId.get(src.slice(4));
+    const url = urlByAssetId.get(src.slice(4));
     if (url) {
       img.setAttribute("src", url);
       return;

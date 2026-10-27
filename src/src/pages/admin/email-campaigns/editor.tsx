@@ -30,7 +30,7 @@ import {
   useOwnerAssets,
   PrivateAssetOwnerType,
 } from "@/state/remote/queries/privateAssets";
-import { validateImageFile, generateContentId } from "@/lib/privateAssetUtils";
+import { validateImageFile, generateUploadId } from "@/lib/privateAssetUtils";
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
 import { BlockHelperHighlight } from "./tiptap/block-helper-highlight";
@@ -112,10 +112,10 @@ export default function EmailCampaignEditor() {
     PrivateAssetOwnerType.EmailCampaign,
   );
 
-  const assetUrlByContentId = useMemo(() => {
+  const assetUrlByAssetId = useMemo(() => {
     const map = new Map<string, string>();
     (campaignAssets || []).forEach((a) => {
-      if (a.url) map.set(a.contentId, a.url);
+      if (a.url) map.set(a.assetId, a.url);
     });
     return map;
   }, [campaignAssets]);
@@ -139,7 +139,7 @@ export default function EmailCampaignEditor() {
   const [previews, setPreviews] = useState<any[]>([]);
   const [previewLoading, setPreviewLoading] = useState(false);
 
-  // Previews carry cid:{contentId} image refs; resolve them to presigned URLs,
+  // Previews carry cid:{assetId} image refs; resolve them to presigned URLs,
   // showing a loading placeholder while the asset list is still fetching.
   const resolvedPreviews = useMemo(
     () =>
@@ -147,11 +147,11 @@ export default function EmailCampaignEditor() {
         ...p,
         html: resolveInlineImageUrls(
           p?.html || "",
-          assetUrlByContentId,
+          assetUrlByAssetId,
           assetsFetching,
         ),
       })),
-    [previews, assetUrlByContentId, assetsFetching],
+    [previews, assetUrlByAssetId, assetsFetching],
   );
 
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
@@ -436,19 +436,19 @@ export default function EmailCampaignEditor() {
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
 
-  // Inline images persist as cid:{contentId}; swap in fresh presigned URLs so
+  // Inline images persist as cid:{assetId}; swap in fresh presigned URLs so
   // they render while editing (the stored URLs expire after ~15 min).
   useEffect(() => {
-    if (!editor || assetUrlByContentId.size === 0) return;
+    if (!editor || assetUrlByAssetId.size === 0) return;
 
     const { state, view } = editor;
     const tr = state.tr;
     let changed = false;
     state.doc.descendants((node, pos) => {
       if (node.type.name !== "image") return;
-      const contentId = node.attrs.contentId as string | null;
-      if (!contentId) return;
-      const freshUrl = assetUrlByContentId.get(contentId);
+      const assetId = node.attrs.assetId as string | null;
+      if (!assetId) return;
+      const freshUrl = assetUrlByAssetId.get(assetId);
       if (freshUrl && node.attrs.src !== freshUrl) {
         tr.setNodeMarkup(pos, undefined, { ...node.attrs, src: freshUrl });
         changed = true;
@@ -458,7 +458,7 @@ export default function EmailCampaignEditor() {
       tr.setMeta("addToHistory", false);
       view.dispatch(tr);
     }
-  }, [editor, assetUrlByContentId, loaded]);
+  }, [editor, assetUrlByAssetId, loaded]);
 
   const doSave = (): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -532,23 +532,28 @@ export default function EmailCampaignEditor() {
     imageInputRef.current?.click();
   };
 
-  const updateImageNodeByContentId = (
-    contentId: string,
-    action: "setSrc" | "remove",
-    src?: string,
+  const updateImageNodeByUploadId = (
+    uploadId: string,
+    action: "resolve" | "remove",
+    resolved?: { assetId: string; src: string },
   ) => {
     if (!editor) return;
     const { state, view } = editor;
     const tr = state.tr;
     let changed = false;
     state.doc.descendants((node, pos) => {
-      if (node.type.name !== "image" || node.attrs.contentId !== contentId) {
+      if (node.type.name !== "image" || node.attrs.uploadId !== uploadId) {
         return;
       }
       if (action === "remove") {
         tr.delete(pos, pos + node.nodeSize);
-      } else {
-        tr.setNodeMarkup(pos, undefined, { ...node.attrs, src });
+      } else if (resolved) {
+        tr.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          assetId: resolved.assetId,
+          src: resolved.src,
+          uploadId: null,
+        });
       }
       changed = true;
       return false;
@@ -576,18 +581,20 @@ export default function EmailCampaignEditor() {
     // expected here; guard defensively.
     if (!campaignId) return;
 
-    const contentId = generateContentId();
+    const uploadId = generateUploadId();
 
     // Drop a placeholder at the cursor immediately; the NodeView renders a
     // spinner until its src is filled in once the upload completes. Insert
     // after the current selection so an already-selected image isn't replaced.
+    // The assetId is unknown until the API responds, so the placeholder is
+    // tracked by a transient uploadId in the meantime.
     const insertPos = editor.state.selection.to;
     editor
       .chain()
       .focus()
       .insertContentAt(insertPos, {
         type: "image",
-        attrs: { src: "", contentId, isInline: true },
+        attrs: { src: "", assetId: null, isInline: true, uploadId },
       })
       .run();
 
@@ -597,21 +604,19 @@ export default function EmailCampaignEditor() {
         file,
         ownerId: campaignId,
         ownerType: PrivateAssetOwnerType.EmailCampaign,
-        contentId,
         isInline: true,
       });
 
-      updateImageNodeByContentId(
-        contentId,
-        "setSrc",
-        asset.url || `cid:${asset.contentId}`,
-      );
+      updateImageNodeByUploadId(uploadId, "resolve", {
+        assetId: asset.assetId,
+        src: asset.url || `cid:${asset.assetId}`,
+      });
 
       if (!asset.url) {
         toast.error("Image uploaded, but preview is unavailable right now");
       }
     } catch {
-      updateImageNodeByContentId(contentId, "remove");
+      updateImageNodeByUploadId(uploadId, "remove");
       toast.error("Could not upload image");
     } finally {
       setImageUploading(false);

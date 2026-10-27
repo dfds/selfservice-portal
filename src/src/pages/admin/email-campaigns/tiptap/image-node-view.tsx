@@ -3,7 +3,7 @@ import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { Loader2 } from "lucide-react";
 
 // Shows a spinner until the image src is a real URL. Inline images are stored by
-// cid:{contentId} and only get a presigned URL once the asset list resolves.
+// cid:{assetId} and only get a presigned URL once the asset list resolves.
 export function ImageNodeView({ node }: NodeViewProps) {
   const { src, alt, title } = node.attrs as {
     src?: string;

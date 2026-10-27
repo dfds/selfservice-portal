@@ -16,7 +16,6 @@ export interface PrivateAsset {
   assetId: string;
   ownerId: string;
   ownerType: PrivateAssetOwnerType;
-  contentId: string;
   isInline: boolean;
   sizeInBytes: number;
   createdAt: string;
@@ -32,7 +31,6 @@ export interface UploadPrivateAssetInput {
   file: File;
   ownerId: string;
   ownerType: PrivateAssetOwnerType;
-  contentId: string;
   isInline: boolean;
 }
 
@@ -50,7 +48,6 @@ export async function uploadPrivateAsset(
   formData.append("file", input.file);
   formData.append("ownerId", input.ownerId);
   formData.append("ownerType", input.ownerType);
-  formData.append("contentId", input.contentId);
   formData.append("isInline", String(input.isInline));
 
   const url = composeSegmentsUrl(["private-assets/upload"]);

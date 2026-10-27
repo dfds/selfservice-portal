@@ -38,9 +38,10 @@ export function validateImageFile(file: File): ImageValidationResult {
   return { ok: true };
 }
 
-// contentId must be unique per owner, <=255 chars, and contain no whitespace,
-// <, >, single quote, or double quote. A random suffix keeps it unique.
-export function generateContentId(prefix = "img"): string {
+// Transient, client-only id used to track a freshly inserted image placeholder
+// while its upload is in flight (the real identity is the assetId the API
+// returns on completion). Never persisted.
+export function generateUploadId(prefix = "img"): string {
   const random =
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()

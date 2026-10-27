@@ -67,24 +67,24 @@ export default function EmailCampaignDetail() {
     PrivateAssetOwnerType.EmailCampaign,
   );
 
-  const assetUrlByContentId = useMemo(() => {
+  const assetUrlByAssetId = useMemo(() => {
     const map = new Map<string, string>();
     (assets || []).forEach((a) => {
-      if (a.url) map.set(a.contentId, a.url);
+      if (a.url) map.set(a.assetId, a.url);
     });
     return map;
   }, [assets]);
 
-  // contentHtml stores inline images as cid:{contentId}; resolve them to
+  // contentHtml stores inline images as cid:{assetId}; resolve them to
   // presigned URLs so the body preview renders images.
   const resolvedBodyHtml = useMemo(
     () =>
       resolveInlineImageUrls(
         campaign?.contentHtml || "",
-        assetUrlByContentId,
+        assetUrlByAssetId,
         assetsFetching,
       ),
-    [campaign?.contentHtml, assetUrlByContentId, assetsFetching],
+    [campaign?.contentHtml, assetUrlByAssetId, assetsFetching],
   );
 
   const handleCancel = () => {
