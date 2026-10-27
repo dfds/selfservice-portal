@@ -1,11 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import {
-  callApi,
-  callApiMultipart,
-  getSelfServiceAccessToken,
-} from "@/AuthService";
+import { callApiMultipart, getSelfServiceAccessToken } from "@/AuthService";
 import { composeSegmentsUrl } from "@/Utils";
+import { ssuRequest } from "../query";
 import PreAppContext from "@/preAppContext";
 
 export enum PrivateAssetOwnerType {
@@ -84,29 +81,16 @@ export function useOwnerAssets(
   return useQuery<PrivateAsset[]>({
     queryKey: ["privateAssets", ownerType, ownerId],
     enabled: !!ownerId,
-    queryFn: async () => {
-      const accessToken = await getSelfServiceAccessToken();
-      if (!accessToken) {
-        throw new Error("No access token available");
-      }
-      const url = composeSegmentsUrl([
-        `private-assets?ownerId=${encodeURIComponent(
-          ownerId as string,
-        )}&ownerType=${encodeURIComponent(ownerType)}`,
-      ]);
-      const response = await callApi(
-        url,
-        accessToken,
-        "GET",
-        null,
+    queryFn: async () =>
+      ssuRequest({
+        method: "GET",
+        urlSegments: [
+          `private-assets?ownerId=${encodeURIComponent(
+            ownerId as string,
+          )}&ownerType=${encodeURIComponent(ownerType)}`,
+        ],
+        payload: null,
         isCloudEngineerEnabled,
-      );
-      if (!response.ok) {
-        const err = new Error("Could not load assets");
-        (err as any).data = response;
-        throw err;
-      }
-      return response.json();
-    },
+      }),
   });
 }
