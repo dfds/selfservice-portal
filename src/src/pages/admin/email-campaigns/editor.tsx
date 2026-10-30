@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
@@ -19,9 +25,21 @@ import {
   useScheduleEmailCampaign,
   useTemplateVariables,
 } from "@/state/remote/queries/emailCampaigns";
+import {
+  useUploadPrivateAsset,
+  useOwnerAssets,
+  PrivateAssetOwnerType,
+} from "@/state/remote/queries/privateAssets";
+import { validateImageFile, generateUploadId } from "@/lib/privateAssetUtils";
 import { TemplateVariableNode } from "./tiptap/template-variable-node";
 import { VariableSuggestion } from "./tiptap/variable-suggestion";
 import { BlockHelperHighlight } from "./tiptap/block-helper-highlight";
+import {
+  InlineImage,
+  serializeInlineImages,
+  serializeInlineImageJson,
+  resolveInlineImageUrls,
+} from "./tiptap/inline-image-node";
 import { VariableInserter } from "./components/variable-inserter";
 import { FormattingToolbar } from "./components/formatting-toolbar";
 import { AudienceBuilder } from "./components/audience-builder";
@@ -88,12 +106,28 @@ export default function EmailCampaignEditor() {
   const previewCampaign = usePreviewEmailCampaign(campaignId || "");
   const sendCampaign = useSendEmailCampaign(campaignId || "");
   const scheduleCampaign = useScheduleEmailCampaign(campaignId || "");
+  const uploadAsset = useUploadPrivateAsset();
+  const { data: campaignAssets, isFetching: assetsFetching } = useOwnerAssets(
+    campaignId,
+    PrivateAssetOwnerType.EmailCampaign,
+  );
+
+  const assetUrlByAssetId = useMemo(() => {
+    const map = new Map<string, string>();
+    (campaignAssets || []).forEach((a) => {
+      if (a.url) map.set(a.assetId, a.url);
+    });
+    return map;
+  }, [campaignAssets]);
 
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [audience, setAudience] = useState<AudienceConfig>({ mode: "all" });
   const [recipientFilter, setRecipientFilter] = useState("");
   const [loaded, setLoaded] = useState(!isEdit);
+  // Tracks unsaved edits so sending can be blocked until the draft is saved.
+  const [dirty, setDirty] = useState(false);
+  const markDirty = useCallback(() => setDirty(true), []);
 
   const [scheduleType, setScheduleType] = useState<
     "Immediate" | "Scheduled" | "Recurring"
@@ -101,9 +135,27 @@ export default function EmailCampaignEditor() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [cronExpression, setCronExpression] = useState("");
 
+  const [imageUploading, setImageUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previews, setPreviews] = useState<any[]>([]);
   const [previewLoading, setPreviewLoading] = useState(false);
+
+  // Previews carry cid:{assetId} image refs; resolve them to presigned URLs,
+  // showing a loading placeholder while the asset list is still fetching.
+  const resolvedPreviews = useMemo(
+    () =>
+      previews.map((p) => ({
+        ...p,
+        html: resolveInlineImageUrls(
+          p?.html || "",
+          assetUrlByAssetId,
+          assetsFetching,
+        ),
+      })),
+    [previews, assetUrlByAssetId, assetsFetching],
+  );
 
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
 
@@ -169,6 +221,7 @@ export default function EmailCampaignEditor() {
       Link.configure({ openOnClick: false }),
       TemplateVariableNode,
       BlockHelperHighlight,
+      InlineImage,
       VariableSuggestion.configure({
         onOpen: handleSuggestionOpen,
         onClose: handleSuggestionClose,
@@ -176,6 +229,11 @@ export default function EmailCampaignEditor() {
       }),
     ],
     content: "",
+    onUpdate: ({ transaction }) => {
+      // Programmatic transactions (image URL refresh, placeholder resolve) tag
+      // themselves so they don't count as unsaved user edits.
+      if (!transaction.getMeta("skipDirty")) markDirty();
+    },
     editorProps: {
       attributes: {
         class:
@@ -383,8 +441,34 @@ export default function EmailCampaignEditor() {
         editor.commands.setContent(existingCampaign.contentJson || "");
       }
       setLoaded(true);
+      setDirty(false);
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
+
+  // Inline images persist as cid:{assetId}; swap in fresh presigned URLs so
+  // they render while editing (the stored URLs expire after ~15 min).
+  useEffect(() => {
+    if (!editor || assetUrlByAssetId.size === 0) return;
+
+    const { state, view } = editor;
+    const tr = state.tr;
+    let changed = false;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name !== "image") return;
+      const assetId = node.attrs.assetId as string | null;
+      if (!assetId) return;
+      const freshUrl = assetUrlByAssetId.get(assetId);
+      if (freshUrl && node.attrs.src !== freshUrl) {
+        tr.setNodeMarkup(pos, undefined, { ...node.attrs, src: freshUrl });
+        changed = true;
+      }
+    });
+    if (changed) {
+      tr.setMeta("addToHistory", false);
+      tr.setMeta("skipDirty", true);
+      view.dispatch(tr);
+    }
+  }, [editor, assetUrlByAssetId, loaded]);
 
   const doSave = (): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -394,12 +478,24 @@ export default function EmailCampaignEditor() {
         return reject(new Error("Validation failed"));
       }
 
+      // Assets still referenced by an image node in the body; sent so the
+      // backend can prune orphaned uploads.
+      const assetIds: string[] = [];
+      editor.state.doc.descendants((node) => {
+        if (node.type.name === "image" && node.attrs.assetId) {
+          assetIds.push(node.attrs.assetId as string);
+        }
+      });
+
       const payload = {
         name: name.trim(),
         subject: subject.trim(),
-        contentJson: JSON.stringify(editor.getJSON()),
-        contentHtml: preserveEmptyParagraphSpacing(editor.getHTML()),
+        contentJson: JSON.stringify(serializeInlineImageJson(editor.getJSON())),
+        contentHtml: serializeInlineImages(
+          preserveEmptyParagraphSpacing(editor.getHTML()),
+        ),
         audienceJson: JSON.stringify(audience),
+        assetIds: Array.from(new Set(assetIds)),
         recipientFilter: recipientFilter || null,
         targetType,
         scheduleType,
@@ -417,6 +513,7 @@ export default function EmailCampaignEditor() {
         { payload },
         {
           onSuccess: (data: any) => {
+            setDirty(false);
             queryClient.invalidateQueries({ queryKey: ["emailCampaigns"] });
             // On a fresh create, adopt the new id in place: transition to
             // edit-mode without remounting the route (so the editor and any
@@ -450,6 +547,102 @@ export default function EmailCampaignEditor() {
         // button remain the explicit ways to leave.
       })
       .catch(() => {});
+  };
+
+  const handleInsertImageClick = () => {
+    imageInputRef.current?.click();
+  };
+
+  const updateImageNodeByUploadId = (
+    uploadId: string,
+    action: "resolve" | "remove",
+    resolved?: { assetId: string; src: string },
+  ) => {
+    if (!editor) return;
+    const { state, view } = editor;
+    const tr = state.tr;
+    let changed = false;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name !== "image" || node.attrs.uploadId !== uploadId) {
+        return;
+      }
+      if (action === "remove") {
+        tr.delete(pos, pos + node.nodeSize);
+      } else if (resolved) {
+        tr.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          assetId: resolved.assetId,
+          src: resolved.src,
+          uploadId: null,
+        });
+      }
+      changed = true;
+      return false;
+    });
+    if (changed) {
+      tr.setMeta("addToHistory", false);
+      tr.setMeta("skipDirty", true);
+      view.dispatch(tr);
+    }
+  };
+
+  const handleImageFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file || !editor) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.ok) {
+      toast.error(validation.error || "Invalid image");
+      return;
+    }
+
+    // The image button is disabled until the draft is saved, so campaignId is
+    // expected here; guard defensively.
+    if (!campaignId) return;
+
+    const uploadId = generateUploadId();
+
+    // Drop a placeholder at the cursor immediately; the NodeView renders a
+    // spinner until its src is filled in once the upload completes. Insert
+    // after the current selection so an already-selected image isn't replaced.
+    // The assetId is unknown until the API responds, so the placeholder is
+    // tracked by a transient uploadId in the meantime.
+    const insertPos = editor.state.selection.to;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(insertPos, {
+        type: "image",
+        attrs: { src: "", assetId: null, isInline: true, uploadId },
+      })
+      .run();
+
+    setImageUploading(true);
+    try {
+      const asset = await uploadAsset.mutateAsync({
+        file,
+        ownerId: campaignId,
+        ownerType: PrivateAssetOwnerType.EmailCampaign,
+        isInline: true,
+      });
+
+      updateImageNodeByUploadId(uploadId, "resolve", {
+        assetId: asset.assetId,
+        src: asset.url || `cid:${asset.assetId}`,
+      });
+
+      if (!asset.url) {
+        toast.error("Image uploaded, but preview is unavailable right now");
+      }
+    } catch {
+      updateImageNodeByUploadId(uploadId, "remove");
+      toast.error("Could not upload image");
+    } finally {
+      setImageUploading(false);
+    }
   };
 
   const waitForPreviewRetry = (ms: number) =>
@@ -634,6 +827,7 @@ export default function EmailCampaignEditor() {
                     // that doesn't apply to the new target type.
                     setAudience({ mode: "all" });
                     setRecipientFilter("");
+                    markDirty();
                   }
                 }}
                 disabled={isEdit}
@@ -662,7 +856,10 @@ export default function EmailCampaignEditor() {
           <Input
             id="campaign-name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              markDirty();
+            }}
             placeholder="e.g., Q1 Migration Notice"
             disabled={!isDraft}
           />
@@ -678,7 +875,10 @@ export default function EmailCampaignEditor() {
           <Input
             id="campaign-subject"
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              markDirty();
+            }}
             placeholder={
               targetType === "User"
                 ? "e.g., Hi {{User.DisplayName}}, an update on your capabilities"
@@ -701,7 +901,14 @@ export default function EmailCampaignEditor() {
             className="border border-card rounded-lg bg-surface relative"
           >
             <div className="flex items-center gap-1 px-3 py-2 border-b border-card bg-surface-subtle rounded-t-lg">
-              <FormattingToolbar editor={editor} variables={variables || []} />
+              <FormattingToolbar
+                editor={editor}
+                variables={variables || []}
+                onInsertImage={handleInsertImageClick}
+                imageUploading={imageUploading}
+                imageDisabled={!campaignId}
+                imageDisabledReason="Save the draft before inserting images"
+              />
               <Separator orientation="vertical" className="mx-1.5 h-5" />
               <VariableInserter editor={editor} targetType={targetType} />
               {targetType === "User" && (
@@ -724,6 +931,14 @@ export default function EmailCampaignEditor() {
               </span>
             </div>
             <EditorContent editor={editor} />
+
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/gif,image/webp"
+              className="hidden"
+              onChange={handleImageFileChange}
+            />
 
             {suggestion.active && filteredVars.length > 0 && (
               <div
@@ -874,10 +1089,20 @@ export default function EmailCampaignEditor() {
 
         <AudienceBuilder
           value={audience}
-          onChange={setAudience}
+          onChange={(a) => {
+            setAudience(a);
+            markDirty();
+          }}
           targetType={targetType}
           recipientFilter={recipientFilter}
-          onRecipientFilterChange={isDraft ? setRecipientFilter : undefined}
+          onRecipientFilterChange={
+            isDraft
+              ? (f) => {
+                  setRecipientFilter(f);
+                  markDirty();
+                }
+              : undefined
+          }
         />
 
         <SchedulePicker
@@ -892,6 +1117,7 @@ export default function EmailCampaignEditor() {
             setScheduleType(st);
             setScheduledAt(sa);
             setCronExpression(ce);
+            markDirty();
           }}
           disabled={!isDraft}
         />
@@ -907,7 +1133,11 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSave}
-              disabled={createCampaign.isPending || updateCampaign.isPending}
+              disabled={
+                createCampaign.isPending ||
+                updateCampaign.isPending ||
+                imageUploading
+              }
               className="gap-1.5"
             >
               <Save size={14} />
@@ -920,7 +1150,8 @@ export default function EmailCampaignEditor() {
             disabled={
               previewCampaign.isPending ||
               createCampaign.isPending ||
-              updateCampaign.isPending
+              updateCampaign.isPending ||
+              imageUploading
             }
             className="gap-1.5"
           >
@@ -931,7 +1162,11 @@ export default function EmailCampaignEditor() {
             <Button
               variant="action"
               onClick={handleSchedule}
-              disabled={scheduleCampaign.isPending || updateCampaign.isPending}
+              disabled={
+                scheduleCampaign.isPending ||
+                updateCampaign.isPending ||
+                imageUploading
+              }
               className="gap-1.5"
             >
               <CalendarClock size={14} />
@@ -946,7 +1181,8 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
-              disabled={updateCampaign.isPending}
+              disabled={updateCampaign.isPending || imageUploading || dirty}
+              title={dirty ? "Save your changes before sending" : undefined}
               className="gap-1.5 ml-auto"
             >
               <Send size={14} />
@@ -959,7 +1195,7 @@ export default function EmailCampaignEditor() {
       <PreviewDialog
         open={previewOpen}
         onOpenChange={setPreviewOpen}
-        previews={previews}
+        previews={resolvedPreviews}
         loading={previewLoading}
         targetType={targetType}
       />
@@ -980,7 +1216,12 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={handleSend}
-              disabled={updateCampaign.isPending || sendCampaign.isPending}
+              disabled={
+                updateCampaign.isPending ||
+                sendCampaign.isPending ||
+                imageUploading ||
+                dirty
+              }
               className="gap-1.5"
             >
               <Send size={14} />

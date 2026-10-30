@@ -41,6 +41,28 @@ export function callApi(
   return fetch(url, options);
 }
 
+export function callApiMultipart(
+  url,
+  accessToken,
+  formData,
+  isCloudEngineerEnabled = false,
+) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${accessToken}`);
+
+  if (!isCloudEngineerEnabled) {
+    headers.append("x-selfservice-permissions", "1");
+  }
+
+  // Content-Type is intentionally omitted so the browser sets the multipart boundary.
+  return fetch(url, {
+    method: "POST",
+    headers,
+    mode: "cors",
+    body: formData,
+  });
+}
+
 let selfServiceTokenInFlight = null;
 
 export async function getSelfServiceAccessToken() {
