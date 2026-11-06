@@ -3,7 +3,7 @@ import { MaterialReactTable } from "material-react-table";
 import { useMemo, useContext, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import AppContext from "@/AppContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, useMuiTableColors } from "@/context/ThemeContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Card, CardContent } from "@/components/ui/card";
@@ -238,6 +238,7 @@ export function MembershipApplicationTable({
   const { truncateString } = useContext(AppContext);
   const { isDark } = useTheme();
   const isMobile = useIsMobile();
+  const { bg, bgMuted, textMuted } = useMuiTableColors();
 
   const muiTheme = useMemo(
     () =>
@@ -361,6 +362,7 @@ export function MembershipApplicationTable({
       <MaterialReactTable
         columns={columns}
         data={tableData}
+        mrtTheme={{ baseBackgroundColor: bg }}
         initialState={{
           pagination: { pageIndex: 0, pageSize: 5 },
           showGlobalFilter: true,
@@ -396,7 +398,12 @@ export function MembershipApplicationTable({
           sx: { background: "transparent" },
         }}
         muiTopToolbarProps={{
-          sx: { background: "transparent", minHeight: "40px", paddingLeft: 0 },
+          sx: {
+            background: "transparent",
+            paddingLeft: 0,
+            "& .MuiIconButton-root": { color: textMuted },
+            "& .MuiSvgIcon-root": { color: textMuted },
+          },
         }}
         muiBottomToolbarProps={{
           sx: { background: "transparent" },
@@ -413,7 +420,7 @@ export function MembershipApplicationTable({
         muiTableBodyRowProps={{
           sx: {
             background: "transparent",
-            "&:hover td": { backgroundColor: isDark ? "#334155" : "#f2f2f2" },
+            "&:hover td": { backgroundColor: bgMuted },
           },
         }}
         enableGlobalFilter={true}
