@@ -19,6 +19,14 @@ import {
 } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useRequirementComplianceDetails } from "@/state/remote/queries/capabilities";
+import {
+  useComplianceDate,
+  useComplianceLink,
+} from "./history/useComplianceDate";
+import { ComplianceDateControl } from "./history/ComplianceDateControl";
+import { HistoricalBanner } from "./history/HistoricalBanner";
+import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { useRequirementHistoryModel } from "./history/designs/models";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -670,10 +678,19 @@ function MobileCapabilityList({
 
 export default function RequirementComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data, isFetched } = useRequirementComplianceDetails(id ?? null) as {
+  const date = useComplianceDate();
+  const { snapshotDate } = date;
+  const complianceLink = useComplianceLink();
+  const historyModel = useRequirementHistoryModel(date, id ?? null);
+  const query = useRequirementComplianceDetails(id ?? null, snapshotDate) as {
     data: RequirementDetailsData | undefined;
     isFetched: boolean;
+    isFetching: boolean;
+    dataUpdatedAt: number;
   };
+  const { data } = query;
+  // Placeholder data from another date counts as loaded.
+  const isFetched = query.isFetched || data !== undefined;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = useMemo(
@@ -819,11 +836,12 @@ export default function RequirementComplianceDetailPage() {
 
   return (
     <div className="min-h-full">
+      <HistoricalBanner date={date} />
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <Link
-            to="/compliance/requirements"
+            to={complianceLink("/compliance/requirements")}
             className="inline-flex items-center gap-1.5 font-mono text-[0.6875rem] font-semibold tracking-[0.05em] text-action hover:underline mb-3"
           >
             <ArrowLeft size={12} strokeWidth={2} />
@@ -938,8 +956,21 @@ export default function RequirementComplianceDetailPage() {
           )}
         </div>
 
+        <div className="mb-6 animate-fade-up animate-stagger-2">
+          <HistoryDesignPreview
+            model={historyModel}
+            view={date.view}
+            onSelect={date.setDate}
+          />
+        </div>
+
         {/* Filter bar */}
         <div className="relative z-30 mb-4 flex flex-col gap-3 animate-fade-up animate-stagger-2">
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={query.dataUpdatedAt}
+            liveFetching={query.isFetching}
+          />
           <div className="flex items-center gap-1.5 flex-wrap">
             {STATUS_FILTERS.map(({ key, label }) => (
               <button

@@ -37,6 +37,17 @@ import {
   parseMetadata,
 } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
+import {
+  useComplianceDate,
+  useComplianceLink,
+} from "./history/useComplianceDate";
+import { useHistoryTrends } from "./history/useHistoryTrends";
+import { costCentrePct } from "./history/series";
+import { ComplianceDateControl } from "./history/ComplianceDateControl";
+import { HistoricalBanner } from "./history/HistoricalBanner";
+import { TrendSummary } from "./history/TrendSummary";
+import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { useCostCentreHistoryModel } from "./history/designs/models";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
   buildMetadataIndex,
@@ -299,33 +310,47 @@ function writeUrl(
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
+type DetailsQuery = {
+  data: CostCentreDetailsData | undefined;
+  isFetched: boolean;
+  isFetching: boolean;
+  dataUpdatedAt: number;
+};
+
 export default function CostCentreComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const costCentreId = id ?? null;
   const isRogue = costCentreId === "rogue-capabilities";
   const isOrphaned = costCentreId === "orphaned-capabilities";
 
-  const { data: apiData, isFetched: apiIsFetched } =
-    useCostCentreComplianceDetails(
-      isRogue || isOrphaned ? null : costCentreId,
-    ) as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
+  const date = useComplianceDate();
+  const { snapshotDate } = date;
+  const complianceLink = useComplianceLink();
+  const trends = useHistoryTrends(date);
+  const historyModel = useCostCentreHistoryModel(date, {
+    kind: isRogue ? "rogue" : isOrphaned ? "orphaned" : "costCentre",
+    costCentre: isRogue || isOrphaned ? null : costCentreId,
+  });
 
-  const { data: rogueApiData, isFetched: rogueIsFetched } =
-    useRogueCapabilitiesComplianceDetails() as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
+  const apiQuery = useCostCentreComplianceDetails(
+    isRogue || isOrphaned ? null : costCentreId,
+    snapshotDate,
+  ) as DetailsQuery;
+  const rogueQuery = useRogueCapabilitiesComplianceDetails(
+    snapshotDate,
+  ) as DetailsQuery;
+  const orphanedQuery = useOrphanedCapabilitiesComplianceDetails(
+    snapshotDate,
+  ) as DetailsQuery;
+  const activeQuery = isRogue
+    ? rogueQuery
+    : isOrphaned
+    ? orphanedQuery
+    : apiQuery;
 
-  const { data: orphanedApiData, isFetched: orphanedIsFetched } =
-    useOrphanedCapabilitiesComplianceDetails() as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
-
-  const { data: requirementsData } = useRequirementsCompliance() as {
+  const { data: requirementsData } = useRequirementsCompliance(
+    snapshotDate,
+  ) as {
     data:
       | {
           items: {
@@ -337,12 +362,16 @@ export default function CostCentreComplianceDetailPage() {
       | undefined;
   };
 
-  const data = isRogue ? rogueApiData : isOrphaned ? orphanedApiData : apiData;
-  const isFetched = isRogue
-    ? rogueIsFetched
-    : isOrphaned
-    ? orphanedIsFetched
-    : apiIsFetched;
+  const data = activeQuery.data;
+  // Placeholder data from another date counts as loaded.
+  const isFetched = activeQuery.isFetched || data !== undefined;
+  const trend = trends((item) =>
+    isRogue
+      ? costCentrePct(item, "rogue")
+      : isOrphaned
+      ? costCentrePct(item, "orphaned")
+      : costCentrePct(item, "costCentre", costCentreId ?? ""),
+  );
 
   const requirementIdByCategory = useMemo(() => {
     const map = new Map<string, string>();
@@ -494,11 +523,12 @@ export default function CostCentreComplianceDetailPage() {
 
   return (
     <div className="min-h-full">
+      <HistoricalBanner date={date} />
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <Link
-            to="/compliance"
+            to={complianceLink("/compliance")}
             className="inline-flex items-center gap-1.5 font-mono text-[0.6875rem] font-semibold tracking-[0.05em] text-action hover:underline mb-3"
           >
             <ArrowLeft size={12} strokeWidth={2} />
@@ -531,6 +561,22 @@ export default function CostCentreComplianceDetailPage() {
               </span>
             )}
           </div>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <ComplianceDateControl
+              date={date}
+              liveUpdatedAt={activeQuery.dataUpdatedAt}
+              liveFetching={activeQuery.isFetching}
+            />
+            <TrendSummary date={date} values={trend} />
+          </div>
+        </div>
+
+        <div className="mb-6 animate-fade-up animate-stagger-1">
+          <HistoryDesignPreview
+            model={historyModel}
+            view={date.view}
+            onSelect={date.setDate}
+          />
         </div>
 
         {/* Stats panel */}
@@ -580,7 +626,7 @@ export default function CostCentreComplianceDetailPage() {
                       normalizedRequirementKey(categoryName),
                     );
                     return requirementId
-                      ? requirementDetailPath(requirementId)
+                      ? complianceLink(requirementDetailPath(requirementId))
                       : null;
                   }}
                 />
@@ -789,6 +835,7 @@ function CapabilityMatrix({
 }) {
   const { bg, bgMuted, textPrimary, textMuted, borderColor } =
     useMuiTableColors();
+  const complianceLink = useComplianceLink();
 
   // Mirror sorting into a ref so sortingFns can pin "no data" rows to the
   // bottom in both directions (TanStack v8 otherwise flips the comparator's
@@ -841,9 +888,11 @@ function CapabilityMatrix({
         header: c.short,
         Header: () => (
           <Link
-            to={requirementDetailPath(
-              requirementIdByCategory.get(normalizedRequirementKey(c.key)) ??
-                c.key,
+            to={complianceLink(
+              requirementDetailPath(
+                requirementIdByCategory.get(normalizedRequirementKey(c.key)) ??
+                  c.key,
+              ),
             )}
             onClick={(e) => e.stopPropagation()}
             className="inline-flex items-center justify-center gap-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted hover:text-action hover:underline"
@@ -917,7 +966,7 @@ function CapabilityMatrix({
       },
     ];
     return cols;
-  }, [requirementIdByCategory]);
+  }, [requirementIdByCategory, complianceLink]);
 
   return (
     <MaterialReactTable

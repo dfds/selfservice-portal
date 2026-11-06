@@ -1,21 +1,29 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQueries } from "@tanstack/react-query";
 import { Search, ChevronRight } from "lucide-react";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import {
-  useCapabilities,
-  useRogueCapabilitiesCompliance,
-  useOrphanedCapabilitiesCompliance,
+  useAllCostCentresCompliance,
   useComplianceSummary,
 } from "@/state/remote/queries/capabilities";
-import { ssuRequest } from "@/state/remote/query";
-import PreAppContext from "@/preAppContext";
+import type { CostCentreCompliance } from "@/state/remote/queries/compliance.types";
+import {
+  useComplianceDate,
+  useComplianceLink,
+} from "./history/useComplianceDate";
+import { useHistoryTrends, trendLabel } from "./history/useHistoryTrends";
+import { costCentrePct } from "./history/series";
+import { periodLabel } from "./history/period";
+import { Sparkline } from "./history/Sparkline";
+import { ComplianceDateControl } from "./history/ComplianceDateControl";
+import { ComplianceTimeline } from "./history/ComplianceTimeline";
+import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { useCostCentresHistoryModel } from "./history/designs/models";
+import { HistoricalBanner } from "./history/HistoricalBanner";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { cn } from "@/lib/utils";
 import {
   getCostCentreLabel,
-  parseCostCentre,
   complianceTier,
   complianceColor,
   calcCompliancePct,
@@ -102,6 +110,23 @@ function DonutChart({
   );
 }
 
+// ─── CardSparkline ───────────────────────────────────────────────────────────
+
+type CardTrend = { values: (number | null)[]; label: string };
+
+function CardSparkline({ trend }: { trend?: CardTrend }) {
+  const last = trend?.values.filter((v): v is number => v !== null).pop();
+  if (!trend || last === undefined) return null;
+  return (
+    <Sparkline
+      values={trend.values}
+      color={complianceColor(last)}
+      label={`Compliance rate, ${trend.label.toLowerCase()}`}
+      className="ml-auto mt-1.5 block"
+    />
+  );
+}
+
 // ─── CostCentreCard ──────────────────────────────────────────────────────────
 
 function CostCentreCard({
@@ -109,6 +134,7 @@ function CostCentreCard({
   capCount,
   data,
   isFetched,
+  trend,
   className,
   style,
 }: {
@@ -116,6 +142,7 @@ function CostCentreCard({
   capCount: number;
   data: ComplianceData | undefined;
   isFetched: boolean;
+  trend?: CardTrend;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -126,10 +153,13 @@ function CostCentreCard({
   const color = isFetched ? complianceColor(pct) : "var(--color-border-card)";
   const categories = data?.categories ?? [];
   const { trackEvent } = useRybbit();
+  const complianceLink = useComplianceLink();
 
   return (
     <Link
-      to={`/compliance/cost-centres/${encodeURIComponent(name)}`}
+      to={complianceLink(
+        `/compliance/cost-centres/${encodeURIComponent(name)}`,
+      )}
       onClick={() =>
         trackEvent("compliance:cost-center:expanded", { cost_centre: name })
       }
@@ -179,6 +209,7 @@ function CostCentreCard({
                   {compliantDisplay}
                 </span>
               </div>
+              <CardSparkline trend={trend} />
             </>
           ) : (
             <div className="flex flex-col items-end gap-1.5">
@@ -252,6 +283,7 @@ function OrphanedCapabilitiesCard({
   capCount,
   categories,
   isFetched,
+  trend,
   className,
   style,
 }: {
@@ -262,12 +294,14 @@ function OrphanedCapabilitiesCard({
     nonCompliantCount: number;
   }[];
   isFetched: boolean;
+  trend?: CardTrend;
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const complianceLink = useComplianceLink();
   return (
     <Link
-      to="/compliance/cost-centres/orphaned-capabilities"
+      to={complianceLink("/compliance/cost-centres/orphaned-capabilities")}
       className={cn(
         "block bg-surface border border-dashed border-[#a855f7] dark:border-[#581c87] rounded-[10px] overflow-hidden no-underline text-inherit",
         "transition-[box-shadow,border-color] duration-200",
@@ -304,6 +338,7 @@ function OrphanedCapabilitiesCard({
           <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
             orphaned
           </div>
+          <CardSparkline trend={trend} />
         </div>
 
         <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
@@ -359,6 +394,7 @@ function RogueCapabilitiesCard({
   capCount,
   categories,
   isFetched,
+  trend,
   className,
   style,
 }: {
@@ -369,12 +405,14 @@ function RogueCapabilitiesCard({
     nonCompliantCount: number;
   }[];
   isFetched: boolean;
+  trend?: CardTrend;
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const complianceLink = useComplianceLink();
   return (
     <Link
-      to="/compliance/cost-centres/rogue-capabilities"
+      to={complianceLink("/compliance/cost-centres/rogue-capabilities")}
       className={cn(
         "block bg-surface border border-dashed border-[#f59e0b] dark:border-[#78350f] rounded-[10px] overflow-hidden no-underline text-inherit",
         "transition-[box-shadow,border-color] duration-200",
@@ -411,6 +449,7 @@ function RogueCapabilitiesCard({
           <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
             untagged
           </div>
+          <CardSparkline trend={trend} />
         </div>
 
         <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
@@ -467,50 +506,20 @@ function RogueCapabilitiesCard({
 // ─── CompliancePage ───────────────────────────────────────────────────────────
 
 export default function CompliancePage() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
-  const { isFetched, data: capabilities } = useCapabilities();
+  const date = useComplianceDate();
+  const { snapshotDate } = date;
+  const complianceLink = useComplianceLink();
+  const trends = useHistoryTrends(date);
+  const historyModel = useCostCentresHistoryModel(date);
   const { data: summaryData, isFetched: summaryFetched } =
-    useComplianceSummary() as {
-      data:
-        | {
-            totalCapabilities: number;
-            fullyCompliantCapabilities: number;
-            nonCompliantCapabilities: number;
-            unknownCapabilities: number;
-          }
-        | undefined;
-      isFetched: boolean;
-    };
-  const { data: rogueComplianceData, isFetched: rogueIsFetched } =
-    useRogueCapabilitiesCompliance() as {
-      data:
-        | {
-            totalCapabilities: number;
-            compliantCount: number;
-            categories: {
-              categoryName: string;
-              compliantCount: number;
-              nonCompliantCount: number;
-            }[];
-          }
-        | undefined;
-      isFetched: boolean;
-    };
-  const { data: orphanedComplianceData, isFetched: orphanedIsFetched } =
-    useOrphanedCapabilitiesCompliance() as {
-      data:
-        | {
-            totalCapabilities: number;
-            compliantCount: number;
-            categories: {
-              categoryName: string;
-              compliantCount: number;
-              nonCompliantCount: number;
-            }[];
-          }
-        | undefined;
-      isFetched: boolean;
-    };
+    useComplianceSummary(snapshotDate);
+  const {
+    data: allCostCentres,
+    isFetched: costCentresFetched,
+    isError: costCentresFailed,
+    dataUpdatedAt,
+    isFetching,
+  } = useAllCostCentresCompliance(snapshotDate);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortMode>("pct-desc");
   const [activeFilters, setActiveFilters] = useState<Set<string>>(
@@ -519,62 +528,43 @@ export default function CompliancePage() {
   const { trackEvent } = useRybbit();
   const searchTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { costCentres, rogueCount } = useMemo(() => {
-    const caps: any[] = capabilities ?? [];
-    // Filter out deleted capabilities
-    const activeCaps = caps.filter((cap) => cap.status !== "Deleted");
-    const map = new Map<string, number>();
-    let rogue = 0;
-    for (const cap of activeCaps) {
-      const cc = parseCostCentre(cap);
-      if (!cc) {
-        rogue++;
-        continue;
-      }
-      map.set(cc, (map.get(cc) ?? 0) + 1);
-    }
-    return {
-      costCentres: Array.from(map.entries())
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
-      rogueCount: rogue,
-    };
-  }, [capabilities]);
+  // Placeholder data from another date counts as loaded, so changing the date
+  // keeps the cards on screen instead of flashing skeletons.
+  const isFetched = costCentresFetched || allCostCentres !== undefined;
 
-  const complianceResults = useQueries({
-    queries: costCentres.map((cc) => ({
-      queryKey: ["compliance", "cost-centres", cc.name],
-      queryFn: async () =>
-        ssuRequest({
-          method: "GET",
-          urlSegments: ["compliance", "cost-centres", cc.name],
-          payload: null,
-          isCloudEngineerEnabled,
-        }),
-      enabled: isFetched,
-      staleTime: 60_000,
-    })),
-  });
+  const { costCentres, rogueComplianceData, orphanedComplianceData } =
+    useMemo(() => {
+      const items: CostCentreCompliance[] = allCostCentres?.items ?? [];
+      return {
+        costCentres: items
+          .filter((item) => item.kind === "costCentre")
+          .map((item) => ({
+            name: item.costCentre,
+            count: item.totalCapabilities,
+            data: item,
+          })),
+        rogueComplianceData: items.find((item) => item.kind === "rogue"),
+        orphanedComplianceData: items.find((item) => item.kind === "orphaned"),
+      };
+    }, [allCostCentres]);
+  const rogueCount = rogueComplianceData?.totalCapabilities ?? 0;
 
   const complianceMap = useMemo(() => {
     const map = new Map<string, ComplianceEntry>();
-    costCentres.forEach((cc, i) => {
-      const result = complianceResults[i];
-      const data = result?.data as ComplianceData | undefined;
-      const fetched = result?.isFetched ?? false;
+    for (const cc of costCentres) {
       const pct = calcCompliancePct(
-        data?.compliantCount ?? 0,
-        data?.totalCapabilities ?? 0,
+        cc.data.compliantCount,
+        cc.data.totalCapabilities,
       );
       map.set(cc.name, {
-        data,
-        isFetched: fetched,
+        data: cc.data,
+        isFetched: true,
         pct,
-        tier: fetched ? complianceTier(pct) : null,
+        tier: complianceTier(pct),
       });
-    });
+    }
     return map;
-  }, [costCentres, complianceResults]);
+  }, [costCentres]);
 
   const sidePanelStats = useMemo(() => {
     let totalCaps = 0;
@@ -590,8 +580,7 @@ export default function CompliancePage() {
       else if (entry.tier === "orange") nOrange++;
       else if (entry.tier === "red") nRed++;
     }
-    // Include rogue capabilities from the dedicated API endpoint — same
-    // tier logic as cost centers.
+    // Rogue and orphaned capabilities count like cost centers.
     if (rogueComplianceData) {
       const roguePct = calcCompliancePct(
         rogueComplianceData.compliantCount,
@@ -695,11 +684,17 @@ export default function CompliancePage() {
     trackEvent("compliance:list:sorted", { sort: key });
   }
 
+  function kindTrend(kind: "rogue" | "orphaned") {
+    const values = trends((item) => costCentrePct(item, kind));
+    return { values, label: trendLabel(date, values.length) };
+  }
+
   const { overallPct, nGreen, nOrange, nRed, fetchedCount } = sidePanelStats;
   const gaugeColor = complianceColor(overallPct);
 
   return (
     <div className="min-h-full">
+      <HistoricalBanner date={date} />
       {/* ─── Main Content ─────────────────────────────────────────────── */}
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
@@ -710,21 +705,20 @@ export default function CompliancePage() {
           <div className="mb-3">
             <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
               <Link
-                to="/compliance"
+                to={complianceLink("/compliance")}
                 aria-current="page"
                 className="inline-flex h-[30px] items-center rounded-[7px] bg-[#0e7cc1] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-white no-underline dark:bg-[#60a5fa]"
               >
                 Cost Centers View
               </Link>
               <Link
-                to="/compliance/requirements"
+                to={complianceLink("/compliance/requirements")}
                 className="inline-flex h-[30px] items-center rounded-[7px] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[#4a6278] no-underline transition-colors hover:bg-white hover:text-[#0e7cc1] dark:text-[#94a3b8] dark:hover:bg-[#0f172a] dark:hover:text-[#60a5fa]"
               >
                 Requirements View
               </Link>
             </div>
           </div>
-
           <div className="flex flex-col gap-4 @[900px]:flex-row @[900px]:items-start @[900px]:justify-between @[900px]:gap-8">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3">
@@ -760,7 +754,11 @@ export default function CompliancePage() {
               <div className="-ml-3 mb-2 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-[#0e7cc1] dark:text-[#60a5fa]">
                 {"// Overall Compliance "}
                 <span className="font-normal tracking-[0.1em] text-muted">
-                  (all capabilities)
+                  (all capabilities
+                  {date.isLive
+                    ? ""
+                    : ` · ${periodLabel(date.view, date.selected)}`}
+                  )
                 </span>
               </div>
               <div className="flex items-center gap-8">
@@ -832,6 +830,15 @@ export default function CompliancePage() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mb-6 animate-fade-up animate-stagger-1">
+          <HistoryDesignPreview
+            model={historyModel}
+            view={date.view}
+            onSelect={date.setDate}
+            current={<ComplianceTimeline date={date} />}
+          />
         </div>
 
         {/* Mobile-only: compact stats + filter chips */}
@@ -912,6 +919,13 @@ export default function CompliancePage() {
           />
         </div>
 
+        <ComplianceDateControl
+          date={date}
+          liveUpdatedAt={dataUpdatedAt}
+          liveFetching={isFetching}
+          className="mb-3 animate-fade-up animate-stagger-2"
+        />
+
         {/* Sort pills + expand/collapse all */}
         <div className="flex items-center gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-3">
           {SORT_OPTIONS.map(({ key, label }) => (
@@ -937,6 +951,14 @@ export default function CompliancePage() {
             Array.from({ length: 6 }).map((_, i) => (
               <SkeletonComplianceCard key={i} />
             ))
+          ) : costCentresFailed && allCostCentres === undefined ? (
+            <div className="col-span-full">
+              <EmptyState>
+                {date.isLive
+                  ? "Could not load cost center compliance."
+                  : `No compliance snapshot was recorded for this ${date.view}.`}
+              </EmptyState>
+            </div>
           ) : filtered.length === 0 && rogueCount === 0 ? (
             <div className="col-span-full">
               <EmptyState>
@@ -949,6 +971,9 @@ export default function CompliancePage() {
             <>
               {filtered.map(({ name, count }, i) => {
                 const entry = complianceMap.get(name);
+                const values = trends((item) =>
+                  costCentrePct(item, "costCentre", name),
+                );
                 return (
                   <CostCentreCard
                     key={name}
@@ -956,6 +981,7 @@ export default function CompliancePage() {
                     capCount={count}
                     data={entry?.data}
                     isFetched={entry?.isFetched ?? false}
+                    trend={{ values, label: trendLabel(date, values.length) }}
                     className="animate-card-enter"
                     style={{ animationDelay: `${i * 25}ms` }}
                   />
@@ -965,7 +991,8 @@ export default function CompliancePage() {
                 <RogueCapabilitiesCard
                   capCount={rogueCount}
                   categories={rogueComplianceData?.categories ?? []}
-                  isFetched={rogueIsFetched}
+                  isFetched={isFetched}
+                  trend={kindTrend("rogue")}
                   className="animate-card-enter"
                   style={{ animationDelay: `${filtered.length * 25}ms` }}
                 />
@@ -976,7 +1003,8 @@ export default function CompliancePage() {
                   <OrphanedCapabilitiesCard
                     capCount={orphanedComplianceData.totalCapabilities}
                     categories={orphanedComplianceData?.categories ?? []}
-                    isFetched={orphanedIsFetched}
+                    isFetched={isFetched}
+                    trend={kindTrend("orphaned")}
                     className="animate-card-enter"
                     style={{
                       animationDelay: `${

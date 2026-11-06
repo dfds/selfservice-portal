@@ -2,6 +2,9 @@ import React, { useContext } from "react";
 import { ExternalLink } from "lucide-react";
 import PageSection from "@/components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
+import { ComplianceHistoryStrip } from "./ComplianceHistoryStrip";
+import { HistoryDesignPreview } from "@/pages/compliance/history/designs/HistoryDesignPreview";
+import { useCapabilityHistoryModel } from "@/pages/compliance/history/designs/models";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import {
   SkeletonRequirementsScore,
@@ -79,7 +82,7 @@ export function QuestionMarkBulb({
 }
 
 export default function RequirementsScore() {
-  const { isLoading, complianceData, complianceLoading } = useContext(
+  const { id, isLoading, complianceData, complianceLoading } = useContext(
     SelectedCapabilityContext,
   );
 
@@ -88,6 +91,7 @@ export default function RequirementsScore() {
   const totalCount = categories.length;
   const metCount = categories.filter((c) => c.status === "Compliant").length;
   const loading = isLoading || complianceLoading;
+  const historyModel = useCapabilityHistoryModel(id, categories);
 
   return (
     <PageSection id="requirements-status" headline="Requirements Status">
@@ -122,6 +126,21 @@ export default function RequirementsScore() {
               here
             </a>
           </span>
+        </div>
+      )}
+
+      {!loading && (
+        <div className="mb-4">
+          <HistoryDesignPreview
+            model={historyModel}
+            view="day"
+            current={
+              <ComplianceHistoryStrip
+                capabilityId={id}
+                categories={categories}
+              />
+            }
+          />
         </div>
       )}
 

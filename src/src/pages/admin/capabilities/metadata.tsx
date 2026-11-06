@@ -67,7 +67,7 @@ function MetadataEditor({ capabilityId }: { capabilityId: string }) {
             queryKey: ["capabilities", "metadata-raw", capabilityId],
           });
           queryClient.invalidateQueries({
-            queryKey: ["capabilities", "compliance", capabilityId],
+            queryKey: ["compliance", "capabilities", capabilityId],
           });
           toast.success("Metadata updated");
         },
