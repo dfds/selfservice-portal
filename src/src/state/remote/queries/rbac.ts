@@ -1,10 +1,12 @@
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
+import PreAppContext from "@/preAppContext";
 import {
   createSsuQuery,
   createSsuParamQuery,
   createSsuMutation,
 } from "../queryFactory";
-import { msGraphRequest } from "../query";
+import { msGraphRequest, ssuRequest } from "../query";
 
 // ── Member types ─────────────────────────────────────────────────────────────
 
@@ -40,6 +42,41 @@ export interface SearchMembersParams {
 }
 
 // ── Queries ──────────────────────────────────────────────────────────────────
+
+export interface CanIPermission {
+  namespace: string;
+  name: string;
+  accessType: "global" | "capability";
+}
+
+/**
+ * Whether the caller holds `permission`, evaluated by `POST /rbac/can-i` with
+ * the same check `[RequiresPermission]` applies, Guest baseline included.
+ */
+export function useCanI(permission: CanIPermission, objectId = "") {
+  const { isCloudEngineerEnabled } = useContext(PreAppContext) as any;
+  return useQuery<any, Error, boolean>({
+    queryKey: [
+      "rbac",
+      "can-i",
+      permission.namespace,
+      permission.name,
+      permission.accessType,
+      objectId,
+    ],
+    queryFn: async () =>
+      ssuRequest({
+        method: "POST",
+        urlSegments: ["rbac", "can-i"],
+        payload: { permissions: [permission], objectId },
+        isCloudEngineerEnabled,
+      }),
+    select: (data) =>
+      data?.permissionMatrix?.[`${permission.namespace}-${permission.name}`]
+        ?.permitted === true,
+    staleTime: 30_000,
+  });
+}
 
 const _useGetRoles = createSsuQuery({
   queryKey: ["rbac", "roles"],
