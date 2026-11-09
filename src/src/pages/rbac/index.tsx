@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Check, Save } from "lucide-react";
 import {
   usePermissionMatrix,
@@ -122,6 +122,37 @@ export default function PermissionMatrixPage() {
     );
   };
 
+  const headScrollRef = useRef<HTMLDivElement>(null);
+  const bodyScrollRef = useRef<HTMLDivElement>(null);
+  const syncScrollLeft = (
+    from: React.RefObject<HTMLDivElement>,
+    to: React.RefObject<HTMLDivElement>,
+  ) => {
+    if (from.current && to.current) {
+      to.current.scrollLeft = from.current.scrollLeft;
+    }
+  };
+
+  // Header and body are separate tables, so both use table-fixed with these widths to keep
+  // their columns aligned. Role widths are in ch of the header's mono font so the longest
+  // name fits without wrapping; the Guest column adds room for the "everyone" badge.
+  const colgroup = (
+    <colgroup>
+      <col className="w-[240px]" />
+      {roles.map((role) => (
+        <col
+          key={role.id}
+          className="font-mono text-[0.6875rem]"
+          style={{
+            width: `max(120px, calc(${role.name.length}ch + 24px${
+              isGuestRole(role) ? " + 72px" : ""
+            }))`,
+          }}
+        />
+      ))}
+    </colgroup>
+  );
+
   // Group permissions by namespace
   const namespaces = Array.from(
     new Set(permissions.map((p) => p.namespace)),
@@ -182,12 +213,23 @@ export default function PermissionMatrixPage() {
       )}
 
       {isFetched && roles.length > 0 && (
-        <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-[0.75rem]">
+        // The header is a separate table so it can stick to the page: an overflow-x-auto
+        // ancestor would become its scroll container and stop it sticking to the window.
+        // overflow-clip keeps the rounded corners without creating one; isolate keeps the
+        // z-indices below inside the card, under the TopBar (sticky, z-10).
+        <div className="isolate bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-clip">
+          <div
+            ref={headScrollRef}
+            onScroll={() => syncScrollLeft(headScrollRef, bodyScrollRef)}
+            className="sticky top-[var(--topbar-height)] z-20 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-white dark:bg-[#1e293b] border-b border-[#eeeeee] dark:border-[#1e2d3d]"
+          >
+            <table className="w-full table-fixed border-collapse text-[0.75rem]">
+              {colgroup}
               <thead>
-                <tr className="border-b border-[#eeeeee] dark:border-[#1e2d3d]">
-                  <th className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] px-4 py-3 text-left font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 min-w-[220px] border-r border-[#eeeeee] dark:border-[#1e2d3d]">
+                <tr>
+                  {/* Divider is an inset shadow: with border-collapse the table paints
+                      borders, so a border-r stays put when this sticky cell moves. */}
+                  <th className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] px-4 py-3 text-left font-mono text-[0.6875rem] text-[#afafaf] dark:text-slate-500 shadow-[inset_-1px_0_0_var(--color-border-divider)]">
                     Permission
                   </th>
                   {roles.map((role) => {
@@ -197,7 +239,7 @@ export default function PermissionMatrixPage() {
                       <th
                         key={role.id}
                         title={role.description ?? role.name}
-                        className="px-3 py-2 text-center font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap min-w-[120px]"
+                        className="px-3 py-2 text-center font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0] whitespace-nowrap"
                       >
                         <div className="flex flex-col items-center gap-1.5">
                           {/* The badge shares the name's line. It keeps its natural height so its
@@ -236,16 +278,26 @@ export default function PermissionMatrixPage() {
                   })}
                 </tr>
               </thead>
+            </table>
+          </div>
+          <div
+            ref={bodyScrollRef}
+            onScroll={() => syncScrollLeft(bodyScrollRef, headScrollRef)}
+            className="overflow-x-auto"
+          >
+            <table className="w-full table-fixed border-collapse text-[0.75rem]">
+              {colgroup}
               <tbody>
                 {namespaces.map((ns) => (
                   <React.Fragment key={ns}>
                     {/* Namespace header row */}
                     <tr className="bg-[#f8f9fa] dark:bg-[#0f172a]">
-                      <td
-                        colSpan={roles.length + 1}
-                        className="sticky left-0 px-4 py-1.5"
-                      >
-                        <SectionLabel>{ns}</SectionLabel>
+                      {/* The cell spans the full table width, so it can't stick; the label
+                          sticks within it instead. */}
+                      <td colSpan={roles.length + 1} className="px-4 py-1.5">
+                        <SectionLabel className="sticky left-4 inline-block">
+                          {ns}
+                        </SectionLabel>
                       </td>
                     </tr>
                     {/* Permission rows */}
@@ -254,7 +306,7 @@ export default function PermissionMatrixPage() {
                         key={`${perm.namespace}|${perm.name}`}
                         className="border-t border-[#eeeeee] dark:border-[#1e2d3d] hover:bg-[#f8f9fa] dark:hover:bg-[#0f172a]/50"
                       >
-                        <td className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] hover:bg-[#f8f9fa] dark:hover:bg-[#0f172a]/50 px-4 py-2 border-r border-[#eeeeee] dark:border-[#1e2d3d]">
+                        <td className="sticky left-0 z-10 bg-white dark:bg-[#1e293b] hover:bg-[#f8f9fa] dark:hover:bg-[#0f172a]/50 px-4 py-2 shadow-[inset_-1px_0_0_var(--color-border-divider)]">
                           <span
                             className="font-mono text-[0.6875rem] text-[#002b45] dark:text-[#e2e8f0]"
                             title={perm.description}
