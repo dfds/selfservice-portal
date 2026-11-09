@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text } from "@/components/ui/Text";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -98,15 +98,9 @@ export default function NewCapabilityWizard({
       skipped: false,
     },
     {
-      title: "Mandatory Tags",
-      content: (props) => <MandatoryTagsStep {...props} />,
+      title: "Tags",
+      content: (props) => <TagsStep {...props} />,
       optional: false,
-      skipped: false,
-    },
-    {
-      title: "Recommended Tags",
-      content: (props) => <OptionalTagsStep {...props} />,
-      optional: true,
       skipped: false,
     },
     {
@@ -132,8 +126,7 @@ export default function NewCapabilityWizard({
   const emptyFormValues = {
     name: "",
     description: "",
-    mandatoryTags: {},
-    optionalTags: {},
+    tags: {},
   };
 
   return (
@@ -285,324 +278,96 @@ const BasicInformationStep = ({
   );
 };
 
-const MandatoryTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
+const COST_CENTRE_TAG = "dfds.cost.centre";
+const BUSINESS_CAPABILITY_TAG = "dfds.businessCapability";
+
+// Same set as TagComplianceEvaluator.RequiredTags in selfservice-api, which rejects
+// a new capability that lacks any of them.
+const TAG_FIELDS = [
+  {
+    key: COST_CENTRE_TAG,
+    label: "Cost Center",
+    description:
+      "Internal analysis and cost aggregation tools such as FinOut requires this to be present.",
+    options: () => ENUM_COSTCENTER_OPTIONS,
+    error: "Capabilities must have a cost centre",
+  },
+  {
+    key: BUSINESS_CAPABILITY_TAG,
+    label: "Business Capability",
+    description: "Select the Business Capability for this Cost Center.",
+    options: (tags) => getBusinessCapabilitiesOptions(tags[COST_CENTRE_TAG]),
+    error: "A Business Capability must be set",
+  },
+  {
+    key: "dfds.env",
+    label: "Environment",
+    description: "Select the environment for this capability.",
+    options: () => ENUM_ENV_OPTIONS,
+    error: "An environment must be set",
+  },
+  {
+    key: "dfds.data.classification",
+    label: "Data Classification",
+    guidance: {
+      href: "https://wiki.dfds.cloud/en/playbooks/Security/Understanding-Data-Confidentiality",
+      text: "Understand Classification",
+    },
+    options: () => ENUM_CLASSIFICATION_OPTIONS,
+    error: "Data classification must be set",
+  },
+  {
+    key: "dfds.service.criticality",
+    label: "Service Criticality",
+    guidance: {
+      href: "https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Criticality",
+      text: "Understand Criticality",
+    },
+    options: () => ENUM_CRITICALITY_OPTIONS,
+    error: "Service criticality must be set",
+  },
+  {
+    key: "dfds.service.availability",
+    label: "Service Availability",
+    guidance: {
+      href: "https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Availability",
+      text: "Understand Availability",
+    },
+    options: () => ENUM_AVAILABILITY_OPTIONS,
+    error: "Service availability must be set",
+  },
+];
+
+const RequiredMarker = () => (
+  <span
+    title="Required"
+    aria-label="Required"
+    className="text-[#be1e2d] dark:text-[#f87171] font-semibold"
+  >
+    {" *"}
+  </span>
+);
+
+const TagsStep = ({ formValues, setFormValues, setCanContinue }) => {
   const { isDark } = useTheme();
-  const [costCentre, setCostCentre] = useState("");
-  const [selectedCostCentreOption, setSelectedCostCentreOption] =
-    useState(undefined);
-  const [costCentreError, setCostCentreError] = useState(undefined);
-  const [businessCapabilityError, setBusinessCapabilityError] =
-    useState(undefined);
-  const [businessCapability, setBusinessCapability] = useState("");
-  const [
-    selectedBusinessCapabilityOption,
-    setSelectedBusinessCapabilityOption,
-  ] = useState(undefined);
-
-  const initialized = useRef(false);
-  // Auto-select the only business capability option if there is just one, on init
-  useEffect(() => {
-    if (!initialized.current) {
-      const costCentre = formValues?.mandatoryTags["dfds.cost.centre"];
-      const businessCapability =
-        formValues?.mandatoryTags["dfds.businessCapability"];
-      const selectedCostOption = costCentre
-        ? ENUM_COSTCENTER_OPTIONS.find((opt) => opt.value === costCentre)
-        : undefined;
-      setSelectedCostCentreOption(selectedCostOption);
-      setCostCentre(costCentre || "");
-      if (costCentre) {
-        const options = getBusinessCapabilitiesOptions(costCentre);
-        let selectedBusinessOption = undefined;
-        if (businessCapability) {
-          selectedBusinessOption = options.find(
-            (opt) => opt.value === businessCapability,
-          );
-        }
-        // Auto-select if only one option
-        if (!selectedBusinessOption && options.length === 1) {
-          selectedBusinessOption = options[0];
-        }
-        setSelectedBusinessCapabilityOption(
-          selectedBusinessOption || undefined,
-        );
-        setBusinessCapability(selectedBusinessOption?.value || "");
-      } else {
-        setSelectedBusinessCapabilityOption(undefined);
-        setBusinessCapability("");
-      }
-      initialized.current = true;
-    }
-  }, []);
-
-  // Auto-select the only business capability option if there is just one, on cost center change
-  useEffect(() => {
-    if (costCentre) {
-      const options = getBusinessCapabilitiesOptions(costCentre);
-      if (
-        options.length === 1 &&
-        (!selectedBusinessCapabilityOption ||
-          selectedBusinessCapabilityOption.value !== options[0].value)
-      ) {
-        setSelectedBusinessCapabilityOption(options[0]);
-        setBusinessCapability(options[0].value);
-        setFormValues((prev) => ({
-          ...prev,
-          mandatoryTags: {
-            ...prev.mandatoryTags,
-            "dfds.businessCapability": options[0].value,
-          },
-        }));
-      }
-    }
-  }, [costCentre]);
+  const tags = formValues.tags;
+  const [touched, setTouched] = useState({});
 
   useEffect(() => {
-    if (selectedBusinessCapabilityOption) {
-      setBusinessCapability(selectedBusinessCapabilityOption.value);
-    } else {
-      setBusinessCapability("");
-    }
-  }, [selectedBusinessCapabilityOption]);
+    setCanContinue(TAG_FIELDS.every((field) => !!tags[field.key]));
+  }, [tags]);
 
-  useEffect(() => {
-    setCostCentreError(undefined);
-    setBusinessCapabilityError(undefined);
-    let valid = true;
-    if (!costCentre || costCentre.length === 0) {
-      setCostCentreError("Capabilities must have a cost centre");
-      valid = false;
-    }
-    if (!businessCapability || businessCapability.length === 0) {
-      setBusinessCapabilityError("A Business Capability must be set");
-      valid = false;
-    }
+  const setTag = (key, value) => {
     setFormValues((prev) => {
-      return {
-        ...prev,
-        mandatoryTags: {
-          "dfds.cost.centre": costCentre,
-          "dfds.businessCapability": businessCapability,
-        },
-      };
+      const nextTags = { ...prev.tags, [key]: value };
+      if (key === COST_CENTRE_TAG && prev.tags[COST_CENTRE_TAG] !== value) {
+        const options = getBusinessCapabilitiesOptions(value);
+        nextTags[BUSINESS_CAPABILITY_TAG] =
+          options.length === 1 ? options[0].value : "";
+      }
+      return { ...prev, tags: nextTags };
     });
-    setCanContinue(valid);
-  }, [costCentre, businessCapability]);
-
-  return (
-    <>
-      <Text>
-        If you are unsure about what tags are, please refer to the{" "}
-        <TrackedLink
-          trackName="TaggingPolicy"
-          href={"https://wiki.dfds.cloud/en/playbooks/standards/tagging_policy"}
-          target="_blank"
-          rel="noreferrer"
-          className="text-action underline underline-offset-2 hover:no-underline"
-        >
-          DFDS Tagging Policy.
-        </TrackedLink>
-      </Text>
-
-      {costCentreError && (
-        <Text className={`${styles.error} ${styles.center}`}>
-          Some tags are not compliant. Please correct them and resubmit.
-        </Text>
-      )}
-
-      {/* Cost Center */}
-      <div>
-        <label className={styles.label}>Cost Center:</label>
-        <span>
-          Internal analysis and cost aggregation tools such as FinOut requires
-          this to be present.
-        </span>
-        <Select
-          options={ENUM_COSTCENTER_OPTIONS}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          value={selectedCostCentreOption}
-          onChange={(selection) => {
-            setSelectedCostCentreOption(selection);
-            // Only reset business capability if cost center actually changed
-            setSelectedBusinessCapabilityOption(undefined);
-            setBusinessCapability("");
-            setCostCentre(selection?.value || "");
-            setFormValues((prev) => {
-              // Only update if cost centre actually changed
-              const prevCost = prev?.mandatoryTags?.["dfds.cost.centre"];
-              if (prevCost === (selection?.value || "")) return prev;
-              return {
-                ...prev,
-                mandatoryTags: {
-                  ...prev.mandatoryTags,
-                  "dfds.cost.centre": selection?.value || "",
-                },
-              };
-            });
-          }}
-        ></Select>
-        <div className={styles.errorContainer}>
-          {costCentreError && (
-            <span className={styles.error}>{costCentreError}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Business Capability */}
-      <div>
-        <label className={styles.label}>Business Capability:</label>
-        <span>Select the Business Capability for this Cost Center.</span>
-        <Select
-          options={getBusinessCapabilitiesOptions(costCentre)}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          value={selectedBusinessCapabilityOption ?? null}
-          placeholder="Select..."
-          onChange={(selection) => {
-            setSelectedBusinessCapabilityOption(selection);
-            setBusinessCapability(selection?.value || "");
-            setFormValues((prev) => ({
-              ...prev,
-              mandatoryTags: {
-                ...prev.mandatoryTags,
-                "dfds.businessCapability": selection?.value || "",
-              },
-            }));
-          }}
-        ></Select>
-        {businessCapabilityError && (
-          <div className={styles.errorContainer}>
-            <span className={styles.error}>{businessCapabilityError}</span>
-          </div>
-        )}
-      </div>
-    </>
-  );
-};
-
-const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
-  const { isDark } = useTheme();
-  const [classification, setClassification] = useState(undefined);
-  const [selectedClassificationOption, setSelectedClassificationOption] =
-    useState(undefined);
-  const [criticality, setCriticality] = useState(undefined);
-  const [selectedCriticalityOption, setSelectedCriticalityOption] =
-    useState(undefined);
-  const [availability, setAvailability] = useState(undefined);
-  const [selectedAvailabilityOption, setSelectedAvailabilityOption] =
-    useState(undefined);
-  const [env, setEnv] = useState(undefined);
-  const [selectedEnvOption, setSelectedEnvOption] = useState(undefined);
-
-  useEffect(() => {
-    if (selectedAvailabilityOption) {
-      setAvailability(selectedAvailabilityOption.value);
-    }
-  }, [selectedAvailabilityOption]);
-
-  useEffect(() => {
-    if (selectedEnvOption) {
-      setEnv(selectedEnvOption.value);
-    }
-  }, [selectedEnvOption]);
-
-  useEffect(() => {
-    if (selectedCriticalityOption) {
-      setCriticality(selectedCriticalityOption.value);
-    }
-  }, [selectedCriticalityOption]);
-
-  useEffect(() => {
-    if (selectedClassificationOption) {
-      setClassification(selectedClassificationOption.value);
-    }
-  }, [selectedClassificationOption]);
-
-  useEffect(() => {
-    const classification = formValues?.optionalTags["dfds.data.classification"];
-    if (classification) {
-      const selectedOption = ENUM_CLASSIFICATION_OPTIONS.find(
-        (opt) => opt.value === classification,
-      );
-      setSelectedClassificationOption(selectedOption || undefined);
-    }
-
-    const criticality = formValues?.optionalTags["dfds.service.criticality"];
-    if (criticality) {
-      const selectedOption = ENUM_CRITICALITY_OPTIONS.find(
-        (opt) => opt.value === criticality,
-      );
-      setSelectedCriticalityOption(selectedOption || undefined);
-    }
-
-    const availability = formValues?.optionalTags["dfds.service.availability"];
-    if (availability) {
-      const selectedOption = ENUM_AVAILABILITY_OPTIONS.find(
-        (opt) => opt.value === availability,
-      );
-      setSelectedAvailabilityOption(selectedOption || undefined);
-    }
-
-    const env = formValues?.optionalTags["dfds.env"];
-    if (env) {
-      const selectedOption = ENUM_ENV_OPTIONS.find((opt) => opt.value === env);
-      setSelectedEnvOption(selectedOption || undefined);
-    }
-  }, [formValues]);
-
-  const isInFuture = (dateString) => {
-    const inputDate = new Date(dateString);
-    return inputDate > new Date();
   };
-
-  useEffect(() => {
-    setFormValues((prev) => {
-      return {
-        ...prev,
-        optionalTags: {
-          ...prev.optionalTags,
-          "dfds.service.availability": availability,
-        },
-      };
-    });
-  }, [availability]);
-
-  useEffect(() => {
-    setFormValues((prev) => {
-      return {
-        ...prev,
-        optionalTags: {
-          ...prev.optionalTags,
-          "dfds.env": env,
-        },
-      };
-    });
-  }, [env]);
-
-  useEffect(() => {
-    setFormValues((prev) => {
-      return {
-        ...prev,
-        optionalTags: {
-          ...prev.optionalTags,
-          "dfds.service.criticality": criticality,
-        },
-      };
-    });
-  }, [criticality]);
-
-  useEffect(() => {
-    setFormValues((prev) => {
-      return {
-        ...prev,
-        optionalTags: {
-          ...prev.optionalTags,
-          "dfds.data.classification": classification,
-        },
-      };
-    });
-  }, [classification]);
 
   return (
     <>
@@ -631,86 +396,61 @@ const OptionalTagsStep = ({ formValues, setFormValues, setCanContinue }) => {
         </TrackedLink>
       </Text>
 
-      {/* Environment Tag */}
-      <div style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
-        <label className={styles.label}>Environment:</label>
-        <span>Select the environment for this capability.</span>
-        <Select
-          options={ENUM_ENV_OPTIONS}
-          value={selectedEnvOption}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          onChange={(selection) => setSelectedEnvOption(selection)}
-        />
-        <div className={styles.errorContainer}></div>
-      </div>
+      <Text>
+        <span className="text-[#be1e2d] dark:text-[#f87171] font-semibold">
+          *
+        </span>{" "}
+        All tags are required.
+      </Text>
 
-      {/* Data Classification */}
-      <div>
-        <label className={styles.label}>Data Classification:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-Data-Confidentiality"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Classification
-          </a>
-        </span>
-        <Select
-          options={ENUM_CLASSIFICATION_OPTIONS}
-          value={selectedClassificationOption}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          onChange={(selection) => setSelectedClassificationOption(selection)}
-        ></Select>
-      </div>
-      <div className={styles.errorContainer}></div>
-      {/* Service Criticality */}
-      <div>
-        <label className={styles.label}>Service Criticality:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Criticality"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Criticality
-          </a>
-        </span>
-        <Select
-          options={ENUM_CRITICALITY_OPTIONS}
-          value={selectedCriticalityOption}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          onChange={(selection) => setSelectedCriticalityOption(selection)}
-        ></Select>
-      </div>
-      <div className={styles.errorContainer}></div>
-      {/* Service Availability */}
-      <div>
-        <label className={styles.label}>Service Availability:</label>
-        <span>
-          Guidance:{" "}
-          <a
-            href="https://wiki.dfds.cloud/en/playbooks/Security/Understanding-System-Availability"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Understand Availability
-          </a>
-        </span>
-        <Select
-          options={ENUM_AVAILABILITY_OPTIONS}
-          value={selectedAvailabilityOption}
-          className={styles.input}
-          styles={getSelectStyles(isDark)}
-          onChange={(selection) => setSelectedAvailabilityOption(selection)}
-        ></Select>
-      </div>
-      <div className={styles.errorContainer}></div>
+      {TAG_FIELDS.map((field) => {
+        const options = field.options(tags);
+        const selected =
+          options.find((opt) => opt.value === tags[field.key]) ?? null;
+        const showError = touched[field.key] && !tags[field.key];
+        return (
+          <div key={field.key}>
+            <label className={styles.label} htmlFor={field.key}>
+              {field.label}:
+              <RequiredMarker />
+            </label>
+            <span>
+              {field.guidance ? (
+                <>
+                  Guidance:{" "}
+                  <a
+                    href={field.guidance.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {field.guidance.text}
+                  </a>
+                </>
+              ) : (
+                field.description
+              )}
+            </span>
+            <Select
+              inputId={field.key}
+              options={options}
+              value={selected}
+              placeholder="Select..."
+              className={styles.input}
+              styles={getSelectStyles(isDark)}
+              aria-invalid={showError}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, [field.key]: true }))
+              }
+              onChange={(selection) =>
+                setTag(field.key, selection?.value || "")
+              }
+            />
+            <div className={styles.errorContainer}>
+              {showError && <span className={styles.error}>{field.error}</span>}
+            </div>
+          </div>
+        );
+      })}
     </>
   );
 };
@@ -724,7 +464,7 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
   ] = useState(undefined);
 
   useEffect(() => {
-    const containsAI = formValues?.optionalTags["dfds.capability.contains-ai"];
+    const containsAI = formValues?.tags["dfds.capability.contains-ai"];
     if (containsAI) {
       const selectedOption = ENUM_CAPABILITY_CONTAINS_AI_OPTIONS.find(
         (opt) => opt.value === containsAI,
@@ -744,8 +484,8 @@ const AIServicesStep = ({ formValues, setFormValues, setCanContinue }) => {
       setFormValues((prev) => {
         return {
           ...prev,
-          optionalTags: {
-            ...prev.optionalTags,
+          tags: {
+            ...prev.tags,
             "dfds.capability.contains-ai": containsAI,
           },
         };
@@ -833,39 +573,37 @@ const SummaryStep = ({ formValues }) => {
       <p>
         <strong>Description:</strong> {formValues.description || "Not provided"}
       </p>
-      <h2>Mandatory Tags</h2>
+      <h2>Tags</h2>
       <p>
         <strong>Owner:</strong> {user?.name || user?.username || "Not provided"}
       </p>
       <p>
         <strong>Cost Center:</strong>{" "}
-        {formValues.mandatoryTags["dfds.cost.centre"] || "Not provided"}
+        {formValues.tags["dfds.cost.centre"] || "Not provided"}
       </p>
       <p>
         <strong>Business Capability:</strong>{" "}
-        {formValues.mandatoryTags["dfds.businessCapability"] || "Not provided"}
+        {formValues.tags["dfds.businessCapability"] || "Not provided"}
       </p>
-      <h2>Optional Tags</h2>
       <p>
         <strong>Environment:</strong>{" "}
-        {formValues.optionalTags["dfds.env"] || "Not provided"}
+        {formValues.tags["dfds.env"] || "Not provided"}
       </p>
       <p>
         <strong>Data Classification:</strong>{" "}
-        {formValues.optionalTags["dfds.data.classification"] || "Not provided"}
+        {formValues.tags["dfds.data.classification"] || "Not provided"}
       </p>
       <p>
         <strong>Service Criticality:</strong>{" "}
-        {formValues.optionalTags["dfds.service.criticality"] || "Not provided"}
+        {formValues.tags["dfds.service.criticality"] || "Not provided"}
       </p>
       <p>
         <strong>Service Availability:</strong>{" "}
-        {formValues.optionalTags["dfds.service.availability"] || "Not provided"}
+        {formValues.tags["dfds.service.availability"] || "Not provided"}
       </p>
       <p>
         <strong>Contains AI Services:</strong>{" "}
-        {formValues.optionalTags["dfds.capability.contains-ai"] ||
-          "Not provided"}
+        {formValues.tags["dfds.capability.contains-ai"] || "Not provided"}
       </p>
     </>
   );
