@@ -21,12 +21,7 @@ export default function CapabilitiesPage() {
 
   const handleAddCapability = async (formData) => {
     setIsCreatingNewCapability(true);
-    const mergedObject = Object.assign(
-      {},
-      formData.mandatoryTags,
-      formData.optionalTags,
-    );
-    const jsonMetadataString = JSON.stringify(mergedObject, null, 1);
+    const jsonMetadataString = JSON.stringify(formData.tags, null, 1);
     await addNewCapability(
       formData.name,
       formData.description,

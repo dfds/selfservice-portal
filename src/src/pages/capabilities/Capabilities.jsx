@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Star } from "lucide-react";
 import styles from "./capabilities.module.css";
 import { MaterialReactTable } from "material-react-table";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useQueryClient } from "@tanstack/react-query";
 import CapabilityCostSummary from "@/components/BasicCapabilityCost";
 import { LightBulb, QuestionMarkBulb } from "./RequirementsStatus";
@@ -324,149 +325,154 @@ function CapabilitiesTable({
   // direction on the same render that MRT applies it.
   if (sortingRef) sortingRef.current = sorting;
 
-  const {
-    bg,
-    bgMuted,
-    textPrimary,
-    textMuted,
-    borderColor,
-    inputBorder,
-    inputText,
-  } = useMuiTableColors();
+  const { bg, bgMuted, textPrimary, textMuted, borderColor } =
+    useMuiTableColors();
   const bgDeleted = isDark ? "#3b1a1a" : "#dd8888";
   const bgDeletedHover = isDark ? "#4a2020" : "rgba(187, 221, 243, 0.1)";
 
-  return (
-    <MaterialReactTable
-      columns={columns}
-      data={filteredCapabilities}
-      getRowId={(originalRow) => originalRow.id}
-      initialState={{
-        pagination: { pageIndex: 0, pageSize: 50 },
-        showGlobalFilter: true,
-        columnVisibility: { AwsAccountId: false, hiddenName: false },
-      }}
-      state={{
-        globalFilter: globalFilter,
-        sorting: sorting,
-      }}
-      onGlobalFilterChange={(value) => {
-        setGlobalFilter(value);
-      }}
-      onSortingChange={(updater) => {
-        setSorting((prev) => {
-          const next = typeof updater === "function" ? updater(prev) : updater;
-          const first = Array.isArray(next) && next.length > 0 ? next[0] : null;
-          if (first) {
-            trackEvent("capability:list:sorted", {
-              column: first.id,
-              direction: first.desc ? "desc" : "asc",
-              view: "table",
-            });
-          }
-          return next;
-        });
-      }}
-      muiTableHeadCellProps={{
-        sx: {
-          fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
-          fontSize: "0.6875rem",
-          fontWeight: "600",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: textMuted,
-          borderBottom: `1px solid ${borderColor}`,
-          backgroundColor: bg,
-        },
-      }}
-      muiTableBodyCellProps={({ row }) => ({
-        sx: {
-          position: "relative",
-          fontWeight: "400",
-          fontSize: "0.875rem",
-          color: textPrimary,
-          padding: "5px",
-          backgroundColor: row.original.status === "Deleted" ? bgDeleted : bg,
-          borderBottom: `1px solid ${borderColor}`,
-        },
-      })}
-      muiTablePaperProps={{
-        elevation: 0,
-        sx: {
-          borderRadius: "0",
-          backgroundColor: bg,
-        },
-      }}
-      enableGlobalFilterModes={true}
-      positionGlobalFilter="left"
-      muiSearchTextFieldProps={{
-        placeholder: `Find a capability...`,
-        sx: {
-          minWidth: "1120px",
-          fontWeight: "400",
-          fontSize: "1rem",
-          padding: "5px",
-          "& .MuiOutlinedInput-root": {
-            color: inputText,
-            "& fieldset": { borderColor: inputBorder },
-            "&:hover fieldset": { borderColor: inputBorder },
-            "&.Mui-focused fieldset": {
-              borderColor: isDark ? "#60a5fa" : undefined,
+  const muiTheme = useMemo(
+    () =>
+      createTheme({
+        palette: { mode: isDark ? "dark" : "light" },
+        components: {
+          MuiTableSortLabel: {
+            styleOverrides: {
+              icon: { opacity: 0.5 },
+              root: {
+                "&:hover .MuiTableSortLabel-icon": { opacity: 1 },
+                "&.Mui-active .MuiTableSortLabel-icon": { opacity: 1 },
+              },
             },
           },
-          "& .MuiInputBase-input::placeholder": {
+        },
+      }),
+    [isDark],
+  );
+
+  return (
+    <ThemeProvider theme={muiTheme}>
+      <MaterialReactTable
+        columns={columns}
+        data={filteredCapabilities}
+        mrtTheme={{ baseBackgroundColor: bg }}
+        getRowId={(originalRow) => originalRow.id}
+        initialState={{
+          pagination: { pageIndex: 0, pageSize: 50 },
+          showGlobalFilter: true,
+          columnVisibility: { AwsAccountId: false, hiddenName: false },
+        }}
+        state={{
+          globalFilter: globalFilter,
+          sorting: sorting,
+        }}
+        onGlobalFilterChange={(value) => {
+          setGlobalFilter(value);
+        }}
+        onSortingChange={(updater) => {
+          setSorting((prev) => {
+            const next =
+              typeof updater === "function" ? updater(prev) : updater;
+            const first =
+              Array.isArray(next) && next.length > 0 ? next[0] : null;
+            if (first) {
+              trackEvent("capability:list:sorted", {
+                column: first.id,
+                direction: first.desc ? "desc" : "asc",
+                view: "table",
+              });
+            }
+            return next;
+          });
+        }}
+        muiTableHeadCellProps={{
+          sx: {
+            fontFamily: '"SFMono-Regular", "Fira Code", "Consolas", monospace',
+            fontSize: "0.6875rem",
+            fontWeight: "600",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
             color: textMuted,
-            opacity: 1,
+            borderBottom: `1px solid ${borderColor}`,
+            backgroundColor: bg,
           },
-        },
-        size: "small",
-        variant: "outlined",
-      }}
-      enablePagination={true}
-      globalFilterFn="contains"
-      enableFilterMatchHighlighting={true}
-      enableDensityToggle={false}
-      enableHiding={false}
-      enableFilters={true}
-      enableGlobalFilter={true}
-      enableTopToolbar={true}
-      enableBottomToolbar={true}
-      enableColumnActions={false}
-      renderEmptyRowsFallback={() => (
-        <div className="text-center text-sm text-muted italic py-8">
-          Nothing here matches your search. Even the cloud is confused.
-        </div>
-      )}
-      muiTopToolbarProps={{
-        sx: {
-          background: bg,
-          color: textPrimary,
-          "& .MuiIconButton-root": { color: textMuted },
-          "& .MuiSvgIcon-root": { color: textMuted },
-        },
-      }}
-      muiBottomToolbarProps={{
-        sx: {
-          background: bg,
-          color: textPrimary,
-          borderTop: `1px solid ${borderColor}`,
-          "& .MuiIconButton-root": { color: textMuted },
-          "& .MuiTablePagination-root": { color: textPrimary },
-          "& .MuiTablePagination-selectLabel": { color: textMuted },
-          "& .MuiTablePagination-displayedRows": { color: textMuted },
-          "& .MuiSelect-icon": { color: textMuted },
-        },
-      }}
-      muiTableBodyRowProps={({ row }) => ({
-        sx: {
-          cursor: "pointer",
-          "&:hover td": {
-            backgroundColor:
-              row.original.status === "Deleted" ? bgDeletedHover : bgMuted,
+        }}
+        muiTableBodyCellProps={({ row }) => ({
+          sx: {
+            position: "relative",
+            fontWeight: "400",
+            fontSize: "0.875rem",
+            color: textPrimary,
+            padding: "5px",
+            backgroundColor: row.original.status === "Deleted" ? bgDeleted : bg,
+            borderBottom: `1px solid ${borderColor}`,
           },
-        },
-      })}
-    />
+        })}
+        muiTablePaperProps={{
+          elevation: 0,
+          sx: {
+            borderRadius: "0",
+            backgroundColor: bg,
+          },
+        }}
+        enableGlobalFilterModes={true}
+        positionGlobalFilter="left"
+        muiSearchTextFieldProps={{
+          placeholder: `Find a capability...`,
+          sx: {
+            minWidth: "1120px",
+            fontWeight: "400",
+            fontSize: "1rem",
+            padding: "5px",
+          },
+          size: "small",
+          variant: "outlined",
+        }}
+        enablePagination={true}
+        globalFilterFn="contains"
+        enableFilterMatchHighlighting={true}
+        enableDensityToggle={false}
+        enableHiding={false}
+        enableFilters={true}
+        enableGlobalFilter={true}
+        enableTopToolbar={true}
+        enableBottomToolbar={true}
+        enableColumnActions={false}
+        renderEmptyRowsFallback={() => (
+          <div className="text-center text-sm text-muted italic py-8">
+            Nothing here matches your search. Even the cloud is confused.
+          </div>
+        )}
+        muiTopToolbarProps={{
+          sx: {
+            background: bg,
+            color: textPrimary,
+            "& .MuiIconButton-root": { color: textMuted },
+            "& .MuiSvgIcon-root": { color: textMuted },
+          },
+        }}
+        muiBottomToolbarProps={{
+          sx: {
+            background: bg,
+            color: textPrimary,
+            borderTop: `1px solid ${borderColor}`,
+            "& .MuiIconButton-root": { color: textMuted },
+            "& .MuiTablePagination-root": { color: textPrimary },
+            "& .MuiTablePagination-selectLabel": { color: textMuted },
+            "& .MuiTablePagination-displayedRows": { color: textMuted },
+            "& .MuiSelect-icon": { color: textMuted },
+          },
+        }}
+        muiTableBodyRowProps={({ row }) => ({
+          sx: {
+            cursor: "pointer",
+            "&:hover td": {
+              backgroundColor:
+                row.original.status === "Deleted" ? bgDeletedHover : bgMuted,
+            },
+          },
+        })}
+      />
+    </ThemeProvider>
   );
 }
 
