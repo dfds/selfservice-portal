@@ -11,12 +11,11 @@ import { PaginationControls } from "@/components/ui/PaginationControls";
 
 const APP_CARD_PAGE_SIZE = 10;
 
-function ApproveButtonWithRoles({
-  row,
-  roleOptions,
-  onApproveWithRole,
-  label,
-}) {
+function ApproveButtonWithRoles({ row, onApproveWithRole, label }) {
+  const roleOptions = (row.grantableRoles || []).map((role) => ({
+    value: role.id,
+    label: role.name,
+  }));
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -42,6 +41,11 @@ function ApproveButtonWithRoles({
   const POPUP_WIDTH = 144;
 
   const handleOpen = () => {
+    // No grantable roles: approve without one, and the API grants Reader.
+    if (roleOptions.length === 0) {
+      onApproveWithRole(row, null);
+      return;
+    }
     const rect = buttonRef.current.getBoundingClientRect();
     const scrollTop = window.scrollY;
     const scrollLeft = window.scrollX;
@@ -110,7 +114,6 @@ function ApproveButtonWithRoles({
 function MembershipApplicationCard({
   row,
   truncateString,
-  roleOptions,
   handleApproveClicked,
   approveButtonLabel,
   handleRejectClicked,
@@ -136,7 +139,6 @@ function MembershipApplicationCard({
             {handleApproveClicked != null && (
               <ApproveButtonWithRoles
                 row={row}
-                roleOptions={roleOptions}
                 onApproveWithRole={handleApproveClicked}
                 label={approveButtonLabel}
               />
@@ -158,7 +160,6 @@ function MembershipApplicationCard({
 function MembershipApplicationCardList({
   tableData,
   truncateString,
-  roleOptions,
   handleApproveClicked,
   approveButtonLabel,
   handleRejectClicked,
@@ -202,7 +203,6 @@ function MembershipApplicationCardList({
           key={row.id}
           row={row}
           truncateString={truncateString}
-          roleOptions={roleOptions}
           handleApproveClicked={handleApproveClicked}
           approveButtonLabel={approveButtonLabel}
           handleRejectClicked={handleRejectClicked}
@@ -229,7 +229,6 @@ function MembershipApplicationCardList({
 
 export function MembershipApplicationTable({
   tableData,
-  roleOptions,
   handleApproveClicked,
   approveButtonLabel,
   handleRejectClicked,
@@ -321,7 +320,6 @@ export function MembershipApplicationTable({
               {handleApproveClicked != null && (
                 <ApproveButtonWithRoles
                   row={row}
-                  roleOptions={roleOptions}
                   onApproveWithRole={handleApproveClicked}
                   label={approveButtonLabel}
                 />
@@ -347,7 +345,6 @@ export function MembershipApplicationTable({
       <MembershipApplicationCardList
         tableData={tableData}
         truncateString={truncateString}
-        roleOptions={roleOptions}
         handleApproveClicked={handleApproveClicked}
         approveButtonLabel={approveButtonLabel}
         handleRejectClicked={handleRejectClicked}

@@ -16,7 +16,11 @@ import {
   useCapabilityMetadata,
   useLeaveCapability,
 } from "@/state/remote/queries/capabilities";
-import { useUserRoles, useGetRoles } from "@/state/remote/queries/rbac";
+import {
+  useUserRoles,
+  useGetRoles,
+  useGrantableRoles,
+} from "@/state/remote/queries/rbac";
 import {
   useAddKafkaTopic,
   useDeleteKafkaTopic,
@@ -105,6 +109,7 @@ function SelectedCapabilityProvider({ children }) {
   const { isFetched: availableRolesDataFetched, data: availableRolesData } =
     useGetRoles(capabilityId);
   const [availableRoles, setAvailableRoles] = useState([]);
+  const { data: grantableRolesData } = useGrantableRoles(capabilityId);
   useEffect(() => {
     if (availableRolesDataFetched) {
       setAvailableRoles(availableRolesData);
@@ -746,6 +751,7 @@ function SelectedCapabilityProvider({ children }) {
     isLoadedAzure,
     userIsOwner,
     availableRoles,
+    grantableRoles: grantableRolesData || [],
     userRoleMap,
     reloadCapability,
   };

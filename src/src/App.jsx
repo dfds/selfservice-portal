@@ -40,6 +40,7 @@ import PermissionMatrixPage from "./pages/rbac";
 import UserInspectorPage from "./pages/admin/rbac/user";
 import RbacManagePage from "./pages/admin/rbac/manage";
 import RbacAssignmentsPage from "./pages/admin/rbac/assignments";
+import GrantableRolesPage from "./pages/admin/rbac/grantable-roles";
 import TopicExplorerPage from "./pages/admin/topics";
 import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
 import BulkMetadataPage from "./pages/admin/capabilities/metadata";
@@ -302,6 +303,10 @@ const router = createBrowserRouter(
       <Route path="admin/rbac/user" element={<UserInspectorPage />} />
       <Route path="admin/rbac/manage" element={<RbacManagePage />} />
       <Route path="admin/rbac/assignments" element={<RbacAssignmentsPage />} />
+      <Route
+        path="admin/rbac/grantable-roles"
+        element={<GrantableRolesPage />}
+      />
       <Route
         path="admin/capabilities/:id"
         element={<CapabilityAdminDetailPage />}
