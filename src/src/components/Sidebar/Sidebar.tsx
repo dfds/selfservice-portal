@@ -45,6 +45,7 @@ import {
   ShieldAlert,
   Clock,
   Gauge,
+  Bot,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import AppContext from "@/AppContext";
@@ -68,6 +69,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
+import {
+  useCanReadAllCopilot,
+  useCanReadOwnCopilot,
+} from "@/state/remote/queries/copilot";
 import WhatsNewBell from "@/components/TopBar/WhatsNewBell";
 
 function DfdsHexMark({ className }: { className?: string }) {
@@ -119,6 +124,7 @@ const platformNav: NavItemDef[] = [
   { title: "Service catalogue", url: "/services", icon: Network },
   { title: "Topics", url: "/topics", icon: List },
   { title: "ECR", url: "/ecr", icon: Package },
+  { title: "Copilot", url: "/copilot", icon: Bot },
   { title: "Permission Matrix", url: "/rbac/permissions", icon: Table2 },
 ];
 
@@ -214,6 +220,7 @@ const adminNav: NavGroupDef = {
     },
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
+    { title: "Copilot", url: "/admin/copilot", icon: Bot },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
     { title: "Email Campaigns", url: "/admin/email-campaigns", icon: Mail },
     ...adminExternalNav,
@@ -1237,6 +1244,23 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     [user?.roles],
   );
 
+  const copilotAccess = useCanReadOwnCopilot();
+  const visiblePlatformNav = platformNav.filter(
+    (item) =>
+      item.url !== "/copilot" ||
+      (copilotAccess.isFetched && !copilotAccess.isDenied),
+  );
+  const copilotAdminAccess = useCanReadAllCopilot();
+  const visibleAdminNav: NavGroupDef = {
+    ...adminNav,
+    children: adminNav.children.filter(
+      (item) =>
+        isNavGroup(item) ||
+        item.url !== "/admin/copilot" ||
+        (copilotAdminAccess.isFetched && !copilotAdminAccess.isDenied),
+    ),
+  };
+
   // Reconcile CE mode with the user's actual role once /me has loaded. This
   // both enables it for cloud engineers and clears any stale persisted value
   // for users who aren't (e.g. lost the role since last visit).
@@ -1281,7 +1305,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       <div>
         <SectionLabel className="px-3 pb-1.5 block">Platform</SectionLabel>
         <div className="flex flex-col gap-1 md:gap-0.5">
-          {platformNav.map((item) => (
+          {visiblePlatformNav.map((item) => (
             <NavItemLink
               key={item.url}
               item={item}
@@ -1297,7 +1321,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
               />
             ))}
           {renderGroup(costCentresGroup)}
-          {isCloudEngineerEnabled && renderGroup(adminNav)}
+          {isCloudEngineerEnabled && renderGroup(visibleAdminNav)}
         </div>
       </div>
 

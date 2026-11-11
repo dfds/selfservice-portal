@@ -10,6 +10,10 @@ import {
 import { useSelector } from "react-redux";
 import AppContext from "./AppContext";
 import { useRybbit } from "./RybbitContext";
+import {
+  useCanReadAllCopilot,
+  useCanReadOwnCopilot,
+} from "./state/remote/queries/copilot";
 
 import FrontPage from "./pages/frontpage";
 import TopicsPage from "./pages/topics";
@@ -21,6 +25,7 @@ import ECRPage from "./pages/ecr";
 import ServicesPage from "./pages/services";
 import ServiceDetailsPage from "./pages/services/ServiceDetailsPage";
 import StatisticsPage from "./pages/statistics";
+import CopilotPage from "./pages/copilot";
 import ReleaseNotes from "./pages/release-notes";
 import AuthTemplate from "./auth/AuthTemplate";
 import ReleaseNotesCreate from "./pages/release-notes/create";
@@ -45,6 +50,7 @@ import CapabilityAdminDetailPage from "./pages/admin/capabilities/detail";
 import BulkMetadataPage from "./pages/admin/capabilities/metadata";
 import EcrSyncDashboardPage from "./pages/admin/ecr";
 import PlatformMetricsDashboardPage from "./pages/admin/metrics";
+import CopilotAdminPage from "./pages/admin/copilot";
 import JsonSchemaEditorPage from "./pages/admin/json-schema";
 import EmailCampaignsPage from "./pages/admin/email-campaigns";
 import EmailCampaignEditor from "./pages/admin/email-campaigns/editor";
@@ -173,14 +179,39 @@ function Layout() {
   };
 
   const isAdminRoute = location.pathname.startsWith("/admin");
+  // Gated by copilot/read-all below instead of the cloud.engineer role.
+  const isCopilotAdminRoute =
+    location.pathname === "/admin/copilot" ||
+    location.pathname.startsWith("/admin/copilot/");
+  const isRoleGatedAdminRoute = isAdminRoute && !isCopilotAdminRoute;
   const userLoaded =
     user?.isAuthenticated === true && user?.roles !== undefined;
   const isCloudEngineer =
     userLoaded &&
     Array.isArray(user.roles) &&
     user.roles.some((r) => /^\s*cloud\.engineer\s*$/i.test(r));
-  const showAdminGuard = isAdminRoute && userLoaded && !isCloudEngineer;
-  const showAdminLoader = isAdminRoute && !userLoaded;
+  const showAdminGuard =
+    isRoleGatedAdminRoute && userLoaded && !isCloudEngineer;
+  const showAdminLoader = isRoleGatedAdminRoute && !userLoaded;
+
+  const { isDenied: isCopilotDenied, isFetched: isCopilotAccessFetched } =
+    useCanReadOwnCopilot();
+  const {
+    isDenied: isCopilotAdminDenied,
+    isFetched: isCopilotAdminAccessFetched,
+  } = useCanReadAllCopilot();
+  const isCopilotRoute =
+    location.pathname === "/copilot" ||
+    location.pathname.startsWith("/copilot/");
+  const showCopilotGuard =
+    (isCopilotRoute && isCopilotDenied) ||
+    (isCopilotAdminRoute && isCopilotAdminDenied);
+  const showCopilotLoader =
+    (isCopilotRoute && !isCopilotAccessFetched) ||
+    (isCopilotAdminRoute && !isCopilotAdminAccessFetched);
+
+  const showGuardLoader = showAdminLoader || showCopilotLoader;
+  const showGuardNotFound = showAdminGuard || showCopilotGuard;
 
   // Close mobile sidebar on navigation
   useEffect(() => {
@@ -230,7 +261,7 @@ function Layout() {
                       development and may change without notice.
                     </div>
                   )}
-                  {showAdminLoader ? null : showAdminGuard ? (
+                  {showGuardLoader ? null : showGuardNotFound ? (
                     <NotFoundPage />
                   ) : (
                     <ErrorBoundary
@@ -266,6 +297,7 @@ const router = createBrowserRouter(
         element={<ServiceDetailsPage />}
       />
       <Route path="statistics" element={<StatisticsPage />} />
+      <Route path="copilot" element={<CopilotPage />} />
       <Route path="release-notes" element={<ReleaseNotes />} />
       <Route path="release-notes/create" element={<ReleaseNotesCreate />} />
       <Route path="release-notes/manage" element={<ReleaseNotesManage />} />
@@ -313,6 +345,7 @@ const router = createBrowserRouter(
       />
       <Route path="admin/ecr" element={<EcrSyncDashboardPage />} />
       <Route path="admin/metrics" element={<PlatformMetricsDashboardPage />} />
+      <Route path="admin/copilot" element={<CopilotAdminPage />} />
       <Route path="admin/json-schema" element={<JsonSchemaEditorPage />} />
       <Route path="admin/email-campaigns" element={<EmailCampaignsPage />} />
       <Route

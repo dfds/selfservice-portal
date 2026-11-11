@@ -48,7 +48,7 @@ export function TabGroup<T extends string>({
   return (
     <div
       className={cn(
-        "flex gap-1 p-1 bg-surface-muted rounded-[6px] w-fit",
+        "flex gap-1 p-1 bg-surface-muted rounded-[6px] w-fit max-w-full overflow-x-auto [scrollbar-width:thin]",
         className,
       )}
     >
@@ -58,7 +58,7 @@ export function TabGroup<T extends string>({
           type="button"
           onClick={() => onChange(tab.id)}
           className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-xs font-medium transition-colors cursor-pointer border-0",
+            "flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 rounded-[4px] text-xs font-medium transition-colors cursor-pointer border-0",
             value === tab.id
               ? "bg-white dark:bg-slate-700 text-primary shadow-card"
               : "text-secondary hover:text-primary bg-transparent",
