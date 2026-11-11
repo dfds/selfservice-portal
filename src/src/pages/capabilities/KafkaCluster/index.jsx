@@ -88,6 +88,9 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
   const hasWriteAccess = (cluster?._links?.createTopic?.allow || []).includes(
     "POST",
   );
+  // requestAccess is offered only to members of a capability without cluster access.
+  // Non-members get neither link, and the topics endpoint returns them public topics only.
+  const canViewPublicTopics = hasWriteAccess || !canRequestAccess;
 
   return (
     <div id={anchorId}>
@@ -300,7 +303,7 @@ export default function KafkaCluster({ anchorId, cluster, capabilityId }) {
         </div>
       )}
 
-      {hasWriteAccess && (
+      {canViewPublicTopics && (
         <TopicList
           name="Public Topics"
           topics={publicTopics}

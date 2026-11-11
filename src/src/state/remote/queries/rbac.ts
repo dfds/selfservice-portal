@@ -89,6 +89,41 @@ export function useGetRoles(_capabilityId: string) {
   return _useGetRoles();
 }
 
+// Roles the signed-in user may grant on the capability, per the grant matrix.
+export const useGrantableRoles = createSsuParamQuery<string>({
+  queryKey: (capabilityId) => ["rbac", "grantable-roles", capabilityId],
+  urlSegments: (capabilityId) => [
+    `rbac/get-assignable-roles?capabilityId=${encodeURIComponent(
+      capabilityId,
+    )}`,
+  ],
+  authMode: false,
+  enabled: (capabilityId) => !!capabilityId,
+});
+
+export type GrantMatrixRule = { roleId: string; grantableRoleId: string };
+
+export type GrantMatrixResponse = {
+  roles: { id: string; name: string; description?: string; type?: string }[];
+  rules: GrantMatrixRule[];
+  _links: { self: { href: string; allow: string[] } };
+};
+
+export const useGrantMatrix = createSsuQuery<GrantMatrixResponse>({
+  queryKey: ["rbac", "grant-matrix"],
+  urlSegments: ["rbac/grant-matrix"],
+  authMode: true,
+});
+
+export const useSetGrantMatrix = createSsuMutation<{
+  rules: GrantMatrixRule[];
+}>({
+  method: "PUT",
+  urlSegments: () => ["rbac", "grant-matrix"],
+  payload: (data) => ({ rules: data.rules }),
+  authMode: true,
+});
+
 export const useUserRoles = createSsuParamQuery<string>({
   queryKey: (capabilityId) => ["rbac", "user-roles", capabilityId],
   urlSegments: (capabilityId) => ["capabilities", capabilityId, "rolegrants"],
