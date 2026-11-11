@@ -40,6 +40,7 @@ import {
   Database,
   Mail,
   Table2,
+  UserCog,
   ListChecks,
   SlidersHorizontal,
   ShieldAlert,
@@ -211,6 +212,11 @@ const adminNav: NavGroupDef = {
       title: "RBAC Assignments",
       url: "/admin/rbac/assignments",
       icon: ListChecks,
+    },
+    {
+      title: "Grantable Roles",
+      url: "/admin/rbac/grantable-roles",
+      icon: UserCog,
     },
     { title: "Topic Explorer", url: "/admin/topics", icon: Network },
     {

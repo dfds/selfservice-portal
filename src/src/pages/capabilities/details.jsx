@@ -114,6 +114,12 @@ function CapabilityDetailsPageContent() {
     }
   }, [metadata]);
 
+  // GET awsaccount needs aws/read, which non-members lack, so awsAccount stays null for them
+  // even when the capability has one. Topics prove the capability is set up for Kafka.
+  const showKafkaClusters =
+    !!awsAccount ||
+    (kafkaClusters || []).some((cluster) => (cluster.topics || []).length > 0);
+
   const anchorLinks = [
     { href: "#summary", label: "Summary" },
     { href: "#requirements-status", label: "Requirements" },
@@ -300,7 +306,7 @@ function CapabilityDetailsPageContent() {
             className="animate-section-enter"
             style={{ animationDelay: "340ms" }}
           >
-            {awsAccount && (kafkaClusters || []).length > 1 ? (
+            {showKafkaClusters && (kafkaClusters || []).length > 1 ? (
               <TabbedPageSection
                 id="kafka"
                 headline="Kafka Clusters"
@@ -323,13 +329,13 @@ function CapabilityDetailsPageContent() {
               />
             ) : (
               <PageSection id="kafka" headline="Kafka Clusters">
-                {!awsAccount && (
+                {!showKafkaClusters && (
                   <Text>
                     No AWS account is linked to this capability. Please link an
                     AWS account to view Kafka clusters.
                   </Text>
                 )}
-                {awsAccount &&
+                {showKafkaClusters &&
                   (kafkaClusters || []).map((cluster) => (
                     <KafkaCluster
                       key={cluster.id}

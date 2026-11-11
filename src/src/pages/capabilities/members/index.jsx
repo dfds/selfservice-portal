@@ -30,10 +30,12 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useRybbit } from "@/RybbitContext";
 import { KeyRound, Copy, Check } from "lucide-react";
 
-function MemberRow({ member, roleTypes }) {
-  const { id: capabilityId, userIsOwner } = useContext(
-    SelectedCapabilityContext,
-  );
+function MemberRow({ member }) {
+  const {
+    id: capabilityId,
+    userIsOwner,
+    grantableRoles,
+  } = useContext(SelectedCapabilityContext);
   const { myProfile: user } = useContext(AppContext);
   const { mutate: grantRoleMutation, isPending } = useGrantRole();
   const queryClient = useQueryClient();
@@ -91,6 +93,12 @@ function MemberRow({ member, roleTypes }) {
   };
 
   const isServicePrincipal = member.type === "service-principal";
+  // A new grant replaces the member's current role, so the API also requires that role to be grantable.
+  const grantableRoleIds = new Set(grantableRoles.map((role) => role.id));
+  const canChangeRole =
+    member.email !== user.id &&
+    grantableRoleIds.size > 0 &&
+    (!selectedRole || grantableRoleIds.has(selectedRole.value));
   const [copied, setCopied] = useState(false);
   const handleCopyOid = () => {
     if (!member.servicePrincipalOid && !member.id) return;
@@ -171,12 +179,12 @@ function MemberRow({ member, roleTypes }) {
               menuPortalTarget={document.body}
               menuPosition="fixed"
               value={selectedRole}
-              isDisabled={!userIsOwner || member.email === user.id || isPending}
+              isDisabled={!canChangeRole || isPending}
               isLoading={isPending}
               onChange={(e) => {
                 grantRole(member.id, e.value, e);
               }}
-              options={roleTypes.map((role) => ({
+              options={grantableRoles.map((role) => ({
                 value: role.id,
                 label: role.name,
               }))}
@@ -351,7 +359,7 @@ function AddServicePrincipalDialog({ open, onClose, capabilityId }) {
   );
 }
 
-export default function Members({ roleTypes }) {
+export default function Members() {
   const {
     members,
     id: capabilityId,
@@ -377,11 +385,7 @@ export default function Members({ roleTypes }) {
         </div>
       )}
       {(members || []).map((member) => (
-        <MemberRow
-          key={member.id || member.email}
-          member={member}
-          roleTypes={roleTypes}
-        />
+        <MemberRow key={member.id || member.email} member={member} />
       ))}
       <AddServicePrincipalDialog
         open={showAddDialog}
@@ -398,9 +402,7 @@ export function TabbedMembersView({ anchorId }) {
     isRefetchting: refetchingOtherApplications,
     data: otherApplicationsData,
   } = useMembershipApplications();
-  const { id: capabilityId, availableRoles } = useContext(
-    SelectedCapabilityContext,
-  );
+  const { id: capabilityId } = useContext(SelectedCapabilityContext);
 
   const [capabilityApplications, setCapabilityApplications] = useState([]);
 
@@ -446,7 +448,7 @@ export function TabbedMembersView({ anchorId }) {
   };
 
   const tabsContent = {
-    members: <Members roleTypes={availableRoles} />,
+    members: <Members />,
     applications: (
       <MembershipApplicationsUserCanApprove
         data={capabilityApplications}
