@@ -21,7 +21,12 @@ import {
  * change since the first recorded day and a sparkline. Hovering one tile
  * moves the readout on all of them.
  */
-export function TrendTiles({ model, view, onSelect }: HistoryDesignProps) {
+export function TrendTiles({
+  model,
+  view,
+  onSelect,
+  tall,
+}: HistoryDesignProps) {
   const [hover, setHover] = useState<number | null>(null);
   const { points, series, selectedIndex } = model;
 
@@ -100,7 +105,7 @@ export function TrendTiles({ model, view, onSelect }: HistoryDesignProps) {
                 onHover={setHover}
                 onSelect={onSelect && ((j) => onSelect(points[j].date))}
                 label={s.name}
-                className="mt-1 h-7"
+                className={cn("mt-1", tall ? "h-20" : "h-7")}
               />
             </div>
           );

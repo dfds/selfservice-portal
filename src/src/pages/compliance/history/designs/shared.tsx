@@ -17,6 +17,8 @@ export type HistorySeries = {
   /** Short form for narrow labels. */
   shortName: string;
   color: string;
+  /** Set once the categorical hues run out and repeat, so a repeat stays distinguishable. */
+  dashed?: boolean;
 };
 
 export type HistoryPoint = {
@@ -54,6 +56,8 @@ export type HistoryDesignProps = {
   view: ComplianceView;
   /** Opens a recorded day. Without it the designs are read-only. */
   onSelect?: (day: ComplianceDay) => void;
+  /** Taller plots, for a page where the history has a section of its own. */
+  tall?: boolean;
 };
 
 /** Buckets `items` by `view` and reads each series' value from the period's last item. */

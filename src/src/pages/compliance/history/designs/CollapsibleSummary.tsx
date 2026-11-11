@@ -28,6 +28,7 @@ export function CollapsibleSummary({
   model,
   view,
   onSelect,
+  tall,
 }: HistoryDesignProps) {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState<number | null>(null);
@@ -103,7 +104,7 @@ export function CollapsibleSummary({
               onHover={setHover}
               onSelect={onSelect && ((i) => onSelect(points[i].date))}
               label={headline.name}
-              className="h-8 flex-1"
+              className={cn("flex-1", tall ? "h-24" : "h-8")}
             />
           </div>
           {series.length > 1 && (
@@ -123,7 +124,12 @@ export function CollapsibleSummary({
         </div>
       </HistoryCard>
       {open && (
-        <RequirementMatrix model={model} view={view} onSelect={onSelect} />
+        <RequirementMatrix
+          model={model}
+          view={view}
+          onSelect={onSelect}
+          tall={tall}
+        />
       )}
     </div>
   );

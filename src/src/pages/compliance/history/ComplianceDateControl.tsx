@@ -76,7 +76,10 @@ export function ComplianceDateControl({
         value={date.view}
         onChange={(view) => {
           date.setView(view);
-          trackEvent("compliance:history:view-changed", { view });
+          trackEvent("compliance:history:view-changed", {
+            view,
+            scope: date.scope,
+          });
         }}
       />
 
@@ -131,27 +134,33 @@ export function ComplianceDateControl({
               style={floatingStyles}
               {...getFloatingProps()}
               aria-label="Choose a date"
-              className="z-50 rounded-[8px] border border-card bg-surface shadow-overlay animate-menu-enter"
+              className="z-50"
             >
-              <ComplianceCalendar
-                view={date.view}
-                selected={date.selected}
-                today={date.today}
-                oldestDate={date.oldestDate}
-                days={date.days ?? []}
-                onSelect={(day) => {
-                  date.setDate(day);
-                  setOpen(false);
-                  trackEvent("compliance:history:date-selected", {
-                    view: date.view,
-                  });
-                }}
-              />
-              {date.days !== undefined && date.days.length === 0 && (
-                <p className="px-4 pb-3 text-[0.6875rem] text-muted">
-                  No history recorded yet.
-                </p>
-              )}
+              {/* floatingStyles positions with `transform`, which the
+                  animation's own `transform` (fill-mode both) would replace,
+                  leaving the popover at the viewport origin. */}
+              <div className="rounded-[8px] border border-card bg-surface shadow-overlay animate-menu-enter">
+                <ComplianceCalendar
+                  view={date.view}
+                  selected={date.selected}
+                  today={date.today}
+                  oldestDate={date.oldestDate}
+                  days={date.days ?? []}
+                  onSelect={(day) => {
+                    date.setDate(day);
+                    setOpen(false);
+                    trackEvent("compliance:history:date-selected", {
+                      view: date.view,
+                      scope: date.scope,
+                    });
+                  }}
+                />
+                {date.days !== undefined && date.days.length === 0 && (
+                  <p className="px-4 pb-3 text-[0.6875rem] text-muted">
+                    No history recorded yet.
+                  </p>
+                )}
+              </div>
             </div>
           </FloatingFocusManager>
         </FloatingPortal>

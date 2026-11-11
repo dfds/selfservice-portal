@@ -15,40 +15,54 @@ import {
 
 // ─── URL state codec ─────────────────────────────────────────────────────────
 // `?date=YYYY-MM-DD&view=day|week|month`. Today and "day" are the defaults and
-// are left out of the URL.
+// are left out of the URL. The "history" scope uses `historyDate` and
+// `historyView`, so a page's history chart can show another period than its
+// cards.
 
 const DATE_PARAM = "date";
 const VIEW_PARAM = "view";
 
-function readView(p: URLSearchParams): ComplianceView {
-  const v = p.get(VIEW_PARAM);
+export type ComplianceDateScope = "page" | "history";
+
+const PARAMS: Record<ComplianceDateScope, { date: string; view: string }> = {
+  page: { date: DATE_PARAM, view: VIEW_PARAM },
+  history: { date: "historyDate", view: "historyView" },
+};
+
+function readView(p: URLSearchParams, key: string): ComplianceView {
+  const v = p.get(key);
   return v === "week" || v === "month" ? v : "day";
 }
 
 /** A malformed, future or current date reads as today. */
-function readDate(p: URLSearchParams, today: ComplianceDay): ComplianceDay {
-  const d = p.get(DATE_PARAM);
+function readDate(
+  p: URLSearchParams,
+  key: string,
+  today: ComplianceDay,
+): ComplianceDay {
+  const d = p.get(key);
   return isComplianceDay(d) && d < today ? d : today;
 }
 
 function writeUrl(
   prev: URLSearchParams,
+  keys: { date: string; view: string },
   patch: { view?: ComplianceView; date?: ComplianceDay },
   today: ComplianceDay,
 ): URLSearchParams {
   const next = new URLSearchParams(prev);
   if (patch.view !== undefined) {
-    if (patch.view === "day") next.delete(VIEW_PARAM);
-    else next.set(VIEW_PARAM, patch.view);
+    if (patch.view === "day") next.delete(keys.view);
+    else next.set(keys.view, patch.view);
   }
   if (patch.date !== undefined) {
-    if (patch.date >= today) next.delete(DATE_PARAM);
-    else next.set(DATE_PARAM, patch.date);
+    if (patch.date >= today) next.delete(keys.date);
+    else next.set(keys.date, patch.date);
   }
   return next;
 }
 
-/** `to` with the current page's `date` and `view` parameters added. */
+/** `to` with the current page's date and view parameters, both scopes, added. */
 export function withComplianceParams(
   to: string,
   search: URLSearchParams | string,
@@ -57,7 +71,7 @@ export function withComplianceParams(
     typeof search === "string" ? new URLSearchParams(search) : search;
   const [path, query = ""] = to.split("?");
   const target = new URLSearchParams(query);
-  for (const key of [DATE_PARAM, VIEW_PARAM]) {
+  for (const key of Object.values(PARAMS).flatMap((k) => [k.date, k.view])) {
     const value = source.get(key);
     if (value) target.set(key, value);
   }
@@ -77,6 +91,7 @@ export function useComplianceLink(): (to: string) => string {
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export type ComplianceDateState = {
+  scope: ComplianceDateScope;
   view: ComplianceView;
   /** The day in the URL, or today. */
   selected: ComplianceDay;
@@ -97,13 +112,16 @@ export type ComplianceDateState = {
   goToToday: () => void;
 };
 
-export function useComplianceDate(): ComplianceDateState {
+export function useComplianceDate(
+  scope: ComplianceDateScope = "page",
+): ComplianceDateState {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: history } = useComplianceHistory();
   const today = utcToday();
 
-  const view = readView(searchParams);
-  const selected = readDate(searchParams, today);
+  const keys = PARAMS[scope];
+  const view = readView(searchParams, keys.view);
+  const selected = readDate(searchParams, keys.date, today);
 
   const days = useMemo(
     () => (history ? availableDays(history.items) : undefined),
@@ -117,14 +135,15 @@ export function useComplianceDate(): ComplianceDateState {
 
   const updateUrl = useCallback(
     (patch: { view?: ComplianceView; date?: ComplianceDay }) => {
-      setSearchParams((prev) => writeUrl(prev, patch, today), {
+      setSearchParams((prev) => writeUrl(prev, keys, patch, today), {
         replace: true,
       });
     },
-    [setSearchParams, today],
+    [setSearchParams, keys, today],
   );
 
   return {
+    scope,
     view,
     selected,
     today,

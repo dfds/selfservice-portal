@@ -53,17 +53,27 @@ const CATEGORY_REQUIREMENT: Record<string, string> = {
 
 function usePalette() {
   const { isDark } = useTheme();
-  return {
-    headline: isDark ? "#e2e8f0" : "#002b45",
-    // Cost centres outnumber the categorical slots, so they share one hue
-    // and are told apart by label.
-    group: isDark ? "#60a5fa" : "#0e7cc1",
-    requirement: (requirementId: string) => {
-      const palette = isDark ? SERIES_DARK : SERIES_LIGHT;
-      const i = REQUIREMENT_ORDER.indexOf(requirementId);
-      return palette[(i < 0 ? REQUIREMENT_ORDER.length : i) % palette.length];
-    },
-  };
+  // Memoised so the colour functions are stable hook dependencies.
+  return useMemo(
+    () => ({
+      headline: isDark ? "#e2e8f0" : "#002b45",
+      // Slot order is the CVD-safe one; past the last slot the hues repeat
+      // dashed.
+      group: (i: number) => {
+        const palette = isDark ? SERIES_DARK : SERIES_LIGHT;
+        return {
+          color: palette[i % palette.length],
+          dashed: i >= palette.length,
+        };
+      },
+      requirement: (requirementId: string) => {
+        const palette = isDark ? SERIES_DARK : SERIES_LIGHT;
+        const i = REQUIREMENT_ORDER.indexOf(requirementId);
+        return palette[(i < 0 ? REQUIREMENT_ORDER.length : i) % palette.length];
+      },
+    }),
+    [isDark],
+  );
 }
 
 function rate(totals: { compliantCount: number; totalCapabilities: number }) {
@@ -112,11 +122,23 @@ function groupName(g: { kind: string; costCentre: string | null }): string {
   return g.costCentre ?? "";
 }
 
+const KIND_ORDER: Record<string, number> = {
+  costCentre: 0,
+  rogue: 1,
+  orphaned: 2,
+};
+
 function groupSeries(
   groups: readonly ComplianceCostCentreTotals[],
-  color: string,
+  slot: (i: number) => { color: string; dashed: boolean },
 ): HistorySeries[] {
-  return groups.map((g) => ({
+  // A fixed order keeps each group's colour when the API reorders them.
+  const sorted = [...groups].sort(
+    (a, b) =>
+      (KIND_ORDER[a.kind] ?? 3) - (KIND_ORDER[b.kind] ?? 3) ||
+      groupName(a).localeCompare(groupName(b)),
+  );
+  return sorted.map((g, i) => ({
     key: groupKey(g),
     name: groupName(g),
     shortName:
@@ -125,7 +147,7 @@ function groupSeries(
         : g.kind === "orphaned"
         ? "Orphaned"
         : groupName(g),
-    color,
+    ...slot(i),
   }));
 }
 

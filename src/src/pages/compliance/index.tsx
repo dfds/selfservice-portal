@@ -17,7 +17,7 @@ import { periodLabel } from "./history/period";
 import { Sparkline } from "./history/Sparkline";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
 import { ComplianceTimeline } from "./history/ComplianceTimeline";
-import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { HistorySection } from "./history/HistorySection";
 import { useCostCentresHistoryModel } from "./history/designs/models";
 import { HistoricalBanner } from "./history/HistoricalBanner";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -510,7 +510,8 @@ export default function CompliancePage() {
   const { snapshotDate } = date;
   const complianceLink = useComplianceLink();
   const trends = useHistoryTrends(date);
-  const historyModel = useCostCentresHistoryModel(date);
+  const historyDate = useComplianceDate("history");
+  const historyModel = useCostCentresHistoryModel(historyDate);
   const { data: summaryData, isFetched: summaryFetched } =
     useComplianceSummary(snapshotDate);
   const {
@@ -832,15 +833,6 @@ export default function CompliancePage() {
           </div>
         </div>
 
-        <div className="mb-6 animate-fade-up animate-stagger-1">
-          <HistoryDesignPreview
-            model={historyModel}
-            view={date.view}
-            onSelect={date.setDate}
-            current={<ComplianceTimeline date={date} />}
-          />
-        </div>
-
         {/* Mobile-only: compact stats + filter chips */}
         <div className="md:hidden mb-4 animate-fade-up animate-stagger-1">
           {fetchedCount > 0 && (
@@ -1016,6 +1008,13 @@ export default function CompliancePage() {
             </>
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          current={<ComplianceTimeline date={historyDate} />}
+          className="mt-10 animate-fade-up animate-stagger-5"
+        />
       </div>
     </div>
   );

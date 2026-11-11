@@ -22,7 +22,7 @@ const MIN_PITCH = 3;
  * is picked. A rate sets the bar's height and tier colour; a status fills the
  * bar in its status colour. A readout names the hovered or selected period.
  */
-export function DailyBars({ model, view, onSelect }: HistoryDesignProps) {
+export function DailyBars({ model, view, onSelect, tall }: HistoryDesignProps) {
   const [hover, setHover] = useState<number | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
   const { series } = model;
@@ -76,7 +76,13 @@ export function DailyBars({ model, view, onSelect }: HistoryDesignProps) {
           className={cn(
             "flex items-end",
             gapped && "gap-px",
-            model.kind === "rate" ? "h-12" : "h-6",
+            model.kind === "rate"
+              ? tall
+                ? "h-40"
+                : "h-12"
+              : tall
+              ? "h-10"
+              : "h-6",
           )}
           onPointerLeave={() => setHover(null)}
         >

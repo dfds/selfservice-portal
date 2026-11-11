@@ -16,7 +16,7 @@ import { requirementPct } from "./history/series";
 import { Sparkline } from "./history/Sparkline";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
 import { HistoricalBanner } from "./history/HistoricalBanner";
-import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { HistorySection } from "./history/HistorySection";
 import { useRequirementsHistoryModel } from "./history/designs/models";
 import {
   calcCompliancePct,
@@ -243,7 +243,8 @@ export default function RequirementsCompliancePage() {
   const { snapshotDate } = date;
   const complianceLink = useComplianceLink();
   const trends = useHistoryTrends(date);
-  const historyModel = useRequirementsHistoryModel(date);
+  const historyDate = useComplianceDate("history");
+  const historyModel = useRequirementsHistoryModel(historyDate);
   const { data: summaryData, isFetched: summaryFetched } =
     useComplianceSummary(snapshotDate);
   const {
@@ -450,14 +451,6 @@ export default function RequirementsCompliancePage() {
           </div>
         </div>
 
-        <div className="mb-6 animate-fade-up animate-stagger-1">
-          <HistoryDesignPreview
-            model={historyModel}
-            view={date.view}
-            onSelect={date.setDate}
-          />
-        </div>
-
         <ComplianceDateControl
           date={date}
           liveUpdatedAt={dataUpdatedAt}
@@ -511,6 +504,12 @@ export default function RequirementsCompliancePage() {
             ))
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          className="mt-10 animate-fade-up animate-stagger-3"
+        />
       </div>
     </div>
   );

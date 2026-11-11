@@ -41,11 +41,8 @@ import {
   useComplianceDate,
   useComplianceLink,
 } from "./history/useComplianceDate";
-import { useHistoryTrends } from "./history/useHistoryTrends";
-import { costCentrePct } from "./history/series";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
 import { HistoricalBanner } from "./history/HistoricalBanner";
-import { TrendSummary } from "./history/TrendSummary";
 import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
 import { useCostCentreHistoryModel } from "./history/designs/models";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
@@ -326,7 +323,6 @@ export default function CostCentreComplianceDetailPage() {
   const date = useComplianceDate();
   const { snapshotDate } = date;
   const complianceLink = useComplianceLink();
-  const trends = useHistoryTrends(date);
   const historyModel = useCostCentreHistoryModel(date, {
     kind: isRogue ? "rogue" : isOrphaned ? "orphaned" : "costCentre",
     costCentre: isRogue || isOrphaned ? null : costCentreId,
@@ -365,13 +361,6 @@ export default function CostCentreComplianceDetailPage() {
   const data = activeQuery.data;
   // Placeholder data from another date counts as loaded.
   const isFetched = activeQuery.isFetched || data !== undefined;
-  const trend = trends((item) =>
-    isRogue
-      ? costCentrePct(item, "rogue")
-      : isOrphaned
-      ? costCentrePct(item, "orphaned")
-      : costCentrePct(item, "costCentre", costCentreId ?? ""),
-  );
 
   const requirementIdByCategory = useMemo(() => {
     const map = new Map<string, string>();
@@ -561,14 +550,12 @@ export default function CostCentreComplianceDetailPage() {
               </span>
             )}
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <ComplianceDateControl
-              date={date}
-              liveUpdatedAt={activeQuery.dataUpdatedAt}
-              liveFetching={activeQuery.isFetching}
-            />
-            <TrendSummary date={date} values={trend} />
-          </div>
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={activeQuery.dataUpdatedAt}
+            liveFetching={activeQuery.isFetching}
+            className="mt-3"
+          />
         </div>
 
         <div className="mb-6 animate-fade-up animate-stagger-1">

@@ -28,6 +28,7 @@ export function RequirementMatrix({
   model,
   view,
   onSelect,
+  tall,
 }: HistoryDesignProps) {
   const [hover, setHover] = useState<number | null>(null);
   const { series } = model;
@@ -38,6 +39,8 @@ export function RequirementMatrix({
   );
 
   if (points.length < 2) return <HistoryEmpty model={model} />;
+
+  const row = tall ? "h-[20px]" : "h-[13px]";
 
   const shown = points[hover ?? selectedIndex] ?? points[points.length - 1];
 
@@ -66,7 +69,8 @@ export function RequirementMatrix({
               key={s.key}
               title={s.name}
               className={cn(
-                "flex h-[13px] max-w-[180px] items-center truncate text-[0.6875rem] leading-none",
+                "flex max-w-[180px] items-center truncate text-[0.6875rem] leading-none",
+                row,
                 i === 0 ? "font-semibold text-primary" : "text-secondary",
               )}
             >
@@ -114,7 +118,7 @@ export function RequirementMatrix({
                   return (
                     <span
                       key={s.key}
-                      className="h-[13px] w-full rounded-[1px]"
+                      className={cn("w-full rounded-[1px]", row)}
                       style={
                         v === null && model.kind === "rate"
                           ? NO_DATA_STYLE
@@ -132,7 +136,8 @@ export function RequirementMatrix({
             <span
               key={s.key}
               className={cn(
-                "flex h-[13px] items-center justify-end whitespace-nowrap font-mono text-[0.6875rem] leading-none",
+                "flex items-center justify-end whitespace-nowrap font-mono text-[0.6875rem] leading-none",
+                row,
                 i === 0 ? "font-semibold text-primary" : "text-secondary",
               )}
             >
