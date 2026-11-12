@@ -16,7 +16,6 @@ import { costCentrePct } from "./history/series";
 import { periodLabel } from "./history/period";
 import { Sparkline } from "./history/Sparkline";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
-import { ComplianceTimeline } from "./history/ComplianceTimeline";
 import { HistorySection } from "./history/HistorySection";
 import { useCostCentresHistoryModel } from "./history/designs/models";
 import { HistoricalBanner } from "./history/HistoricalBanner";
@@ -911,30 +910,31 @@ export default function CompliancePage() {
           />
         </div>
 
-        <ComplianceDateControl
-          date={date}
-          liveUpdatedAt={dataUpdatedAt}
-          liveFetching={isFetching}
-          className="mb-3 animate-fade-up animate-stagger-2"
-        />
-
-        {/* Sort pills + expand/collapse all */}
-        <div className="flex items-center gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-3">
-          {SORT_OPTIONS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => handleSortChange(key)}
-              className={cn(
-                "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
-                sort === key
-                  ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
-                  : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
-              )}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Sort pills + date control */}
+        <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 animate-fade-up animate-stagger-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => handleSortChange(key)}
+                className={cn(
+                  "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
+                  sort === key
+                    ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
+                    : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={dataUpdatedAt}
+            liveFetching={isFetching}
+            className="ml-auto"
+          />
         </div>
 
         {/* Card grid */}
@@ -1012,7 +1012,6 @@ export default function CompliancePage() {
         <HistorySection
           date={historyDate}
           model={historyModel}
-          current={<ComplianceTimeline date={historyDate} />}
           className="mt-10 animate-fade-up animate-stagger-5"
         />
       </div>

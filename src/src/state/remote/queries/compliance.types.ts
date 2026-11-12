@@ -126,6 +126,8 @@ export type RequirementComplianceHistory = {
 export type ComplianceCategoryStatus = {
   categoryName: string;
   status: ComplianceStatus;
+  /** 0–100; null when the category could not be evaluated. */
+  score?: number | null;
 };
 
 export type CapabilityComplianceHistoryEntry = {

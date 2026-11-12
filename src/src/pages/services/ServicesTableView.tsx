@@ -5,7 +5,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -237,7 +242,9 @@ export function ServicesTableView({
   const { isDark } = useTheme();
   const isMobile = useIsMobile();
   const colors = useMuiTableColors();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { pathname, hash } = useLocation();
+  const navigate = useNavigate();
 
   const qKey = `${urlPrefix}q`;
   const statusKey = `${urlPrefix}status`;
@@ -302,19 +309,21 @@ export function ServicesTableView({
   const [searchQuery, setSearchQuery] = useState(urlSearch);
   const lastPushedSearch = useRef(urlSearch);
 
+  // setSearchParams navigates to the search alone, dropping the location hash,
+  // and the table calls this on mount with nothing to change. On the
+  // capability page that removed a #section anchor before it could scroll.
   const patchUrl = useCallback(
     (mutate: (p: URLSearchParams) => void, resetPage = false) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          mutate(next);
-          if (resetPage) next.delete(pageKey);
-          return next;
-        },
-        { replace: true },
+      const next = new URLSearchParams(searchParams);
+      mutate(next);
+      if (resetPage) next.delete(pageKey);
+      if (next.toString() === searchParams.toString()) return;
+      navigate(
+        { pathname, search: next.toString(), hash },
+        { replace: true, preventScrollReset: true },
       );
     },
-    [setSearchParams, pageKey],
+    [searchParams, pathname, hash, navigate, pageKey],
   );
 
   // update searchQuery when URL query changes externally (back/forward navigation).

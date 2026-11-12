@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { differenceInCalendarDays } from "date-fns";
 import { useTheme } from "@/context/ThemeContext";
 import {
   type ComplianceGroup,
@@ -12,8 +13,7 @@ import type {
   ComplianceRequirementTotals,
 } from "@/state/remote/queries/compliance.types";
 import { calcCompliancePct } from "../../utils";
-import { SERIES_DARK, SERIES_LIGHT } from "../ComplianceTimeline";
-import { type ComplianceView, utcToday } from "../period";
+import { type ComplianceDay, dayToDate } from "../period";
 import { overallPct, requirementPct } from "../series";
 import type { ComplianceDateState } from "../useComplianceDate";
 import {
@@ -23,6 +23,29 @@ import {
   buildPoints,
   selectedIndexFor,
 } from "./shared";
+
+// Categorical slots, in a fixed order per series; checked with the dataviz
+// palette validator against both surfaces.
+const SERIES_LIGHT = [
+  "#2a78d6",
+  "#eb6834",
+  "#1baf7a",
+  "#eda100",
+  "#e87ba4",
+  "#008300",
+  "#6250d6",
+  "#e34948",
+];
+const SERIES_DARK = [
+  "#3987e5",
+  "#d95926",
+  "#199e70",
+  "#c98500",
+  "#d55181",
+  "#008300",
+  "#9085e9",
+  "#e66767",
+];
 
 // The API's requirement order; a requirement keeps its colour on every page.
 const REQUIREMENT_ORDER = [
@@ -74,6 +97,15 @@ function usePalette() {
     }),
     [isDark],
   );
+}
+
+/** The items inside the history range; the "page" scope has none and keeps all. */
+function inRange<T extends { date: ComplianceDay }>(
+  items: readonly T[],
+  date: ComplianceDateState,
+): readonly T[] {
+  const r = date.range?.resolved;
+  return r ? items.filter((i) => i.date >= r.start && i.date <= r.end) : items;
 }
 
 function rate(totals: { compliantCount: number; totalCapabilities: number }) {
@@ -170,14 +202,14 @@ export function useCostCentresHistoryModel(
     const series: HistorySeries[] = [
       {
         key: OVERALL_KEY,
-        name: "All capabilities",
-        shortName: "All capabilities",
+        name: "Fully compliant capabilities",
+        shortName: "Fully compliant capabilities",
         color: palette.headline,
       },
       ...groupSeries(latest?.costCentres ?? [], palette.group),
     ];
     const points = buildPoints(
-      items,
+      inRange(items, date),
       date.view,
       series,
       (item, key) => {
@@ -204,6 +236,8 @@ export function useCostCentresHistoryModel(
     palette.group,
     date.view,
     date.selected,
+    date.range?.resolved.start,
+    date.range?.resolved.end,
   ]);
 }
 
@@ -220,8 +254,8 @@ export function useRequirementsHistoryModel(
     const series: HistorySeries[] = [
       {
         key: OVERALL_KEY,
-        name: "Fully compliant",
-        shortName: "Fully compliant",
+        name: "Fully compliant capabilities",
+        shortName: "Fully compliant capabilities",
         color: palette.headline,
       },
       ...requirementSeries(
@@ -231,7 +265,7 @@ export function useRequirementsHistoryModel(
       ),
     ];
     const points = buildPoints(
-      items,
+      inRange(items, date),
       date.view,
       series,
       (item, key) =>
@@ -250,7 +284,16 @@ export function useRequirementsHistoryModel(
     };
     // palette.requirement depends only on the theme, which palette.headline tracks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isFetched, palette.headline, names, date.view, date.selected]);
+  }, [
+    data,
+    isFetched,
+    palette.headline,
+    names,
+    date.view,
+    date.selected,
+    date.range?.resolved.start,
+    date.range?.resolved.end,
+  ]);
 }
 
 /** One cost centre (or rogue/orphaned): its rate, then each requirement within it. */
@@ -278,7 +321,7 @@ export function useCostCentreHistoryModel(
       ),
     ];
     const points = buildPoints(
-      items,
+      inRange(items, date),
       date.view,
       series,
       (item, key) => {
@@ -298,7 +341,16 @@ export function useCostCentreHistoryModel(
       isFetched: isFetched || !!data,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isFetched, palette.headline, names, date.view, date.selected]);
+  }, [
+    data,
+    isFetched,
+    palette.headline,
+    names,
+    date.view,
+    date.selected,
+    date.range?.resolved.start,
+    date.range?.resolved.end,
+  ]);
 }
 
 /** One requirement: its rate, then each cost centre, rogue and orphaned. */
@@ -321,7 +373,7 @@ export function useRequirementHistoryModel(
       ...groupSeries(latest?.costCentres ?? [], palette.group),
     ];
     const points = buildPoints(
-      items,
+      inRange(items, date),
       date.view,
       series,
       (item, key) => {
@@ -348,20 +400,36 @@ export function useRequirementHistoryModel(
     palette.group,
     date.view,
     date.selected,
+    date.range?.resolved.start,
+    date.range?.resolved.end,
   ]);
 }
 
-export const CAPABILITY_HISTORY_DAYS = 180;
+// The capability history endpoint takes a trailing day count, 1–1100.
+const CAPABILITY_HISTORY_MAX_DAYS = 1100;
 
-/** One capability, per day: overall status, then each requirement's status. */
+/** Days back from today that cover `date`'s range start. */
+function capabilityHistoryDays(date: ComplianceDateState): number {
+  const start = date.range?.resolved.start;
+  if (!start) return 180;
+  const days =
+    differenceInCalendarDays(dayToDate(date.today), dayToDate(start)) + 1;
+  return Math.min(CAPABILITY_HISTORY_MAX_DAYS, Math.max(1, days));
+}
+
+/**
+ * One capability, per day: the share of its evaluated requirements met, then
+ * each requirement's score. A snapshot without a score falls back to 100 or 0
+ * from the status.
+ */
 export function useCapabilityHistoryModel(
   capabilityId: string | null,
   categories: readonly { categoryName: string; displayName?: string | null }[],
-  view: ComplianceView = "day",
+  date: ComplianceDateState,
 ): HistoryModel {
   const { data, isFetched } = useCapabilityComplianceHistory(
     capabilityId,
-    CAPABILITY_HISTORY_DAYS,
+    capabilityHistoryDays(date),
   );
   const palette = usePalette();
   return useMemo(() => {
@@ -369,8 +437,8 @@ export function useCapabilityHistoryModel(
     const series: HistorySeries[] = [
       {
         key: OVERALL_KEY,
-        name: "Overall",
-        shortName: "Overall",
+        name: "Requirements met",
+        shortName: "Requirements met",
         color: palette.headline,
       },
       ...categories.map((c) => {
@@ -385,8 +453,8 @@ export function useCapabilityHistoryModel(
       }),
     ];
     const points = buildPoints(
-      items,
-      view,
+      inRange(items, date),
+      date.view,
       series,
       (item, key) => {
         if (key === OVERALL_KEY) {
@@ -397,23 +465,33 @@ export function useCapabilityHistoryModel(
           const met = evaluated.filter((c) => c.status === "Compliant").length;
           return Math.round((met / evaluated.length) * 100);
         }
-        const status = item.categories.find((c) => c.categoryName === key)
-          ?.status;
-        if (status === "Compliant") return 100;
-        if (status === "NonCompliant") return 0;
-        return null;
+        const category = item.categories.find((c) => c.categoryName === key);
+        if (!category || category.status === "Unknown") return null;
+        if (typeof category.score === "number") {
+          return Math.round(category.score * 10) / 10;
+        }
+        return category.status === "Compliant" ? 100 : 0;
       },
       (item) => `${item.compliantCategories} of ${item.totalCategories} met`,
     );
     return {
-      kind: "status",
-      subject: "requirements met",
+      kind: "rate",
+      subject: "requirement scores",
       breakdown: "requirement",
       series,
       points,
-      selectedIndex: selectedIndexFor(points, view, utcToday()),
+      selectedIndex: selectedIndexFor(points, date.view, date.selected),
       isFetched: isFetched || !!data,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isFetched, palette.headline, categories, view]);
+  }, [
+    data,
+    isFetched,
+    palette.headline,
+    categories,
+    date.view,
+    date.selected,
+    date.range?.resolved.start,
+    date.range?.resolved.end,
+  ]);
 }

@@ -64,7 +64,8 @@ function WeekDay({ selectedDay, ...props }: WeekDayProps) {
 
 /**
  * Picks a day, week or month. Days, weeks and months without a recorded
- * snapshot can't be picked; the period containing `today` is always live.
+ * snapshot can't be picked unless `anyDay` is set; the period containing
+ * `today` is always live.
  */
 export function ComplianceCalendar({
   view,
@@ -72,6 +73,7 @@ export function ComplianceCalendar({
   today,
   oldestDate,
   days,
+  anyDay = false,
   onSelect,
 }: {
   view: ComplianceView;
@@ -79,6 +81,8 @@ export function ComplianceCalendar({
   today: ComplianceDay;
   oldestDate: ComplianceDay | undefined;
   days: AvailableDays;
+  /** Range bounds can be any past day, recorded or not. */
+  anyDay?: boolean;
   onSelect: (day: ComplianceDay) => void;
 }) {
   const { isDark } = useTheme();
@@ -106,10 +110,12 @@ export function ComplianceCalendar({
   const maxDate = dayToDate(today);
 
   const hasData = (period: ComplianceView, day: ComplianceDay) =>
+    anyDay ||
     periodContains(period, day, today) ||
     (period === "day" ? daySet.has(day) : periodHasData(period, day, days));
 
   const yearHasData = (year: number) =>
+    anyDay ||
     String(year) === today.slice(0, 4) ||
     days.some((d) => d.startsWith(`${year}-`));
 
@@ -137,8 +143,11 @@ export function ComplianceCalendar({
         ) : (
           <DateCalendar
             {...common}
-            views={["year", "day"]}
+            // The header opens the year list; a picked year then lists its months
+            // before the days. Without "month" it went from year straight to days.
+            views={["year", "month", "day"]}
             openTo="day"
+            shouldDisableMonth={(d) => !hasData("month", dateToDay(d))}
             shouldDisableDate={(d) => !hasData(view, dateToDay(d))}
             onChange={(d, state) => {
               if (d && state === "finish") onSelect(dateToDay(d));

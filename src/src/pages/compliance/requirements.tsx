@@ -451,30 +451,31 @@ export default function RequirementsCompliancePage() {
           </div>
         </div>
 
-        <ComplianceDateControl
-          date={date}
-          liveUpdatedAt={dataUpdatedAt}
-          liveFetching={isFetching}
-          className="mb-3 animate-fade-up animate-stagger-1"
-        />
-
-        {/* Sort pills */}
-        <div className="flex items-center gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-1">
-          {SORT_OPTIONS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setSort(key)}
-              className={cn(
-                "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
-                sort === key
-                  ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
-                  : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
-              )}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Sort pills + date control */}
+        <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 animate-fade-up animate-stagger-1">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSort(key)}
+                className={cn(
+                  "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
+                  sort === key
+                    ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
+                    : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={dataUpdatedAt}
+            liveFetching={isFetching}
+            className="ml-auto"
+          />
         </div>
 
         {/* Card grid */}

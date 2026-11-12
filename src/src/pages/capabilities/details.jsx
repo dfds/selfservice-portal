@@ -38,8 +38,39 @@ export default function CapabilityDetailsPage() {
   );
 }
 
+// Stop re-aligning on any of these, so the page never scrolls under the user.
+const USER_SCROLL_EVENTS = ["wheel", "touchstart", "keydown", "mousedown"];
+
+/**
+ * Scrolls to the section the URL hash names once `ready`. The sections render
+ * only after the capability loads, so the browser's own jump on page load
+ * finds no target; sections above it then grow as their own queries resolve,
+ * so the jump repeats on layout changes for up to 2 s.
+ */
+function useScrollToHash(hash, ready) {
+  useEffect(() => {
+    if (!ready || !hash) return;
+    const id = decodeURIComponent(hash.slice(1));
+    const align = () => document.getElementById(id)?.scrollIntoView();
+    align();
+    const observer = new ResizeObserver(align);
+    observer.observe(document.body);
+    const timer = setTimeout(stop, 2000);
+    function stop() {
+      observer.disconnect();
+      clearTimeout(timer);
+      for (const e of USER_SCROLL_EVENTS) window.removeEventListener(e, stop);
+    }
+    for (const e of USER_SCROLL_EVENTS) {
+      window.addEventListener(e, stop, { passive: true });
+    }
+    return stop;
+  }, [hash, ready]);
+}
+
 function CapabilityDetailsPageContent() {
   const { id } = useParams();
+  const { hash } = useLocation();
   const {
     links,
     isLoading,
@@ -79,9 +110,11 @@ function CapabilityDetailsPageContent() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) window.scrollTo(0, 0);
     loadCapability(id);
   }, [id]);
+
+  useScrollToHash(hash, !isLoading && isFound);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -122,8 +155,8 @@ function CapabilityDetailsPageContent() {
 
   const anchorLinks = [
     { href: "#summary", label: "Summary" },
-    { href: "#requirements-status", label: "Requirements" },
     { href: "#members", label: "Members" },
+    { href: "#requirements-status", label: "Requirements" },
     ...(showJsonMetadata ? [{ href: "#tags", label: "Tags" }] : []),
     ...(showAICatalogueSection
       ? [{ href: "#ai-catalogue", label: "AI Catalogue" }]
@@ -253,14 +286,14 @@ function CapabilityDetailsPageContent() {
             className="animate-section-enter"
             style={{ animationDelay: "130ms" }}
           >
-            <RequirementsScore />
+            <TabbedMembersView anchorId="members" />
           </div>
 
           <div
             className="animate-section-enter"
             style={{ animationDelay: "200ms" }}
           >
-            <TabbedMembersView anchorId="members" />
+            <RequirementsScore />
           </div>
 
           {showJsonMetadata && (

@@ -12,31 +12,18 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LastUpdated } from "@/components/ui/LastUpdated";
-import { TabGroup } from "@/components/ui/TabGroup";
 import { useRybbit } from "@/RybbitContext";
 import { cn } from "@/lib/utils";
 import { ComplianceCalendar } from "./ComplianceCalendar";
-import { type ComplianceView, periodLabel } from "./period";
+import { periodLabel } from "./period";
 import type { ComplianceDateState } from "./useComplianceDate";
 
-const VIEW_TABS: { id: ComplianceView; label: string }[] = [
-  { id: "day", label: "Day" },
-  { id: "week", label: "Week" },
-  { id: "month", label: "Month" },
-];
-
-const LIVE_LABEL: Record<ComplianceView, string> = {
-  day: "Today",
-  week: "This week",
-  month: "This month",
-};
-
 /**
- * Day/Week/Month toggle, previous/next period, and a calendar popover. Live
- * data shows when it was last fetched; a past period offers "Back to today".
+ * The page's day, with a calendar popover. Live data shows when it was last
+ * fetched; a past day offers "Back to today".
  */
 export function ComplianceDateControl({
   date,
@@ -66,60 +53,35 @@ export function ComplianceDateControl({
   ]);
 
   const label = date.isLive
-    ? `${LIVE_LABEL[date.view]} · live`
+    ? "Today · live"
     : periodLabel(date.view, date.selected);
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
-      <TabGroup
-        tabs={VIEW_TABS}
-        value={date.view}
-        onChange={(view) => {
-          date.setView(view);
-          trackEvent("compliance:history:view-changed", {
-            view,
-            scope: date.scope,
-          });
-        }}
-      />
-
-      <div className="inline-flex h-[34px] items-stretch rounded-[6px] border border-card bg-surface">
-        <button
-          type="button"
-          onClick={date.stepPrev}
-          disabled={!date.canStepPrev}
-          aria-label={`Previous ${date.view} with data`}
-          className="inline-flex w-8 items-center justify-center rounded-l-[5px] text-secondary transition-colors hover:bg-surface-muted hover:text-action disabled:pointer-events-none disabled:opacity-40"
-        >
-          <ChevronLeft size={14} />
-        </button>
-        <button
-          ref={refs.setReference}
-          type="button"
-          aria-haspopup="dialog"
-          aria-expanded={open}
-          {...getReferenceProps()}
-          className={cn(
-            "inline-flex min-w-0 items-center gap-2 border-x border-card px-3 font-mono text-[0.75rem] font-semibold transition-colors hover:bg-surface-muted",
-            date.isLive ? "text-primary" : "text-action",
-          )}
-        >
-          <CalendarDays size={13} className="flex-shrink-0" />
-          <span className="truncate">{label}</span>
-        </button>
-        <button
-          type="button"
-          onClick={date.stepNext}
-          disabled={!date.canStepNext}
-          aria-label={`Next ${date.view} with data`}
-          className="inline-flex w-8 items-center justify-center rounded-r-[5px] text-secondary transition-colors hover:bg-surface-muted hover:text-action disabled:pointer-events-none disabled:opacity-40"
-        >
-          <ChevronRight size={14} />
-        </button>
-      </div>
+      <button
+        ref={refs.setReference}
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        {...getReferenceProps()}
+        className={cn(
+          "inline-flex h-[34px] min-w-0 items-center gap-2 rounded-[6px] border border-card bg-surface px-3 font-mono text-[0.75rem] font-semibold transition-colors hover:bg-surface-muted",
+          date.isLive ? "text-primary" : "text-action",
+        )}
+      >
+        <CalendarDays size={13} className="flex-shrink-0" />
+        <span className="truncate">{label}</span>
+      </button>
 
       {date.isLive ? (
-        <LastUpdated updatedAt={liveUpdatedAt} isFetching={liveFetching} />
+        // The control sits right-aligned, so a width change in the ticking
+        // label ("9 seconds ago" → "10 seconds ago") shifts everything left
+        // of it. 25ch fits "Updated 59 minutes ago" plus the icon.
+        <LastUpdated
+          updatedAt={liveUpdatedAt}
+          isFetching={liveFetching}
+          className="min-w-[25ch]"
+        />
       ) : (
         <Button variant="outline" size="sm" onClick={date.goToToday}>
           Back to today

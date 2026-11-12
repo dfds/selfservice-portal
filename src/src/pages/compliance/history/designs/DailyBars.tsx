@@ -18,9 +18,10 @@ import {
 const MIN_PITCH = 3;
 
 /**
- * Design 3: one bar per period for one series, the headline unless another
- * is picked. A rate sets the bar's height and tier colour; a status fills the
- * bar in its status colour. A readout names the hovered or selected period.
+ * The history chart on mobile: one bar per period for one series, the
+ * headline unless another is picked. A rate sets the bar's height and tier
+ * colour; a status fills the bar in its status colour. A readout names the
+ * hovered or selected period.
  */
 export function DailyBars({ model, view, onSelect, tall }: HistoryDesignProps) {
   const [hover, setHover] = useState<number | null>(null);

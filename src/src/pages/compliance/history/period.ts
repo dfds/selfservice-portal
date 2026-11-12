@@ -137,15 +137,6 @@ export function lastAvailableOnOrBefore(
   return i > 0 ? days[i - 1] : undefined;
 }
 
-/** The earliest recorded day after `day`, if any. */
-export function firstAvailableAfter(
-  days: AvailableDays,
-  day: ComplianceDay,
-): ComplianceDay | undefined {
-  const i = upperBound(days, day);
-  return i < days.length ? days[i] : undefined;
-}
-
 export function periodHasData(
   view: ComplianceView,
   period: ComplianceDay,
@@ -176,41 +167,4 @@ export function resolveSnapshotDate(
   if (view === "day" || !days) return end;
   const last = lastAvailableOnOrBefore(days, end);
   return last !== undefined && last >= periodStart(view, selected) ? last : end;
-}
-
-/**
- * The day representing the previous period with data, or `undefined` when
- * there is none. For week and month this is the period's last recorded day.
- */
-export function previousPeriodWithData(
-  view: ComplianceView,
-  selected: ComplianceDay,
-  days: AvailableDays,
-): ComplianceDay | undefined {
-  // The latest recorded day before this period is also the latest in its own.
-  return lastAvailableOnOrBefore(
-    days,
-    shiftDay(periodStart(view, selected), -1),
-  );
-}
-
-/**
- * The day representing the next period with data, or `undefined` when the
- * selected period already contains `today`. The period containing `today` is
- * live, so it always counts as having data; it is returned as `today`.
- */
-export function nextPeriodWithData(
-  view: ComplianceView,
-  selected: ComplianceDay,
-  days: AvailableDays,
-  today: ComplianceDay,
-): ComplianceDay | undefined {
-  if (periodContains(view, selected, today) || selected > today) {
-    return undefined;
-  }
-  const day = firstAvailableAfter(days, periodEnd(view, selected));
-  if (day === undefined || periodContains(view, day, today) || day > today) {
-    return today;
-  }
-  return resolveSnapshotDate(view, day, days, today);
 }

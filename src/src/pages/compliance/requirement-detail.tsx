@@ -25,7 +25,7 @@ import {
 } from "./history/useComplianceDate";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
 import { HistoricalBanner } from "./history/HistoricalBanner";
-import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { HistorySection } from "./history/HistorySection";
 import { useRequirementHistoryModel } from "./history/designs/models";
 import { statusIcon } from "@/lib/statusUtils";
 import { cn } from "@/lib/utils";
@@ -681,7 +681,8 @@ export default function RequirementComplianceDetailPage() {
   const date = useComplianceDate();
   const { snapshotDate } = date;
   const complianceLink = useComplianceLink();
-  const historyModel = useRequirementHistoryModel(date, id ?? null);
+  const historyDate = useComplianceDate("history");
+  const historyModel = useRequirementHistoryModel(historyDate, id ?? null);
   const query = useRequirementComplianceDetails(id ?? null, snapshotDate) as {
     data: RequirementDetailsData | undefined;
     isFetched: boolean;
@@ -956,14 +957,6 @@ export default function RequirementComplianceDetailPage() {
           )}
         </div>
 
-        <div className="mb-6 animate-fade-up animate-stagger-2">
-          <HistoryDesignPreview
-            model={historyModel}
-            view={date.view}
-            onSelect={date.setDate}
-          />
-        </div>
-
         {/* Filter bar */}
         <div className="relative z-30 mb-4 flex flex-col gap-3 animate-fade-up animate-stagger-2">
           <ComplianceDateControl
@@ -1099,6 +1092,12 @@ export default function RequirementComplianceDetailPage() {
             />
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          className="mt-10 animate-fade-up animate-stagger-5"
+        />
       </div>
     </div>
   );

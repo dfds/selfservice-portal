@@ -20,23 +20,105 @@ import {
   HistoryEmpty,
   HistoryLabel,
   type HistoryDesignProps,
+  type HistorySeries,
   fitDomain,
 } from "./shared";
 
 const DASH = "5 3";
 
+// Past this many rows the tooltip splits into two columns. Recharts pins a
+// tooltip taller than the plot to the plot's top edge, so one column of a
+// dozen series overflows the bottom of the chart.
+const TOOLTIP_ROWS = 7;
+
+type TooltipEntry = {
+  dataKey?: string | number | ((obj: unknown) => unknown);
+  value?: unknown;
+};
+
+function ChartTooltip({
+  active,
+  label,
+  payload,
+  view,
+  unit,
+  series,
+  headlineKey,
+}: {
+  active?: boolean;
+  label?: string;
+  payload?: readonly TooltipEntry[];
+  view: HistoryDesignProps["view"];
+  unit: string;
+  series: readonly HistorySeries[];
+  headlineKey: string;
+}) {
+  if (!active || !label || !payload?.length) return null;
+  const valueOf = (key: string): number | null => {
+    const v = payload.find((p) => p.dataKey === key)?.value;
+    return typeof v === "number" ? v : null;
+  };
+  const entries = series
+    .map((s) => ({ s, value: valueOf(s.key) }))
+    .sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
+  const columns = entries.length > TOOLTIP_ROWS ? 2 : 1;
+  const rows = Math.ceil(entries.length / columns);
+  return (
+    <div className="rounded-[6px] border border-card bg-surface px-3 py-2 shadow-overlay">
+      <p className="mb-1.5 text-[0.75rem] font-semibold text-primary">
+        {periodLabel(view, label)}
+      </p>
+      <ul
+        className="grid grid-flow-col gap-x-5 gap-y-0.5"
+        style={{ gridTemplateRows: `repeat(${rows}, auto)` }}
+      >
+        {entries.map(({ s, value }) => (
+          <li
+            key={s.key}
+            className={cn(
+              "flex items-center gap-2 text-[0.6875rem] leading-4",
+              s.key === headlineKey
+                ? "font-semibold text-primary"
+                : "text-secondary",
+            )}
+          >
+            <svg aria-hidden width="12" height="2" className="flex-shrink-0">
+              <line
+                x1="0"
+                x2="12"
+                y1="1"
+                y2="1"
+                stroke={s.color}
+                strokeWidth={2}
+                strokeDasharray={s.dashed ? "4 2" : undefined}
+              />
+            </svg>
+            <span className="flex-1 whitespace-nowrap">{s.name}</span>
+            <span className="pl-2 font-mono tabular-nums text-primary">
+              {value === null ? "—" : `${value}${unit}`}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /**
- * Design 5: a short chart of the headline and every other series. A chip
- * hides or shows its series, and hovering one brings its line forward.
+ * The history chart: the headline and every other series. A chip hides or
+ * shows its series, and hovering one brings its line forward.
  * Recharts throws under display:none, so mobile gets the bar strip instead.
- * Status models plot only the headline.
  */
 export function FocusChart({
   model,
   view,
   onSelect,
   tall,
-}: HistoryDesignProps) {
+  caption = true,
+}: HistoryDesignProps & {
+  /** The "(… per day; click a … to hide it)" note after the label. */
+  caption?: boolean;
+}) {
   const { isDark } = useTheme();
   const isMobile = useIsMobile();
   const [hidden, setHidden] = useState<Set<string>>(new Set());
@@ -50,7 +132,7 @@ export function FocusChart({
   if (points.length < 2) return <HistoryEmpty model={model} />;
 
   const headline = series[0];
-  const others = model.kind === "rate" ? series.slice(1) : [];
+  const others = series.slice(1);
   const ink = isDark ? "#94a3b8" : "#666666";
   const grid = isDark ? "#1e2d3d" : "#eeeeee";
   const rows = points.map((p) => ({ period: p.period, ...p.values }));
@@ -90,8 +172,17 @@ export function FocusChart({
     <HistoryCard className="pb-2">
       <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
         <HistoryLabel>
-          ({model.subject} per {view}
-          {others.length > 0 ? `; click a ${model.breakdown} to hide it` : ""})
+          {caption ? (
+            <>
+              ({model.subject} per {view}
+              {others.length > 0
+                ? `; click a ${model.breakdown} to hide it`
+                : ""}
+              )
+            </>
+          ) : (
+            ""
+          )}
         </HistoryLabel>
         <div
           className="flex flex-wrap gap-1"
@@ -177,22 +268,17 @@ export function FocusChart({
               <ReferenceLine key={t} y={t} stroke={grid} />
             ))}
             <Tooltip
-              labelFormatter={(period) => periodLabel(view, period as string)}
-              formatter={(value, name) => [
-                value === null || value === undefined ? "—" : `${value}${unit}`,
-                name,
-              ]}
-              itemSorter={(item) => -Number(item.value ?? 0)}
-              contentStyle={{
-                background: isDark ? "#1e293b" : "#ffffff",
-                border: `1px solid ${isDark ? "#334155" : "#d9dcde"}`,
-                borderRadius: 6,
-                fontSize: 12,
-              }}
-              labelStyle={{
-                color: isDark ? "#e2e8f0" : "#002b45",
-                fontWeight: 600,
-              }}
+              content={(props) => (
+                <ChartTooltip
+                  active={props.active}
+                  label={props.label as string | undefined}
+                  payload={props.payload}
+                  view={view}
+                  unit={unit}
+                  series={drawn}
+                  headlineKey={headline.key}
+                />
+              )}
             />
             {selectedPeriod && (
               <ReferenceLine

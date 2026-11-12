@@ -43,7 +43,7 @@ import {
 } from "./history/useComplianceDate";
 import { ComplianceDateControl } from "./history/ComplianceDateControl";
 import { HistoricalBanner } from "./history/HistoricalBanner";
-import { HistoryDesignPreview } from "./history/designs/HistoryDesignPreview";
+import { HistorySection } from "./history/HistorySection";
 import { useCostCentreHistoryModel } from "./history/designs/models";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
@@ -323,7 +323,8 @@ export default function CostCentreComplianceDetailPage() {
   const date = useComplianceDate();
   const { snapshotDate } = date;
   const complianceLink = useComplianceLink();
-  const historyModel = useCostCentreHistoryModel(date, {
+  const historyDate = useComplianceDate("history");
+  const historyModel = useCostCentreHistoryModel(historyDate, {
     kind: isRogue ? "rogue" : isOrphaned ? "orphaned" : "costCentre",
     costCentre: isRogue || isOrphaned ? null : costCentreId,
   });
@@ -558,14 +559,6 @@ export default function CostCentreComplianceDetailPage() {
           />
         </div>
 
-        <div className="mb-6 animate-fade-up animate-stagger-1">
-          <HistoryDesignPreview
-            model={historyModel}
-            view={date.view}
-            onSelect={date.setDate}
-          />
-        </div>
-
         {/* Stats panel */}
         <div className="mb-6 rounded-[8px] border border-card bg-surface p-5 animate-fade-up animate-stagger-1">
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-6">
@@ -771,6 +764,12 @@ export default function CostCentreComplianceDetailPage() {
             />
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          className="mt-10 animate-fade-up animate-stagger-5"
+        />
       </div>
     </div>
   );

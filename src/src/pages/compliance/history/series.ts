@@ -76,25 +76,3 @@ export function trendUpTo(
   while (end > 0 && buckets[end - 1].period > endPeriod) end--;
   return buckets.slice(Math.max(0, end - count), end).map((b) => value(b.item));
 }
-
-/**
- * The first recorded day each requirement was evaluated, for requirements
- * that started after the oldest recorded day.
- */
-export function requirementIntroductions(
-  items: readonly ComplianceDailySummary[],
-): Map<string, ComplianceDay> {
-  const firstSeen = new Map<string, ComplianceDay>();
-  for (const item of items) {
-    for (const r of item.requirements) {
-      if (r.totalCapabilities > 0 && !firstSeen.has(r.requirementId)) {
-        firstSeen.set(r.requirementId, item.date);
-      }
-    }
-  }
-  const oldest = items[0]?.date;
-  for (const [id, day] of firstSeen) {
-    if (day === oldest) firstSeen.delete(id);
-  }
-  return firstSeen;
-}

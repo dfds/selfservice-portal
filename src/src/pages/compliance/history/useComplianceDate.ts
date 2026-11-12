@@ -7,30 +7,45 @@ import {
   type ComplianceView,
   availableDays,
   isComplianceDay,
-  nextPeriodWithData,
-  previousPeriodWithData,
   resolveSnapshotDate,
   utcToday,
 } from "./period";
+import {
+  DEFAULT_RANGE,
+  type HistoryRange,
+  type ResolvedRange,
+  resolveRange,
+  sameRange,
+} from "./range";
 
 // ─── URL state codec ─────────────────────────────────────────────────────────
-// `?date=YYYY-MM-DD&view=day|week|month`. Today and "day" are the defaults and
-// are left out of the URL. The "history" scope uses `historyDate` and
-// `historyView`, so a page's history chart can show another period than its
-// cards.
-
-const DATE_PARAM = "date";
-const VIEW_PARAM = "view";
+// The "page" scope is `?date=YYYY-MM-DD` and always reads by day. The "history"
+// scope uses `historyDate` and `historyView=day|week|month`, so a page's
+// history chart can show another period than its cards, and adds
+// `historyFrom`/`historyTo` for the range it plots (see range.ts). Today, "day"
+// and the default range are left out of the URL.
 
 export type ComplianceDateScope = "page" | "history";
 
-const PARAMS: Record<ComplianceDateScope, { date: string; view: string }> = {
-  page: { date: DATE_PARAM, view: VIEW_PARAM },
+type ScopeParams = { date: string; view?: string };
+
+const PARAMS: Record<ComplianceDateScope, ScopeParams> = {
+  page: { date: "date" },
   history: { date: "historyDate", view: "historyView" },
 };
 
-function readView(p: URLSearchParams, key: string): ComplianceView {
-  const v = p.get(key);
+const RANGE_PARAMS = { from: "historyFrom", to: "historyTo" };
+
+const ALL_PARAMS = [
+  ...Object.values(PARAMS).flatMap((k) =>
+    k.view ? [k.date, k.view] : [k.date],
+  ),
+  RANGE_PARAMS.from,
+  RANGE_PARAMS.to,
+];
+
+function readView(p: URLSearchParams, key?: string): ComplianceView {
+  const v = key ? p.get(key) : null;
   return v === "week" || v === "month" ? v : "day";
 }
 
@@ -46,12 +61,12 @@ function readDate(
 
 function writeUrl(
   prev: URLSearchParams,
-  keys: { date: string; view: string },
+  keys: ScopeParams,
   patch: { view?: ComplianceView; date?: ComplianceDay },
   today: ComplianceDay,
 ): URLSearchParams {
   const next = new URLSearchParams(prev);
-  if (patch.view !== undefined) {
+  if (patch.view !== undefined && keys.view) {
     if (patch.view === "day") next.delete(keys.view);
     else next.set(keys.view, patch.view);
   }
@@ -71,7 +86,7 @@ export function withComplianceParams(
     typeof search === "string" ? new URLSearchParams(search) : search;
   const [path, query = ""] = to.split("?");
   const target = new URLSearchParams(query);
-  for (const key of Object.values(PARAMS).flatMap((k) => [k.date, k.view])) {
+  for (const key of ALL_PARAMS) {
     const value = source.get(key);
     if (value) target.set(key, value);
   }
@@ -103,13 +118,16 @@ export type ComplianceDateState = {
   /** Recorded days, oldest first; `undefined` until the history has loaded. */
   days: AvailableDays | undefined;
   oldestDate: ComplianceDay | undefined;
-  canStepPrev: boolean;
-  canStepNext: boolean;
   setView: (view: ComplianceView) => void;
   setDate: (day: ComplianceDay) => void;
-  stepPrev: () => void;
-  stepNext: () => void;
   goToToday: () => void;
+  /** The plotted range; only the "history" scope has one. */
+  range?: {
+    value: HistoryRange;
+    resolved: ResolvedRange;
+    /** Also clears the selected day, which may fall outside the new range. */
+    set: (range: HistoryRange) => void;
+  };
 };
 
 export function useComplianceDate(
@@ -128,10 +146,39 @@ export function useComplianceDate(
     [history],
   );
   const snapshotDate = resolveSnapshotDate(view, selected, days, today);
-  const previous = days
-    ? previousPeriodWithData(view, selected, days)
-    : undefined;
-  const next = nextPeriodWithData(view, selected, days ?? [], today);
+
+  const range = useMemo(
+    () =>
+      resolveRange(
+        {
+          from: searchParams.get(RANGE_PARAMS.from) ?? DEFAULT_RANGE.from,
+          to: searchParams.get(RANGE_PARAMS.to) ?? DEFAULT_RANGE.to,
+        },
+        today,
+      ),
+    [searchParams, today],
+  );
+
+  const setRange = useCallback(
+    (value: HistoryRange) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete(keys.date);
+          if (sameRange(value, DEFAULT_RANGE)) {
+            next.delete(RANGE_PARAMS.from);
+            next.delete(RANGE_PARAMS.to);
+          } else {
+            next.set(RANGE_PARAMS.from, value.from.trim());
+            next.set(RANGE_PARAMS.to, value.to.trim());
+          }
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams, keys],
+  );
 
   const updateUrl = useCallback(
     (patch: { view?: ComplianceView; date?: ComplianceDay }) => {
@@ -151,16 +198,12 @@ export function useComplianceDate(
     isLive: snapshotDate === undefined,
     days,
     oldestDate: history?.oldestDate ?? undefined,
-    canStepPrev: previous !== undefined,
-    canStepNext: next !== undefined,
     setView: (v) => updateUrl({ view: v }),
     setDate: (date) => updateUrl({ date }),
-    stepPrev: () => {
-      if (previous !== undefined) updateUrl({ date: previous });
-    },
-    stepNext: () => {
-      if (next !== undefined) updateUrl({ date: next });
-    },
     goToToday: () => updateUrl({ date: today }),
+    range:
+      scope === "history"
+        ? { value: range.range, resolved: range.resolved, set: setRange }
+        : undefined,
   };
 }
