@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   BarChart3,
@@ -8,7 +8,6 @@ import {
   Server,
   Users,
 } from "lucide-react";
-import PreAppContext from "@/preAppContext";
 import {
   useCopilotAdmin,
   type CopilotScope,
@@ -140,7 +139,6 @@ function KeptTab({
 }
 
 export default function CopilotAdminPage() {
-  const { isCloudEngineerEnabled } = useContext(PreAppContext) as any;
   const [tab, setTab] = useTabParam();
   const [statsSeen, setStatsSeen] = useState(tab === "stats");
   if (tab === "stats" && !statsSeen) setStatsSeen(true);
@@ -185,13 +183,7 @@ export default function CopilotAdminPage() {
   );
 
   let body: React.ReactNode;
-  if (!isCloudEngineerEnabled) {
-    body = (
-      <InfoAlert variant="info">
-        Turn on CE Mode to load Copilot admin data.
-      </InfoAlert>
-    );
-  } else if (unavailable(scopesQ)) {
+  if (unavailable(scopesQ)) {
     body = (
       <InfoAlert variant="warning">
         copilot-insights is unavailable. selfservice-api could not reach it or
