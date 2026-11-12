@@ -8,6 +8,7 @@ import { ComplianceRangeControl } from "@/pages/compliance/history/ComplianceRan
 import { useComplianceDate } from "@/pages/compliance/history/useComplianceDate";
 import { useComplianceHistory } from "@/state/remote/queries/capabilities";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { statusIcon } from "@/lib/statusUtils";
 import {
   SkeletonRequirementsScore,
   SkeletonRequirementsRow,
@@ -198,7 +199,8 @@ export default function RequirementsScore() {
                   )}
                   {category.nonCompliantItems?.length > 0 && (
                     <div className="mt-2 flex flex-col gap-0.5">
-                      <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-[#afafaf] dark:text-slate-500">
+                      <span className="flex items-center gap-1.5 text-[0.625rem] font-mono uppercase tracking-[0.12em] text-[#afafaf] dark:text-slate-500">
+                        {statusIcon("noncompliant")}
                         Non-compliant items
                       </span>
                       {category.nonCompliantItems.map((item, i) => (

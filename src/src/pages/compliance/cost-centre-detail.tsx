@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowUp,
   ChevronDown,
+  ChevronRight,
   ExternalLink,
   Plus,
   X,
@@ -851,23 +852,57 @@ function CapabilityMatrix({
         header: "Capability",
         accessorFn: (row) => row.capabilityName,
         size: 320,
-        Cell: ({ row }) => (
-          <div className="min-w-0 flex items-center gap-2">
-            <div className="min-w-0 flex-1">
-              <Link
-                to={`/capabilities/${row.original.capabilityId}`}
-                onClick={(e) => e.stopPropagation()}
-                className="text-[0.8125rem] font-medium text-primary hover:text-action hover:underline truncate block"
-                aria-label={`Open ${row.original.capabilityName}`}
+        Cell: ({ row }) => {
+          const expanded = row.getIsExpanded();
+          return (
+            <div className="min-w-0 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  row.toggleExpanded();
+                }}
+                aria-expanded={expanded}
+                aria-label={`${expanded ? "Hide" : "Show"} details for ${
+                  row.original.capabilityName
+                }`}
+                className="flex-shrink-0 inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/10"
               >
-                {row.original.capabilityName}
-              </Link>
-              <div className="text-[10.5px] font-mono text-muted truncate">
-                {row.original.capabilityId}
+                <ChevronRight
+                  size={14}
+                  strokeWidth={2}
+                  className={cn(
+                    "transition-transform duration-200",
+                    expanded && "rotate-90",
+                  )}
+                />
+              </button>
+              <div className="min-w-0 flex-1">
+                {/* Inline, so only the name navigates; the rest of the row
+                    toggles the detail panel. */}
+                <Link
+                  to={`/capabilities/${row.original.capabilityId}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="group inline-flex max-w-full items-center gap-1 align-top text-[0.8125rem] font-medium text-primary hover:text-action"
+                  aria-label={`Open ${row.original.capabilityName}`}
+                >
+                  <span className="truncate group-hover:underline">
+                    {row.original.capabilityName}
+                  </span>
+                  <ExternalLink
+                    size={11}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="flex-shrink-0 text-muted group-hover:text-action"
+                  />
+                </Link>
+                <div className="text-[10.5px] font-mono text-muted truncate">
+                  {row.original.capabilityId}
+                </div>
               </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
       ...CATEGORY_COLUMNS.map<MRT_ColumnDef<CapabilityCompliance>>((c) => ({
         id: c.key,
