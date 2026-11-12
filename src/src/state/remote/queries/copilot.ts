@@ -30,7 +30,7 @@ const COPILOT_READ_ALL = {
  */
 export function useCanReadAllCopilot() {
   const { data, isFetched } = useCanI(COPILOT_READ_ALL);
-  return { isDenied: data === false, isFetched };
+  return { isAllowed: data === true, isDenied: data === false, isFetched };
 }
 
 export interface CopilotMeta {

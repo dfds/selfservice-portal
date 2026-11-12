@@ -159,7 +159,7 @@ const ceNav: NavItemDef[] = [
   },
 ];
 
-const costCentresGroup: NavGroupDef = {
+const dashboardsGroup: NavGroupDef = {
   title: "Dashboards",
   icon: Gauge,
   children: [
@@ -168,6 +168,7 @@ const costCentresGroup: NavGroupDef = {
       url: "/compliance",
       icon: ShieldCheck,
     },
+    { title: "Copilot", url: "/admin/copilot", icon: Bot },
   ],
 };
 
@@ -226,7 +227,6 @@ const adminNav: NavGroupDef = {
     },
     { title: "ECR Sync", url: "/admin/ecr", icon: Container },
     { title: "Metrics", url: "/admin/metrics", icon: LineChart },
-    { title: "Copilot", url: "/admin/copilot", icon: Bot },
     { title: "JSON Schema Editor", url: "/admin/json-schema", icon: FileText },
     { title: "Email Campaigns", url: "/admin/email-campaigns", icon: Mail },
     ...adminExternalNav,
@@ -1257,13 +1257,13 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       (copilotAccess.isFetched && !copilotAccess.isDenied),
   );
   const copilotAdminAccess = useCanReadAllCopilot();
-  const visibleAdminNav: NavGroupDef = {
-    ...adminNav,
-    children: adminNav.children.filter(
+  const visibleDashboardsGroup: NavGroupDef = {
+    ...dashboardsGroup,
+    children: dashboardsGroup.children.filter(
       (item) =>
         isNavGroup(item) ||
         item.url !== "/admin/copilot" ||
-        (copilotAdminAccess.isFetched && !copilotAdminAccess.isDenied),
+        copilotAdminAccess.isAllowed,
     ),
   };
 
@@ -1285,7 +1285,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         ...platformNav,
         ...contentNav,
         ...ceNav,
-        ...flatNavItems(costCentresGroup.children),
+        ...flatNavItems(dashboardsGroup.children),
       ];
       const hasMoreSpecificMatch = allNavItems.some(
         (item) => item.url !== url && location.pathname.startsWith(item.url),
@@ -1326,8 +1326,8 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
                 isActive={isActive(item.url)}
               />
             ))}
-          {renderGroup(costCentresGroup)}
-          {isCloudEngineerEnabled && renderGroup(visibleAdminNav)}
+          {renderGroup(visibleDashboardsGroup)}
+          {isCloudEngineerEnabled && renderGroup(adminNav)}
         </div>
       </div>
 
