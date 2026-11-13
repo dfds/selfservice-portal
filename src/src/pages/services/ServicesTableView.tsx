@@ -5,7 +5,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   MaterialReactTable,
   type MRT_ColumnDef,
@@ -13,6 +18,7 @@ import {
   type MRT_PaginationState,
   type MRT_VisibilityState,
   type MRT_ColumnSizingState,
+  type MRT_RowVirtualizer,
 } from "material-react-table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type { TableHeadProps } from "@mui/material/TableHead";
@@ -237,7 +243,9 @@ export function ServicesTableView({
   const { isDark } = useTheme();
   const isMobile = useIsMobile();
   const colors = useMuiTableColors();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { pathname, hash } = useLocation();
+  const navigate = useNavigate();
 
   const qKey = `${urlPrefix}q`;
   const statusKey = `${urlPrefix}status`;
@@ -302,19 +310,21 @@ export function ServicesTableView({
   const [searchQuery, setSearchQuery] = useState(urlSearch);
   const lastPushedSearch = useRef(urlSearch);
 
+  // setSearchParams navigates to the search alone, dropping the location hash,
+  // and the table calls this on mount with nothing to change. On the
+  // capability page that removed a #section anchor before it could scroll.
   const patchUrl = useCallback(
     (mutate: (p: URLSearchParams) => void, resetPage = false) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          mutate(next);
-          if (resetPage) next.delete(pageKey);
-          return next;
-        },
-        { replace: true },
+      const next = new URLSearchParams(searchParams);
+      mutate(next);
+      if (resetPage) next.delete(pageKey);
+      if (next.toString() === searchParams.toString()) return;
+      navigate(
+        { pathname, search: next.toString(), hash },
+        { replace: true, preventScrollReset: true },
       );
     },
-    [setSearchParams, pageKey],
+    [searchParams, pathname, hash, navigate, pageKey],
   );
 
   // update searchQuery when URL query changes externally (back/forward navigation).
@@ -862,6 +872,16 @@ export function ServicesTableView({
     [page, maxPageIndex, pageSize],
   );
 
+  // React attaches refs child-first in the layout phase, so the body's
+  // virtualizer runs its layout effect before MRT has set tableContainerRef,
+  // finds no scroll element, and renders no rows until something else
+  // re-renders the body. A passive effect runs after refs are attached;
+  // measure() makes the body re-render and pick up the container.
+  const rowVirtualizerRef = useRef<MRT_RowVirtualizer | null>(null);
+  useEffect(() => {
+    rowVirtualizerRef.current?.measure();
+  }, [isMobile, enableSearch]);
+
   const canFilterByTag = enableMetadataFilters && !!metadataByCapability;
 
   const filterBar = canFilterByTag ? (
@@ -1016,6 +1036,7 @@ export function ServicesTableView({
             enableRowVirtualization={virtualize}
             enableStickyHeader={virtualize}
             rowVirtualizerOptions={{ overscan: 6 }}
+            rowVirtualizerInstanceRef={rowVirtualizerRef}
             onSortingChange={(updater) =>
               setSorting(
                 typeof updater === "function" ? updater(sorting) : updater,

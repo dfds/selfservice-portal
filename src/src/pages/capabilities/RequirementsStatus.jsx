@@ -2,7 +2,13 @@ import React, { useContext } from "react";
 import { ExternalLink } from "lucide-react";
 import PageSection from "@/components/PageSection";
 import SelectedCapabilityContext from "./SelectedCapabilityContext";
+import { FocusChart } from "@/pages/compliance/history/designs/FocusChart";
+import { useCapabilityHistoryModel } from "@/pages/compliance/history/designs/models";
+import { ComplianceRangeControl } from "@/pages/compliance/history/ComplianceRangeControl";
+import { useComplianceDate } from "@/pages/compliance/history/useComplianceDate";
+import { useComplianceHistory } from "@/state/remote/queries/capabilities";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { statusIcon } from "@/lib/statusUtils";
 import {
   SkeletonRequirementsScore,
   SkeletonRequirementsRow,
@@ -79,7 +85,7 @@ export function QuestionMarkBulb({
 }
 
 export default function RequirementsScore() {
-  const { isLoading, complianceData, complianceLoading } = useContext(
+  const { id, isLoading, complianceData, complianceLoading } = useContext(
     SelectedCapabilityContext,
   );
 
@@ -88,6 +94,9 @@ export default function RequirementsScore() {
   const totalCount = categories.length;
   const metCount = categories.filter((c) => c.status === "Compliant").length;
   const loading = isLoading || complianceLoading;
+  const historyDate = useComplianceDate("history");
+  const historyModel = useCapabilityHistoryModel(id, categories, historyDate);
+  const { dataUpdatedAt, isFetching } = useComplianceHistory();
 
   return (
     <PageSection id="requirements-status" headline="Requirements Status">
@@ -190,7 +199,8 @@ export default function RequirementsScore() {
                   )}
                   {category.nonCompliantItems?.length > 0 && (
                     <div className="mt-2 flex flex-col gap-0.5">
-                      <span className="text-[0.625rem] font-mono uppercase tracking-[0.12em] text-[#afafaf] dark:text-slate-500">
+                      <span className="flex items-center gap-1.5 text-[0.625rem] font-mono uppercase tracking-[0.12em] text-[#afafaf] dark:text-slate-500">
+                        {statusIcon("noncompliant")}
                         Non-compliant items
                       </span>
                       {category.nonCompliantItems.map((item, i) => (
@@ -223,6 +233,24 @@ export default function RequirementsScore() {
         <div className="py-5 text-center text-[0.8125rem] text-[#afafaf] dark:text-slate-500 italic">
           All is good! We see no issues with the current requirements for this
           capability.
+        </div>
+      )}
+
+      {!loading && (
+        <div className="mt-6">
+          <ComplianceRangeControl
+            date={historyDate}
+            liveUpdatedAt={dataUpdatedAt}
+            liveFetching={isFetching}
+            className="mb-3"
+          />
+          <FocusChart
+            model={historyModel}
+            view={historyDate.view}
+            onSelect={historyDate.setDate}
+            tall
+            caption={false}
+          />
         </div>
       )}
     </PageSection>

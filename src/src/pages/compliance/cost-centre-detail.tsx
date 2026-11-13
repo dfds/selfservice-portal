@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowUp,
   ChevronDown,
+  ChevronRight,
   ExternalLink,
   Plus,
   X,
@@ -37,6 +38,14 @@ import {
   parseMetadata,
 } from "./utils";
 import { ArcGauge, CategoryBreakdownList } from "./components";
+import {
+  useComplianceDate,
+  useComplianceLink,
+} from "./history/useComplianceDate";
+import { ComplianceDateControl } from "./history/ComplianceDateControl";
+import { HistoricalBanner } from "./history/HistoricalBanner";
+import { HistorySection } from "./history/HistorySection";
+import { useCostCentreHistoryModel } from "./history/designs/models";
 import { MetadataCombobox } from "@/components/ui/MetadataCombobox";
 import {
   buildMetadataIndex,
@@ -299,33 +308,47 @@ function writeUrl(
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
+type DetailsQuery = {
+  data: CostCentreDetailsData | undefined;
+  isFetched: boolean;
+  isFetching: boolean;
+  dataUpdatedAt: number;
+};
+
 export default function CostCentreComplianceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const costCentreId = id ?? null;
   const isRogue = costCentreId === "rogue-capabilities";
   const isOrphaned = costCentreId === "orphaned-capabilities";
 
-  const { data: apiData, isFetched: apiIsFetched } =
-    useCostCentreComplianceDetails(
-      isRogue || isOrphaned ? null : costCentreId,
-    ) as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
+  const date = useComplianceDate();
+  const { snapshotDate } = date;
+  const complianceLink = useComplianceLink();
+  const historyDate = useComplianceDate("history");
+  const historyModel = useCostCentreHistoryModel(historyDate, {
+    kind: isRogue ? "rogue" : isOrphaned ? "orphaned" : "costCentre",
+    costCentre: isRogue || isOrphaned ? null : costCentreId,
+  });
 
-  const { data: rogueApiData, isFetched: rogueIsFetched } =
-    useRogueCapabilitiesComplianceDetails() as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
+  const apiQuery = useCostCentreComplianceDetails(
+    isRogue || isOrphaned ? null : costCentreId,
+    snapshotDate,
+  ) as DetailsQuery;
+  const rogueQuery = useRogueCapabilitiesComplianceDetails(
+    snapshotDate,
+  ) as DetailsQuery;
+  const orphanedQuery = useOrphanedCapabilitiesComplianceDetails(
+    snapshotDate,
+  ) as DetailsQuery;
+  const activeQuery = isRogue
+    ? rogueQuery
+    : isOrphaned
+    ? orphanedQuery
+    : apiQuery;
 
-  const { data: orphanedApiData, isFetched: orphanedIsFetched } =
-    useOrphanedCapabilitiesComplianceDetails() as {
-      data: CostCentreDetailsData | undefined;
-      isFetched: boolean;
-    };
-
-  const { data: requirementsData } = useRequirementsCompliance() as {
+  const { data: requirementsData } = useRequirementsCompliance(
+    snapshotDate,
+  ) as {
     data:
       | {
           items: {
@@ -337,12 +360,9 @@ export default function CostCentreComplianceDetailPage() {
       | undefined;
   };
 
-  const data = isRogue ? rogueApiData : isOrphaned ? orphanedApiData : apiData;
-  const isFetched = isRogue
-    ? rogueIsFetched
-    : isOrphaned
-    ? orphanedIsFetched
-    : apiIsFetched;
+  const data = activeQuery.data;
+  // Placeholder data from another date counts as loaded.
+  const isFetched = activeQuery.isFetched || data !== undefined;
 
   const requirementIdByCategory = useMemo(() => {
     const map = new Map<string, string>();
@@ -494,11 +514,12 @@ export default function CostCentreComplianceDetailPage() {
 
   return (
     <div className="min-h-full">
+      <HistoricalBanner date={date} />
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
           <Link
-            to="/compliance"
+            to={complianceLink("/compliance")}
             className="inline-flex items-center gap-1.5 font-mono text-[0.6875rem] font-semibold tracking-[0.05em] text-action hover:underline mb-3"
           >
             <ArrowLeft size={12} strokeWidth={2} />
@@ -531,6 +552,12 @@ export default function CostCentreComplianceDetailPage() {
               </span>
             )}
           </div>
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={activeQuery.dataUpdatedAt}
+            liveFetching={activeQuery.isFetching}
+            className="mt-3"
+          />
         </div>
 
         {/* Stats panel */}
@@ -580,7 +607,7 @@ export default function CostCentreComplianceDetailPage() {
                       normalizedRequirementKey(categoryName),
                     );
                     return requirementId
-                      ? requirementDetailPath(requirementId)
+                      ? complianceLink(requirementDetailPath(requirementId))
                       : null;
                   }}
                 />
@@ -738,6 +765,12 @@ export default function CostCentreComplianceDetailPage() {
             />
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          className="mt-10 animate-fade-up animate-stagger-5"
+        />
       </div>
     </div>
   );
@@ -789,6 +822,7 @@ function CapabilityMatrix({
 }) {
   const { bg, bgMuted, textPrimary, textMuted, borderColor } =
     useMuiTableColors();
+  const complianceLink = useComplianceLink();
 
   // Mirror sorting into a ref so sortingFns can pin "no data" rows to the
   // bottom in both directions (TanStack v8 otherwise flips the comparator's
@@ -818,32 +852,68 @@ function CapabilityMatrix({
         header: "Capability",
         accessorFn: (row) => row.capabilityName,
         size: 320,
-        Cell: ({ row }) => (
-          <div className="min-w-0 flex items-center gap-2">
-            <div className="min-w-0 flex-1">
-              <Link
-                to={`/capabilities/${row.original.capabilityId}`}
-                onClick={(e) => e.stopPropagation()}
-                className="text-[0.8125rem] font-medium text-primary hover:text-action hover:underline truncate block"
-                aria-label={`Open ${row.original.capabilityName}`}
+        Cell: ({ row }) => {
+          const expanded = row.getIsExpanded();
+          return (
+            <div className="min-w-0 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  row.toggleExpanded();
+                }}
+                aria-expanded={expanded}
+                aria-label={`${expanded ? "Hide" : "Show"} details for ${
+                  row.original.capabilityName
+                }`}
+                className="flex-shrink-0 inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/10"
               >
-                {row.original.capabilityName}
-              </Link>
-              <div className="text-[10.5px] font-mono text-muted truncate">
-                {row.original.capabilityId}
+                <ChevronRight
+                  size={14}
+                  strokeWidth={2}
+                  className={cn(
+                    "transition-transform duration-200",
+                    expanded && "rotate-90",
+                  )}
+                />
+              </button>
+              <div className="min-w-0 flex-1">
+                {/* Inline, so only the name navigates; the rest of the row
+                    toggles the detail panel. */}
+                <Link
+                  to={`/capabilities/${row.original.capabilityId}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="group inline-flex max-w-full items-center gap-1 align-top text-[0.8125rem] font-medium text-primary hover:text-action"
+                  aria-label={`Open ${row.original.capabilityName}`}
+                >
+                  <span className="truncate group-hover:underline">
+                    {row.original.capabilityName}
+                  </span>
+                  <ExternalLink
+                    size={11}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="flex-shrink-0 text-muted group-hover:text-action"
+                  />
+                </Link>
+                <div className="text-[10.5px] font-mono text-muted truncate">
+                  {row.original.capabilityId}
+                </div>
               </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
       ...CATEGORY_COLUMNS.map<MRT_ColumnDef<CapabilityCompliance>>((c) => ({
         id: c.key,
         header: c.short,
         Header: () => (
           <Link
-            to={requirementDetailPath(
-              requirementIdByCategory.get(normalizedRequirementKey(c.key)) ??
-                c.key,
+            to={complianceLink(
+              requirementDetailPath(
+                requirementIdByCategory.get(normalizedRequirementKey(c.key)) ??
+                  c.key,
+              ),
             )}
             onClick={(e) => e.stopPropagation()}
             className="inline-flex items-center justify-center gap-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted hover:text-action hover:underline"
@@ -917,7 +987,7 @@ function CapabilityMatrix({
       },
     ];
     return cols;
-  }, [requirementIdByCategory]);
+  }, [requirementIdByCategory, complianceLink]);
 
   return (
     <MaterialReactTable
