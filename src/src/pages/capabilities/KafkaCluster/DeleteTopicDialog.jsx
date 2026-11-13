@@ -25,7 +25,7 @@ export default function DeleteTopicDialog({
 
   return (
     <Dialog open={true} onOpenChange={(o) => !o && onCancelClicked()}>
-      <DialogContent>
+      <DialogContent className="flex flex-col gap-4">
         <DialogHeader>
           <DialogTitle>Delete {topicName}</DialogTitle>
         </DialogHeader>
