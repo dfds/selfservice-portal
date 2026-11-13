@@ -18,6 +18,7 @@ import {
   type MRT_PaginationState,
   type MRT_VisibilityState,
   type MRT_ColumnSizingState,
+  type MRT_RowVirtualizer,
 } from "material-react-table";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import type { TableHeadProps } from "@mui/material/TableHead";
@@ -871,6 +872,16 @@ export function ServicesTableView({
     [page, maxPageIndex, pageSize],
   );
 
+  // React attaches refs child-first in the layout phase, so the body's
+  // virtualizer runs its layout effect before MRT has set tableContainerRef,
+  // finds no scroll element, and renders no rows until something else
+  // re-renders the body. A passive effect runs after refs are attached;
+  // measure() makes the body re-render and pick up the container.
+  const rowVirtualizerRef = useRef<MRT_RowVirtualizer | null>(null);
+  useEffect(() => {
+    rowVirtualizerRef.current?.measure();
+  }, [isMobile, enableSearch]);
+
   const canFilterByTag = enableMetadataFilters && !!metadataByCapability;
 
   const filterBar = canFilterByTag ? (
@@ -1025,6 +1036,7 @@ export function ServicesTableView({
             enableRowVirtualization={virtualize}
             enableStickyHeader={virtualize}
             rowVirtualizerOptions={{ overscan: 6 }}
+            rowVirtualizerInstanceRef={rowVirtualizerRef}
             onSortingChange={(updater) =>
               setSorting(
                 typeof updater === "function" ? updater(sorting) : updater,
