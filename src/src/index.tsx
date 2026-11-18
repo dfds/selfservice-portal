@@ -17,7 +17,7 @@ import store from "./state/local/store";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./state/remote/client";
 import { ToastProvider } from "./context/ToastContext";
-import SnowFall from "react-snowfall";
+import SnowFall from "./components/SnowFall";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -30,16 +30,6 @@ root.render(
     <Provider store={store}>
       <MsalProvider instance={msalInstance}>
         <QueryClientProvider client={queryClient}>
-          <SnowFall
-            style={{
-              position: "fixed",
-              width: "100vw",
-              height: "100vh",
-              zIndex: 9999,
-            }}
-            snowflakeCount={350}
-            wind={[-0.5, 5]}
-          />
           <ErrorProvider>
             <ToastProvider>
               <TrackingProvider>
@@ -47,6 +37,7 @@ root.render(
                   <RybbitProvider>
                     <PreAppProvider>
                       <ThemeProvider>
+                        <SnowFall />
                         <FontScaleProvider>
                           <AppProvider>
                             <App />
