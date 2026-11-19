@@ -19,7 +19,7 @@ RUN cd /app/src/ && npm install
 COPY src/ /app/src/
 RUN cd /app/src/ && npm run build
 
-FROM nginx:alpine
+FROM nginx:1.31.9-alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/src/build/ /usr/share/nginx/html
