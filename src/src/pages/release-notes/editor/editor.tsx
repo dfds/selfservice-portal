@@ -21,7 +21,11 @@ import { TrailingNode } from "./tiptap/components/tiptap-extension/trailing-node
 // --- UI Primitives ---
 import { Button } from "./tiptap/components/tiptap-ui-primitive/button";
 import { Spacer } from "./tiptap/components/tiptap-ui-primitive/spacer";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tiptap/components/tiptap-ui-primitive/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "./tiptap/components/tiptap-ui-primitive/tooltip";
 import {
   Toolbar,
   ToolbarGroup,
@@ -101,7 +105,12 @@ import {
 import { Button as UiButton } from "@/components/ui/button";
 import { Text } from "@/components/ui/Text";
 
-function ControlTooltip({ disabled, reason, enabledLabel, children }: {
+function ControlTooltip({
+  disabled,
+  reason,
+  enabledLabel,
+  children,
+}: {
   disabled: boolean;
   reason: string;
   enabledLabel?: string;
@@ -118,14 +127,16 @@ function ControlTooltip({ disabled, reason, enabledLabel, children }: {
           aria-label={disabled ? reason : undefined}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={(event) => {
-            if (!event.currentTarget.contains(document.activeElement)) setOpen(false);
+            if (!event.currentTarget.contains(document.activeElement))
+              setOpen(false);
           }}
           onFocus={() => setOpen(true)}
           onBlur={(event) => {
             if (!event.currentTarget.matches(":hover")) setOpen(false);
           }}
           onPointerDown={(event) => {
-            if (disabled && event.pointerType === "touch") event.currentTarget.focus();
+            if (disabled && event.pointerType === "touch")
+              event.currentTarget.focus();
           }}
           onKeyDown={(event) => {
             if (event.key === "Escape") setOpen(false);
@@ -207,8 +218,19 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ControlTooltip disabled={imageDisabled} reason={imageDisabledReason} enabledLabel="Add image">
-          <Button type="button" data-style="ghost" aria-label="Add image" className={imageDisabled ? "pointer-events-none" : undefined} disabled={imageDisabled} onClick={onInsertImage}>
+        <ControlTooltip
+          disabled={imageDisabled}
+          reason={imageDisabledReason}
+          enabledLabel="Add image"
+        >
+          <Button
+            type="button"
+            data-style="ghost"
+            aria-label="Add image"
+            className={imageDisabled ? "pointer-events-none" : undefined}
+            disabled={imageDisabled}
+            onClick={onInsertImage}
+          >
             <ImagePlusIcon className="tiptap-button-icon" />
           </Button>
         </ControlTooltip>
@@ -304,7 +326,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   );
   const initialMetadata = React.useRef({ title, releaseDate });
   const [currentContent, setCurrentContent] = useState<string | null>(null);
-  const [savedSnapshot, setSavedSnapshot] = useState<{ title: string; releaseDate: string; content: string } | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<{
+    title: string;
+    releaseDate: string;
+    content: string;
+  } | null>(null);
 
   const editorContent = defaultContent != null ? defaultContent : content;
   const editable = mode !== EditorMode.View;
@@ -342,12 +368,15 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   React.useEffect(() => {
     if (!editor) return;
-    const readContent = () => setCurrentContent(serializeRichContent(editor.getJSON()));
+    const readContent = () =>
+      setCurrentContent(serializeRichContent(editor.getJSON()));
     const initialContent = serializeRichContent(editor.getJSON());
     setCurrentContent(initialContent);
     setSavedSnapshot({ ...initialMetadata.current, content: initialContent });
     editor.on("update", readContent);
-    return () => { editor.off("update", readContent); };
+    return () => {
+      editor.off("update", readContent);
+    };
   }, [editor]);
 
   const images = useRichTextImages({
@@ -371,26 +400,42 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const updateReleaseNote = useUpdateReleaseNote(ownerId || "0");
   const { trackEvent } = useRybbit();
   const toast = useToast();
-  const isDirty = !!savedSnapshot && (title !== savedSnapshot.title || releaseDate !== savedSnapshot.releaseDate || currentContent !== savedSnapshot.content);
+  const isDirty =
+    !!savedSnapshot &&
+    (title !== savedSnapshot.title ||
+      releaseDate !== savedSnapshot.releaseDate ||
+      currentContent !== savedSnapshot.content);
   const isSaving = createReleaseNote.isPending || updateReleaseNote.isPending;
   const titleMissing = !title?.trim();
   const dateMissing = !releaseDate;
-  const saveDisabled = !editor || !savedSnapshot || !isDirty || titleMissing || dateMissing || images.uploading || isSaving;
-  const saveDisabledReason = titleMissing && dateMissing
-    ? "Release notes must have a title and release date"
-    : titleMissing
+  const saveDisabled =
+    !editor ||
+    !savedSnapshot ||
+    !isDirty ||
+    titleMissing ||
+    dateMissing ||
+    images.uploading ||
+    isSaving;
+  const saveDisabledReason =
+    titleMissing && dateMissing
+      ? "Release notes must have a title and release date"
+      : titleMissing
       ? "Release notes must have a title"
       : dateMissing
-        ? "Release notes must have a release date"
-        : images.uploading
-          ? "Wait for the image upload to finish"
-          : isSaving
-            ? "Saving release note"
-            : "No changes to save";
+      ? "Release notes must have a release date"
+      : images.uploading
+      ? "Wait for the image upload to finish"
+      : isSaving
+      ? "Saving release note"
+      : "No changes to save";
 
   const handleOnSaveDraft = () => {
     if (!editor || saveDisabled) return;
-    const snapshot = { title, releaseDate, content: serializeRichContent(editor.getJSON()) };
+    const snapshot = {
+      title,
+      releaseDate,
+      content: serializeRichContent(editor.getJSON()),
+    };
     createReleaseNote.mutate(
       {
         payload: {
@@ -420,7 +465,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   const handleOnSave = () => {
     if (!editor || saveDisabled) return;
-    const snapshot = { title, releaseDate, content: serializeRichContent(editor.getJSON()) };
+    const snapshot = {
+      title,
+      releaseDate,
+      content: serializeRichContent(editor.getJSON()),
+    };
     updateReleaseNote.mutate(
       {
         payload: {
@@ -447,9 +496,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
 
   const handleSaveError = (error: Error & { data?: Response }) => {
     const status = error.data?.status;
-    toast.error(status === 401 || status === 403
-      ? "Could not save the release note. Check your permissions or sign in again."
-      : "Could not save the release note. Please try again.");
+    toast.error(
+      status === 401 || status === 403
+        ? "Could not save the release note. Check your permissions or sign in again."
+        : "Could not save the release note. Please try again.",
+    );
   };
 
   const handleTitleUpdate = (evt) => {
@@ -477,14 +528,15 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
         <EditorContext.Provider value={{ editor }}>
           {mode !== EditorMode.View && (
             <div className="flex flex-row justify-end gap-2 mb-2.5">
-              <ControlTooltip disabled={saveDisabled} reason={saveDisabledReason}>
+              <ControlTooltip
+                disabled={saveDisabled}
+                reason={saveDisabledReason}
+              >
                 <TrackedButton
                   trackName="ReleaseNotes-Save"
                   disabled={saveDisabled}
                   className={saveDisabled ? "pointer-events-none" : undefined}
-                  onClick={
-                    ownerId ? handleOnSave : handleOnSaveDraft
-                  }
+                  onClick={ownerId ? handleOnSave : handleOnSaveDraft}
                   trackingEvent={{
                     category: "ReleaseNotes",
                     action: "Save New",
@@ -495,10 +547,16 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                 </TrackedButton>
               </ControlTooltip>
               <TrackedButton
-                trackName={isDirty ? "ReleaseNotes-Discard" : "ReleaseNotes-Return"}
+                trackName={
+                  isDirty ? "ReleaseNotes-Discard" : "ReleaseNotes-Return"
+                }
                 variation={isDirty ? "danger" : undefined}
                 disabled={isSaving}
-                onClick={() => isDirty ? setShowDiscardWarning(true) : navigate("/release-notes/manage")}
+                onClick={() =>
+                  isDirty
+                    ? setShowDiscardWarning(true)
+                    : navigate("/release-notes/manage")
+                }
                 trackingEvent={{
                   category: "ReleaseNotes",
                   action: "Discard",
@@ -534,7 +592,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                     isMobile={isMobile}
                     onInsertImage={images.insertImage}
                     imageDisabled={!ownerId || images.uploading}
-                    imageDisabledReason={!ownerId ? "Save first, then edit to upload images" : "Image upload in progress"}
+                    imageDisabledReason={
+                      !ownerId
+                        ? "Save first, then edit to upload images"
+                        : "Image upload in progress"
+                    }
                   />
                 ) : (
                   <MobileToolbarContent
@@ -543,9 +605,19 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                   />
                 )}
               </Toolbar>
-              <input ref={images.inputRef} type="file" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" className="hidden" onChange={images.onFileChange} />
+              <input
+                ref={images.inputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp"
+                className="hidden"
+                onChange={images.onFileChange}
+              />
               {images.uploading && <p role="status">Uploading image...</p>}
-              {images.error && <p role="alert" className="text-red-500">{images.error}</p>}
+              {images.error && (
+                <p role="alert" className="text-red-500">
+                  {images.error}
+                </p>
+              )}
             </div>
           )}
 

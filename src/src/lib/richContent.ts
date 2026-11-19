@@ -47,7 +47,9 @@ export function richContentText(value: string | JSONContent = ""): string {
 export function serializeRichContentDocument<T>(doc: T): T {
   const visit = (node: JSONContent): JSONContent => ({
     ...node,
-    ...(node.type === "image" && node.attrs?.assetId && node.attrs.isInline !== false
+    ...(node.type === "image" &&
+    node.attrs?.assetId &&
+    node.attrs.isInline !== false
       ? { attrs: { ...node.attrs, src: `cid:${node.attrs.assetId}` } }
       : {}),
     ...(node.content ? { content: node.content.map(visit) } : {}),
@@ -62,7 +64,8 @@ export function serializeRichContent(doc: JSONContent): string {
 export function richContentAssetIds(doc: JSONContent): string[] {
   const ids = new Set<string>();
   const visit = (node: JSONContent) => {
-    if (node.type === "image" && node.attrs?.assetId) ids.add(node.attrs.assetId);
+    if (node.type === "image" && node.attrs?.assetId)
+      ids.add(node.attrs.assetId);
     node.content?.forEach(visit);
   };
   visit(doc);
@@ -70,5 +73,8 @@ export function richContentAssetIds(doc: JSONContent): string[] {
 }
 
 export function hasRichContent(value: string): boolean {
-  return !!richContentText(value).trim() || richContentAssetIds(parseRichContent(value)).length > 0;
+  return (
+    !!richContentText(value).trim() ||
+    richContentAssetIds(parseRichContent(value)).length > 0
+  );
 }

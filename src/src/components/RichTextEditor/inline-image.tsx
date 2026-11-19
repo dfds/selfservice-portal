@@ -1,6 +1,10 @@
 import React from "react";
 import { Image } from "@tiptap/extension-image";
-import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from "@tiptap/react";
+import {
+  NodeViewWrapper,
+  ReactNodeViewRenderer,
+  type NodeViewProps,
+} from "@tiptap/react";
 import { Loader2 } from "lucide-react";
 export { serializeRichContentDocument as serializeInlineImageJson } from "@/lib/richContent";
 
@@ -10,9 +14,17 @@ export function ImageNodeView({ node }: NodeViewProps) {
   return (
     <NodeViewWrapper as="div" className="inline-image-node" data-drag-handle>
       {resolved ? (
-        <img src={src} alt={alt || ""} title={title || ""} className="max-w-full h-auto rounded" />
+        <img
+          src={src}
+          alt={alt || ""}
+          title={title || ""}
+          className="max-w-full h-auto rounded"
+        />
       ) : (
-        <span role="status" className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-card bg-surface-subtle text-muted text-[0.75rem]">
+        <span
+          role="status"
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-card bg-surface-subtle text-muted text-[0.75rem]"
+        >
           <Loader2 size={14} className="animate-spin" />
           Loading image...
         </span>
@@ -29,13 +41,16 @@ export const InlineImage = Image.extend({
       assetId: {
         default: null,
         parseHTML: (element) => element.getAttribute("data-asset-id"),
-        renderHTML: (attributes) => attributes.assetId ? { "data-asset-id": attributes.assetId } : {},
+        renderHTML: (attributes) =>
+          attributes.assetId ? { "data-asset-id": attributes.assetId } : {},
       },
       uploadId: { default: null, rendered: false },
       isInline: {
         default: true,
         parseHTML: (element) => element.getAttribute("data-inline") !== "false",
-        renderHTML: (attributes) => ({ "data-inline": String(attributes.isInline) }),
+        renderHTML: (attributes) => ({
+          "data-inline": String(attributes.isInline),
+        }),
       },
     };
   },
@@ -56,7 +71,11 @@ export function serializeInlineImages(html: string): string {
   return doc.body.innerHTML;
 }
 
-export function resolveInlineImageUrls(html: string, urlByAssetId: Map<string, string>, loading = false): string {
+export function resolveInlineImageUrls(
+  html: string,
+  urlByAssetId: Map<string, string>,
+  loading = false,
+): string {
   if (!html || typeof DOMParser === "undefined") return html;
   const doc = new DOMParser().parseFromString(html, "text/html");
   let addedPlaceholder = false;
@@ -70,7 +89,9 @@ export function resolveInlineImageUrls(html: string, urlByAssetId: Map<string, s
     }
     const placeholder = doc.createElement("span");
     placeholder.className = loading ? "cid-image-loading" : "cid-image-missing";
-    placeholder.textContent = loading ? "Loading image..." : "Image unavailable";
+    placeholder.textContent = loading
+      ? "Loading image..."
+      : "Image unavailable";
     image.replaceWith(placeholder);
     addedPlaceholder = true;
   });
@@ -91,5 +112,7 @@ export function resolveInlineImageUrls(html: string, urlByAssetId: Map<string, s
     `;
     (doc.head || doc.body).appendChild(style);
   }
-  return /<html[\s>]/i.test(html) ? doc.documentElement.outerHTML : doc.body.innerHTML;
+  return /<html[\s>]/i.test(html)
+    ? doc.documentElement.outerHTML
+    : doc.body.innerHTML;
 }

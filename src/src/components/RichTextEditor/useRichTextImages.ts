@@ -42,11 +42,17 @@ export function useRichTextImages({
       const transaction = editor.state.tr;
       editor.state.doc.descendants((node, position) => {
         if (node.type.name !== "image") return;
-        const assetId = node.attrs.assetId ||
+        const assetId =
+          node.attrs.assetId ||
           (node.attrs.src?.startsWith("cid:") ? node.attrs.src.slice(4) : null);
-        const url = assets.data?.find((asset) => asset.assetId === assetId)?.url;
+        const url = assets.data?.find((asset) => asset.assetId === assetId)
+          ?.url;
         if (url && node.attrs.src !== url) {
-          transaction.setNodeMarkup(position, undefined, { ...node.attrs, assetId, src: url });
+          transaction.setNodeMarkup(position, undefined, {
+            ...node.attrs,
+            assetId,
+            src: url,
+          });
         }
       });
       if (transaction.docChanged) {
@@ -57,14 +63,20 @@ export function useRichTextImages({
     };
     resolveImages();
     editor.on("update", resolveImages);
-    return () => { editor.off("update", resolveImages); };
+    return () => {
+      editor.off("update", resolveImages);
+    };
   }, [editor, assets.data, contentReady]);
 
-  const updateUpload = (uploadId: string, asset?: { assetId: string; url?: string }) => {
+  const updateUpload = (
+    uploadId: string,
+    asset?: { assetId: string; url?: string },
+  ) => {
     if (!editor || editor.isDestroyed) return;
     const transaction = editor.state.tr;
     editor.state.doc.descendants((node, position) => {
-      if (node.type.name !== "image" || node.attrs.uploadId !== uploadId) return;
+      if (node.type.name !== "image" || node.attrs.uploadId !== uploadId)
+        return;
       if (asset) {
         transaction.setNodeMarkup(position, undefined, {
           ...node.attrs,
@@ -92,19 +104,37 @@ export function useRichTextImages({
       return;
     }
     const uploadId = generateUploadId();
-    editor.chain().focus().insertContentAt(editor.state.selection.to, {
-      type: "image",
-      attrs: { src: "", assetId: null, isInline: true, uploadId, alt: file.name },
-    }).run();
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(editor.state.selection.to, {
+        type: "image",
+        attrs: {
+          src: "",
+          assetId: null,
+          isInline: true,
+          uploadId,
+          alt: file.name,
+        },
+      })
+      .run();
     uploadingRef.current = true;
     setUploading(true);
     setError("");
     onUploadingChange?.(true);
     try {
-      const asset = await uploadAsset.mutateAsync({ file, ownerId, ownerType, isInline: true });
+      const asset = await uploadAsset.mutateAsync({
+        file,
+        ownerId,
+        ownerType,
+        isInline: true,
+      });
       updateUpload(uploadId, asset);
       const refreshed = await assets.refetch();
-      if (!asset.url && !refreshed.data?.find((item) => item.assetId === asset.assetId)?.url) {
+      if (
+        !asset.url &&
+        !refreshed.data?.find((item) => item.assetId === asset.assetId)?.url
+      ) {
         setError("Image uploaded, but its preview is currently unavailable");
       }
     } catch {
