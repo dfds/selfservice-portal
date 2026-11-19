@@ -90,6 +90,7 @@ import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
 import { TrackedButton } from "@/components/Tracking";
 import { useRybbit } from "@/RybbitContext";
+import { useToast } from "@/context/ToastContext";
 import {
   Dialog,
   DialogContent,
@@ -369,6 +370,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   const createReleaseNote = useCreateReleaseNote();
   const updateReleaseNote = useUpdateReleaseNote(ownerId || "0");
   const { trackEvent } = useRybbit();
+  const toast = useToast();
   const isDirty = !!savedSnapshot && (title !== savedSnapshot.title || releaseDate !== savedSnapshot.releaseDate || currentContent !== savedSnapshot.content);
   const isSaving = createReleaseNote.isPending || updateReleaseNote.isPending;
   const titleMissing = !title?.trim();
@@ -402,9 +404,11 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
         onSuccess: (data: any) => {
           setOwnerId(data.id);
           setSavedSnapshot(snapshot);
+          toast.success("Release note saved");
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
           trackEvent("release-note:create:saved", { note_id: data?.id });
         },
+        onError: handleSaveError,
       },
     );
   };
@@ -429,14 +433,23 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
       {
         onSuccess: () => {
           setSavedSnapshot(snapshot);
+          toast.success("Release note saved");
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
           queryClient.invalidateQueries({
             queryKey: ["releasenotes", "details", ownerId],
           });
           trackEvent("release-note:update:saved", { note_id: ownerId });
         },
+        onError: handleSaveError,
       },
     );
+  };
+
+  const handleSaveError = (error: Error & { data?: Response }) => {
+    const status = error.data?.status;
+    toast.error(status === 401 || status === 403
+      ? "Could not save the release note. Check your permissions or sign in again."
+      : "Could not save the release note. Please try again.");
   };
 
   const handleTitleUpdate = (evt) => {
@@ -478,7 +491,7 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                     label: "Save New Release Note",
                   }}
                 >
-                  Save
+                  {isSaving ? "Saving..." : "Save"}
                 </TrackedButton>
               </ControlTooltip>
               <TrackedButton

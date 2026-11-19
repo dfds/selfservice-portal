@@ -123,6 +123,7 @@ test("release notes upload and reopen private images", { skip: !process.env.EDIT
     let saved;
     let created;
     let updateGate;
+    let updateStatus = 200;
     await page.route("**/__release-note-check", (route) => route.fulfill({ contentType: "text/html", body: '<!doctype html><html><body><div id="check-root"></div></body></html>' }));
     await page.route("**/private-assets**", async (route) => {
       if (route.request().method() === "POST") {
@@ -138,7 +139,7 @@ test("release notes upload and reopen private images", { skip: !process.env.EDIT
     await page.route("**/release-notes/release-1", async (route) => {
       saved = route.request().postDataJSON();
       if (updateGate) await updateGate;
-      await route.fulfill({ json: {} });
+      await route.fulfill(updateStatus === 200 ? { json: {} } : { status: updateStatus, body: "Save failed" });
     });
     await page.route("**/release-notes", async (route) => {
       created = route.request().postDataJSON();
@@ -235,6 +236,7 @@ test("release notes upload and reopen private images", { skip: !process.env.EDIT
     await save.click();
     await createResponse;
     await page.getByRole("button", { name: "Return", exact: true }).waitFor();
+    await page.getByRole("status").filter({ hasText: "Saved" }).waitFor();
     assert.equal(created.releaseDate, "2026-12-15T00:00:00.000Z");
     assert.equal(await save.isDisabled(), true);
     assert.equal(new URL(page.url()).pathname, "/__release-note-check");
@@ -263,6 +265,12 @@ test("release notes upload and reopen private images", { skip: !process.env.EDIT
     assert.equal(await save.isDisabled(), true);
     await setTitle("Updated release");
     assert.equal(await save.isDisabled(), false);
+    updateStatus = 403;
+    await save.click();
+    await page.getByRole("alert").filter({ hasText: "Check your permissions or sign in again" }).waitFor();
+    assert.equal(await save.isDisabled(), false);
+    assert.equal(await page.getByRole("button", { name: "Discard", exact: true }).count(), 1);
+    updateStatus = 200;
     await page.getByRole("button", { name: "Discard", exact: true }).click();
     await page.getByRole("dialog").getByText("All changes will be discarded and cannot be restored.").waitFor();
     await page.getByRole("dialog").getByRole("button", { name: "Cancel", exact: true }).click();
