@@ -9,11 +9,11 @@
 .SingleCountCard {
   margin: 10px;
   padding: 10px 0;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-radius: 5px;
-  box-shadow: 0 0 5px #ccc;
-  background-color: #e6e6e6;
-  color: #000;
+  box-shadow: 0 0 5px var(--color-border);
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-primary);
   font-size: 1.2em;
   font-weight: bold;
   text-align: center;
@@ -25,7 +25,7 @@
 
 .SingleCountCardSubtitle {
   font-size: 0.8em;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0 auto;
   top: -10px;
   position: relative;
@@ -33,14 +33,14 @@
 
 .CountNumber {
   font-size: 1.5em;
-  color: #000;
+  color: var(--color-text-primary);
   position: relative;
   top: -10px;
 }
 
 .resourceHint {
   font-size: 0.8em;
-  color: #666;
+  color: var(--color-text-secondary);
   text-align: left;
   padding: 0 5px;
 }
