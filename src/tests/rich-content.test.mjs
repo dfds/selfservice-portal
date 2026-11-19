@@ -574,13 +574,11 @@ test(
           )?.disabled === false,
       );
       assert.equal(await save.isDisabled(), false);
-      await page
-        .locator('input[type="file"]')
-        .setInputFiles({
-          name: "screenshot.png",
-          mimeType: "image/png",
-          buffer: Buffer.from("image"),
-        });
+      await page.locator('input[type="file"]').setInputFiles({
+        name: "screenshot.png",
+        mimeType: "image/png",
+        buffer: Buffer.from("image"),
+      });
       await page.locator('.tiptap img[alt="screenshot.png"]').waitFor();
       const updateResponse = page.waitForResponse(
         (response) =>
