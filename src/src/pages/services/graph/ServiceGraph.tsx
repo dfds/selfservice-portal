@@ -79,7 +79,7 @@ export function GraphCanvas({
   heightClass?: string;
   emptyMessage?: string;
 }) {
-  const { theme } = useTheme();
+  const { isDark } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const presentKinds = useMemo(() => {
@@ -100,7 +100,6 @@ export function GraphCanvas({
 
     ensureDagre();
 
-    const isDark = document.documentElement.classList.contains("dark");
     const nodeBg = isDark ? "#1e293b" : "#ffffff";
     const nodeText = isDark ? "#e2e8f0" : "#334155";
     const labelBg = isDark ? "#0f172a" : "#ffffff";
@@ -203,7 +202,7 @@ export function GraphCanvas({
     });
 
     return () => cy.destroy();
-  }, [graph, theme]);
+  }, [graph, isDark]);
 
   if (graph.capped) {
     return (
