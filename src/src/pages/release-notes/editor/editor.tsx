@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
-import { Image } from "@tiptap/extension-image";
 import { TaskItem } from "@tiptap/extension-task-item";
 import { TaskList } from "@tiptap/extension-task-list";
 import { TextAlign } from "@tiptap/extension-text-align";
@@ -23,13 +22,17 @@ import { TrailingNode } from "./tiptap/components/tiptap-extension/trailing-node
 import { Button } from "./tiptap/components/tiptap-ui-primitive/button";
 import { Spacer } from "./tiptap/components/tiptap-ui-primitive/spacer";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "./tiptap/components/tiptap-ui-primitive/tooltip";
+import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
 } from "./tiptap/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
-import { ImageUploadNode } from "./tiptap/components/tiptap-node/image-upload-node/image-upload-node-extension";
 import "./tiptap/components/tiptap-node/code-block-node/code-block-node.scss";
 import "./tiptap/components/tiptap-node/list-node/list-node.scss";
 import "./tiptap/components/tiptap-node/image-node/image-node.scss";
@@ -38,7 +41,6 @@ import "./tiptap/components/tiptap-node/paragraph-node/paragraph-node.scss";
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "./tiptap/components/tiptap-ui/heading-dropdown-menu";
 import { SimpleTagDropdownMenu } from "./tiptap/components/tiptap-ui/simple-tag-dropdown-menu";
-import { ImageUploadButton } from "./tiptap/components/tiptap-ui/image-upload-button";
 import { ListDropdownMenu } from "./tiptap/components/tiptap-ui/list-dropdown-menu";
 import { BlockQuoteButton } from "./tiptap/components/tiptap-ui/blockquote-button";
 import { CodeBlockButton } from "./tiptap/components/tiptap-ui/code-block-button";
@@ -60,6 +62,7 @@ import { UndoRedoButton } from "./tiptap/components/tiptap-ui/undo-redo-button";
 import { ArrowLeftIcon } from "./tiptap/components/tiptap-icons/arrow-left-icon";
 import { HighlighterIcon } from "./tiptap/components/tiptap-icons/highlighter-icon";
 import { LinkIcon } from "./tiptap/components/tiptap-icons/link-icon";
+import { ImagePlusIcon } from "./tiptap/components/tiptap-icons/image-plus-icon";
 
 // --- Hooks ---
 import { useMobile } from "./tiptap/hooks/use-mobile";
@@ -69,7 +72,10 @@ import { useCursorVisibility } from "./tiptap/hooks/use-cursor-visibility";
 import { ThemeToggle } from "./tiptap/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from "./tiptap/lib/tiptap-utils";
+import { InlineImage } from "@/components/RichTextEditor/inline-image";
+import { useRichTextImages } from "@/components/RichTextEditor/useRichTextImages";
+import { serializeRichContent } from "@/lib/richContent";
+import { PrivateAssetOwnerType } from "@/state/remote/queries/privateAssets";
 
 // --- Styles ---
 import "./tiptap/components/tiptap-templates/simple/simple-editor.scss";
@@ -88,6 +94,7 @@ import { queryClient } from "@/state/remote/client";
 import { DatePicker } from "./datepicker";
 import { TrackedButton } from "@/components/Tracking";
 import { useRybbit } from "@/RybbitContext";
+import { useToast } from "@/context/ToastContext";
 import {
   Dialog,
   DialogContent,
@@ -98,14 +105,65 @@ import {
 import { Button as UiButton } from "@/components/ui/button";
 import { Text } from "@/components/ui/Text";
 
+function ControlTooltip({
+  disabled,
+  reason,
+  enabledLabel,
+  children,
+}: {
+  disabled: boolean;
+  reason: string;
+  enabledLabel?: string;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip open={open && (disabled || !!enabledLabel)} onOpenChange={setOpen}>
+      <TooltipTrigger asChild>
+        <span
+          className="inline-flex"
+          tabIndex={disabled ? 0 : undefined}
+          aria-label={disabled ? reason : undefined}
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={(event) => {
+            if (!event.currentTarget.contains(document.activeElement))
+              setOpen(false);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.matches(":hover")) setOpen(false);
+          }}
+          onPointerDown={(event) => {
+            if (disabled && event.pointerType === "touch")
+              event.currentTarget.focus();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setOpen(false);
+          }}
+        >
+          {children}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{disabled ? reason : enabledLabel}</TooltipContent>
+    </Tooltip>
+  );
+}
+
 const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
   isMobile,
+  onInsertImage,
+  imageDisabled,
+  imageDisabledReason,
 }: {
   onHighlighterClick: () => void;
   onLinkClick: () => void;
   isMobile: boolean;
+  onInsertImage: () => void;
+  imageDisabled: boolean;
+  imageDisabledReason: string;
 }) => {
   return (
     <>
@@ -160,7 +218,22 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton text="Add" />
+        <ControlTooltip
+          disabled={imageDisabled}
+          reason={imageDisabledReason}
+          enabledLabel="Add image"
+        >
+          <Button
+            type="button"
+            data-style="ghost"
+            aria-label="Add image"
+            className={imageDisabled ? "pointer-events-none" : undefined}
+            disabled={imageDisabled}
+            onClick={onInsertImage}
+          >
+            <ImagePlusIcon className="tiptap-button-icon" />
+          </Button>
+        </ControlTooltip>
         <SimpleTagDropdownMenu />
       </ToolbarGroup>
 
@@ -246,6 +319,18 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
   const [showDiscardWarning, setShowDiscardWarning] = useState(false);
+  const [ownerId, setOwnerId] = useState<string | undefined>(doc?.id);
+  const [title, setTitle] = useState(doc != null ? doc.title : "");
+  const [releaseDate, setReleaseDate] = useState(
+    doc != null ? new Date(doc.releaseDate).toISOString().split("T")[0] : "",
+  );
+  const initialMetadata = React.useRef({ title, releaseDate });
+  const [currentContent, setCurrentContent] = useState<string | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<{
+    title: string;
+    releaseDate: string;
+    content: string;
+  } | null>(null);
 
   const editorContent = defaultContent != null ? defaultContent : content;
   const editable = mode !== EditorMode.View;
@@ -268,24 +353,36 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      Image,
+      InlineImage,
       Typography,
       Superscript,
       Subscript,
 
       Selection,
-      ImageUploadNode.configure({
-        accept: "image/*",
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: (error) => console.error("Upload failed:", error),
-      }),
       TrailingNode,
       Link.configure({ openOnClick: false }),
       SimpleTag,
     ],
     content: editorContent,
+  });
+
+  React.useEffect(() => {
+    if (!editor) return;
+    const readContent = () =>
+      setCurrentContent(serializeRichContent(editor.getJSON()));
+    const initialContent = serializeRichContent(editor.getJSON());
+    setCurrentContent(initialContent);
+    setSavedSnapshot({ ...initialMetadata.current, content: initialContent });
+    editor.on("update", readContent);
+    return () => {
+      editor.off("update", readContent);
+    };
+  }, [editor]);
+
+  const images = useRichTextImages({
+    editor,
+    ownerId,
+    ownerType: PrivateAssetOwnerType.ReleaseNote,
   });
 
   useCursorVisibility({
@@ -299,32 +396,64 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
     }
   }, [isMobile, mobileView]);
 
-  // release notes
-  const [title, setTitle] = useState(doc != null ? doc.title : "");
-  const [releaseDate, setReleaseDate] = useState(
-    doc != null ? new Date(doc.releaseDate).toISOString().split("T")[0] : "",
-  );
-
   const createReleaseNote = useCreateReleaseNote();
-  const updateReleaseNote = useUpdateReleaseNote(doc != null ? doc.id : "0");
+  const updateReleaseNote = useUpdateReleaseNote(ownerId || "0");
   const { trackEvent } = useRybbit();
+  const toast = useToast();
+  const isDirty =
+    !!savedSnapshot &&
+    (title !== savedSnapshot.title ||
+      releaseDate !== savedSnapshot.releaseDate ||
+      currentContent !== savedSnapshot.content);
+  const isSaving = createReleaseNote.isPending || updateReleaseNote.isPending;
+  const titleMissing = !title?.trim();
+  const dateMissing = !releaseDate;
+  const saveDisabled =
+    !editor ||
+    !savedSnapshot ||
+    !isDirty ||
+    titleMissing ||
+    dateMissing ||
+    images.uploading ||
+    isSaving;
+  const saveDisabledReason =
+    titleMissing && dateMissing
+      ? "Release notes must have a title and release date"
+      : titleMissing
+      ? "Release notes must have a title"
+      : dateMissing
+      ? "Release notes must have a release date"
+      : images.uploading
+      ? "Wait for the image upload to finish"
+      : isSaving
+      ? "Saving release note"
+      : "No changes to save";
 
   const handleOnSaveDraft = () => {
+    if (!editor || saveDisabled) return;
+    const snapshot = {
+      title,
+      releaseDate,
+      content: serializeRichContent(editor.getJSON()),
+    };
     createReleaseNote.mutate(
       {
         payload: {
           title: title,
-          content: JSON.stringify(editor.getJSON()),
-          releaseDate: new Date().toJSON(),
+          content: snapshot.content,
+          releaseDate: new Date(releaseDate).toJSON(),
           isActive: false,
         },
       },
       {
         onSuccess: (data: any) => {
+          setOwnerId(data.id);
+          setSavedSnapshot(snapshot);
+          toast.success("Release note saved");
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
           trackEvent("release-note:create:saved", { note_id: data?.id });
-          navigate("/release-notes/manage");
         },
+        onError: handleSaveError,
       },
     );
   };
@@ -335,25 +464,42 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
   };
 
   const handleOnSave = () => {
+    if (!editor || saveDisabled) return;
+    const snapshot = {
+      title,
+      releaseDate,
+      content: serializeRichContent(editor.getJSON()),
+    };
     updateReleaseNote.mutate(
       {
         payload: {
           title: title,
-          content: JSON.stringify(editor.getJSON()),
+          content: snapshot.content,
           releaseDate: new Date(releaseDate).toJSON(),
           isActive: false,
         },
       },
       {
         onSuccess: () => {
+          setSavedSnapshot(snapshot);
+          toast.success("Release note saved");
           queryClient.invalidateQueries({ queryKey: ["releasenotes", "list"] });
           queryClient.invalidateQueries({
-            queryKey: ["releasenotes", "details", doc.id],
+            queryKey: ["releasenotes", "details", ownerId],
           });
-          trackEvent("release-note:update:saved", { note_id: doc?.id });
-          navigate("/release-notes/manage");
+          trackEvent("release-note:update:saved", { note_id: ownerId });
         },
+        onError: handleSaveError,
       },
+    );
+  };
+
+  const handleSaveError = (error: Error & { data?: Response }) => {
+    const status = error.data?.status;
+    toast.error(
+      status === 401 || status === 403
+        ? "Could not save the release note. Check your permissions or sign in again."
+        : "Could not save the release note. Please try again.",
     );
   };
 
@@ -382,30 +528,42 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
         <EditorContext.Provider value={{ editor }}>
           {mode !== EditorMode.View && (
             <div className="flex flex-row justify-end gap-2 mb-2.5">
-              <TrackedButton
-                trackName="ReleaseNotes-Save"
-                onClick={
-                  mode === EditorMode.Create ? handleOnSaveDraft : handleOnSave
-                }
-                trackingEvent={{
-                  category: "ReleaseNotes",
-                  action: "Save New",
-                  label: "Save New Release Note",
-                }}
+              <ControlTooltip
+                disabled={saveDisabled}
+                reason={saveDisabledReason}
               >
-                Save
-              </TrackedButton>
+                <TrackedButton
+                  trackName="ReleaseNotes-Save"
+                  disabled={saveDisabled}
+                  className={saveDisabled ? "pointer-events-none" : undefined}
+                  onClick={ownerId ? handleOnSave : handleOnSaveDraft}
+                  trackingEvent={{
+                    category: "ReleaseNotes",
+                    action: "Save New",
+                    label: "Save New Release Note",
+                  }}
+                >
+                  {isSaving ? "Saving..." : "Save"}
+                </TrackedButton>
+              </ControlTooltip>
               <TrackedButton
-                trackName="ReleaseNotes-Discard"
-                variation="danger"
-                onClick={() => setShowDiscardWarning(true)}
+                trackName={
+                  isDirty ? "ReleaseNotes-Discard" : "ReleaseNotes-Return"
+                }
+                variation={isDirty ? "danger" : undefined}
+                disabled={isSaving}
+                onClick={() =>
+                  isDirty
+                    ? setShowDiscardWarning(true)
+                    : navigate("/release-notes/manage")
+                }
                 trackingEvent={{
                   category: "ReleaseNotes",
                   action: "Discard",
                   label: "Discard Release Note",
                 }}
               >
-                Discard
+                {isDirty ? "Discard" : "Return"}
               </TrackedButton>
             </div>
           )}
@@ -432,6 +590,13 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                     onHighlighterClick={() => setMobileView("highlighter")}
                     onLinkClick={() => setMobileView("link")}
                     isMobile={isMobile}
+                    onInsertImage={images.insertImage}
+                    imageDisabled={!ownerId || images.uploading}
+                    imageDisabledReason={
+                      !ownerId
+                        ? "Save first, then edit to upload images"
+                        : "Image upload in progress"
+                    }
                   />
                 ) : (
                   <MobileToolbarContent
@@ -440,6 +605,19 @@ export function Editor({ defaultContent, mode, doc }: EditorProps) {
                   />
                 )}
               </Toolbar>
+              <input
+                ref={images.inputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp"
+                className="hidden"
+                onChange={images.onFileChange}
+              />
+              {images.uploading && <p role="status">Uploading image...</p>}
+              {images.error && (
+                <p role="alert" className="text-red-500">
+                  {images.error}
+                </p>
+              )}
             </div>
           )}
 
