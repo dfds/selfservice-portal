@@ -5,6 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
+import type { Editor as TiptapEditor } from "@tiptap/core";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
@@ -40,6 +41,11 @@ import {
   serializeInlineImageJson,
   resolveInlineImageUrls,
 } from "./tiptap/inline-image-node";
+import {
+  estimateEmailMessageBytes,
+  formatEmailSize,
+  MAX_EMAIL_SIZE_BYTES,
+} from "./messageSize";
 import { VariableInserter } from "./components/variable-inserter";
 import { FormattingToolbar } from "./components/formatting-toolbar";
 import { AudienceBuilder } from "./components/audience-builder";
@@ -85,6 +91,22 @@ function preserveEmptyParagraphSpacing(html: string) {
   );
 }
 
+function getBodySizeContent(editor: TiptapEditor) {
+  const assetIds = new Set<string>();
+  editor.state.doc.descendants((node) => {
+    if (node.type.name === "image" && node.attrs.assetId) {
+      assetIds.add(node.attrs.assetId as string);
+    }
+  });
+
+  return {
+    html: serializeInlineImages(
+      preserveEmptyParagraphSpacing(editor.getHTML()),
+    ),
+    assetIds: Array.from(assetIds),
+  };
+}
+
 export default function EmailCampaignEditor() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -111,6 +133,9 @@ export default function EmailCampaignEditor() {
     campaignId,
     PrivateAssetOwnerType.EmailCampaign,
   );
+  const [uploadedAssetSizes, setUploadedAssetSizes] = useState<Map<string, number>>(
+    new Map(),
+  );
 
   const assetUrlByAssetId = useMemo(() => {
     const map = new Map<string, string>();
@@ -122,6 +147,10 @@ export default function EmailCampaignEditor() {
 
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
+  const [bodySizeContent, setBodySizeContent] = useState<{
+    html: string;
+    assetIds: string[];
+  }>({ html: "", assetIds: [] });
   const [audience, setAudience] = useState<AudienceConfig>({ mode: "all" });
   const [recipientFilter, setRecipientFilter] = useState("");
   const [loaded, setLoaded] = useState(!isEdit);
@@ -158,6 +187,27 @@ export default function EmailCampaignEditor() {
   );
 
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
+
+  const assetSizeByAssetId = useMemo(() => {
+    const sizes = new Map<string, number>();
+    (campaignAssets || []).forEach((asset) => {
+      sizes.set(asset.assetId, asset.sizeInBytes);
+    });
+    uploadedAssetSizes.forEach((size, assetId) => sizes.set(assetId, size));
+    return sizes;
+  }, [campaignAssets, uploadedAssetSizes]);
+
+  const imageSizesInBytes = bodySizeContent.assetIds.map((assetId) =>
+    assetSizeByAssetId.get(assetId),
+  );
+  const missingImageSizes = imageSizesInBytes.some((size) => size === undefined);
+  const estimatedMessageBytes = estimateEmailMessageBytes(
+    subject,
+    bodySizeContent.html,
+    imageSizesInBytes.filter((size): size is number => size !== undefined),
+  );
+  const messageOverLimit = estimatedMessageBytes > MAX_EMAIL_SIZE_BYTES;
+  const sizeCheckBlocked = !loaded || missingImageSizes || messageOverLimit;
 
   // Autocomplete state
   const [suggestion, setSuggestion] = useState<{
@@ -229,10 +279,11 @@ export default function EmailCampaignEditor() {
       }),
     ],
     content: "",
-    onUpdate: ({ transaction }) => {
+    onUpdate: ({ transaction, editor }) => {
       // Programmatic transactions (image URL refresh, placeholder resolve) tag
       // themselves so they don't count as unsaved user edits.
       if (!transaction.getMeta("skipDirty")) markDirty();
+      setBodySizeContent(getBodySizeContent(editor));
     },
     editorProps: {
       attributes: {
@@ -440,10 +491,17 @@ export default function EmailCampaignEditor() {
       } catch {
         editor.commands.setContent(existingCampaign.contentJson || "");
       }
+      setBodySizeContent(getBodySizeContent(editor));
       setLoaded(true);
       setDirty(false);
     }
   }, [isEdit, isFetched, existingCampaign, editor, loaded]);
+
+  useEffect(() => {
+    if (editor && loaded) {
+      setBodySizeContent(getBodySizeContent(editor));
+    }
+  }, [editor, loaded]);
 
   // Inline images persist as cid:{assetId}; swap in fresh presigned URLs so
   // they render while editing (the stored URLs expire after ~15 min).
@@ -633,6 +691,9 @@ export default function EmailCampaignEditor() {
         assetId: asset.assetId,
         src: asset.url || `cid:${asset.assetId}`,
       });
+      setUploadedAssetSizes((current) =>
+        new Map(current).set(asset.assetId, asset.sizeInBytes),
+      );
 
       if (!asset.url) {
         toast.error("Image uploaded, but preview is unavailable right now");
@@ -728,6 +789,15 @@ export default function EmailCampaignEditor() {
   };
 
   const handleSchedule = () => {
+    if (sizeCheckBlocked) {
+      toast.error(
+        missingImageSizes
+          ? "Could not verify the size of every email image"
+          : "Email is over the 2.5 MB size limit",
+      );
+      return;
+    }
+
     if (scheduleType === "Scheduled" && !scheduledAt) {
       toast.error("Please select a date and time");
       return;
@@ -761,6 +831,15 @@ export default function EmailCampaignEditor() {
   };
 
   const handleSend = () => {
+    if (sizeCheckBlocked) {
+      toast.error(
+        missingImageSizes
+          ? "Could not verify the size of every email image"
+          : "Email is over the 2.5 MB size limit",
+      );
+      return;
+    }
+
     doSave()
       .then(() => {
         sendCampaign.mutate(undefined, {
@@ -931,6 +1010,27 @@ export default function EmailCampaignEditor() {
               </span>
             </div>
             <EditorContent editor={editor} />
+            <div
+              className={`border-t border-card px-4 py-2 text-[0.6875rem] ${
+                messageOverLimit || missingImageSizes
+                  ? "text-destructive"
+                  : "text-muted"
+              }`}
+              aria-live="polite"
+            >
+              {!loaded || (missingImageSizes && assetsFetching) ? (
+                "Calculating email size..."
+              ) : missingImageSizes ? (
+                "Email size unavailable: an image size could not be verified."
+              ) : (
+                <>
+                  Estimated email size: {formatEmailSize(estimatedMessageBytes)}
+                  {" / "}
+                  {formatEmailSize(MAX_EMAIL_SIZE_BYTES)}
+                  {messageOverLimit && "; sending and scheduling are blocked."}
+                </>
+              )}
+            </div>
 
             <input
               ref={imageInputRef}
@@ -1165,7 +1265,8 @@ export default function EmailCampaignEditor() {
               disabled={
                 scheduleCampaign.isPending ||
                 updateCampaign.isPending ||
-                imageUploading
+                imageUploading ||
+                sizeCheckBlocked
               }
               className="gap-1.5"
             >
@@ -1181,7 +1282,12 @@ export default function EmailCampaignEditor() {
             <Button
               variant="destructive"
               onClick={() => setSendConfirmOpen(true)}
-              disabled={updateCampaign.isPending || imageUploading || dirty}
+              disabled={
+                updateCampaign.isPending ||
+                imageUploading ||
+                dirty ||
+                sizeCheckBlocked
+              }
               title={dirty ? "Save your changes before sending" : undefined}
               className="gap-1.5 ml-auto"
             >
@@ -1220,7 +1326,8 @@ export default function EmailCampaignEditor() {
                 updateCampaign.isPending ||
                 sendCampaign.isPending ||
                 imageUploading ||
-                dirty
+                dirty ||
+                sizeCheckBlocked
               }
               className="gap-1.5"
             >
