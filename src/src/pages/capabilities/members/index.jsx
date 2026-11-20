@@ -360,38 +360,13 @@ function AddServicePrincipalDialog({ open, onClose, capabilityId }) {
 }
 
 export default function Members() {
-  const {
-    members,
-    id: capabilityId,
-    links,
-  } = useContext(SelectedCapabilityContext);
-  const canAddServicePrincipal = (
-    links?.servicePrincipalMembers?.allow || []
-  ).includes("POST");
-  const [showAddDialog, setShowAddDialog] = useState(false);
+  const { members } = useContext(SelectedCapabilityContext);
 
   return (
     <div>
-      {canAddServicePrincipal && (
-        <div className="mb-3 flex justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowAddDialog(true)}
-          >
-            <KeyRound size={14} className="mr-1.5" />
-            Add service account
-          </Button>
-        </div>
-      )}
       {(members || []).map((member) => (
         <MemberRow key={member.id || member.email} member={member} />
       ))}
-      <AddServicePrincipalDialog
-        open={showAddDialog}
-        onClose={() => setShowAddDialog(false)}
-        capabilityId={capabilityId}
-      />
     </div>
   );
 }
@@ -402,7 +377,11 @@ export function TabbedMembersView({ anchorId }) {
     isRefetchting: refetchingOtherApplications,
     data: otherApplicationsData,
   } = useMembershipApplications();
-  const { id: capabilityId } = useContext(SelectedCapabilityContext);
+  const { id: capabilityId, links } = useContext(SelectedCapabilityContext);
+  const canAddServicePrincipal = (
+    links?.servicePrincipalMembers?.allow || []
+  ).includes("POST");
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const [capabilityApplications, setCapabilityApplications] = useState([]);
 
@@ -423,12 +402,24 @@ export function TabbedMembersView({ anchorId }) {
   const footer = <></>;
 
   const headlineChildren = (
-    <Link
-      to="/rbac/permissions"
-      className="font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
-    >
-      View permission matrix →
-    </Link>
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      {canAddServicePrincipal && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowAddDialog(true)}
+        >
+          <KeyRound size={14} className="mr-1.5" />
+          Add service account
+        </Button>
+      )}
+      <Link
+        to="/rbac/permissions"
+        className="whitespace-nowrap font-mono text-[0.6875rem] text-[#0e7cc1] dark:text-[#60a5fa] hover:underline"
+      >
+        View permission matrix →
+      </Link>
+    </div>
   );
 
   const applicationCount = (capabilityApplications || []).length;
@@ -459,14 +450,21 @@ export function TabbedMembersView({ anchorId }) {
   };
 
   return (
-    <TabbedPageSection
-      id={anchorId}
-      headline="Capability Member Management"
-      headlineChildren={headlineChildren}
-      tabs={tabs}
-      tabsContent={tabsContent}
-      header={header}
-      footer={footer}
-    />
+    <>
+      <TabbedPageSection
+        id={anchorId}
+        headline="Capability Member Management"
+        headlineChildren={headlineChildren}
+        tabs={tabs}
+        tabsContent={tabsContent}
+        header={header}
+        footer={footer}
+      />
+      <AddServicePrincipalDialog
+        open={showAddDialog}
+        onClose={() => setShowAddDialog(false)}
+        capabilityId={capabilityId}
+      />
+    </>
   );
 }

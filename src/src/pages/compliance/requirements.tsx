@@ -1,19 +1,27 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ExternalLink } from "lucide-react";
-import { useQueries } from "@tanstack/react-query";
 import { Skeleton, SkeletonComplianceCard } from "@/components/ui/skeleton";
 import {
   useRequirementsCompliance,
   useComplianceSummary,
 } from "@/state/remote/queries/capabilities";
-import { ssuRequest } from "@/state/remote/query";
-import PreAppContext from "@/preAppContext";
+import type { RequirementComplianceSummary } from "@/state/remote/queries/compliance.types";
+import {
+  useComplianceDate,
+  useComplianceLink,
+} from "./history/useComplianceDate";
+import { useHistoryTrends, trendLabel } from "./history/useHistoryTrends";
+import { requirementPct } from "./history/series";
+import { Sparkline } from "./history/Sparkline";
+import { ComplianceDateControl } from "./history/ComplianceDateControl";
+import { HistoricalBanner } from "./history/HistoricalBanner";
+import { HistorySection } from "./history/HistorySection";
+import { useRequirementsHistoryModel } from "./history/designs/models";
 import {
   calcCompliancePct,
   complianceColor,
   complianceTier,
-  parseCostCentre,
   getCostCentreLabel,
 } from "./utils";
 import { cn } from "@/lib/utils";
@@ -21,17 +29,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type RequirementSummary = {
-  requirementId: string;
-  categoryName: string;
-  displayName: string;
-  description: string;
-  helpUrl: string | null;
-  totalCapabilities: number;
-  compliantCount: number;
-  nonCompliantCount: number;
-  unknownCount: number;
-};
+export type RequirementSummary = RequirementComplianceSummary;
 
 type SortMode = "name" | "pct-asc" | "pct-desc";
 
@@ -103,20 +101,25 @@ type CostCentreInfo = { entries: CostCentreEntry[]; isFetched: boolean };
 function RequirementCard({
   req,
   costCentreInfo,
+  trend,
   className,
   style,
 }: {
   req: RequirementSummary;
   costCentreInfo?: CostCentreInfo;
+  trend?: { values: (number | null)[]; label: string };
   className?: string;
   style?: React.CSSProperties;
 }) {
   const pct = calcCompliancePct(req.compliantCount, req.totalCapabilities);
   const color = complianceColor(pct);
+  const complianceLink = useComplianceLink();
 
   return (
     <Link
-      to={`/compliance/requirements/${encodeURIComponent(req.requirementId)}`}
+      to={complianceLink(
+        `/compliance/requirements/${encodeURIComponent(req.requirementId)}`,
+      )}
       className={cn(
         "block bg-surface border border-card rounded-[10px] overflow-hidden no-underline text-inherit",
         "transition-[box-shadow,border-color] duration-200",
@@ -168,6 +171,14 @@ function RequirementCard({
           <div className="text-[0.625rem] text-[#afafaf] dark:text-[#64748b] mt-0.5 font-mono">
             {req.compliantCount}/{req.totalCapabilities}
           </div>
+          {trend && (
+            <Sparkline
+              values={trend.values}
+              color={color}
+              label={`Compliance rate, ${trend.label.toLowerCase()}`}
+              className="ml-auto mt-1.5 block"
+            />
+          )}
         </div>
 
         <ChevronRight size={14} className="flex-shrink-0 text-[#afafaf]" />
@@ -228,64 +239,39 @@ function RequirementCard({
 // ─── RequirementsCompliancePage ───────────────────────────────────────────────
 
 export default function RequirementsCompliancePage() {
+  const date = useComplianceDate();
+  const { snapshotDate } = date;
+  const complianceLink = useComplianceLink();
+  const trends = useHistoryTrends(date);
+  const historyDate = useComplianceDate("history");
+  const historyModel = useRequirementsHistoryModel(historyDate);
   const { data: summaryData, isFetched: summaryFetched } =
-    useComplianceSummary() as {
-      data:
-        | {
-            totalCapabilities: number;
-            fullyCompliantCapabilities: number;
-            nonCompliantCapabilities: number;
-            unknownCapabilities: number;
-          }
-        | undefined;
-      isFetched: boolean;
-    };
-  const { isFetched, data } = useRequirementsCompliance() as {
-    isFetched: boolean;
-    data: { items: RequirementSummary[] } | undefined;
-  };
-  const { isCloudEngineerEnabled } = useContext(PreAppContext);
+    useComplianceSummary(snapshotDate);
+  const {
+    isFetched: requirementsFetched,
+    data,
+    dataUpdatedAt,
+    isFetching,
+  } = useRequirementsCompliance(snapshotDate);
   const [sort, setSort] = useState<SortMode>("pct-asc");
 
+  const isFetched = requirementsFetched || data !== undefined;
   const requirements: RequirementSummary[] = data?.items ?? [];
-
-  const detailResults = useQueries({
-    queries: requirements.map((req) => ({
-      queryKey: ["compliance", "requirements", req.requirementId],
-      queryFn: async () =>
-        ssuRequest({
-          method: "GET",
-          urlSegments: ["compliance", "requirements", req.requirementId],
-          payload: null,
-          isCloudEngineerEnabled,
-        }),
-      enabled: isFetched,
-      staleTime: 60_000,
-    })),
-  });
 
   const costCentreInfoMap = useMemo(() => {
     const map = new Map<string, CostCentreInfo>();
-    requirements.forEach((req, i) => {
-      const result = detailResults[i];
-      const detailData = result?.data as
-        | { capabilities: { jsonMetadata: string | null; status: string }[] }
-        | undefined;
-      const fetched = result?.isFetched ?? false;
-      if (!fetched || !detailData?.capabilities) {
-        map.set(req.requirementId, { entries: [], isFetched: false });
-        return;
-      }
-      // Group all capabilities by cost center, count compliant vs total.
+    for (const req of requirements) {
+      // The API groups by the stored value, so a blank cost centre ("") is
+      // its own group; on this page it is rogue, like a missing one.
       const byCC = new Map<
         string | null,
         { total: number; compliant: number }
       >();
-      for (const cap of detailData.capabilities) {
-        const cc = parseCostCentre(cap); // null = rogue
+      for (const group of req.byCostCentre) {
+        const cc = group.costCentre || null;
         const counts = byCC.get(cc) ?? { total: 0, compliant: 0 };
-        counts.total++;
-        if (cap.status === "Compliant") counts.compliant++;
+        counts.total += group.totalCapabilities;
+        counts.compliant += group.compliantCount;
         byCC.set(cc, counts);
       }
       const entries: CostCentreEntry[] = [];
@@ -305,9 +291,14 @@ export default function RequirementsCompliancePage() {
         return a.label.localeCompare(b.label);
       });
       map.set(req.requirementId, { entries, isFetched: true });
-    });
+    }
     return map;
-  }, [requirements, detailResults]);
+  }, [requirements]);
+
+  function requirementTrend(requirementId: string) {
+    const values = trends((item) => requirementPct(item, requirementId));
+    return { values, label: trendLabel(date, values.length) };
+  }
 
   const sorted = useMemo(() => {
     return [...requirements].sort((a, b) => {
@@ -322,6 +313,7 @@ export default function RequirementsCompliancePage() {
 
   return (
     <div className="min-h-full">
+      <HistoricalBanner date={date} />
       <div className="min-w-0 p-4 md:p-8 @container">
         {/* Header */}
         <div className="mb-6 animate-fade-up">
@@ -331,13 +323,13 @@ export default function RequirementsCompliancePage() {
           <div className="mb-3">
             <div className="inline-flex items-center gap-1 rounded-[10px] border border-card bg-surface-muted/40 p-1">
               <Link
-                to="/compliance"
+                to={complianceLink("/compliance")}
                 className="inline-flex h-[30px] items-center rounded-[7px] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[#4a6278] no-underline transition-colors hover:bg-white hover:text-[#0e7cc1] dark:text-[#94a3b8] dark:hover:bg-[#0f172a] dark:hover:text-[#60a5fa]"
               >
                 Cost Centers View
               </Link>
               <Link
-                to="/compliance/requirements"
+                to={complianceLink("/compliance/requirements")}
                 aria-current="page"
                 className="inline-flex h-[30px] items-center rounded-[7px] bg-[#0e7cc1] px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-white no-underline dark:bg-[#60a5fa]"
               >
@@ -345,7 +337,6 @@ export default function RequirementsCompliancePage() {
               </Link>
             </div>
           </div>
-
           <div className="flex flex-col gap-4 @[900px]:flex-row @[900px]:items-start @[900px]:justify-between @[900px]:gap-8">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3">
@@ -460,23 +451,31 @@ export default function RequirementsCompliancePage() {
           </div>
         </div>
 
-        {/* Sort pills */}
-        <div className="flex items-center gap-1.5 mb-6 flex-wrap animate-fade-up animate-stagger-1">
-          {SORT_OPTIONS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setSort(key)}
-              className={cn(
-                "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
-                sort === key
-                  ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
-                  : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
-              )}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Sort pills + date control */}
+        <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 animate-fade-up animate-stagger-1">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSort(key)}
+                className={cn(
+                  "h-[28px] px-3 border rounded-full text-[0.6875rem] font-medium transition-all",
+                  sort === key
+                    ? "bg-[#0e7cc1] dark:bg-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa] text-white font-semibold"
+                    : "bg-white dark:bg-[#0f172a] border-[#d9dcde] dark:border-[#334155] text-[#4a6278] dark:text-[#94a3b8] hover:border-[#0e7cc1] dark:hover:border-[#60a5fa] hover:text-[#0e7cc1] dark:hover:text-[#60a5fa]",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <ComplianceDateControl
+            date={date}
+            liveUpdatedAt={dataUpdatedAt}
+            liveFetching={isFetching}
+            className="ml-auto"
+          />
         </div>
 
         {/* Card grid */}
@@ -487,7 +486,11 @@ export default function RequirementsCompliancePage() {
             ))
           ) : sorted.length === 0 ? (
             <div className="col-span-full">
-              <EmptyState>No requirement data available yet.</EmptyState>
+              <EmptyState>
+                {date.isLive
+                  ? "No requirement data available yet."
+                  : `No compliance snapshot was recorded for this ${date.view}.`}
+              </EmptyState>
             </div>
           ) : (
             sorted.map((req, i) => (
@@ -495,12 +498,19 @@ export default function RequirementsCompliancePage() {
                 key={req.requirementId}
                 req={req}
                 costCentreInfo={costCentreInfoMap.get(req.requirementId)}
+                trend={requirementTrend(req.requirementId)}
                 className="animate-card-enter"
                 style={{ animationDelay: `${i * 25}ms` }}
               />
             ))
           )}
         </div>
+
+        <HistorySection
+          date={historyDate}
+          model={historyModel}
+          className="mt-10 animate-fade-up animate-stagger-3"
+        />
       </div>
     </div>
   );
