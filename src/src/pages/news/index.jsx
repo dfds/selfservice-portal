@@ -20,11 +20,14 @@ import {
   useHighlightNews,
 } from "@/state/remote/queries/news";
 import { useMutationToast } from "@/hooks/useMutationToast";
+import { queryClient } from "@/state/remote/client";
 import { Trash2, Plus, Newspaper, Star, Pencil } from "lucide-react";
 import { useTopBarActions } from "@/components/TopBar/TopBarActionsContext";
 import { TrackedButton } from "@/components/Tracking";
 import { useRybbit } from "@/RybbitContext";
 import LinkifiedText from "@/components/Text/LinkifiedText";
+import { ImageUploadSection } from "@/components/ImageUploadSection";
+import { PrivateAssetOwnerType } from "@/state/remote/queries/privateAssets";
 
 // ── Create modal ──────────────────────────────────────────────────────────────
 
@@ -35,16 +38,27 @@ function CreateNewsModal({ onClose }) {
   const [dueDate, setDueDate] = useState(
     new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
   );
+  const [assetIds, setAssetIds] = useState([]);
 
   const createNews = useCreateNews();
   const { trackEvent } = useRybbit();
   const submit = useMutationToast(createNews, {
-    invalidateKeys: [["news", "list"]],
+    invalidateKeys: [
+      ["news", "list"],
+      ["news", "relevant"],
+    ],
     successMessage: "News item created",
     errorMessage: "Failed to create news item",
     onSuccess: (data) => {
+      // Invalidate the assets query for the newly created news item
+      if (data && data.id) {
+        queryClient.invalidateQueries({
+          queryKey: ["privateAssets", PrivateAssetOwnerType.News, data.id],
+        });
+      }
       trackEvent("news:create:submitted", {
         has_due_date: true,
+        image_count: assetIds.length,
       });
       onClose();
     },
@@ -62,6 +76,7 @@ function CreateNewsModal({ onClose }) {
           ? { frontpageSummary: trimmedFrontpageSummary }
           : {}),
         dueDate: new Date(dueDate).toISOString(),
+        ...(assetIds.length > 0 ? { assetIds } : {}),
       },
     });
   };
@@ -70,11 +85,14 @@ function CreateNewsModal({ onClose }) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Create news item</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-1 overflow-y-auto flex-1"
+        >
           <div>
             <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Title <span className="text-red-500">*</span>
@@ -129,20 +147,31 @@ function CreateNewsModal({ onClose }) {
             />
           </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={createNews.isPending}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isValid || createNews.isPending}>
-              {createNews.isPending ? "Creating…" : "Create"}
-            </Button>
-          </DialogFooter>
+          <ImageUploadSection
+            ownerType={PrivateAssetOwnerType.News}
+            assetIds={assetIds}
+            onAssetIdsChange={setAssetIds}
+            disabled={createNews.isPending}
+          />
         </form>
+
+        <DialogFooter className="mt-4 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={createNews.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={!isValid || createNews.isPending}
+            onClick={handleSubmit}
+          >
+            {createNews.isPending ? "Creating…" : "Create"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -158,12 +187,19 @@ function EditNewsModal({ item, onClose }) {
     item.frontpageSummary ?? "",
   );
   const [dueDate, setDueDate] = useState(initialDueDate);
+  const [assetIds, setAssetIds] = useState(item.assetIds || []);
 
   useEffect(() => {
+    console.log("[EditNewsModal] Item loaded:", {
+      id: item.id,
+      title: item.title,
+      assetIds: item.assetIds,
+    });
     setTitle(item.title ?? "");
     setBody(item.body ?? "");
     setFrontpageSummary(item.frontpageSummary ?? "");
     setDueDate(item.dueDate ? item.dueDate.slice(0, 10) : "");
+    setAssetIds(item.assetIds ?? []);
   }, [item]);
 
   const updateNews = useUpdateNews();
@@ -173,11 +209,15 @@ function EditNewsModal({ item, onClose }) {
       ["news", "list"],
       ["news", "relevant"],
       ["news", "details", item.id],
+      ["privateAssets", PrivateAssetOwnerType.News, item.id],
     ],
     successMessage: "News item updated",
     errorMessage: "Failed to update news item",
     onSuccess: () => {
-      trackEvent("news:update:submitted", { news_id: item.id });
+      trackEvent("news:update:submitted", {
+        news_id: item.id,
+        image_count: assetIds.length,
+      });
       onClose();
     },
   });
@@ -186,7 +226,7 @@ function EditNewsModal({ item, onClose }) {
     e.preventDefault();
     if (!title.trim() || !body.trim()) return;
     const trimmedFrontpageSummary = frontpageSummary.trim();
-    submit({
+    const payload = {
       id: item.id,
       payload: {
         title: title.trim(),
@@ -195,19 +235,25 @@ function EditNewsModal({ item, onClose }) {
           ? { frontpageSummary: trimmedFrontpageSummary }
           : {}),
         dueDate: new Date(dueDate).toISOString(),
+        ...(assetIds.length > 0 ? { assetIds } : {}),
       },
-    });
+    };
+    console.log("[EditNewsModal] Submitting:", payload);
+    submit(payload);
   };
 
   const isValid = title.trim().length > 0 && body.trim().length > 0;
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Edit news item</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-1 overflow-y-auto flex-1"
+        >
           <div>
             <label className="block text-[0.75rem] font-semibold text-secondary mb-1">
               Title <span className="text-red-500">*</span>
@@ -262,20 +308,32 @@ function EditNewsModal({ item, onClose }) {
             />
           </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={updateNews.isPending}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isValid || updateNews.isPending}>
-              {updateNews.isPending ? "Saving…" : "Save changes"}
-            </Button>
-          </DialogFooter>
+          <ImageUploadSection
+            ownerId={item.id}
+            ownerType={PrivateAssetOwnerType.News}
+            assetIds={assetIds}
+            onAssetIdsChange={setAssetIds}
+            disabled={updateNews.isPending}
+          />
         </form>
+
+        <DialogFooter className="mt-4 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={updateNews.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={!isValid || updateNews.isPending}
+            onClick={handleSubmit}
+          >
+            {updateNews.isPending ? "Saving…" : "Save changes"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

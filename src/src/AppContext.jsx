@@ -205,9 +205,14 @@ function AppProvider({ children }) {
 
   async function addNewEvent(payload) {
     registerEvent.mutate(payload, {
-      onSuccess: async () => {
+      onSuccess: async (data) => {
         await sleep(200).then(() => {
           queryClient.invalidateQueries({ queryKey: ["events"] });
+          if (data && data.id) {
+            queryClient.invalidateQueries({
+              queryKey: ["privateAssets", "Event", data.id],
+            });
+          }
           toast.success("Event registered. DFDS management thanks you");
         });
       },
@@ -237,6 +242,11 @@ function AppProvider({ children }) {
       onSuccess: async () => {
         await sleep(200).then(() => {
           queryClient.invalidateQueries({ queryKey: ["events"] });
+          if (payload.id) {
+            queryClient.invalidateQueries({
+              queryKey: ["privateAssets", "Event", payload.id],
+            });
+          }
           toast.success("Event updated.");
         });
       },

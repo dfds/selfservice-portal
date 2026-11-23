@@ -7,6 +7,8 @@ import PreAppContext from "@/preAppContext";
 
 export enum PrivateAssetOwnerType {
   EmailCampaign = "EmailCampaign",
+  News = "News",
+  Event = "Event",
 }
 
 export interface PrivateAsset {
@@ -26,7 +28,7 @@ export interface PrivateAsset {
 
 export interface UploadPrivateAssetInput {
   file: File;
-  ownerId: string;
+  ownerId?: string;
   ownerType: PrivateAssetOwnerType;
   isInline: boolean;
 }
@@ -43,7 +45,9 @@ export async function uploadPrivateAsset(
 
   const formData = new FormData();
   formData.append("file", input.file);
-  formData.append("ownerId", input.ownerId);
+  if (input.ownerId) {
+    formData.append("ownerId", input.ownerId);
+  }
   formData.append("ownerType", input.ownerType);
   formData.append("isInline", String(input.isInline));
 

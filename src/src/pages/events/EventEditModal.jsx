@@ -15,6 +15,8 @@ import {
   combineLocalDateTimeToUtc,
   splitLocalDateAndTime,
 } from "./eventDateTime";
+import { ImageUploadSection } from "@/components/ImageUploadSection";
+import { PrivateAssetOwnerType } from "@/state/remote/queries/privateAssets";
 import {
   X,
   Plus,
@@ -42,6 +44,7 @@ export default function EventEditModal({ isOpen, onClose, event }) {
       eventTime: time || "09:00",
       type: ev.type || "Demo",
       attachments: ev.attachments || [],
+      assetIds: ev.assetIds || [],
     };
   };
 
@@ -121,6 +124,7 @@ export default function EventEditModal({ isOpen, onClose, event }) {
       ),
       type: formData.type,
       attachments: formData.attachments.filter((a) => a.url.trim() !== ""),
+      ...(formData.assetIds.length > 0 ? { assetIds: formData.assetIds } : {}),
     };
 
     editEvent(payload);
@@ -201,6 +205,14 @@ export default function EventEditModal({ isOpen, onClose, event }) {
               {timeError && <p className="text-xs text-red-500">{timeError}</p>}
             </div>
           </div>
+          <ImageUploadSection
+            ownerId={event.id}
+            ownerType={PrivateAssetOwnerType.Event}
+            assetIds={formData.assetIds}
+            onAssetIdsChange={(assetIds) =>
+              setFormData({ ...formData, assetIds })
+            }
+          />
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <Label>Attachments</Label>
