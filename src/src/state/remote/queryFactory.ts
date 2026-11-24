@@ -23,6 +23,7 @@ interface SsuQueryConfig<TData = any, TSelected = TData> {
   authMode?: AuthMode;
   select?: (data: TData) => TSelected;
   staleTime?: number;
+  refetchInterval?: number | false;
   enabled?: boolean;
 }
 
@@ -45,6 +46,9 @@ export function createSsuQuery<TData = any, TSelected = TData>(
         }),
       ...(config.select && { select: config.select }),
       ...(config.staleTime !== undefined && { staleTime: config.staleTime }),
+      ...(config.refetchInterval !== undefined && {
+        refetchInterval: config.refetchInterval,
+      }),
       ...(config.enabled !== undefined && { enabled: config.enabled }),
     });
   };
@@ -52,13 +56,30 @@ export function createSsuQuery<TData = any, TSelected = TData>(
 
 // ── Parameterized query factory ───────────────────────────────────────────────
 
+type PerArgs<TArgs, T> = T | ((args: TArgs) => T);
+
+export type PlaceholderData<TData> = (
+  previousData: TData | undefined,
+  previousQuery: { queryKey: QueryKey } | undefined,
+) => TData | undefined;
+
+function resolve<TArgs, T>(value: PerArgs<TArgs, T>, args: TArgs): T {
+  return typeof value === "function"
+    ? (value as (args: TArgs) => T)(args)
+    : value;
+}
+
 interface SsuParamQueryConfig<TArgs, TData = any, TSelected = TData> {
   queryKey: (args: TArgs) => QueryKey;
   urlSegments: (args: TArgs) => string[];
   method?: string;
   authMode?: AuthMode;
   select?: (data: TData) => TSelected;
-  staleTime?: number;
+  staleTime?: PerArgs<TArgs, number>;
+  refetchInterval?: PerArgs<TArgs, number | false>;
+  /** Built per args, so it can compare the previous query's key with this one. */
+  placeholderData?: (args: TArgs) => PlaceholderData<TData>;
+  retry?: (failureCount: number, error: Error) => boolean;
   enabled?: (args: TArgs) => boolean;
 }
 
@@ -80,7 +101,17 @@ export function createSsuParamQuery<TArgs, TData = any, TSelected = TData>(
           isCloudEngineerEnabled,
         }),
       ...(config.select && { select: config.select }),
-      ...(config.staleTime !== undefined && { staleTime: config.staleTime }),
+      ...(config.staleTime !== undefined && {
+        staleTime: resolve(config.staleTime, args),
+      }),
+      ...(config.refetchInterval !== undefined && {
+        refetchInterval: resolve(config.refetchInterval, args),
+      }),
+      ...(config.placeholderData && {
+        // react-query wraps TData in NonFunctionGuard, which a generic TData can't satisfy.
+        placeholderData: config.placeholderData(args) as any,
+      }),
+      ...(config.retry !== undefined && { retry: config.retry }),
       ...(config.enabled && { enabled: config.enabled(args) }),
     });
   };
