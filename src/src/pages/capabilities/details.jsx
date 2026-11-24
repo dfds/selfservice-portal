@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import { ChevronUp, Star } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
@@ -38,8 +38,43 @@ export default function CapabilityDetailsPage() {
   );
 }
 
+// Input that can scroll the page. Re-aligning stops on any of them, so the page
+// never scrolls under the user, and only scrolling after one updates the hash.
+const USER_SCROLL_EVENTS = ["wheel", "touchstart", "keydown", "mousedown"];
+
+/**
+ * Scrolls to the section the URL hash names once `ready`. The sections render
+ * only after the capability loads, so the browser's own jump on page load
+ * finds no target; sections above it then grow as their own queries resolve,
+ * so the jump repeats on layout changes for up to 2 s. A hash the page wrote
+ * itself while the user scrolled (`syncedHashRef`) is skipped.
+ */
+function useScrollToHash(hash, ready, syncedHashRef) {
+  useEffect(() => {
+    if (!ready || !hash || hash === syncedHashRef.current) return;
+    const id = decodeURIComponent(hash.slice(1));
+    const align = () => document.getElementById(id)?.scrollIntoView();
+    align();
+    const observer = new ResizeObserver(align);
+    observer.observe(document.body);
+    const timer = setTimeout(stop, 2000);
+    function stop() {
+      observer.disconnect();
+      clearTimeout(timer);
+      for (const e of USER_SCROLL_EVENTS) window.removeEventListener(e, stop);
+    }
+    for (const e of USER_SCROLL_EVENTS) {
+      window.addEventListener(e, stop, { passive: true });
+    }
+    return stop;
+  }, [hash, ready, syncedHashRef]);
+}
+
 function CapabilityDetailsPageContent() {
   const { id } = useParams();
+  const location = useLocation();
+  const { hash } = location;
+  const navigate = useNavigate();
   const {
     links,
     isLoading,
@@ -79,9 +114,36 @@ function CapabilityDetailsPageContent() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) window.scrollTo(0, 0);
     loadCapability(id);
   }, [id]);
+
+  // The hash follows the section at the top only for scrolling the user does.
+  // A nav-link jump clears the flag: a section near the page end can't reach
+  // the top, and the hash would move to the one above it.
+  const userScrolledRef = useRef(false);
+  const syncedHashRef = useRef(null);
+  const locationRef = useRef(location);
+  locationRef.current = location;
+
+  useEffect(() => {
+    const mark = () => {
+      userScrolledRef.current = true;
+    };
+    for (const e of USER_SCROLL_EVENTS) {
+      window.addEventListener(e, mark, { passive: true });
+    }
+    return () => {
+      for (const e of USER_SCROLL_EVENTS) window.removeEventListener(e, mark);
+    };
+  }, []);
+
+  const onNavLinkClick = () => {
+    userScrolledRef.current = false;
+    syncedHashRef.current = null;
+  };
+
+  useScrollToHash(hash, !isLoading && isFound, syncedHashRef);
 
   const pagetitle = isDeleted ? `${name} [Deleted]` : name;
 
@@ -122,8 +184,8 @@ function CapabilityDetailsPageContent() {
 
   const anchorLinks = [
     { href: "#summary", label: "Summary" },
-    { href: "#requirements-status", label: "Requirements" },
     { href: "#members", label: "Members" },
+    { href: "#requirements-status", label: "Requirements" },
     ...(showJsonMetadata ? [{ href: "#tags", label: "Tags" }] : []),
     ...(showAICatalogueSection
       ? [{ href: "#ai-catalogue", label: "AI Catalogue" }]
@@ -157,16 +219,30 @@ function CapabilityDetailsPageContent() {
     const updateActive = () => {
       const HEADER_OFFSET = 80;
       let activeId = null;
+      let rendered = false;
 
       for (const id of sectionIds) {
         const el = document.getElementById(id);
         if (!el) continue;
+        rendered = true;
         if (el.getBoundingClientRect().top <= HEADER_OFFSET) {
           activeId = id;
         }
       }
 
-      setActiveSection(activeId ? "#" + activeId : null);
+      const next = activeId ? "#" + activeId : "";
+      setActiveSection(next || null);
+
+      if (!rendered || !userScrolledRef.current) return;
+      // window.location is current right after a replace; the router's
+      // location only after the re-render.
+      if (next === window.location.hash) return;
+      syncedHashRef.current = next;
+      const { pathname, search } = locationRef.current;
+      navigate(
+        { pathname, search, hash: next },
+        { replace: true, preventScrollReset: true },
+      );
     };
 
     window.addEventListener("scroll", updateActive, { passive: true });
@@ -253,14 +329,14 @@ function CapabilityDetailsPageContent() {
             className="animate-section-enter"
             style={{ animationDelay: "130ms" }}
           >
-            <RequirementsScore />
+            <TabbedMembersView anchorId="members" />
           </div>
 
           <div
             className="animate-section-enter"
             style={{ animationDelay: "200ms" }}
           >
-            <TabbedMembersView anchorId="members" />
+            <RequirementsScore />
           </div>
 
           {showJsonMetadata && (
@@ -385,6 +461,7 @@ function CapabilityDetailsPageContent() {
                 <a
                   key={href}
                   href={href}
+                  onClick={onNavLinkClick}
                   className={`block pl-3.5 pr-4 py-[0.3rem] font-mono text-[0.6875rem] no-underline tracking-[0.03em] transition-colors border-l-2 ${
                     isActive
                       ? "text-[#0e7cc1] dark:text-[#60a5fa] border-[#0e7cc1] dark:border-[#60a5fa]"
@@ -415,7 +492,10 @@ function CapabilityDetailsPageContent() {
                     <a
                       key={href}
                       href={href}
-                      onClick={() => setMobileNavOpen(false)}
+                      onClick={() => {
+                        onNavLinkClick();
+                        setMobileNavOpen(false);
+                      }}
                       className={cn(
                         "flex items-center px-4 py-3 font-mono text-[0.75rem] no-underline tracking-[0.03em] transition-colors border-l-2",
                         isActive

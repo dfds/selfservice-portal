@@ -27,7 +27,7 @@ export default function PageSection({
     <section id={id} className="mb-4">
       <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
         {headline && (
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
             <SectionLabel tip={headlineTip}>{headline}</SectionLabel>
             {headlineChildren && <div>{headlineChildren}</div>}
           </div>
@@ -54,7 +54,7 @@ export function TabbedPageSection({
     <section id={id} className="mb-4">
       <div className="bg-white dark:bg-[#1e293b] border border-[#d9dcde] dark:border-[#334155] rounded-[8px] overflow-hidden">
         {headline && (
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 border-b border-[#eeeeee] dark:border-[#1e2d3d]">
             <SectionLabel>{headline}</SectionLabel>
             {headlineChildren && <div>{headlineChildren}</div>}
           </div>
