@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
-import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import {
+  CacheLookupPolicy,
+  InteractionRequiredAuthError,
+} from "@azure/msal-browser";
 import { getUserProfile, getUserProfilePictureUrl } from "./GraphApiClient";
 import {
   msalInstance,
@@ -63,6 +66,14 @@ export function callApiMultipart(
   });
 }
 
+// Skips MSAL's hidden-iframe renewal once the refresh token has expired, so the
+// call fails at once with InteractionRequiredAuthError. The iframe cannot
+// succeed here: build.dfds.cloud is behind ALB authenticate-oidc, which
+// redirects the iframe to its own Entra login (X-Frame-Options: DENY), and
+// Safari sends no Entra session cookie to the iframe (AADSTS160021). Each
+// attempt ended in monitor_window_timeout after 10 s.
+const SILENT_POLICY = CacheLookupPolicy.AccessTokenAndRefreshToken;
+
 let selfServiceTokenInFlight = null;
 
 export async function getSelfServiceAccessToken() {
@@ -81,6 +92,7 @@ export async function getSelfServiceAccessToken() {
       const { accessToken } = await msalInstance.acquireTokenSilent({
         scopes: selfServiceApiScopes,
         account: account,
+        cacheLookupPolicy: SILENT_POLICY,
       });
       tokenCache.put("selfservice-api", accessToken);
       store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
@@ -89,7 +101,13 @@ export async function getSelfServiceAccessToken() {
       console.log("getSelfServiceAccessToken failed:", e);
       tokenCache.remove("selfservice-api");
 
-      if (e instanceof InteractionRequiredAuthError) {
+      // AuthTemplate renders nothing until the first token settles auth state,
+      // so before a session is active any error (BrowserAuthError, network
+      // failure) has to fall through to the sign-in screen.
+      if (
+        e instanceof InteractionRequiredAuthError ||
+        !store.getState().auth.isSessionActive
+      ) {
         store.dispatch(sessionExpired());
       }
       return null;
@@ -111,6 +129,7 @@ export async function getGraphAccessToken() {
     const { accessToken } = await msalInstance.acquireTokenSilent({
       scopes: graphScopes,
       account: account,
+      cacheLookupPolicy: SILENT_POLICY,
     });
     tokenCache.put("msgraph", accessToken);
     store.dispatch(refreshAuthState({ msalInstance: msalInstance }));
