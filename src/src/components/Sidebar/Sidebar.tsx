@@ -75,6 +75,8 @@ import {
   useCanReadOwnCopilot,
 } from "@/state/remote/queries/copilot";
 import WhatsNewBell from "@/components/TopBar/WhatsNewBell";
+import SnowSettingsMenu from "@/components/TopBar/SnowSettingsMenu";
+import FestiveGarland from "@/components/Festive/FestiveGarland";
 
 function DfdsHexMark({ className }: { className?: string }) {
   return (
@@ -1392,9 +1394,10 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       {/* Logo */}
       <Link
         to="/"
-        className="flex items-center gap-2.5 px-4 h-[52px] border-b border-card no-underline flex-shrink-0"
+        className="relative flex items-center gap-2.5 px-4 h-[52px] border-b border-card no-underline flex-shrink-0"
         aria-label="DFDS Self Service home"
       >
+        <FestiveGarland direction="down" />
         <DfdsHexMark className="h-7 w-auto text-primary flex-shrink-0" />
         <div className="flex flex-col leading-tight">
           <span className="text-[0.5625rem] font-semibold tracking-[0.08em] uppercase text-muted font-mono">
@@ -1433,13 +1436,17 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
       )}
 
       {/* Footer */}
-      <div className="px-3 py-3 border-t border-card flex-shrink-0 flex flex-col gap-2">
+      <div className="relative px-3 py-3 border-t border-card flex-shrink-0 flex flex-col gap-2">
+        <FestiveGarland direction="up" />
         {/* Mobile-only: What's New + CE Mode (hidden in TopBar on small screens) */}
         {isMobile && (
           <div className="flex items-center justify-between gap-2">
             {/* Close the drawer when the bell is tapped - the list modal opens on top of the page, the sidebar shouldn't linger. */}
-            <div onClick={onClose}>
-              <WhatsNewBell />
+            <div className="flex items-center">
+              <div onClick={onClose}>
+                <WhatsNewBell />
+              </div>
+              <SnowSettingsMenu />
             </div>
             {isCloudEngineer && (
               <div className="flex items-center gap-2 select-none">
