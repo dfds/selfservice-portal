@@ -18,6 +18,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./state/remote/client";
 import { ToastProvider } from "./context/ToastContext";
 import SnowFall from "./components/SnowFall";
+import { SnowSettingsProvider } from "./context/SnowSettingsContext";
 
 (window as any).apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 (window as any).env = process.env.NODE_ENV;
@@ -37,12 +38,14 @@ root.render(
                   <RybbitProvider>
                     <PreAppProvider>
                       <ThemeProvider>
-                        <SnowFall />
-                        <FontScaleProvider>
-                          <AppProvider>
-                            <App />
-                          </AppProvider>
-                        </FontScaleProvider>
+                        <SnowSettingsProvider>
+                          <SnowFall />
+                          <FontScaleProvider>
+                            <AppProvider>
+                              <App />
+                            </AppProvider>
+                          </FontScaleProvider>
+                        </SnowSettingsProvider>
                       </ThemeProvider>
                     </PreAppProvider>
                   </RybbitProvider>

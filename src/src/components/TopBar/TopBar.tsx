@@ -7,6 +7,8 @@ import { useTopBarActions } from "./TopBarActionsContext";
 import { checkIfCloudEngineer } from "@/lib/roleUtils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import WhatsNewBell from "./WhatsNewBell";
+import SnowSettingsMenu from "./SnowSettingsMenu";
+import FestiveGarland from "@/components/Festive/FestiveGarland";
 
 const pathLabels: Record<string, string> = {
   "/": "Home",
@@ -69,6 +71,10 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
 
   return (
     <div className="h-[52px] flex-shrink-0 flex items-center justify-between px-4 md:px-6 bg-surface border-b border-card sticky top-0 z-10">
+      <FestiveGarland direction="down" primary />
+      {/* The sticky top bar shares the sidebar's right border and keeps the
+          strand in view. The sidebar's overflow-hidden would clip it. */}
+      {!isMobile && <FestiveGarland direction="right" />}
       {/* Left side: hamburger + breadcrumb */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Mobile hamburger */}
@@ -127,7 +133,12 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
       <div className="flex items-center gap-4">
         {actions}
         {/* What's New + CE Mode are desktop-only; on mobile they live in the Sidebar so the cramped top bar has room for breadcrumb + page action. */}
-        {!isMobile && <WhatsNewBell />}
+        {!isMobile && (
+          <div className="flex items-center">
+            <SnowSettingsMenu />
+            <WhatsNewBell />
+          </div>
+        )}
         {!isMobile && isCloudEngineer && (
           <div className="flex items-center gap-2 select-none">
             <span
