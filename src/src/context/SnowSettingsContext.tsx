@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useRybbit } from "@/RybbitContext";
 
 // Set to false outside the Christmas season.
 export const SNOWFALL_SEASON = true;
@@ -126,24 +133,64 @@ export function useSnowSettings(): SnowSettingsContextValue {
   return useContext(SnowSettingsContext);
 }
 
+function hasStoredSettings(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
+// festiveLights is the effective state: lights only render while snow is on.
+function snowTraits(s: SnowSettings, customised: boolean) {
+  return {
+    snowEnabled: s.enabled,
+    snowAmount: s.amount,
+    snowSpeed: s.speed,
+    snowWind: s.wind,
+    snowSize: s.size,
+    snowTumble: s.tumble,
+    festiveLights: s.enabled && s.lights,
+    festiveLightsStyle: s.lightsStyle,
+    snowCustomised: customised,
+  };
+}
+
 export function SnowSettingsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [settings, setSettings] = useState<SnowSettings>(() => readStored());
+  const { trackEvent, setTraits } = useRybbit();
+  const snapshotSent = useRef(false);
+
+  // Records the loaded selection for users who never open the menu.
+  // The ref keeps StrictMode's double effect run from sending it twice.
+  useEffect(() => {
+    if (!SNOWFALL_SEASON || snapshotSent.current) return;
+    snapshotSent.current = true;
+    const customised = hasStoredSettings();
+    trackEvent("user:preference:snow:loaded", { ...settings, customised });
+    setTraits(snowTraits(settings, customised));
+  }, [trackEvent, setTraits, settings]);
 
   function update(patch: Partial<SnowSettings>) {
-    setSettings((prev) => {
-      const next = { ...prev, ...patch };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      return next;
+    const next = { ...settings, ...patch };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSettings(next);
+    trackEvent("user:preference:snow", {
+      ...next,
+      changed: Object.keys(patch).join(","),
     });
+    setTraits(snowTraits(next, true));
   }
 
   function reset() {
     localStorage.removeItem(STORAGE_KEY);
     setSettings(DEFAULT_SNOW_SETTINGS);
+    trackEvent("user:preference:snow:reset", { ...DEFAULT_SNOW_SETTINGS });
+    setTraits(snowTraits(DEFAULT_SNOW_SETTINGS, false));
   }
 
   return (

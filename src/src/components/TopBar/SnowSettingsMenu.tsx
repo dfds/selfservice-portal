@@ -15,14 +15,12 @@ import {
 import { Snowflake } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import GrinchIcon from "./GrinchIcon";
-import { useRybbit } from "@/RybbitContext";
 import { cn } from "@/lib/utils";
 import {
   FESTIVE_STYLES,
   SNOWFALL_SEASON,
   SNOW_OPTIONS,
   type SnowLevel,
-  type SnowSettings,
   useSnowSettings,
 } from "@/context/SnowSettingsContext";
 
@@ -84,7 +82,6 @@ function LevelPicker({
 
 export default function SnowSettingsMenu() {
   const { settings, update, reset } = useSnowSettings();
-  const { trackEvent } = useRybbit();
   const [open, setOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
     open,
@@ -104,11 +101,6 @@ export default function SnowSettingsMenu() {
   const grinch = !settings.enabled;
   // Turning snow off preserves the saved lights preference.
   const lightsOn = settings.enabled && settings.lights;
-
-  function change(patch: Partial<SnowSettings>) {
-    update(patch);
-    trackEvent("user:preference:snow", { ...settings, ...patch });
-  }
 
   return (
     <>
@@ -154,7 +146,7 @@ export default function SnowSettingsMenu() {
                     id="ssu-snow-enabled"
                     aria-label="Let it snow"
                     checked={settings.enabled}
-                    onCheckedChange={(enabled) => change({ enabled })}
+                    onCheckedChange={(enabled) => update({ enabled })}
                   />
                 </div>
 
@@ -174,7 +166,7 @@ export default function SnowSettingsMenu() {
                       levels={SNOW_OPTIONS[key].levels}
                       value={settings[key]}
                       disabled={!settings.enabled}
-                      onChange={(level) => change({ [key]: level })}
+                      onChange={(level) => update({ [key]: level })}
                     />
                   ))}
 
@@ -189,7 +181,7 @@ export default function SnowSettingsMenu() {
                       id="ssu-snow-tumble"
                       checked={settings.tumble}
                       disabled={!settings.enabled}
-                      onCheckedChange={(tumble) => change({ tumble })}
+                      onCheckedChange={(tumble) => update({ tumble })}
                     />
                   </div>
                 </div>
@@ -213,7 +205,7 @@ export default function SnowSettingsMenu() {
                     id="ssu-festive-lights"
                     checked={lightsOn}
                     disabled={grinch}
-                    onCheckedChange={(lights) => change({ lights })}
+                    onCheckedChange={(lights) => update({ lights })}
                   />
                 </div>
 
@@ -234,7 +226,7 @@ export default function SnowSettingsMenu() {
                         role="radio"
                         aria-checked={active}
                         disabled={!lightsOn}
-                        onClick={() => change({ lightsStyle: style.id })}
+                        onClick={() => update({ lightsStyle: style.id })}
                         className={cn(
                           "flex items-center gap-2.5 rounded-[6px] border-0 px-2 py-1.5 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action/50 disabled:cursor-not-allowed",
                           active

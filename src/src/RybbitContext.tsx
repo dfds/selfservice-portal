@@ -31,7 +31,8 @@ type RybbitState = {
   trackEvent: (name: string, properties?: RybbitEventProperties) => void;
   /**
    * Persist per-user traits via window.rybbit.setTraits(). Traits attach to
-   * subsequent events. Queued until the script loads, no-op when disabled.
+   * subsequent events. Buffered until the user is identified, because Rybbit
+   * drops setTraits() calls made before identify(). No-op when disabled.
    * See https://rybbit.com/docs/identify-users#windowrybbitsettraitstraits
    */
   setTraits: (traits: RybbitTraitMap) => void;
@@ -121,6 +122,9 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
 
   const scriptInjected = useRef(false);
   const lastIdentified = useRef<string | null>(null);
+  // Every trait set this page load. Sent with identify() so traits set before
+  // sign-in, or before an identity change, are not lost.
+  const sessionTraits = useRef<RybbitTraitMap>({});
 
   // Inject the Rybbit script tag exactly once per page load.
   useEffect(() => {
@@ -168,7 +172,7 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
       if (!rb) return;
       if (email && lastIdentified.current !== identityKey) {
         try {
-          rb.identify(email, traits);
+          rb.identify(email, { ...sessionTraits.current, ...traits });
           lastIdentified.current = identityKey;
         } catch (e) {
           // analytics must never break the UI
@@ -211,17 +215,16 @@ function RybbitProvider({ children }: { children: React.ReactNode }) {
   const setTraits = useCallback(
     (traits: RybbitTraitMap) => {
       if (!isEnabled) return;
-      const apply = () => {
-        const rb = (window as any).rybbit;
-        if (!rb || typeof rb.setTraits !== "function") return;
-        try {
-          rb.setTraits(traits);
-        } catch (e) {
-          // analytics must never break the UI
-        }
-      };
-      if (scriptLoaded) apply();
-      else onScriptLoad.push(apply);
+      sessionTraits.current = { ...sessionTraits.current, ...traits };
+      // Not identified yet: the identify effect sends sessionTraits.
+      if (!scriptLoaded || !lastIdentified.current) return;
+      const rb = (window as any).rybbit;
+      if (!rb || typeof rb.setTraits !== "function") return;
+      try {
+        rb.setTraits(traits);
+      } catch (e) {
+        // analytics must never break the UI
+      }
     },
     [isEnabled],
   );
