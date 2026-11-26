@@ -1,0 +1,272 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.optional {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.errorAlert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 0.8125rem;
+}
+
+.closeError {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeError:hover {
+  opacity: 0.8;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.uploadArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  border: 2px dashed var(--color-border-card);
+  border-radius: 8px;
+  background-color: var(--color-surface-muted);
+  transition: all 0.2s ease;
+}
+
+.uploadArea:hover:not(:has(button:disabled)) {
+  border-color: var(--color-action);
+  background-color: var(--color-surface-subtle);
+}
+
+.browseButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: var(--color-action);
+  color: var(--color-surface-muted);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.browseButton:hover:not(:disabled) {
+  background-color: color-mix(
+    in srgb,
+    var(--color-action) 85%,
+    var(--color-surface)
+  );
+}
+
+.browseButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.uploadingList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--color-surface-muted);
+  border-radius: 6px;
+  border: 1px solid var(--color-border-card);
+}
+
+.uploadingLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.uploadingItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background-color: var(--color-surface);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-divider);
+}
+
+.uploadingName {
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.uploadingError {
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-border-card);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-action);
+  transition: width 0.3s ease;
+}
+
+.cancelButton {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancelButton:hover {
+  color: #dc2626;
+}
+
+.assetsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.assetsLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.assetsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.assetItem {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-divider);
+  background-color: var(--color-surface);
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.assetPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex: 1;
+}
+
+.assetPlaceholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.assetItem:hover .removeButton {
+  opacity: 1;
+}
+
+.removeButton:hover:not(:disabled) {
+  background-color: rgba(220, 38, 38, 0.8);
+}
+
+.removeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.assetInfo {
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  word-break: break-word;
+  line-height: 1.2;
+  flex-shrink: 0;
+}

@@ -5,11 +5,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { intlFormatDistance } from "date-fns";
 import { ArrowLeft, Newspaper } from "lucide-react";
 import LinkifiedText from "@/components/Text/LinkifiedText";
+import {
+  PrivateAssetOwnerType,
+  useOwnerAssets,
+} from "@/state/remote/queries/privateAssets";
 
 export function NewsView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isFetched, data } = useNewsItem(id);
+  const { data: assets = [] } = useOwnerAssets(id, PrivateAssetOwnerType.News);
+  const attachedAssets = assets.filter((asset) => asset.url);
 
   return (
     <Page title="">
@@ -60,6 +66,18 @@ export function NewsView() {
               linkClassName="text-action underline"
             />
           </p>
+          {attachedAssets.length > 0 && (
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {attachedAssets.map((asset) => (
+                <img
+                  key={asset.assetId}
+                  src={asset.url}
+                  alt={asset.fileName}
+                  className="w-full max-h-[28rem] rounded-[6px] border border-card object-contain bg-surface-muted"
+                />
+              ))}
+            </div>
+          )}
         </article>
       )}
     </Page>

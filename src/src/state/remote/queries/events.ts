@@ -4,6 +4,17 @@ import {
   createSsuParamQuery,
 } from "../queryFactory";
 
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  eventDate: string;
+  type: string;
+  attachments?: any[];
+  assetIds?: string[];
+  [key: string]: any;
+}
+
 export const useEventSignups = createSsuQuery({
   queryKey: ["eventsignups"],
   urlSegments: ["demos/signups"],

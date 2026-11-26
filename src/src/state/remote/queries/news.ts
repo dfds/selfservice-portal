@@ -15,6 +15,7 @@ export interface NewsItem {
   createdBy: string;
   createdAt: string;
   modifiedAt: string | null;
+  assetIds?: string[];
   _links: Record<string, unknown>;
 }
 
@@ -46,6 +47,7 @@ export const useCreateNews = createSsuMutation<{
     body: string;
     frontpageSummary?: string;
     dueDate: string;
+    assetIds?: string[];
   };
 }>({
   method: "POST",
@@ -59,6 +61,7 @@ export const useUpdateNews = createSsuMutation<{
     body: string;
     frontpageSummary?: string;
     dueDate: string;
+    assetIds?: string[];
   };
 }>({
   method: "POST",
