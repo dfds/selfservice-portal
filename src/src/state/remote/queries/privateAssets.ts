@@ -7,6 +7,7 @@ import PreAppContext from "@/preAppContext";
 
 export enum PrivateAssetOwnerType {
   EmailCampaign = "EmailCampaign",
+  ReleaseNote = "ReleaseNote",
 }
 
 export interface PrivateAsset {
