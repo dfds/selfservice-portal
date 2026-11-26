@@ -6,6 +6,12 @@ import React, {
   useState,
 } from "react";
 import { useRybbit } from "@/RybbitContext";
+import {
+  adventState,
+  seasonYear,
+  todayOrdinal,
+  type AdventState,
+} from "@/components/Festive/advent";
 
 // Set to false outside the Christmas season.
 export const SNOWFALL_SEASON = true;
@@ -121,12 +127,15 @@ interface SnowSettingsContextValue {
   settings: SnowSettings;
   update: (patch: Partial<SnowSettings>) => void;
   reset: () => void;
+  /** Season state for today in Copenhagen. */
+  advent: AdventState;
 }
 
 const SnowSettingsContext = createContext<SnowSettingsContextValue>({
   settings: DEFAULT_SNOW_SETTINGS,
   update: () => {},
   reset: () => {},
+  advent: adventState(todayOrdinal(), seasonYear()),
 });
 
 export function useSnowSettings(): SnowSettingsContextValue {
@@ -164,6 +173,15 @@ export function SnowSettingsProvider({
   const [settings, setSettings] = useState<SnowSettings>(() => readStored());
   const { trackEvent, setTraits } = useRybbit();
   const snapshotSent = useRef(false);
+  const [today, setToday] = useState(() => todayOrdinal());
+
+  // Polls so an open tab moves to the next day after midnight.
+  useEffect(() => {
+    const id = window.setInterval(() => setToday(todayOrdinal()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const advent = adventState(today, seasonYear());
 
   // Records the loaded selection for users who never open the menu.
   // The ref keeps StrictMode's double effect run from sending it twice.
@@ -194,7 +212,7 @@ export function SnowSettingsProvider({
   }
 
   return (
-    <SnowSettingsContext.Provider value={{ settings, update, reset }}>
+    <SnowSettingsContext.Provider value={{ settings, update, reset, advent }}>
       {children}
     </SnowSettingsContext.Provider>
   );
