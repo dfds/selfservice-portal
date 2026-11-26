@@ -259,6 +259,28 @@
     }
   }
 
+  --animate-festive-flicker: festive-flicker 1.8s ease-in-out infinite;
+
+  @keyframes festive-flicker {
+    0%,
+    100% {
+      transform: scale(1, 1) skewX(0deg);
+    }
+
+    25% {
+      transform: scale(0.93, 1.07) skewX(-4deg);
+    }
+
+    50% {
+      transform: scale(1.05, 0.94) skewX(3deg);
+      opacity: 0.9;
+    }
+
+    75% {
+      transform: scale(0.97, 1.04) skewX(-2deg);
+    }
+  }
+
   --animate-number-reveal: number-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1)
     both;
 
