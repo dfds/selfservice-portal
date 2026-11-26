@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import WhatsNewBell from "./WhatsNewBell";
 import SnowSettingsMenu from "./SnowSettingsMenu";
 import FestiveGarland from "@/components/Festive/FestiveGarland";
+import WindowFrost from "@/components/Festive/WindowFrost";
 
 const pathLabels: Record<string, string> = {
   "/": "Home",
@@ -71,6 +72,7 @@ export default function TopBar({ onMenuOpen, menuOpen = false }: TopBarProps) {
 
   return (
     <div className="h-[52px] flex-shrink-0 flex items-center justify-between px-4 md:px-6 bg-surface border-b border-card sticky top-0 z-10">
+      <WindowFrost />
       <FestiveGarland direction="down" primary />
       {/* The sticky top bar shares the sidebar's right border and keeps the
           strand in view. The sidebar's overflow-hidden would clip it. */}

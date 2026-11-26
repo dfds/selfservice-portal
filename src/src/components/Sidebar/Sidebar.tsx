@@ -77,6 +77,8 @@ import {
 import WhatsNewBell from "@/components/TopBar/WhatsNewBell";
 import SnowSettingsMenu from "@/components/TopBar/SnowSettingsMenu";
 import FestiveGarland from "@/components/Festive/FestiveGarland";
+import WindowFrost from "@/components/Festive/WindowFrost";
+import AdventCandles from "@/components/Festive/AdventCandles";
 
 function DfdsHexMark({ className }: { className?: string }) {
   return (
@@ -1397,6 +1399,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         className="relative flex items-center gap-2.5 px-4 h-[52px] border-b border-card no-underline flex-shrink-0"
         aria-label="DFDS Self Service home"
       >
+        <WindowFrost />
         <FestiveGarland direction="down" />
         <DfdsHexMark className="h-7 w-auto text-primary flex-shrink-0" />
         <div className="flex flex-col leading-tight">
@@ -1427,6 +1430,9 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
         {/* Scroll-overflow chevron indicators */}
         <EdgeIndicators edges={navEdges} />
       </div>
+
+      {/* Short viewports keep the room for navigation. */}
+      <AdventCandles className="flex-shrink-0 [@media(max-height:760px)]:hidden" />
 
       {/* Commit hash */}
       {process.env.REACT_APP_COMMIT_HASH && (
